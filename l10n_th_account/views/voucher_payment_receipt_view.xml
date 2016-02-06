@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_vendor_receipt_dialog_form_ext" model="ir.ui.view">
+            <field name="name">view.vendor.receipt.dialog.form.ext</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_dialog_form"/>
+            <field name="arch" type="xml">
+                <data>
+					<xpath expr="//field[@name='partner_id']" position="attributes">
+						<attribute name="invisible">True</attribute>
+					</xpath>				
+					<xpath expr="/form/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
+						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+						<field sum="Total Retention" name="amount_retention" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+					</xpath>
+					<xpath expr="/form/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="after">
+						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+						<field sum="Total Retention" name="amount_retention" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+					</xpath>	
+					<!-- onchange amount/reconcile -->
+					<xpath expr="/form/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="attributes">
+						<attribute name="on_change">onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="attributes">
+						<attribute name="on_change">onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
+						<attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
+						<attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+					</xpath>		
+					<!-- change order of amount vs journal -->	
+					<xpath expr="/form/group/group/field[@name='amount']" position="replace" />
+					<xpath expr="/form/group/group/field[@name='journal_id']" position="after" >
+	                    <field name="amount" class="oe_inline"
+	                        string="Paid Amount"
+	                        widget='monetary' options='{"currency_field": "currency_id"}'
+	                        invisible="context.get('line_type', False)"
+	                        on_change="onchange_amount(amount, payment_rate, partner_id, journal_id, currency_id, type, date, payment_rate_currency_id, company_id, context)"/>
+					</xpath>		
+				</data>
+            </field>
+        </record>    
+    
+        <record id="view_vendor_receipt_form_ext" model="ir.ui.view">
+		    <field name="name">view.vendor.receipt.form.ext</field>
+		    <field name="model">account.voucher</field>
+		    <field name="type">form</field>
+		    <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+		    <field name="arch" type="xml">
+                <data>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
+						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                		<field name="retention_on_payment" invisible="1"/>
+						<field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}"
+							 on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="after">
+						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                		<field name="retention_on_payment" invisible="1"/>
+						<field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}"
+							on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+					</xpath>					
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="attributes">
+						<attribute name="on_change">onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="attributes">
+						<attribute name="on_change">onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
+						<attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
+						<attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+					</xpath>	
+					<xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_acc_id']" position="attributes">
+						<attribute name="attrs">{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}</attribute>
+					</xpath>						
+					<page string="Payment Information" position="after">
+			            <page string="Other Info">
+			                <field name="tax_line">
+			                    <tree editable="bottom" string="Taxes">
+			                    	<field name="invoice_id"/>
+			                        <field name="name"/>
+			                        <field name="account_id" groups="account.group_account_user"/>
+			                        <field name="base" readonly="1"/>
+			                        <field name="amount" readonly="1"/>
+			                        <field name="tax_currency_gain" readonly="1"/>
+			                        <field invisible="True" name="base_amount"/>
+			                        <field invisible="True" name="tax_amount"/>
+			                        <field name="factor_base" invisible="True"/>
+			                        <field name="factor_tax" invisible="True"/>
+			                    </tree>
+			                </field>
+			                <div>
+		                        <label for="amount_tax"/>
+		                        <button name="button_reset_taxes" states="draft,proforma2"
+		                            string="(update)" class="oe_link oe_edit_only"
+		                            type="object" help="Recompute taxes and total"/>
+		                    </div>
+						</page>	        
+					</page>
+				</data>
+			</field>
+		</record>
+        <record id="view_vendor_payment_form_ext" model="ir.ui.view">
+		    <field name="name">view.vendor.payment.form.ext</field>
+		    <field name="model">account.voucher</field>
+		    <field name="type">form</field>
+		    <field name="inherit_id" ref="account_voucher.view_vendor_payment_form"/>
+		    <field name="arch" type="xml">
+				<data>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
+						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                		<field name="retention_on_payment" invisible="1"/>
+						<field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}"
+							on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+					</xpath>	
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="after">
+						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                		<field name="retention_on_payment" invisible="1"/>
+						<field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}"
+							on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+					</xpath>	
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="attributes">
+						<attribute name="on_change">onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="attributes">
+						<attribute name="on_change">onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
+						<attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
+						<attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+					</xpath>
+					<xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_acc_id']" position="attributes">
+						<attribute name="attrs">{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}</attribute>
+					</xpath>	
+					<page string="Payment Information" position="after">
+			            <page string="Other Info">
+			                <field name="tax_line">
+			                    <tree editable="bottom" string="Taxes">
+			                    	<field name="invoice_id"/>
+			                        <field name="name"/>
+			                        <field name="account_id" groups="account.group_account_user"/>
+			                        <field name="base" readonly="1"/>
+			                        <field name="amount" />
+			                        <field name="tax_currency_gain" readonly="1"/>
+			                        <field invisible="True" name="base_amount"/>
+			                        <field invisible="True" name="tax_amount"/>
+			                        <field name="factor_base" invisible="True"/>
+			                        <field name="factor_tax" invisible="True"/>
+			                    </tree>
+			                </field>
+			                <div>
+		                        <label for="amount_tax"/>
+		                        <button name="button_reset_taxes" states="draft,proforma2"
+		                            string="(update)" class="oe_link oe_edit_only"
+		                            type="object" help="Recompute taxes and total"/>
+		                    </div>
+						</page>	        
+					</page>
+				</data>
+			</field>
+		</record>
+	</data>
+</openerp>

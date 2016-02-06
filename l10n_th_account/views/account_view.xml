@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_tax_form_ext" model="ir.ui.view">
+		    <field name="name">view.tax.form.ext</field>
+		    <field name="model">account.tax</field>
+		    <field name="type">form</field>
+		    <field name="inherit_id" ref="account.view_tax_form"/>
+		    <field name="arch" type="xml">
+		        <field name="price_include" position="after">
+		            <field name="is_wht" />
+		            <field name="threshold_wht" attrs="{'invisible': [('is_wht','=',False)]}"/>
+		            <field name="is_undue_tax" />
+		            <field name="refer_tax_id" attrs="{'invisible': [('is_undue_tax','=',False)]}" class="oe_inline"/>
+		        </field>
+			</field>
+		</record>
+		<record id="view_tax_tree_ext" model="ir.ui.view">
+		    <field name="name">view.tax.tree.ext</field>
+		    <field name="model">account.tax</field>
+		    <field name="type">tree</field>
+		    <field name="inherit_id" ref="account.view_tax_tree"/>
+		    <field name="arch" type="xml">
+		        <field name="description" position="after">
+		            <field name="is_undue_tax"/>
+		            <field name="is_wht"/>
+		        </field>
+		    </field>
+		</record>    
+	</data>
+</openerp>

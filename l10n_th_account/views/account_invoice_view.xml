@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_form_ext" model="ir.ui.view">
+            <field name="name">invoice.form.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
+                    <field name="amount_retention" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                </xpath>
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="residual"]' position="after">
+                    <field name="retention_on_payment" attrs="{'invisible': [('retention_on_payment','!=',True)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
