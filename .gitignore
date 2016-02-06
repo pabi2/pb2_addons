@@ -15,8 +15,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+#lib/
+#lib64/
 parts/
 sdist/
 var/
@@ -47,7 +47,7 @@ coverage.xml
 
 # Translations
 *.mo
-*.pot
+#*.pot
 
 # Django stuff:
 *.log
@@ -60,3 +60,12 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Additional
+openerp-server.conf
+*.jasper
+.project
+.pydevproject
+*.settings
+*.*~
+.~*
