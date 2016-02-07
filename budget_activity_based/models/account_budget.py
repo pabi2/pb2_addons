@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-from lxml import etree
-from openerp import api, fields, models, _
-from openerp.osv.orm import setup_modifiers
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp import api, fields, models
 
 
 class CrossoveredBudget(models.Model):
@@ -96,4 +92,3 @@ class CrossoveredBudgetLines(models.Model):
             else:
                 line.analytic_account_id = False
         return
-

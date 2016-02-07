@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-import itertools
-from lxml import etree
-from openerp.osv.orm import setup_modifiers
-from openerp import api, fields, models, _
-from openerp.exceptions import except_orm, Warning
+from openerp import api, fields, models
 
 
 class AccountInvoice(models.Model):

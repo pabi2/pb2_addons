@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-from lxml import etree
 from openerp import api, fields, models
-from openerp.osv.orm import setup_modifiers
 
 
 class AccountAnalyticLine(models.Model):
@@ -80,7 +77,6 @@ class AccountAnalyticAccount(models.Model):
         domain.append(('type', '=', 'activity'))
         analytics = self.env['account.analytic.account'].search(domain)
         if analytics:
-            #analytics.ensure_one()
             return analytics[0]
         return False
 
@@ -97,7 +93,4 @@ class AccountAnalyticAccount(models.Model):
             vals['type'] = 'activity'
             return Analytic.create(vals)
         else:
-            #analytics.ensure_one()
             return analytics[0]
-
-

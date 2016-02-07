@@ -1,24 +1,4 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
-
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
@@ -34,68 +14,88 @@ class sale_order(models.Model):
 
     _inherit = 'sale.order'
 
-    use_invoice_plan = fields.Boolean(string='Use Invoice Plan', readonly=True, states={'draft': [('readonly', False)]}, 
-        default=False, help="It indicates that the invoice has been sent.")
-    invoice_plan_ids = fields.One2many('sale.invoice.plan', 'order_id', string='Invoice Plan', copy=True,
-        readonly=True, states={'draft': [('readonly', False)], 'invoice_except': [('readonly', False)]})
-    invoice_plan_wd_ids = fields.One2many('sale.invoice.plan', 'order_id', string='Invoice Plan with Advance', copy=True)
-    use_deposit = fields.Boolean('Advance on 1st Invoice', readonly=True)
-    invoice_mode = fields.Selection([('change_price', 'As 1 Job (change price)'),
-                                     ('change_quantity', 'As Units (change quantity)')], string='Invoice Mode', requied=True, readonly=True)
+    use_invoice_plan = fields.Boolean(
+        string='Use Invoice Plan',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default=False,
+        help="It indicates that the invoice has been sent.",
+    )
+    invoice_plan_ids = fields.One2many(
+        'sale.invoice.plan',
+        'order_id',
+        string='Invoice Plan',
+        copy=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'invoice_except': [('readonly', False)]},
+    )
+    invoice_plan_wd_ids = fields.One2many(
+        'sale.invoice.plan',
+        'order_id',
+        string='Invoice Plan with Advance',
+        copy=True,
+    )
+    use_deposit = fields.Boolean(
+        string='Advance on 1st Invoice',
+        readonly=True,
+    )
+    invoice_mode = fields.Selection(
+        [('change_price', 'As 1 Job (change price)'),
+         ('change_quantity', 'As Units (change quantity)')],
+        string='Invoice Mode',
+        requied=True,
+        readonly=True,
+    )
 
     @api.model
     def _calculate_subtotal(self, vals):
-        if vals.get('invoice_plan_ids', False) or vals.get('invoice_plan_wd_ids', False):
+        if vals.get('invoice_plan_ids', False) or \
+                vals.get('invoice_plan_wd_ids', False):
             plan_ids = self.invoice_plan_ids or self.invoice_plan_wd_ids
             old_installment = 0
             subtotal = 0.0
-            list = []  # Keep the subtotal line index
+            index_list = []  # Keep the subtotal line index
             i = 0
             for line in plan_ids:
                 if line.installment > old_installment:  # Start new installment
-                    if len(list) > 0:
-                        del list[-1]  # Remove last index
+                    if len(index_list) > 0:
+                        del index_list[-1]  # Remove last index
                     subtotal = 0.0
-                list.append(i)
+                index_list.append(i)
                 if line.installment == 0:
-                    #subtotal += line.deposit_amount
                     line.subtotal = 0.0
                 else:
                     subtotal += line.invoice_amount
                     line.subtotal = subtotal
                 old_installment = line.installment
                 i += 1
-            if len(list) > 0:
-                del list[-1]
-            # Now, delete subtotal  not in the list
-            for i in list:
+            if len(index_list) > 0:
+                del index_list[-1]
+            # Now, delete subtotal  not in the index_list
+            for i in index_list:
                 self.invoice_plan_ids[i].subtotal = 0.0
-                        
+
     @api.model
-    def _validate_invoice_plan(self, vals) :
+    def _validate_invoice_plan(self, vals):
         if vals.get('invoice_plan_ids', False):
             for line in vals.get('invoice_plan_ids'):
                 # Deleting (2) line that is not being cancelled
                 plan = self.env['sale.invoice.plan'].browse(line[1])
-                if line[0] == 2: # Deletion
+                if line[0] == 2:  # Deletion
                     plan = self.env['sale.invoice.plan'].browse(line[1])
                     if plan.state and plan.state != 'cancel':
-                        raise except_orm(_('Delete Error!'),
-                            _("""You are trying deleting line(s) that has not been cancelled!
-                            Please discard change and try again!"""))
-
-#     @api.multi
-#     def copy(self, default=None):
-#         default = dict(default or {})
-#         order = super(sale_order, self).copy(default)
-#         for invoice_plan in order.invoice_plan_ids:
-#             invoice_plan.order_line_id = invoice_plan.order_line_id.copy_to_line_id.id
-#         return order
+                        raise except_orm(
+                            _('Delete Error!'),
+                            _("You are trying deleting line(s) "
+                              "that has not been cancelled!\n"
+                              "Please discard change and try again!"))
 
     # Don't know why, but can't use v8 API !!, so revert to v7
-    def copy(self, cr, uid, id, default=None, context=None):
+    def copy(self, cr, uid, rec_id, default=None, context=None):
         default = default or {}
-        order_id = super(sale_order, self).copy(cr, uid, id, default, context)
+        order_id = super(sale_order, self).copy(cr, uid, rec_id,
+                                                default, context)
         order = self.browse(cr, uid, order_id)
         for invoice_plan in order.invoice_plan_ids:
             copy_to_line_id = invoice_plan.order_line_id and \
@@ -112,24 +112,17 @@ class sale_order(models.Model):
         res = super(sale_order, self).write(vals)
         for sale in self:
             sale._calculate_subtotal(vals)
-        self.env['sale.invoice.plan']._validate_installment_date(self.invoice_plan_ids)
+        self.env['sale.invoice.plan']._validate_installment_date(
+            self.invoice_plan_ids)
         return res
-
-#     @api.onchange('invoice_plan_ids')
-#     def _onchange_order_line(self):
-#         if self._context.get('invoice_plan_ids'):
-#             line = self._context.get('invoice_plan_ids')[-1]
-#             # Deleting (2) line that is not being cancelled
-#             if line[0] == 2 and self.env['sale.invoice.plan'].browse(line[1]).state != 'cancel':
-#                 raise except_orm(_('Error!'),
-#                         _("This line can not be deleted, as it is not cancelled!"))
 
     @api.onchange('use_invoice_plan')
     def _onchange_use_invoice_plan(self):
         if self.use_invoice_plan:
             self.order_policy = 'manual'
         else:
-            default_order_policy = self.env['ir.values'].get_default('sale.order', 'order_policy')
+            default_order_policy = self.env['ir.values'].get_default(
+                'sale.order', 'order_policy')
             self.order_policy = default_order_policy or 'manual'
 
     @api.one
@@ -162,29 +155,34 @@ class sale_order(models.Model):
 
     @api.multi
     def action_button_confirm(self):
-        assert len(self) == 1, 'This option should only be used for a single id at a time.'
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
         self._check_invoice_plan()
         super(sale_order, self).action_button_confirm()
         return True
-    
+
     @api.multi
     def action_cancel_draft_invoices(self):
-        assert len(self) == 1, 'This option should only be used for a single id at a time.'
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
         # Get all unpaid invoice
         for invoice in self.invoice_ids:
             if invoice.state in ('draft'):
-                workflow.trg_validate(self._uid, 'account.invoice', invoice.id, 'invoice_cancel', self._cr)        
+                workflow.trg_validate(
+                    self._uid, 'account.invoice',
+                    invoice.id, 'invoice_cancel', self._cr)
         return True
-    
+
     @api.multi
     def _create_deposit_invoice(self, percent, amount, date_invoice=False):
         for order in self:
             if amount:
                 advance_label = 'Advance'
                 prop = self.env['ir.property'].get(
-                            'property_account_deposit_customer', 'res.partner')
+                    'property_account_deposit_customer', 'res.partner')
                 prop_id = prop and prop.id or False
-                account_id = self.env['account.fiscal.position'].map_account(prop_id)
+                account_id = self.env[
+                    'account.fiscal.position'].map_account(prop_id)
                 name = _("%s of %s %%") % (advance_label, percent)
                 # create the invoice
                 inv_line_values = {
@@ -197,55 +195,81 @@ class sale_order(models.Model):
                     'discount': False,
                     'uos_id': False,
                     'product_id': False,
-                    'invoice_line_tax_id': [(6, 0, [x.id for x in order.order_line[0].tax_id])],
+                    'invoice_line_tax_id': [
+                        (6, 0, [x.id for x in order.order_line[0].tax_id])],
                     'account_analytic_id': order.project_id.id or False,
                 }
                 inv_values = self._prepare_invoice(order, inv_line_values)
                 inv_values.update({'is_deposit': True,
                                    'date_invoice': date_invoice})
                 # Chainging from [6, 0, ...] to [0, 0, ...]
-                inv_values['invoice_line'] = [(0, 0, inv_values['invoice_line'][0][2])]
-                inv_id = self.env['sale.advance.payment.inv']._create_invoices(inv_values, self.id)
+                inv_values['invoice_line'] = [
+                    (0, 0, inv_values['invoice_line'][0][2])]
+                inv_id = self.env[
+                    'sale.advance.payment.inv']._create_invoices(inv_values,
+                                                                 self.id)
                 # Calculate due date
                 invoice = self.env['account.invoice'].browse(inv_id)
                 if date_invoice:
-                    data = invoice.onchange_payment_term_date_invoice(order.payment_term.id, date_invoice)
+                    data = invoice.onchange_payment_term_date_invoice(
+                        order.payment_term.id, date_invoice)
                 else:
-                    data = invoice.onchange_payment_term_date_invoice(order.payment_term.id, time.strftime(DEFAULT_SERVER_DATE_FORMAT))
+                    data = invoice.onchange_payment_term_date_invoice(
+                        order.payment_term.id,
+                        time.strftime(DEFAULT_SERVER_DATE_FORMAT))
                 if data.get('value', False):
                     invoice.write(data['value'])
                 return inv_id
         return False
 
     @api.multi
-    def action_invoice_create(self, grouped=False, states=None, date_invoice=False):
+    def action_invoice_create(self, grouped=False,
+                              states=None, date_invoice=False):
         self._check_invoice_plan()
         # Mixed Invoice plan and grouping is not allowed.
         if grouped and (True in [order.use_invoice_plan for order in self]):
-            raise except_orm(_('Warning'),
-                    _("Mixing normal Order and Order with Invoice Plan not allowed!"))
+            raise except_orm(
+                _('Warning'),
+                _("Mix order and order with invoice plan is not allowed!"))
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
             if order.use_invoice_plan:
                 plan_obj = self.env['sale.invoice.plan']
-                installments = list(set([plan.installment for plan in order.invoice_plan_ids]))
+                installments = list(set([plan.installment
+                                         for plan in order.invoice_plan_ids]))
                 for installment in installments:
                     # Getting invoice plan for each installment
-                    blines = plan_obj.search([('installment', '=', installment), ('order_id', '=', order.id), ('state', 'in', [False, 'cancel'])])
+                    blines = plan_obj.search(
+                        [('installment', '=', installment),
+                         ('order_id', '=', order.id),
+                         ('state', 'in', [False, 'cancel'])])
                     if blines:
-                        if installment == 0: # Deposit Case
-                            inv_id = self._create_deposit_invoice(blines[0].deposit_percent, blines[0].deposit_amount, blines[0].date_invoice)
+                        if installment == 0:  # Deposit Case
+                            inv_id = self._create_deposit_invoice(
+                                blines[0].deposit_percent,
+                                blines[0].deposit_amount,
+                                blines[0].date_invoice)
                             blines.write({'ref_invoice_id': inv_id})
                         else:
-                            dict = {}
-                            date_invoice = blines and blines[0].date_invoice or False
+                            percent_dict = {}
+                            date_invoice = (blines and
+                                            blines[0].date_invoice or
+                                            False)
                             for b in blines:
-                                dict.update({b.order_line_id: b.invoice_percent})
-                            order = order.with_context(installment=installment, invoice_plan_percent=dict) 
-                            inv_id = super(sale_order, order).action_invoice_create(grouped=grouped, states=states, date_invoice=date_invoice)
+                                percent_dict.update(
+                                    {b.order_line_id: b.invoice_percent})
+                            order = order.with_context(
+                                installment=installment,
+                                invoice_plan_percent=percent_dict)
+                            inv_id = super(
+                                sale_order, order).action_invoice_create(
+                                    grouped=grouped,
+                                    states=states,
+                                    date_invoice=date_invoice)
                             blines.write({'ref_invoice_id': inv_id})
             else:
-                inv_id = super(sale_order, order).action_invoice_create(grouped=grouped, states=states, date_invoice=date_invoice)
+                inv_id = super(sale_order, order).action_invoice_create(
+                    grouped=grouped, states=states, date_invoice=date_invoice)
         return inv_id
 
     @api.model
@@ -257,13 +281,18 @@ class sale_order(models.Model):
                 if line.price_unit < 0:  # Remove line with negative price line
                     line.unlink()
             for deposit_inv in order.invoice_ids:
-                if deposit_inv.state not in ('cancel',) and deposit_inv.is_deposit:
+                if deposit_inv.state not in ('cancel',) and \
+                        deposit_inv.is_deposit:
                     for preline in deposit_inv.invoice_line:
                         # nstda:
-                        #if context.get('revert_deposit', False):
+                        # if context.get('revert_deposit', False):
                         # --
-                        ratio = order.amount_untaxed and (invoice.amount_untaxed / order.amount_untaxed) or 1.0
-                        inv_line = preline.copy({'invoice_id': inv_id, 'price_unit': -preline.price_unit})
+                        ratio = (order.amount_untaxed and
+                                 (invoice.amount_untaxed /
+                                  order.amount_untaxed) or 1.0)
+                        inv_line = preline.copy(
+                            {'invoice_id': inv_id,
+                             'price_unit': -preline.price_unit})
                         inv_line.quantity = inv_line.quantity * ratio
             invoice.button_compute()
         return inv_id
@@ -275,21 +304,33 @@ class sale_order(models.Model):
         if self[0].use_invoice_plan:
             res = self.action_view_invoice()
         return res
-    
-class sale_order_line(models.Model):
-    
-    _inherit = 'sale.order.line'
-    
-    invoice_plan_ids = fields.One2many('sale.invoice.plan', 'order_line_id', string='Invoice Plan',
-        readonly=True)
-    #temp_copy_id = fields.Integer(string="Temporary ID of the copied line")
-    copy_from_line_id = fields.Many2one('sale.order.line', string="Copied from", readonly=True)
-    copy_to_line_id = fields.Many2one('sale.order.line', string="Last copied to", readonly=True)
 
-    def copy_data(self, cr, uid, id, default=None, context=None):
+
+class sale_order_line(models.Model):
+    _inherit = 'sale.order.line'
+
+    invoice_plan_ids = fields.One2many(
+        'sale.invoice.plan',
+        'order_line_id',
+        string='Invoice Plan',
+        readonly=True,
+    )
+    copy_from_line_id = fields.Many2one(
+        'sale.order.line',
+        string="Copied from",
+        readonly=True,
+    )
+    copy_to_line_id = fields.Many2one(
+        'sale.order.line',
+        string="Last copied to",
+        readonly=True,
+    )
+
+    def copy_data(self, cr, uid, rec_id, default=None, context=None):
         default = dict(default or {})
-        default.update({'copy_from_line_id': id, 'copy_to_line_id': False})
-        return super(sale_order_line, self).copy_data(cr, uid, id, default, context=context)
+        default.update({'copy_from_line_id': rec_id, 'copy_to_line_id': False})
+        return super(sale_order_line, self).copy_data(cr, uid, rec_id,
+                                                      default, context=context)
 
     @api.model
     def create(self, vals):
@@ -298,39 +339,49 @@ class sale_order_line(models.Model):
             old_line = self.browse(new_line.copy_from_line_id.id)
             old_line.copy_to_line_id = new_line.id
         return new_line
-    
+
     @api.v7
-    def _prepare_order_line_invoice_line_ex(self, cr, uid, line, account_id=False, context=None):
-        """ Overwrite _prepare_order_line_invoice_line with 1 important condition (nstda) """
+    def _prepare_order_line_invoice_line_ex(self, cr, uid, line,
+                                            account_id=False, context=None):
+        """ Overwrite _prepare_order_line_invoice_line with 1
+        important condition (nstda) """
         res = {}
         # nstda: if invoice plan, always execute
         if not line.invoiced or context.get('invoice_plan_percent', False):
-        #if not line.invoiced:
+            # if not line.invoiced:
             if not account_id:
                 if line.product_id:
                     account_id = line.product_id.property_account_income.id
                     if not account_id:
-                        account_id = line.product_id.categ_id.property_account_income_categ.id
+                        categ = line.product_id.categ_id
+                        account_id = categ.property_account_income_categ.id
                     if not account_id:
-                        raise except_orm(_('Error!'),
-                                _('Please define income account for this product: "%s" (id:%d).') % \
-                                    (line.product_id.name, line.product_id.id,))
+                        raise except_orm(
+                            _('Error!'),
+                            _('Please define income account for this product:'
+                              ' "%s" (id:%d).') %
+                            (line.product_id.name, line.product_id.id,))
                 else:
-                    prop = self.pool.get('ir.property').get(cr, uid,
-                            'property_account_income_categ', 'product.category',
-                            context=context)
+                    prop = self.pool.get('ir.property').get(
+                        cr, uid, 'property_account_income_categ',
+                        'product.category', context=context)
                     account_id = prop and prop.id or False
             uosqty = self._get_line_qty(cr, uid, line, context=context)
             uos_id = self._get_line_uom(cr, uid, line, context=context)
             pu = 0.0
             if uosqty:
-                pu = round(line.price_unit * line.product_uom_qty / uosqty,
-                        self.pool.get('decimal.precision').precision_get(cr, uid, 'Product Price'))
+                prec = self.pool.get('decimal.precision')
+                price = line.price_unit * line.product_uom_qty / uosqty
+                pu = round(price, prec.precision_get(cr, uid, 'Product Price'))
             fpos = line.order_id.fiscal_position or False
-            account_id = self.pool.get('account.fiscal.position').map_account(cr, uid, fpos, account_id)
+            account_id = self.pool.get('account.fiscal.position').map_account(
+                cr, uid, fpos, account_id)
             if not account_id:
-                raise except_orm(_('Error!'),
-                            _('There is no Fiscal Position defined or Income category account defined for default properties of Product categories.'))
+                raise except_orm(
+                    _('Error!'),
+                    _('There is no Fiscal Position defined or '
+                      'Income category account defined for default '
+                      'properties of Product categories.'))
             res = {
                 'name': line.name,
                 'sequence': line.sequence,
@@ -342,30 +393,39 @@ class sale_order_line(models.Model):
                 'uos_id': uos_id,
                 'product_id': line.product_id.id or False,
                 'invoice_line_tax_id': [(6, 0, [x.id for x in line.tax_id])],
-                'account_analytic_id': line.order_id.project_id and line.order_id.project_id.id or False,
+                'account_analytic_id': (line.order_id.project_id and
+                                        line.order_id.project_id.id or False),
             }
 
         return res
 
     @api.v7
-    def _prepare_order_line_invoice_line(self, cr, uid, line, account_id=False, context=None):
-        res = self._prepare_order_line_invoice_line_ex(cr, uid, line, account_id=account_id, context=context)
+    def _prepare_order_line_invoice_line(self, cr, uid, line,
+                                         account_id=False, context=None):
+        res = self._prepare_order_line_invoice_line_ex(cr, uid, line,
+                                                       account_id=account_id,
+                                                       context=context)
         invoice_plan_percent = context.get('invoice_plan_percent', False)
         if invoice_plan_percent:
             if line in invoice_plan_percent:
                 if line.order_id.invoice_mode == 'change_quantity':
-                    res.update({'quantity': (res.get('quantity') or 0.0)
-                                            * (line and invoice_plan_percent[line] or 0.0) / 100})
+                    res.update({'quantity': (res.get('quantity') or 0.0) *
+                                (line and invoice_plan_percent[line] or 0.0) /
+                                100})
                 elif line.order_id.invoice_mode == 'change_price':
-                    res.update({'price_unit': (res.get('price_unit') or 0.0) * (res.get('quantity') or 0.0) \
-                                            * (line and invoice_plan_percent[line] or 0.0) / 100,
+                    res.update({'price_unit': (res.get('price_unit') or 0.0) *
+                                (res.get('quantity') or 0.0) *
+                                (line and invoice_plan_percent[line] or 0.0) /
+                                100,
                                 'quantity': 1.0})
             else:
                 return False
-        # From invoice_percentage, we need to call it here as the above is _ex, not super.
+        # From invoice_percentage,
+        # we need to call it here as the above is _ex, not super.
         line_percent = context.get('line_percent', False)
         if line_percent:
-            res.update({'quantity': (res.get('quantity') or 0.0) * (line_percent / 100)})
+            res.update({'quantity': ((res.get('quantity') or 0.0) *
+                                     (line_percent / 100))})
         return res
-     
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, fields, models, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp.exceptions import Warning
 
 
 class AccountActivityGroup(models.Model):

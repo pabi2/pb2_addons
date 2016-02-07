@@ -1,22 +1,4 @@
 # -*- coding: utf-8 -*-
-#
-#    Author: Kitti Upariphutthiphong
-#    Copyright 2014-2015 Ecosoft Co., Ltd.
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#
 
 import datetime
 import time
@@ -293,11 +275,9 @@ class account_voucher(common_voucher, models.Model):
 
     @api.v7
     def action_move_line_create(self, cr, uid, ids, context=None):
-        """ Overwrite, all change marked with 'ecosoft' """
-        '''
+        """ Overwrite, all change marked with 'ecosoft'
         Confirm the vouchers given in ids and create the
-        journal entries for each of them
-        '''
+        journal entries for each of them """
         if context is None:
             context = {}
         move_pool = self.pool.get('account.move')

@@ -19,7 +19,6 @@
 #
 ##############################################################################
 
-import all_docs
-
+from . import all_docs
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

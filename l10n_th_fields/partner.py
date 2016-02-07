@@ -23,3 +23,5 @@ class ResPartner(models.Model):
         if self.taxbranch and len(self.taxbranch) != 5:
             raise ValidationError(
                 _("Tax Branch must be 5 digits"))
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

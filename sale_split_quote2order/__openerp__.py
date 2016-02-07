@@ -22,12 +22,6 @@ Sales Order will also has a Force Done option.
         "sale_view.xml",
         "res_partner_view.xml",
     ],
-    'qweb' : [
-    ],
-    'demo': [
-    ],
-    'test': [
-    ],
     'installable': True,
     'auto_install': False,
 }
