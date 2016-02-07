@@ -10,18 +10,18 @@ addons:
     packages:
       - expect-dev  # provides unbuffer utility
       - python-lxml  # because pip installation is slow
+      - python-simplejson
+      - python-serial
+      - python-yaml
 
 env:
   global:
-  - VERSION="8.0" LINT_CHECK="1"
-  - VERSION="8.0" ODOO_REPO="odoo/odoo" LINT_CHECK="0"
-  - VERSION="8.0" ODOO_REPO="OCA/OCB" LINT_CHECK="0"
+  - VERSION="8.0" TESTS="0" LINT_CHECK="0"
+  - secure: mTXYvzW7/+xP465dNW0p9H+Q8jVgQXmqm8zo+ntZC6ESkTudj6xUkrjJcfzp9LGomxoG6N+6TezjFuhfGKCAc4S2manxj9YQoHvZMHJvt73VsMZU2QLfE+IMAdFS/AeBpYLNE8VvdKIGhiFwvHyRqaF0vAGwmcsOdS2NQb/hoiY=
 
   matrix:
-  - LINT_CHECK="1" EXCLUDE="jasper_reports"
-  - TRANSIFEX="0" EXCLUDE="jasper_reports"
-  - TESTS="1" ODOO_REPO="odoo/odoo" EXCLUDE="jasper_reports"
-  - TESTS="0" ODOO_REPO="OCA/OCB" EXCLUDE="jasper_reports"
+  - LINT_CHECK="1"
+  - TESTS="1" ODOO_REPO="odoo/odoo" EXCLUDE="jasper_reports" LINT_CHECK="0"
 
 virtualenv:
   system_site_packages: true
