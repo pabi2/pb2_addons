@@ -7,6 +7,7 @@ class account_voucher(osv.osv):
     _inherit = 'account.voucher'
 
     # This is a complete overwrite method
+    # kittiu: already try to move to v8, but not works
     def _get_writeoff_amount(self, cr, uid, ids, name, args, context=None):
         if not ids:
             return {}

@@ -10,6 +10,7 @@
     'depends': [
         'account',
         'account_voucher',
+        'account_voucher_action_move_line_create_hooks',
     ],
     'data': [
         'views/account_view.xml',
