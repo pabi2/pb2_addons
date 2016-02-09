@@ -15,7 +15,9 @@ Sales Order will also has a Force Done option.
 
     """,
     'website': 'http://ecosoft.co.th',
-    'depends': ['sale', ],
+    'depends': ['sale',
+                'sale_stock',
+                ],
     'data': [
         "sale_sequence.xml",
         "sale_workflow.xml",
