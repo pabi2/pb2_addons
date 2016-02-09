@@ -28,11 +28,11 @@ class sale_order(models.Model):
 
     @api.model
     def _selected_invoice_lines(self, order, states):
-        """ Overwrite """
+        """ Overwrite on a hook method """
         lines = []
-        for line in order.order_line and \
-                not self._context.get('invoice_plan_percent', False):  # Check
-            if line.invoiced:
+        for line in order.order_line:
+            if line.invoiced and \
+                    not self._context.get('invoice_plan_percent', False):
                 continue
             elif (line.state in states):
                 lines.append(line.id)

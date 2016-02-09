@@ -43,6 +43,7 @@ evenly by percentage of the invoice amount.
                 'purchase',
                 'sale_order_action_invoice_create_hooks',
                 'sale_order_make_invoice_hooks',
+                'sale_wizard_make_invoices_hooks',
                 ],
     'demo': [],
     'data': ['wizards/sale_make_invoice_advance.xml',

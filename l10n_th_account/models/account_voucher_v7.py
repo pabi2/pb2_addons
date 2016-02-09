@@ -8,7 +8,7 @@ class account_voucher(osv.osv):
 
     # kittiu: already try to move to v8, but not works
     def _get_writeoff_amount(self, cr, uid, ids, name, args, context=None):
-        """ Overwrite """
+        """ Overwrite (ok) """
         if not ids:
             return {}
         currency_obj = self.pool.get('res.currency')

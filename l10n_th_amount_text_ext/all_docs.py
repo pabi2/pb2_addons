@@ -7,7 +7,7 @@ from openerp.addons.l10n_th_amount_text.all_docs import AmountToWord
 class AmountToWordExt(AmountToWord):
 
     def _get_amount_total(self, obj):
-        """ Overwrite (but shouldn't be called else where) """
+        """ Overwrite (ok) """
         amount_total = 0.0
         # Order, Invoice
         if obj._name in ('account.invoice', 'sale.order'):

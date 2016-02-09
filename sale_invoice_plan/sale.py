@@ -284,9 +284,6 @@ class sale_order(models.Model):
                 if deposit_inv.state not in ('cancel',) and \
                         deposit_inv.is_deposit:
                     for preline in deposit_inv.invoice_line:
-                        # nstda:
-                        # if context.get('revert_deposit', False):
-                        # --
                         ratio = (order.amount_untaxed and
                                  (invoice.amount_untaxed /
                                   order.amount_untaxed) or 1.0)
