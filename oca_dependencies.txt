@@ -1,1 +1,1 @@
-https://github.com/pabi2/pb2_base_technical
+pb2_base_technical https://github.com/pabi2/pb2_base_technical.git
