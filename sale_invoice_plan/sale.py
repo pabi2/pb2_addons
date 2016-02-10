@@ -92,9 +92,9 @@ class sale_order(models.Model):
                               "Please discard change and try again!"))
 
     # Don't know why, but can't use v8 API !!, so revert to v7
-    def copy(self, cr, uid, rec_id, default=None, context=None):
+    def copy(self, cr, uid, id, default=None, context=None):
         default = default or {}
-        order_id = super(sale_order, self).copy(cr, uid, rec_id,
+        order_id = super(sale_order, self).copy(cr, uid, id,
                                                 default, context)
         order = self.browse(cr, uid, order_id)
         for invoice_plan in order.invoice_plan_ids:
@@ -323,10 +323,10 @@ class sale_order_line(models.Model):
         readonly=True,
     )
 
-    def copy_data(self, cr, uid, rec_id, default=None, context=None):
+    def copy_data(self, cr, uid, id, default=None, context=None):
         default = dict(default or {})
-        default.update({'copy_from_line_id': rec_id, 'copy_to_line_id': False})
-        return super(sale_order_line, self).copy_data(cr, uid, rec_id,
+        default.update({'copy_from_line_id': id, 'copy_to_line_id': False})
+        return super(sale_order_line, self).copy_data(cr, uid, id,
                                                       default, context=context)
 
     @api.model
@@ -337,72 +337,15 @@ class sale_order_line(models.Model):
             old_line.copy_to_line_id = new_line.id
         return new_line
 
-    @api.v7
-    def _prepare_order_line_invoice_line_ex(self, cr, uid, line,
-                                            account_id=False, context=None):
-        """ Overwrite _prepare_order_line_invoice_line with 1
-        important condition (nstda) """
-        res = {}
-        # nstda: if invoice plan, always execute
-        if not line.invoiced or context.get('invoice_plan_percent', False):
-            # if not line.invoiced:
-            if not account_id:
-                if line.product_id:
-                    account_id = line.product_id.property_account_income.id
-                    if not account_id:
-                        categ = line.product_id.categ_id
-                        account_id = categ.property_account_income_categ.id
-                    if not account_id:
-                        raise except_orm(
-                            _('Error!'),
-                            _('Please define income account for this product:'
-                              ' "%s" (id:%d).') %
-                            (line.product_id.name, line.product_id.id,))
-                else:
-                    prop = self.pool.get('ir.property').get(
-                        cr, uid, 'property_account_income_categ',
-                        'product.category', context=context)
-                    account_id = prop and prop.id or False
-            uosqty = self._get_line_qty(cr, uid, line, context=context)
-            uos_id = self._get_line_uom(cr, uid, line, context=context)
-            pu = 0.0
-            if uosqty:
-                prec = self.pool.get('decimal.precision')
-                price = line.price_unit * line.product_uom_qty / uosqty
-                pu = round(price, prec.precision_get(cr, uid, 'Product Price'))
-            fpos = line.order_id.fiscal_position or False
-            account_id = self.pool.get('account.fiscal.position').map_account(
-                cr, uid, fpos, account_id)
-            if not account_id:
-                raise except_orm(
-                    _('Error!'),
-                    _('There is no Fiscal Position defined or '
-                      'Income category account defined for default '
-                      'properties of Product categories.'))
-            res = {
-                'name': line.name,
-                'sequence': line.sequence,
-                'origin': line.order_id.name,
-                'account_id': account_id,
-                'price_unit': pu,
-                'quantity': uosqty,
-                'discount': line.discount,
-                'uos_id': uos_id,
-                'product_id': line.product_id.id or False,
-                'invoice_line_tax_id': [(6, 0, [x.id for x in line.tax_id])],
-                'account_analytic_id': (line.order_id.project_id and
-                                        line.order_id.project_id.id or False),
-            }
-
-        return res
-
-    @api.v7
-    def _prepare_order_line_invoice_line(self, cr, uid, line,
-                                         account_id=False, context=None):
-        res = self._prepare_order_line_invoice_line_ex(cr, uid, line,
-                                                       account_id=account_id,
-                                                       context=context)
-        invoice_plan_percent = context.get('invoice_plan_percent', False)
+    @api.model
+    def _prepare_order_line_invoice_line(self, line, account_id=False):
+        # Call super
+        res = super(sale_order_line, self).\
+            _prepare_order_line_invoice_line(line, account_id)
+        # For invoice plan
+        invoice_plan_percent = self._context.get('invoice_plan_percent', False)
+        if not res and invoice_plan_percent:  # But if invoice plan, try again
+            res = self._prepare_order_line_invoice_line_hook(line, account_id)
         if invoice_plan_percent:
             if line in invoice_plan_percent:
                 if line.order_id.invoice_mode == 'change_quantity':
@@ -418,8 +361,7 @@ class sale_order_line(models.Model):
             else:
                 return False
         # From invoice_percentage,
-        # we need to call it here as the above is _ex, not super.
-        line_percent = context.get('line_percent', False)
+        line_percent = self._context.get('line_percent', False)
         if line_percent:
             res.update({'quantity': ((res.get('quantity') or 0.0) *
                                      (line_percent / 100))})

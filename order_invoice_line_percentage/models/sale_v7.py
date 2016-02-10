@@ -41,7 +41,7 @@ class sale_order_line(osv.osv):
 
     _inherit = 'sale.order.line'
 
-    # A complete overwrite method of sale_order_line
+    # A complete overwrite (ok) method of sale_order_line
     def _fnct_line_invoiced(
             self, cr, uid, ids, field_name, args, context=None):
         res = dict.fromkeys(ids, False)

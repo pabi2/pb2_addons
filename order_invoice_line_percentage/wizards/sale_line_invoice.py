@@ -8,7 +8,6 @@ class sale_order_line_make_invoice(osv.osv_memory):
     _inherit = "sale.order.line.make.invoice"
 
     def _sale_order_line_make_invoice_hook1(self, cr, uid, res, order):
-        return
         super(sale_order_line_make_invoice, self).\
             _sale_order_line_make_invoice_hook1(cr, uid, res, order)
         # for Line Percentage invoice, add the advance back.
