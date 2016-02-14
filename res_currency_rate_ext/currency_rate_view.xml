@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_currency_form" model="ir.ui.view">
+            <field name="name">view.currency.form</field>
+            <field name="inherit_id" ref="base.view_currency_form" />
+            <field name="model">res.currency</field>
+            <field name="arch" type="xml">
+                <data>   
+            		<xpath expr="//form//field[@name='rate_silent']" position="replace">
+						<field name="rate_input_silent"/>
+					</xpath>
+            		<xpath expr="//form//field[@name='base']" position="after">
+						<field name="type"/>
+					</xpath>
+					<xpath expr="//form/field[@name='rate_ids']/tree/field[@name='rate']" position="attributes">
+						<attribute name="invisible">True</attribute>
+					</xpath>       
+					<xpath expr="//form/field[@name='rate_ids']/tree/field[@name='rate']" position="after">
+						<field name="rate_input"/>
+					</xpath>                                  
+				</data>
+            </field>
+        </record>        
+        <record id="view_currency_tree" model="ir.ui.view">
+            <field name="name">view.currency.tree</field>
+            <field name="inherit_id" ref="base.view_currency_tree" />
+            <field name="model">res.currency</field>
+            <field name="arch" type="xml">
+                <data>   
+            		<xpath expr="//field[@name='rate_silent']" position="replace">
+						<field name="rate_input_silent"/>
+					</xpath>                          
+				</data>
+            </field>
+        </record>        
+  	</data>
+</openerp>
