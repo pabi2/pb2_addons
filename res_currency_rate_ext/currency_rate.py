@@ -4,7 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 
 
-class res_currency(models.Model):
+class ResCurrency(models.Model):
     _inherit = "res.currency"
 
     @api.one
@@ -60,7 +60,7 @@ class res_currency(models.Model):
     )
 
 
-class res_currency_rate(models.Model):
+class ResCurrencyRate(models.Model):
     _inherit = "res.currency.rate"
 
     def init(self, cr):
