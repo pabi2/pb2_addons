@@ -722,14 +722,14 @@ class account_voucher_tax(common_voucher, models.Model):
             val['name'] = tax['name']
             val['amount'] = self._to_voucher_currency(
                 invoice, journal,
-                (tax['amount'] *
+                (-tax['amount'] *
                  payment_ratio *
                  line_sign))
             val['manual'] = False
             val['sequence'] = tax['sequence']
             val['base'] = self._to_voucher_currency(
                 invoice, journal,
-                voucher_cur.round(
+                -voucher_cur.round(
                     tax['price_unit'] * line.quantity) *
                 payment_ratio * line_sign)
             # For Undue
@@ -740,14 +740,14 @@ class account_voucher_tax(common_voucher, models.Model):
             vals['name'] = tax['name']
             vals['amount'] = self._to_invoice_currency(
                 invoice, journal,
-                (-tax['amount'] *
+                (tax['amount'] *
                  payment_ratio *
                  line_sign))
             vals['manual'] = False
             vals['sequence'] = tax['sequence']
             vals['base'] = self._to_invoice_currency(
                 invoice, journal,
-                -voucher_cur.round(
+                voucher_cur.round(
                     tax['price_unit'] * line.quantity) *
                 payment_ratio * line_sign)
 
