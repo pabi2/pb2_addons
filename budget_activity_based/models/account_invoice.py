@@ -32,8 +32,6 @@ class AccountInvoiceLine(models.Model):
 
     @api.onchange('activity_id')
     def _onchange_activity_id(self):
-        print 'activity'
-        print self
         self.product_id = False
         self.activity_group_id = self.activity_id.activity_group_id
         self.account_id = self.activity_id.account_id or \
