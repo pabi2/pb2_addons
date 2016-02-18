@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 
 class AccountActivityGroup(models.Model):
@@ -34,7 +34,8 @@ class AccountActivityGroup(models.Model):
                 self.env['account.activity'].search_count(
                     [('activity_group_id', '=', self.id),
                      ('account_id', '=', False)]) > 0:
-            raise Warning(_('Please select account in group or in activity!'))
+            raise UserError(
+                _('Please select account in group or in activity!'))
 
 
 class AccountActivity(models.Model):
@@ -74,5 +75,6 @@ class AccountActivity(models.Model):
     @api.constrains('account_id')
     def _check_account_id(self):
         if not self.account_id and not self.activity_group_id.account_id:
-            raise Warning(_('Please select account for activity in group %s!' %
-                            (self.activity_group_id.name,)))
+            raise UserError(
+                _('Please select account for activity in group %s!' %
+                  (self.activity_group_id.name,)))

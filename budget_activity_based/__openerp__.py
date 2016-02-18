@@ -19,6 +19,7 @@
         'views/account_invoice_view.xml',
     ],
     'demo': [
+        'demo/activity_demo.xml',
     ],
     'installable': True,
 }
