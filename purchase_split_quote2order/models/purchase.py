@@ -65,6 +65,7 @@ class PurchaseOrder(models.Model):
         })
         self.order_id = order.id  # Reference from this quotation to order
         self.signal_workflow('convert_to_order')
+        self.state2 = 'done'
         return self.open_purchase_order()
 
     def open_purchase_order(self):

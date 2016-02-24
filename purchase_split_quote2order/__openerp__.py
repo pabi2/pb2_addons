@@ -9,11 +9,10 @@
     "description": """
 
 Purchase - Separate Quote and Order
-======
+===================================
 
   * Separate 'Request for Quotation' record to 'Purchase Order' record while
     confirming order.
-  * Remove rfq and bidding processes.
 
     """,
     "website": "http://www.trinityroots.co.th",
@@ -21,10 +20,6 @@ Purchase - Separate Quote and Order
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "external_dependencies": {
-        "python": [],
-        "bin": [],
-    },
     "depends": [
         "purchase",
     ],
@@ -33,12 +28,6 @@ Purchase - Separate Quote and Order
         "data/purchase_workflow.xml",
         "views/purchase_view.xml",
     ],
-    "demo": [
-        # "demo/res_partner_demo.xml",
-    ],
-    "qweb": [
-        # "static/src/xml/module_name.xml",
-    ]
 }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

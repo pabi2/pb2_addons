@@ -19,6 +19,5 @@
             <field name="act_to" ref="act_quote_done"/>
             <field name="signal">convert_to_order</field>
         </record>
-
     </data>
 </openerp>
