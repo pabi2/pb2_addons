@@ -59,9 +59,9 @@
                 <field name="bid_validity" position="after">
                     <field name="order_type" />
                     <field name="quote_id" attrs="{'invisible': [('order_type','=','quotation')]}"
-                    	context="{'search_default_my_purchase_orders_filter': 1, 'order_type': 'quotation'}"/>
+                    	context="{'order_type': 'quotation'}"/>
                     <field name="order_id" attrs="{'invisible': [('order_type','=','purchase_order')]}"
-                   		context="{'search_default_my_purchase_orders_filter': 1, 'order_type': 'purchase_order'}"/>
+                   		context="{'order_type': 'purchase_order'}"/>
                 </field>
                 <label string="Request for Quotation " position="replace">
                 	<label string="Quotation " attrs="{'invisible': [('order_type','=','purchase_order')]}"/>
@@ -73,6 +73,25 @@
             		<attribute name="context">{'order_type': order_type}</attribute>
                 </xpath>
         	</field>
+        </record>
+
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+            <field name="name">Quotation</field>
+            <field name="context">
+                {
+                    'order_type': 'quotation',
+                }
+            </field>
+            <field name="domain">[('state', 'in', ('draft','sent','done')),('order_type', '=', 'quotation')]</field>
+        </record>
+
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="context">
+                {
+                    'order_type': 'purchase_order',
+                }
+            </field>
+            <field name="domain">[('order_type', '=', 'purchase_order')]</field>
         </record>
     </data>
 </openerp>
