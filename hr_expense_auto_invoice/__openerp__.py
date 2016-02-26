@@ -17,12 +17,8 @@ HR Expense with auto invoice
     "installable": True,
     "depends": [
         "hr_expense",
-        "hr_expense_sequence",
     ],
     "data": [
         "views/hr_expense_view.xml",
-    ],
-    "demo": [
-        # "demo/res_partner_demo.xml",
     ],
 }

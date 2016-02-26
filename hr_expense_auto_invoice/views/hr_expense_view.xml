@@ -19,6 +19,9 @@
             <xpath expr='/form/sheet/notebook/page/field/form/group//field[@name="date_value"]' position="before">
                 <field name="tax_ids" widget="many2many_tags" />
             </xpath>
+            <xpath expr='/form/sheet/notebook/page[@string="Accounting"]/group/group/field[@name="account_move_id"]' position="before">
+                <field name="invoice_id" />
+            </xpath>
 	    </field>
 	</record>
 

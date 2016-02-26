@@ -53,7 +53,6 @@ class HRExpenseExpese(models.Model):
             'quantity': exp_line.unit_quantity,
             'product_id': exp_line.product_id.id or False,
             'invoice_line_tax_id': [(6, 0, [x.id for x in exp_line.tax_ids])],
-            # 'expense_line_id': exp_line.id,
         }
 
     @api.model
@@ -75,6 +74,17 @@ class HRExpenseExpese(models.Model):
                       "have a journal with type 'purchase' configured."))
             journal_id = journal[0].id
         # Partner, account_id, payment_term
+        if expense.pay_to == 'employee':
+            if not expense.employee_id.address_home_id:
+                raise except_orm(
+                    _('Error!'),
+                    _('The employee must have a home address.'))
+            if not expense.employee_id.address_home_id.\
+                    property_account_payable:
+                raise except_orm(
+                    _('Error!'),
+                    _('The employee must have a payable account '
+                      'set on his home address.'))
         partner = (expense.pay_to == 'employee' and
                    expense.employee_id.address_home_id or
                    expense.partner_id)
@@ -82,7 +92,8 @@ class HRExpenseExpese(models.Model):
             type, partner.id, expense.date_valid, payment_term=False,
             partner_bank_id=False, company_id=expense.company_id.id)['value']
         return {
-            'origin': expense.number,
+            'origin': False,
+            'comment': expense.name,
             'date_invoice': expense.date_valid,
             'user_id': expense.user_id.id,
             'partner_id': partner.id,
@@ -101,7 +112,6 @@ class HRExpenseExpese(models.Model):
         Property = self.env['ir.property']
         account_id = False
         if exp_line.product_id:
-            exp_line.product_id.property_account_expense
             account_id = exp_line.product_id.property_account_expense.id
             if not account_id:
                 categ = exp_line.product_id.categ_id
