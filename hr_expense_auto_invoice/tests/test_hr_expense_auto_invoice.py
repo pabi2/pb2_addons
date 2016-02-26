@@ -34,23 +34,24 @@ class TestHRExpenseAutoInvoice(TransactionCase):
             'base_code_id': self.base_code_id.id,
             'base_sign': -1,
         })
-        self.expense = self.expense_obj.create({
+        # Expense
+        exp_line_val = {
+            'name': 'Car Travel Expenses',
+            'product_id': self.product.id,
+            'unit_amount': 100.00,
+            'tax_ids': [(6, 0, [self.tax.id])],
+        }
+        exp_val = {
             'name': 'Expense for Minh Tran',
             'employee_id': self.employee.id,
             'pay_to': 'supplier',
             'partner_id': self.partner.id,
-        })
-        self.expense_line = self.exp_line_obj.create({
-            'name': 'Car Travel Expenses',
-            'product_id': self.product.id,
-            'unit_amount': 100.00,
-            'expense_id': self.expense.id,
-            'tax_ids': [(6, 0, [self.tax.id])],  # Tax 10%
-        })
+            'line_ids': [(0, 0, exp_line_val)],
+        }
+        self.expense = self.expense_obj.create(exp_val)
         self.account = self.account_obj.search(
             [('type', '=', 'payable'), ('currency_id', '=', False)],
             limit=1)[0]
-
         self.voucher = self.voucher_model.create({
             'date': str(date.today().year) + '-01-01',
             'name': "Test", 'amount': 110.0,
