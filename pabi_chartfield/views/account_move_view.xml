@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_move_line_form" model="ir.ui.view">
+            <field name="name">account.move.line.form</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_move_line_form2" model="ir.ui.view">
+            <field name="name">account.move.line.form2</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_move_line_tree" model="ir.ui.view">
+            <field name="name">account.move.line.tree</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_move_line_filter" model="ir.ui.view">
+            <field name="name">Journal Items</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+                <xpath expr="/search/group" position="inside">
+                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                    <filter string="SPA" context="{'group_by':'spa_id'}"/>
+                    <filter string="Program Base Type" context="{'group_by':'program_base_type_id'}"/>
+                    <filter string="Program Type" context="{'group_by':'program_type_id'}"/>
+                    <filter string="Program" context="{'group_by':'program_id'}"/>
+                    <filter string="Org" context="{'group_by':'org_id'}"/>
+                    <filter string="Project" context="{'group_by':'project_id'}"/>
+                    <filter string="Division" context="{'group_by':'division_id'}"/>
+                    <filter string="Department" context="{'group_by':'department_id'}"/>
+                    <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+            	</xpath>                    
+            </field>
+        </record>
+        
+
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_id']/tree//field[@name='account_id']"
+                       position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+            </field>
+        </record>        
+    </data>
+</openerp>

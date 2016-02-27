@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+        <record id="crossovered_budget_view_form" model="ir.ui.view" >
+            <field name="name">crossovered.budget.view.form</field>
+            <field name="model">crossovered.budget</field>
+            <field name="inherit_id" ref="budget_activity_based.crossovered_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group//field[@name='validating_user_id']" position="after">
+                	<field name="chart_view" required="1"/>
+                	<field name="program_type_id" domain="[('chart_view','=',chart_view)]" required="1"/>
+					<field name="org_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>                	
+					<field name="division_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
+					<field name="department_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
+					<field name="costcenter_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
+            	</xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='crossovered_budget_line']" position="replace">
+	                <!-- Unit Based -->
+                	<field name="crossovered_budget_line_unit_base" colspan="4" nolabel="1"
+                			attrs="{'readonly':[('state','!=','draft')], 'invisible':[('chart_view','!=','unit_base')]}">
+	                    <tree string="Budget Lines" editable="bottom">
+	                    	<!-- Unit -->  
+	                    		<!-- User will choose from activity group -->
+	                    	<!-- Activity -->         	
+		                    <field name="activity_group_id" />
+		                    <field name="activity_id" invisible="1"/>
+		                    <!-- -->
+	                        <field name="analytic_account_id" invisible="1" groups="analytic.group_analytic_accounting"/>
+	                        <field name="general_budget_id"/>
+	                        <field name="period_id" />
+	                        <field name="date_from" invisible="1" />
+	                        <field name="date_to" invisible="1" />
+	                        <field name="paid_date" invisible="1"/>
+	                        <field name="planned_amount" sum="Planned Amount"/>
+	                        <field name="practical_amount" sum="Practical Amount"  invisible="1"/>
+	                        <field name="theoritical_amount" sum="Theoretical Amount" invisible="1"/>
+	                        <field name="percentage" invisible="1"/>
+	                    </tree>
+	                    <form string="Budget Lines">
+	                    	<group>
+								<group string="Unit Based">
+				                    <field name="program_id" />
+				                    <field name="program_type_id" />
+				                    <field name="program_base_type_id" />
+				                    <field name="org_id" />
+				                    <field name="division_id" />
+				                    <field name="department_id" />
+				                    <field name="costcenter_id" />
+								</group>
+								<group string="Activity" >
+				                    <field name="activity_group_id" />
+				                    <field name="activity_id" invisible="1"/>
+								</group>
+	                    	</group>
+	                        <group>
+	                            <group>
+	                                <field name="analytic_account_id" invisible="1" groups="analytic.group_analytic_accounting"/>
+	                                <field name="general_budget_id"/>
+	                                <field name="planned_amount" />
+	                            </group>
+	                            <group>
+	                        		<field name="period_id" />
+	                                <label for="date_from" string="Duration"/>
+	                                <div>
+	                                    <field name="date_from" invisible="1"  class="oe_inline"/> - 
+	                                    <field name="date_to" invisible="1"  class="oe_inline"/>
+	                                </div>
+	                                <field name="paid_date" invisible="1"/>
+	                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+	                            </group>
+	                        </group>
+	                    </form>
+	                </field>           
+	                <!-- Project Based -->
+                	<field name="crossovered_budget_line_project_base" colspan="4" nolabel="1"
+                			attrs="{'readonly':[('state','!=','draft')], 'invisible':[('chart_view','!=','project_base')]}">
+	                    <tree string="Budget Lines" editable="bottom">
+	                    	<!-- Project -->
+		                    <field name="program_id" widget="many2one_clickable" domain="[('program_type_id','=',parent.program_type_id)]"/>
+	                    	<!-- Activity -->             	
+		                    <field name="activity_group_id" invisible="1"/>
+		                    <field name="activity_id" invisible="1"/>
+		                    <!-- -->
+	                        <field name="analytic_account_id" invisible="1" groups="analytic.group_analytic_accounting"/>
+	                        <field name="general_budget_id"/>
+	                        <field name="period_id" />
+	                        <field name="date_from" invisible="1" />
+	                        <field name="date_to" invisible="1" />
+	                        <field name="paid_date" invisible="1"/>
+	                        <field name="planned_amount" sum="Planned Amount"/>
+	                        <field name="practical_amount" sum="Practical Amount"  invisible="1"/>
+	                        <field name="theoritical_amount" sum="Theoretical Amount" invisible="1"/>
+	                        <field name="percentage" invisible="1"/>
+	                    </tree>
+	                    <form string="Budget Lines">
+	                    	<group>
+								<group string="Project Based">
+				                    <field name="program_id" />
+				                    <field name="program_type_id" />
+				                    <field name="program_base_type_id" />
+								</group>
+								<group string="Activity" invisible="1">
+				                    <field name="activity_group_id" />
+				                    <field name="activity_id" />
+								</group>
+	                    	</group>
+	                        <group>
+	                            <group>
+	                                <field name="analytic_account_id" invisible="1" groups="analytic.group_analytic_accounting"/>
+	                                <field name="general_budget_id"/>
+	                                <field name="planned_amount" />
+	                            </group>
+	                            <group>
+	                        		<field name="period_id" />
+	                                <label for="date_from" string="Duration"/>
+	                                <div>
+	                                    <field name="date_from" invisible="1"  class="oe_inline"/> - 
+	                                    <field name="date_to" invisible="1"  class="oe_inline"/>
+	                                </div>
+	                                <field name="paid_date" invisible="1"/>
+	                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+	                            </group>
+	                        </group>
+	                    </form>
+	                </field>             
+            	</xpath>
+        	</field>
+        </record>
+        
+     </data>
+</openerp>

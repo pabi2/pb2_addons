@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+		<record id="view_analytic_entries_report_search" model="ir.ui.view">
+	        <field name="name">analytic.entries.report.search</field>
+	        <field name="model">analytic.entries.report</field>
+	        <field name="inherit_id" ref="account.view_analytic_entries_report_search"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="/search/group" position="inside">
+	                <separator/>
+                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                    <filter string="SPA" context="{'group_by':'spa_id'}"/>
+                    <filter string="Program Base Type" context="{'group_by':'program_base_type_id'}"/>
+                    <filter string="Program Type" context="{'group_by':'program_type_id'}"/>
+                    <filter string="Program" context="{'group_by':'program_id'}"/>
+                    <filter string="Org" context="{'group_by':'org_id'}"/>
+                    <filter string="Project" context="{'group_by':'project_id'}"/>
+                    <filter string="Division" context="{'group_by':'division_id'}"/>
+                    <filter string="Department" context="{'group_by':'department_id'}"/>
+                    <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+	                <separator/>
+	                <filter string="Activity" context="{'group_by':'activity_id'}"/>
+	                <filter string="Activity Group" context="{'group_by':'activity_group_id'}"/>
+				</xpath>   
+	        </field>
+	    </record>
+
+	</data>
+</openerp>

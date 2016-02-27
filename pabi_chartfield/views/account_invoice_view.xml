@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="invoice_form" model="ir.ui.view" >
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+            </field>
+        </record>    
+        <record id="invoice_supplier_form" model="ir.ui.view" >
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="mission_id" invisible="0"/>
+                    <field name="spa_id" invisible="0"/>
+                    <field name="program_base_type_id" invisible="0"/>
+                    <field name="program_type_id" invisible="0"/>
+                    <field name="program_id" invisible="0"/>
+                    <field name="org_id" invisible="0"/>
+                    <field name="project_id" />
+                    <field name="division_id" invisible="0"/>
+                    <field name="department_id" invisible="0"/>
+                    <field name="costcenter_id" />
+                </xpath>
+            </field>
+        </record>    
+    	
+    </data>
+</openerp>
