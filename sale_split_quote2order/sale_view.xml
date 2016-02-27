@@ -105,7 +105,6 @@
                     'search_default_my_sale_orders_filter': 1,
                     'order_type': 'sale_order',
                     'hide_reports': ['sale.report_saleorder', 'nstda.msd.quotation'],
-                }
             </field>
             <field name="domain">[('order_type', '=', 'sale_order')]</field>
         </record>
