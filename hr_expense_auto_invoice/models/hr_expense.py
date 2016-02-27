@@ -31,6 +31,16 @@ class HRExpenseExpese(models.Model):
         string='Supplier Invoice',
         readonly=True,
     )
+    date_invoice = fields.Date(
+        string='Invoice Date',
+        readonly=True,
+    )
+    journal_id = fields.Many2one(
+        readonly=True,
+    )
+    account_move_id = fields.Many2one(
+        readonly=True,
+    )
 
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
@@ -82,7 +92,7 @@ class HRExpenseExpese(models.Model):
         return {
             'origin': False,
             'comment': expense.name,
-            'date_invoice': expense.date_valid,
+            'date_invoice': expense.date_invoice,
             'user_id': expense.user_id.id,
             'partner_id': partner.id,
             'account_id': res.get('account_id', False),
@@ -182,3 +192,12 @@ class HRExpenseLine(models.Model):
         if self.expense_id:
             currency = self.expense_id.currency_id
             self.total_amount = currency.round(self.total_amount)
+
+    @api.multi
+    def onchange_product_id(self, product_id):
+        res = super(HRExpenseLine, self).onchange_product_id(product_id)
+        if product_id:
+            product = self.env['product.product'].browse(product_id)
+            taxes = [tax.id for tax in product.supplier_taxes_id]
+            res['tax_ids'] = [(6, 0, taxes)]
+        return {'value': res}

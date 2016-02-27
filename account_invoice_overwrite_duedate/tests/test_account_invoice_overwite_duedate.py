@@ -12,7 +12,8 @@ class TestAccountInvoiceOverwriteDueDate(common.TransactionCase):
     """
     def setUp(self):
         super(TestAccountInvoiceOverwriteDueDate, self).setUp()
-        self.invoice = self.env.ref('account_invoice_overwrite_duedate.demo_invoice_no_duedate')
+        self.invoice = self.env.ref(
+            'account_invoice_overwrite_duedate.demo_invoice_no_duedate')
 
     def test_no_duedate_system_suggest(self):
         # Invoice Date is YYYY-01-01 and no due date
