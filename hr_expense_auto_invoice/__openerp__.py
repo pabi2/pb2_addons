@@ -45,10 +45,10 @@ This Module Features
     "application": False,
     "installable": True,
     "depends": [
-        "hr",
         "hr_expense",
     ],
     "data": [
+        "wizards/expense_create_supplier_invoice_wizard.xml",
         "views/hr_expense_view.xml",
     ],
 }
