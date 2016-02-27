@@ -5,14 +5,17 @@
 <openerp>
 <data>
 
-<record id="my_view" model="ir.ui.view">
-    <field name="name">My view description</field>
-    <field name="model">model.name</field>
-    <field name="inherit_id" ref="othermodule.form_view"/>
-    <field name="arch" type="xml">
-        <!-- My view modifications -->
-    </field>
-</record>
+	<record id="invoice_form" model="ir.ui.view">
+	    <field name="name">invoice.form</field>
+	    <field name="model">account.invoice</field>
+	    <field name="inherit_id" ref="account.invoice_form"/>
+	    <field name="arch" type="xml">
+            <xpath expr='/form/sheet/notebook/page[@string="Other Info"]/group/group/field[@name="date_due"]' position="replace" />
+            <xpath expr='/form/sheet/group//field[@name="date_invoice"]' position="after" >
+            	<field name="date_due"/>
+			</xpath>            	
+        </field>
+	</record>
 
 </data>
 </openerp>

@@ -31,9 +31,12 @@ This module will change this behaviour by,
     "application": False,
     "installable": True,
     "depends": [
-        "account_invoice",
+        "account",
     ],
     "data": [
         "views/account_invoice_view.xml",
     ],
+    "demo": [
+        "demo/account_invoice_demo.xml"
+    ]
 }
