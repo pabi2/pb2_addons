@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+<data>
+
+	<record id="view_expenses_form" model="ir.ui.view">
+	    <field name="name">view.expenses.form</field>
+	    <field name="model">hr.expense.expense</field>
+	    <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+	    <field name="arch" type="xml">
+			<field name="name" position="after">
+				<field name="pay_to" />
+				<field name="partner_id" attrs="{'invisible': [('pay_to', '!=', 'supplier')],
+												'required': [('pay_to', '=', 'supplier')]}"/> 
+	    	</field>
+            <xpath expr='/form/sheet/notebook/page/field/tree/field[@name="total_amount"]' position="before">
+                <field name="tax_ids" widget="many2many_tags" />
+            </xpath>
+            <xpath expr='/form/sheet/notebook/page/field/form/group//field[@name="date_value"]' position="before">
+                <field name="tax_ids" widget="many2many_tags" />
+            </xpath>
+            <xpath expr='/form/sheet/notebook/page[@string="Accounting"]/group/group/field[@name="account_move_id"]' position="before">
+                <field name="invoice_id" />
+            </xpath>
+	    </field>
+	</record>
+
+</data>
+</openerp>
