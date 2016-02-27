@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from datetime import date
-from openerp.tests.common import TransactionCase
+from openerp.tests import common
 
 
-class TestHRExpenseAutoInvoice(TransactionCase):
+class TestHRExpenseAutoInvoice(common.TransactionCase):
     """
     Case:
     - Expense can have tax now. Total = Amount + Tax
@@ -11,12 +11,10 @@ class TestHRExpenseAutoInvoice(TransactionCase):
     - Employee / Partner and Amount in invoice must equal to expense
     - Once invoice is paid, the expense state will be paid too
     """
-
     def setUp(self):
         super(TestHRExpenseAutoInvoice, self).setUp()
         self.account_obj = self.env['account.account']
         self.expense_obj = self.env['hr.expense.expense']
-        self.exp_line_obj = self.env['hr.expense.line']
         self.product_obj = self.env['product.product']
         self.tax_obj = self.env['account.tax']
         self.code_obj = self.env['account.tax.code']

@@ -31,18 +31,6 @@ class HRExpenseExpese(models.Model):
         string='Supplier Invoice',
         readonly=True,
     )
-    amount = fields.Float(
-        string='Total Amount',
-        digits=dp.get_precision('Account'),
-        store=True,
-        readonly=True,
-        compute='_compute_amount',
-    )
-
-    @api.one
-    @api.depends('line_ids.total_amount')
-    def _compute_amount(self):
-        self.amount = sum(line.total_amount for line in self.line_ids)
 
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
