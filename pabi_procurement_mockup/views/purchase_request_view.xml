@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+    <record model="ir.ui.view" id="view_purchase_request_mock_form">
+        <field name="name">purchase.request.mock.form</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group" position="replace">
+                    <group>
+                        <group>
+                            <field name="requested_by"
+                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="assigned_to"
+                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="date_start"
+                                    attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="picking_type_id"
+                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection"
+                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="description"
+                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
+                            <field name="procure_reason"/>
+                            <field name="objective"/>
+                            <field name="procure_method"/>
+                            <field name="warehouse_id"/>
+                            <field name="procure_type"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
+                    <field name="product_price"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page" position="after">
+                    <page string="Committee">
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Attachment">
+                        <field name="attachment_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="file_url"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+    </record>
+    </data>
+</openerp>
