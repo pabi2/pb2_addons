@@ -30,16 +30,21 @@ class HRExpenseExpese(models.Model):
         'account.invoice',
         string='Supplier Invoice',
         readonly=True,
+        copy=False,
     )
     date_invoice = fields.Date(
         string='Invoice Date',
         readonly=True,
+        copy=False,
     )
     journal_id = fields.Many2one(
         readonly=True,
+        copy=False,
     )
     account_move_id = fields.Many2one(
         readonly=True,
+        copy=False,
+        ondelete='set null',
     )
 
     @api.model
@@ -90,7 +95,7 @@ class HRExpenseExpese(models.Model):
             type, partner.id, expense.date_valid, payment_term=False,
             partner_bank_id=False, company_id=expense.company_id.id)['value']
         return {
-            'origin': False,
+            'origin': expense.number,
             'comment': expense.name,
             'date_invoice': expense.date_invoice,
             'user_id': expense.user_id.id,
@@ -154,10 +159,11 @@ class HRExpenseExpese(models.Model):
         Create Supplier Invoice (instead of the old style Journal Entries)
         '''
         for expense in self:
-            invoice = expense._create_supplier_invoice_from_expense()
-            expense.invoice_id = invoice
-            invoice.signal_workflow('invoice_open')
-            expense.write({'account_move_id': invoice.move_id.id,
+            if not expense.invoice_id:
+                invoice = expense._create_supplier_invoice_from_expense()
+                expense.invoice_id = invoice
+                invoice.signal_workflow('invoice_open')
+            expense.write({'account_move_id': expense.invoice_id.move_id.id,
                            'state': 'done'})
         return True
 
