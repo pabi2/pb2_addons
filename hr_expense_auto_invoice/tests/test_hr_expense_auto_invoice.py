@@ -10,6 +10,8 @@ class TestHRExpenseAutoInvoice(common.TransactionCase):
     - Upon generate account entries (last step), invoice will be created
     - Employee / Partner and Amount in invoice must equal to expense
     - Once invoice is paid, the expense state will be paid too
+    - If invoice is cancelled, the expense should back to cancelled
+    - And if invoice is back to Open, expense should back to waiting payment
     """
     def setUp(self):
         super(TestHRExpenseAutoInvoice, self).setUp()
@@ -79,6 +81,42 @@ class TestHRExpenseAutoInvoice(common.TransactionCase):
         self.assertEqual(self.expense.amount,
                          self.expense.invoice_id.amount_total,
                          'Amount in expense is not equal to amount in invoice')
+        # Create Supplier Payment
+        val = self.voucher.onchange_partner_id(
+            self.partner.id,
+            self.voucher.journal_id.id,
+            self.voucher.amount,
+            self.voucher.currency_id.id,
+            self.voucher.type,
+            self.voucher.date
+        )
+        voucher_lines = [(0, 0, line) for line in val['value']['line_dr_ids']]
+        self.voucher.write({'line_dr_ids': voucher_lines})
+        # Paid
+        self.voucher.signal_workflow('proforma_voucher')
+        self.assertEqual(self.expense.state,
+                         'paid',
+                         'Paid but expense is not marked as paid')
+
+    def test_auto_invoice_cancel(self):
+        self.expense.signal_workflow('confirm')
+        self.expense.signal_workflow('validate')
+        self.expense.signal_workflow('done')
+        # Cancel Invoice, make sure it can be cancelled
+        self.invoice = self.expense.invoice_id
+        self.invoice.journal_id.update_posted = True  # allow cancel JE
+        self.invoice.signal_workflow('invoice_cancel')
+        self.assertEqual(self.expense.state, 'cancelled',
+                         'Invoice is cancelled but expense is not cancelled')
+        # Invoice is set to draft, expense stay cancelled
+        self.invoice.action_cancel_draft()
+        self.assertEqual(self.expense.state, 'cancelled',
+                         'Invoice is draft but expense is not cancelled')
+        # Invoice is set to open, expense back to waiting payment
+        self.invoice.signal_workflow('invoice_open')
+        self.assertEqual(self.expense.state, 'done',
+                         'Invoice is open, but expense is '
+                         'not back to waiting payment')
         # Create Supplier Payment
         val = self.voucher.onchange_partner_id(
             self.partner.id,

@@ -46,9 +46,11 @@ This Module Features
     "installable": True,
     "depends": [
         "hr_expense",
+        "hr_expense_sequence",
     ],
     "data": [
         "wizards/expense_create_supplier_invoice_wizard.xml",
         "views/hr_expense_view.xml",
+        "workflow/hr_expense_workflow.xml",
     ],
 }
