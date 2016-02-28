@@ -102,8 +102,9 @@ class TestHRExpenseAutoInvoice(common.TransactionCase):
         self.expense.signal_workflow('confirm')
         self.expense.signal_workflow('validate')
         self.expense.signal_workflow('done')
-        # Cancel Invoice
+        # Cancel Invoice, make sure it can be cancelled
         self.invoice = self.expense.invoice_id
+        self.invoice.journal_id.update_posted = True  # allow cancel JE
         self.invoice.signal_workflow('invoice_cancel')
         self.assertEqual(self.expense.state, 'cancelled',
                          'Invoice is cancelled but expense is not cancelled')
