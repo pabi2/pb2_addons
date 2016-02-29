@@ -6,3 +6,4 @@ from . import purchase_request
 from . import procurement_committee
 from . import procurement_attachment
 
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
