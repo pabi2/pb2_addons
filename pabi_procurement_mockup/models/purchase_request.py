@@ -2,7 +2,7 @@
 # © 2015 TrinityRoots
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import api, fields, models
+from openerp import fields, models
 import openerp.addons.decimal_precision as dp
 import time
 
@@ -46,7 +46,7 @@ class PurchaseRequest(models.Model):
                                 time.strftime('%Y-%m-%d %H:%M:%S'),
                                 readonly=True,
                                 track_visibility='onchange')
-    currency = fields.Many2one('res.currency', 'Currency')
+    currency_id = fields.Many2one('res.currency', 'Currency')
     currency_rate = fields.Float('Rate')
     procure_reason = fields.Selection(selection=_REASON,
                                       string='Reason',
@@ -70,4 +70,4 @@ class PurchaseRequestLine(models.Model):
     product_price = fields.Float('Unit Price',
                                  track_visibility='onchange',
                                  digits_compute=dp.get_precision(
-                                 'Product Price'))
+                                     'Product Price'))
