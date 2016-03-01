@@ -6,30 +6,24 @@
         <field name="model">purchase.request</field>
         <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/group" position="replace">
-                    <group>
-                        <group>
-                            <field name="requested_by"
-                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
-                            <field name="assigned_to"
-                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
-                            <field name="date_start"
-                                    attrs="{'readonly': [('is_editable','=', False)]}"/>
-                            <field name="picking_type_id"
-                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
-                            <field name="company_id" groups="base.group_multi_company" widget="selection"
-                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
-                        </group>
-                        <group>
-                            <field name="description"
-                                   attrs="{'readonly': [('is_editable','=', False)]}"/>
+                <xpath expr="//form/sheet/group/group/field[@name='date_start']" position="after">
+                            <field name="date_approved"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='description']" position="after">
                             <field name="procure_reason"/>
                             <field name="objective"/>
                             <field name="procure_method"/>
                             <field name="warehouse_id"/>
                             <field name="procure_type"/>
-                        </group>
-                    </group>
+                </xpath>
+                <xpath expr="//button[@name='button_to_approve']" position="after">
+                    <button name="button_cancel" states="draft"
+                            string="Cancel" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">
+                        draft, approved, cancel
+                    </attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
                     <field name="product_price"/>
