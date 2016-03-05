@@ -809,17 +809,17 @@ class account_voucher_tax(common_voucher, models.Model):
                        val['account_id'])
                 if not (key in tax_gp):
                     tax_gp[key] = val
-                    tax_gp[key]['amount'] = -tax_gp[key]['amount']
-                    tax_gp[key]['base'] = -tax_gp[key]['base']
-                    tax_gp[key]['base_amount'] = -tax_gp[key]['base_amount']
-                    tax_gp[key]['tax_amount'] = -tax_gp[key]['tax_amount']
+                    tax_gp[key]['amount'] = tax_gp[key]['amount']
+                    tax_gp[key]['base'] = tax_gp[key]['base']
+                    tax_gp[key]['base_amount'] = tax_gp[key]['base_amount']
+                    tax_gp[key]['tax_amount'] = tax_gp[key]['tax_amount']
                     tax_gp[key]['tax_currency_gain'] = 0.0  # No gain for WHT
                 else:
-                    tax_gp[key]['amount'] -= val['amount']
-                    tax_gp[key]['base'] -= val['base']
-                    tax_gp[key]['base_amount'] -= val['base_amount']
-                    tax_gp[key]['tax_amount'] -= val['tax_amount']
-                    tax_gp[key]['tax_currency_gain'] -= 0.0  # No gain for WHT
+                    tax_gp[key]['amount'] += val['amount']
+                    tax_gp[key]['base'] += val['base']
+                    tax_gp[key]['base_amount'] += val['base_amount']
+                    tax_gp[key]['tax_amount'] += val['tax_amount']
+                    tax_gp[key]['tax_currency_gain'] += 0.0  # No gain for WHT
 
             # --> Adding Tax for Posting 1) Contra-Undue 2) Non-Undue
             elif tax1.is_undue_tax:
