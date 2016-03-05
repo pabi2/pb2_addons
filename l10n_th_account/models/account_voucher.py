@@ -990,7 +990,6 @@ class account_voucher_tax(common_voucher, models.Model):
             if voucher_line.move_line_id.invoice:
                 tax_gp = self._compute_tax_grouped(voucher, voucher_line,
                                                    voucher_cur, line_sign)
-                print tax_gp
                 # Grouping into tax_gps
                 for key in tax_gp:
                     if key not in tax_gps.keys():
