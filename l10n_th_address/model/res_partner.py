@@ -52,7 +52,6 @@ class ResPartner(models.Model):
     @api.model
     def _display_address(self, address, without_company=False):
         """ Overwrite for Thai """
-
         # get the information that will be injected into the display format
         # get the address format
         address_format = address.country_id.address_format or \
@@ -75,4 +74,3 @@ class ResPartner(models.Model):
         elif address.parent_id:
             address_format = '%(company_name)s\n' + address_format
         return address_format % args
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
