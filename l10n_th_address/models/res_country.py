@@ -19,7 +19,7 @@ class ResCountryProvince(models.Model):
     name_en = fields.Char(string='Province (en)', required=False)
     country_id = fields.Many2one(
         'res.country',
-        string='Country', 
+        string='Country',
         required=True,
         )
 
@@ -28,7 +28,7 @@ class ResCountryDistrict(models.Model):
 
     _name = 'res.country.district'
     _description = 'Districts'
-    
+
     name = fields.Char(string='District', required=True)
     name_en = fields.Char(string='District (en)', required=False)
     province_id = fields.Many2one(

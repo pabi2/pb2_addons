@@ -35,11 +35,11 @@ class ResPartner(models.Model):
 #             )
 #         if township:
 #             self.township_id = township[0].id
-#             self.province_id = township[0].province_id and 
+#             self.province_id = township[0].province_id and
 #                                 township[0].province_id.id
-#             self.district_id = township[0].district_id and 
+#             self.district_id = township[0].district_id and
 #                                 township[0].district_id.id
-#             self.country_id = township[0].country_id and 
+#             self.country_id = township[0].country_id and
 #                                 township[0].country_id.id
 
     @api.onchange('township_id')
@@ -62,8 +62,10 @@ class ResPartner(models.Model):
         """ Overwrite for Thai """
         # get the information that will be injected into the display format
         # get the address format
-        address_format = address.country_id.address_format or \
-              "%(street)s\n%(street2)s\n%(district_name)s %(township_name)s\n%(province_name)s %(zip)s"
+        default_format = "%(street)s\n%(street2)s\n%(district_name)s \
+               %(township_name)s\n%(province_name)s %(zip)s"
+        address_format = address.country_id.address_format or default_format
+
         args = {
             'state_code': address.state_id.code or '',
             'state_name': address.state_id.name or '',
