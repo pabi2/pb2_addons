@@ -804,22 +804,21 @@ class account_voucher_tax(common_voucher, models.Model):
                         val['account_id'] == line.account_id.id:
                     val['account_analytic_id'] = line.account_analytic_id.id
 
-                key = (val['tax_code_id'],
-                       val['base_code_id'],
-                       val['account_id'])
+                key = (val['invoice_id'], val['tax_code_id'],
+                       val['base_code_id'], val['account_id'])
                 if not (key in tax_gp):
                     tax_gp[key] = val
-                    tax_gp[key]['amount'] = -tax_gp[key]['amount']
-                    tax_gp[key]['base'] = -tax_gp[key]['base']
-                    tax_gp[key]['base_amount'] = -tax_gp[key]['base_amount']
-                    tax_gp[key]['tax_amount'] = -tax_gp[key]['tax_amount']
+                    tax_gp[key]['amount'] = tax_gp[key]['amount']
+                    tax_gp[key]['base'] = tax_gp[key]['base']
+                    tax_gp[key]['base_amount'] = tax_gp[key]['base_amount']
+                    tax_gp[key]['tax_amount'] = tax_gp[key]['tax_amount']
                     tax_gp[key]['tax_currency_gain'] = 0.0  # No gain for WHT
                 else:
-                    tax_gp[key]['amount'] -= val['amount']
-                    tax_gp[key]['base'] -= val['base']
-                    tax_gp[key]['base_amount'] -= val['base_amount']
-                    tax_gp[key]['tax_amount'] -= val['tax_amount']
-                    tax_gp[key]['tax_currency_gain'] -= 0.0  # No gain for WHT
+                    tax_gp[key]['amount'] += val['amount']
+                    tax_gp[key]['base'] += val['base']
+                    tax_gp[key]['base_amount'] += val['base_amount']
+                    tax_gp[key]['tax_amount'] += val['tax_amount']
+                    tax_gp[key]['tax_currency_gain'] += 0.0  # No gain for WHT
 
             # --> Adding Tax for Posting 1) Contra-Undue 2) Non-Undue
             elif tax1.is_undue_tax:
@@ -865,10 +864,8 @@ class account_voucher_tax(common_voucher, models.Model):
                         val['account_id'] == line.account_id.id:
                     val['account_analytic_id'] = line.account_analytic_id.id
 
-                key = (val['tax_code_id'],
-                       val['base_code_id'],
-                       val['account_id'])
-
+                key = (val['invoice_id'], val['tax_code_id'],
+                       val['base_code_id'], val['account_id'])
                 if not (key in tax_gp):
                     tax_gp[key] = val
                 else:
@@ -948,6 +945,7 @@ class account_voucher_tax(common_voucher, models.Model):
         invoice_cur = invoice.currency_id.with_context(date=date)
         company_currency = invoice.company_id.currency_id
         # Retrieve Additional Discount, Advance and Deposit in percent.
+        tax_gps = {}
         for line in voucher_line.move_line_id.invoice.invoice_line:
             # Each invoice line, calculate tax
             revised_price = line.price_unit * (1 - (line.discount / 100.0))
@@ -961,11 +959,23 @@ class account_voucher_tax(common_voucher, models.Model):
                 invoice_cur, company_currency,
                 journal, line_sign, payment_ratio,
                 line, revised_price)
+            # Grouping
+            for key in tax_gp:
+                if key not in tax_gps.keys():
+                    tax_gps[key] = tax_gp[key]
+                else:
+                    tax_gps[key]['tax_currency_gain'] += \
+                        tax_gp[key]['tax_currency_gain']
+                    tax_gps[key]['tax_amount'] += tax_gp[key]['tax_amount']
+                    tax_gps[key]['base_amount'] += tax_gp[key]['base_amount']
+                    tax_gps[key]['amount'] += tax_gp[key]['amount']
+                    tax_gps[key]['base'] += tax_gp[key]['base']
 
-        return tax_gp
+        return tax_gps
 
     @api.model
     def compute(self, voucher):
+        tax_gps = {}
         tax_gp = {}
         date = voucher.date or fields.Date.context_today(voucher)
         voucher_cur = voucher.currency_id.with_context(date=date)
@@ -980,16 +990,27 @@ class account_voucher_tax(common_voucher, models.Model):
             if voucher_line.move_line_id.invoice:
                 tax_gp = self._compute_tax_grouped(voucher, voucher_line,
                                                    voucher_cur, line_sign)
-
+                # Grouping into tax_gps
+                for key in tax_gp:
+                    if key not in tax_gps.keys():
+                        tax_gps[key] = tax_gp[key]
+                    else:
+                        tax_gps[key]['tax_currency_gain'] += \
+                            tax_gp[key]['tax_currency_gain']
+                        tax_gps[key]['tax_amount'] += tax_gp[key]['tax_amount']
+                        tax_gps[key]['base_amount'] += \
+                            tax_gp[key]['base_amount']
+                        tax_gps[key]['amount'] += tax_gp[key]['amount']
+                        tax_gps[key]['base'] += tax_gp[key]['base']
         # rounding
-        for t in tax_gp.values():
+        for t in tax_gps.values():
             t['base'] = voucher_cur.round(t['base'])
             t['amount'] = voucher_cur.round(t['amount'])
             t['base_amount'] = voucher_cur.round(t['base_amount'])
             t['tax_amount'] = voucher_cur.round(t['tax_amount'])
             t['tax_currency_gain'] = voucher_cur.round(t['tax_currency_gain'])
 
-        return tax_gp
+        return tax_gps
 
     @api.model
     def move_line_get(self, voucher_id):
