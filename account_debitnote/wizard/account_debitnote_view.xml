@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_debitnote" model="ir.ui.view">
+            <field name="name">account.debitnote.form</field>
+            <field name="model">account.debitnote</field>
+            <field name="arch" type="xml">
+                <form string="Credit Note">
+                    <group>
+                         <group>
+                             <field name="description"/>
+                             <field name="journal_id" widget='selection'/>
+                         </group><group>
+                             <field name="date"/>
+                             <field name="period"/>
+                         </group>
+                    </group>
+                    <footer>
+                        <button string='Create Debit Note' name="invoice_debitnote" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_account_debitnote" model="ir.actions.act_window">
+            <field name="name">Debit Note Invoice</field>
+            <field name="res_model">account.debitnote</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_account_debitnote"/>
+           <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>
