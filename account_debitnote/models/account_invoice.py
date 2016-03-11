@@ -92,10 +92,10 @@ class AccountInvoice(models.Model):
         if not date:
             date = time.strftime('%Y-%m-%d')
 
-        debitnote_journal_ids = False
         if debitnote_journal_ids:
             debitnote_journal_ids = debitnote_journal_ids[0]
-
+        else:
+            debitnote_journal_ids = False
         invoice_data.update({
             'type': invoice['type'],
             'date_invoice': date,
@@ -167,7 +167,10 @@ class AccountInvoice(models.Model):
                 invoice.is_debitnote = False
 
     @api.multi
-    @api.depends('amount_untaxed', 'comment')
+    @api.depends('refund_invoice_ids',
+                 'refunded_amount',
+                 'refund_invoice_ids.state',
+                 'refund_invoice_ids.amount_untaxed')
     def _compute_debited_amount(self):
         for invoice in self:
             # Get the refund based on this invoice
