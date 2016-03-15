@@ -38,10 +38,10 @@ class TestAccountInvoiceCancel(common.TransactionCase):
                       'journal_id': self.journal_id,
                       'company_id': self.company_id,
                       'invoice_line': [(0, 0, {
-                                    'name': "LCD Screen",
-                                    'product_id': self.product_id,
-                                    'quantity': 5,
-                                    'price_unit': 200})]})
+                                               'name': "LCD Screen",
+                                               'product_id': self.product_id,
+                                               'quantity': 5,
+                                               'price_unit': 200})]})
         invoice = self.account_invoice_model.browse(cr, uid, self.invoice_id)
         self.account_invoice_model.signal_workflow(
             cr, uid, [self.invoice_id], 'invoice_open')
@@ -88,7 +88,7 @@ class TestAccountInvoiceCancel(common.TransactionCase):
             self.voucher.currency_id.id,
             self.voucher.type,
             self.voucher.date
-                )
+            )
         voucher_lines = [(0, 0, line) for line in val['value']['line_cr_ids']]
         self.voucher.write({'line_cr_ids': voucher_lines})
         # Paid
