@@ -22,6 +22,20 @@ class PurchaseRequisition(models.Model):
         res['domain'] = [('order_id', 'in', pur_line_ids)]
         return res
 
+    @api.multi
+    def by_pass_approve(self):
+        po_obj = self.env["purchase.order"]
+        po_obj.action_button_convert_to_order()
+        return True
+
+    @api.model
+    def _prepare_purchase_order(self, requisition, supplier):
+        res = super(PurchaseRequisition, self).\
+            _prepare_purchase_order(requisition, supplier)
+        if self.operating_unit_id:
+            res.update({'operating_unit_id': self.operating_unit_id.id})
+        return res
+
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = 'purchase.requisition.line'

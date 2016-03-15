@@ -10,14 +10,21 @@ import time
 class PurchaseRequest(models.Model):
     _inherit = 'purchase.request'
 
+    _STATES = [
+        ('draft', 'Draft'),
+        ('to_approve', 'To Accept'),
+        ('approved', 'Accepted'),
+        ('rejected', 'Cancelled')
+    ]
+
     _REASON = {
-        ('reason1', 'Reason 1'),
-        ('reason2', 'Reason 2'),
+        ('reason1', 'เสื่อมสภาพ'),
+        ('reason2', 'ชำรุด'),
         ('reason3', 'Reason 3'),
         ('reason4', 'Reason 4'),
     }
     _METHOD = {
-        ('method1', 'Method 1'),
+        ('method1', 'ราคาไม่เกิน 30,000 บาท'),
         ('method2', 'Method 2'),
         ('method3', 'Method 3'),
         ('method4', 'Method 4'),
@@ -28,6 +35,12 @@ class PurchaseRequest(models.Model):
         ('type3', 'Type 3'),
         ('type4', 'Type 4'),
     }
+
+    state = fields.Selection(selection=_STATES,
+                             string='Status',
+                             track_visibility='onchange',
+                             required=True,
+                             default='draft')
 
     committee_ids = fields.One2many('procurement.committee', 'pr_id',
                                     'Committee to Procure',
@@ -40,7 +53,7 @@ class PurchaseRequest(models.Model):
     assigned_to = fields.Many2one('res.users', 'Approver',
                                   readonly=True,
                                   track_visibility='onchange')
-    date_approved = fields.Date('Request date',
+    date_approved = fields.Date('Approved Date',
                                 help="Date when the request has been approved",
                                 default=lambda *args:
                                 time.strftime('%Y-%m-%d %H:%M:%S'),

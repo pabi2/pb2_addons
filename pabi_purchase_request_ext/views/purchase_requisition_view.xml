@@ -13,8 +13,8 @@
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
                 </xpath>
-                <xpath expr="//button[@name='purchase_confirm']" position="replace">
-                    <button name="purchase_confirm" states="draft" string="Confirm Purchase Order" icon="gtk-apply" invisible="1"/> 
+                <xpath expr="//button[@name='purchase_approve']" position="replace">
+                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok"/>
                 </xpath>
             </field>
     </record>

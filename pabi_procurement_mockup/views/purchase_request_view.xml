@@ -15,18 +15,67 @@
                             <field name="procure_method"/>
                             <field name="warehouse_id"/>
                             <field name="procure_type"/>
+                            <field name="currency_id"/>
+                            <field name="currency_rate"/>
                 </xpath>
-                <xpath expr="//button[@name='button_to_approve']" position="after">
-                    <button name="button_cancel" states="draft"
-                            string="Cancel" type="object"/>
+                <xpath expr="//button[@name='button_rejected']" position="attributes">
+                    <attribute name="states">to_approve</attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_draft']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">
                         draft, approved, cancel
                     </attribute>
                 </xpath>
+                <xpath expr="//button[@name='button_approved']" position="attributes">
+                    <attribute name="string">Accept</attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_rejected']" position="attributes">
+                    <attribute name="string">Cancel</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
-                    <field name="product_price"/>
+                    <field name="product_price"
+                           class="oe_inline"
+                           attrs="{'readonly': [('is_editable','=', False)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='mission_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='spa_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_base_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly">[('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='org_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='division_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='department_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">
+                    <field name="product_price" />
+                    <field name="project_id" />
+                    <field name="costcenter_id" />
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
@@ -50,5 +99,17 @@
                 </xpath>
             </field>
     </record>
+    <!--<record model="ir.ui.view" id="view_purchase_request_mock_line_form">-->
+        <!--<field name="name">purchase.request.mock.line.form</field>-->
+        <!--<field name="model">purchase.request.line</field>-->
+        <!--<field name="inherit_id" ref="purchase_request.purchase_request_line_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//field[@name='procurement_id']" position="before">-->
+                    <!--<field name="product_price"/>-->
+                    <!--<field name="project_id"/>-->
+                    <!--<field name="costcenter_id"/>-->
+                <!--</xpath>-->
+            <!--</field>-->
+    <!--</record>-->
     </data>
 </openerp>

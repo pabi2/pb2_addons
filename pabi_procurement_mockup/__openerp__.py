@@ -21,8 +21,11 @@ PABI2 - Procurement Mock Up
     "installable": True,
     "depends": [
         "purchase_request_to_requisition",
+        "purchase_operating_unit",
+        "stock_operating_unit"
     ],
     "data": [
-        "views/purchase_request_view.xml"
+        "views/purchase_request_view.xml",
+        "views/purchase_requisition_view.xml"
     ],
 }

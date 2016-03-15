@@ -23,7 +23,7 @@ PABI2 - Purchase Request Extension
     "application": False,
     "installable": True,
     "depends": [
-        "purchase_request_to_requisition",
+        "purchase_request_to_requisition", "purchase_split_quote2order",
     ],
     "data": [
         "views/purchase_requisition_view.xml",
