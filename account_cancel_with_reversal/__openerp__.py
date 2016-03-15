@@ -14,6 +14,7 @@ when it cancelled.
     'images': [],
     'depends': [
         'account_reversal',
+        'account_voucher',
     ],
     'demo': [],
     'data': [

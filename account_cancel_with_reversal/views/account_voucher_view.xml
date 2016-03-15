@@ -20,8 +20,11 @@
                 <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-                <xpath expr="//field[@name='writeoff_amount']" position="before">
+                <xpath expr="//field[@name='audit']" position="after">
                     <field name="cancel_move_id"/>
+                </xpath>
+                <xpath expr="//page[@string='Journal Items']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state','not in',('posted', 'cancel'))]}</attribute>
                 </xpath>
             </field>
         </record>
@@ -45,8 +48,11 @@
                 <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-                <xpath expr="//field[@name='writeoff_amount']" position="before">
+                <xpath expr="//field[@name='number']" position="after">
                     <field name="cancel_move_id"/>
+                </xpath>
+                <xpath expr="//page[@string='Journal Items']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state','not in',('posted', 'cancel'))]}</attribute>
                 </xpath>
             </field>
         </record>

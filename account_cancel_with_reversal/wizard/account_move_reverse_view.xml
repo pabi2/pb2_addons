@@ -10,13 +10,14 @@
                 <xpath expr="//field[@name='move_line_prefix']" position="after">
                     <field name="is_invoice" invisible="True"/>
                 </xpath>
+                <xpath expr="//label" position="after">
+                    <label string="This wizard will cancel the invoice and create reversal for entries of current invoice whether checked 'to be reversed' or not."
+                    attrs="{'invisible': [('is_invoice' , '=', False)]}"/>
+                </xpath>
                 <xpath expr="//button[@name='action_reverse']" position="before">
                     <button name="action_reverse_invoice" string="Reverse Entries"
                             type="object" class="oe_highlight" 
                             attrs="{'invisible': [('is_invoice' , '=', False)]}"/>
-                </xpath>
-                <xpath expr="//button[@name='action_reverse']" position="attributes">
-                    <attribute name="invisible">True</attribute>
                 </xpath>
             </field>
         </record>
@@ -37,6 +38,10 @@
             <field name="model">account.move.reverse</field> 
             <field name="inherit_id" ref="account_reversal.view_account_move_reverse"/>
             <field name="arch" type="xml">
+                <xpath expr="//label" position="after">
+                    <label string="This wizard will cancel the voucher and create reversal for entries of current voucher whether checked 'to be reversed' or not."
+                      attrs="{'invisible': [('is_voucher' , '=', False)]}"/>
+                </xpath>
                 <xpath expr="//field[@name='move_line_prefix']" position="after">
                     <field name="is_voucher" invisible="True"/>
                 </xpath>
@@ -46,7 +51,10 @@
                             attrs="{'invisible': [('is_voucher' , '=', False)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_reverse']" position="attributes">
-                    <attribute name="invisible">True</attribute>
+                    <attribute name="attrs">{'invisible': ['|',('is_invoice', '=', True), ('is_voucher', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//label" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('is_invoice', '=', True), ('is_voucher', '=', True)]}</attribute>
                 </xpath>
             </field>
         </record>
