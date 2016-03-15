@@ -6,7 +6,11 @@ from openerp import models, fields,  api, _
 class AccountVoucher(models.Model):
     _inherit = "account.voucher"
 
-    cancel_move_id = fields.Many2one('account.move', 'Cancelled Journal Entry')
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        'Cancelled Journal Entry',
+        copy=False
+        )
 
     @api.multi
     def cancel_voucher(self):

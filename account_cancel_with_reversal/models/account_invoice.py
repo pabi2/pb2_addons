@@ -7,12 +7,18 @@ from openerp.exceptions import except_orm, Warning, RedirectWarning
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
-    cancel_move_id = fields.Many2one('account.move', 'Cancelled Journal Entry')
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        'Cancelled Journal Entry',
+        copy=False
+        )
 
     @api.multi
     def action_cancel(self):
         moves = self.env['account.move']
         for inv in self:
+            # if inv.move_id:
+                # moves += inv.move_id
             if inv.payment_ids:
                 for move_line in inv.payment_ids:
                     if move_line.reconcile_partial_id.line_partial_ids:

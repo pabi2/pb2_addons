@@ -11,7 +11,7 @@
                     <field name="is_invoice" invisible="True"/>
                 </xpath>
                 <xpath expr="//label" position="after">
-                    <label string="This wizard will cancel the invoice and create reversal for entries of current invoice whether checked 'to be reversed' or not."
+                    <label string="This wizard will cancel current invoice and create reversal entry for current invoice."
                     attrs="{'invisible': [('is_invoice' , '=', False)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_reverse']" position="before">
@@ -23,7 +23,7 @@
         </record>
 
         <record id="act_account_move_reverse_invoice" model="ir.actions.act_window">
-            <field name="name">Reverse Entries</field>
+            <field name="name">Cancel Invoice and Reverse Entries</field>
             <field name="res_model">account.move.reverse</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field> 
@@ -39,7 +39,7 @@
             <field name="inherit_id" ref="account_reversal.view_account_move_reverse"/>
             <field name="arch" type="xml">
                 <xpath expr="//label" position="after">
-                    <label string="This wizard will cancel the voucher and create reversal for entries of current voucher whether checked 'to be reversed' or not."
+                    <label string="This wizard will cancel current payment and create reversal for entry for current payment."
                       attrs="{'invisible': [('is_voucher' , '=', False)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='move_line_prefix']" position="after">
@@ -60,7 +60,7 @@
         </record>
 
         <record id="act_account_move_reverse_voucher" model="ir.actions.act_window">
-            <field name="name">Reverse Entries</field>
+            <field name="name">Cancel Payment and Reverse Entries</field>
             <field name="res_model">account.move.reverse</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
