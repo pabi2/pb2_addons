@@ -39,7 +39,7 @@ class AccountMoveReversal(models.TransientModel):
 
         form = self.read()[0]
 
-        move_obj = self.env['account.move']
+        # move_obj = self.env['account.move']
 #         picking_obj = self.env['stock.picking']
 #         stock_move_obj = self.env['stock.move']
 
@@ -88,9 +88,7 @@ class AccountMoveReversal(models.TransientModel):
                                                  missing in context"
 
         form = self.read()[0]
-
-        move_obj = self.env['account.move']
-
+        # move_obj = self.env['account.move']
         period_id = form['period_id'][0] if form.get('period_id') else False
         journal_id = form['journal_id'][0] if form.get('journal_id') else False
         voucher_ids = self.env.context.get('active_ids')

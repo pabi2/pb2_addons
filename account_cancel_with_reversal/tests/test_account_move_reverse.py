@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import date
-import time
 from openerp.tests import common
 
 
@@ -60,9 +59,8 @@ class TestAccountInvoiceCancel(common.TransactionCase):
         # reconcile new journal entry
         self.account_invoice_model.signal_workflow(
             cr, uid, [self.invoice_id], 'invoice_cancel')
-        reconcile_moves = \
-            self.wizard_voucher_move_reverse.reconcile_reverse_journals(
-                cr, uid, [reverse_move_id[0], move_id.id])
+        self.wizard_voucher_move_reverse.reconcile_reverse_journals(
+            cr, uid, [reverse_move_id[0], move_id.id])
 
     def test_voucher_cancel(self):
         cr, uid = self.cr, self.uid
