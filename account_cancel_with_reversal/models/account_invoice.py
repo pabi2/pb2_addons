@@ -13,8 +13,6 @@ class AccountInvoice(models.Model):
     def action_cancel(self):
         moves = self.env['account.move']
         for inv in self:
-#             if inv.move_id:
-#                 moves += inv.move_id
             if inv.payment_ids:
                 for move_line in inv.payment_ids:
                     if move_line.reconcile_partial_id.line_partial_ids:
