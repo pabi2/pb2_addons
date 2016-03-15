@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields,  api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning
 
 
 class AccountInvoice(models.Model):
@@ -15,10 +15,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_cancel(self):
-        moves = self.env['account.move']
         for inv in self:
-            # if inv.move_id:
-                # moves += inv.move_id
             if inv.payment_ids:
                 for move_line in inv.payment_ids:
                     if move_line.reconcile_partial_id.line_partial_ids:
