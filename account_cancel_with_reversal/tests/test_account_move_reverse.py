@@ -37,8 +37,7 @@ class TestAccountInvoiceCancel(common.TransactionCase):
                       'account_id': self.account_id,
                       'journal_id': self.journal_id,
                       'company_id': self.company_id,
-                      'invoice_line': [(0, 0, {
-                                               'name': "LCD Screen",
+                      'invoice_line': [(0, 0, {'name': "LCD Screen",
                                                'product_id': self.product_id,
                                                'quantity': 5,
                                                'price_unit': 200})]})
