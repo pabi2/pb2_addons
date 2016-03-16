@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields,  api, _
 
 
 class AccountVoucher(models.Model):
@@ -17,6 +17,8 @@ class AccountVoucher(models.Model):
         """ Overwrite """
         if self.env.context is None:
             self.env.context = {}
+        # reconcile_pool = self.env['account.move.reconcile']
+        # move_pool = self.env['account.move']
         move_line_pool = self.env['account.move.line']
         for voucher in self:
             # refresh to make sure you don't unlink an already removed move
