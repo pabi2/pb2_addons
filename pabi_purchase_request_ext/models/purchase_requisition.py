@@ -28,13 +28,13 @@ class PurchaseRequisition(models.Model):
         po_obj.action_button_convert_to_order()
         return True
 
-    @api.model
-    def _prepare_purchase_order(self, requisition, supplier):
-        res = super(PurchaseRequisition, self).\
-            _prepare_purchase_order(requisition, supplier)
-        if self.operating_unit_id:
-            res.update({'operating_unit_id': self.operating_unit_id.id})
-        return res
+    # @api.model
+    # def _prepare_purchase_order(self, requisition, supplier):
+    #     res = super(PurchaseRequisition, self).\
+    #         _prepare_purchase_order(requisition, supplier)
+    #     if self.operating_unit_id:
+    #         res.update({'operating_unit_id': self.operating_unit_id.id})
+    #     return res
 
 
 class PurchaseRequisitionLine(models.Model):

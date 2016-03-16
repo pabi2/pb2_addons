@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+    <record model="ir.ui.view" id="view_purchase_requisition_mock_form">
+        <field name="name">purchase.requisition.mock.form</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='mission_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//field[@name='spa_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="///field[@name='program_base_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//field[@name='program_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//field[@name='program_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly">[('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//field[@name='org_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//field[@name='division_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
+                </xpath>
+                <!--<xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">-->
+                    <!--<field name="product_price" />-->
+                    <!--<field name="project_id" />-->
+                    <!--<field name="costcenter_id" />-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page" position="after">-->
+                    <!--<page string="Committee">-->
+                        <!--<field name="committee_ids">-->
+                            <!--<tree>-->
+                                <!--<field name="sequence"/>-->
+                                <!--<field name="name"/>-->
+                                <!--<field name="position"/>-->
+                                <!--<field name="responsible"/>-->
+                            <!--</tree>-->
+                        <!--</field>-->
+                    <!--</page>-->
+                    <!--<page string="Attachment">-->
+                        <!--<field name="attachment_ids">-->
+                            <!--<tree>-->
+                                <!--<field name="name"/>-->
+                                <!--<field name="file_url"/>-->
+                            <!--</tree>-->
+                        <!--</field>-->
+                    <!--</page>-->
+                <!--</xpath>-->
+            </field>
+    </record>
+    </data>
+</openerp>

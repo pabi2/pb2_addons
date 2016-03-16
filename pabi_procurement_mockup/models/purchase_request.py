@@ -51,7 +51,6 @@ class PurchaseRequest(models.Model):
                                      readonly=False,
                                      track_visibility='onchange')
     assigned_to = fields.Many2one('res.users', 'Approver',
-                                  readonly=True,
                                   track_visibility='onchange')
     date_approved = fields.Date('Approved Date',
                                 help="Date when the request has been approved",
