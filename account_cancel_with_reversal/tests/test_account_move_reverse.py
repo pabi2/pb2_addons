@@ -39,16 +39,20 @@ class TestAccountInvoiceCancel(common.TransactionCase):
 
     def test_invoice_cancel(self):
         cr, uid = self.cr, self.uid
+
+        invoice_line_val = {
+            'name': 'LCD Screen',
+            'product_id': self.product_id,
+            'quantity': 5,
+            'price_unit': 200,
+        }
+
         self.invoice_id = self.account_invoice_model.create(
             cr, uid, {'partner_id': self.partner_id,
                       'account_id': self.account_id,
                       'journal_id': self.journal_id,
                       'company_id': self.company_id,
-                      'invoice_line': [(0, 0, {
-                                               'name': "LCD Screen",
-                                               'product_id': self.product_id,
-                                               'quantity': 5,
-                                               'price_unit': 200})]})
+                      'invoice_line': [(0, 0, invoice_line_val)]})
         invoice = self.account_invoice_model.browse(cr, uid, self.invoice_id)
         self.account_invoice_model.signal_workflow(
             cr, uid, [self.invoice_id], 'invoice_open')
