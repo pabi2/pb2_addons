@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
-
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 
 
 class AccountMoveReversal(models.TransientModel):
@@ -15,8 +14,6 @@ class AccountMoveReversal(models.TransientModel):
     def reconcile_reverse_journals(self, move_ids):
         account_move_line_obj = self.env['account.move.line']
         period_obj = self.env['account.period']
-        if self.env.context is None:
-            self.env.context = {}
         date = time.strftime('%Y-%m-%d')
         ids = period_obj.find(dt=date)
         period_id = ids and ids[0] or False
@@ -32,16 +29,10 @@ class AccountMoveReversal(models.TransientModel):
 
     @api.multi
     def action_reverse_invoice(self):
-        if self.env.context is None:
-            self.env.context = {}
         assert 'active_ids' in self.env.context, "active_ids \
                                         missing in context"
 
         form = self.read()[0]
-
-        # move_obj = self.env['account.move']
-        # picking_obj = self.env['stock.picking']
-        # stock_move_obj = self.env['stock.move']
 
         period_id = form['period_id'][0] if form.get('period_id') else False
         journal_id = form['journal_id'][0] if form.get('journal_id') else False
@@ -64,32 +55,15 @@ class AccountMoveReversal(models.TransientModel):
             reversed_move_ids.extend(reverse_move_id)
             # reconcile new journal entry
             self.reconcile_reverse_journals([reverse_move_id[0], move_id.id])
-            # make picking 2binvoiced
-#             picking_ids = picking_obj.search([('name', '=', invoice.origin)])
-#             if picking_ids:
-#                 move_ids = stock_move_obj.search([
-#                                     ('picking_id', 'in', picking_ids.ids)
-#                                     ])
-#                 picking_ids.write({'invoice_state': '2binvoiced'})
-#                 move_ids.write({'invoice_state': '2binvoiced'})
 
-        result = self.env.ref('account.action_move_journal_line')
-        result = result.read()[0]
-        result['domain'] = unicode([('id', 'in', reversed_move_ids)])
-        result['name'] = _('Reversal Entries')
-        result['context'] = unicode({'search_default_to_be_reversed': 0})
-        return result
+        return {'type': 'ir.actions.act_window_close'}
 
     @api.multi
     def action_reverse_voucher(self):
-        if self.env.context is None:
-            self.env.context = {}
         assert 'active_ids' in self.env.context, "active_ids\
                                                  missing in context"
 
         form = self.read()[0]
-
-        # move_obj = self.env['account.move']
 
         period_id = form['period_id'][0] if form.get('period_id') else False
         journal_id = form['journal_id'][0] if form.get('journal_id') else False
@@ -114,9 +88,4 @@ class AccountMoveReversal(models.TransientModel):
             # reconcile new journal entry
             self.reconcile_reverse_journals([reverse_move_id[0], move_id.id])
 
-        result = self.env.ref('account.action_move_journal_line')
-        result = result.read()[0]
-        result['domain'] = unicode([('id', 'in', reversed_move_ids)])
-        result['name'] = _('Reversal Entries')
-        result['context'] = unicode({'search_default_to_be_reversed': 0})
-        return result
+        return {'type': 'ir.actions.act_window_close'}

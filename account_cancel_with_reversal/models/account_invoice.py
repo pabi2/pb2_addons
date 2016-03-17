@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields,  api, _
-from openerp.exceptions import Warning
+from openerp import models, fields, api
 
 
 class AccountInvoice(models.Model):
@@ -9,20 +8,11 @@ class AccountInvoice(models.Model):
 
     cancel_move_id = fields.Many2one(
         'account.move',
-        'Cancelled Journal Entry',
-        copy=False
-        )
+        string='Cancelled Journal Entry',
+        copy=False,
+    )
 
-    @api.multi
-    def action_cancel(self):
-        for inv in self:
-            if inv.payment_ids:
-                for move_line in inv.payment_ids:
-                    if move_line.reconcile_partial_id.line_partial_ids:
-                        raise Warning(_('Error!'),
-                                      _('You cannot cancel an invoice\
-                                        which is partially paid. You need \
-                                        to unreconcile related \
-                                        payment entries first.'))
+    @api.model
+    def action_cancel_hook(self, moves=False):
         self.write({'state': 'cancel'})
-        return True
+        return
