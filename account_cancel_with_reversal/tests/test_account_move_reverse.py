@@ -43,12 +43,13 @@ class TestAccountCancelWithReversal(common.TransactionCase):
             'price_unit': 200,
         }
 
-        self.invoice_id = self.AccountInvoice.create(
-                    {'partner_id': self.partner.id,
-                     'account_id': self.account.id,
-                     'journal_id': self.sales_journal.id,
-                     'company_id': self.company.id,
-                     'invoice_line': [(0, 0, invoice_line_val)]})
+        self.invoice_id = self.AccountInvoice.create({
+            'partner_id': self.partner.id,
+            'account_id': self.account.id,
+            'journal_id': self.sales_journal.id,
+            'company_id': self.company.id,
+            'invoice_line': [(0, 0, invoice_line_val)],
+        })
         self.invoice_id.signal_workflow('invoice_open')
         self.assertEqual(self.invoice_id.state, 'open',
                          'Invoice not validated.')
