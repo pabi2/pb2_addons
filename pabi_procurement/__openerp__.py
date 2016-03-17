@@ -2,16 +2,18 @@
 # © 2015 TrinityRoots>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
-    "name": "NSTDA :: PABI2 - Procurement Mockup",
-    "summary": "Mock Up for procurement",
+    "name": "NSTDA :: PABI2 - Procurement",
+    "summary": "Pabi2 Procurement",
     "version": "8.0.1.0.0",
     "category": "Purchase",
     "description": """
 
-PABI2 - Procurement Mock Up
+PABI2 - Procurement Module
 ==================================
 
-  * Mock up fields for PABI2 procurement processes.
+  * Add fields for PABI2 procurement processes.
+  * Fix some functions from processes interaction
+
 
     """,
     "website": "https://nstda.or.th/",
@@ -20,7 +22,8 @@ PABI2 - Procurement Mock Up
     "application": False,
     "installable": True,
     "depends": [
-        "purchase_request_to_requisition",
+        "pabi_chartfield",
+        "pabi_purchase_request_ext",
         "purchase_operating_unit",
         "stock_operating_unit"
     ],

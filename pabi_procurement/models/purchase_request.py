@@ -16,12 +16,9 @@ class PurchaseRequest(models.Model):
         ('approved', 'Accepted'),
         ('rejected', 'Cancelled')
     ]
-
-    _REASON = {
-        ('reason1', 'เสื่อมสภาพ'),
-        ('reason2', 'ชำรุด'),
-        ('reason3', 'Reason 3'),
-        ('reason4', 'Reason 4'),
+    _ORIGINAL = {
+        ('yes', 'YES'),
+        ('no', 'NO'),
     }
     _METHOD = {
         ('method1', 'ราคาไม่เกิน 30,000 บาท'),
@@ -50,31 +47,33 @@ class PurchaseRequest(models.Model):
                                      'Attach Files',
                                      readonly=False,
                                      track_visibility='onchange')
-    assigned_to = fields.Many2one('res.users', 'Approver',
-                                  track_visibility='onchange')
     date_approved = fields.Date('Approved Date',
                                 help="Date when the request has been approved",
                                 default=lambda *args:
                                 time.strftime('%Y-%m-%d %H:%M:%S'),
                                 readonly=True,
                                 track_visibility='onchange')
+    responsible_man = fields.Many2one('res.users', 'Responsible Man',
+                                  track_visibility='onchange')
     currency_id = fields.Many2one('res.currency', 'Currency')
     currency_rate = fields.Float('Rate')
-    procure_reason = fields.Selection(selection=_REASON,
-                                      string='Reason',
-                                      track_visibility='onchange',
-                                      required=True)
     objective = fields.Char('Objective')
     procure_method = fields.Selection(selection=_METHOD,
                                       string='Procurement Method',
                                       track_visibility='onchange',
                                       required=True)
+    original_durable_articles = fields.Boolean(
+                                      string='Original Durable Articles',
+                                      default=False,
+                                      track_visibility='onchange',
+                                      required=True)
+    total_budget_value = fields.Float('Total Budget Value')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse')
     procure_type = fields.Selection(selection=_TYPE,
                                     string='Type',
                                     track_visibility='onchange',
                                     required=True)
-
+    delivery_address = fields.Text('Delivery Address')
 
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
