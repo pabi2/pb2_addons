@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, api
 
 
-class account_voucher(models.Model):
+class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
 
     @api.model
@@ -27,7 +27,6 @@ class account_voucher(models.Model):
             voucher_brw.journal_id.company_id.currency_id
         list_move_line = []
         ded_amount = 0.00
-        flag = False
         if not current_currency_obj.is_zero(line_total):
             diff = line_total
             account_id = False
@@ -122,11 +121,8 @@ class account_voucher(models.Model):
 
             # Create the writeoff line if needed
             ml_writeoff = voucher.writeoff_move_line_get(
-                                                        line_total,
-                                                        move_id.id,
-                                                        name,
-                                                        company_currency,
-                                                        current_currency)
+                line_total, move_id.id, name, company_currency,
+                current_currency)
 
             # PROBUSE CHANGE STARTED Section 1 ----------------------
             if voucher.multiple_reconcile_ids:

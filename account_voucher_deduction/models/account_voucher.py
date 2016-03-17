@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 import openerp.addons.decimal_precision as dp
 
 
@@ -30,8 +30,6 @@ class AccountVoucher(models.Model):
     def _get_writeoff_amount(self):
         if not self.ids:
             return True
-        currency_obj = self.env['res.currency']
-        res = {}
         for voucher in self:
             debit = 0.0
             credit = 0.0
@@ -82,7 +80,7 @@ class AccountVoucher(models.Model):
     def multiple_reconcile_get_hook(self, line_total,
                                     move_id, name,
                                     company_currency, current_currency):
-        ded_amount, list_move_line = super(account_voucher, self).\
+        ded_amount, list_move_line = super(AccountVoucher, self).\
             multiple_reconcile_get_hook(line_total, move_id, name,
                                         company_currency, current_currency)
         voucher = self
@@ -134,22 +132,32 @@ class AccountVoucher(models.Model):
 
     @api.model
     def action_move_line_writeoff_hook(self, ml_writeoff):
-        super(account_voucher, self).\
+        super(AccountVoucher, self).\
             action_move_line_writeoff_hook(ml_writeoff)
         if ml_writeoff:
             for line_tax in ml_writeoff:
-                writeoff_id = self.env['account.move.line'].create(line_tax)
+                self.env['account.move.line'].create(line_tax)
         return
 
     @api.model
     def multiple_reconcile_ded_amount_hook(self, line_total,
                                            move_id, name,
                                            company_currency, current_currency):
-        list_move_line = super(account_voucher, self).\
+        list_move_line = super(AccountVoucher, self).\
             multiple_reconcile_ded_amount_hook(line_total, move_id,
                                                name, company_currency,
                                                current_currency)
         voucher = self
+        if voucher.payment_option == 'with_writeoff':
+            account_id = voucher.writeoff_acc_id.id
+            write_off_name = voucher.comment
+        elif voucher.type in ('sale', 'receipt'):
+            account_id = voucher.partner_id.\
+                property_account_receivable.id
+        else:
+            account_id = voucher.partner_id.\
+                property_account_payable.id
+
         ctx = dict(self._context.copy())
         ctx.update({'date': voucher.date})
         value1 = self.with_context(ctx).\
@@ -185,7 +193,7 @@ class AccountVoucher(models.Model):
 
     @api.model
     def action_move_line_create_hook(self, rec_list_ids):
-        super(account_voucher, self).action_move_line_create_hook(rec_list_ids)
+        super(AccountVoucher, self).action_move_line_create_hook(rec_list_ids)
         voucher = self
         for rec_ids in rec_list_ids:
             if len(rec_ids) >= 2:

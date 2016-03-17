@@ -8,8 +8,7 @@
     'description': """
 Account Voucher Hook.
     """,
-    'data': [
-            ],
+    'data': [],
     'depends': ['account_voucher'],
     'installable': True,
     'auto_install': False
