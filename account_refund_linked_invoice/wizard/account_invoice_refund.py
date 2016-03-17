@@ -16,6 +16,4 @@ class AccountInvoiceRefund(models.TransientModel):
             raise ValidationError(
                 _('This will make refund amount exceeded the invoice amount!')
                 )
-        return self.compute_refund()
-
-AccountInvoiceRefund()
+        return super(AccountInvoiceRefund, self).invoice_refund()

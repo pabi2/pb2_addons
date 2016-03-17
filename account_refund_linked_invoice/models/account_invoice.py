@@ -4,19 +4,18 @@ import openerp.addons.decimal_precision as dp
 
 
 class AccountInvoice(models.Model):
-
     _inherit = 'account.invoice'
 
     origin_invoice_id = fields.Many2one(
         'account.invoice',
         string='Origin invoice',
         readonly=True,
-        states={'draft': [('readonly', False)]}
+        states={'draft': [('readonly', False)]},
         )
     refunded_amount = fields.Float(
         string='Refunded Amount',
         compute='_compute_refunded_amount',
-        digits_compute=dp.get_precision('Product Price')
+        digits_compute=dp.get_precision('Product Price'),
         )
     refund_invoice_ids = fields.One2many(
         'account.invoice',
@@ -24,7 +23,7 @@ class AccountInvoice(models.Model):
         string='Refund Documents',
         domain=[('type', '=', 'out_refund')],
         readonly=True,
-        copy=False
+        copy=False,
         )
 
     @api.multi
