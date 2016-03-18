@@ -14,8 +14,8 @@ when it cancelled.
     'images': [],
     'depends': [
         'account_reversal',
-        'account_voucher_cancel_hook',
-        'account_invoice_cancel_hook'
+        'account_voucher_cancel_hooks',
+        'account_invoice_cancel_hooks'
     ],
     'demo': [],
     'data': [
