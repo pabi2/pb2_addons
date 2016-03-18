@@ -145,21 +145,21 @@ class AccountBudget(models.Model):
             model = 'account.activity.group'
         elif budgeting_level == 'activity_id':
             model = 'account.activity'
-        # Get budget performance of specified budgeting_level
+        # Get budget monitor of specified budgeting_level
         resource = self.env[model].browse(budgeting_level_id)
-        performance = resource.performance_ids.\
+        monitor = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal)
         # Validation
-        if not performance:  # No plan, no check
+        if not monitor:  # No plan, no check
             return res
-        if amount > performance.amount_balance:
+        if amount > monitor.amount_balance:
             res['budget_ok'] = False
             res['message'] = _('%s\n'
                                '[%s] remaining budget is %s,\n'
                                'but the requested budget is %s') % \
                 (fiscal.name, resource.name_get()[0][1],
-                 '{0:,}'.format(performance.amount_balance),
-                 '{0:,}'.format(performance.amount_plan))
+                 '{0:,}'.format(monitor.amount_balance),
+                 '{0:,}'.format(monitor.amount_plan))
         return res
 
 #     @api.model

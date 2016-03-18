@@ -23,10 +23,10 @@ class AccountActivityGroup(models.Model):
         domain=[('type', '!=', 'view')],
         help="This account has less priority to activitie's account",
     )
-    performance_ids = fields.One2many(
-        'account.activity.group.performance.view',
+    monitor_ids = fields.One2many(
+        'account.activity.group.monitor.view',
         'activity_group_id',
-        string='Activity Group Performance',
+        string='Activity Group Monitor',
         help="Plan vs actual per fiscal year for activity group"
     )
     _sql_constraints = [
@@ -63,10 +63,10 @@ class AccountActivity(models.Model):
         domain=[('type', '!=', 'view')],
         help="This account has higher priority to group activities's account",
     )
-    performance_ids = fields.One2many(
-        'account.activity.performance.view',
+    monitor_ids = fields.One2many(
+        'account.activity.monitor.view',
         'activity_id',
-        string='Activity Performance',
+        string='Activity Monitor',
         help="Plan vs actual per fiscal year for activity"
     )
     _sql_constraints = [
@@ -93,8 +93,8 @@ class AccountActivity(models.Model):
                   (self.activity_group_id.name,)))
 
 
-class PerformanceView(models.AbstractModel):
-    _name = 'generic.performance.view'
+class MonitorView(models.AbstractModel):
+    _name = 'generic.monitor.view'
 
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -116,7 +116,7 @@ class PerformanceView(models.AbstractModel):
         compute='_amount_all',
     )
 
-    _performance_view_tempalte = """CREATE or REPLACE VIEW %s as (
+    _monitor_view_tempalte = """CREATE or REPLACE VIEW %s as (
             select ap.fiscalyear_id id,
             ap.fiscalyear_id, abl.%s,
             coalesce(sum(planned_amount), 0.0) amount_plan
@@ -127,29 +127,32 @@ class PerformanceView(models.AbstractModel):
         group by ap.fiscalyear_id, abl.%s)
     """
 
-    def _create_performance_view(self, cr, table, field):
+    def _create_monitor_view(self, cr, table, field):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute(
-            self._performance_view_tempalte %
+            self._monitor_view_tempalte %
             (self._table, field, field))
 
     @api.multi
     def _amount_all(self):
         for rec in self:
-            # Actual Amount
+            # Actual from move lines (journal = purchase, purchase_refund
             self._cr.execute("""
                 select sum(debit-credit) amount_actual
                 from account_move_line aml
                     join account_period ap on ap.id = aml.period_id
-                where aml.%s = %s and ap.fiscalyear_id = %s;
+                where aml.%s = %s and ap.fiscalyear_id = %s
+                and journal_id in
+                    (select id from account_journal
+                    where type in ('purchase', 'purchase_refund');
             """ % (self._budgeting_level,
                    rec[self._budgeting_level].id, rec.fiscalyear_id.id))
             rec.amount_actual = self._cr.fetchone()[0] or 0.0
             rec.amount_balance = rec.amount_plan - rec.amount_actual
 
 
-class AccountActivityGroupPerformanceView(PerformanceView, models.Model):
-    _name = 'account.activity.group.performance.view'
+class AccountActivityGroupMonitorView(MonitorView, models.Model):
+    _name = 'account.activity.group.monitor.view'
     _auto = False
 
     activity_group_id = fields.Many2one(
@@ -160,11 +163,11 @@ class AccountActivityGroupPerformanceView(PerformanceView, models.Model):
     _budgeting_level = 'activity_group_id'
 
     def init(self, cr):
-        self._create_performance_view(cr, self._table, 'activity_group_id')
+        self._create_monitor_view(cr, self._table, 'activity_group_id')
 
 
-class AccountActivityPerformanceView(PerformanceView, models.Model):
-    _name = 'account.activity.performance.view'
+class AccountActivityMonitorView(MonitorView, models.Model):
+    _name = 'account.activity.monitor.view'
     _auto = False
 
     activity_id = fields.Many2one(
@@ -175,4 +178,4 @@ class AccountActivityPerformanceView(PerformanceView, models.Model):
     _budgeting_level = 'activity_id'
 
     def init(self, cr):
-        self._create_performance_view(cr, self._table, 'activity_id')
+        self._create_monitor_view(cr, self._table, 'activity_id')

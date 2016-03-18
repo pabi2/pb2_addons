@@ -56,9 +56,9 @@
 				                </tree>
 		                	</field>
 		                </page>
-	                    <page string="Budget Performance">
-		                    <field name="performance_ids">
-				                <tree string="Performance" editable="bottom">
+	                    <page string="Budget Monitor">
+		                    <field name="monitor_ids">
+				                <tree string="Monitor" editable="bottom">
 		                    		<field name="activity_group_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
@@ -119,9 +119,9 @@
                         </group>
                     </group>
                     <notebook>
-	                    <page string="Budget Performance">
-		                    <field name="performance_ids">
-				                <tree string="Performance" editable="bottom">
+	                    <page string="Budget Monitor">
+		                    <field name="monitor_ids">
+				                <tree string="Monitor" editable="bottom">
 		                    		<field name="activity_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
