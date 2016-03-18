@@ -12,7 +12,7 @@ Multiple Deductions on Voucher Payment.
         'security/ir.model.access.csv',
         'views/account_voucher_view.xml',
     ],
-    'depends': ['account_voucher_hook'],
+    'depends': ['account_voucher_hooks'],
     'installable': True,
     'auto_install': False
 }
