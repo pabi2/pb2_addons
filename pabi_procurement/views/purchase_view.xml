@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="purchase_order_form" model="ir.ui.view" >
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="pabi_chartfield.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ref']" position="after">
+                    <field name="date_reference" />
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="mycontract_id" />
+                    <field name="date_contract_start" />
+                    <field name="date_contract_end" />
+                </xpath>
+                <xpath expr="//field[@name='mission_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='spa_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="///field[@name='program_base_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='program_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='program_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='org_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='division_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//div[@class='oe_clear']" position="before">
+                    <group>
+                        <field name="fine_rate" />
+                        <field name="total_fine"/>
+                        <field name="receive_date_con"/>
+                        <field name="receive_date_date" attrs="{'invisible':[('receive_date_con', '!=', '2')]}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page" position="after">
+                    <page string="Committee">
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

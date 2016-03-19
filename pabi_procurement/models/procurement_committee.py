@@ -14,3 +14,4 @@ class ProcurementCommittee(models.Model):
     position = fields.Char(string='Position')
     responsible = fields.Char(string='Responsible')
     pr_id = fields.Many2one('purchase_request', 'Purchase Request')
+    po_id = fields.Many2one('purchase_order', 'Purchase Order')

@@ -54,7 +54,7 @@ class PurchaseRequest(models.Model):
                                 readonly=True,
                                 track_visibility='onchange')
     responsible_man = fields.Many2one('res.users', 'Responsible Man',
-                                  track_visibility='onchange')
+                                      track_visibility='onchange')
     currency_id = fields.Many2one('res.currency', 'Currency')
     currency_rate = fields.Float('Rate')
     objective = fields.Char('Objective')
@@ -63,10 +63,9 @@ class PurchaseRequest(models.Model):
                                       track_visibility='onchange',
                                       required=True)
     original_durable_articles = fields.Boolean(
-                                      string='Original Durable Articles',
-                                      default=False,
-                                      track_visibility='onchange',
-                                      required=True)
+        default=False,
+        track_visibility='onchange',
+        required=True)
     total_budget_value = fields.Float('Total Budget Value')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse')
     procure_type = fields.Selection(selection=_TYPE,
@@ -74,6 +73,7 @@ class PurchaseRequest(models.Model):
                                     track_visibility='onchange',
                                     required=True)
     delivery_address = fields.Text('Delivery Address')
+
 
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"

@@ -29,6 +29,7 @@ PABI2 - Procurement Module
     ],
     "data": [
         "views/purchase_request_view.xml",
-        "views/purchase_requisition_view.xml"
+        "views/purchase_requisition_view.xml",
+        "views/purchase_view.xml"
     ],
 }

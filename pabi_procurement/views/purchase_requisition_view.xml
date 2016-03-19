@@ -8,35 +8,27 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='mission_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="//field[@name='spa_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="///field[@name='program_base_type_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="//field[@name='program_type_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="//field[@name='program_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly">[('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="//field[@name='org_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="//field[@name='division_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <xpath expr="//field[@name='department_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                    <attribute name="readonly"> [('is_editable','=', False)] </attribute>
                 </xpath>
                 <!--<xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">-->
                     <!--<field name="product_price" />-->
