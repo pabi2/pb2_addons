@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
+from openerp.exceptions import Warning, except_orm
+from . import account
 
 
 class AccountBudget(models.Model):
@@ -93,10 +95,20 @@ class AccountBudget(models.Model):
         self.date_to = self.fiscalyear_id.date_stop
 
     @api.multi
+    def _validate_budgeting_level(self):
+        for budget in self:
+            budgeting_level = budget.fiscalyear_id.budgeting_level
+            count = self.env['account.budget.line'].search_count(
+                [('budget_id', '=', budget.id), (budgeting_level, '=', False)])
+            if count:
+                raise except_orm(
+                    _('Budgeting Level Warning'),
+                    _('Required budgeting level is %s') %
+                    (account.BUDGETING_LEVEL[budgeting_level]))
+
+    @api.multi
     def budget_validate(self):
-        # for budget in self:
-        #    # On approval create analytic account auto, if not exists.
-        #    budget.budget_line_ids.create_analytic_account_activity()
+        self._validate_budgeting_level()
         self.write({
             'state': 'validate',
             'validating_user_id': self._uid,
