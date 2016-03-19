@@ -4,19 +4,19 @@ from openerp import api, fields, models
 from .chartfield import CHART_VIEW, ChartField
 
 
-class CrossoveredBudget(models.Model):
-    _inherit = 'crossovered.budget'
+class AccountBudget(ChartField, models.Model):
+    _inherit = 'account.budget'
 
-    crossovered_budget_line_unit_base = fields.One2many(
-        'crossovered.budget.lines',
-        'crossovered_budget_id',
+    budget_line_unit_base = fields.One2many(
+        'account.budget.line',
+        'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    crossovered_budget_line_project_base = fields.One2many(
-        'crossovered.budget.lines',
-        'crossovered_budget_id',
+    budget_line_project_base = fields.One2many(
+        'account.budget.line',
+        'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         copy=True,
@@ -28,46 +28,67 @@ class CrossoveredBudget(models.Model):
         required=True,
         copy=True,
     )
-    program_type_id = fields.Many2one(
-        'res.program.type',
-        string='Program Type',
-        states={'done': [('readonly', True)]},
-        required=True,
-        copy=True,
-    )
-    # For unit base
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
-    division_id = fields.Many2one(
-        'res.division',
-        string='Division',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
-    department_id = fields.Many2one(
-        'res.department',
-        string='Department',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
-    costcenter_id = fields.Many2one(
-        'res.costcenter',
-        string='Costcenter',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
 
     @api.multi
     def budget_validate(self):
         for budget in self:
-            line = budget.crossovered_budget_line
+            line = budget.budget_line_ids
             line.validate_chartfields(self.chart_view)
-        return super(CrossoveredBudget, self).budget_validate()
+        return super(AccountBudget, self).budget_validate()
 
 
-class CrossoveredBudgetLines(ChartField, models.Model):
-    _inherit = 'crossovered.budget.lines'
+class AccountBudgetLine(ChartField, models.Model):
+    _inherit = 'account.budget.line'
+
+    # Project Based
+    spa_id = fields.Many2one(
+        related='program_id.current_spa_id',
+        readonly=True,
+        store=True,
+    )
+    mission_id = fields.Many2one(
+        related='project_id.mission_id',
+        readonly=True,
+        store=True,
+    )
+    program_scheme_id = fields.Many2one(
+        related='budget_id.program_scheme_id',
+        readonly=True,
+        store=True,
+    )
+    program_group_id = fields.Many2one(
+        related='budget_id.program_group_id',
+        readonly=True,
+        store=True,
+    )
+    # Unit Based
+    org_id = fields.Many2one(
+        related='budget_id.org_id',
+        readonly=True,
+        store=True,
+    )
+    sector_id = fields.Many2one(
+        related='budget_id.sector_id',
+        readonly=True,
+        store=True,
+    )
+    division_group_id = fields.Many2one(
+        related='budget_id.division_group_id',
+        readonly=True,
+        store=True,
+    )
+    division_id = fields.Many2one(
+        related='budget_id.division_id',
+        readonly=True,
+        store=True,
+    )
+    department_id = fields.Many2one(
+        related='budget_id.department_id',
+        readonly=True,
+        store=True,
+    )
+    costcenter_id = fields.Many2one(
+        related='budget_id.costcenter_id',
+        readonly=True,
+        store=True,
+    )

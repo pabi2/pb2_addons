@@ -8,15 +8,19 @@ CHART_VIEW = [
     ('project_base', 'Project Based'),
     ]
 
-# The order must order from smaller to bigger
 CHART_FIELDS = [
-    ('mission_id', ['unit_base', 'project_base']),
+    # Project Based
     ('spa_id', ['project_base']),
-    ('program_base_type_id', ['unit_base', 'project_base']),
-    ('program_type_id', ['unit_base', 'project_base']),
-    ('program_id', ['unit_base', 'project_base']),
-    ('org_id', ['unit_base', 'project_base']),
+    ('mission_id', ['project_base']),
+    ('program_scheme_id', ['project_base']),
+    ('program_group_id', ['project_base']),
+    ('program_id', ['project_base']),
+    ('project_group_id', ['project_base']),
     ('project_id', ['project_base']),
+    # Unit Based
+    ('org_id', ['unit_base']),
+    ('sector_id', ['unit_base']),
+    ('division_group_id', ['unit_base']),
     ('division_id', ['unit_base']),
     ('department_id', ['unit_base']),
     ('costcenter_id', ['unit_base']),
@@ -25,14 +29,17 @@ CHART_FIELDS = [
 
 class ChartField(object):
 
+    spa_id = fields.Many2one('res.spa', 'SPA')
     mission_id = fields.Many2one('res.mission', 'Mission')
-    spa_id = fields.Many2one('res.program.spa', 'SPA')
-    program_base_type_id = fields.Many2one('res.program.base.type',
-                                           'Program Base Type')
-    program_type_id = fields.Many2one('res.program.type', 'Program Type')
+    program_scheme_id = fields.Many2one('res.program.scheme', 'Program Scheme')
+    program_group_id = fields.Many2one('res.program.group', 'Program Group')
     program_id = fields.Many2one('res.program', 'Program')
-    org_id = fields.Many2one('res.org', 'Org')
+    project_group_id = fields.Many2one('res.project.group', 'Project Group')
     project_id = fields.Many2one('res.project', 'Project')
+
+    org_id = fields.Many2one('res.org', 'Org')
+    sector_id = fields.Many2one('res.sector', 'Sector')
+    division_group_id = fields.Many2one('res.division.group', 'Division Group')
     division_id = fields.Many2one('res.division', 'Division')
     department_id = fields.Many2one('res.department', 'Department')
     costcenter_id = fields.Many2one('res.costcenter', 'Costcenter')

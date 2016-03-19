@@ -7,16 +7,22 @@
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="after">
-                    <field name="mission_id" invisible="0"/>
-                    <field name="spa_id" invisible="0"/>
-                    <field name="program_base_type_id" invisible="0"/>
-                    <field name="program_type_id" invisible="0"/>
-                    <field name="program_id" invisible="0"/>
-                    <field name="org_id" invisible="0"/>
-                    <field name="project_id" />
-                    <field name="division_id" invisible="0"/>
-                    <field name="department_id" invisible="0"/>
-                    <field name="costcenter_id" />
+                    
+                	<field name="spa_id" invisible="1"/>
+                	<field name="mission_id" invisible="1" />
+                	<field name="program_scheme_id" invisible="1" />
+                	<field name="program_group_id" invisible="1" />
+                	<field name="program_id" invisible="1" />
+                	<field name="project_group_id" invisible="1" />
+                	<field name="project_id" attrs="{'required': [('costcenter_id','=',False)]}"/>
+                	
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="division_group_id" invisible="1" />
+                    <field name="division_id" invisible="1" />
+                    <field name="department_id" invisible="1"/>
+                    <field name="costcenter_id" attrs="{'required': [('project_id','=',False)]}"/>
+                    
                 </xpath>
             </field>
         </record>
