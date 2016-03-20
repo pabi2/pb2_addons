@@ -9,7 +9,8 @@
             <field name="arch" type="xml">
                 <tree string="Fiscalyear Budgeting Level" editable="top">
                     <field name="name" readonly="1"/>
-                    <field name="budgeting_level"/>
+                    <field name="budget_control"/>
+                    <field name="budgeting_level" attrs="{'required': [('budget_control','=',True)]}"/>
                 </tree>
             </field>
         </record>

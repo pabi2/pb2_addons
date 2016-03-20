@@ -2,7 +2,7 @@
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning, except_orm
-from . import account
+from .account import BUDGETING_LEVEL
 
 
 class AccountBudget(models.Model):
@@ -104,7 +104,7 @@ class AccountBudget(models.Model):
                 raise except_orm(
                     _('Budgeting Level Warning'),
                     _('Required budgeting level is %s') %
-                    (account.BUDGETING_LEVEL[budgeting_level]))
+                    (BUDGETING_LEVEL[budgeting_level]))
 
     @api.multi
     def budget_validate(self):
@@ -146,32 +146,61 @@ class AccountBudget(models.Model):
         return fiscal_id, budgeting_level
 
     @api.model
-    def check_budget(self, amount, budgeting_level_id, fiscal_id):
+    def _get_model_budgeting_level(self):
+        MODEL_DICT = {
+            'activity_group_id': 'account.activity.group',
+            'activity_id': 'account.activity',
+        }
+        return MODEL_DICT
+
+    @api.model
+    def _get_budgeting_resource(self, budgeting_resource_id, fiscal, *args):
+        model_dict = self._get_model_budgeting_level()
+        model = model_dict.get(fiscal.budgeting_level, False)
+        if not budgeting_resource_id:
+            field = BUDGETING_LEVEL[fiscal.budgeting_level]
+            raise Warning(_("Field %s is not entered, "
+                            "can not check for budget") % (field,))
+        # Get budget monitor of specified object, i.e., Activity Group ID
+        resource = self.env[model].browse(budgeting_resource_id)
+        return resource
+
+    @api.model
+    def _get_budget_monitor(self, resource, fiscal, *args):
+        monitors = resource.monitor_ids.\
+            filtered(lambda x: x.fiscalyear_id == fiscal)
+        if not monitors:
+            return False
+        return monitors
+
+    @api.model
+    def check_budget(self, amount, budgeting_resource_id, fiscal_id, *args):
         res = {'budget_ok': True,
                'message': False, }
         AccountFiscalyear = self.env['account.fiscalyear']
         fiscal = AccountFiscalyear.browse(fiscal_id)
-        budgeting_level = fiscal.budgeting_level
-        model = False
-        if budgeting_level == 'activity_group_id':
-            model = 'account.activity.group'
-        elif budgeting_level == 'activity_id':
-            model = 'account.activity'
-        # Get budget monitor of specified budgeting_level
-        resource = self.env[model].browse(budgeting_level_id)
-        monitor = resource.monitor_ids.\
-            filtered(lambda x: x.fiscalyear_id == fiscal)
-        # Validation
-        if not monitor:  # No plan, no check
+        if not fiscal.budget_control:
             return res
-        if amount > monitor.amount_balance:
+        resource = self._get_budgeting_resource(budgeting_resource_id,
+                                                fiscal, *args)
+        monitors = self._get_budget_monitor(resource, fiscal, *args)
+        # Validation
+        if not monitors:  # No plan
+            res['budget_ok'] = False
+            res['message'] = _('%s\n'
+                               '[%s] the requested budget is %s,\n'
+                               'but there is no budget plan for it.') % \
+                (fiscal.name, resource.name_get()[0][1],
+                 '{0:,}'.format(amount))
+            return res
+        if amount > monitors[0].amount_balance:
             res['budget_ok'] = False
             res['message'] = _('%s\n'
                                '[%s] remaining budget is %s,\n'
                                'but the requested budget is %s') % \
                 (fiscal.name, resource.name_get()[0][1],
-                 '{0:,}'.format(monitor.amount_balance),
-                 '{0:,}'.format(monitor.amount_plan))
+                 '{0:,}'.format(monitors[0].amount_balance),
+                 '{0:,}'.format(amount))
         return res
 
 #     @api.model

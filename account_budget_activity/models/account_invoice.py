@@ -12,10 +12,10 @@ class AccountInvoice(models.Model):
         for invoice in self:
             if invoice.type != 'in_invoice':
                 continue
-            # Get fiscal year and budget level
+            # Get fiscal year and budget level for this group
             fiscal_id, budgeting_level = AccountBudget.\
                 get_fiscal_and_budgeting_level(invoice.date_invoice)
-            # Find amount in this invoice to check againt budget
+            # Find amount in this invoice to check against budget
             self._cr.execute("""
                 select %(budgeting_level)s,
                 coalesce(sum(price_subtotal), 0.0) amount
@@ -28,7 +28,8 @@ class AccountInvoice(models.Model):
             for r in self._cr.dictfetchall():
                 res = AccountBudget.check_budget(r['amount'],
                                                  r[budgeting_level],
-                                                 fiscal_id)
+                                                 fiscal_id,
+                                                 budgeting_level)
                 if not res['budget_ok']:
                     raise Warning(res['message'])
         return True
