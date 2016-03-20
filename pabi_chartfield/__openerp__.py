@@ -18,9 +18,6 @@
         'views/purchase_view.xml',
         'views/purchase_request_view.xml',
         'views/purchase_requisition_view.xml',
-        'views/account_view.xml',
-        'views/res_org_structure_view.xml',
-        'views/res_spa_structure_view.xml',
         #'report/account_analytic_entries_report_view.xml',
     ],
     'demo': [
