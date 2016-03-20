@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_fiscalyear_budgeting_level_tree" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budgeting.level.tree</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="inherit_id" ref="account_budget_activity.view_fiscalyear_budgeting_level_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='budgeting_level']" position="after">
+                	<field name="budgeting_level_unit" />
+                </xpath>
+            </field>
+        </record>      
+    	
+    </data>
+</openerp>
