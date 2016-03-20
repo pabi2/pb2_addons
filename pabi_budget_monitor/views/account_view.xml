@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="account_budget_activity.view_fiscalyear_budgeting_level_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='budgeting_level']" position="after">
-                	<field name="budgeting_level_unit" />
+                	<field name="budgeting_level_unit"  attrs="{'required': [('budget_control','=',True)]}"/>
                 </xpath>
             </field>
         </record>      

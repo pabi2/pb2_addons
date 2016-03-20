@@ -9,6 +9,7 @@
     'depends': ['pabi_chartfield',
                 ],
     'data': [
+        'views/account_activity_view.xml',
         'views/account_view.xml',
         'views/res_org_structure_view.xml',
         'views/res_spa_structure_view.xml',
