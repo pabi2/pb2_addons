@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_move_reverse_invoice" model="ir.ui.view">
+            <field name="name">account.move.reverse.form.invoice</field>
+            <field name="model">account.move.reverse</field> 
+            <field name="inherit_id" ref="account_reversal.view_account_move_reverse"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_line_prefix']" position="after">
+                    <field name="is_invoice" invisible="True"/>
+                </xpath>
+                <xpath expr="//label" position="after">
+                    <label string="This wizard will cancel current invoice and create reversal entry for current invoice."
+                    attrs="{'invisible': [('is_invoice' , '=', False)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_reverse']" position="before">
+                    <button name="action_reverse_invoice" string="Reverse Entries"
+                            type="object" class="oe_highlight" 
+                            attrs="{'invisible': [('is_invoice' , '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="act_account_move_reverse_invoice" model="ir.actions.act_window">
+            <field name="name">Cancel Invoice and Reverse Entries</field>
+            <field name="res_model">account.move.reverse</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field> 
+            <field name="context">{'default_is_invoice': True}</field>
+            <field name="view_id" ref="view_account_move_reverse_invoice"/>
+            <field name="target">new</field>
+        </record>
+        
+        
+        <record id="view_account_move_reverse_voucher" model="ir.ui.view">
+            <field name="name">account.move.reverse.form.voucher</field>
+            <field name="model">account.move.reverse</field> 
+            <field name="inherit_id" ref="account_reversal.view_account_move_reverse"/>
+            <field name="arch" type="xml">
+                <xpath expr="//label" position="after">
+                    <label string="This wizard will cancel current payment and create reversal for entry for current payment."
+                      attrs="{'invisible': [('is_voucher' , '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='move_line_prefix']" position="after">
+                    <field name="is_voucher" invisible="True"/>
+                </xpath>
+                <xpath expr="//button[@name='action_reverse']" position="before">
+                    <button name="action_reverse_voucher" string="Reverse Entries"
+                            type="object" class="oe_highlight"
+                            attrs="{'invisible': [('is_voucher' , '=', False)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_reverse']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('is_invoice', '=', True), ('is_voucher', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//label" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('is_invoice', '=', True), ('is_voucher', '=', True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="act_account_move_reverse_voucher" model="ir.actions.act_window">
+            <field name="name">Cancel Payment and Reverse Entries</field>
+            <field name="res_model">account.move.reverse</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'default_is_voucher': True}</field>
+            <field name="view_id" ref="view_account_move_reverse_voucher"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>
