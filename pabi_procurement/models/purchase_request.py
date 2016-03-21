@@ -33,60 +33,88 @@ class PurchaseRequest(models.Model):
         ('estate', 'เช่าอสังหาริมทรัพย์'),
     }
 
-    state = fields.Selection(selection=_STATES,
-                             string='Status',
-                             track_visibility='onchange',
-                             required=True,
-                             default='draft')
+    state = fields.Selection(
+        selection=_STATES,
+        string='Status',
+        track_visibility='onchange',
+        required=True,
+        default='draft',
+    )
 
-    committee_ids = fields.One2many('procurement.committee', 'pr_id',
-                                    'Committee to Procure',
-                                    readonly=False,
-                                    track_visibility='onchange')
-    attachment_ids = fields.One2many('procurement.attachment', 'pr_id',
-                                     'Attach Files',
-                                     readonly=False,
-                                     track_visibility='onchange')
-    date_approved = fields.Date('Approved Date',
-                                help="Date when the request has been approved",
-                                default=lambda *args:
-                                time.strftime('%Y-%m-%d %H:%M:%S'),
-                                readonly=True,
-                                track_visibility='onchange')
-    responsible_man = fields.Many2one('res.users', 'Responsible Man',
-                                      track_visibility='onchange')
-    currency_id = fields.Many2one('res.currency', 'Currency')
+    committee_ids = fields.One2many(
+        'procurement.committee',
+        'pr_id',
+        'Committee to Procure',
+        readonly=False,
+        track_visibility='onchange',
+    )
+    attachment_ids = fields.One2many(
+        'procurement.attachment',
+        'pr_id',
+        'Attach Files',
+        readonly=False,
+        track_visibility='onchange',
+    )
+    date_approved = fields.Date(
+        'Approved Date',
+        help="Date when the request has been approved",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        readonly=True,
+        track_visibility='onchange',
+    )
+    responsible_man = fields.Many2one(
+        'res.users',
+        'Responsible Man',
+        track_visibility='onchange',
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        'Currency',
+    )
     currency_rate = fields.Float('Rate')
     objective = fields.Char('Objective')
-    procure_method = fields.Selection(selection=_METHOD,
-                                      string='Procurement Method',
-                                      track_visibility='onchange',
-                                      default='method1',
-                                      required=True)
+    procure_method = fields.Selection(
+        selection=_METHOD,
+        string='Procurement Method',
+        track_visibility='onchange',
+        default='method1',
+        required=True,
+    )
     original_durable_articles = fields.Boolean(
-        string='Original Durable Articles',
+        string='Prototype',
         default=False,
-        track_visibility='onchange',)
+        track_visibility='onchange',
+    )
     total_budget_value = fields.Float('Total Budget Value')
-    warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse')
-    procure_type = fields.Selection(selection=_TYPE,
-                                    string='Type',
-                                    track_visibility='onchange',
-                                    required=True)
+    warehouse_id = fields.Many2one(
+        'stock.warehouse',
+        'Warehouse',
+    )
+    procure_type = fields.Selection(
+        selection=_TYPE,
+        string='Type',
+        track_visibility='onchange',
+        required=True,
+    )
     delivery_address = fields.Text('Delivery Address')
-    amount_total = fields.Float('Total', readonly=True, default=0)
+    amount_total = fields.Float(
+        'Total',
+        readonly=True,
+        default=0
+    )
 
     @api.model
     def create(self, vals):
-        create_id = super(PurchaseRequest, self).create(vals)
+        create_rec = super(PurchaseRequest, self).create(vals)
         sum_total = 0
         if 'line_ids' in vals:
             if len(vals['line_ids']) > 0:
                 for line_rec in vals['line_ids']:
-                    line_flds = line_rec[2]
-                    sum_total += line_flds['product_qty'] * line_flds['product_price']
-            create_id.amount_total = sum_total
-        return create_id
+                    field = line_rec[2]
+                    sum_total += field['product_qty'] * field['product_price']
+            create_rec.amount_total = sum_total
+        return create_rec
 
     @api.multi
     def write(self, vals):
@@ -97,23 +125,24 @@ class PurchaseRequest(models.Model):
         found_recs = prql_obj.search(domain)
         for rec in found_recs:
             sum_total += rec.product_qty * rec.product_price
-        edited_id = super(PurchaseRequest, self).\
+        edited = super(PurchaseRequest, self).\
             write({'amount_total': sum_total})
-        return edited_id
+        return edited
 
 
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
 
-    product_price = fields.Float('Unit Price',
-                                 track_visibility='onchange',
-                                 digits_compute=dp.get_precision(
-                                     'Product Price'))
+    product_price = fields.Float(
+        'Unit Price',
+        track_visibility='onchange',
+    )
     fixed_asset = fields.Boolean('Fixed Asset')
-    price_subtotal = fields.Float('Sub Total',
-                                  compute="_amount_line",
-                                  store=True,
-                                  digits_compute=dp.get_precision('Account'))
+    price_subtotal = fields.Float(
+        'Sub Total',
+        compute="_amount_line",
+        store=True,
+    )
 
     @api.onchange('product_qty', 'product_price')
     @api.depends('product_qty', 'product_price')

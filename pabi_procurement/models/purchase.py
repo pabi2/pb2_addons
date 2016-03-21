@@ -33,67 +33,95 @@ class PurchaseOrder(models.Model):
     def _compute_total_fine(self):
         self.total_fine = self.amount_total * self.fine_rate
 
-    date_reference = fields.Date('Reference Date',
-                                 help="Date when the PO has been referenced",
-                                 default=lambda *args:
-                                 time.strftime('%Y-%m-%d %H:%M:%S'),
-                                 readonly=True,
-                                 track_visibility='onchange')
+    date_reference = fields.Date(
+        'Reference Date',
+        help="Date when the PO has been referenced",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        readonly=True,
+        track_visibility='onchange',
+    )
 
-    mycontract_id = fields.Selection(selection=_CONTRACT,
-                                     track_visibility='onchange',
-                                     default='1')
+    mycontract_id = fields.Selection(
+        selection=_CONTRACT,
+        track_visibility='onchange',
+        default='1',
+    )
 
-    receive_date_con = fields.Selection(selection=_RECEIVE_CON,
-                                        string='Receive Date Condition',
-                                        track_visibility='onchange',
-                                        default='1')
+    receive_date_con = fields.Selection(
+        selection=_RECEIVE_CON,
+        string='Receive Date Condition',
+        track_visibility='onchange',
+        default='1',
+    )
 
-    receive_date_date = fields.Date(' ',
-                                    help="Pick Receive Date",
-                                    default=lambda *args:
-                                    time.strftime('%Y-%m-%d %H:%M:%S'),
-                                    track_visibility='onchange')
+    receive_date_date = fields.Date(
+        ' ',
+        help="Pick Receive Date",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        track_visibility='onchange',
+    )
 
-    date_contract_start = fields.Date('Contract Start Date',
-                                      help="Date when the contract is started",
-                                      default=lambda *args:
-                                      time.strftime('%Y-%m-%d %H:%M:%S'),
-                                      track_visibility='onchange')
+    date_contract_start = fields.Date(
+        'Contract Start Date',
+        help="Date when the contract is started",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        track_visibility='onchange',
+    )
 
-    date_contract_end = fields.Date('Contract End Date',
-                                    help="Date when the contract is ended",
-                                    default=lambda *args:
-                                    time.strftime('%Y-%m-%d %H:%M:%S'),
-                                    track_visibility='onchange')
+    date_contract_end = fields.Date(
+        'Contract End Date',
+        help="Date when the contract is ended",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        track_visibility='onchange',
+    )
 
-    fine_rate = fields.Float('Fine Rate',
-                             _compute='_compute_total_fine',
-                             store=True,
-                             default=0)
+    fine_rate = fields.Float(
+        'Fine Rate',
+        _compute='_compute_total_fine',
+        store=True,
+        default=0,
+    )
 
-    total_fine = fields.Float('Total Fine',
-                              _compute='_compute_total_fine',
-                              store=True,
-                              )
+    total_fine = fields.Float(
+        'Total Fine',
+        _compute='_compute_total_fine',
+        store=True,
+    )
 
-    committee_ids = fields.One2many('procurement.committee', 'po_id',
-                                    'PO Committee',
-                                    readonly=False,
-                                    track_visibility='onchange')
+    committee_ids = fields.One2many(
+        'procurement.committee', 'po_id',
+        'PO Committee',
+        readonly=False,
+        track_visibility='onchange',
+    )
 
     #get from Call for Bids
-    create_by = fields.Many2one('res.users', 'Create By')
+    create_by = fields.Many2one(
+        'res.users',
+        'Create By',
+    )
 
-    verified_by = fields.Many2one('res.users', 'Verified By')
+    verified_by = fields.Many2one(
+        'res.users',
+        'Verified By',
+    )
 
-    approved_by = fields.Many2one('res.users', 'Approved By')
+    approved_by = fields.Many2one(
+        'res.users',
+        'Approved By',
+    )
 
     position = fields.Char('Position')
 
-    date_approval = fields.Date('Approved Date',
-                                 help="Date when the PO has been approved",
-                                 default=lambda *args:
-                                 time.strftime('%Y-%m-%d %H:%M:%S'),
-                                 readonly=True,
-                                 track_visibility='onchange')
+    date_approval = fields.Date(
+        'Approved Date',
+        help="Date when the PO has been approved",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        readonly=True,
+        track_visibility='onchange',
+    )
