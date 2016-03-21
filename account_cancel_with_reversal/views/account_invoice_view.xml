@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='invoice_cancel']" position="after">
+                    <button name="%(act_account_move_reverse_invoice)d" 
+                            type="action" 
+                            string="Cancel Invoice"
+                            class="oe_highlight" 
+                            states="open"
+                    />
+                </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="attributes">
+                    <attribute name="states">draft,proforma2</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='invoice_cancel']" position="after">
+                    <button name="%(act_account_move_reverse_invoice)d" 
+                            type="action" 
+                            string="Cancel Invoice"
+                            class="oe_highlight" 
+                            states="open"
+                    />
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
