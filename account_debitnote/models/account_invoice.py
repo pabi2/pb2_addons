@@ -2,7 +2,7 @@
 import time
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -57,8 +57,7 @@ class AccountInvoice(models.Model):
 
         type_list = ['out_invoice', 'in_invoice', ]
         if invoice.type not in type_list:
-            raise Warning(_('Error!'),
-                          _('Can not create Debit Note from this document!'))
+            raise UserError(_('Can not create Debit Note from this document!'))
 
         invoice_data = {}
         for field in ['name', 'reference', 'comment', 'date_due', 'partner_id',
@@ -197,5 +196,3 @@ class AccountInvoice(models.Model):
                     '', [('type', 'in', type)], limit=None, name_get_uid=1)
                 res['fields'][field]['selection'] = journal_select
         return res
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

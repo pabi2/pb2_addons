@@ -2,7 +2,7 @@
 import time
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 
 class AccountDebitNote(models.Model):
@@ -78,8 +78,7 @@ class AccountDebitNote(models.Model):
             journal_id = form.journal_id.id
             for inv in inv_obj.browse(self.env.context.get('active_ids')):
                 if inv.state in ['draft', 'proforma2', 'cancel']:
-                    raise Warning(_('Error!'),
-                                  _(''' Cannot create debit note for
+                    raise UserError(_(''' Cannot create debit note for
                                  draft/proforma/cancel invoice.'''))
                 if form.period.id:
                     period = form.period.id
@@ -130,8 +129,7 @@ class AccountDebitNote(models.Model):
                     description = inv.name
 
                 if not period:
-                    raise Warning(_('Insufficient Data!'),
-                                  _('No period found on the invoice.'))
+                    raise UserError(_('No period found on the invoice.'))
 
                 debitnote = inv.debitnote(date,
                                           period,
@@ -157,5 +155,3 @@ class AccountDebitNote(models.Model):
     def invoice_debitnote(self):
         for invoice in self:
             return invoice.compute_debitnote()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

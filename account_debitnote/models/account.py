@@ -23,5 +23,3 @@ class AccountJournal(models.Model):
             Select 'General' for miscellaneous operations journals.
             Select 'Opening/Closing Situation' for entries generated
             for new fiscal years.""")
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
