@@ -33,3 +33,4 @@ Make sure the new Journal has been created for them (manually).
     'application': True,
     'installable': True,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
