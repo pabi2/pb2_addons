@@ -16,6 +16,13 @@ class PurchaseOrder(models.Model):
         ('4', '4'),
     }
 
+    _BID_TYPE = {
+        ('regular', 'ซื้อ/จ้าง/เช่า'),
+        ('consult', 'จ้างที่ปรึกษา'),
+        ('design', 'จ้างออกแบบ'),
+        ('estate', 'เช่าอสังหาริมทรัพย์'),
+    }
+
     _RECEIVE_CON = {
         ('1', 'จำนวนวัน'),
         ('2', 'วันที่'),
@@ -74,3 +81,19 @@ class PurchaseOrder(models.Model):
                                     'PO Committee',
                                     readonly=False,
                                     track_visibility='onchange')
+
+    #get from Call for Bids
+    create_by = fields.Many2one('res.users', 'Create By')
+
+    verified_by = fields.Many2one('res.users', 'Verified By')
+
+    approved_by = fields.Many2one('res.users', 'Approved By')
+
+    position = fields.Char('Position')
+
+    date_approval = fields.Date('Approved Date',
+                                 help="Date when the PO has been approved",
+                                 default=lambda *args:
+                                 time.strftime('%Y-%m-%d %H:%M:%S'),
+                                 readonly=True,
+                                 track_visibility='onchange')

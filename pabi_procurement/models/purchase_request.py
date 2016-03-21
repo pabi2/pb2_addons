@@ -2,7 +2,7 @@
 # © 2015 TrinityRoots
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import fields, models
+from openerp import fields, models, api
 import openerp.addons.decimal_precision as dp
 import time
 
@@ -27,10 +27,10 @@ class PurchaseRequest(models.Model):
         ('method4', 'Method 4'),
     }
     _TYPE = {
-        ('type1', 'Type 1'),
-        ('type2', 'Type 2'),
-        ('type3', 'Type 3'),
-        ('type4', 'Type 4'),
+        ('regular', 'ซื้อ/จ้าง/เช่า'),
+        ('consult', 'จ้างที่ปรึกษา'),
+        ('design', 'จ้างออกแบบ'),
+        ('estate', 'เช่าอสังหาริมทรัพย์'),
     }
 
     state = fields.Selection(selection=_STATES,
@@ -61,11 +61,12 @@ class PurchaseRequest(models.Model):
     procure_method = fields.Selection(selection=_METHOD,
                                       string='Procurement Method',
                                       track_visibility='onchange',
+                                      default='method1',
                                       required=True)
     original_durable_articles = fields.Boolean(
+        string='Original Durable Articles',
         default=False,
-        track_visibility='onchange',
-        required=True)
+        track_visibility='onchange',)
     total_budget_value = fields.Float('Total Budget Value')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse')
     procure_type = fields.Selection(selection=_TYPE,
@@ -73,6 +74,32 @@ class PurchaseRequest(models.Model):
                                     track_visibility='onchange',
                                     required=True)
     delivery_address = fields.Text('Delivery Address')
+    amount_total = fields.Float('Total', readonly=True, default=0)
+
+    @api.model
+    def create(self, vals):
+        create_id = super(PurchaseRequest, self).create(vals)
+        sum_total = 0
+        if 'line_ids' in vals:
+            if len(vals['line_ids']) > 0:
+                for line_rec in vals['line_ids']:
+                    line_flds = line_rec[2]
+                    sum_total += line_flds['product_qty'] * line_flds['product_price']
+            create_id.amount_total = sum_total
+        return create_id
+
+    @api.multi
+    def write(self, vals):
+        super(PurchaseRequest, self).write(vals)
+        prql_obj = self.env['purchase.request.line']
+        sum_total = 0
+        domain = [('request_id', '=', self.id)]
+        found_recs = prql_obj.search(domain)
+        for rec in found_recs:
+            sum_total += rec.product_qty * rec.product_price
+        edited_id = super(PurchaseRequest, self).\
+            write({'amount_total': sum_total})
+        return edited_id
 
 
 class PurchaseRequestLine(models.Model):
@@ -82,3 +109,13 @@ class PurchaseRequestLine(models.Model):
                                  track_visibility='onchange',
                                  digits_compute=dp.get_precision(
                                      'Product Price'))
+    fixed_asset = fields.Boolean('Fixed Asset')
+    price_subtotal = fields.Float('Sub Total',
+                                  compute="_amount_line",
+                                  store=True,
+                                  digits_compute=dp.get_precision('Account'))
+
+    @api.onchange('product_qty', 'product_price')
+    @api.depends('product_qty', 'product_price')
+    def _amount_line(self):
+        self.price_subtotal = self.product_qty * self.product_price

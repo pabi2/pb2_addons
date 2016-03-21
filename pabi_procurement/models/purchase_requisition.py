@@ -10,10 +10,12 @@ import openerp.addons.decimal_precision as dp
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
-    _BID_TYPE = [
-        ('buy', 'Buy'),
-        ('hire', 'Hire'),
-        ('rent', 'Rent')]
+    _BID_TYPE = {
+        ('regular', 'ซื้อ/จ้าง/เช่า'),
+        ('consult', 'จ้างที่ปรึกษา'),
+        ('design', 'จ้างออกแบบ'),
+        ('estate', 'เช่าอสังหาริมทรัพย์'),
+    }
 
     _METHOD = {
         ('method1', 'ราคาไม่เกิน 30,000 บาท'),
@@ -54,13 +56,14 @@ class PurchaseRequisition(models.Model):
     @api.model
     def create(self, vals):
         create_id = super(PurchaseRequisition, self).create(vals)
-
         sum_total = 0
-        if len(vals['line_ids']) > 0:
-            for line_rec in vals['line_ids']:
-                line_flds = line_rec[2]
-                sum_total += line_flds['product_qty'] * line_flds['price_unit']
-        create_id.amount_total = sum_total
+        if 'line_ids' in vals:
+            if len(vals['line_ids']) > 0:
+                for line_rec in vals['line_ids']:
+                    line_flds = line_rec[2]
+                    sum_total += \
+                        line_flds['product_qty'] * line_flds['price_unit']
+            create_id.amount_total = sum_total
         return create_id
 
     @api.multi
@@ -80,7 +83,7 @@ class PurchaseRequisition(models.Model):
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
 
-    price_unit = fields.Float('Unit Price', required=True,
+    price_unit = fields.Float('Unit Price',
                               digits_compute=dp.get_precision('Product Price'))
     fixed_asset = fields.Boolean('Fixed Asset')
     price_subtotal = fields.Float('Sub Total',
