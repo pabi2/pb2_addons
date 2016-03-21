@@ -14,7 +14,7 @@
             <field name="sequence_id" ref="sale_debit_note_sequence"/>
             <field name="user_id" ref="base.user_root"/>
         </record>
-        
+
         <record id="purchase_debit_note_sequence" model="ir.sequence">
             <field name="name">purchase debit note</field>
             <field eval="3" name="padding"/>
@@ -28,5 +28,5 @@
             <field name="user_id" ref="base.user_root"/>
         </record>
 
-	</data>
+    </data>
 </openerp>

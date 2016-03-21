@@ -2,7 +2,7 @@
 import time
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp.exceptions import Warning
 
 
 class AccountInvoice(models.Model):
@@ -183,8 +183,6 @@ class AccountInvoice(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type=False,
                         toolbar=False, submenu=False):
-        if self.env.context is None:
-            self.env.context = {}
         res = super(AccountInvoice, self).fields_view_get(
             view_id=view_id, view_type=view_type,
             toolbar=toolbar, submenu=submenu

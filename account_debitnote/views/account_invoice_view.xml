@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+
         <record id="invoice_form" model="ir.ui.view">
             <field name="name">invoice.form.ext</field>
             <field name="model">account.invoice</field>
@@ -27,14 +28,14 @@
                             <group>
                                    <field name="debited_amount" />
                             </group>
-                            <field name="debit_invoice_ids"  />
+                            <field name="debit_invoice_ids" />
                         </page>
                     </page>
                 </data>
             </field>
         </record>
-        
-        <record id="invoice_supplier_form_ext" model="ir.ui.view">
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
             <field name="name">invoice.supplier.ext</field>
             <field name="model">account.invoice</field>
             <field name="type">form</field>
@@ -45,8 +46,8 @@
                 </button>
             </field>
         </record>
-        
-        <record id="view_account_invoice_filter_ext" model="ir.ui.view">
+
+        <record id="view_account_invoice_filter" model="ir.ui.view">
             <field name="name">view.account.invoice.filter.ext</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
@@ -57,6 +58,6 @@
                 </search>
             </field>
         </record>
-        
+
     </data>
 </openerp>

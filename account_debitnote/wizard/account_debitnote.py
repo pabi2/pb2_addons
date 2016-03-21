@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import time
 
-from openerp import models, fields,  api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning
 
 
 class AccountDebitNote(models.Model):
@@ -12,9 +12,6 @@ class AccountDebitNote(models.Model):
     @api.model
     def default_journal(self):
         obj_journal = self.env['account.journal']
-        user_obj = self.env['res.users']
-        if self.env.context is None:
-            self.env.context = {}
         inv_type = self.env.context.get('type', 'out_invoice')
         company_id = self.env.user.company_id.id
         type = (inv_type == 'out_invoice') and 'sale_debitnote' or \
@@ -44,10 +41,7 @@ class AccountDebitNote(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type=False,
                         toolbar=False, submenu=False):
-        if self.env.context is None:
-            self.env.context = {}
         journal_obj = self.env['account.journal']
-        user_obj = self.env['res.users']
 
         res = super(AccountDebitNote, self).fields_view_get(
             view_id=view_id, view_type=view_type,
@@ -75,11 +69,6 @@ class AccountDebitNote(models.Model):
 
         """
         inv_obj = self.env['account.invoice']
-        mod_obj = self.env['ir.model.data']
-        act_obj = self.env['ir.actions.act_window']
-        res_users_obj = self.env['res.users']
-        if self.env.context is None:
-            self.env.context = {}
 
         for form in self:
             created_inv = []
@@ -104,36 +93,36 @@ class AccountDebitNote(models.Model):
                 if form.date:
                     date = form.date
                     if not form.period.id:
-                            self._cr.execute(
-                                """ select
-                                        name
-                                    from
-                                        ir_model_fields
-                                    where
-                                        model = 'account.period'
-                                        and name = 'company_id'
-                                """
-                            )
-                            result_query = self._cr.fetchone()
-                            if result_query:
-                                self._cr.execute("""
-                                    select p.id
-                                    from
-                                        account_fiscalyear y,
-                                        account_period p
-                                    where
-                                        y.id=p.fiscalyear_id and
-                                        date(%s) between p.date_start AND
-                                        p.date_stop and y.company_id = %s
-                                    limit 1""", (date, company.id,))
-                            else:
-                                self._cr.execute("""SELECT id
-                                        from account_period where date(%s)
-                                        between date_start AND  date_stop \
-                                        limit 1 """, (date,))
-                            res = self._cr.fetchone()
-                            if res:
-                                period = res[0]
+                        self._cr.execute(
+                            """ select
+                                    name
+                                from
+                                    ir_model_fields
+                                where
+                                    model = 'account.period'
+                                    and name = 'company_id'
+                            """
+                        )
+                        result_query = self._cr.fetchone()
+                        if result_query:
+                            self._cr.execute("""
+                                select p.id
+                                from
+                                    account_fiscalyear y,
+                                    account_period p
+                                where
+                                    y.id=p.fiscalyear_id and
+                                    date(%s) between p.date_start AND
+                                    p.date_stop and y.company_id = %s
+                                limit 1""", (date, company.id,))
+                        else:
+                            self._cr.execute("""SELECT id
+                                    from account_period where date(%s)
+                                    between date_start AND  date_stop \
+                                    limit 1 """, (date,))
+                        res = self._cr.fetchone()
+                        if res:
+                            period = res[0]
                 else:
                     date = inv.date_invoice
                 if form.description:
