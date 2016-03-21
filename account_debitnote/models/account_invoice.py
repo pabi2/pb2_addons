@@ -22,9 +22,9 @@ class AccountInvoice(models.Model):
             for field in line._all_columns.keys():
                 if line._all_columns[field].column._type == 'many2one':
                     clean_line[field] = line[field].id
-                elif line._all_columns[field].column._type not in [
-                    'many2many', 'one2many',
-                     ]:
+                elif line._all_columns[field].column._type not in ['many2many',
+                                                                   'one2many',
+                                                                   ]:
                     clean_line[field] = line[field]
                 elif field == 'invoice_line_tax_id':
                     tax_list = []
@@ -55,7 +55,7 @@ class AccountInvoice(models.Model):
         """
         obj_journal = self.env['account.journal']
 
-        type_list = ['out_invoice', 'in_invoice']
+        type_list = ['out_invoice', 'in_invoice', ]
         if invoice.type not in type_list:
             raise Warning(_('Error!'),
                           _('Can not create Debit Note from this document!'))
@@ -82,12 +82,10 @@ class AccountInvoice(models.Model):
             debitnote_journal_ids = [journal_id]
         elif invoice['type'] == 'in_invoice':
             debitnote_journal_ids = obj_journal.search(
-                                [('type', '=', 'purchase_debitnote')]
-                                ).ids
+                                [('type', '=', 'purchase_debitnote')]).ids
         else:
             debitnote_journal_ids = obj_journal.search(
-                                [('type', '=', 'sale_debitnote')]
-                                ).ids
+                                [('type', '=', 'sale_debitnote')]).ids
 
         if not date:
             date = time.strftime('%Y-%m-%d')
@@ -160,8 +158,7 @@ class AccountInvoice(models.Model):
     def _compute_is_debitnote(self):
         for invoice in self:
             if invoice.journal_id and invoice.journal_id.type in (
-                                    'sale_debitnote', 'purchase_debitnote'
-                                    ):
+                                    'sale_debitnote', 'purchase_debitnote'):
                 invoice.is_debitnote = True
             else:
                 invoice.is_debitnote = False
@@ -199,8 +196,7 @@ class AccountInvoice(models.Model):
                 journal_select = journal_obj._name_search(
                                     '',
                                     [('type', 'in', type)],
-                                    limit=None, name_get_uid=1
-                                    )
+                                    limit=None, name_get_uid=1)
                 res['fields'][field]['selection'] = journal_select
         return res
 

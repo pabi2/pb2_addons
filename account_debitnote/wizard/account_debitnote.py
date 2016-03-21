@@ -53,10 +53,9 @@ class AccountDebitNote(models.Model):
                        (type == 'in_invoice') and 'purchase_debitnote'
         for field in res['fields']:
             if field == 'journal_id':
-                journal_select = journal_obj._name_search('', [
-                     ('type', '=', journal_type),
-                     ('company_id', 'child_of', [company_id])
-                    ])
+                journal_select = journal_obj._name_search(
+                    '', [('type', '=', journal_type),
+                         ('company_id', 'child_of', [company_id])])
                 res['fields'][field]['selection'] = journal_select
         return res
 
