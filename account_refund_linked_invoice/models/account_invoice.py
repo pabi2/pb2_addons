@@ -47,5 +47,5 @@ class AccountInvoice(models.Model):
             date=date, period_id=period_id,
             description=description, journal_id=journal_id
             )
-        res['origin_invoice_id'] = invoice.id
+        res.update(origin_invoice_id=invoice.id)
         return res
