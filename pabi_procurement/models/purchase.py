@@ -99,7 +99,7 @@ class PurchaseOrder(models.Model):
         track_visibility='onchange',
     )
 
-    #get from Call for Bids
+    # get from Call for Bids
     create_by = fields.Many2one(
         'res.users',
         'Create By',
