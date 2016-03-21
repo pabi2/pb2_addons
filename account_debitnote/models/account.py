@@ -16,8 +16,6 @@ class AccountJournal(models.Model):
          ('bank', 'Bank and Checks'),
          ('general', 'General'),
          ('situation', 'Opening/Closing Situation')],
-        string='Type',
-        required=True,
         help="""Select 'Sale' for customer invoices journals.
             Select 'Purchase' for supplier invoices journals.
             Select 'Cash' or 'Bank' for journals that are used
