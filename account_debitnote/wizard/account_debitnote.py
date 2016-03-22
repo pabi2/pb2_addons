@@ -146,9 +146,7 @@ class AccountDebitNote(models.Model):
 
             result = self.env.ref('account.' + xml_id)
             result = result.read()[0]
-            invoice_domain = eval(result['domain'])
-            invoice_domain.append(('id', 'in', created_inv))
-            result['domain'] = invoice_domain
+            result['domain'] = [('id', 'in', created_inv)]
             return result
 
     @api.multi
