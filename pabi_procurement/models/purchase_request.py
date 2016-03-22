@@ -72,7 +72,7 @@ class PurchaseRequest(models.Model):
         'Currency',
     )
     currency_rate = fields.Float('Rate')
-    objective = fields.Char('Objective')
+    objective = fields.Text('Objective')
     procure_method = fields.Selection(
         selection=_METHOD,
         string='Procurement Method',
