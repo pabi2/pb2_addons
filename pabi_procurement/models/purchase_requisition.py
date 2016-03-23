@@ -25,7 +25,6 @@ class PurchaseRequisition(models.Model):
     }
 
     bid_type = fields.Selection(_BID_TYPE, string="Type")
-    description = fields.Text(string='Description')
     objective = fields.Text(string='Objective')
     total_budget_value = fields.Float('Total Budget Value')
     original_durable_articles = fields.Boolean(
@@ -43,15 +42,15 @@ class PurchaseRequisition(models.Model):
     currency_id = fields.Many2one('res.currency', 'Currency')
     currency_rate = fields.Float('Rate')
     committee_ids = fields.One2many(
-        'procurement.committee',
-        'pr_id',
-        'Committee to Procure',
+        'purchase.requisition.committee',
+        'requisition_id',
+        'Committee',
         readonly=False,
         track_visibility='onchange',
     )
     attachment_ids = fields.One2many(
-        'procurement.attachment',
-        'pr_id',
+        'purchase.requisition.attachment',
+        'requisition_id',
         'Attach Files',
         readonly=False,
         track_visibility='onchange',
@@ -92,6 +91,17 @@ class PurchaseRequisition(models.Model):
             write({'amount_total': sum_total})
         return edited
 
+    @api.model
+    def _prepare_purchase_order_line(self, requisition, requisition_line,
+                                     purchase_id, supplier):
+        res = super(PurchaseRequisition, self).\
+            _prepare_purchase_order_line(requisition, requisition_line,
+                                         purchase_id, supplier)
+        res.update({
+            'requisition_line_id': requisition_line.id,
+        })
+        return res
+
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
@@ -106,8 +116,11 @@ class PurchaseRequisitionLine(models.Model):
         store=True,
         digits_compute=dp.get_precision('Account')
     )
+    order_line_id = fields.Many2one(
+        'purchase_order_line',
+        'Purchase Order Line'
+    )
 
-    @api.onchange('product_qty', 'price_unit')
     @api.depends('product_qty', 'price_unit')
     def _amount_line(self):
         self.price_subtotal = self.product_qty * self.price_unit

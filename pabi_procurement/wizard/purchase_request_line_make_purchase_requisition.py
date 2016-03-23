@@ -10,8 +10,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
 
     @api.model
     def _prepare_purchase_requisition_line(self, pr, item):
-        res = super(PurchaseRequestLineMakePurchaseRequisition, self)\
-            ._prepare_purchase_requisition_line(pr, item)
+        res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
+            _prepare_purchase_requisition_line(pr, item)
         if 'price_unit' not in res:
             res.update({'price_unit': item.product_price})
         return res

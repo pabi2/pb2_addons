@@ -93,8 +93,15 @@ class PurchaseOrder(models.Model):
     )
 
     committee_ids = fields.One2many(
-        'procurement.committee', 'po_id',
-        'PO Committee',
+        'purchase.order.committee', 'order_id',
+        'Committee',
+        readonly=False,
+        track_visibility='onchange',
+    )
+
+    committee_ids = fields.One2many(
+        'purchase.order.committee', 'order_id',
+        'Committee',
         readonly=False,
         track_visibility='onchange',
     )
@@ -124,4 +131,13 @@ class PurchaseOrder(models.Model):
         time.strftime('%Y-%m-%d %H:%M:%S'),
         readonly=True,
         track_visibility='onchange',
+    )
+
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    requisition_line_id = fields.Many2one(
+        'purchase_requisition_line',
+        'Purchase Requisition Line'
     )

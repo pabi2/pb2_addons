@@ -41,15 +41,15 @@ class PurchaseRequest(models.Model):
     )
 
     committee_ids = fields.One2many(
-        'procurement.committee',
-        'pr_id',
-        'Committee to Procure',
+        'purchase.request.committee',
+        'request_id',
+        'Committee',
         readonly=False,
         track_visibility='onchange',
     )
     attachment_ids = fields.One2many(
-        'procurement.attachment',
-        'pr_id',
+        'purchase.request.attachment',
+        'request_id',
         'Attach Files',
         readonly=False,
         track_visibility='onchange',
@@ -143,7 +143,6 @@ class PurchaseRequestLine(models.Model):
         store=True,
     )
 
-    @api.onchange('product_qty', 'product_price')
     @api.depends('product_qty', 'product_price')
     def _amount_line(self):
         self.price_subtotal = self.product_qty * self.product_price

@@ -7,11 +7,14 @@
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='description']" position="replace">
+
+                </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="after">
                     <field name="bid_type"/>
-                    <field name="description"/>
                     <field name="objective"/>
+                    <field name="description"/>
                     <field name="total_budget_value"/>
                     <field name="original_durable_articles"/>
                 </xpath>
