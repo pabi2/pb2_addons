@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_purchase_request_line_make_purchase_requisition" model="ir.ui.view" >
+            <field name="name">view.purchase.request.line.make.purchase.requisition</field>
+            <field name="model">purchase.request.line.make.purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_request_to_requisition.view_purchase_request_line_make_purchase_requisition"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group/field/tree/field[@name='product_qty']" position="before">
+                    <field name="activity_group_id" invisible="1"/>
+                    <field name="activity_id"/>
+                </xpath>
+            </field>
+        </record>
+    	
+    </data>
+</openerp>
