@@ -19,18 +19,6 @@ class PurchaseRequest(models.Model):
         ('yes', 'YES'),
         ('no', 'NO'),
     }
-    _METHOD = {
-        ('method1', 'ราคาไม่เกิน 30,000 บาท'),
-        ('method2', 'Method 2'),
-        ('method3', 'Method 3'),
-        ('method4', 'Method 4'),
-    }
-    _TYPE = {
-        ('regular', 'ซื้อ/จ้าง/เช่า'),
-        ('consult', 'จ้างที่ปรึกษา'),
-        ('design', 'จ้างออกแบบ'),
-        ('estate', 'เช่าอสังหาริมทรัพย์'),
-    }
 
     state = fields.Selection(
         selection=_STATES,
@@ -39,20 +27,17 @@ class PurchaseRequest(models.Model):
         required=True,
         default='draft',
     )
-
     committee_ids = fields.One2many(
         'purchase.request.committee',
         'request_id',
         'Committee',
         readonly=False,
-        track_visibility='onchange',
     )
     attachment_ids = fields.One2many(
         'purchase.request.attachment',
         'request_id',
         'Attach Files',
         readonly=False,
-        track_visibility='onchange',
     )
     date_approved = fields.Date(
         'Approved Date',
@@ -62,9 +47,9 @@ class PurchaseRequest(models.Model):
         readonly=True,
         track_visibility='onchange',
     )
-    responsible_man = fields.Many2one(
+    responsible_person = fields.Many2one(
         'res.users',
-        'Responsible Man',
+        'Responsible Person',
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
@@ -73,40 +58,34 @@ class PurchaseRequest(models.Model):
     )
     currency_rate = fields.Float('Rate')
     objective = fields.Text('Objective')
-    procure_method = fields.Selection(
-        selection=_METHOD,
-        string='Procurement Method',
-        track_visibility='onchange',
-        default='method1',
-        required=True,
+    purchase_method_id = fields.Many2one(
+        'purchase.method',
+        'Method',
     )
-    original_durable_articles = fields.Boolean(
-        string='Prototype',
+    prototype = fields.Boolean(
+        'Prototype',
         default=False,
-        track_visibility='onchange',
     )
-    total_budget_value = fields.Float('Total Budget Value')
+    total_budget_value = fields.Float('Total Budget Value', default=0.0)
     warehouse_id = fields.Many2one(
         'stock.warehouse',
         'Warehouse',
     )
-    procure_type = fields.Selection(
-        selection=_TYPE,
-        string='Type',
-        track_visibility='onchange',
-        required=True,
+    purchase_type_id = fields.Many2one(
+        'purchase.type',
+        'Type',
     )
     delivery_address = fields.Text('Delivery Address')
     amount_total = fields.Float(
         'Total',
         readonly=True,
-        default=0
+        default=0.0
     )
 
     @api.model
     def create(self, vals):
         create_rec = super(PurchaseRequest, self).create(vals)
-        sum_total = 0
+        sum_total = 0.0
         if 'line_ids' in vals:
             if len(vals['line_ids']) > 0:
                 for line_rec in vals['line_ids']:
@@ -119,7 +98,7 @@ class PurchaseRequest(models.Model):
     def write(self, vals):
         super(PurchaseRequest, self).write(vals)
         prql_obj = self.env['purchase.request.line']
-        sum_total = 0
+        sum_total = 0.0
         domain = [('request_id', '=', self.id)]
         found_recs = prql_obj.search(domain)
         for rec in found_recs:

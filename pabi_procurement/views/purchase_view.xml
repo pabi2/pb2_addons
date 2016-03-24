@@ -43,11 +43,19 @@
                         <field name="fine_rate" />
                         <field name="total_fine"/>
                         <field name="receive_date_con"/>
-                        <field name="receive_date_date" attrs="{'invisible':[('receive_date_con', '!=', '2')]}"/>
+                        <field name="picking_receive_date" attrs="{'invisible':[('receive_date_con', '!=', '2')]}"/>
                     </group>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
                         <field name="committee_ids">
                             <tree>
                                 <field name="sequence"/>

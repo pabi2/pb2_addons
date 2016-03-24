@@ -5,39 +5,26 @@
 
 from openerp import api, fields, models
 import openerp.addons.decimal_precision as dp
+import time
 
 
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
-    _BID_TYPE = {
-        ('regular', 'ซื้อ/จ้าง/เช่า'),
-        ('consult', 'จ้างที่ปรึกษา'),
-        ('design', 'จ้างออกแบบ'),
-        ('estate', 'เช่าอสังหาริมทรัพย์'),
-    }
-
-    _METHOD = {
-        ('method1', 'ราคาไม่เกิน 30,000 บาท'),
-        ('method2', 'Method 2'),
-        ('method3', 'Method 3'),
-        ('method4', 'Method 4'),
-    }
-
-    bid_type = fields.Selection(_BID_TYPE, string="Type")
-    objective = fields.Text(string='Objective')
-    total_budget_value = fields.Float('Total Budget Value')
-    original_durable_articles = fields.Boolean(
+    purchase_type_id = fields.Many2one(
+        'purchase.type',
+        'Type',
+    )
+    objective = fields.Text('Objective')
+    total_budget_value = fields.Float('Total Budget Value', default=0.0)
+    prototype = fields.Boolean(
         string='Prototype',
         default=False,
-        track_visibility='onchange',
     )
-    procure_method = fields.Selection(
-        selection=_METHOD,
-        string='Procurement Method',
-        default='method1',
+    purchase_method_id = fields.Many2one(
+        'purchase.method',
+        'Method',
         track_visibility='onchange',
-        required=True
     )
     currency_id = fields.Many2one('res.currency', 'Currency')
     currency_rate = fields.Float('Rate')
@@ -45,30 +32,32 @@ class PurchaseRequisition(models.Model):
         'purchase.requisition.committee',
         'requisition_id',
         'Committee',
-        readonly=False,
-        track_visibility='onchange',
     )
     attachment_ids = fields.One2many(
         'purchase.requisition.attachment',
         'requisition_id',
         'Attach Files',
-        readonly=False,
-        track_visibility='onchange',
     )
     amount_total = fields.Float(
         'Total',
         readonly=True,
-        default=0,
+        default=0.0,
     )
-    approval_document_no = fields.Char(string="No.")
-    approval_document_date = fields.Date(string="Date")
-    approval_document_header = fields.Text(string="Header")
-    approval_document_footer = fields.Text(string="Footer")
+    approval_document_no = fields.Char('No.')
+    approval_document_date = fields.Date(
+        'Date of Approval',
+        help="Date of the order has been approved ",
+        default=lambda *args:
+        time.strftime('%Y-%m-%d %H:%M:%S'),
+        track_visibility='onchange',
+    )
+    approval_document_header = fields.Text('Header')
+    approval_document_footer = fields.Text('Footer')
 
     @api.model
     def create(self, vals):
         create_rec = super(PurchaseRequisition, self).create(vals)
-        sum_total = 0
+        sum_total = 0.0
         if 'line_ids' in vals:
             if len(vals['line_ids']) > 0:
                 for line_rec in vals['line_ids']:
@@ -82,7 +71,7 @@ class PurchaseRequisition(models.Model):
     def write(self, vals):
         super(PurchaseRequisition, self).write(vals)
         prql_obj = self.env['purchase.requisition.line']
-        sum_total = 0
+        sum_total = 0.0
         domain = [('requisition_id', '=', self.id)]
         found_recs = prql_obj.search(domain)
         for rec in found_recs:

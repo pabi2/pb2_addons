@@ -13,8 +13,8 @@ class PurchaseRequestAttachment(models.Model):
         'purchase_request',
         'Purchase Request'
     )
-    name = fields.Char(string='File Name')
-    file_url = fields.Binary(string='File Url')
+    name = fields.Char('File Name')
+    file_url = fields.Binary('File Url')
 
 
 class PurchaseRequisitionAttachment(models.Model):
@@ -25,5 +25,5 @@ class PurchaseRequisitionAttachment(models.Model):
         'purchase_requisition',
         'Purchase Requisition'
     )
-    name = fields.Char(string='File Name')
-    file_url = fields.Binary(string='File Url')
+    name = fields.Char('File Name')
+    file_url = fields.Binary('File Url')

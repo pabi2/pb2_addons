@@ -12,19 +12,17 @@
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="after">
-                    <field name="bid_type"/>
+                    <field name="purchase_type_id"/>
                     <field name="objective"/>
                     <field name="description"/>
                     <field name="total_budget_value"/>
-                    <field name="original_durable_articles"/>
+                    <field name="prototype"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
-
-                    <field name="procure_method"/>
+                    <field name="purchase_method_id"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
-
                 </xpath>
                 <xpath expr="//field[@name='mission_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -51,12 +49,6 @@
                 <xpath expr="//field[@name='department_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <!--<xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']"-->
-                <!--position="after">-->
-                <!--<field name="product_price"/>-->
-                <!--<field name="project_id"/>-->
-                <!--<field name="costcenter_id"/>-->
-                <!--</xpath>-->
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
                     <field name="price_unit"/>
@@ -86,6 +78,14 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
                         <field name="committee_ids">
                             <tree>
                                 <field name="sequence"/>
