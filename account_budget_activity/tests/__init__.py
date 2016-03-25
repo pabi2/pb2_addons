@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import test_invoice_activity
+from . import test_pr_to_req_to_rfq

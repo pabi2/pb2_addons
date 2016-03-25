@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
-from openerp.exceptions import except_orm, Warning
+from openerp import api, fields, models, _
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -56,7 +56,8 @@ class AccountInvoiceLine(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=False,
+        required=True,
+        compute='_compute_activity_group',
     )
     activity_id = fields.Many2one(
         'account.activity',
@@ -64,23 +65,16 @@ class AccountInvoiceLine(models.Model):
         required=False,
     )
 
-    @api.onchange('activity_id')
-    def _onchange_activity_id(self):
-        self.product_id = False
-        self.activity_group_id = self.activity_id.activity_group_id
-        self.account_id = self.activity_id.account_id or \
-            self.activity_id.activity_group_id.account_id
-
-    @api.multi
-    def product_id_change(
-            self, product, uom_id, qty=0, name='', type='out_invoice',
-            partner_id=False, fposition_id=False, price_unit=False,
-            currency_id=False, company_id=None):
-        res = super(AccountInvoiceLine, self).product_id_change(
-            product, uom_id, qty=qty, name=name, type=type,
-            partner_id=partner_id, fposition_id=fposition_id,
-            price_unit=price_unit, currency_id=currency_id,
-            company_id=company_id)
-        res['value'].update({'activity_group_id': False,
-                             'activity_id': False, })
-        return res
+    @api.one
+    @api.depends('product_id', 'activity_id')
+    def _compute_activity_group(self):
+        if self.product_id and self.activity_id:
+            self.product_id = self.activity_id = False
+            self.name = False
+        if self.product_id:
+            activity_group = self.env['account.activity.group'].\
+                search([('account_id', '=', self.account_id.id)])
+            self.activity_group_id = activity_group
+        elif self.activity_id:
+            self.activity_group_id = self.activity_id.activity_group_id
+            self.name = self.activity_id.name

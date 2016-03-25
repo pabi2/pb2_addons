@@ -96,7 +96,7 @@ class AccountAnalyticAccount(models.Model):
     def create_matched_analytic(self, rec):
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
-            if rec.product_id and (rec.activity_group_id or rec.activity_id):
+            if rec.product_id and rec.activity_id:
                 raise UserError(_('Select both Product and '
                                   'Activity is prohibited'))
         if not rec.product_id and not rec.activity_id:

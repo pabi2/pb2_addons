@@ -31,6 +31,8 @@ class AccountActivityGroup(models.Model):
     _sql_constraints = [
         ('activity_uniq', 'unique(name)',
          'Activity Group must be unique!'),
+        ('account_uniq', 'unique(account_id)',
+         'Each Activity Group must have unique account'),
     ]
 
     @api.one
@@ -51,17 +53,19 @@ class AccountActivity(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
+        required=True,
     )
     name = fields.Char(
         string='Activity',
         required=True,
     )
+    # TODO: May be removed later???
     account_id = fields.Many2one(
         'account.account',
         string='Account',
         domain=[('type', '!=', 'view')],
         help="This account has higher priority to group activities's account",
-    )
+    )  # --
     monitor_ids = fields.One2many(
         'account.activity.monitor.view',
         'activity_id',

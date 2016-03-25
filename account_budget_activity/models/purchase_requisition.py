@@ -48,6 +48,22 @@ class PurchaseRequisition(models.Model):
                     Analytic.create_matched_analytic(line)
         return super(PurchaseRequisition, self).tender_in_progress()
 
+    @api.model
+    def _prepare_purchase_order_line(self, requisition, requisition_line,
+                                     purchase_id, supplier):
+        res = super(PurchaseRequisition, self).\
+            _prepare_purchase_order_line(requisition, requisition_line,
+                                         purchase_id, supplier)
+        res.update({
+            'requisition_line_id': requisition_line.id,
+        })
+        # Dimension
+        AnayticAccount = self.env['account.analytic.account']
+        dimensions = AnayticAccount._analytic_dimensions()
+        for d in dimensions:
+            res.update({d: requisition_line[d].id})
+        return res
+
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = 'purchase.requisition.line'
@@ -55,7 +71,8 @@ class PurchaseRequisitionLine(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=False,
+        required=True,
+        compute='_compute_activity_group',
     )
     activity_id = fields.Many2one(
         'account.activity',
@@ -63,18 +80,16 @@ class PurchaseRequisitionLine(models.Model):
         required=False,
     )
 
-    @api.onchange('activity_id')
-    def _onchange_activity_id(self):
-        self.product_id = False
-        self.activity_group_id = self.activity_id.activity_group_id
-
-    @api.multi
-    def onchange_product_id(self, product_id, product_uom_id,
-                            parent_analytic_account, analytic_account,
-                            parent_date, date):
-        res = super(PurchaseRequisitionLine, self).onchange_product_id(
-            product_id, product_uom_id, parent_analytic_account,
-            analytic_account, parent_date, date)
-        res['value'].update({'activity_group_id': False,
-                             'activity_id': False, })
-        return res
+    @api.one
+    @api.depends('product_id', 'activity_id')
+    def _compute_activity_group(self):
+        if self.product_id and self.activity_id:
+            self.product_id = self.activity_id = False
+        if self.product_id:
+            account_id = self.product_id.property_account_expense.id or \
+                self.product_id.categ_id.property_account_expense_categ.id
+            activity_group = self.env['account.activity.group'].\
+                search([('account_id', '=', account_id)])
+            self.activity_group_id = activity_group
+        elif self.activity_id:
+            self.activity_group_id = self.activity_id.activity_group_id

@@ -55,18 +55,34 @@ class PurchaseOrderLine(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=False,
+        required=True,
+        compute='_compute_activity_group',
     )
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
         required=False,
     )
+    requisition_line_id = fields.Many2one(
+        'purchase.requisition.line',
+        string='Purchase Requisition Line',
+    )
 
-    @api.onchange('activity_id')
-    def _onchange_activity_id(self):
-        self.product_id = False
-        self.activity_group_id = self.activity_id.activity_group_id
+    @api.one
+    @api.depends('product_id', 'activity_id')
+    def _compute_activity_group(self):
+        if self.product_id and self.activity_id:
+            self.product_id = self.activity_id = False
+            self.name = False
+        if self.product_id:
+            account_id = self.product_id.property_account_expense.id or \
+                self.product_id.categ_id.property_account_expense_categ.id
+            activity_group = self.env['account.activity.group'].\
+                search([('account_id', '=', account_id)])
+            self.activity_group_id = activity_group
+        elif self.activity_id:
+            self.activity_group_id = self.activity_id.activity_group_id
+            self.name = self.activity_id.name
 
     @api.multi
     def onchange_product_id(
@@ -78,6 +94,7 @@ class PurchaseOrderLine(models.Model):
             date_order=date_order, fiscal_position_id=fiscal_position_id,
             date_planned=date_planned, name=name,
             price_unit=price_unit, state=state)
-        res['value'].update({'activity_group_id': False,
-                             'activity_id': False, })
+        if not res['value'].get('date_planned', False):
+            date_planned = date_planned or fields.Date.today()
+            res['value'].update({'date_planned': date_planned})
         return res

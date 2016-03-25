@@ -7,6 +7,13 @@
 
 Activity based budgetting
 
+Testing:
+* Make sure that, activity_group_id, activity_id is passed from
+  PR -> Call for Bid -> PO
+  PR -> PO
+* Make sure when confirm PR, Call for Bid, PO, Invoice, the Analyic is created
+    2 types 1) product, 2) activity
+
 """,
     'author': 'Kitti U.',
     'website': 'http://ecosoft.co.th',
@@ -36,6 +43,7 @@ Activity based budgetting
     'demo': [
         'demo/activity_demo.xml',
         'demo/account_budget_demo.xml',
+        'demo/purchase_request_demo.xml',
     ],
     'installable': True,
     'auto_install': False,

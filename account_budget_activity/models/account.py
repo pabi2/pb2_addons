@@ -3,7 +3,7 @@ from openerp import fields, models
 
 BUDGETING_LEVEL = {
     'activity_group_id': 'Activity Group',
-    'activity_id': 'Activity'
+    # 'activity_id': 'Activity'  # No Activity Level
 }
 
 
