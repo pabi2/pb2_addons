@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_type,access_purchase_type,model_purchase_type,,1,0,0,0
+access_purchase_method,access_purchase_method,model_purchase_method,,1,0,0,0
+access_purchase_request_committee,access_purchase_request_committee,model_purchase_request_committee,,1,0,0,0
+access_purchase_requisition_committee,access_purchase_requisition_committee,model_purchase_requisition_committee,,1,0,0,0
+access_purchase_order_committee,access_purchase_order_committee,model_purchase_order_committee,,1,0,0,0 
+access_purchase_request_attachment,access_purchase_request_attachment,model_purchase_request_attachment,,1,0,0,0 
+access_purchase_requisition_attachment,access_purchase_requisition_attachment,model_purchase_requisition_attachment,,1,0,0,0
