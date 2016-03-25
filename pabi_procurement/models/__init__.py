@@ -7,5 +7,6 @@ from . import purchase_request
 from . import purchase_requisition
 from . import purchase_committee
 from . import purchase_attachment
+from . import purchase_pabi_master
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
