@@ -5,7 +5,6 @@
 from . import purchase
 from . import purchase_request
 from . import purchase_requisition
-from . import purchase_pabi_master
 from . import purchase_committee
 from . import purchase_attachment
 

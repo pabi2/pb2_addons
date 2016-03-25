@@ -28,6 +28,7 @@ PABI2 - Procurement Module
         "stock_operating_unit"
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
