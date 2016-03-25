@@ -2,7 +2,7 @@
 # © 2015 TrinityRoots
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import fields, models, api, _
+from openerp import fields, models, api
 import time
 
 
@@ -112,4 +112,3 @@ class PurchaseOrderLine(models.Model):
         'purchase_requisition_line',
         'Purchase Requisition Line'
     )
-
