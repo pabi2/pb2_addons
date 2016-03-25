@@ -15,7 +15,7 @@ PABI2 - Purchase Request Extension
   * Add description to 'Call for Bids' form.
   * Modified 'Call for Bids' form not to change product's description
     while changing product.
-
+  * Operate PR process and Call for Bids with Operating Units.
     """,
     "website": "https://nstda.or.th/",
     "author": "TrinityRoots",
@@ -23,7 +23,11 @@ PABI2 - Purchase Request Extension
     "application": False,
     "installable": True,
     "depends": [
+        "pabi_config_menu",
         "purchase_request_to_requisition",
+        "purchase_split_quote2order",
+        "purchase_requisition_operating_unit",
+        "purchase_request_to_requisition_operating_unit",
     ],
     "data": [
         "views/purchase_requisition_view.xml",

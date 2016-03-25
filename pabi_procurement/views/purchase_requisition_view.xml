@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_requisition_mock_form">
+            <field name="name">purchase.requisition.mock.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='description']" position="replace">
+
+                </xpath>
+                <xpath expr="//field[@name='multiple_rfq_per_supplier']"
+                       position="after">
+                    <field name="purchase_type_id"/>
+                    <field name="objective"/>
+                    <field name="description"/>
+                    <field name="total_budget_value"/>
+                    <field name="prototype"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
+                       position="after">
+                    <field name="purchase_method_id"/>
+                    <field name="currency_id"/>
+                    <field name="currency_rate"/>
+                </xpath>
+                <xpath expr="//field[@name='mission_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='spa_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="///field[@name='program_base_type_id']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='program_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='program_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='org_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='division_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
+                       position="after">
+                    <field name="price_unit"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='costcenter_id']"
+                       position="after">
+                    <field name="fixed_asset"/>
+                    <field name="price_subtotal"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']"
+                       position="after">
+                    <group class="oe_subtotal_footer oe_right">
+                        <!--<field name="amount_untaxed" widget="monetary"-->
+                        <!--options="{'currency_field': 'currency_id'}"/>-->
+                        <!--<field name="amount_tax" widget="monetary"-->
+                        <!--options="{'currency_field': 'currency_id'}"/>-->
+                        <!--<div class="oe_subtotal_footer_separator oe_inline">-->
+                        <!--<label for="amount_total"/>-->
+                        <!--<button name="button_dummy"-->
+                        <!--states="draft" string="(update)" type="object"-->
+                        <!--class="oe_edit_only oe_link"/>-->
+                        <!--</div>-->
+                        <field name="amount_total" nolabel="1"
+                               class="oe_subtotal_footer_separator" widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page" position="after">
+                    <page string="Committee">
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                        <field name="committee_ids">
+                            <tree>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Attachment">
+                        <field name="attachment_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="file_url"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Approval Report">
+                        <group>
+                            <field name="approval_document_no"/>
+                            <field name="approval_document_date"/>
+                            <field name="approval_document_header"/>
+                            <field name="approval_document_footer"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
