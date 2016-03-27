@@ -41,30 +41,30 @@
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
                     <field name="price_unit"/>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='mission_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='spa_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_base_type_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_type_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='org_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='division_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='department_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='mission_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='spa_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_base_type_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_type_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='org_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='division_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='department_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='is_editable']" position="after">
                     <field name="fixed_asset"/>
                     <field name="price_subtotal"/>

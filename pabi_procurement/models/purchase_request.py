@@ -5,9 +5,9 @@
 from openerp import fields, models, api
 import time
 
+
 class PurchaseRequest(models.Model):
     _inherit = 'purchase.request'
-
 
     _STATES = [
         ('draft', 'Draft'),
@@ -134,15 +134,22 @@ class PurchaseRequest(models.Model):
         res = self.load(fields, data)
         order_id = res['ids'] and res['ids'][0] or False
         if not order_id:
-            return {'is_success': False, 'result': False,
-                    'messages': [m['message'] for m in res['messages']]}
+            return {
+                'is_success': False,
+                'result': False,
+                'messages': [m['message'] for m in res['messages']],
+            }
         else:
             order = self.browse(order_id)
-            return {'is_success': True, 'result': {'request_id': order.id,
-                                                   'name': order.name,
-                                                   'partner_id':order.name,
-                                                   },
-                    'messages': False}
+            return {
+                'is_success': True,
+                'result': {
+                    'request_id': order.id,
+                    'name': order.name,
+                    'partner_id': order.partner_id.id,
+                },
+                'messages': False
+            }
 
 
 class PurchaseRequestLine(models.Model):
