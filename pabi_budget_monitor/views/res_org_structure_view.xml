@@ -49,19 +49,19 @@
                 </xpath>
             </field>
         </record>  
-          
-    	# Division Group
-        <record id="view_res_division_group_form" model="ir.ui.view" >
-            <field name="name">view.res.division.group.form</field>
-            <field name="model">res.division.group</field>
-            <field name="inherit_id" ref="pabi_base.view_res_division_group_form"/>
+        
+    	# Department
+        <record id="view_res_department_form" model="ir.ui.view" >
+            <field name="name">view.res.department.form</field>
+            <field name="model">res.department</field>
+            <field name="inherit_id" ref="pabi_base.view_res_department_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
 	                    <page string="Budget Monitor">
 		                    <field name="monitor_ids">
 				                <tree string="Monitor" editable="bottom">
-		                    		<field name="division_group_id" invisible="1"/>
+		                    		<field name="department_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
@@ -96,20 +96,20 @@
                 	</notebook>
                 </xpath>
             </field>
-        </record>    
-          
-    	# Department
-        <record id="view_res_department_form" model="ir.ui.view" >
-            <field name="name">view.res.department.form</field>
-            <field name="model">res.department</field>
-            <field name="inherit_id" ref="pabi_base.view_res_department_form"/>
+        </record>   
+        
+    	# Section
+        <record id="view_res_section_form" model="ir.ui.view" >
+            <field name="name">view.res.section.form</field>
+            <field name="model">res.section</field>
+            <field name="inherit_id" ref="pabi_base.view_res_section_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
 	                    <page string="Budget Monitor">
 		                    <field name="monitor_ids">
 				                <tree string="Monitor" editable="bottom">
-		                    		<field name="department_id" invisible="1"/>
+		                    		<field name="section_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
@@ -121,6 +121,8 @@
                 </xpath>
             </field>
         </record>    
+           
+          
           
     	# Costcenter
         <record id="view_res_costcenter_form" model="ir.ui.view" >

@@ -88,16 +88,16 @@ class ResSectorMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'sector_id')
 
 
-class ResDivisionGroupMonitorView(MonitorView, models.Model):
-    _name = 'res.division.group.monitor.view'
+class ResDepartmentMonitorView(MonitorView, models.Model):
+    _name = 'res.department.monitor.view'
     _auto = False
-    _budgeting_level = 'division_group_id'
+    _budgeting_level = 'department_id'
 
-    division_group_id = fields.Many2one(
-        'res.division.group', 'Division Group', readonly=True)
+    department_id = fields.Many2one(
+        'res.department', 'Department', readonly=True)
 
     def init(self, cr):
-        self._create_monitor_view(cr, self._table, 'division_group_id')
+        self._create_monitor_view(cr, self._table, 'department_id')
 
 
 class ResDivisionMonitorView(MonitorView, models.Model):
@@ -112,16 +112,16 @@ class ResDivisionMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'division_id')
 
 
-class ResDepartmentMonitorView(MonitorView, models.Model):
-    _name = 'res.department.monitor.view'
+class ResSectionMonitorView(MonitorView, models.Model):
+    _name = 'res.section.monitor.view'
     _auto = False
-    _budgeting_level = 'department_id'
+    _budgeting_level = 'section_id'
 
-    department_id = fields.Many2one(
-        'res.department', 'Department', readonly=True)
+    section_id = fields.Many2one(
+        'res.section.group', 'Section', readonly=True)
 
     def init(self, cr):
-        self._create_monitor_view(cr, self._table, 'department_id')
+        self._create_monitor_view(cr, self._table, 'section_id')
 
 
 class ResCostcenterMonitorView(MonitorView, models.Model):
@@ -136,8 +136,7 @@ class ResCostcenterMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'costcenter_id')
 
 
-# ------------------ Project Based ------------------
-
+# ------------------ Tags ------------------
 
 class ResSpaMonitorView(MonitorView, models.Model):
     _name = 'res.spa.monitor.view'
@@ -162,6 +161,32 @@ class ResMissionMonitorView(MonitorView, models.Model):
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'mission_id')
 
+
+class ResTagTypeMonitorView(MonitorView, models.Model):
+    _name = 'res.tag.type.monitor.view'
+    _auto = False
+    _budgeting_level = 'tag_type_id'
+
+    tag_type_id = fields.Many2one(
+        'res.tag.type', 'Tag Type', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._table, 'tag_type_id')
+
+
+class ResTagMonitorView(MonitorView, models.Model):
+    _name = 'res.tag.monitor.view'
+    _auto = False
+    _budgeting_level = 'tag_id'
+
+    tag_id = fields.Many2one(
+        'res.tag', 'Tag', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._table, 'tag_id')
+
+
+# ------------------ Project Based ------------------
 
 class ResProgramSchemeMonitorView(MonitorView, models.Model):
     _name = 'res.program.scheme.monitor.view'

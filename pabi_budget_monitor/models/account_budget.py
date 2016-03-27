@@ -11,9 +11,11 @@ class AccountBudget(models.Model):
     def _get_model_budgeting_level(self):
         MODEL_DICT = super(AccountBudget, self)._get_model_budgeting_level()
         MODEL_DICT.update({
-            # Project Based
             'spa_id': 'res.spa',
             'mission_id': 'res.mission',
+            'tag_type_id': 'res.tag.type',
+            'tag_id': 'res.tag',
+            # Project Based
             'program_scheme_id': 'res.program.scheme',
             'program_group_id': 'res.program.group',
             'program_id': 'res.program',
@@ -22,9 +24,9 @@ class AccountBudget(models.Model):
             # Unit Based
             'org_id': 'res.org',
             'sector_id': 'res.sector',
-            'division_group_id': 'res.division.group',
-            'division_id': 'res.division',
             'department_id': 'res.department',
+            'division_id': 'res.division',
+            'section_id': 'res.section',
             'costcenter_id': 'res.costcenter',
         })
         return MODEL_DICT

@@ -20,12 +20,12 @@ class ResSector(models.Model):
     )
 
 
-class ResDivisionGroup(models.Model):
-    _inherit = 'res.division.group'
+class ResDepartment(models.Model):
+    _inherit = 'res.department'
 
     monitor_ids = fields.One2many(
-        'res.division.group.monitor.view', 'division_group_id',
-        string='Division Group Monitor',
+        'res.department.monitor.view', 'department_id',
+        string='Department Monitor',
     )
 
 
@@ -38,12 +38,12 @@ class ResDivision(models.Model):
     )
 
 
-class ResDepartment(models.Model):
-    _inherit = 'res.department'
+class ResSection(models.Model):
+    _inherit = 'res.section'
 
     monitor_ids = fields.One2many(
-        'res.department.monitor.view', 'department_id',
-        string='Department Monitor',
+        'res.section.monitor.view', 'section_id',
+        string='Section',
     )
 
 

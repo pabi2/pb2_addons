@@ -3,7 +3,7 @@ from openerp import fields, models
 
 BUDGETING_LEVEL = {
    'activity_group_id': 'Activity Group',
-   'activity_id': 'Activity',
+   # 'activity_id': 'Activity',  # No activity level
    # Project Based
    'spa_id': 'SPA',
    'mission_id': 'Mission',
@@ -16,13 +16,13 @@ BUDGETING_LEVEL = {
 
 BUDGETING_LEVEL_UNIT = {
    'activity_group_id': 'Activity Group',
-   'activity_id': 'Activity',
+   # 'activity_id': 'Activity',  # No activity level
    # Unit Based
    'org_id': 'Org',
    'sector_id': 'Sector',
-   'division_group_id': 'Division Group',
-   'division_id': 'Division',
    'department_id': 'Department',
+   'division_id': 'Division',
+   'section_id': 'Section',
    'costcenter_id': 'Costcenter',
 }
 

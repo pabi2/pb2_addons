@@ -20,6 +20,24 @@ class ResMission(models.Model):
     )
 
 
+class ResTagType(models.Model):
+    _inherit = 'res.tag.type'
+
+    monitor_ids = fields.One2many(
+        'res.tag.type.monitor.view', 'tag_type_id',
+        string='Tag Type',
+    )
+
+
+class ResTag(models.Model):
+    _inherit = 'res.tag'
+
+    monitor_ids = fields.One2many(
+        'res.tag.monitor.view', 'tag_id',
+        string='Tag',
+    )
+
+
 class ResProgramScheme(models.Model):
     _inherit = 'res.program.scheme'
 
