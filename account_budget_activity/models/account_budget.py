@@ -204,32 +204,6 @@ class AccountBudget(models.Model):
                  '{0:,}'.format(amount))
         return res
 
-#     @api.model
-#     def get_plan_amount(self, request_date, domain):
-#         where_clause = ' and activity_group_id = 1 '
-#         self._cr.execute("""
-#             select sum(planned_amount) from account_budget_line abl
-#             join account_budget ab on ab.id = abl.budget_id
-#             where ab.date_from <= %s and ab.date_to >= %s
-#             and latest_version = true
-#             %s
-#         """, (request_date, request_date, where_clause,))
-#         return self.cr.fetchone()[0] or 0.0
-# 
-#     @api.model
-#     def get_actual_amount(self, request_date, domain):
-#   
-#     @api.model
-#     def get_commit_amount(self, request_date, domain):
-#   
-#     @api.model
-#     def get_remaining_amount(self, date, domain):
-#   
-#     @api.model
-#     def is_budget_ok(self, date, domain, amount):
-#         return True
-    # ----------------------
-
 
 class AccountBudgetLine(models.Model):
 
