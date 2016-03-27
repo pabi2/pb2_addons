@@ -8,8 +8,8 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_FIELDS, ChartField
 
 
-class CrossoveredBudgetLines(ChartField, models.Model):
-    _inherit = 'crossovered.budget.lines'
+class AccountBudgetLine(ChartField, models.Model):
+    _inherit = 'account.budget.line'
 
     display_name = fields.Char(
         string='Display Name',
