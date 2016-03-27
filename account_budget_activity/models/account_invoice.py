@@ -31,7 +31,7 @@ class AccountInvoice(models.Model):
                                                  fiscal_id,
                                                  budgeting_level)
                 if not res['budget_ok']:
-                    raise Warning(res['message'])
+                    raise UserError(res['message'])
         return True
 
     @api.multi
@@ -58,6 +58,7 @@ class AccountInvoiceLine(models.Model):
         string='Activity Group',
         required=True,
         compute='_compute_activity_group',
+        store=True,
     )
     activity_id = fields.Many2one(
         'account.activity',

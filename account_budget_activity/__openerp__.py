@@ -19,6 +19,7 @@ Testing:
     'website': 'http://ecosoft.co.th',
     'depends': [
         'account',
+        'account_accountant',
         'purchase',
         'purchase_requisition',
         'purchase_request',

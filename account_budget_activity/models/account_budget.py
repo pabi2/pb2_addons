@@ -117,6 +117,7 @@ class AccountBudget(models.Model):
 
     @api.multi
     def budget_confirm(self):
+        self._validate_budgeting_level()
         self.write({'state': 'confirm'})
         return True
 
