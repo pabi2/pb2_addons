@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models
-from openerp.exceptions import except_orm, Warning
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -45,5 +45,5 @@ class AccountInvoice(models.Model):
                                                      project_or_unit,
                                                      r.get(project_or_unit))
                     if not res['budget_ok']:
-                        raise Warning(res['message'])
+                        raise UserError(res['message'])
         return True

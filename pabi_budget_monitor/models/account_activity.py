@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp import fields, models
 
 
 class AccountActivityGroup(models.Model):
@@ -23,4 +22,3 @@ class AccountActivity(models.Model):
         string='Activity Monitor',
         help="Plan vs actual per fiscal year for activity"
     )
-
