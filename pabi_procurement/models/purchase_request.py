@@ -5,9 +5,9 @@
 from openerp import fields, models, api
 import time
 
-
 class PurchaseRequest(models.Model):
     _inherit = 'purchase.request'
+
 
     _STATES = [
         ('draft', 'Draft'),
@@ -90,7 +90,7 @@ class PurchaseRequest(models.Model):
             if len(vals['line_ids']) > 0:
                 for line_rec in vals['line_ids']:
                     field = line_rec[2]
-                    sum_total += field['product_qty'] * field['product_price']
+                    sum_total += field['product_qty'] * field['price_unit']
             create_rec.amount_total = sum_total
         return create_rec
 
@@ -102,26 +102,65 @@ class PurchaseRequest(models.Model):
         domain = [('request_id', '=', self.id)]
         found_recs = prql_obj.search(domain)
         for rec in found_recs:
-            sum_total += rec.product_qty * rec.product_price
+            sum_total += rec.product_qty * rec.price_unit
         edited = super(PurchaseRequest, self).\
             write({'amount_total': sum_total})
         return edited
+
+    @api.model
+    def _finalize_data_to_load(self, fields, data):
+        # Case multiple order line, split lines
+        if 'line_ids' in fields:
+            datas = []
+            is_first = True
+            for line in data[fields.index('line_ids')]:
+                if is_first:
+                    i = fields.index('line_ids')  # Delete 'order_line'
+                    del fields[i]
+                    del data[i]
+                    fields += ['line_ids/'+key for key in line.keys()]
+                datas += [tuple(data + line.values())]
+                is_first = False
+            return fields, datas
+        else:
+            return fields, [tuple(data)]   # one line sales order
+
+    @api.model
+    def generate_purchase_request(self, data_dict):
+        fields = data_dict.keys()
+        data = data_dict.values()
+        # Final Preparation of fields and data
+        fields, data = self._finalize_data_to_load(fields, data)
+        res = self.load(fields, data)
+        order_id = res['ids'] and res['ids'][0] or False
+        if not order_id:
+            return {'is_success': False, 'result': False,
+                    'messages': [m['message'] for m in res['messages']]}
+        else:
+            order = self.browse(order_id)
+            return {'is_success': True, 'result': {'request_id': order.id,
+                                                   'name': order.name,
+                                                   'partner_id':order.name,
+                                                   },
+                    'messages': False}
 
 
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
 
-    product_price = fields.Float(
+    price_unit = fields.Float(
         'Unit Price',
         track_visibility='onchange',
     )
     fixed_asset = fields.Boolean('Fixed Asset')
     price_subtotal = fields.Float(
         'Sub Total',
-        compute="_amount_line",
+        compute="_compute_price_subtotal",
         store=True,
     )
 
-    @api.depends('product_qty', 'product_price')
-    def _amount_line(self):
-        self.price_subtotal = self.product_qty * self.product_price
+    @api.multi
+    @api.depends('product_qty', 'price_unit')
+    def _compute_price_subtotal(self):
+        for rec in self:
+            rec.price_subtotal = rec.product_qty * rec.price_unit

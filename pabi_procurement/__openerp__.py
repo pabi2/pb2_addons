@@ -22,7 +22,6 @@ PABI2 - Procurement Module
     "application": False,
     "installable": True,
     "depends": [
-        "pabi_chartfield",
         "pabi_purchase_request_ext",
         "purchase_operating_unit",
         "stock_operating_unit"
