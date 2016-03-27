@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models
+from openerp import models
 from .chartfield import \
     ChartField
 

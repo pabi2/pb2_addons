@@ -21,7 +21,6 @@
         'views/purchase_view.xml',
         'views/purchase_request_view.xml',
         'views/purchase_requisition_view.xml',
-        #'report/account_analytic_entries_report_view.xml',
     ],
     'demo': [
     ],

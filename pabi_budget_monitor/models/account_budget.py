@@ -80,7 +80,6 @@ class AccountBudget(models.Model):
             monitors = resource.monitor_ids.\
                 filtered(lambda x: x.fiscalyear_id == fiscal)
             # 2nd filter by project_id
-            print monitors
             if fiscal.budgeting_level in ('activity_group_id',
                                           'activity_id'):
                 monitors = monitors.filtered(lambda x:

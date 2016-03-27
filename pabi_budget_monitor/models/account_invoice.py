@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import api, models
 from openerp.exceptions import Warning as UserError
 
 
@@ -16,24 +16,24 @@ class AccountInvoice(models.Model):
             fiscal_id, budgeting_level, budgeting_level_unit = AccountBudget.\
                 get_fiscal_and_budgeting_level(invoice.date_invoice)
             query = """
-                select %(fields)s,
+                select %(field)s,
                     coalesce(sum(price_subtotal), 0.0) amount
                 from account_invoice_line
                 where invoice_id = %(invoice_id)s
                     and %(project_or_unit)s is not null
-                group by %(fields)s
+                group by %(field)s
             """
             # Check budget for both project and unit base
             for project_or_unit in ['project_id', 'costcenter_id']:
                 budgeting_level = (project_or_unit == 'project_id' and
                                    budgeting_level or
                                    budgeting_level_unit)
-                fields = budgeting_level
+                field = budgeting_level
                 # Case check to activity, combine with project or costcenter
                 if budgeting_level in ('activity_group_id', 'activity_id'):
-                    fields = project_or_unit + ', ' + budgeting_level
+                    field = project_or_unit + ', ' + budgeting_level
                 self._cr.execute(
-                    query % {'fields': fields,
+                    query % {'field': field,
                              'invoice_id': invoice.id,
                              'project_or_unit': project_or_unit}
                 )
