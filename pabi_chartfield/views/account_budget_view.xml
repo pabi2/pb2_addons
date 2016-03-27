@@ -15,9 +15,9 @@
 					<!-- Unit Based -->
                 	<field name="org_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>             	
 					<field name="sector_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>      	
-					<field name="division_group_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>         	
+					<field name="department_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>     	
 					<field name="division_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
-					<field name="department_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
+					<field name="section_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>    
 					<field name="costcenter_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
             	</xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='budget_line_ids']" position="replace">
@@ -37,14 +37,22 @@
 								<group string="Unit Based">
 				                    <field name="org_id" />
 				                    <field name="sector_id" />
-				                    <field name="division_group_id" />
-				                    <field name="division_id" />
 				                    <field name="department_id" />
+				                    <field name="division_id" />
+				                    <field name="section_id" />
 				                    <field name="costcenter_id" />
 								</group>
 								<group string="Activity" >
 				                    <field name="activity_group_id" />
 				                    <field name="activity_id" />
+								</group>
+								<group>
+								</group>
+								<group string="Tag">
+			                    	<field name="spa_id" />
+			                    	<field name="mission_id" />
+			                    	<field name="tag_type_id" />
+			                    	<field name="tag_id" />
 								</group>
 	                    	</group>
 	                        <group>
@@ -80,8 +88,6 @@
 	                    <form string="Budget Lines">
 	                    	<group>
 								<group string="Project Based">
-			                    	<field name="spa_id" />
-			                    	<field name="mission_id" />
 			                    	<field name="program_scheme_id" />
 			                    	<field name="program_group_id" />
 			                    	<field name="program_id" />
@@ -91,6 +97,15 @@
 								<group string="Activity" >
 				                    <field name="activity_group_id" />
 				                    <field name="activity_id" />
+								</group>
+								<group>
+								</group>
+								<group string="Tag">
+			                    	<field name="spa_id" />
+			                    	<field name="mission_id" />
+			                    	<field name="org_id" />
+			                    	<field name="tag_type_id" />
+			                    	<field name="tag_id" />
 								</group>
 	                    	</group>
 	                        <group>
