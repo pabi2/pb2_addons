@@ -205,5 +205,5 @@ class HRExpenseLine(models.Model):
         if product_id:
             product = self.env['product.product'].browse(product_id)
             taxes = [tax.id for tax in product.supplier_taxes_id]
-            res['tax_ids'] = [(6, 0, taxes)]
-        return {'value': res}
+            res['value']['tax_ids'] = [(6, 0, taxes)]
+        return res
