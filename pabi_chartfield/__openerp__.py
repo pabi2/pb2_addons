@@ -6,11 +6,14 @@
     'website': "http://ecosoft.co.th",
     'category': 'Account',
     'version': '0.1.0',
-    'depends': ['operating_unit',
-                'budget_activity_based',
-                'pabi_base',
-                'purchase_request_to_requisition',
-                ],
+    'depends': [
+        'pabi_base',
+        'account_budget_activity',
+        'account',
+        'purchase',
+        'purchase_requisition',
+        'purchase_request',
+    ],
     'data': [
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
@@ -19,7 +22,6 @@
         'views/purchase_view.xml',
         'views/purchase_request_view.xml',
         'views/purchase_requisition_view.xml',
-        'report/account_analytic_entries_report_view.xml',
     ],
     'demo': [
     ],

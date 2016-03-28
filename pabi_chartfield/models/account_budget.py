@@ -4,19 +4,19 @@ from openerp import api, fields, models
 from .chartfield import CHART_VIEW, ChartField
 
 
-class CrossoveredBudget(models.Model):
-    _inherit = 'crossovered.budget'
+class AccountBudget(ChartField, models.Model):
+    _inherit = 'account.budget'
 
-    crossovered_budget_line_unit_base = fields.One2many(
-        'crossovered.budget.lines',
-        'crossovered_budget_id',
+    budget_line_unit_base = fields.One2many(
+        'account.budget.line',
+        'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    crossovered_budget_line_project_base = fields.One2many(
-        'crossovered.budget.lines',
-        'crossovered_budget_id',
+    budget_line_project_base = fields.One2many(
+        'account.budget.line',
+        'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         copy=True,
@@ -28,46 +28,116 @@ class CrossoveredBudget(models.Model):
         required=True,
         copy=True,
     )
-    program_type_id = fields.Many2one(
-        'res.program.type',
-        string='Program Type',
-        states={'done': [('readonly', True)]},
-        required=True,
-        copy=True,
-    )
-    # For unit base
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
-    division_id = fields.Many2one(
-        'res.division',
-        string='Division',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
-    department_id = fields.Many2one(
-        'res.department',
-        string='Department',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
-    costcenter_id = fields.Many2one(
-        'res.costcenter',
-        string='Costcenter',
-        states={'done': [('readonly', True)]},
-        copy=True,
-    )
 
     @api.multi
     def budget_validate(self):
         for budget in self:
-            line = budget.crossovered_budget_line
+            budget.validate_chartfields(self.chart_view)
+            line = budget.budget_line_ids
             line.validate_chartfields(self.chart_view)
-        return super(CrossoveredBudget, self).budget_validate()
+        return super(AccountBudget, self).budget_validate()
+
+    @api.multi
+    def budget_confirm(self):
+        for budget in self:
+            budget.validate_chartfields(self.chart_view)
+            line = budget.budget_line_ids
+            line.validate_chartfields(self.chart_view)
+        return super(AccountBudget, self).budget_confirm()
 
 
-class CrossoveredBudgetLines(ChartField, models.Model):
-    _inherit = 'crossovered.budget.lines'
+class AccountBudgetLine(ChartField, models.Model):
+    _inherit = 'account.budget.line'
+
+    spa_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    mission_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    tag_type_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    tag_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    program_scheme_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    program_group_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    # Only Program, Program Group and Project will be chosen @ header
+    org_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    sector_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    department_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    division_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    section_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+    costcenter_id = fields.Many2one(
+        compute='_compute_all',
+        readonly=True, store=True
+    )
+
+    @api.multi
+    @api.depends('budget_id.program_scheme_id',
+                 'budget_id.program_group_id',
+                 'budget_id.org_id',
+                 'budget_id.sector_id',
+                 'budget_id.department_id',
+                 'budget_id.division_id',
+                 'budget_id.section_id',
+                 'budget_id.costcenter_id',)
+    def _compute_all(self):
+
+        for rec in self:
+
+            # Project base, line level choose program, project_group, project
+            rec.program_scheme_id = rec.budget_id.program_scheme_id
+            rec.program_group_id = rec.budget_id.program_group_id
+
+            # Unit base
+            rec.org_id = rec.budget_id.org_id
+            rec.sector_id = rec.budget_id.sector_id
+            rec.department_id = rec.budget_id.department_id
+            rec.division_id = rec.budget_id.division_id
+            rec.section_id = rec.budget_id.section_id
+            rec.costcenter_id = rec.budget_id.costcenter_id
+
+            # Project base, more follows program, project_group, project
+            if rec.budget_id.chart_view == 'project_base':
+                rec.spa_id = (rec.program_id.current_spa_id)
+                rec.mission_id = (rec.project_id.mission_id)
+                rec.org_id = (rec.program_id.org_id or
+                              rec.project_group_id.org_id or
+                              rec.project_id.org_id)
+                rec.tag_type_id = (rec.program_id.tag_type_id or
+                                   rec.project_group_id.tag_type_id or
+                                   rec.project_id.tag_type_id)
+                rec.tag_id = (rec.program_id.tag_id or
+                              rec.project_group_id.tag_id or
+                              rec.project_id.tag_id)
+
+            # Unit base, more dimension follows costcenter_id
+            if rec.budget_id.chart_view == 'unit_base':
+                rec.mission_id = rec.budget_id.costcenter_id.mission_id

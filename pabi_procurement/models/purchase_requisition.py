@@ -80,17 +80,6 @@ class PurchaseRequisition(models.Model):
             write({'amount_total': sum_total})
         return edited
 
-    @api.model
-    def _prepare_purchase_order_line(self, requisition, requisition_line,
-                                     purchase_id, supplier):
-        res = super(PurchaseRequisition, self).\
-            _prepare_purchase_order_line(requisition, requisition_line,
-                                         purchase_id, supplier)
-        res.update({
-            'requisition_line_id': requisition_line.id,
-        })
-        return res
-
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
@@ -101,7 +90,7 @@ class PurchaseRequisitionLine(models.Model):
     fixed_asset = fields.Boolean('Fixed Asset')
     price_subtotal = fields.Float(
         'Sub Total',
-        compute="_amount_line",
+        compute="_compute_price_subtotal",
         store=True,
         digits_compute=dp.get_precision('Account')
     )
@@ -110,6 +99,8 @@ class PurchaseRequisitionLine(models.Model):
         'Purchase Order Line'
     )
 
+    @api.multi
     @api.depends('product_qty', 'price_unit')
-    def _amount_line(self):
-        self.price_subtotal = self.product_qty * self.price_unit
+    def _compute_price_subtotal(self):
+        for rec in self:
+            rec.price_subtotal = rec.product_qty * rec.price_unit

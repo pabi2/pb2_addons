@@ -5,19 +5,28 @@
         <record id="view_account_analytic_account_form" model="ir.ui.view" >
             <field name="name">view.account.analytic.account.form</field>
             <field name="model">account.analytic.account</field>
-            <field name="inherit_id" ref="budget_activity_based.view_account_analytic_account_form"/>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_account_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='chartfields']" position="inside">
-                    <field name="mission_id" invisible="0"/>
-                    <field name="spa_id" invisible="0"/>
-                    <field name="program_base_type_id" invisible="0"/>
-                    <field name="program_type_id" invisible="0"/>
-                    <field name="program_id" invisible="0"/>
-                    <field name="org_id" invisible="0"/>
-                    <field name="project_id" />
-                    <field name="division_id" invisible="0"/>
-                    <field name="department_id" invisible="0"/>
-                    <field name="costcenter_id" />
+                    
+                	<field name="spa_id"/>
+                	<field name="mission_id" />
+                	<field name="tag_type_id" />
+                	<field name="tag_id" />
+                	
+                	<field name="program_scheme_id" />
+                	<field name="program_group_id" />
+                	<field name="program_id" />
+                	<field name="project_group_id" />
+                	<field name="project_id"/>
+                	
+                    <field name="org_id" />
+                    <field name="sector_id" />
+                    <field name="department_id"/>
+                    <field name="division_id" />
+                    <field name="section_id" />
+                    <field name="costcenter_id"/>
+                    
                 </xpath> 
             </field>
         </record>         
@@ -27,16 +36,25 @@
             <field name="inherit_id" ref="account.view_account_analytic_account_tree"/>
             <field name="arch" type="xml">
                 <field name="debit" position="before">
-                    <field name="mission_id" invisible="0"/>
-                    <field name="spa_id" invisible="0"/>
-                    <field name="program_base_type_id" invisible="0"/>
-                    <field name="program_type_id" invisible="0"/>
-                    <field name="program_id" invisible="0"/>
-                    <field name="org_id" invisible="0"/>
-                    <field name="project_id" />
-                    <field name="division_id" invisible="0"/>
-                    <field name="department_id" invisible="0"/>
-                    <field name="costcenter_id" />
+                    
+                	<field name="spa_id"/>
+                	<field name="mission_id" />
+                	<field name="tag_type_id" />
+                	<field name="tag_id" />
+                	
+                	<field name="program_scheme_id" />
+                	<field name="program_group_id" />
+                	<field name="program_id" />
+                	<field name="project_group_id" />
+                	<field name="project_id"/>
+                	
+                    <field name="org_id" />
+                    <field name="sector_id" />
+                    <field name="department_id"/>
+                    <field name="division_id" />
+                    <field name="section_id" />
+                    <field name="costcenter_id"/>
+                    
                 </field>
             </field>
         </record>
@@ -47,16 +65,25 @@
             <field name="inherit_id" ref="account.view_account_analytic_account_search"/>
             <field name="arch" type="xml">
                 <xpath expr="/search/group" position="inside">
-                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                	
                     <filter string="SPA" context="{'group_by':'spa_id'}"/>
-                    <filter string="Program Base Type" context="{'group_by':'program_base_type_id'}"/>
-                    <filter string="Program Type" context="{'group_by':'program_type_id'}"/>
+                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                    <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
+                    <filter string="Tag" context="{'group_by':'tag_id'}"/>
+
+                    <filter string="Program Scheme" context="{'group_by':'program_scheme_id'}"/>
+                    <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
                     <filter string="Program" context="{'group_by':'program_id'}"/>
-                    <filter string="Org" context="{'group_by':'org_id'}"/>
+                    <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
                     <filter string="Project" context="{'group_by':'project_id'}"/>
-                    <filter string="Division" context="{'group_by':'division_id'}"/>
+                    
+                    <filter string="Org" context="{'group_by':'org_id'}"/>
+                    <filter string="Sector" context="{'group_by':'sector_id'}"/>
                     <filter string="Department" context="{'group_by':'department_id'}"/>
+                    <filter string="Division" context="{'group_by':'division_id'}"/>
+                    <filter string="Section" context="{'group_by':'section_id'}"/>
                     <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                    
                 </xpath>
             </field>
 		</record>
