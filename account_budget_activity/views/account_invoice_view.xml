@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="before">
-                    <field name="activity_group_id" invisible="1"/>
+                    <field name="activity_group_id" invisible="0"/>
                     <field name="activity_id"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
@@ -26,7 +26,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="before">
-                    <field name="activity_group_id" invisible="1"/>
+                    <field name="activity_group_id" invisible="0"/>
                     <field name="activity_id"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
