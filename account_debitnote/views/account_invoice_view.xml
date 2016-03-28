@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">invoice.form.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="/form" position="inside">
+                        <field name="is_debitnote" invisible="True"/>
+                    </xpath>
+                    <xpath expr="/form/sheet/h1/label[@string='Draft Invoice']" position="replace">
+                        <label string="Draft Invoice" attrs="{'invisible': ['|','|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice'), ('is_debitnote','&lt;&gt;',False)]}"/>
+                        <label string="Draft Debit Note" attrs="{'invisible': ['|','|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice'), ('is_debitnote','&lt;&gt;',True)]}"/>
+                    </xpath>
+                    <xpath expr="/form/sheet/h1/label[@string='Invoice']" position="replace">
+                        <label string="Invoice" attrs="{'invisible': ['|','|',('state','in',('draft','proforma','proforma2')), ('type','&lt;&gt;','out_invoice'), ('is_debitnote','&lt;&gt;',False)]}"/>
+                        <label string="Debit Note" attrs="{'invisible': ['|','|',('state','in',('draft','proforma','proforma2')), ('type','&lt;&gt;','out_invoice'), ('is_debitnote','&lt;&gt;',True)]}"/>
+                    </xpath>
+                    <button name="%(account.action_account_invoice_refund)d" position="after">
+                        <button name="%(action_account_debitnote)d" type='action' string='Debit Note' states='open,proforma2,paid' groups="base.group_user" />
+                    </button>
+                    <page string="Payments" position="after" >
+                        <page string="Debits" attrs="{'invisible': [('debited_amount','=',0)]}">
+                            <group>
+                                   <field name="debited_amount" />
+                            </group>
+                            <field name="debit_invoice_ids" />
+                        </page>
+                    </page>
+                </data>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <button name="%(account.action_account_invoice_refund)d" position="after">
+                    <button name="%(action_account_debitnote)d" type='action' string='Debit Note' states='open,paid' groups="base.group_user" />
+                </button>
+            </field>
+        </record>
+
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">view.account.invoice.filter.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <search position="inside">
+                    <separator/>
+                    <filter name="debitnote" string="Debit Notes" domain="[('is_debitnote','=',True)]" help="Debit Note"/>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</openerp>
