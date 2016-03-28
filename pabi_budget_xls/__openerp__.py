@@ -15,7 +15,7 @@
     "application": False,
     "installable": True,
     "depends": [
-        "pabi_chartfield",
+        "account_budget_activity",
         'web_widget_x2many_2d_matrix',
     ],
     "data": [
