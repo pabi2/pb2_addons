@@ -25,7 +25,7 @@ class AccuontVoucherMultipleReconcile(models.Model):
 class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
 
-    @api.multi  # Complete override function field from account_voucher module.
+    @api.multi
     @api.depends('line_cr_ids', 'line_dr_ids', 'multiple_reconcile_ids')
     def _get_writeoff_amount(self):
         if not self.ids:
@@ -61,7 +61,6 @@ class AccountVoucher(models.Model):
                 voucher.writeoff_amount = currency.round(
                     voucher.amount - sign * (credit - debit))
 
-# Columns-------START
     is_lazada_payment = fields.Boolean('Is Lazada Payment?', readonly=True)
     multiple_reconcile_ids = fields.One2many(
         'account.voucher.multiple.reconcile',
@@ -74,7 +73,6 @@ class AccountVoucher(models.Model):
         help="Computed as the difference between \
         the amount stated in the voucher and the\
          sum of allocation on the voucher lines.")
-# Columns----------END
 
     @api.model
     def multiple_reconcile_get_hook(self, line_total,
@@ -132,64 +130,60 @@ class AccountVoucher(models.Model):
 
     @api.model
     def action_move_line_writeoff_hook(self, ml_writeoff):
-        super(AccountVoucher, self).\
-            action_move_line_writeoff_hook(ml_writeoff)
         if ml_writeoff:
-            for line_tax in ml_writeoff:
-                self.env['account.move.line'].create(line_tax)
+            if self.multiple_reconcile_ids:
+                for line_tax in ml_writeoff:
+                    self.env['account.move.line'].create(line_tax)
+        else:
+            self.env['account.move.line'].create(ml_writeoff[0])
         return
 
     @api.model
     def multiple_reconcile_ded_amount_hook(self, line_total,
-                                           move_id, name,
+                                           move_id, account_id, diff,
+                                           ded_amount, name,
                                            company_currency, current_currency):
-        list_move_line = super(AccountVoucher, self).\
-            multiple_reconcile_ded_amount_hook(line_total, move_id,
-                                               name, company_currency,
-                                               current_currency)
         voucher = self
-        if voucher.payment_option == 'with_writeoff':
-            account_id = voucher.writeoff_acc_id.id
-            write_off_name = voucher.comment
-        elif voucher.type in ('sale', 'receipt'):
-            account_id = voucher.partner_id.\
-                property_account_receivable.id
+        list_move_line = []
+        if self.multiple_reconcile_ids and diff != ded_amount:
+            debit = credit = 0.0
+            ctx = dict(self._context.copy())
+            ctx.update({'date': voucher.date})
+            value1 = self.with_context(ctx).\
+                _convert_amount(voucher.writeoff_amount, voucher.id)
+            if value1 != 0.0:
+                if value1 < 0.0:
+                    if voucher.type == 'receipt':
+                        debit = value1
+                    else:
+                        credit = value1
+                else:
+                    if voucher.type == 'receipt':
+                        credit = value1
+                    else:
+                        debit = value1
+
+                sign = voucher.type == 'payment' and -1 or 1
+                move_line = {
+                    'name': name,
+                    'account_id': account_id,
+                    'move_id': move_id,
+                    'partner_id': voucher.partner_id.id,
+                    'date': voucher.date,
+                    'credit': abs(credit),
+                    'debit': abs(debit),
+                    'amount_currency': company_currency != current_currency and
+                    (sign * -1 * voucher.writeoff_amount) or False,
+                    'currency_id': company_currency != current_currency and
+                    current_currency or False,
+                }
+                list_move_line.append(move_line)
+            return list_move_line
         else:
-            account_id = voucher.partner_id.\
-                property_account_payable.id
-
-        ctx = dict(self._context.copy())
-        ctx.update({'date': voucher.date})
-        value1 = self.with_context(ctx).\
-            _convert_amount(voucher.writeoff_amount, voucher.id)
-        if value1 != 0.0:
-            if value1 < 0.0:
-                if voucher.type == 'receipt':
-                    debit = value1
-                else:
-                    credit = value1
-            else:
-                if voucher.type == 'receipt':
-                    credit = value1
-                else:
-                    debit = value1
-
-            sign = voucher.type == 'payment' and -1 or 1
-            move_line = {
-                'name': write_off_name or name,
-                'account_id': account_id,
-                'move_id': move_id,
-                'partner_id': voucher.partner_id.id,
-                'date': voucher.date,
-                'credit': abs(credit),
-                'debit': abs(debit),
-                'amount_currency': company_currency != current_currency and
-                (sign * -1 * voucher.writeoff_amount) or False,
-                'currency_id': company_currency != current_currency and
-                current_currency or False,
-            }
-            list_move_line.append(move_line)
-        return list_move_line
+            super(AccountVoucher, self).\
+                multiple_reconcile_ded_amount_hook(line_total, move_id,
+                                                   name, company_currency,
+                                                   current_currency)
 
     @api.model
     def action_move_line_create_hook(self, rec_list_ids):
