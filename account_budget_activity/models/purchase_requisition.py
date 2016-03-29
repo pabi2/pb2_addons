@@ -37,14 +37,12 @@ class PurchaseRequisitionLine(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=True,
         compute='_compute_activity_group',
         store=True,
     )
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
-        required=False,
     )
 
     @api.one
