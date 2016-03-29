@@ -41,54 +41,30 @@
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
                     <field name="price_unit"/>
                 </xpath>
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='mission_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='spa_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_base_type_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_type_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='program_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='org_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='division_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//form/sheet/notebook/page/field/tree/field[@name='department_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='is_editable']" position="after">
                     <field name="fixed_asset"/>
+                    <field name="taxes_id"/>
                     <field name="price_subtotal"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">
                     <field name="price_unit" />
-                    <field name="project_id" />
-                    <field name="costcenter_id" />
                     <field name="fixed_asset"/>
+                    <field name="taxes_id"/>
                     <field name="price_subtotal"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']"
                        position="after">
                     <group class="oe_subtotal_footer oe_right">
-                        <!--<field name="amount_untaxed" widget="monetary"-->
-                        <!--options="{'currency_field': 'currency_id'}"/>-->
-                        <!--<field name="amount_tax" widget="monetary"-->
-                        <!--options="{'currency_field': 'currency_id'}"/>-->
-                        <!--<div class="oe_subtotal_footer_separator oe_inline">-->
-                        <!--<label for="amount_total"/>-->
+                        <field name="amount_untaxed" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="amount_total"/>
                         <!--<button name="button_dummy"-->
                         <!--states="draft" string="(update)" type="object"-->
                         <!--class="oe_edit_only oe_link"/>-->
-                        <!--</div>-->
+                        </div>
                         <field name="amount_total" nolabel="1"
                                class="oe_subtotal_footer_separator" widget="monetary"
                                options="{'currency_field': 'currency_id'}"/>

@@ -55,6 +55,7 @@ class PurchaseRequest(models.Model):
     currency_id = fields.Many2one(
         'res.currency',
         'Currency',
+        required=True,
     )
     currency_rate = fields.Float('Rate')
     objective = fields.Text('Objective')
@@ -76,6 +77,16 @@ class PurchaseRequest(models.Model):
         'Type',
     )
     delivery_address = fields.Text('Delivery Address')
+    amount_untaxed = fields.Float(
+        'Untaxed Amount',
+        readonly=True,
+        default=0.0
+    )
+    amount_tax = fields.Float(
+        'Taxes',
+        readonly=True,
+        default=0.0
+    )
     amount_total = fields.Float(
         'Total',
         readonly=True,
@@ -85,26 +96,59 @@ class PurchaseRequest(models.Model):
     @api.model
     def create(self, vals):
         create_rec = super(PurchaseRequest, self).create(vals)
-        sum_total = 0.0
+        AccTax = self.env['account.tax']
+        total_untaxed = 0.0
+        tax_amount = 0.0
         if 'line_ids' in vals:
             if len(vals['line_ids']) > 0:
                 for line_rec in vals['line_ids']:
                     field = line_rec[2]
-                    sum_total += field['product_qty'] * field['price_unit']
-            create_rec.amount_total = sum_total
+                    for rec_taxes in field['taxes_id']:
+                        for rec_tax in rec_taxes[2]:
+                            domain = [('id', '=', rec_tax)]
+                            found_tax = AccTax.search(domain)
+                            if found_tax.type == 'percent':
+                                tax_amount += field['product_qty'] * (
+                                    field['price_unit'] * found_tax.amount
+                                )
+                            elif found_tax.type == 'fixed':
+                                tax_amount += field['product_qty'] * (
+                                    field['price_unit'] + found_tax.amount
+                                )
+                    untaxed = field['product_qty'] * field['price_unit']
+                    total_untaxed += untaxed
+            create_rec.amount_untaxed = total_untaxed
+            create_rec.amount_tax = tax_amount
+            create_rec.amount_total = total_untaxed + tax_amount
         return create_rec
 
     @api.multi
     def write(self, vals):
         super(PurchaseRequest, self).write(vals)
-        prql_obj = self.env['purchase.request.line']
+        PRLine = self.env['purchase.request.line']
         sum_total = 0.0
+        total_untaxed = 0.0
+        tax_amount = 0.0
         domain = [('request_id', '=', self.id)]
-        found_recs = prql_obj.search(domain)
+        found_recs = PRLine.search(domain)
         for rec in found_recs:
-            sum_total += rec.product_qty * rec.price_unit
+            for rec_tax in rec.taxes_id:
+                if rec_tax.type == 'percent':
+                    tax_amount += rec.product_qty * (
+                        rec.price_unit * rec_tax.amount
+                    )
+                elif rec_tax.type == 'fixed':
+                    tax_amount += rec.product_qty * (
+                        rec.price_unit + rec_tax.amount
+                    )
+            total_untaxed += rec.product_qty * rec.price_unit
+            sum_total += rec.price_subtotal
         edited = super(PurchaseRequest, self).\
-            write({'amount_total': sum_total})
+            write({
+                'amount_untaxed': total_untaxed,
+                'amount_tax': tax_amount,
+                'amount_total': sum_total,
+            })
         return edited
 
     @api.model
@@ -165,9 +209,28 @@ class PurchaseRequestLine(models.Model):
         compute="_compute_price_subtotal",
         store=True,
     )
+    taxes_id = fields.Many2many(
+        'account.tax',
+        'purchase_request_taxes_rel',
+        'request_line_id',
+        'tax_id',
+        'Taxes'
+    )
 
     @api.multi
-    @api.depends('product_qty', 'price_unit')
+    @api.depends('product_qty', 'price_unit', 'taxes_id')
     def _compute_price_subtotal(self):
-        for rec in self:
-            rec.price_subtotal = rec.product_qty * rec.price_unit
+        tax_amount = 0.0
+        for line in self:
+            amount_untaxed = line.product_qty * line.price_unit
+            for line_tax in line.taxes_id:
+                if line_tax.type == 'percent':
+                    tax_amount += line.product_qty * (
+                        line.price_unit * line_tax.amount
+                    )
+                elif line_tax.type == 'fixed':
+                    tax_amount += line.product_qty * (
+                        line.price_unit + line_tax.amount
+                    )
+            cur = line.request_id.currency_id
+            line.price_subtotal = cur.round(amount_untaxed + tax_amount)

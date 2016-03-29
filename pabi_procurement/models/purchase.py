@@ -105,15 +105,6 @@ class PurchaseOrder(models.Model):
     )
 
 
-class PurchaseOrderLine(models.Model):
-    _inherit = 'purchase.order.line'
-
-    requisition_line_id = fields.Many2one(
-        'purchase_requisition_line',
-        'Purchase Requisition Line'
-    )
-
-
 class PurchaseType(models.Model):
     _name = 'purchase.type'
     _description = 'PABI2 Purchase Type'
