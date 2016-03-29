@@ -1,11 +1,33 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
 from openerp.exceptions import Warning
-from .account import BUDGETING_LEVEL, BUDGETING_LEVEL_UNIT
 
 
 class AccountBudget(models.Model):
     _inherit = 'account.budget'
+
+    BUDGETING_LEVEL = {'activity_group_id': 'Activity Group',
+                       # 'activity_id': 'Activity',  # No activity level
+                       # Project Based
+                       'spa_id': 'SPA',
+                       'mission_id': 'Mission',
+                       'program_scheme_id': 'Program Scheme',
+                       'program_group_id': 'Program Group',
+                       'program_id': 'Program',
+                       'project_group_id': 'Project Group',
+                       'project_id': 'Project',
+                       }
+
+    BUDGETING_LEVEL_UNIT = {'activity_group_id': 'Activity Group',
+                            # 'activity_id': 'Activity',  # No activity level
+                            # Unit Based
+                            'org_id': 'Org',
+                            'sector_id': 'Sector',
+                            'department_id': 'Department',
+                            'division_id': 'Division',
+                            'section_id': 'Section',
+                            'costcenter_id': 'Costcenter',
+                            }
 
     @api.model
     def _get_model_budgeting_level(self):
@@ -46,18 +68,20 @@ class AccountBudget(models.Model):
 
     @api.model
     def _get_budgeting_resource(self, budgeting_resource_id, fiscal, *args):
+        LEVEL = self.env['account.budget'].BUDGETING_LEVEL
+        LEVEL_UNIT = self.env['account.budget'].BUDGETING_LEVEL_UNIT
         if args[0] == 'costcenter_id':
             model_dict = self._get_model_budgeting_level()
             model = model_dict.get(fiscal.budgeting_level_unit, False)
             if not budgeting_resource_id:
-                field = BUDGETING_LEVEL_UNIT[fiscal.budgeting_level_unit]
+                field = LEVEL_UNIT[fiscal.budgeting_level_unit]
                 raise Warning(_("Field %s is not entered, "
                                 "can not check for budget") % (field,))
             resource = self.env[model].browse(budgeting_resource_id)
             return resource
         elif args[0] == 'project_id':
             if not budgeting_resource_id:
-                field = BUDGETING_LEVEL[fiscal.budgeting_level]
+                field = LEVEL[fiscal.budgeting_level]
                 raise Warning(_("Field %s is not entered, "
                                 "can not check for budget") % (field,))
             return super(AccountBudget, self).\
