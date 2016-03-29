@@ -80,7 +80,7 @@ class TestAccountVoucherDeduction(common.TransactionCase):
 
         self.reconcile_lines = self.AccountVoucherMultipleReconcile.create({
             'account_id': self.account_bank.id,
-            'amount': self.voucher.writeoff_amount,
+            'amount': -1 * self.voucher.writeoff_amount,
             'comment': 'Test voucher deduction lines',
             'voucher_id': self.voucher.id,
         })
