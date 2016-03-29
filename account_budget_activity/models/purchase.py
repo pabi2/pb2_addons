@@ -14,6 +14,16 @@ class PurchaseOrder(models.Model):
                     Analytic.create_matched_analytic(line)
         return super(PurchaseOrder, self).wkf_confirm_order()
 
+    @api.model
+    def _prepare_inv_line(self, account_id, order_line):
+        res = super(PurchaseOrder, self).\
+            _prepare_inv_line(account_id, order_line)
+        AnayticAccount = self.env['account.analytic.account']
+        dimensions = AnayticAccount._analytic_dimensions()
+        for d in dimensions:
+            res.update({d: order_line[d].id})
+        return res
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
