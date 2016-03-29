@@ -130,13 +130,14 @@ class AccountVoucher(models.Model):
 
     @api.model
     def action_move_line_writeoff_hook(self, ml_writeoff):
-        if ml_writeoff:
-            if self.multiple_reconcile_ids:
+        if self.multiple_reconcile_ids:
+            if ml_writeoff:
                 for line_tax in ml_writeoff:
                     self.env['account.move.line'].create(line_tax)
+            return
         else:
-            self.env['account.move.line'].create(ml_writeoff[0])
-        return
+            return super(AccountVoucher, self).\
+                action_move_line_writeoff_hook(ml_writeoff)
 
     @api.model
     def multiple_reconcile_ded_amount_hook(self, line_total,
@@ -180,7 +181,7 @@ class AccountVoucher(models.Model):
                 list_move_line.append(move_line)
             return list_move_line
         else:
-            super(AccountVoucher, self).\
+            return super(AccountVoucher, self).\
                 multiple_reconcile_ded_amount_hook(line_total,
                                                    move_id, account_id, diff,
                                                    ded_amount, name,
