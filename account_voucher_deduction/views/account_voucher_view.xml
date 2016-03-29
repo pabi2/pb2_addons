@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record id="view_voucher_multiple_reconcile_tree" model="ir.ui.view">
+            <field name="name">account.voucher.multiple.reconcile.tree</field>
+            <field name="model">account.voucher.multiple.reconcile</field>
+            <field name="arch" type="xml">
+                <tree string="Reconcile Lines" editable="bottom">
+                    <field name="account_id" domain="[('type','not in',['view', 'closed'])]" select="1" />
+                    <field name="amount" sum="Total Deduction" select="1" />
+                    <field name="comment" select="1" />
+                    <field name="analytic_id" select="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_voucher_multiple_reconcile_form" model="ir.ui.view">
+            <field name="name">account.voucher.multiple.reconcile.form</field>
+            <field name="model">account.voucher.multiple.reconcile</field>
+            <field name="arch" type="xml">
+                <form string="Reconcile Lines">
+                    <group>
+                        <group>
+                            <field name="account_id" domain="[('type','not in',['view', 'closed'])]" select="1" />
+                            <field name="comment" />
+                        </group>
+                        <group>
+                            <field name="amount" select="1" />
+                            <field name="analytic_id" select="1" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_voucher_multiple_reconcile_filter" model="ir.ui.view">
+            <field name="name">account.voucher.multiple.reconcile.search</field>
+            <field name="model">account.voucher.multiple.reconcile</field>
+            <field name="arch" type="xml">
+                <search string="Reconcile Lines">
+                    <field name="account_id" select="1" />
+                    <field name="amount" select="1" />
+                </search>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_vendor_receipt_form_voucher_payment">
+            <field name="name">account.voucher.voucher.customer.payment.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath  expr="//field[@name='writeoff_acc_id']"   position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath> 
+                <xpath  expr="//field[@name='comment']"   position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath> 
+                <xpath  expr="//field[@name='analytic_id']"   position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath> 
+                <xpath expr="//field[@name='payment_option']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_option']" position="after">
+                        <separator string="Reconcile Payment Lines"/>
+                        <group class="oe_subtotal_footer oe_left">
+                            <button name="button_reset_amount" states="draft"
+                                string="(update)" class="oe_link oe_edit_only"
+                                type="object" help="Recompute Difference Amount"/>
+                        </group>
+                        <group>
+                            <field name="multiple_reconcile_ids" nolabel="1" >
+                                <tree string="Reconcile Lines" editable="top">
+                                    <field name="account_id" domain="[('type','not in',['view', 'closed'])]" select="1" />
+                                    <field name="amount" sum="Total Amount" select="1" />
+                                    <field name="comment" />
+                                    <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                                </tree>
+                            </field>
+                        </group>
+                </xpath>
+            </field>
+         </record>
+        <record model="ir.ui.view" id="view_vendor_supplier_form_voucher_payment">
+            <field name="name">account.voucher.voucher.supplier.payment.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath  expr="//field[@name='writeoff_acc_id']"   position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath> 
+                <xpath  expr="//field[@name='comment']"   position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath> 
+                <xpath  expr="//field[@name='analytic_id']"   position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath> 
+                <xpath expr="//field[@name='payment_option']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_option']" position="after">
+                        <separator string="Reconcile Payment Lines" nolabel="1" />
+                        <group class="oe_subtotal_footer oe_left">
+                            <button name="button_reset_amount" states="draft"
+                                string="(update)" class="oe_link oe_edit_only"
+                                type="object" help="Recompute Difference Amount"/>
+                        </group>
+                        <group>
+                            <field name="multiple_reconcile_ids"  >
+                                <tree string="Reconcile Lines" editable="top">
+                                    <field name="account_id" domain="[('type','not in',['view', 'closed'])]" select="1" />
+                                    <field name="amount" sum="Total Amount"  select="1" />
+                                    <field name="comment" />
+                                    <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                                </tree>
+                            </field>
+                        </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
