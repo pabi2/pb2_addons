@@ -181,8 +181,10 @@ class AccountVoucher(models.Model):
             return list_move_line
         else:
             super(AccountVoucher, self).\
-                multiple_reconcile_ded_amount_hook(line_total, move_id,
-                                                   name, company_currency,
+                multiple_reconcile_ded_amount_hook(line_total,
+                                                   move_id, account_id, diff,
+                                                   ded_amount, name,
+                                                   company_currency,
                                                    current_currency)
 
     @api.model
