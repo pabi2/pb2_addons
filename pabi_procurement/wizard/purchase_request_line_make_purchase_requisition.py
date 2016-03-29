@@ -17,7 +17,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         if 'taxes_id' not in res:
             res.update(
                 {
-                    'taxes_id': [(4,item.line_id.taxes_id.ids)],
+                    'taxes_id': [(4, item.line_id.taxes_id.ids)],
                 }
             )
         return res
