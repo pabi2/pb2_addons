@@ -2,12 +2,16 @@
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning, except_orm
-from .account import BUDGETING_LEVEL
 
 
 class AccountBudget(models.Model):
     _name = "account.budget"
     _description = "Budget"
+
+    BUDGETING_LEVEL = {
+        'activity_group_id': 'Activity Group',
+        # 'activity_id': 'Activity'  # No Activity Level
+    }
 
     name = fields.Char(
         string='Name',
@@ -96,6 +100,7 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _validate_budgeting_level(self):
+        LEVEL = self.env['account.budget'].BUDGETING_LEVEL
         for budget in self:
             budgeting_level = budget.fiscalyear_id.budgeting_level
             count = self.env['account.budget.line'].search_count(
@@ -104,7 +109,7 @@ class AccountBudget(models.Model):
                 raise except_orm(
                     _('Budgeting Level Warning'),
                     _('Required budgeting level is %s') %
-                    (BUDGETING_LEVEL[budgeting_level]))
+                    (LEVEL[budgeting_level]))
 
     @api.multi
     def budget_validate(self):
@@ -156,10 +161,11 @@ class AccountBudget(models.Model):
 
     @api.model
     def _get_budgeting_resource(self, budgeting_resource_id, fiscal, *args):
+        LEVEL = self.env['account.budget'].BUDGETING_LEVEL
         model_dict = self._get_model_budgeting_level()
         model = model_dict.get(fiscal.budgeting_level, False)
         if not budgeting_resource_id:
-            field = BUDGETING_LEVEL[fiscal.budgeting_level]
+            field = LEVEL[fiscal.budgeting_level]
             raise Warning(_("Field %s is not entered, "
                             "can not check for budget") % (field,))
         # Get budget monitor of specified object, i.e., Activity Group ID
