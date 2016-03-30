@@ -1,16 +1,25 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning, except_orm
+from openerp.exceptions import except_orm, Warning as UserError
 
 
 class AccountBudget(models.Model):
     _name = "account.budget"
     _description = "Budget"
 
-    BUDGETING_LEVEL = {
+    BUDGET_LEVEL = {
         'activity_group_id': 'Activity Group',
         # 'activity_id': 'Activity'  # No Activity Level
+    }
+
+    BUDGET_LEVEL_MODEL = {
+        'activity_group_id': 'account.activity.group',
+        # 'activity_id': 'Activity'  # No Activity Level
+    }
+
+    BUDGET_LEVEL_TYPE = {
+        'check_budget': 'Check Budget',
     }
 
     name = fields.Char(
@@ -99,21 +108,25 @@ class AccountBudget(models.Model):
         self.date_to = self.fiscalyear_id.date_stop
 
     @api.multi
-    def _validate_budgeting_level(self):
-        LEVEL = self.env['account.budget'].BUDGETING_LEVEL
+    def _validate_budget_level(self):
+        LEVEL = self.env['account.budget'].BUDGET_LEVEL
         for budget in self:
-            budgeting_level = budget.fiscalyear_id.budgeting_level
+            fiscal = budget.fiscalyear_id
+            if not fiscal.budget_level_ids:
+                raise UserError(_('No budget level configured '
+                                  'for this fiscal year'))
+            budget_level = fiscal.budget_level_ids[0].budget_level
             count = self.env['account.budget.line'].search_count(
-                [('budget_id', '=', budget.id), (budgeting_level, '=', False)])
+                [('budget_id', '=', budget.id), (budget_level, '=', False)])
             if count:
                 raise except_orm(
                     _('Budgeting Level Warning'),
                     _('Required budgeting level is %s') %
-                    (LEVEL[budgeting_level]))
+                    (LEVEL[budget_level]))
 
     @api.multi
     def budget_validate(self):
-        self._validate_budgeting_level()
+        self._validate_budget_level()
         self.write({
             'state': 'validate',
             'validating_user_id': self._uid,
@@ -122,7 +135,7 @@ class AccountBudget(models.Model):
 
     @api.multi
     def budget_confirm(self):
-        self._validate_budgeting_level()
+        self._validate_budget_level()
         self.write({'state': 'confirm'})
         return True
 
@@ -143,31 +156,31 @@ class AccountBudget(models.Model):
 
     # ---- BUDGET CHECK ----
     @api.model
-    def get_fiscal_and_budgeting_level(self, budget_date=False):
+    def get_fiscal_and_budget_level(self, budget_date=False):
         if not budget_date:
             budget_date = fields.Date.today()
         Fiscal = self.env['account.fiscalyear']
         fiscal_id = Fiscal.find(budget_date)
-        budgeting_level = Fiscal.browse(fiscal_id).budgeting_level
-        return fiscal_id, budgeting_level
+        res = {'fiscal_id': fiscal_id}
+        for level in Fiscal.browse(fiscal_id).budget_level_ids:
+            res[level.type] = level.budget_level
+        return res
 
     @api.model
-    def _get_model_budgeting_level(self):
-        MODEL_DICT = {
-            'activity_group_id': 'account.activity.group',
-            'activity_id': 'account.activity',
-        }
-        return MODEL_DICT
+    def _get_model_budget_level(self):
+        return self.BUDGET_LEVEL_MODEL
 
     @api.model
     def _get_budgeting_resource(self, budgeting_resource_id, fiscal, *args):
-        LEVEL = self.env['account.budget'].BUDGETING_LEVEL
-        model_dict = self._get_model_budgeting_level()
-        model = model_dict.get(fiscal.budgeting_level, False)
-        if not budgeting_resource_id:
-            field = LEVEL[fiscal.budgeting_level]
-            raise Warning(_("Field %s is not entered, "
-                            "can not check for budget") % (field,))
+        LEVEL = self.env['account.budget'].BUDGET_LEVEL
+        model_dict = self._get_model_budget_level()
+        if fiscal.budget_level_ids:
+            budget_level = fiscal.budget_level_ids[0].budget_level
+            model = model_dict.get(budget_level, False)
+            if not budgeting_resource_id:
+                field = LEVEL[fiscal.budget_level]
+                raise Warning(_("Field %s is not entered, "
+                                "can not check for budget") % (field,))
         # Get budget monitor of specified object, i.e., Activity Group ID
         resource = self.env[model].browse(budgeting_resource_id)
         return resource
@@ -176,8 +189,6 @@ class AccountBudget(models.Model):
     def _get_budget_monitor(self, resource, fiscal, *args):
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal)
-        if not monitors:
-            return False
         return monitors
 
     @api.model

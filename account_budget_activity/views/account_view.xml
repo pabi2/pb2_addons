@@ -1,27 +1,72 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-
-    	# Budgeting Level Config
-        <record id="view_fiscalyear_budgeting_level_tree" model="ir.ui.view">
-            <field name="name">view.fiscalyear.budgeting.level.tree</field>
+    	
+    	<!-- Budget Level -->
+        <record id="view_fiscalyear_budget_level_form" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.level.form</field>
             <field name="model">account.fiscalyear</field>
             <field name="arch" type="xml">
-                <tree string="Fiscalyear Budgeting Level" editable="top">
-                    <field name="name" readonly="1"/>
-                    <field name="budget_control"/>
-                    <field name="budgeting_level" attrs="{'required': [('budget_control','=',True)]}"/>
+            	<form>
+	                <group>
+	                    <group>
+	                        <field name="name" readonly="1"/>
+	                        <field name="code" readonly="1"/>
+	                        <field name="company_id" groups="base.group_multi_company"/>
+	                    </group>
+	                    <group>
+	                        <field name="budget_control"/>
+	                    </group>
+	                </group>
+	                <field colspan="4" name="budget_level_ids" nolabel="1" widget="one2many_list">
+	                    <tree string="Budget Level" editable="bottom">
+                            <field name="fiscal_id" invisible="1"/>
+                            <field name="type"/>
+                            <field name="budget_level"/>
+	                    </tree>
+	                </field>
+                </form>
+            </field>
+        </record>
+        <record id="view_fiscalyear_budget_level_tree" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.level.tree</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
                 </tree>
             </field>
         </record>
-
-        <record id="action_fiscalyear_budgeting_level" model="ir.actions.act_window">
+        <record id="view_fiscalyear_budget_level_search" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.level.search</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <search string="Search Fiscalyear">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Fiscal Year"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_fiscalyear_budget_level" model="ir.actions.act_window">
             <field name="name">Budgeting Level</field>
             <field name="res_model">account.fiscalyear</field>
             <field name="view_type">form</field>
-            <field name="view_id" ref="view_fiscalyear_budgeting_level_tree"/>
+            <field name="view_mode">tree,form</field>
         </record>
-        <menuitem action="action_fiscalyear_budgeting_level" id="menu_fiscalyear_budgeting_level" parent="next_id_pos" sequence="110"/>
-
+        <record id="action_fiscalyear_budget_level_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_fiscalyear_budget_level_form"/>
+            <field name="act_window_id" ref="action_fiscalyear_budget_level"/>
+        </record>
+        <record id="action_fiscalyear_budget_level_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_fiscalyear_budget_level_tree"/>
+            <field name="act_window_id" ref="action_fiscalyear_budget_level"/>
+        </record>
+        <menuitem action="action_fiscalyear_budget_level" id="menu_fiscalyear_budget_level" parent="next_id_pos" sequence="110"/>
+        
     </data>
 </openerp>

@@ -55,8 +55,8 @@ class MonitorView(models.AbstractModel):
                 and journal_id in
                     (select id from account_journal
                     where type in ('purchase', 'purchase_refund'));
-            """ % (self._budgeting_level,
-                   rec[self._budgeting_level].id, rec.fiscalyear_id.id))
+            """ % (self._budget_level,
+                   rec[self._budget_level].id, rec.fiscalyear_id.id))
             rec.amount_actual = self._cr.fetchone()[0] or 0.0
             rec.amount_balance = rec.amount_plan - rec.amount_actual
 
@@ -70,7 +70,7 @@ class AccountActivityGroupMonitorView(MonitorView, models.Model):
         string='Activity Group',
         readonly=True,
     )
-    _budgeting_level = 'activity_group_id'
+    _budget_level = 'activity_group_id'
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'activity_group_id')
@@ -85,7 +85,7 @@ class AccountActivityMonitorView(MonitorView, models.Model):
         string='Activity',
         readonly=True,
     )
-    _budgeting_level = 'activity_id'
+    _budget_level = 'activity_id'
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'activity_id')
