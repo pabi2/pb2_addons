@@ -152,20 +152,82 @@ class PurchaseRequest(models.Model):
         return edited
 
     @api.model
+    def call_gen_pr(self):
+        gen_dict = {
+            'name': u'PR0000001',
+            'requested_by': u'Administrator',
+            'responsible_person': u'Administrator',
+            'date_approved': u'2016-01-31',
+            'prototype': u'True',
+            'total_budget_value': u'240000',
+            'warehouse_id': u'Your Company',
+            'purchase_type_id': u'AAAA',
+            'purchase_method_id': u'AAAA',
+            'description': u'Put your PR description here.',
+            'objective': u'Put your PR objective here',
+            'currency_id': u'THB',
+            'currency_rate': u'1',
+            'delivery_address': u'Put your PR delivery address here',
+            'date_start': u'2016-01-31',
+            'picking_type_id': u'Receipts',
+            'operating_unit_id': u'Main Operating Unit',
+            'line_ids': (
+                {
+                    'name': u'Computer',
+                    'product_qty': u'20',
+                    'price_unit': u'10000',
+                    'date_required': u'2016-01-31',
+                    'taxes_id': u'Tax 7.00%',
+                },
+                {
+                    'name': u'HDD',
+                    'product_qty': u'20',
+                    'price_unit': u'1030',
+                    'date_required': u'2016-01-31',
+                    'taxes_id': u'Tax 7.00%',
+                }
+            ),
+        }
+        self.generate_purchase_request(gen_dict)
+        return True
+
+    @api.model
     def _finalize_data_to_load(self, fields, data):
         # Case multiple order line, split lines
         if 'line_ids' in fields:
+            line_ids_index = []
             datas = []
+            arrange_dat = []
+            dat_tuple = ()
             is_first = True
             for line in data[fields.index('line_ids')]:
                 if is_first:
-                    i = fields.index('line_ids')  # Delete 'order_line'
+                    i = fields.index('line_ids')
                     del fields[i]
                     del data[i]
                     fields += ['line_ids/'+key for key in line.keys()]
+                    #collect child key index
+                    for key in line.keys():
+                        found_idx = fields.index('line_ids/'+key)
+                        if found_idx:
+                            line_ids_index.append(found_idx)
                 datas += [tuple(data + line.values())]
                 is_first = False
-            return fields, datas
+            #clear header data in line row
+            is_first = True
+            for line_dat in enumerate(datas):
+                if is_first:
+                    is_first = False
+                    arrange_dat.append(line_dat[1])
+                    continue
+                for col_dat in enumerate(line_dat[1]):
+                    if col_dat[0] not in line_ids_index:
+                        dat_tuple += (u'',)
+                    else:
+                        dat_tuple += (col_dat[1],)
+                arrange_dat.append(dat_tuple)
+                dat_tuple = ()
+            return fields, arrange_dat
         else:
             return fields, [tuple(data)]   # one line sales order
 
@@ -175,22 +237,21 @@ class PurchaseRequest(models.Model):
         data = data_dict.values()
         # Final Preparation of fields and data
         fields, data = self._finalize_data_to_load(fields, data)
-        res = self.load(fields, data)
-        order_id = res['ids'] and res['ids'][0] or False
-        if not order_id:
+        load_res = self.load(fields, data)
+        res_id = load_res['ids'] and load_res['ids'][0] or False
+        if not res_id:
             return {
                 'is_success': False,
                 'result': False,
-                'messages': [m['message'] for m in res['messages']],
+                'messages': [m['message'] for m in res_id['messages']],
             }
         else:
-            order = self.browse(order_id)
+            res = self.browse(res_id)
             return {
                 'is_success': True,
                 'result': {
-                    'request_id': order.id,
-                    'name': order.name,
-                    'partner_id': order.partner_id.id,
+                    'request_id': res.id,
+                    'name': res.name,
                 },
                 'messages': False
             }
