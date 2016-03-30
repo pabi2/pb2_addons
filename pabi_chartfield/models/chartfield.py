@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from openerp import api, fields
+from openerp import api, fields, _
+from openerp.exceptions import Warning as UserError
 
 # org -> sector -> department -> division -> section -> costcenter
 #                                                       (mission)
@@ -38,33 +39,96 @@ CHART_FIELDS = [
 
 class ChartField(object):
 
-    spa_id = fields.Many2one('res.spa', 'SPA')
-    mission_id = fields.Many2one('res.mission', 'Mission')
-    tag_type_id = fields.Many2one('res.tag.type', 'Tag Type')
-    tag_id = fields.Many2one('res.tag', 'Tag')
+    # Project Base
+    spa_id = fields.Many2one(
+        'res.spa',
+        string='SPA',
+    )
+    mission_id = fields.Many2one(
+        'res.mission',
+        string='Mission',
+    )
+    tag_type_id = fields.Many2one(
+        'res.tag.type',
+        string='Tag Type',
+    )
+    tag_id = fields.Many2one(
+        'res.tag',
+        string='Tag',
+        domain="[('tag_type_id', '=', tag_type_id)]",
+    )
+    program_scheme_id = fields.Many2one(
+        'res.program.scheme',
+        string='Program Scheme',
+    )
+    program_group_id = fields.Many2one(
+        'res.program.group',
+        string='Program Group',
+        domain="[('program_scheme_id', '=', program_scheme_id)]",
+    )
+    program_id = fields.Many2one(
+        'res.program',
+        string='Program',
+        domain="[('program_group_id', '=', program_group_id)]",
+    )
+    project_group_id = fields.Many2one(
+        'res.project.group',
+        string='Project Group',
+        domain="[('program_id', '=', program_id)]",
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        domain="[('project_group_id', '=', project_group_id)]",
+    )
+    # Unit Base
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
+    sector_id = fields.Many2one(
+        'res.sector',
+        string='Sector',
+        domain="[('org_id', '=', org_id)]",
+    )
+    department_id = fields.Many2one(
+        'res.department',
+        string='Department',
+        domain="[('sector_id', '=', sector_id)]",
+    )
+    division_id = fields.Many2one(
+        'res.division',
+        string='Division',
+        domain="[('department_id', '=', department_id)]",
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        domain="[('section_ids', '!=', False)]",
+    )
 
-    program_scheme_id = fields.Many2one('res.program.scheme', 'Program Scheme')
-    program_group_id = fields.Many2one('res.program.group', 'Program Group')
-    program_id = fields.Many2one('res.program', 'Program')
-    project_group_id = fields.Many2one('res.project.group', 'Project Group')
-    project_id = fields.Many2one('res.project', 'Project')
+    @api.onchange('section_id')
+    def _onchange_section_id(self):
 
-    org_id = fields.Many2one('res.org', 'Org')
-    sector_id = fields.Many2one('res.sector', 'Sector')
-    department_id = fields.Many2one('res.department', 'Department')
-    division_id = fields.Many2one('res.division', 'Division')
-    section_id = fields.Many2one('res.section', 'Section')
-    costcenter_id = fields.Many2one('res.costcenter', 'Costcenter')
+        self.org_id = self.section_id.org_id  # main
+        self.sector_id = self.section_id.sector_id  # main
+        self.department_id = self.section_id.department_id  # main
+        self.division_id = self.section_id.division_id  # main
+        self.costcenter_id = self.section_id.costcenter_id  # main
+
+        self.project_id = False
 
     @api.onchange('costcenter_id')
     def _onchange_costcenter_id(self):
+        if len(self.costcenter_id.section_ids) > 1:
+            raise UserError(_('More than 1 sections is using this costcenter'))
 
-        self.org_id = self.costcenter_id.org_id  # main
-        self.sector_id = self.costcenter_id.sector_id  # main
-        self.department_id = self.costcenter_id.department_id  # main
-        self.division_id = self.costcenter_id.division_id  # main
-        self.section_id = self.costcenter_id.section_id  # main
-        self.costcenter_id = self.costcenter_id  # main
+        self.section_id = len(self.costcenter_id.section_ids) == 1 and \
+            self.costcenter_id.section_ids[0]  # main
         self.mission_id = self.costcenter_id.mission_id
 
         self.project_id = False
@@ -72,6 +136,7 @@ class ChartField(object):
     @api.onchange('project_id')
     def _onchange_project_id(self):
 
+        self.section_id = False
         self.costcenter_id = False
 
         self.program_scheme_id = self.project_id.program_scheme_id  # main
