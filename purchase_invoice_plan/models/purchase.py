@@ -5,6 +5,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
+
 class PurchaseOrder(models.Model):
 
     _inherit = 'purchase.order'

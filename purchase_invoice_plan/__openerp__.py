@@ -18,7 +18,8 @@ Purchase Invoice Plan
     'data': [
         'wizard/create_invoice_view.xml',
         'wizard/purchase_create_invoice_plan_view.xml',
-        'views/purchase_view.xml'
+        'views/purchase_view.xml',
+        'security/ir.model.access.csv'
     ],
     'test': [
     ],
