@@ -15,6 +15,10 @@ class MonitorView(models.AbstractModel):
         string='Planned Amount',
         readonly=True,
     )
+    amount_commit = fields.Float(
+        string='Committed Amount',
+        readonly=True,
+    )
     amount_actual = fields.Float(
         string='Actual Amount',
         readonly=True,
@@ -55,8 +59,8 @@ class MonitorView(models.AbstractModel):
                 and journal_id in
                     (select id from account_journal
                     where type in ('purchase', 'purchase_refund'));
-            """ % (self._budgeting_level,
-                   rec[self._budgeting_level].id, rec.fiscalyear_id.id))
+            """ % (self._budget_level,
+                   rec[self._budget_level].id, rec.fiscalyear_id.id))
             rec.amount_actual = self._cr.fetchone()[0] or 0.0
             rec.amount_balance = rec.amount_plan - rec.amount_actual
 
@@ -66,7 +70,7 @@ class MonitorView(models.AbstractModel):
 class ResOrgMonitorView(MonitorView, models.Model):
     _name = 'res.org.monitor.view'
     _auto = False
-    _budgeting_level = 'org_id'
+    _budget_level = 'org_id'
 
     org_id = fields.Many2one(
         'res.org', 'Org', readonly=True)
@@ -78,7 +82,7 @@ class ResOrgMonitorView(MonitorView, models.Model):
 class ResSectorMonitorView(MonitorView, models.Model):
     _name = 'res.sector.monitor.view'
     _auto = False
-    _budgeting_level = 'sector_id'
+    _budget_level = 'sector_id'
 
     sector_id = fields.Many2one(
         'res.sector', 'Sector', readonly=True)
@@ -90,7 +94,7 @@ class ResSectorMonitorView(MonitorView, models.Model):
 class ResDepartmentMonitorView(MonitorView, models.Model):
     _name = 'res.department.monitor.view'
     _auto = False
-    _budgeting_level = 'department_id'
+    _budget_level = 'department_id'
 
     department_id = fields.Many2one(
         'res.department', 'Department', readonly=True)
@@ -102,7 +106,7 @@ class ResDepartmentMonitorView(MonitorView, models.Model):
 class ResDivisionMonitorView(MonitorView, models.Model):
     _name = 'res.division.monitor.view'
     _auto = False
-    _budgeting_level = 'division_id'
+    _budget_level = 'division_id'
 
     division_id = fields.Many2one(
         'res.division', 'Division', readonly=True)
@@ -114,7 +118,7 @@ class ResDivisionMonitorView(MonitorView, models.Model):
 class ResSectionMonitorView(MonitorView, models.Model):
     _name = 'res.section.monitor.view'
     _auto = False
-    _budgeting_level = 'section_id'
+    _budget_level = 'section_id'
 
     section_id = fields.Many2one(
         'res.section.group', 'Section', readonly=True)
@@ -126,7 +130,7 @@ class ResSectionMonitorView(MonitorView, models.Model):
 class ResCostcenterMonitorView(MonitorView, models.Model):
     _name = 'res.costcenter.monitor.view'
     _auto = False
-    _budgeting_level = 'costcenter_id'
+    _budget_level = 'costcenter_id'
 
     costcenter_id = fields.Many2one(
         'res.costcenter', 'Costcenter', readonly=True)
@@ -140,7 +144,7 @@ class ResCostcenterMonitorView(MonitorView, models.Model):
 class ResSpaMonitorView(MonitorView, models.Model):
     _name = 'res.spa.monitor.view'
     _auto = False
-    _budgeting_level = 'spa_id'
+    _budget_level = 'spa_id'
 
     spa_id = fields.Many2one(
         'res.spa', 'SPA', readonly=True)
@@ -152,7 +156,7 @@ class ResSpaMonitorView(MonitorView, models.Model):
 class ResMissionMonitorView(MonitorView, models.Model):
     _name = 'res.mission.monitor.view'
     _auto = False
-    _budgeting_level = 'mission_id'
+    _budget_level = 'mission_id'
 
     mission_id = fields.Many2one(
         'res.mission', 'Mission', readonly=True)
@@ -164,7 +168,7 @@ class ResMissionMonitorView(MonitorView, models.Model):
 class ResTagTypeMonitorView(MonitorView, models.Model):
     _name = 'res.tag.type.monitor.view'
     _auto = False
-    _budgeting_level = 'tag_type_id'
+    _budget_level = 'tag_type_id'
 
     tag_type_id = fields.Many2one(
         'res.tag.type', 'Tag Type', readonly=True)
@@ -176,7 +180,7 @@ class ResTagTypeMonitorView(MonitorView, models.Model):
 class ResTagMonitorView(MonitorView, models.Model):
     _name = 'res.tag.monitor.view'
     _auto = False
-    _budgeting_level = 'tag_id'
+    _budget_level = 'tag_id'
 
     tag_id = fields.Many2one(
         'res.tag', 'Tag', readonly=True)
@@ -190,7 +194,7 @@ class ResTagMonitorView(MonitorView, models.Model):
 class ResProgramSchemeMonitorView(MonitorView, models.Model):
     _name = 'res.program.scheme.monitor.view'
     _auto = False
-    _budgeting_level = 'program_scheme_id'
+    _budget_level = 'program_scheme_id'
 
     program_scheme_id = fields.Many2one(
         'res.program.scheme', 'Program Scheme', readonly=True)
@@ -202,7 +206,7 @@ class ResProgramSchemeMonitorView(MonitorView, models.Model):
 class ResProgramGroupMonitorView(MonitorView, models.Model):
     _name = 'res.program.group.monitor.view'
     _auto = False
-    _budgeting_level = 'program_group_id'
+    _budget_level = 'program_group_id'
 
     program_group_id = fields.Many2one(
         'res.program.group', 'Program Group', readonly=True)
@@ -214,7 +218,7 @@ class ResProgramGroupMonitorView(MonitorView, models.Model):
 class ResProgramMonitorView(MonitorView, models.Model):
     _name = 'res.program.monitor.view'
     _auto = False
-    _budgeting_level = 'program_id'
+    _budget_level = 'program_id'
 
     program_id = fields.Many2one(
         'res.program', 'Program', readonly=True)
@@ -226,7 +230,7 @@ class ResProgramMonitorView(MonitorView, models.Model):
 class ResProjectGroupView(MonitorView, models.Model):
     _name = 'res.project.group.monitor.view'
     _auto = False
-    _budgeting_level = 'project_group_id'
+    _budget_level = 'project_group_id'
 
     project_group_id = fields.Many2one(
         'res.project.group', 'Project Group', readonly=True)
@@ -238,7 +242,7 @@ class ResProjectGroupView(MonitorView, models.Model):
 class ResProjectView(MonitorView, models.Model):
     _name = 'res.project.monitor.view'
     _auto = False
-    _budgeting_level = 'project_id'
+    _budget_level = 'project_id'
 
     project_id = fields.Many2one(
         'res.project', 'Project', readonly=True)
@@ -307,8 +311,8 @@ class MonitorProjectView(models.AbstractModel):
                     and journal_id in
                         (select id from account_journal
                         where type in ('purchase', 'purchase_refund'));
-            """ % (self._budgeting_level,
-                   rec[self._budgeting_level].id,
+            """ % (self._budget_level,
+                   rec[self._budget_level].id,
                    rec.fiscalyear_id.id, rec.project_id.id or 0))
             rec.amount_actual = self._cr.fetchone()[0] or 0.0
             rec.amount_balance = rec.amount_plan - rec.amount_actual
@@ -323,7 +327,7 @@ class AccountActivityGroupMonitorView(MonitorProjectView, models.Model):
         string='Activity Group',
         readonly=True,
     )
-    _budgeting_level = 'activity_group_id'
+    _budget_level = 'activity_group_id'
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'activity_group_id')
@@ -338,7 +342,7 @@ class AccountActivityMonitorView(MonitorProjectView, models.Model):
         string='Activity',
         readonly=True,
     )
-    _budgeting_level = 'activity_id'
+    _budget_level = 'activity_id'
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'activity_id')
@@ -402,8 +406,8 @@ class MonitorUnitView(models.AbstractModel):
                     and journal_id in
                         (select id from account_journal
                         where type in ('purchase', 'purchase_refund'));
-            """ % (self._budgeting_level,
-                   rec[self._budgeting_level].id,
+            """ % (self._budget_level,
+                   rec[self._budget_level].id,
                    rec.fiscalyear_id.id, rec.costcenter_id.id or 0))
             rec.amount_actual = self._cr.fetchone()[0] or 0.0
             rec.amount_balance = rec.amount_plan - rec.amount_actual
@@ -418,7 +422,7 @@ class AccountActivityGroupMonitorUnitView(MonitorUnitView, models.Model):
         string='Activity Group',
         readonly=True,
     )
-    _budgeting_level = 'activity_group_id'
+    _budget_level = 'activity_group_id'
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'activity_group_id')
@@ -433,7 +437,7 @@ class AccountActivityMonitorUnitView(MonitorUnitView, models.Model):
         string='Activity',
         readonly=True,
     )
-    _budgeting_level = 'activity_id'
+    _budget_level = 'activity_id'
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'activity_id')
