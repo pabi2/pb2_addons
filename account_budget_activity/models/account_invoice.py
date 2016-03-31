@@ -12,10 +12,11 @@ class AccountInvoice(models.Model):
         for invoice in self:
             if invoice.type != 'in_invoice':
                 continue
-            # Get fiscal year and budget level for this group
+            # Get budget level type resources
             r = AccountBudget.get_fiscal_and_budget_level(invoice.date_invoice)
             fiscal_id = r['fiscal_id']
-            budget_level = r['check_budget']
+            budget_type = 'check_budget'
+            budget_level = r[budget_type]  # specify what to check
             # Find amount in this invoice to check against budget
             self._cr.execute("""
                 select %(budget_level)s,
@@ -27,10 +28,11 @@ class AccountInvoice(models.Model):
             )
             # Check budget at this budgeting level
             for r in self._cr.dictfetchall():
-                res = AccountBudget.check_budget(r['amount'],
+                res = AccountBudget.check_budget(fiscal_id,
+                                                 budget_type,
+                                                 budget_level,
                                                  r[budget_level],
-                                                 fiscal_id,
-                                                 budget_level)
+                                                 r['amount'])
                 if not res['budget_ok']:
                     raise UserError(res['message'])
         return True

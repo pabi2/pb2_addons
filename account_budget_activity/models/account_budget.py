@@ -108,21 +108,22 @@ class AccountBudget(models.Model):
         self.date_to = self.fiscalyear_id.date_stop
 
     @api.multi
-    def _validate_budget_level(self):
-        LEVEL = self.env['account.budget'].BUDGET_LEVEL
+    def _validate_budget_level(self, budget_type='check_budget'):
+        LEVEL_DICT = self.env['account.budget'].BUDGET_LEVEL
         for budget in self:
             fiscal = budget.fiscalyear_id
             if not fiscal.budget_level_ids:
                 raise UserError(_('No budget level configured '
                                   'for this fiscal year'))
-            budget_level = fiscal.budget_level_ids[0].budget_level
+            budget_level = fiscal.budget_level_ids.\
+                filtered(lambda x: x.type == budget_type)[0].budget_level
             count = self.env['account.budget.line'].search_count(
                 [('budget_id', '=', budget.id), (budget_level, '=', False)])
             if count:
                 raise except_orm(
                     _('Budgeting Level Warning'),
                     _('Required budgeting level is %s') %
-                    (LEVEL[budget_level]))
+                    (LEVEL_DICT[budget_level]))
 
     @api.multi
     def budget_validate(self):
@@ -167,41 +168,38 @@ class AccountBudget(models.Model):
         return res
 
     @api.model
-    def _get_model_budget_level(self):
-        return self.BUDGET_LEVEL_MODEL
-
-    @api.model
-    def _get_budgeting_resource(self, budgeting_resource_id, fiscal, *args):
-        LEVEL = self.env['account.budget'].BUDGET_LEVEL
-        model_dict = self._get_model_budget_level()
-        if fiscal.budget_level_ids:
-            budget_level = fiscal.budget_level_ids[0].budget_level
-            model = model_dict.get(budget_level, False)
-            if not budgeting_resource_id:
-                field = LEVEL[fiscal.budget_level]
-                raise Warning(_("Field %s is not entered, "
-                                "can not check for budget") % (field,))
-        # Get budget monitor of specified object, i.e., Activity Group ID
-        resource = self.env[model].browse(budgeting_resource_id)
+    def _get_budget_resource(self, fiscal, budget_type,
+                             budget_level, budget_level_res_id, pu_id=False):
+        LEVEL_DICT = self.env['account.budget'].BUDGET_LEVEL
+        MODEL_DICT = self.env['account.budget'].BUDGET_LEVEL_MODEL
+        model = MODEL_DICT.get(budget_level, False)
+        if not budget_level_res_id:
+            field_name = LEVEL_DICT[budget_level]
+            raise Warning(_("Field %s is not entered, "
+                            "can not check for budget") % (field_name,))
+        resource = self.env[model].browse(budget_level_res_id)
         return resource
 
     @api.model
-    def _get_budget_monitor(self, resource, fiscal, *args):
+    def _get_budget_monitor(self, fiscal, budget_type,
+                            budget_level, resource, pu_id=False):
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal)
         return monitors
 
     @api.model
-    def check_budget(self, amount, budgeting_resource_id, fiscal_id, *args):
+    def check_budget(self, fiscal_id, budget_type,
+                     budget_level, budget_level_res_id, amount, pu_id=False):
         res = {'budget_ok': True,
                'message': False, }
         AccountFiscalyear = self.env['account.fiscalyear']
         fiscal = AccountFiscalyear.browse(fiscal_id)
         if not fiscal.budget_control:
             return res
-        resource = self._get_budgeting_resource(budgeting_resource_id,
-                                                fiscal, *args)
-        monitors = self._get_budget_monitor(resource, fiscal, *args)
+        resource = self._get_budget_resource(fiscal, budget_type,
+                                             budget_level, budget_level_res_id, pu_id)
+        monitors = self._get_budget_monitor(fiscal, budget_type,
+                                            budget_level, resource, pu_id)
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
