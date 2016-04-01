@@ -78,30 +78,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
-                            </tree>
-                        </field>
-                        <field name="committee_ids">
-                            <tree>
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="responsible"/>
-                            </tree>
-                        </field>
-                        <field name="committee_ids">
-                            <tree>
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="responsible"/>
-                            </tree>
-                        </field>
-                        <field name="committee_ids">
-                            <tree>
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                     </page>

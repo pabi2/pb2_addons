@@ -153,6 +153,7 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def call_gen_pr(self):
+        #for testing generate pr
         gen_dict = {
             'name': u'PR0000001',
             'requested_by': u'Administrator',
@@ -187,13 +188,43 @@ class PurchaseRequest(models.Model):
                     'taxes_id': u'Tax 7.00%',
                 }
             ),
+            'attachment_ids': (
+                {
+                    'name': u'PD Form',
+                    'file_url': u'google.com',
+                },
+                {
+                    'name': u'PD Form2',
+                    'file_url': u'google.com',
+                }
+            ),
+            'committee_ids': (
+                {
+                    'name': u'Mr. Steve Roger',
+                    'position': u'Manager',
+                    'responsible': u'Responsible',
+                    'type': u'Committee',
+                },
+                {
+                    'name': u'Mr. Samuel Jackson',
+                    'position': u'Staff',
+                    'responsible': u'Responsible',
+                    'type': u'Committee',
+                }
+            ),
         }
         self.generate_purchase_request(gen_dict)
         return True
 
     @api.model
     def _finalize_data_to_load(self, fields, data):
-        # Case multiple order line, split lines
+        #clear up attachment and committee data. will and them after create pr
+        clear_up_fields = ['attachment_ids', 'committee_ids']
+        for clear_up_field in clear_up_fields:
+            if clear_up_field in fields:
+                i = fields.index(clear_up_field)
+                del fields[i]
+                del data[i]
         if 'line_ids' in fields:
             line_ids_index = []
             datas = []
@@ -232,6 +263,24 @@ class PurchaseRequest(models.Model):
             return fields, [tuple(data)]   # one line sales order
 
     @api.model
+    def create_purchase_request_attachment(self, data_dict, pr_id):
+        PRAttachment = self.env['purchase.request.attachment']
+        attachment_tup = data_dict['attachment_ids']
+        for att_rec in attachment_tup:
+            att_rec['request_id'] = pr_id
+            pr_attachment = PRAttachment.create(att_rec)
+        return pr_attachment
+
+    @api.model
+    def create_purchase_request_committee(self, data_dict, pr_id):
+        PRCommittee = self.env['purchase.request.committee']
+        committee_tup = data_dict['committee_ids']
+        for cmt_rec in committee_tup:
+            cmt_rec['request_id'] = pr_id
+            pr_committee = PRCommittee.create(cmt_rec)
+        return pr_committee
+
+    @api.model
     def generate_purchase_request(self, data_dict):
         fields = data_dict.keys()
         data = data_dict.values()
@@ -243,18 +292,29 @@ class PurchaseRequest(models.Model):
             return {
                 'is_success': False,
                 'result': False,
-                'messages': [m['message'] for m in res_id['messages']],
+                'messages': [m['message'] for m in load_res['messages']],
             }
         else:
             res = self.browse(res_id)
-            return {
-                'is_success': True,
-                'result': {
-                    'request_id': res.id,
-                    'name': res.name,
-                },
-                'messages': False
-            }
+            attachment = self.create_purchase_request_attachment(data_dict,
+                                                                 res_id)
+            committee = self.create_purchase_request_committee(data_dict,
+                                                               res_id)
+            if not attachment or not committee:
+                return {
+                    'is_success': False,
+                    'result': False,
+                    'messages': 'Error on create attachment or commitee list'
+                }
+            else:
+                return {
+                    'is_success': True,
+                    'result': {
+                        'request_id': res.id,
+                        'name': res.name,
+                    },
+                    'messages': False
+                }
 
 
 class PurchaseRequestLine(models.Model):
