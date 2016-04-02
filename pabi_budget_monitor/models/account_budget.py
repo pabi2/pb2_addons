@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields, _
-from openerp.exceptions import except_orm, Warning as UserError
+from openerp import models, api
 
 
 class AccountBudget(models.Model):
@@ -83,7 +82,6 @@ class AccountBudget(models.Model):
                     filtered(lambda x: x.fiscalyear_id == fiscal).\
                     filtered(lambda x: x['project_id'].id == pu_id)
         else:
-            print resource.monitor_ids
             monitors = resource.monitor_ids.\
-                    filtered(lambda x: x.fiscalyear_id == fiscal)
+                filtered(lambda x: x.fiscalyear_id == fiscal)
         return monitors

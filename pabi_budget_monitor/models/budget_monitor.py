@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models
 from openerp import tools
+from openerp.addons.account_budget_activity.models.budget_monitor \
+    import MonitorView
 
 
-class MonitorView(models.AbstractModel):
-    _inherit = 'monitor.view'
+# class MonitorView(models.AbstractModel):
+#     _inherit = 'monitor.view'
 
 # ------------------ Unit Based ------------------
 
@@ -195,7 +197,7 @@ class ResProjectView(MonitorView, models.Model):
 # ---------- Activity / Activity Group -------------
 
 
-class MonitorProjectView(models.AbstractModel):
+class MonitorProjectView(object):
     _name = 'monitor.project.view'
 
     fiscalyear_id = fields.Many2one(
@@ -296,7 +298,7 @@ class AccountActivityMonitorView(MonitorProjectView, models.Model):
         self._create_monitor_view(cr, self._table, 'activity_id')
 
 
-class MonitorUnitView(models.AbstractModel):
+class MonitorUnitView(object):
     _name = 'monitor.unit.view'
 
     fiscalyear_id = fields.Many2one(
