@@ -49,19 +49,12 @@ class AccountAnalyticAccount(models.Model):
         'account.activity.group',
         string='Activity Group',
         ondelete='restrict',
-        compute='_compute_activity_group_id',
-        store=True,
     )
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
         ondelete='restrict',
     )
-
-    @api.one
-    @api.depends('activity_id')
-    def _compute_activity_group_id(self):
-        self.activity_group_id = self.activity_id.activity_group_id
 
     @api.model
     def _analytic_dimensions(self):
