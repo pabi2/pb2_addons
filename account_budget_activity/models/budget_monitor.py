@@ -39,6 +39,7 @@ class MonitorView(models.AbstractModel):
             join account_budget_line abl on ap.id = abl.period_id
             join account_budget ab on ab.id = abl.budget_id
         where ab.latest_version = true and ab.state in ('validate', 'done')
+            and abl.%s is not null
         group by ap.fiscalyear_id, abl.%s)
     """
 
@@ -46,7 +47,7 @@ class MonitorView(models.AbstractModel):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute(
             self._monitor_view_tempalte %
-            (self._table, field, field))
+            (self._table, field, field, field))
 
     def _prepare_commit_amount_sql(self):
         sql = """

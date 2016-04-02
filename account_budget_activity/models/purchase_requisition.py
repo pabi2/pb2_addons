@@ -44,6 +44,12 @@ class PurchaseRequisitionLine(models.Model):
         'account.activity',
         string='Activity',
     )
+    purchase_line_ids = fields.One2many(
+        'purchase.order.line',
+        'requisition_line_id',
+        string='Purchase Order Lines',
+        readonly=True,
+    )
 
     @api.one
     @api.depends('product_id', 'activity_id')

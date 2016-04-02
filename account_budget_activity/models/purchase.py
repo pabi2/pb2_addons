@@ -51,7 +51,7 @@ class PurchaseOrderLine(models.Model):
         "Will be used to calculate committed budget",
     )
 
-    @api.one
+    @api.multi
     @api.depends('invoice_lines.invoice_id.state')
     def _compute_invoiced_qty(self):
         Uom = self.env['product.uom']
