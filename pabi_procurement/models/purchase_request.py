@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import fields, models, api
-from openerp.exceptions import except_orm, Warning
 import time
 
 
@@ -164,7 +163,7 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def call_gen_pr(self):
-        #for testing generate pr
+        # for testing generate pr
         gen_dict = {
             'name': u'PR0000001',
             'requested_by': u'Administrator',
@@ -235,7 +234,7 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def _finalize_data_to_load(self, fields, data):
-        #clear up attachment and committee data. will and them after create pr
+        # clear up attachment and committee data. will and them after create pr
         clear_up_fields = [
             'attachment_ids',
             'committee_ids'
@@ -257,14 +256,14 @@ class PurchaseRequest(models.Model):
                     del fields[i]
                     del data[i]
                     fields += ['line_ids/'+key for key in line.keys()]
-                    #collect child key index
+                    # collect child key index
                     for key in line.keys():
                         found_idx = fields.index('line_ids/'+key)
                         if found_idx:
                             line_ids_index.append(found_idx)
                 datas += [tuple(data + line.values())]
                 is_first = False
-            #clear header data in line row
+            # clear header data in line row
             is_first = True
             for line_dat in enumerate(datas):
                 if is_first:
