@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models
+from openerp import api, models, _
 from openerp.exceptions import Warning as UserError
 
 
@@ -27,6 +27,8 @@ class AccountInvoice(models.Model):
             # Check budget for both project and unit base
             for budget_type in ['check_budget_project_base',
                                 'check_budget_unit_base']:
+                if budget_type not in r:
+                    raise UserError(_('Budget level is not set!'))
                 budget_level = r[budget_type]
                 pu_field = (budget_type == 'check_budget_project_base' and
                             'project_id' or 'costcenter_id')
