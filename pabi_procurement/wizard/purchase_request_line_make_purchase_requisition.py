@@ -9,11 +9,21 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     _inherit = "purchase.request.line.make.purchase.requisition"
 
     @api.model
+    def _get_requisition_line_search_domain(self, requisition, item):
+        res = super(
+            PurchaseRequestLineMakePurchaseRequisition, self
+        )._get_requisition_line_search_domain(requisition, item)
+        res.append(('product_name', '=', item.name))
+        return res
+
+    @api.model
     def _prepare_purchase_requisition_line(self, pr, item):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
             _prepare_purchase_requisition_line(pr, item)
         if 'price_unit' not in res:
             res.update({'price_unit': item.price_unit})
+        if 'product_name' not in res:
+            res['product_name'] = item.name
         if 'taxes_id' not in res:
             res.update(
                 {

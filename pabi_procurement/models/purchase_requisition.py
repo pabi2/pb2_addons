@@ -13,60 +13,75 @@ class PurchaseRequisition(models.Model):
 
     purchase_type_id = fields.Many2one(
         'purchase.type',
-        'Type',
+        string='Type',
     )
-    objective = fields.Text('Objective')
-    total_budget_value = fields.Float('Total Budget Value', default=0.0)
+    objective = fields.Text(
+        string='Objective',
+    )
+    total_budget_value = fields.Float(
+        string='Total Budget Value',
+        default=0.0,
+    )
     prototype = fields.Boolean(
         string='Prototype',
         default=False,
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
-        'Method',
+        string='Method',
         track_visibility='onchange',
     )
-    currency_id = fields.Many2one('res.currency', 'Currency')
-    currency_rate = fields.Float('Rate')
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+    )
+    currency_rate = fields.Float(
+        string='Rate',
+    )
     committee_ids = fields.One2many(
         'purchase.requisition.committee',
         'requisition_id',
-        'Committee',
+        string='Committee',
     )
     attachment_ids = fields.One2many(
         'purchase.requisition.attachment',
         'requisition_id',
-        'Attach Files',
+        string='Attach Files',
     )
     amount_untaxed = fields.Float(
-        'Untaxed Amount',
+        string='Untaxed Amount',
         readonly=True,
-        default=0.0
+        default=0.0,
     )
     amount_tax = fields.Float(
-        'Taxes',
+        string='Taxes',
         readonly=True,
-        default=0.0
+        default=0.0,
     )
     amount_total = fields.Float(
-        'Total',
+        string='Total',
         readonly=True,
-        default=0.0
+        default=0.0,
     )
-    approval_document_no = fields.Char('No.')
+    approval_document_no = fields.Char(
+        string='No.',
+    )
     approval_document_date = fields.Date(
-        'Date of Approval',
+        string='Date of Approval',
         help="Date of the order has been approved ",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
         track_visibility='onchange',
     )
-    approval_document_header = fields.Text('Header')
-    approval_document_footer = fields.Text('Footer')
+    approval_document_header = fields.Text(
+        string='Header',
+    )
+    approval_document_footer = fields.Text(
+        string='Footer',
+    )
 
     @api.model
     def create(self, vals):
-        create_rec = super(PurchaseRequisition, self).create(vals)
         AccTax = self.env['account.tax']
         total_untaxed = 0.0
         tax_amount = 0.0
@@ -88,14 +103,16 @@ class PurchaseRequisition(models.Model):
                                 )
                     untaxed = field['product_qty'] * field['price_unit']
                     total_untaxed += untaxed
-            create_rec.amount_untaxed = total_untaxed
-            create_rec.amount_tax = tax_amount
-            create_rec.amount_total = total_untaxed + tax_amount
+        vals.update({
+            'amount_untaxed': total_untaxed,
+            'amount_tax': tax_amount,
+            'amount_total': total_untaxed + tax_amount,
+        })
+        create_rec = super(PurchaseRequisition, self).create(vals)
         return create_rec
 
     @api.multi
     def write(self, vals):
-        super(PurchaseRequisition, self).write(vals)
         PRLine = self.env['purchase.requisition.line']
         sum_total = 0.0
         total_untaxed = 0.0
@@ -114,24 +131,42 @@ class PurchaseRequisition(models.Model):
                     )
             total_untaxed += rec.product_qty * rec.price_unit
             sum_total += rec.price_subtotal
-        edited = super(PurchaseRequisition, self).\
-            write({
-                'amount_untaxed': total_untaxed,
-                'amount_tax': tax_amount,
-                'amount_total': sum_total,
-            })
-        return edited
+        vals.update({
+            'amount_untaxed': total_untaxed,
+            'amount_tax': tax_amount,
+            'amount_total': sum_total,
+        })
+        res = super(PurchaseRequisition, self).write(vals)
+        return res
+
+    @api.model
+    def open_price_comparison(self, ids):
+        window_obj = self.env["ir.actions.act_window"]
+        res = window_obj.for_xml_id('purchase', 'purchase_line_form_action2')
+        pur_line_ids = []
+        po_recs = self.browse(ids)
+        for po_rec in po_recs:
+            pur_line_ids = po_rec.purchase_ids._ids
+        res['context'] = self._context
+        res['domain'] = [('order_id', 'in', pur_line_ids)]
+        return res
+
+    @api.multi
+    def by_pass_approve(self):
+        po_obj = self.env["purchase.order"]
+        po_obj.action_button_convert_to_order()
+        return True
 
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
 
     price_unit = fields.Float(
-        'Unit Price',
+        string='Unit Price',
     )
     fixed_asset = fields.Boolean('Fixed Asset')
     price_subtotal = fields.Float(
-        'Sub Total',
+        string='Sub Total',
         compute="_compute_price_subtotal",
         store=True,
         digits_compute=dp.get_precision('Account')
@@ -141,12 +176,26 @@ class PurchaseRequisitionLine(models.Model):
         'purchase_requisition_taxe',
         'requisition_line_id',
         'tax_id',
-        'Taxes'
+        string='Taxes'
     )
     order_line_id = fields.Many2one(
         'purchase_order_line',
-        'Purchase Order Line'
+        string='Purchase Order Line'
     )
+    product_name = fields.Char(string='Description')
+
+    @api.multi
+    def onchange_product_id(self, product_id, product_uom_id,
+                            parent_analytic_account, analytic_account,
+                            parent_date, date):
+        res = super(PurchaseRequisitionLine, self).\
+            onchange_product_id(product_id, product_uom_id,
+                                parent_analytic_account, analytic_account,
+                                parent_date, date)
+        if 'value' in res:
+            if 'product_qty' in res['value']:
+                del res['value']['product_qty']
+        return res
 
     @api.multi
     @api.depends('product_qty', 'price_unit', 'taxes_id')

@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import fields, models, api
+from openerp.exceptions import except_orm, Warning
 import time
 
 
@@ -30,17 +31,17 @@ class PurchaseRequest(models.Model):
     committee_ids = fields.One2many(
         'purchase.request.committee',
         'request_id',
-        'Committee',
+        string='Committee',
         readonly=False,
     )
     attachment_ids = fields.One2many(
         'purchase.request.attachment',
         'request_id',
-        'Attach Files',
+        string='Attach Files',
         readonly=False,
     )
     date_approved = fields.Date(
-        'Approved Date',
+        string='Approved Date',
         help="Date when the request has been approved",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -49,53 +50,61 @@ class PurchaseRequest(models.Model):
     )
     responsible_person = fields.Many2one(
         'res.users',
-        'Responsible Person',
+        string='Responsible Person',
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
         'res.currency',
-        'Currency',
+        string='Currency',
         required=True,
     )
-    currency_rate = fields.Float('Rate')
-    objective = fields.Text('Objective')
+    currency_rate = fields.Float(
+        string='Rate',
+    )
+    objective = fields.Text(
+        string='Objective',
+    )
     purchase_method_id = fields.Many2one(
         'purchase.method',
-        'Method',
+        string='Method',
     )
     prototype = fields.Boolean(
-        'Prototype',
+        string='Prototype',
         default=False,
     )
-    total_budget_value = fields.Float('Total Budget Value', default=0.0)
+    total_budget_value = fields.Float(
+        'Total Budget Value',
+        default=0.0,
+    )
     warehouse_id = fields.Many2one(
         'stock.warehouse',
-        'Warehouse',
+        string='Warehouse',
     )
     purchase_type_id = fields.Many2one(
         'purchase.type',
-        'Type',
+        string='Type',
     )
-    delivery_address = fields.Text('Delivery Address')
+    delivery_address = fields.Text(
+        string='Delivery Address',
+    )
     amount_untaxed = fields.Float(
-        'Untaxed Amount',
+        string='Untaxed Amount',
         readonly=True,
         default=0.0
     )
     amount_tax = fields.Float(
-        'Taxes',
+        string='Taxes',
         readonly=True,
         default=0.0
     )
     amount_total = fields.Float(
-        'Total',
+        string='Total',
         readonly=True,
         default=0.0
     )
 
     @api.model
     def create(self, vals):
-        create_rec = super(PurchaseRequest, self).create(vals)
         AccTax = self.env['account.tax']
         total_untaxed = 0.0
         tax_amount = 0.0
@@ -117,14 +126,16 @@ class PurchaseRequest(models.Model):
                                 )
                     untaxed = field['product_qty'] * field['price_unit']
                     total_untaxed += untaxed
-            create_rec.amount_untaxed = total_untaxed
-            create_rec.amount_tax = tax_amount
-            create_rec.amount_total = total_untaxed + tax_amount
-        return create_rec
+        vals.update({
+            'amount_untaxed': total_untaxed,
+            'amount_tax': tax_amount,
+            'amount_total': total_untaxed + tax_amount,
+        })
+        res = super(PurchaseRequest, self).create(vals)
+        return res
 
     @api.multi
     def write(self, vals):
-        super(PurchaseRequest, self).write(vals)
         PRLine = self.env['purchase.request.line']
         sum_total = 0.0
         total_untaxed = 0.0
@@ -143,13 +154,13 @@ class PurchaseRequest(models.Model):
                     )
             total_untaxed += rec.product_qty * rec.price_unit
             sum_total += rec.price_subtotal
-        edited = super(PurchaseRequest, self).\
-            write({
-                'amount_untaxed': total_untaxed,
-                'amount_tax': tax_amount,
-                'amount_total': sum_total,
-            })
-        return edited
+        vals.update({
+            'amount_untaxed': total_untaxed,
+            'amount_tax': tax_amount,
+            'amount_total': sum_total,
+        })
+        res = super(PurchaseRequest, self).write(vals)
+        return res
 
     @api.model
     def call_gen_pr(self):
@@ -196,7 +207,11 @@ class PurchaseRequest(models.Model):
                 {
                     'name': u'PD Form2',
                     'file_url': u'google.com',
-                }
+                },
+                {
+                    'name': u'PD Form2',
+                    'file_url': u'google.com',
+                },
             ),
             'committee_ids': (
                 {
@@ -204,13 +219,15 @@ class PurchaseRequest(models.Model):
                     'position': u'Manager',
                     'responsible': u'Responsible',
                     'type': u'Committee',
+                    'sequence': u'1',
                 },
                 {
                     'name': u'Mr. Samuel Jackson',
                     'position': u'Staff',
                     'responsible': u'Responsible',
                     'type': u'Committee',
-                }
+                    'sequence': u'1',
+                },
             ),
         }
         self.generate_purchase_request(gen_dict)
@@ -219,7 +236,10 @@ class PurchaseRequest(models.Model):
     @api.model
     def _finalize_data_to_load(self, fields, data):
         #clear up attachment and committee data. will and them after create pr
-        clear_up_fields = ['attachment_ids', 'committee_ids']
+        clear_up_fields = [
+            'attachment_ids',
+            'committee_ids'
+        ]
         for clear_up_field in clear_up_fields:
             if clear_up_field in fields:
                 i = fields.index(clear_up_field)
@@ -264,20 +284,24 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def create_purchase_request_attachment(self, data_dict, pr_id):
-        PRAttachment = self.env['purchase.request.attachment']
-        attachment_tup = data_dict['attachment_ids']
-        for att_rec in attachment_tup:
-            att_rec['request_id'] = pr_id
-            pr_attachment = PRAttachment.create(att_rec)
+        pr_attachment = []
+        if 'attachment_ids' in data_dict:
+            PRAttachment = self.env['purchase.request.attachment']
+            attachment_tup = data_dict['attachment_ids']
+            for att_rec in attachment_tup:
+                att_rec['request_id'] = pr_id
+                pr_attachment = PRAttachment.create(att_rec)
         return pr_attachment
 
     @api.model
     def create_purchase_request_committee(self, data_dict, pr_id):
-        PRCommittee = self.env['purchase.request.committee']
-        committee_tup = data_dict['committee_ids']
-        for cmt_rec in committee_tup:
-            cmt_rec['request_id'] = pr_id
-            pr_committee = PRCommittee.create(cmt_rec)
+        pr_committee = []
+        if 'committee_ids' in data_dict:
+            PRCommittee = self.env['purchase.request.committee']
+            committee_tup = data_dict['committee_ids']
+            for cmt_rec in committee_tup:
+                cmt_rec['request_id'] = pr_id
+                pr_committee = PRCommittee.create(cmt_rec)
         return pr_committee
 
     @api.model
@@ -304,7 +328,7 @@ class PurchaseRequest(models.Model):
                 return {
                     'is_success': False,
                     'result': False,
-                    'messages': 'Error on create attachment or commitee list'
+                    'messages': 'Error on create attachment or committee list',
                 }
             else:
                 return {
@@ -313,7 +337,7 @@ class PurchaseRequest(models.Model):
                         'request_id': res.id,
                         'name': res.name,
                     },
-                    'messages': False
+                    'messages': 'PR has been created.',
                 }
 
 
