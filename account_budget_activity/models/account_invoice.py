@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import api, fields, models, _
 from openerp.exceptions import Warning as UserError
 
 
@@ -16,12 +16,27 @@ class AccountInvoice(models.Model):
             r = AccountBudget.get_fiscal_and_budget_level(invoice.date_invoice)
             fiscal_id = r['fiscal_id']
             budget_type = 'check_budget'
+            if budget_type not in r:
+                raise UserError(_('Budget level is not set!'))
             budget_level = r[budget_type]  # specify what to check
             # Find amount in this invoice to check against budget
             self._cr.execute("""
                 select %(budget_level)s,
-                coalesce(sum(price_subtotal), 0.0) amount
-                from account_invoice_line where invoice_id = %(invoice_id)s
+                    coalesce(sum(ail.price_subtotal / cr.rate), 0.0) amount
+                from account_invoice_line ail
+                join account_invoice ai on ai.id = ail.invoice_id
+                -- to base currency
+                JOIN res_currency_rate cr ON (cr.currency_id = ai.currency_id)
+                    AND
+                    cr.id IN (SELECT id
+                      FROM res_currency_rate cr2
+                      WHERE (cr2.currency_id = ai.currency_id)
+                          AND ((ai.date_invoice IS NOT NULL
+                                  AND cr2.name <= ai.date_invoice)
+                        OR (ai.date_invoice IS NULL AND cr2.name <= NOW()))
+                      ORDER BY name DESC LIMIT 1)
+                --
+                where ai.id = %(invoice_id)s
                 group by %(budget_level)s
             """ % {'budget_level': budget_level,
                    'invoice_id': invoice.id}

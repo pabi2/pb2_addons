@@ -62,6 +62,7 @@
 		                    		<field name="activity_group_id" invisible="0"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -125,6 +126,7 @@
 		                    		<field name="activity_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
