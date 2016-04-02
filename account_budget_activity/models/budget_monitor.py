@@ -3,7 +3,7 @@ from openerp import api, fields, models
 from openerp import tools
 
 
-class MonitorView(models.AbstractModel):
+class MonitorView(object):
     _name = 'monitor.view'
 
     fiscalyear_id = fields.Many2one(

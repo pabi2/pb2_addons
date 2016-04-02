@@ -197,7 +197,8 @@ class AccountBudget(models.Model):
         if not fiscal.budget_control:
             return res
         resource = self._get_budget_resource(fiscal, budget_type,
-                                             budget_level, budget_level_res_id, pu_id)
+                                             budget_level,
+                                             budget_level_res_id, pu_id)
         monitors = self._get_budget_monitor(fiscal, budget_type,
                                             budget_level, resource, pu_id)
         # Validation
