@@ -17,6 +17,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -41,6 +42,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -65,6 +67,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -89,6 +92,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -113,6 +117,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -137,6 +142,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -161,6 +167,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -185,6 +192,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -209,6 +217,7 @@
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_actual" />
+		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
