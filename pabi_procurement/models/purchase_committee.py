@@ -9,14 +9,25 @@ class PurchaseRequestCommittee(models.Model):
     _name = 'purchase.request.committee'
     _description = 'Purchase Request Committee'
 
-    sequence = fields.Integer(string='Sequence')
-    name = fields.Char(string='Name')
-    position = fields.Char(string='Position')
-    responsible = fields.Char(string='Responsible')
-    committee_type = fields.Char(string='Type')
+    sequence = fields.Integer(
+        string='Sequence',
+        default=1,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    position = fields.Char(
+        string='Position',
+    )
+    responsible = fields.Char(
+        string='Responsible',
+    )
+    committee_type = fields.Char(
+        string='Type',
+    )
     request_id = fields.Many2one(
         'purchase_request',
-        'Purchase Request'
+        string='Purchase Request',
     )
 
 
@@ -24,14 +35,25 @@ class PurchaseRequisitionCommittee(models.Model):
     _name = 'purchase.requisition.committee'
     _description = 'Purchase Requisition Committee'
 
-    sequence = fields.Integer(string='Sequence')
-    name = fields.Char(string='Name')
-    position = fields.Char(string='Position')
-    responsible = fields.Char(string='Responsible')
-    committee_type = fields.Char(string='Type')
+    sequence = fields.Integer(
+        string='Sequence',
+        default=1,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    position = fields.Char(
+        string='Position',
+    )
+    responsible = fields.Char(
+        string='Responsible',
+    )
+    committee_type = fields.Char(
+        string='Type',
+    )
     requisition_id = fields.Many2one(
         'purchase_requisition',
-        'Purchase Requisition',
+        string='Purchase Requisition',
     )
 
 
@@ -39,12 +61,23 @@ class PurchaseOrderCommittee(models.Model):
     _name = 'purchase.order.committee'
     _description = 'Purchase Order Committee'
 
-    sequence = fields.Integer(string='Sequence')
-    name = fields.Char(string='Name')
-    position = fields.Char(string='Position')
-    responsible = fields.Char(string='Responsible')
-    committee_type = fields.Char(string='Type')
+    sequence = fields.Integer(
+        string='Sequence',
+        default=1,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    position = fields.Char(
+        string='Position',
+    )
+    responsible = fields.Char(
+        string='Responsible',
+    )
+    committee_type = fields.Char(
+        string='Type',
+    )
     order_id = fields.Many2one(
         'purchase_order',
-        'Purchase Order'
+        string='Purchase Order',
     )

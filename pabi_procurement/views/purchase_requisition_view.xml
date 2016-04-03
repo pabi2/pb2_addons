@@ -24,53 +24,39 @@
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
-                <!--<xpath expr="//field[@name='mission_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='spa_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="///field[@name='program_base_type_id']"-->
-                       <!--position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='program_type_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='program_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='org_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='division_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='department_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']"
+                       position="after">
+                    <field name="product_name"/>
+                </xpath>
+                <xpath expr="//button[@name='open_rfq']" position="after">
+                    <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
+                </xpath>
+                <xpath expr="//button[@name='purchase_approve']" position="replace">
+                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok"/>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
                     <field name="price_unit"/>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='costcenter_id']"
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
                        position="after">
                     <field name="fixed_asset"/>
+                    <field name="taxes_id"/>
                     <field name="price_subtotal"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']"
                        position="after">
                     <group class="oe_subtotal_footer oe_right">
-                        <!--<field name="amount_untaxed" widget="monetary"-->
-                        <!--options="{'currency_field': 'currency_id'}"/>-->
-                        <!--<field name="amount_tax" widget="monetary"-->
-                        <!--options="{'currency_field': 'currency_id'}"/>-->
-                        <!--<div class="oe_subtotal_footer_separator oe_inline">-->
-                        <!--<label for="amount_total"/>-->
+                        <field name="amount_untaxed" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="amount_total"/>
                         <!--<button name="button_dummy"-->
                         <!--states="draft" string="(update)" type="object"-->
                         <!--class="oe_edit_only oe_link"/>-->
-                        <!--</div>-->
+                        </div>
                         <field name="amount_total" nolabel="1"
                                class="oe_subtotal_footer_separator" widget="monetary"
                                options="{'currency_field': 'currency_id'}"/>

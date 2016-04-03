@@ -9,11 +9,27 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     _inherit = "purchase.request.line.make.purchase.requisition"
 
     @api.model
+    def _get_requisition_line_search_domain(self, requisition, item):
+        res = super(
+            PurchaseRequestLineMakePurchaseRequisition, self
+        )._get_requisition_line_search_domain(requisition, item)
+        res.append(('product_name', '=', item.name))
+        return res
+
+    @api.model
     def _prepare_purchase_requisition_line(self, pr, item):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
             _prepare_purchase_requisition_line(pr, item)
         if 'price_unit' not in res:
-            res.update({'price_unit': item.product_price})
+            res.update({'price_unit': item.price_unit})
+        if 'product_name' not in res:
+            res['product_name'] = item.name
+        if 'taxes_id' not in res:
+            res.update(
+                {
+                    'taxes_id': [(4, item.line_id.taxes_id.ids)],
+                }
+            )
         return res
 
     @api.model
@@ -24,12 +40,14 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         active_id = self._context['active_ids'][0]
         req_id = pr_line_obj.browse(active_id).request_id
         vals = {
-            'user_id': req_id.responsible_man.id,
+            'user_id': req_id.responsible_person.id,
             'description': req_id.description,
             'objective': req_id.objective,
-            'bid_type': req_id.procure_type,
+            'currency_id': req_id.currency_id.id,
+            'purchase_type_id': req_id.purchase_type_id.id,
+            'purchase_method_id': req_id.purchase_method_id.id,
             'total_budget_value': req_id.total_budget_value,
-            'original_durable_articles': req_id.original_durable_articles,
+            'prototype': req_id.prototype,
         }
         res.update(vals)
         return res
@@ -38,15 +56,24 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def _prepare_item(self, line):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self)\
             ._prepare_item(line)
-        if 'product_price' not in res:
-            res.update({'product_price': line.product_price})
+        if 'price_unit' not in res:
+            res.update({'price_unit': line.price_unit})
+        if 'taxes_id' not in res:
+            res.update({'taxes_id': line.taxes_id.ids})
         return res
 
 
 class PurchaseRequestLineMakePurchaseRequisitionItem(models.TransientModel):
     _inherit = "purchase.request.line.make.purchase.requisition.item"
 
-    product_price = fields.Float(
+    price_unit = fields.Float(
         'Unit Price',
         track_visibility='onchange',
+    )
+    taxes_id = fields.Many2many(
+        'account.tax',
+        'purchase_request_make_requisition_taxes_rel',
+        'item_id',
+        'tax_id',
+        string='Taxes'
     )
