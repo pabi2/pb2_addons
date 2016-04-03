@@ -11,6 +11,7 @@
         'account_budget_activity',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/account_activity_view.xml',
         'views/res_org_structure_view.xml',
         'views/res_spa_structure_view.xml',
