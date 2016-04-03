@@ -79,7 +79,6 @@ class ChartField(object):
     project_id = fields.Many2one(
         'res.project',
         string='Project',
-        domain="[('project_group_id', '=', project_group_id)]",
     )
     # Unit Base
     org_id = fields.Many2one(

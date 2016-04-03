@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# © 2015 TrinityRoots
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import fields, models, api
-import time
+from openerp import fields, models, api, _
 
 
 class PurchaseRequest(models.Model):
@@ -15,17 +12,9 @@ class PurchaseRequest(models.Model):
         ('approved', 'Accepted'),
         ('rejected', 'Cancelled')
     ]
-    _ORIGINAL = {
-        ('yes', 'YES'),
-        ('no', 'NO'),
-    }
 
     state = fields.Selection(
         selection=_STATES,
-        string='Status',
-        track_visibility='onchange',
-        required=True,
-        default='draft',
     )
     committee_ids = fields.One2many(
         'purchase.request.committee',
@@ -41,13 +30,11 @@ class PurchaseRequest(models.Model):
     )
     date_approved = fields.Date(
         string='Approved Date',
-        help="Date when the request has been approved",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        readonly=True,
+        readonly=False,  # TODO: False for testing, True when live.
         track_visibility='onchange',
+        help="Date when the request has been approved",
     )
-    responsible_person = fields.Many2one(
+    responsible_user_id = fields.Many2one(
         'res.users',
         string='Responsible Person',
         track_visibility='onchange',
@@ -59,6 +46,7 @@ class PurchaseRequest(models.Model):
     )
     currency_rate = fields.Float(
         string='Rate',
+        digits=(12, 6),
     )
     objective = fields.Text(
         string='Objective',
@@ -75,10 +63,6 @@ class PurchaseRequest(models.Model):
         'Total Budget Value',
         default=0.0,
     )
-    warehouse_id = fields.Many2one(
-        'stock.warehouse',
-        string='Warehouse',
-    )
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Type',
@@ -88,78 +72,39 @@ class PurchaseRequest(models.Model):
     )
     amount_untaxed = fields.Float(
         string='Untaxed Amount',
+        compute='_compute_amount',
+        store=True,
         readonly=True,
         default=0.0
     )
     amount_tax = fields.Float(
         string='Taxes',
+        compute='_compute_amount',
+        store=True,
         readonly=True,
         default=0.0
     )
     amount_total = fields.Float(
         string='Total',
+        compute='_compute_amount',
+        store=True,
         readonly=True,
         default=0.0
     )
 
-    @api.model
-    def create(self, vals):
-        AccTax = self.env['account.tax']
-        total_untaxed = 0.0
-        tax_amount = 0.0
-        if 'line_ids' in vals:
-            if len(vals['line_ids']) > 0:
-                for line_rec in vals['line_ids']:
-                    field = line_rec[2]
-                    for rec_taxes in field['taxes_id']:
-                        for rec_tax in rec_taxes[2]:
-                            domain = [('id', '=', rec_tax)]
-                            found_tax = AccTax.search(domain)
-                            if found_tax.type == 'percent':
-                                tax_amount += field['product_qty'] * (
-                                    field['price_unit'] * found_tax.amount
-                                )
-                            elif found_tax.type == 'fixed':
-                                tax_amount += field['product_qty'] * (
-                                    field['price_unit'] + found_tax.amount
-                                )
-                    untaxed = field['product_qty'] * field['price_unit']
-                    total_untaxed += untaxed
-        vals.update({
-            'amount_untaxed': total_untaxed,
-            'amount_tax': tax_amount,
-            'amount_total': total_untaxed + tax_amount,
-        })
-        res = super(PurchaseRequest, self).create(vals)
-        return res
-
-    @api.multi
-    def write(self, vals):
-        PRLine = self.env['purchase.request.line']
-        sum_total = 0.0
-        total_untaxed = 0.0
-        tax_amount = 0.0
-        domain = [('request_id', '=', self.id)]
-        found_recs = PRLine.search(domain)
-        for rec in found_recs:
-            for rec_tax in rec.taxes_id:
-                if rec_tax.type == 'percent':
-                    tax_amount += rec.product_qty * (
-                        rec.price_unit * rec_tax.amount
-                    )
-                elif rec_tax.type == 'fixed':
-                    tax_amount += rec.product_qty * (
-                        rec.price_unit + rec_tax.amount
-                    )
-            total_untaxed += rec.product_qty * rec.price_unit
-            sum_total += rec.price_subtotal
-        vals.update({
-            'amount_untaxed': total_untaxed,
-            'amount_tax': tax_amount,
-            'amount_total': sum_total,
-        })
-        res = super(PurchaseRequest, self).write(vals)
-        return res
+    @api.one
+    @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
+    def _compute_amount(self):
+        amount_untaxed = 0.0
+        amount_tax = 0.0
+        for line in self.line_ids:
+            taxes = line.tax_ids.compute_all(line.price_unit, line.product_qty,
+                                             product=line.product_id)
+            amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
+            amount_untaxed += taxes['total']
+        self.amount_untaxed = amount_untaxed
+        self.amount_tax = amount_tax
+        self.amount_total = amount_untaxed + amount_tax
 
     @api.model
     def call_gen_pr(self):
@@ -167,11 +112,10 @@ class PurchaseRequest(models.Model):
         gen_dict = {
             'name': u'PR0000001',
             'requested_by': u'Administrator',
-            'responsible_person': u'Administrator',
+            'responsible_user_id': u'Administrator',
             'date_approved': u'2016-01-31',
             'prototype': u'True',
             'total_budget_value': u'240000',
-            'warehouse_id': u'Your Company',
             'purchase_type_id': u'AAAA',
             'purchase_method_id': u'AAAA',
             'description': u'Put your PR description here.',
@@ -188,14 +132,14 @@ class PurchaseRequest(models.Model):
                     'product_qty': u'20',
                     'price_unit': u'10000',
                     'date_required': u'2016-01-31',
-                    'taxes_id': u'Tax 7.00%',
+                    'tax_ids': u'Tax 7.00%',
                 },
                 {
                     'name': u'HDD',
                     'product_qty': u'20',
                     'price_unit': u'1030',
                     'date_required': u'2016-01-31',
-                    'taxes_id': u'Tax 7.00%',
+                    'tax_ids': u'Tax 7.00%',
                 }
             ),
             'attachment_ids': (
@@ -283,25 +227,27 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def create_purchase_request_attachment(self, data_dict, pr_id):
-        pr_attachment = []
+        attachment_ids = []
         if 'attachment_ids' in data_dict:
             PRAttachment = self.env['purchase.request.attachment']
             attachment_tup = data_dict['attachment_ids']
             for att_rec in attachment_tup:
                 att_rec['request_id'] = pr_id
-                pr_attachment = PRAttachment.create(att_rec)
-        return pr_attachment
+                attachment = PRAttachment.create(att_rec)
+                attachment_ids.append(attachment.id)
+        return attachment_ids
 
     @api.model
     def create_purchase_request_committee(self, data_dict, pr_id):
-        pr_committee = []
+        commitee_ids = []
         if 'committee_ids' in data_dict:
             PRCommittee = self.env['purchase.request.committee']
             committee_tup = data_dict['committee_ids']
             for cmt_rec in committee_tup:
                 cmt_rec['request_id'] = pr_id
-                pr_committee = PRCommittee.create(cmt_rec)
-        return pr_committee
+                commitee = PRCommittee.create(cmt_rec)
+                commitee_ids.append(commitee.id)
+        return commitee_ids
 
     @api.model
     def generate_purchase_request(self, data_dict):
@@ -318,6 +264,7 @@ class PurchaseRequest(models.Model):
                 'messages': [m['message'] for m in load_res['messages']],
             }
         else:
+            # TODO: https://mobileapp.nstda.or.th/redmine/issues/326
             res = self.browse(res_id)
             attachment = self.create_purchase_request_attachment(data_dict,
                                                                  res_id)
@@ -327,7 +274,8 @@ class PurchaseRequest(models.Model):
                 return {
                     'is_success': False,
                     'result': False,
-                    'messages': 'Error on create attachment or committee list',
+                    'messages': _('Error on create attachment '
+                                  'or committee list'),
                 }
             else:
                 return {
@@ -336,7 +284,7 @@ class PurchaseRequest(models.Model):
                         'request_id': res.id,
                         'name': res.name,
                     },
-                    'messages': 'PR has been created.',
+                    'messages': _('PR has been created.'),
                 }
 
 
@@ -344,37 +292,79 @@ class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
 
     price_unit = fields.Float(
-        'Unit Price',
+        string='Unit Price',
         track_visibility='onchange',
     )
-    fixed_asset = fields.Boolean('Fixed Asset')
+    fixed_asset = fields.Boolean(
+        string='Fixed Asset',
+    )
     price_subtotal = fields.Float(
-        'Sub Total',
+        string='Sub Total',
         compute="_compute_price_subtotal",
         store=True,
     )
-    taxes_id = fields.Many2many(
+    tax_ids = fields.Many2many(
         'account.tax',
         'purchase_request_taxes_rel',
         'request_line_id',
         'tax_id',
-        'Taxes'
+        string='Taxes',
+        readonly=False,  # TODO: readonly=True
     )
 
     @api.multi
-    @api.depends('product_qty', 'price_unit', 'taxes_id')
+    @api.depends('product_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
-        tax_amount = 0.0
-        for line in self:
-            amount_untaxed = line.product_qty * line.price_unit
-            for line_tax in line.taxes_id:
-                if line_tax.type == 'percent':
-                    tax_amount += line.product_qty * (
-                        line.price_unit * line_tax.amount
-                    )
-                elif line_tax.type == 'fixed':
-                    tax_amount += line.product_qty * (
-                        line.price_unit + line_tax.amount
-                    )
-            cur = line.request_id.currency_id
-            line.price_subtotal = cur.round(amount_untaxed + tax_amount)
+        for rec in self:
+            taxes = rec.tax_ids.compute_all(rec.price_unit, rec.product_qty,
+                                            product=rec.product_id)
+            rec.price_subtotal = taxes['total']
+            if rec.request_id:
+                rec.price_subtotal = \
+                    rec.request_id.currency_id.round(rec.price_subtotal)
+
+
+class PurchaseRequestAttachment(models.Model):
+    _name = 'purchase.request.attachment'
+    _description = 'Purchase Request Attachment'
+
+    request_id = fields.Many2one(
+        'purchase_request',
+        string='Purchase Request',
+    )
+    name = fields.Char(
+        string='File Name',
+    )
+    file_url = fields.Char(
+        string='File Url',
+    )
+    file = fields.Binary(
+        string='File',
+    )
+
+
+class PurchaseRequestCommittee(models.Model):
+    _name = 'purchase.request.committee'
+    _description = 'Purchase Request Committee'
+    _order = 'sequence, id'
+
+    sequence = fields.Integer(
+        string='Sequence',
+        default=1,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    position = fields.Char(
+        string='Position',
+    )
+    responsible = fields.Char(
+        string='Responsible',
+    )
+    committee_type = fields.Char(
+        string='Type',
+    )
+    request_id = fields.Many2one(
+        'purchase_request',
+        string='Purchase Request',
+    )
