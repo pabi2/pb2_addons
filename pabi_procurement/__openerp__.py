@@ -22,7 +22,11 @@ PABI2 - Procurement Module
     "application": False,
     "installable": True,
     "depends": [
-        "pabi_purchase_request_ext",
+        "pabi_config_menu",
+        "purchase_request_to_requisition",
+        "purchase_split_quote2order",
+        "purchase_requisition_operating_unit",
+        "purchase_request_to_requisition_operating_unit",
         "purchase_operating_unit",
         "stock_operating_unit"
     ],

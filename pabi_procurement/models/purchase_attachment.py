@@ -11,11 +11,17 @@ class PurchaseRequestAttachment(models.Model):
 
     request_id = fields.Many2one(
         'purchase_request',
-        'Purchase Request'
+        string='Purchase Request',
     )
-    name = fields.Char('File Name')
-    file_url = fields.Text('File Url')
-    file = fields.Binary('File')
+    name = fields.Char(
+        string='File Name',
+    )
+    file_url = fields.Text(
+        string='File Url',
+    )
+    file = fields.Binary(
+        string='File',
+    )
 
 
 class PurchaseRequisitionAttachment(models.Model):
@@ -24,8 +30,14 @@ class PurchaseRequisitionAttachment(models.Model):
 
     requisition_id = fields.Many2one(
         'purchase_requisition',
-        'Purchase Requisition'
+        string='Purchase Requisition',
     )
-    name = fields.Char('File Name')
-    file_url = fields.Text('File Url')
-    file = fields.Binary('File')
+    name = fields.Char(
+        string='File Name',
+    )
+    file_url = fields.Text(
+        string='File Url',
+    )
+    file = fields.Binary(
+        string='File',
+    )

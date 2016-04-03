@@ -27,7 +27,7 @@ class PurchaseOrder(models.Model):
         self.total_fine = self.amount_total * self.fine_rate
 
     date_reference = fields.Date(
-        'Reference Date',
+        string='Reference Date',
         help="Date when the PO has been referenced",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -46,57 +46,60 @@ class PurchaseOrder(models.Model):
         default='1',
     )
     picking_receive_date = fields.Date(
-        ' ',
+        string=' ',
         help="Picking Receive Date",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
         track_visibility='onchange',
     )
     date_contract_start = fields.Date(
-        'Contract Start Date',
+        string='Contract Start Date',
         help="Date when the contract is started",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
         track_visibility='onchange',
     )
     date_contract_end = fields.Date(
-        'Contract End Date',
+        string='Contract End Date',
         help="Date when the contract is ended",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
         track_visibility='onchange',
     )
     fine_rate = fields.Float(
-        'Fine Rate',
+        string='Fine Rate',
         _compute='_compute_total_fine',
         store=True,
         default=0.0,
     )
     total_fine = fields.Float(
-        'Total Fine',
+        string='Total Fine',
         _compute='_compute_total_fine',
         store=True,
     )
     committee_ids = fields.One2many(
-        'purchase.order.committee', 'order_id',
-        'Committee',
+        'purchase.order.committee',
+        'order_id',
+        string='Committee',
         readonly=False,
     )
     create_by = fields.Many2one(
         'res.users',
-        'Create By',
+        string='Create By',
     )
     verified_by = fields.Many2one(
         'res.users',
-        'Verified By',
+        string='Verified By',
     )
     approved_by = fields.Many2one(
         'res.users',
-        'Approved By',
+        string='Approved By',
     )
-    position = fields.Char('Position')
+    position = fields.Char(
+        string='Position',
+    )
     date_approval = fields.Date(
-        'Approved Date',
+        string='Approved Date',
         help="Date when the PO has been approved",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -104,25 +107,28 @@ class PurchaseOrder(models.Model):
         track_visibility='onchange',
     )
 
-
-class PurchaseOrderLine(models.Model):
-    _inherit = 'purchase.order.line'
-
-    requisition_line_id = fields.Many2one(
-        'purchase_requisition_line',
-        'Purchase Requisition Line'
-    )
+    @api.model
+    def by_pass_approve(self, ids):
+        po_rec = self.browse(ids)
+        po_rec.action_button_convert_to_order()
+        if po_rec.state != 'done':
+            po_rec.state = 'done'
+        return True
 
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'
     _description = 'PABI2 Purchase Type'
 
-    name = fields.Char(string='Purchase Type')
+    name = fields.Char(
+        string='Purchase Type',
+    )
 
 
 class PurchaseMethod(models.Model):
     _name = 'purchase.method'
     _description = 'PABI2 Purchase Method'
 
-    name = fields.Char(string='Purchase Method')
+    name = fields.Char(
+        string='Purchase Method',
+    )
