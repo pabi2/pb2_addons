@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# © 2015 TrinityRoots
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import fields, models, api
 import time
@@ -16,21 +14,14 @@ class PurchaseOrder(models.Model):
         ('4', '4'),
     ]
 
-    _RECEIVE_CON = [
-        ('1', 'Day'),
-        ('2', 'Date'),
+    _RECEIVE_DATE_CONDITION = [
+        ('day', 'Day'),
+        ('date', 'Date'),
     ]
-
-    @api.depends('amount_total', 'fine_rate')
-    @api.onchange('amount_total', 'fine_rate')
-    def _compute_total_fine(self):
-        self.total_fine = self.amount_total * self.fine_rate
 
     date_reference = fields.Date(
         string='Reference Date',
-        help="Date when the PO has been referenced",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
+        default=fields.Date.today(),
         readonly=True,
         track_visibility='onchange',
     )
@@ -39,24 +30,20 @@ class PurchaseOrder(models.Model):
         string='myContract',
         default='1',
     )
-    receive_date_con = fields.Selection(
-        selection=_RECEIVE_CON,
+    receive_date_condition = fields.Selection(
+        selection=_RECEIVE_DATE_CONDITION,
         string='Receive Date Condition',
         track_visibility='onchange',
-        default='1',
+        default='day',
     )
     picking_receive_date = fields.Date(
-        string=' ',
-        help="Picking Receive Date",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
+        string='Picking Receive Date',
+        default=fields.Date.today(),
         track_visibility='onchange',
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
-        help="Date when the contract is started",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
+        default=fields.Date.today(),
         track_visibility='onchange',
     )
     date_contract_end = fields.Date(
@@ -68,13 +55,11 @@ class PurchaseOrder(models.Model):
     )
     fine_rate = fields.Float(
         string='Fine Rate',
-        _compute='_compute_total_fine',
-        store=True,
         default=0.0,
     )
     total_fine = fields.Float(
         string='Total Fine',
-        _compute='_compute_total_fine',
+        compute='_compute_total_fine',
         store=True,
     )
     committee_ids = fields.One2many(
@@ -107,6 +92,11 @@ class PurchaseOrder(models.Model):
         track_visibility='onchange',
     )
 
+    @api.one
+    @api.depends('amount_total', 'fine_rate')
+    def _compute_total_fine(self):
+        self.total_fine = self.amount_total * self.fine_rate
+
     @api.model
     def by_pass_approve(self, ids):
         po_rec = self.browse(ids)
@@ -131,4 +121,30 @@ class PurchaseMethod(models.Model):
 
     name = fields.Char(
         string='Purchase Method',
+    )
+
+
+class PurchaseOrderCommittee(models.Model):
+    _name = 'purchase.order.committee'
+    _description = 'Purchase Order Committee'
+
+    sequence = fields.Integer(
+        string='Sequence',
+        default=1,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    position = fields.Char(
+        string='Position',
+    )
+    responsible = fields.Char(
+        string='Responsible',
+    )
+    committee_type = fields.Char(
+        string='Type',
+    )
+    order_id = fields.Many2one(
+        'purchase_order',
+        string='Purchase Order',
     )

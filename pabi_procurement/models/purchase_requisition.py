@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# © 2015 Eficent Business and IT Consulting Services S.L.
-# - Jordi Ballester Alomar
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from openerp import api, fields, models
 import openerp.addons.decimal_precision as dp
@@ -50,16 +47,22 @@ class PurchaseRequisition(models.Model):
     )
     amount_untaxed = fields.Float(
         string='Untaxed Amount',
+        compute='_compute_amount',
+        store=True,
         readonly=True,
         default=0.0,
     )
     amount_tax = fields.Float(
         string='Taxes',
+        compute='_compute_amount',
+        store=True,
         readonly=True,
         default=0.0,
     )
     amount_total = fields.Float(
         string='Total',
+        compute='_compute_amount',
+        store=True,
         readonly=True,
         default=0.0,
     )
@@ -80,64 +83,19 @@ class PurchaseRequisition(models.Model):
         string='Footer',
     )
 
-    @api.model
-    def create(self, vals):
-        AccTax = self.env['account.tax']
-        total_untaxed = 0.0
-        tax_amount = 0.0
-        if 'line_ids' in vals:
-            if len(vals['line_ids']) > 0:
-                for line_rec in vals['line_ids']:
-                    field = line_rec[2]
-                    for rec_taxes in field['taxes_id']:
-                        for rec_tax in rec_taxes[2]:
-                            domain = [('id', '=', rec_tax)]
-                            found_tax = AccTax.search(domain)
-                            if found_tax.type == 'percent':
-                                tax_amount += field['product_qty'] * (
-                                    field['price_unit'] * found_tax.amount
-                                )
-                            elif found_tax.type == 'fixed':
-                                tax_amount += field['product_qty'] * (
-                                    field['price_unit'] + found_tax.amount
-                                )
-                    untaxed = field['product_qty'] * field['price_unit']
-                    total_untaxed += untaxed
-        vals.update({
-            'amount_untaxed': total_untaxed,
-            'amount_tax': tax_amount,
-            'amount_total': total_untaxed + tax_amount,
-        })
-        create_rec = super(PurchaseRequisition, self).create(vals)
-        return create_rec
-
-    @api.multi
-    def write(self, vals):
-        PRLine = self.env['purchase.requisition.line']
-        sum_total = 0.0
-        total_untaxed = 0.0
-        tax_amount = 0.0
-        domain = [('requisition_id', '=', self.id)]
-        found_recs = PRLine.search(domain)
-        for rec in found_recs:
-            for rec_tax in rec.taxes_id:
-                if rec_tax.type == 'percent':
-                    tax_amount += rec.product_qty * (
-                        rec.price_unit * rec_tax.amount
-                    )
-                elif rec_tax.type == 'fixed':
-                    tax_amount += rec.product_qty * (
-                        rec.price_unit + rec_tax.amount
-                    )
-            total_untaxed += rec.product_qty * rec.price_unit
-            sum_total += rec.price_subtotal
-        vals.update({
-            'amount_untaxed': total_untaxed,
-            'amount_tax': tax_amount,
-            'amount_total': sum_total,
-        })
-        res = super(PurchaseRequisition, self).write(vals)
-        return res
+    @api.one
+    @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
+    def _compute_amount(self):
+        amount_untaxed = 0.0
+        amount_tax = 0.0
+        for line in self.line_ids:
+            taxes = line.tax_ids.compute_all(line.price_unit, line.product_qty,
+                                             product=line.product_id)
+            amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
+            amount_untaxed += taxes['total']
+        self.amount_untaxed = amount_untaxed
+        self.amount_tax = amount_tax
+        self.amount_total = amount_untaxed + amount_tax
 
     @api.model
     def open_price_comparison(self, ids):
@@ -157,6 +115,20 @@ class PurchaseRequisition(models.Model):
         po_obj.action_button_convert_to_order()
         return True
 
+    @api.model
+    def _prepare_purchase_order_line(self, requisition, requisition_line,
+                                     purchase_id, supplier):
+        res = super(PurchaseRequisition, self).\
+            _prepare_purchase_order_line(requisition, requisition_line,
+                                         purchase_id, supplier)
+        # Always use price and tax_ids from pr_line (NOT from product)
+        res.update({
+            'name': requisition_line.product_name,
+            'price_unit': requisition_line.price_unit,
+            'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
+        })
+        return res
+
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
@@ -164,25 +136,31 @@ class PurchaseRequisitionLine(models.Model):
     price_unit = fields.Float(
         string='Unit Price',
     )
-    fixed_asset = fields.Boolean('Fixed Asset')
+    fixed_asset = fields.Boolean(
+        string='Fixed Asset',
+        default=False,
+    )
     price_subtotal = fields.Float(
         string='Sub Total',
         compute="_compute_price_subtotal",
         store=True,
         digits_compute=dp.get_precision('Account')
     )
-    taxes_id = fields.Many2many(
+    tax_ids = fields.Many2many(
         'account.tax',
-        'purchase_requisition_taxe',
+        'purchase_requisition_taxes_rel',
         'requisition_line_id',
         'tax_id',
-        string='Taxes'
+        string='Taxes',
+        readonly=False,  # TODO: readonly=True
     )
     order_line_id = fields.Many2one(
         'purchase_order_line',
         string='Purchase Order Line'
     )
-    product_name = fields.Char(string='Description')
+    product_name = fields.Char(
+        string='Description',
+    )
 
     @api.multi
     def onchange_product_id(self, product_id, product_uom_id,
@@ -198,12 +176,12 @@ class PurchaseRequisitionLine(models.Model):
         return res
 
     @api.multi
-    @api.depends('product_qty', 'price_unit', 'taxes_id')
+    @api.depends('product_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
         tax_amount = 0.0
         for line in self:
             amount_untaxed = line.product_qty * line.price_unit
-            for line_tax in line.taxes_id:
+            for line_tax in line.tax_ids:
                 if line_tax.type == 'percent':
                     tax_amount += line.product_qty * (
                         line.price_unit * line_tax.amount
@@ -214,3 +192,49 @@ class PurchaseRequisitionLine(models.Model):
                     )
             cur = line.requisition_id.currency_id
             line.price_subtotal = cur.round(amount_untaxed + tax_amount)
+
+
+class PurchaseRequisitionAttachment(models.Model):
+    _name = 'purchase.requisition.attachment'
+    _description = 'Purchase Requisition Attachment'
+
+    requisition_id = fields.Many2one(
+        'purchase.requisition',
+        string='Purchase Requisition',
+    )
+    name = fields.Char(
+        string='File Name',
+    )
+    file_url = fields.Char(
+        string='File Url',
+    )
+    file = fields.Binary(
+        string='File',
+    )
+
+
+class PurchaseRequisitionCommittee(models.Model):
+    _name = 'purchase.requisition.committee'
+    _description = 'Purchase Requisition Committee'
+    _order = 'sequence, id'
+
+    requisition_id = fields.Many2one(
+        'purchase.requisition',
+        string='Purchase Requisition',
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        default=1,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    position = fields.Char(
+        string='Position',
+    )
+    responsible = fields.Char(
+        string='Responsible',
+    )
+    committee_type = fields.Char(
+        string='Type',
+    )

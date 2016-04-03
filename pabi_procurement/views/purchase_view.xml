@@ -18,8 +18,9 @@
                     <group>
                         <field name="fine_rate" />
                         <field name="total_fine"/>
-                        <field name="receive_date_con"/>
-                        <field name="picking_receive_date" attrs="{'invisible':[('receive_date_con', '!=', '2')]}"/>
+                        <field name="receive_date_condition"/>
+                        <field name="picking_receive_date" nolabel="1"
+                        	attrs="{'invisible':[('receive_date_condition', '!=', 'date')]}"/>
                     </group>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
