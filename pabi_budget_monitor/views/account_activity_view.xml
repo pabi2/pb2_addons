@@ -17,7 +17,8 @@
 	                		<field name="fiscalyear_id" />
 	                		<field name="costcenter_id" />
 	                		<field name="amount_plan" />
-		                    <field name="amount_commit" />
+	                		<field name="amount_pr_commit" />
+		                    <field name="amount_po_commit" />
 	                		<field name="amount_actual" />
 	                		<field name="amount_balance" />
 		                </tree>
@@ -41,7 +42,8 @@
 	                		<field name="fiscalyear_id" />
 	                		<field name="costcenter_id" />
 	                		<field name="amount_plan" />
-		                    <field name="amount_commit" />
+	                		<field name="amount_pr_commit" />
+		                    <field name="amount_po_commit" />
 	                		<field name="amount_actual" />
 	                		<field name="amount_balance" />
 		                </tree>
