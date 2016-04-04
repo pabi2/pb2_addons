@@ -16,8 +16,9 @@
 		                    		<field name="spa_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -41,8 +42,9 @@
 		                    		<field name="mission_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -66,8 +68,9 @@
 		                    		<field name="tag_type_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -91,8 +94,9 @@
 		                    		<field name="tag_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -116,8 +120,9 @@
 		                    		<field name="program_scheme_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -141,8 +146,9 @@
 		                    		<field name="program_group_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -166,8 +172,9 @@
 		                    		<field name="program_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -191,8 +198,9 @@
 		                    		<field name="project_group_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>
@@ -216,8 +224,9 @@
 		                    		<field name="project_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_pr_commit" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
-		                    		<field name="amount_commit" />
 		                    		<field name="amount_balance" />
 				                </tree>
 		                	</field>

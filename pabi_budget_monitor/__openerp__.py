@@ -7,8 +7,9 @@
     'category': 'Account',
     'version': '0.1.0',
     'depends': [
-        'pabi_chartfield',
         'account_budget_activity',
+        'pabi_chartfield',
+        'pabi_procurement',
     ],
     'data': [
         'security/ir.model.access.csv',

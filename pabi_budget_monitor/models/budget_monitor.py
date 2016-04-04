@@ -5,13 +5,66 @@ from openerp.addons.account_budget_activity.models.budget_monitor \
     import MonitorView
 
 
-# class MonitorView(models.AbstractModel):
-#     _inherit = 'monitor.view'
+class MonitorViewEx(MonitorView):
+
+    amount_pr_commit = fields.Float(
+        string='PR Committed Amount',
+        readonly=True,
+        compute='_amount_all',
+    )
+
+    def _prepare_pr_commit_amount_sql(self):
+        """ Commit amount will involce purchase_request """
+        sql = """
+        select sum((price_unit / cr.rate)
+                * (product_qty - purchased_qty)) amount_commit
+        from purchase_request_line line
+            join purchase_request doc on line.request_id = doc.id
+                and (doc.date_approved is not null
+                    and doc.state in ('approved'))
+            join account_fiscalyear af
+                on (doc.date_approved <= af.date_stop
+                    and doc.date_approved >= af.date_start)
+        -- to base currency
+        JOIN res_currency_rate cr ON (cr.currency_id = doc.currency_id)
+            AND
+            cr.id IN (SELECT id
+              FROM res_currency_rate cr2
+              WHERE (cr2.currency_id = doc.currency_id)
+              AND ((doc.date_approved IS NOT NULL
+                      AND cr2.name <= doc.date_approved)
+            OR (doc.date_approved IS NULL AND cr2.name <= NOW()))
+              ORDER BY name DESC LIMIT 1)
+        --
+        where line.%s = %s and af.id = %s
+        """
+        return sql
+
+    @api.model
+    def _get_amount_pr_commit(self):
+        self._cr.execute(self._prepare_pr_commit_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id))
+        return self._cr.fetchone()[0] or 0.0
+
+    @api.multi
+    def _amount_all(self):
+        """ Overwrite, adding amount_commit """
+        for rec in self:
+            rec.amount_pr_commit = rec._get_amount_pr_commit()
+            rec.amount_po_commit = rec._get_amount_po_commit()
+            rec.amount_actual = rec._get_amount_actual()
+            # Balance
+            rec.amount_balance = (rec.amount_plan -
+                                  (rec.amount_pr_commit +
+                                   rec.amount_po_commit) -
+                                  rec.amount_actual)
 
 # ------------------ Unit Based ------------------
 
 
-class ResOrgMonitorView(MonitorView, models.Model):
+class ResOrgMonitorView(MonitorViewEx, models.Model):
     _name = 'res.org.monitor.view'
     _auto = False
     _budget_level = 'org_id'
@@ -23,7 +76,7 @@ class ResOrgMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'org_id')
 
 
-class ResSectorMonitorView(MonitorView, models.Model):
+class ResSectorMonitorView(MonitorViewEx, models.Model):
     _name = 'res.sector.monitor.view'
     _auto = False
     _budget_level = 'sector_id'
@@ -35,7 +88,7 @@ class ResSectorMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'sector_id')
 
 
-class ResDepartmentMonitorView(MonitorView, models.Model):
+class ResDepartmentMonitorView(MonitorViewEx, models.Model):
     _name = 'res.department.monitor.view'
     _auto = False
     _budget_level = 'department_id'
@@ -47,7 +100,7 @@ class ResDepartmentMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'department_id')
 
 
-class ResDivisionMonitorView(MonitorView, models.Model):
+class ResDivisionMonitorView(MonitorViewEx, models.Model):
     _name = 'res.division.monitor.view'
     _auto = False
     _budget_level = 'division_id'
@@ -59,7 +112,7 @@ class ResDivisionMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'division_id')
 
 
-class ResSectionMonitorView(MonitorView, models.Model):
+class ResSectionMonitorView(MonitorViewEx, models.Model):
     _name = 'res.section.monitor.view'
     _auto = False
     _budget_level = 'section_id'
@@ -71,7 +124,7 @@ class ResSectionMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'section_id')
 
 
-class ResCostcenterMonitorView(MonitorView, models.Model):
+class ResCostcenterMonitorView(MonitorViewEx, models.Model):
     _name = 'res.costcenter.monitor.view'
     _auto = False
     _budget_level = 'costcenter_id'
@@ -85,7 +138,7 @@ class ResCostcenterMonitorView(MonitorView, models.Model):
 
 # ------------------ Tags ------------------
 
-class ResSpaMonitorView(MonitorView, models.Model):
+class ResSpaMonitorView(MonitorViewEx, models.Model):
     _name = 'res.spa.monitor.view'
     _auto = False
     _budget_level = 'spa_id'
@@ -97,7 +150,7 @@ class ResSpaMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'spa_id')
 
 
-class ResMissionMonitorView(MonitorView, models.Model):
+class ResMissionMonitorView(MonitorViewEx, models.Model):
     _name = 'res.mission.monitor.view'
     _auto = False
     _budget_level = 'mission_id'
@@ -109,7 +162,7 @@ class ResMissionMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'mission_id')
 
 
-class ResTagTypeMonitorView(MonitorView, models.Model):
+class ResTagTypeMonitorView(MonitorViewEx, models.Model):
     _name = 'res.tag.type.monitor.view'
     _auto = False
     _budget_level = 'tag_type_id'
@@ -121,7 +174,7 @@ class ResTagTypeMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'tag_type_id')
 
 
-class ResTagMonitorView(MonitorView, models.Model):
+class ResTagMonitorView(MonitorViewEx, models.Model):
     _name = 'res.tag.monitor.view'
     _auto = False
     _budget_level = 'tag_id'
@@ -135,7 +188,7 @@ class ResTagMonitorView(MonitorView, models.Model):
 
 # ------------------ Project Based ------------------
 
-class ResProgramSchemeMonitorView(MonitorView, models.Model):
+class ResProgramSchemeMonitorView(MonitorViewEx, models.Model):
     _name = 'res.program.scheme.monitor.view'
     _auto = False
     _budget_level = 'program_scheme_id'
@@ -147,7 +200,7 @@ class ResProgramSchemeMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'program_scheme_id')
 
 
-class ResProgramGroupMonitorView(MonitorView, models.Model):
+class ResProgramGroupMonitorView(MonitorViewEx, models.Model):
     _name = 'res.program.group.monitor.view'
     _auto = False
     _budget_level = 'program_group_id'
@@ -159,7 +212,7 @@ class ResProgramGroupMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'program_group_id')
 
 
-class ResProgramMonitorView(MonitorView, models.Model):
+class ResProgramMonitorView(MonitorViewEx, models.Model):
     _name = 'res.program.monitor.view'
     _auto = False
     _budget_level = 'program_id'
@@ -171,7 +224,7 @@ class ResProgramMonitorView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'program_id')
 
 
-class ResProjectGroupView(MonitorView, models.Model):
+class ResProjectGroupView(MonitorViewEx, models.Model):
     _name = 'res.project.group.monitor.view'
     _auto = False
     _budget_level = 'project_group_id'
@@ -183,7 +236,7 @@ class ResProjectGroupView(MonitorView, models.Model):
         self._create_monitor_view(cr, self._table, 'project_group_id')
 
 
-class ResProjectView(MonitorView, models.Model):
+class ResProjectView(MonitorViewEx, models.Model):
     _name = 'res.project.monitor.view'
     _auto = False
     _budget_level = 'project_id'
@@ -210,8 +263,13 @@ class MonitorProjectView(object):
         string='Project',
         readonly=True,
     )
-    amount_commit = fields.Float(
-        string='Committed Amount',
+    amount_pr_commit = fields.Float(
+        string='PR Committed Amount',
+        readonly=True,
+        compute='_amount_all',
+    )
+    amount_po_commit = fields.Float(
+        string='PO Committed Amount',
         readonly=True,
         compute='_amount_all',
     )
@@ -239,6 +297,7 @@ class MonitorProjectView(object):
             join account_budget ab on ab.id = abl.budget_id
         where ab.latest_version = true and ab.state in ('validate', 'done')
             and abl.%s is not null
+            and abl.project_id is not null
         group by ap.fiscalyear_id, abl.project_id, abl.%s)
     """
 
@@ -248,24 +307,112 @@ class MonitorProjectView(object):
             self._monitor_view_tempalte %
             (self._table, field, field, field))
 
+    def _prepare_pr_commit_amount_sql(self):
+        """ Commit amount will invoice purchase_request """
+        sql = """
+        select sum((price_unit / cr.rate)
+                * (product_qty - purchased_qty)) amount_commit
+        from purchase_request_line line
+            join purchase_request doc on line.request_id = doc.id
+                and (doc.date_approved is not null
+                    and doc.state in ('approved'))
+            join account_fiscalyear af
+                on (doc.date_approved <= af.date_stop
+                    and doc.date_approved >= af.date_start)
+        -- to base currency
+        JOIN res_currency_rate cr ON (cr.currency_id = doc.currency_id)
+            AND
+            cr.id IN (SELECT id
+              FROM res_currency_rate cr2
+              WHERE (cr2.currency_id = doc.currency_id)
+              AND ((doc.date_approved IS NOT NULL
+                      AND cr2.name <= doc.date_approved)
+            OR (doc.date_approved IS NULL AND cr2.name <= NOW()))
+              ORDER BY name DESC LIMIT 1)
+        --
+        where line.%s = %s and af.id = %s
+            and line.project_id = %s
+        """
+        return sql
+
+    def _prepare_po_commit_amount_sql(self):
+        sql = """
+        select sum((price_unit / cr.rate)
+                * (product_qty - invoiced_qty)) amount_commit
+        from purchase_order_line line
+            join purchase_order doc on line.order_id = doc.id
+                and (doc.date_approve is not null
+                    and doc.state in ('approved'))
+            join account_fiscalyear af
+                on (doc.date_approve <= af.date_stop
+                    and doc.date_approve >= af.date_start)
+        -- to base currency
+        JOIN res_currency_rate cr ON (cr.currency_id = doc.currency_id)
+            AND
+            cr.id IN (SELECT id
+              FROM res_currency_rate cr2
+              WHERE (cr2.currency_id = doc.currency_id)
+              AND ((doc.date_approve IS NOT NULL
+                      AND cr2.name <= doc.date_approve)
+            OR (doc.date_approve IS NULL AND cr2.name <= NOW()))
+              ORDER BY name DESC LIMIT 1)
+        --
+        where line.%s = %s and af.id = %s
+            and line.project_id = %s
+        """
+        return sql
+
+    def _prepare_actual_amount_sql(self):
+        sql = """
+        select sum(debit-credit) amount_actual
+        from account_move_line aml
+            join account_period ap on ap.id = aml.period_id
+        where aml.%s = %s and ap.fiscalyear_id = %s
+            and aml.project_id = %s
+            and journal_id in (select id from account_journal
+            where type in ('purchase', 'purchase_refund'));
+        """
+        return sql
+
+    @api.model
+    def _get_amount_pr_commit(self):
+        self._cr.execute(self._prepare_pr_commit_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id,
+                          self.project_id.id or 0))  # Project
+        return self._cr.fetchone()[0] or 0.0
+
+    @api.model
+    def _get_amount_po_commit(self):
+        self._cr.execute(self._prepare_po_commit_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id,
+                          self.project_id.id or 0))  # Project
+        return self._cr.fetchone()[0] or 0.0
+
+    @api.model
+    def _get_amount_actual(self):
+        self._cr.execute(self._prepare_actual_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id,
+                          self.project_id.id or 0))  # Project
+        return self._cr.fetchone()[0] or 0.0
+
     @api.multi
     def _amount_all(self):
+        """ Overwrite, adding amount_commit """
         for rec in self:
-            # Actual from move lines (journal = purchase, purchase_refund
-            self._cr.execute("""
-                select sum(debit-credit) amount_actual
-                from account_move_line aml
-                    join account_period ap on ap.id = aml.period_id
-                where aml.%s = %s and ap.fiscalyear_id = %s
-                    and aml.project_id = %s
-                    and journal_id in
-                        (select id from account_journal
-                        where type in ('purchase', 'purchase_refund'));
-            """ % (self._budget_level,
-                   rec[self._budget_level].id,
-                   rec.fiscalyear_id.id, rec.project_id.id or 0))
-            rec.amount_actual = self._cr.fetchone()[0] or 0.0
-            rec.amount_balance = rec.amount_plan - rec.amount_actual
+            rec.amount_pr_commit = rec._get_amount_pr_commit()
+            rec.amount_po_commit = rec._get_amount_po_commit()
+            rec.amount_actual = rec._get_amount_actual()
+            # Balance
+            rec.amount_balance = (rec.amount_plan -
+                                  (rec.amount_pr_commit +
+                                   rec.amount_po_commit) -
+                                  rec.amount_actual)
 
 
 class AccountActivityGroupMonitorView(MonitorProjectView, models.Model):
@@ -311,8 +458,13 @@ class MonitorUnitView(object):
         string='Costcenter',
         readonly=True,
     )
-    amount_commit = fields.Float(
-        string='Committed Amount',
+    amount_pr_commit = fields.Float(
+        string='PR Committed Amount',
+        readonly=True,
+        compute='_amount_all',
+    )
+    amount_po_commit = fields.Float(
+        string='PO Committed Amount',
         readonly=True,
         compute='_amount_all',
     )
@@ -340,6 +492,7 @@ class MonitorUnitView(object):
             join account_budget ab on ab.id = abl.budget_id
         where ab.latest_version = true and ab.state in ('validate', 'done')
             and abl.%s is not null
+            and abl.costcenter_id is not null
         group by ap.fiscalyear_id, abl.costcenter_id, abl.%s)
     """
 
@@ -349,24 +502,112 @@ class MonitorUnitView(object):
             self._monitor_view_tempalte %
             (self._table, field, field, field))
 
+    def _prepare_pr_commit_amount_sql(self):
+        """ Commit amount will invoice purchase_request """
+        sql = """
+        select sum((price_unit / cr.rate)
+                * (product_qty - purchased_qty)) amount_commit
+        from purchase_request_line line
+            join purchase_request doc on line.request_id = doc.id
+                and (doc.date_approved is not null
+                    and doc.state in ('approved'))
+            join account_fiscalyear af
+                on (doc.date_approved <= af.date_stop
+                    and doc.date_approved >= af.date_start)
+        -- to base currency
+        JOIN res_currency_rate cr ON (cr.currency_id = doc.currency_id)
+            AND
+            cr.id IN (SELECT id
+              FROM res_currency_rate cr2
+              WHERE (cr2.currency_id = doc.currency_id)
+              AND ((doc.date_approved IS NOT NULL
+                      AND cr2.name <= doc.date_approved)
+            OR (doc.date_approved IS NULL AND cr2.name <= NOW()))
+              ORDER BY name DESC LIMIT 1)
+        --
+        where line.%s = %s and af.id = %s
+            and line.costcenter_id = %s
+        """
+        return sql
+
+    def _prepare_po_commit_amount_sql(self):
+        sql = """
+        select sum((price_unit / cr.rate)
+                * (product_qty - invoiced_qty)) amount_commit
+        from purchase_order_line line
+            join purchase_order doc on line.order_id = doc.id
+                and (doc.date_approve is not null
+                    and doc.state in ('approved'))
+            join account_fiscalyear af
+                on (doc.date_approve <= af.date_stop
+                    and doc.date_approve >= af.date_start)
+        -- to base currency
+        JOIN res_currency_rate cr ON (cr.currency_id = doc.currency_id)
+            AND
+            cr.id IN (SELECT id
+              FROM res_currency_rate cr2
+              WHERE (cr2.currency_id = doc.currency_id)
+              AND ((doc.date_approve IS NOT NULL
+                      AND cr2.name <= doc.date_approve)
+            OR (doc.date_approve IS NULL AND cr2.name <= NOW()))
+              ORDER BY name DESC LIMIT 1)
+        --
+        where line.%s = %s and af.id = %s
+            and line.costcenter_id = %s
+        """
+        return sql
+
+    def _prepare_actual_amount_sql(self):
+        sql = """
+        select sum(debit-credit) amount_actual
+        from account_move_line aml
+            join account_period ap on ap.id = aml.period_id
+        where aml.%s = %s and ap.fiscalyear_id = %s
+            and aml.costcenter_id = %s
+            and journal_id in (select id from account_journal
+            where type in ('purchase', 'purchase_refund'));
+        """
+        return sql
+
+    @api.model
+    def _get_amount_pr_commit(self):
+        self._cr.execute(self._prepare_pr_commit_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id,
+                          self.costcenter_id.id or 0))  # Costcenter
+        return self._cr.fetchone()[0] or 0.0
+
+    @api.model
+    def _get_amount_po_commit(self):
+        self._cr.execute(self._prepare_po_commit_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id,
+                          self.costcenter_id.id or 0))  # Costcenter
+        return self._cr.fetchone()[0] or 0.0
+
+    @api.model
+    def _get_amount_actual(self):
+        self._cr.execute(self._prepare_actual_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id,
+                          self.costcenter_id.id or 0))  # Costcenter
+        return self._cr.fetchone()[0] or 0.0
+
     @api.multi
     def _amount_all(self):
+        """ Overwrite, adding amount_pr_commit """
         for rec in self:
-            # Actual from move lines (journal = purchase, purchase_refund
-            self._cr.execute("""
-                select sum(debit-credit) amount_actual
-                from account_move_line aml
-                    join account_period ap on ap.id = aml.period_id
-                where aml.%s = %s and ap.fiscalyear_id = %s
-                    and aml.costcenter_id = %s
-                    and journal_id in
-                        (select id from account_journal
-                        where type in ('purchase', 'purchase_refund'));
-            """ % (self._budget_level,
-                   rec[self._budget_level].id,
-                   rec.fiscalyear_id.id, rec.costcenter_id.id or 0))
-            rec.amount_actual = self._cr.fetchone()[0] or 0.0
-            rec.amount_balance = rec.amount_plan - rec.amount_actual
+            rec.amount_pr_commit = rec._get_amount_pr_commit()
+            rec.amount_po_commit = rec._get_amount_po_commit()
+            rec.amount_actual = rec._get_amount_actual()
+            # Balance
+            rec.amount_balance = (rec.amount_plan -
+                                  (rec.amount_pr_commit +
+                                   rec.amount_po_commit) -
+                                  rec.amount_actual)
 
 
 class AccountActivityGroupMonitorUnitView(MonitorUnitView, models.Model):
