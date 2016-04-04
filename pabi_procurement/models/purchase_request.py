@@ -13,14 +13,51 @@ class PurchaseRequest(models.Model):
         ('rejected', 'Cancelled')
     ]
 
+    _SEMINAR = [
+        ('1', 'from myProject'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+    ]
+
     state = fields.Selection(
         selection=_STATES,
     )
-    committee_ids = fields.One2many(
+    committee_tor_ids = fields.One2many(
         'purchase.request.committee',
         'request_id',
         string='Committee',
         readonly=False,
+        domain=[
+            ('committee_type', '=', 'tor'),
+        ],
+    )
+    committee_tender_ids = fields.One2many(
+        'purchase.request.committee',
+        'request_id',
+        string='Committee Tender',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tender'),
+        ],
+    )
+    committee_receipt_ids = fields.One2many(
+        'purchase.request.committee',
+        'request_id',
+        string='Committee Receipt',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'receipt'),
+        ],
+    )
+    committee_std_price_ids = fields.One2many(
+        'purchase.request.committee',
+        'request_id',
+        string='Committee Standard Price',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'std_price'),
+        ],
     )
     attachment_ids = fields.One2many(
         'purchase.request.attachment',
@@ -53,11 +90,24 @@ class PurchaseRequest(models.Model):
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
-        string='Method',
+        string='Procurement Method',
     )
-    prototype = fields.Boolean(
+    purchase_prototype_id = fields.Many2one(
+        'purchase.prototype',
         string='Prototype',
-        default=False,
+    )
+    purchase_unit_id = fields.Many2one(
+        'purchase.unit',
+        string='Procurement Unit',
+    )
+    request_ref_id = fields.Many2one(
+        'purchase.request',
+        string='PR Reference',
+    )
+    seminar_id = fields.Selection(
+        selection=_SEMINAR,
+        string='Seminar',
+        default='1',
     )
     total_budget_value = fields.Float(
         'Total Budget Value',
@@ -65,7 +115,7 @@ class PurchaseRequest(models.Model):
     )
     purchase_type_id = fields.Many2one(
         'purchase.type',
-        string='Type',
+        string='Procurement Type',
     )
     delivery_address = fields.Text(
         string='Delivery Address',
@@ -75,21 +125,21 @@ class PurchaseRequest(models.Model):
         compute='_compute_amount',
         store=True,
         readonly=True,
-        default=0.0
+        default=0.0,
     )
     amount_tax = fields.Float(
         string='Taxes',
         compute='_compute_amount',
         store=True,
         readonly=True,
-        default=0.0
+        default=0.0,
     )
     amount_total = fields.Float(
         string='Total',
         compute='_compute_amount',
         store=True,
         readonly=True,
-        default=0.0
+        default=0.0,
     )
 
     @api.one
@@ -161,14 +211,28 @@ class PurchaseRequest(models.Model):
                     'name': u'Mr. Steve Roger',
                     'position': u'Manager',
                     'responsible': u'Responsible',
-                    'type': u'Committee',
+                    'committee_type': u'tor',
                     'sequence': u'1',
                 },
                 {
                     'name': u'Mr. Samuel Jackson',
                     'position': u'Staff',
                     'responsible': u'Responsible',
-                    'type': u'Committee',
+                    'committee_type': u'tor',
+                    'sequence': u'1',
+                },
+                {
+                    'name': u'Mr. Steve Roger',
+                    'position': u'Manager',
+                    'responsible': u'Responsible',
+                    'committee_type': u'receipt',
+                    'sequence': u'1',
+                },
+                {
+                    'name': u'Mr. Samuel Jackson',
+                    'position': u'Staff',
+                    'responsible': u'Responsible',
+                    'committee_type': u'std_price',
                     'sequence': u'1',
                 },
             ),
@@ -311,6 +375,13 @@ class PurchaseRequestLine(models.Model):
         string='Taxes',
         readonly=False,  # TODO: readonly=True
     )
+    responsible_user_id = fields.Many2one(
+        'res.users',
+        string='Responsible Person',
+        related='request_id.responsible_user_id',
+        store=True,
+        readonly=True,
+    )
 
     @api.multi
     @api.depends('product_qty', 'price_unit', 'tax_ids')
@@ -348,6 +419,13 @@ class PurchaseRequestCommittee(models.Model):
     _description = 'Purchase Request Committee'
     _order = 'sequence, id'
 
+    _COMMITTEE_TYPE = [
+        ('tor', 'TOR'),
+        ('tender', 'Tender'),
+        ('receipt', 'Receipt'),
+        ('std_price', 'Standard Price')
+    ]
+
     sequence = fields.Integer(
         string='Sequence',
         default=1,
@@ -361,8 +439,10 @@ class PurchaseRequestCommittee(models.Model):
     responsible = fields.Char(
         string='Responsible',
     )
-    committee_type = fields.Char(
+    committee_type = fields.Selection(
         string='Type',
+        selection=_COMMITTEE_TYPE,
+        required=True,
     )
     request_id = fields.Many2one(
         'purchase_request',

@@ -35,10 +35,41 @@ class PurchaseRequisition(models.Model):
     currency_rate = fields.Float(
         string='Rate',
     )
-    committee_ids = fields.One2many(
+    committee_tor_ids = fields.One2many(
         'purchase.requisition.committee',
         'requisition_id',
         string='Committee',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tor'),
+        ],
+    )
+    committee_tender_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee Tender',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tender'),
+        ],
+    )
+    committee_receipt_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee Receipt',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'receipt'),
+        ],
+    )
+    committee_std_price_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee Standard Price',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'std_price'),
+        ],
     )
     attachment_ids = fields.One2many(
         'purchase.requisition.attachment',
@@ -218,6 +249,13 @@ class PurchaseRequisitionCommittee(models.Model):
     _description = 'Purchase Requisition Committee'
     _order = 'sequence, id'
 
+    _COMMITTEE_TYPE = [
+        ('tor', 'TOR'),
+        ('tender', 'Tender'),
+        ('receipt', 'Receipt'),
+        ('std_price', 'Standard Price')
+    ]
+
     requisition_id = fields.Many2one(
         'purchase.requisition',
         string='Purchase Requisition',
@@ -235,6 +273,7 @@ class PurchaseRequisitionCommittee(models.Model):
     responsible = fields.Char(
         string='Responsible',
     )
-    committee_type = fields.Char(
+    committee_type = fields.Selection(
         string='Type',
+        selection=_COMMITTEE_TYPE,
     )

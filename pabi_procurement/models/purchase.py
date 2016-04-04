@@ -115,6 +115,15 @@ class PurchaseType(models.Model):
     )
 
 
+class PurchasePrototype(models.Model):
+    _name = 'purchase.prototype'
+    _description = 'PABI2 Purchase Prototype'
+
+    name = fields.Char(
+        string='Prototype',
+    )
+
+
 class PurchaseMethod(models.Model):
     _name = 'purchase.method'
     _description = 'PABI2 Purchase Method'
@@ -124,9 +133,25 @@ class PurchaseMethod(models.Model):
     )
 
 
+class PurchaseUnit(models.Model):
+    _name = 'purchase.unit'
+    _description = 'PABI2 Purchase Unit'
+
+    name = fields.Char(
+        string='Purchase Unit',
+    )
+
+
 class PurchaseOrderCommittee(models.Model):
     _name = 'purchase.order.committee'
     _description = 'Purchase Order Committee'
+
+    _COMMITTEE_TYPE = [
+        ('tor', 'TOR'),
+        ('tender', 'Tender'),
+        ('receipt', 'Receipt'),
+        ('std_price', 'Standard Price')
+    ]
 
     sequence = fields.Integer(
         string='Sequence',
@@ -141,8 +166,9 @@ class PurchaseOrderCommittee(models.Model):
     responsible = fields.Char(
         string='Responsible',
     )
-    committee_type = fields.Char(
+    committee_type = fields.Selection(
         string='Type',
+        selection=_COMMITTEE_TYPE,
     )
     order_id = fields.Many2one(
         'purchase_order',
