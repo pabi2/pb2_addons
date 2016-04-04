@@ -15,8 +15,8 @@ class MonitorView(object):
         string='Planned Amount',
         readonly=True,
     )
-    amount_commit = fields.Float(
-        string='Committed Amount',
+    amount_po_commit = fields.Float(
+        string='PO Committed Amount',
         readonly=True,
         compute='_amount_all',
     )
@@ -49,29 +49,29 @@ class MonitorView(object):
             self._monitor_view_tempalte %
             (self._table, field, field, field))
 
-    def _prepare_commit_amount_sql(self):
+    def _prepare_po_commit_amount_sql(self):
         sql = """
         select sum((price_unit / cr.rate)
                 * (product_qty - invoiced_qty)) amount_commit
-        from purchase_order_line pol
-            join purchase_order po on pol.order_id = po.id
-                and (po.date_approve is not null
-                    and po.state in ('approved'))
+        from purchase_order_line line
+            join purchase_order doc on line.order_id = doc.id
+                and (doc.date_approve is not null
+                    and doc.state in ('approved'))
             join account_fiscalyear af
-                on (po.date_approve <= af.date_stop
-                    and po.date_approve >= af.date_start)
+                on (doc.date_approve <= af.date_stop
+                    and doc.date_approve >= af.date_start)
         -- to base currency
-        JOIN res_currency_rate cr ON (cr.currency_id = po.currency_id)
+        JOIN res_currency_rate cr ON (cr.currency_id = doc.currency_id)
             AND
             cr.id IN (SELECT id
               FROM res_currency_rate cr2
-              WHERE (cr2.currency_id = po.currency_id)
-              AND ((po.date_approve IS NOT NULL
-                      AND cr2.name <= po.date_approve)
-            OR (po.date_approve IS NULL AND cr2.name <= NOW()))
+              WHERE (cr2.currency_id = doc.currency_id)
+              AND ((doc.date_approve IS NOT NULL
+                      AND cr2.name <= doc.date_approve)
+            OR (doc.date_approve IS NULL AND cr2.name <= NOW()))
               ORDER BY name DESC LIMIT 1)
         --
-        where pol.%s = %s and af.id = %s
+        where line.%s = %s and af.id = %s
         """
         return sql
 
@@ -86,24 +86,30 @@ class MonitorView(object):
         """
         return sql
 
+    @api.model
+    def _get_amount_po_commit(self):
+        self._cr.execute(self._prepare_po_commit_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id))
+        return self._cr.fetchone()[0] or 0.0
+
+    @api.model
+    def _get_amount_actual(self):
+        self._cr.execute(self._prepare_actual_amount_sql() %
+                         (self._budget_level,
+                          self[self._budget_level].id,
+                          self.fiscalyear_id.id))
+        return self._cr.fetchone()[0] or 0.0
+
     @api.multi
     def _amount_all(self):
         for rec in self:
-            # Commit form purchase line (approved but not inoviced)
-            self._cr.execute(self._prepare_commit_amount_sql() %
-                             (self._budget_level,
-                              rec[self._budget_level].id,
-                              rec.fiscalyear_id.id))
-            rec.amount_commit = self._cr.fetchone()[0] or 0.0
-            # Actual from move lines (journal = purchase, purchase_refund)
-            self._cr.execute(self._prepare_actual_amount_sql() %
-                             (self._budget_level,
-                              rec[self._budget_level].id,
-                              rec.fiscalyear_id.id))
-            rec.amount_actual = self._cr.fetchone()[0] or 0.0
+            rec.amount_po_commit = rec._get_amount_po_commit()
+            rec.amount_actual = rec._get_amount_actual()
             # Balance
             rec.amount_balance = (rec.amount_plan -
-                                  rec.amount_commit -
+                                  rec.amount_po_commit -
                                   rec.amount_actual)
 
 
