@@ -28,6 +28,31 @@ class PurchaseRequestLine(models.Model):
         'account.activity',
         string='Activity',
     )
+    purchased_qty = fields.Float(
+        string='Purchased Quantity',
+        digits=(12, 6),
+        compute='_compute_purchased_qty',
+        store=True,
+        help="This field calculate purchased quantity at line level. "
+        "Will be used to calculate committed budget",
+    )
+
+    @api.multi
+    @api.depends('requisition_lines.purchase_line_ids.order_id.state')
+    def _compute_purchased_qty(self):
+        Uom = self.env['product.uom']
+        for request_line in self:
+            purchased_qty = 0.0
+            for reqisition_line in request_line.requisition_lines:
+                for purchase_line in reqisition_line.purchase_line_ids:
+                    if purchase_line.order_id.state in ['approved']:
+                        # Purchased Qty in PO Line's UOM
+                        purchased_qty += \
+                            Uom._compute_qty(purchase_line.product_uom.id,
+                                             purchase_line.product_qty,
+                                             request_line.product_uom_id.id)
+            request_line.purchased_qty = min(request_line.product_qty,
+                                             purchased_qty)
 
     @api.one
     @api.depends('product_id', 'activity_id')

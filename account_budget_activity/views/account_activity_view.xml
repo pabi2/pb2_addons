@@ -50,7 +50,7 @@
 	                    <page string="Activities">
 	                    	<field name="activity_ids">
 				                <tree string="Activity" editable="bottom">
-		                    		<field name="activity_group_id" invisible="0"/>
+		                    		<field name="activity_group_id" invisible="1"/>
 				                    <field name="name"/>
                     				<!--field name="account_id"/-->
 				                </tree>
@@ -59,9 +59,10 @@
 	                    <page string="Budget Monitor">
 		                    <field name="monitor_ids">
 				                <tree string="Monitor" editable="bottom">
-		                    		<field name="activity_group_id" invisible="0"/>
+		                    		<field name="activity_group_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -125,6 +126,7 @@
 		                    		<field name="activity_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
+		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
