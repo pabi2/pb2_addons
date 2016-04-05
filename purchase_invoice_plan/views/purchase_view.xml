@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
+                            type="action" states="confirmed" class="oe_highlight"
+                            attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),('invoice_method', '!=', 'invoice_plan')]}" />
+                </xpath>
+                
+                <xpath expr='//form/sheet/notebook/page[3]' position="after">
+                    <page string="Invoice Plan" attrs="{'invisible': [('invoice_method', '!=', 'invoice_plan')]}">
+                        <group>
+                            <group>
+                                <button name="%(action_purchase_create_invoice_plan)d" string="⇒ Create Invoice Plan"
+                                    type="action" class="oe_link" states="draft"/>
+                                <button name="action_cancel_draft_invoices" states="progress" string="Cancel Draft Invoices" class="oe_highlight" type="object" 
+                                    confirm="This will cancel all draft invoices, are you sure you want to proceed?" groups="base.group_user"/> 
+                                <field name="invoice_mode"/>
+                            </group>
+                            <group>
+                                <field name="use_advance"/> 
+                                <field name="use_deposit"/>
+                            </group>
+                        </group>
+                        <field name="invoice_plan_ids"  attrs="{'invisible': ['|',('use_advance','=',True),('use_deposit','=',True)]}">
+                            <tree string="Invoice Plan" create="1" editable="bottom">
+                                <field name="sequence" widget="handle" />
+                                <!-- <field name="dummy" invisible="1"/> -->
+                                <field name="order_id" invisible="1" />
+                                <field name="order_line_id" domain="[('order_id','=',parent.id)]" />
+                                <field name="installment" />
+                                <field name="date_invoice" />
+                                <field name="invoice_amount" sum="Amount" />
+                                <field name="invoice_percent"/>
+                                <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
+                                <field name="ref_invoice_id" invisible="1"  />
+                                <field name="state" invisible="0"/>
+                            </tree>
+                        </field>
+                        <field name="invoice_plan_wd_ids"  attrs="{'invisible': [('use_advance','=',False),('use_deposit','=',False)]}">
+                            <tree string="Invoice Plan with Advance" create="1" editable="bottom" >
+                                <field name="sequence" widget="handle" />
+                                <!-- <field name="dummy" invisible="1"/> -->
+                                <field name="order_id" invisible="1" />
+                                <field name="order_line_id" invisible="1" domain="[('order_id','=',parent.id)]" /> 
+                                <field name="description"/>
+                                <field name="is_deposit_installment" invisible="1" /> 
+                                <field name="is_advance_installment" invisible="1" />
+                                <field name="installment" />
+                                <field name="date_invoice" />
+                                <field name="deposit_amount" sum="Deposit Amount" attrs="{'invisible': [('installment','!=',0)]}"/>
+                                <field name="deposit_percent" sum="%" attrs="{'invisible': [('installment','!=',0)]}" />
+                                <field name="invoice_amount" sum="Amount" attrs="{'invisible': [('installment','=',0)]}"/>
+                                <field name="invoice_percent" attrs="{'invisible': [('installment','=',0)]}"/>
+                                <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
+                                <field name="ref_invoice_id" invisible="1" />
+                                <field name="state" invisible="0"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                
+                
+            </field>
+        </record>
+    </data>
+</openerp>
