@@ -132,14 +132,14 @@ class AccountVoucher(models.Model):
         if self.multiple_reconcile_ids:
             if ml_writeoff:
                 for line_tax in ml_writeoff:
-                    writeoff_id = self.env['account.move.line'].create(line_tax)
+                    self.env['account.move.line'].create(line_tax)
             return True
         else:
             return super(AccountVoucher, self).\
                 action_move_line_writeoff_hook(ml_writeoff)
 
     @api.model
-    def multiple_reconcile_ded_amount_hook(self,line_total, move_id,
+    def multiple_reconcile_ded_amount_hook(self, line_total, move_id,
                                            account_id, diff, ded_amount, name,
                                            company_currency, current_currency):
         voucher = self
@@ -210,4 +210,3 @@ class AccountVoucher(models.Model):
     @api.multi
     def button_reset_amount(self):
         return self.write({'multiple_reconcile_ids': []})
-
