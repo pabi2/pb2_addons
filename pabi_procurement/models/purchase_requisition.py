@@ -19,9 +19,9 @@ class PurchaseRequisition(models.Model):
         string='Total Budget Value',
         default=0.0,
     )
-    prototype = fields.Boolean(
+    purchase_prototype_id = fields.Many2one(
+        'purchase.prototype',
         string='Prototype',
-        default=False,
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',

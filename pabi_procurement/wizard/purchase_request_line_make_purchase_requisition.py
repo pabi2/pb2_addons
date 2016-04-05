@@ -45,7 +45,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'purchase_type_id': req_id.purchase_type_id.id,
             'purchase_method_id': req_id.purchase_method_id.id,
             'total_budget_value': req_id.total_budget_value,
-            'prototype': req_id.prototype,
+            'purchase_prototype_id': req_id.purchase_prototype_id.id,
         }
         res.update(vals)
         return res
