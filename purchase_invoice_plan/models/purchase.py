@@ -222,10 +222,9 @@ class PurchaseOrder(models.Model):
             if deposit.state != 'cancel' and \
                     deposit.is_deposit_invoice:
                 for dline in deposit.invoice_line:
-                    inv_line = dline.copy(
-                        {'invoice_id': inv_id,
-                         'price_unit': -1 *
-                            dline.price_unit})
+                    dline.copy({'invoice_id': inv_id,
+                                'price_unit': -1 *
+                                dline.price_unit})
         invoice.button_compute()
         return True
 
@@ -325,6 +324,16 @@ class PurchaseOrder(models.Model):
             res.update({'quantity': ((res.get('quantity') or 0.0) *
                                      (line_percent / 100))})
         return res
+
+    @api.multi
+    def action_cancel_draft_invoices(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        # Get all unpaid invoice
+        for invoice in self.invoice_ids:
+            if invoice.state in ('draft',):
+                invoice.signal_workflow('invoice_cancel')
+        return True
 
 
 class PurchaseOrderLine(models.Model):

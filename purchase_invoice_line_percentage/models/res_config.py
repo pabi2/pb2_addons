@@ -49,7 +49,8 @@ class account_config_settings(osv.osv_memory):
                     property_obj.create(cr, uid, vals, context=context)
         return True
 
-    def get_default_account_advance_supplier(self, cr, uid, fields, context=None):
+    def get_default_account_advance_supplier(self, cr, uid,
+                                             fields, context=None):
         ir_property_obj = self.pool.get('ir.property')
         fiscal_obj = self.pool.get('account.fiscal.position')
         todo_list = [
