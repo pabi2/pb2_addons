@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+
+       <record id="purchase_order_form_plan" model="ir.ui.view">
+            <field name="name">purchase.order.form.ext</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="purchase_invoice_line_percentage.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='view_invoice']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'line_percentage', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>                                
+                </xpath>
+                <xpath expr="//button[@string='Create Invoice (%)']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'order', 'invoice_plan']), '|', ('state', '!=', 'approved'), ('invoiced','=',True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
         <record id="purchase_order_form" model="ir.ui.view">
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>
@@ -8,10 +24,14 @@
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside">
                     <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
-                            type="action" states="confirmed" class="oe_highlight"
-                            attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),('invoice_method', '!=', 'invoice_plan')]}" />
+                            type="action" class="oe_highlight"
+                            attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),
+                                                 '|',('invoice_method', '!=', 'invoice_plan'),
+                                                     ('invoiced','=',True)]}"/>
                 </xpath>
-                
+                <xpath expr="//button[@name='view_invoice']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>
+                </xpath>
                 <xpath expr='//form/sheet/notebook/page[3]' position="after">
                     <page string="Invoice Plan" attrs="{'invisible': [('invoice_method', '!=', 'invoice_plan')]}">
                         <group>
@@ -64,9 +84,8 @@
                         </field>
                     </page>
                 </xpath>
-                
-                
             </field>
         </record>
+
     </data>
 </openerp>

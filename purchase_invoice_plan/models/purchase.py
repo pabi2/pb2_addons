@@ -193,6 +193,42 @@ class PurchaseOrder(models.Model):
                 return invoice
         return False
 
+    @api.model
+    def compute_advance_payment_line(self, inv_id):
+        invoice = self.env['account.invoice'].browse(inv_id)
+        order = self
+        for advance in order.invoice_ids:
+            if advance.state != 'cancel' and \
+                    advance.is_deposit:
+                for preline in advance.invoice_line:
+                    ratio = (order.amount_untaxed and
+                             (invoice.amount_untaxed /
+                              order.amount_untaxed) or
+                             1.0)
+                    inv_line = preline.copy(
+                        {'invoice_id': inv_id,
+                         'price_unit': -1 *
+                            preline.price_unit})
+                    inv_line.quantity = \
+                        inv_line.quantity * ratio
+        invoice.button_compute()
+        return True
+
+    @api.model
+    def compute_deposit_line(self, inv_id):
+        invoice = self.env['account.invoice'].browse(inv_id)
+        order = self
+        for deposit in order.invoice_ids:
+            if deposit.state != 'cancel' and \
+                    deposit.is_deposit_invoice:
+                for dline in deposit.invoice_line:
+                    inv_line = dline.copy(
+                        {'invoice_id': inv_id,
+                         'price_unit': -1 *
+                            dline.price_unit})
+        invoice.button_compute()
+        return True
+
     @api.multi
     def action_invoice_create(self):
         self._check_invoice_plan()
@@ -253,31 +289,9 @@ class PurchaseOrder(models.Model):
                                 # Remove line with negative price line
                                 if line.price_unit < 0:
                                     line.unlink()
-                            for advance in order.invoice_ids:
-                                if advance.state != 'cancel' and \
-                                        advance.is_deposit:
-                                    for preline in advance.invoice_line:
-                                        ratio = (order.amount_untaxed and
-                                                 (invoice.amount_untaxed /
-                                                  order.amount_untaxed) or
-                                                 1.0)
-                                        inv_line = preline.copy(
-                                            {'invoice_id': inv_id,
-                                             'price_unit': -1 *
-                                                preline.price_unit})
-                                        inv_line.quantity = \
-                                            inv_line.quantity * ratio
-                            invoice.button_compute()
+                            order.compute_advance_payment_line(inv_id)
                             if installment == last_installment:
-                                for deposit in order.invoice_ids:
-                                    if deposit.state != 'cancel' and \
-                                            deposit.is_deposit_invoice:
-                                        for dline in deposit.invoice_line:
-                                            inv_line = dline.copy(
-                                                {'invoice_id': inv_id,
-                                                 'price_unit': -1 *
-                                                    dline.price_unit})
-                            invoice.button_compute()
+                                order.compute_deposit_line(inv_id)
             else:
                 inv_id = super(PurchaseOrder, order).action_invoice_create()
         return inv_id
