@@ -83,66 +83,64 @@ class AccountVoucher(models.Model):
                                         company_currency, current_currency)
         voucher = self
         if voucher.multiple_reconcile_ids:
-            if voucher.multiple_reconcile_ids:
-                ctx = dict(self._context.copy())
-                ctx.update({'date': voucher.date})
-                for line in voucher.multiple_reconcile_ids:
-                    amount_convert = self.with_context(ctx)._convert_amount(
-                        line.amount, voucher.id)  # amount in company currency
-                    debit = 0.0
-                    credit = 0.0
-                    if line.amount < 0.0:
-                        if voucher.type == 'receipt':
-                            debit = amount_convert
-                        else:
-                            credit = amount_convert
+            ctx = dict(self._context.copy())
+            ctx.update({'date': voucher.date})
+            for line in voucher.multiple_reconcile_ids:
+                amount_convert = self.with_context(ctx)._convert_amount(
+                    line.amount, voucher.id)  # amount in company currency
+                debit = 0.0
+                credit = 0.0
+                if line.amount < 0.0:
+                    if voucher.type == 'receipt':
+                        debit = amount_convert
                     else:
-                        if voucher.type == 'receipt':
-                            credit = amount_convert
-                        else:
-                            debit = amount_convert
+                        credit = amount_convert
+                else:
+                    if voucher.type == 'receipt':
+                        credit = amount_convert
+                    else:
+                        debit = amount_convert
 
-                    debit = voucher.company_id.currency_id.round((debit))
-                    credit = voucher.company_id.currency_id.round((credit))
-                    if abs(debit) > 0.0:
-                        sign = 1
-                    else:
-                        sign = -1
-                    move_line = {
-                        'name': line.comment or name,
-                        'account_id': line.account_id.id,
-                        'move_id': move_id,
-                        'partner_id': voucher.partner_id.id,
-                        'date': voucher.date,
-                        'credit': abs(credit),
-                        'debit': abs(debit),
-                        'amount_currency': company_currency !=
-                        current_currency and sign * abs(line.amount) or 0.0,
-                        'currency_id': company_currency !=
-                        current_currency and current_currency or False,
-                        'analytic_account_id': line.analytic_id and
-                        line.analytic_id.id or False,
-                    }
-                    ded_amount += voucher.company_id.currency_id.\
-                        round((amount_convert))
-                    list_move_line.append(move_line)
+                debit = voucher.company_id.currency_id.round((debit))
+                credit = voucher.company_id.currency_id.round((credit))
+                if abs(debit) > 0.0:
+                    sign = 1
+                else:
+                    sign = -1
+                move_line = {
+                    'name': line.comment or name,
+                    'account_id': line.account_id.id,
+                    'move_id': move_id,
+                    'partner_id': voucher.partner_id.id,
+                    'date': voucher.date,
+                    'credit': abs(credit),
+                    'debit': abs(debit),
+                    'amount_currency': company_currency !=
+                    current_currency and sign * abs(line.amount) or 0.0,
+                    'currency_id': company_currency !=
+                    current_currency and current_currency or False,
+                    'analytic_account_id': line.analytic_id and
+                    line.analytic_id.id or False,
+                }
+                ded_amount += voucher.company_id.currency_id.\
+                    round((amount_convert))
+                list_move_line.append(move_line)
         return ded_amount, list_move_line
 
-    @api.model
+    @api.multi
     def action_move_line_writeoff_hook(self, ml_writeoff):
         if self.multiple_reconcile_ids:
             if ml_writeoff:
                 for line_tax in ml_writeoff:
                     self.env['account.move.line'].create(line_tax)
-            return
+            return True
         else:
             return super(AccountVoucher, self).\
                 action_move_line_writeoff_hook(ml_writeoff)
 
     @api.model
-    def multiple_reconcile_ded_amount_hook(self, line_total,
-                                           move_id, account_id, diff,
-                                           ded_amount, name,
+    def multiple_reconcile_ded_amount_hook(self, line_total, move_id,
+                                           account_id, diff, ded_amount, name,
                                            company_currency, current_currency):
         voucher = self
         list_move_line = []
@@ -180,17 +178,18 @@ class AccountVoucher(models.Model):
                 }
                 list_move_line.append(move_line)
             return list_move_line
+        elif self.multiple_reconcile_ids:
+            return list_move_line
         else:
             return super(AccountVoucher, self).\
-                multiple_reconcile_ded_amount_hook(line_total,
-                                                   move_id, account_id, diff,
+                multiple_reconcile_ded_amount_hook(line_total, move_id,
+                                                   account_id, diff,
                                                    ded_amount, name,
                                                    company_currency,
                                                    current_currency)
 
-    @api.model
+    @api.multi
     def action_move_line_create_hook(self, rec_list_ids):
-        super(AccountVoucher, self).action_move_line_create_hook(rec_list_ids)
         voucher = self
         for rec_ids in rec_list_ids:
             if len(rec_ids) >= 2:
@@ -206,10 +205,8 @@ class AccountVoucher(models.Model):
                     recs.reconcile(type='manual')
                 else:
                     recs.reconcile_partial(type='manual')
-        return
+        return True
 
     @api.multi
     def button_reset_amount(self):
         return self.write({'multiple_reconcile_ids': []})
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
