@@ -12,7 +12,7 @@ Purchase Invoice Plan
     'images': [],
     'depends': [
         'purchase',
-        'order_invoice_line_percentage'
+        'purchase_invoice_line_percentage'
     ],
     'demo': [],
     'data': [
