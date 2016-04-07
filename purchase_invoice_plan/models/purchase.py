@@ -42,6 +42,23 @@ class PurchaseOrder(models.Model):
         requied=True,
         readonly=True,
     )
+    invoice_created = fields.Boolean(
+        string='Invoice Created',
+        compute='_compute_plan_invoice_created',
+    )
+
+    @api.one
+    @api.depends('invoice_ids', 'invoice_ids.state')
+    def _compute_plan_invoice_created(self):
+        if self.invoice_ids:
+            self.invoice_created = False
+            cancelled_invoice = self.invoice_ids.search_count([
+                ('id', 'in', self.invoice_ids.ids),
+                ('state', '=', 'cancel'),
+                ('copy_invoice_id', '=', False),
+            ])
+            if cancelled_invoice == 0:
+                self.invoice_created = True
 
     @api.model
     def _calculate_subtotal(self, vals):
