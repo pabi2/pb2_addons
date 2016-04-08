@@ -24,7 +24,7 @@ m2x Options
     "application": False,
     "installable": True,
     "depends": [
-        "web_m2x_options",
+        "base",
     ],
     "data": [
         "data/config_param.xml",
