@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="act_to_verify" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_requisition.purchase_requisition_workflow"/>
+            <field name="name">verify</field>
+            <field name="kind">function</field>
+            <field name="action">to_verify()</field>
+        </record>
+        <record id="act_rejected" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_requisition.purchase_requisition_workflow"/>
+            <field name="name">verify</field>
+            <field name="kind">function</field>
+            <field name="action">rejected()</field>
+        </record>
+        <record id="trans_sent_to_verify" model="workflow.transition">
+            <field name="act_from" ref="purchase_requisition.act_draft"/>
+            <field name="act_to" ref="act_to_verify"/>
+            <field name="signal">to_verify</field>
+        </record>
+         <record id="trans_to_verify_verified" model="workflow.transition">
+            <field name="act_from" ref="act_to_verify"/>
+            <field name="act_to" ref="purchase_requisition.act_sent"/>
+            <field name="signal">verified</field>
+        </record>
+        <record id="trans_to_verify_draft" model="workflow.transition">
+            <field name="act_from" ref="act_to_verify"/>
+            <field name="act_to" ref="act_rejected"/>
+            <field name="signal">rejected</field>
+        </record>
+    </data>
+</openerp>

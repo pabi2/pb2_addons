@@ -25,36 +25,44 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
-                        <field name="committee_ids">
-                            <tree>
+                        <field name="committee_tor_ids">
+                            <h2>Draft TOR</h2>
+                            <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
-                        <field name="committee_ids">
-                            <tree>
+                        <field name="committee_tender_ids">
+                            <h2>Tender</h2>
+                            <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
-                        <field name="committee_ids">
-                            <tree>
+                       <field name="committee_receipt_ids">
+                            <h2>Receipt</h2>
+                            <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
-                        <field name="committee_ids">
-                            <tree>
+                       <field name="committee_std_price_ids">
+                            <h2>Std. Price</h2>
+                            <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                     </page>

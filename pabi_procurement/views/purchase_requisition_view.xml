@@ -21,21 +21,38 @@
                     <field name="total_budget_value"/>
                     <field name="purchase_prototype_id"/>
                 </xpath>
+                <xpath expr="//field[@name='multiple_rfq_per_supplier']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
                     <field name="purchase_method_id"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
+                 <xpath expr="//form/sheet/group/group/field[@name='origin']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']"
                        position="after">
                     <field name="product_name"/>
+                </xpath>
+                <xpath expr="//button[@name='sent_suppliers']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='sent_suppliers']" position="after">
+                    <button name="to_verify" states="draft" string="Send to Verify" class="oe_highlight"/>
+                    <button name="verified" states="verify" string="Verify" class="oe_highlight"/>
+                    <button name="%(action_requisition_reject)d" type="action" states="verify" string="Reject"/>
                 </xpath>
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
                 </xpath>
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
                     <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok"/>
+                    <button name="action_print_po" type="object" states="done" string="Print PO" icon="gtk-print"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
@@ -68,7 +85,7 @@
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']"
                        position="before">
-                        <field name="order_id"/>
+                        <field name="order_id" widget="many2one_clickable"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
@@ -79,6 +96,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                         <field name="committee_tender_ids">
@@ -88,6 +106,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                        </field>
                        <field name="committee_receipt_ids">
@@ -97,6 +116,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                        </field>
                        <field name="committee_std_price_ids">
@@ -106,6 +126,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                        </field>
                     </page>

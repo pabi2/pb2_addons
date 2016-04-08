@@ -23,10 +23,16 @@ class PurchaseRequest(models.Model):
     state = fields.Selection(
         selection=_STATES,
     )
-    committee_tor_ids = fields.One2many(
+    committee_ids = fields.One2many(
         'purchase.request.committee',
         'request_id',
         string='Committee',
+        readonly=False,
+    )
+    committee_tor_ids = fields.One2many(
+        'purchase.request.committee',
+        'request_id',
+        string='Committee TOR',
         readonly=False,
         domain=[
             ('committee_type', '=', 'tor'),

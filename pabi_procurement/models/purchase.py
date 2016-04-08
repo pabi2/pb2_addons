@@ -68,6 +68,42 @@ class PurchaseOrder(models.Model):
         string='Committee',
         readonly=False,
     )
+    committee_tor_ids = fields.One2many(
+        'purchase.order.committee',
+        'order_id',
+        string='Committee TOR',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tor'),
+        ],
+    )
+    committee_tender_ids = fields.One2many(
+        'purchase.order.committee',
+        'order_id',
+        string='Committee Tender',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tender'),
+        ],
+    )
+    committee_receipt_ids = fields.One2many(
+        'purchase.order.committee',
+        'order_id',
+        string='Committee Receipt',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'receipt'),
+        ],
+    )
+    committee_std_price_ids = fields.One2many(
+        'purchase.order.committee',
+        'order_id',
+        string='Committee Standard Price',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'std_price'),
+        ],
+    )
     create_by = fields.Many2one(
         'res.users',
         string='Create By',
@@ -104,6 +140,13 @@ class PurchaseOrder(models.Model):
         if po_rec.state != 'done':
             po_rec.state = 'done'
         return True
+
+    @api.multi
+    def action_print_po(self):
+        Report = self.env['report']
+        for rec in self:
+            return Report.get_action(rec.order_id,
+                                     'purchase.report_purchasequotation')
 
 
 class PurchaseType(models.Model):

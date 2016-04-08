@@ -8,6 +8,23 @@ import time
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
+    _STATES = [
+        ('draft', 'Draft'),
+        ('in_progress', 'Confirmed'),
+        ('verify', 'To Verify'),
+        ('rejected', 'Rejected'),
+        ('open', 'Bid Selection'),
+        ('done', 'PO Created'),
+        ('cancel', 'Cancelled'),
+    ]
+
+    state = fields.Selection(
+        _STATES,
+        string='Status',
+        track_visibility='onchange',
+        required=True,
+        copy=False,
+    )
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Type',
@@ -35,10 +52,16 @@ class PurchaseRequisition(models.Model):
     currency_rate = fields.Float(
         string='Rate',
     )
-    committee_tor_ids = fields.One2many(
+    committee_ids = fields.One2many(
         'purchase.requisition.committee',
         'requisition_id',
         string='Committee',
+        readonly=False,
+    )
+    committee_tor_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee TOR',
         readonly=False,
         domain=[
             ('committee_type', '=', 'tor'),
@@ -113,6 +136,10 @@ class PurchaseRequisition(models.Model):
     approval_document_footer = fields.Text(
         string='Footer',
     )
+    cancel_reason_txt = fields.Char(
+        string="Description",
+        readonly=True,
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -159,6 +186,20 @@ class PurchaseRequisition(models.Model):
             'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
         })
         return res
+
+    @api.multi
+    def to_verify(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.state = 'verify'
+        return True
+
+    @api.multi
+    def rejected(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.signal_workflow('rejected')
+        self.state = 'rejected'
 
 
 class PurchaseRequisitionLine(models.Model):

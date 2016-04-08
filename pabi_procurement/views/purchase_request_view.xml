@@ -88,6 +88,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                         <field name="committee_tender_ids">
@@ -97,6 +98,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                        <field name="committee_receipt_ids">
@@ -106,6 +108,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                        <field name="committee_std_price_ids">
@@ -115,6 +118,7 @@
                                 <field name="name"/>
                                 <field name="position"/>
                                 <field name="responsible"/>
+                                <field name="committee_type"/>
                             </tree>
                         </field>
                     </page>
