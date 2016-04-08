@@ -82,7 +82,7 @@ class TestAccountCancelWithReversal(common.TransactionCase):
             self.voucher.currency_id.id,
             self.voucher.type,
             self.voucher.date
-            ) 
+            )
         voucher_lines = [(0, 0, line) for line in val['value']['line_cr_ids']]
         self.voucher.write({'line_cr_ids': voucher_lines})
         # Paid
