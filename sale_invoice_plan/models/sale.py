@@ -200,7 +200,7 @@ class sale_order(models.Model):
                     'account_analytic_id': order.project_id.id or False,
                 }
                 inv_values = self._prepare_invoice(order, inv_line_values)
-                inv_values.update({'is_deposit': True,
+                inv_values.update({'is_advance': True,
                                    'date_invoice': date_invoice})
                 # Chainging from [6, 0, ...] to [0, 0, ...]
                 inv_values['invoice_line'] = [
@@ -282,7 +282,7 @@ class sale_order(models.Model):
                     line.unlink()
             for deposit_inv in order.invoice_ids:
                 if deposit_inv.state not in ('cancel',) and \
-                        deposit_inv.is_deposit:
+                        deposit_inv.is_advance:
                     for preline in deposit_inv.invoice_line:
                         ratio = (order.amount_untaxed and
                                  (invoice.amount_untaxed /

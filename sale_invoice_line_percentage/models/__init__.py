@@ -2,7 +2,6 @@
 
 from . import sale_v7
 from . import sale
-from . import purchase_v7
 from . import account_invoice
 from . import res_partner
 from . import res_config

@@ -18,7 +18,4 @@ class PurchaseCreateInvoice(models.TransientModel):
                 for order in purchase_orders:
                     inv_ids = order.action_invoice_create()
                     invoice_ids.append(inv_ids)
-        res = self.env.ref('account.action_invoice_tree2')
-        res = res.read()[0]
-        res['domain'] = "[('id','in',["+','.join(map(str, invoice_ids))+"])]"
-        return res
+        return True

@@ -15,9 +15,9 @@
                     	attrs="{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'order']), '|', ('state', '!=', 'approved'), ('invoiced','=',True)]}"
                         type="action" class="oe_highlight" groups="base.group_user" />
 				</xpath>
-				<field name='invoiced' position="before">
+				<!--field name='invoiced' position="before">
                     <field name="invoiced_rate"/>
-                </field>
+                </field-->
             </field>
         </record>        
     </data>

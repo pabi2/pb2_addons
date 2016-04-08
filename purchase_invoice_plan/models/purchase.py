@@ -2,7 +2,7 @@
 import time
 
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm
+from openerp.exceptions import except_orm, Warning as UserError
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
@@ -42,6 +42,27 @@ class PurchaseOrder(models.Model):
         requied=True,
         readonly=True,
     )
+    plan_invoice_created = fields.Boolean(
+        string='Invoice Created',
+        compute='_compute_plan_invoice_created',
+        store=True,
+        help="Compute whether number of invoices (not cancelled invoices) "
+        "are created as planned"
+    )
+
+    @api.one
+    @api.depends('invoice_ids.state')
+    def _compute_plan_invoice_created(self):
+        if not self.invoice_ids:
+            self.plan_invoice_created = False
+        else:
+            num_valid_invoices = 0
+            for i in self.invoice_ids:
+                if i.state not in ('cancel'):
+                    num_valid_invoices += 1
+            num_plan_invoice = len(list(set([i.installment
+                                             for i in self.invoice_plan_ids])))
+            self.plan_invoice_created = num_valid_invoices == num_plan_invoice
 
     @api.model
     def _calculate_subtotal(self, vals):
@@ -114,6 +135,12 @@ class PurchaseOrder(models.Model):
     @api.one
     def _check_invoice_plan(self):
         if self.invoice_method == 'invoice_plan':
+            if self.invoice_mode == 'change_price':
+                for order_line in self.order_line:
+                    if order_line.product_qty != 1:
+                        raise UserError(
+                            _('For invoice plan mode "As 1 Job", '
+                              'all line quantity must equal to 1'))
             obj_precision = self.env['decimal.precision']
             prec = obj_precision.precision_get('Account')
             for order_line in self.order_line:
@@ -144,14 +171,14 @@ class PurchaseOrder(models.Model):
             if amount:
                 filter_values = {'date_invoice': date_invoice}
                 if blines.is_advance_installment:
-                    advance_label = 'Advance'
-                    filter_values.update({'is_deposit': True, })
+                    advance_label = _('Advance')
+                    filter_values.update({'is_advance': True, })
                 elif blines.is_deposit_installment:
-                    advance_label = 'Deposit'
-                    filter_values.update({'is_deposit_invoice': True, })
+                    advance_label = _('Deposit')
+                    filter_values.update({'is_deposit': True, })
 
                 prop = self.env['ir.property'].get(
-                    'property_account_deposit_customer', 'res.partner')
+                    'property_account_deposit_supplier', 'res.partner')
                 prop_id = prop and prop.id or False
                 account_id = self.env[
                     'account.fiscal.position'].map_account(prop_id)
@@ -190,12 +217,54 @@ class PurchaseOrder(models.Model):
                         time.strftime(DEFAULT_SERVER_DATE_FORMAT))
                 if data.get('value', False):
                     invoice.write(data['value'])
-                return invoice
+                return invoice.id
         return False
+
+    @api.model
+    def compute_advance_payment_line(self, inv_id):
+        invoice = self.env['account.invoice'].browse(inv_id)
+        order = self
+        for advance in order.invoice_ids:
+            if advance.state != 'cancel' and \
+                    advance.is_advance:
+                for preline in advance.invoice_line:
+                    ratio = (order.amount_untaxed and
+                             (invoice.amount_untaxed /
+                              order.amount_untaxed) or
+                             1.0)
+                    inv_line = preline.copy(
+                        {'invoice_id': inv_id,
+                         'price_unit': -1 *
+                            preline.price_unit})
+                    inv_line.quantity = \
+                        inv_line.quantity * ratio
+        invoice.button_compute()
+        return True
+
+    @api.model
+    def compute_deposit_line(self, inv_id):
+        invoice = self.env['account.invoice'].browse(inv_id)
+        order = self
+        for deposit in order.invoice_ids:
+            if deposit.state != 'cancel' and \
+                    deposit.is_deposit:
+                for dline in deposit.invoice_line:
+                    dline.copy({'invoice_id': inv_id,
+                                'price_unit': -1 *
+                                dline.price_unit})
+        invoice.button_compute()
+        return True
+
+    @api.multi
+    def wkf_approve_order(self):
+        self._check_invoice_plan()
+        return super(PurchaseOrder, self).wkf_approve_order()
 
     @api.multi
     def action_invoice_create(self):
         self._check_invoice_plan()
+        if self.plan_invoice_created:
+            raise UserError(_('Create more invoices not allowed!'))
         invoice_ids = []
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
@@ -206,79 +275,58 @@ class PurchaseOrder(models.Model):
                 last_installment = max(installments)
                 for installment in installments:
                     # Getting invoice plan for each installment
-                    plan_lines = plan_obj.search(
+                    blines = plan_obj.search(
                         [('installment', '=', installment),
-                         ('order_id', '=', order.id)])
-                    if plan_lines:
-                        for blines in plan_lines:
-                            if installment == 0:
-                                if blines.is_advance_installment:
-                                    inv_id = self._create_deposit_invoice(
-                                        blines.deposit_percent,
-                                        blines.deposit_amount,
-                                        blines.date_invoice,
-                                        blines)
-                                elif blines.is_deposit_installment:
-                                    inv_id = self._create_deposit_invoice(
-                                        blines.deposit_percent,
-                                        blines.deposit_amount,
-                                        blines.date_invoice,
-                                        blines)
+                         ('order_id', '=', order.id),
+                         ('state', 'in', [False, 'cancel'])])
+                    if blines:
+                        if installment == 0:
+                            if blines.is_advance_installment:
+                                inv_id = self._create_deposit_invoice(
+                                    blines.deposit_percent,
+                                    blines.deposit_amount,
+                                    blines.date_invoice,
+                                    blines)
+                            elif blines.is_deposit_installment:
+                                inv_id = self._create_deposit_invoice(
+                                    blines.deposit_percent,
+                                    blines.deposit_amount,
+                                    blines.date_invoice,
+                                    blines)
+                            blines.write({'ref_invoice_id': inv_id})
+                            invoice_ids.append(inv_id)
+                            invoice = self.env['account.invoice'].\
+                                browse(inv_id)
+                            invoice.write({
+                                'date_invoice': blines.date_invoice
+                            })
+                        else:
+                            percent_dict = {}
+                            date_invoice = (blines and
+                                            blines[0].date_invoice or
+                                            False)
+                            for b in blines:
+                                percent_dict.update(
+                                    {b.order_line_id: b.invoice_percent})
+                            order = order.with_context(
+                                installment=installment,
+                                invoice_plan_percent=percent_dict,
+                                date_invoice=date_invoice)
+                            inv_id = super(PurchaseOrder, order).\
+                                action_invoice_create()
+                            invoice_ids.append(inv_id)
+                            blines.write({'ref_invoice_id': inv_id})
+                            invoice = self.env['account.invoice'].\
+                                browse(inv_id)
+                            invoice.write({'date_invoice': date_invoice})
 
-                                blines.write({'ref_invoice_id': inv_id.id})
-                                invoice_ids.append(inv_id)
-                                inv_id.write({
-                                    'date_invoice': blines.date_invoice
-                                })
-                            else:
-                                percent_dict = {}
-                                date_invoice = (blines and
-                                                blines[0].date_invoice or
-                                                False)
-                                for b in blines:
-                                    percent_dict.update(
-                                        {b.order_line_id: b.invoice_percent})
-                                order = order.with_context(
-                                    installment=installment,
-                                    invoice_plan_percent=percent_dict,
-                                    date_invoice=date_invoice)
-                                inv_id = super(PurchaseOrder, order).\
-                                    action_invoice_create()
-                                invoice_ids.append(inv_id)
-                                blines.write({'ref_invoice_id': inv_id})
-                                invoice = self.env['account.invoice'].\
-                                    browse(inv_id)
-                                invoice.write({'date_invoice': date_invoice})
-
-                                for line in invoice.invoice_line:
-                                    # Remove line with negative price line
-                                    if line.price_unit < 0:
-                                        line.unlink()
-                                for advance in order.invoice_ids:
-                                    if advance.state != 'cancel' and \
-                                            advance.is_deposit:
-                                        for preline in advance.invoice_line:
-                                            ratio = (order.amount_untaxed and
-                                                     (invoice.amount_untaxed /
-                                                      order.amount_untaxed) or
-                                                     1.0)
-                                            inv_line = preline.copy(
-                                                {'invoice_id': inv_id,
-                                                 'price_unit': -1 *
-                                                    preline.price_unit})
-                                            inv_line.quantity = \
-                                                inv_line.quantity * ratio
-                                invoice.button_compute()
-                                if installment == last_installment:
-                                    for deposit in order.invoice_ids:
-                                        if deposit.state != 'cancel' and \
-                                                deposit.is_deposit_invoice:
-                                            for dline in deposit.invoice_line:
-                                                inv_line = dline.copy(
-                                                    {'invoice_id': inv_id,
-                                                     'price_unit': -1 *
-                                                        dline.price_unit})
-                                invoice.button_compute()
+                            for line in invoice.invoice_line:
+                                # Remove line with negative price line
+                                if line.price_unit < 0:
+                                    line.unlink()
+                            order.compute_advance_payment_line(inv_id)
+                            if installment == last_installment:
+                                order.compute_deposit_line(inv_id)
             else:
                 inv_id = super(PurchaseOrder, order).action_invoice_create()
         return inv_id
@@ -306,12 +354,17 @@ class PurchaseOrder(models.Model):
                                 'quantity': 1.0})
             else:
                 return False
-        # From invoice_percentage,
-        line_percent = self._context.get('line_percent', False)
-        if line_percent:
-            res.update({'quantity': ((res.get('quantity') or 0.0) *
-                                     (line_percent / 100))})
         return res
+
+    @api.multi
+    def action_cancel_draft_invoices(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        # Get all unpaid invoice
+        for invoice in self.invoice_ids:
+            if invoice.state in ('draft',):
+                invoice.signal_workflow('invoice_cancel')
+        return True
 
 
 class PurchaseOrderLine(models.Model):

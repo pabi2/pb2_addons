@@ -8,19 +8,19 @@ _logger = logging.getLogger(__name__)
 class account_config_settings(osv.osv_memory):
     _inherit = 'account.config.settings'
     _columns = {
-        'property_account_deposit_customer': fields.many2one(
+        'property_account_deposit_supplier': fields.many2one(
             'account.account',
-            'Account Advance Customer',
+            'Account Advance Supplier',
             domain="[('type', '!=', 'view')]",),
     }
 
-    def set_default_account_advance(self, cr, uid, ids, context=None):
-        """ set property advance account for customer and supplier """
+    def set_default_account_advance_supplier(self, cr, uid, ids, context=None):
+        """ set property advance account for supplier """
         wizard = self.browse(cr, uid, ids)[0]
         property_obj = self.pool.get('ir.property')
         field_obj = self.pool.get('ir.model.fields')
         todo_list = [
-            ('property_account_deposit_customer',
+            ('property_account_deposit_supplier',
              'res.partner', 'account.account'),
         ]
         for record in todo_list:
@@ -49,11 +49,12 @@ class account_config_settings(osv.osv_memory):
                     property_obj.create(cr, uid, vals, context=context)
         return True
 
-    def get_default_account_advance(self, cr, uid, fields, context=None):
+    def get_default_account_advance_supplier(self, cr, uid,
+                                             fields, context=None):
         ir_property_obj = self.pool.get('ir.property')
         fiscal_obj = self.pool.get('account.fiscal.position')
         todo_list = [
-            ('property_account_deposit_customer', 'res.partner'),
+            ('property_account_deposit_supplier', 'res.partner'),
         ]
         res = {}
         for record in todo_list:

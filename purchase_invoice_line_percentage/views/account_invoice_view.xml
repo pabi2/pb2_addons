@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="fiscal_position" position="after">
+                	<field name="is_advance" attrs="{'invisible': [('is_advance','=',False)]}"/>
+                	<field name="is_deposit" attrs="{'invisible': [('is_deposit','=',False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

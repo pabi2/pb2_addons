@@ -46,10 +46,20 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         required=True,
         default='change_price')
 
+    @api.onchange('use_advance')
+    def _onchange_use_advance(self):
+        if self.use_advance:
+            self.use_deposit = False
+
+    @api.onchange('use_deposit')
+    def _onchange_use_deposit(self):
+        if self.use_deposit:
+            self.use_advance = False
+
     @api.model
     def _check_deposit_account(self):
         prop = self.env['ir.property'].get(
-            'property_account_deposit_customer', 'res.partner')
+            'property_account_deposit_supplier', 'res.partner')
         prop_id = prop and prop.id or False
         account_id = self.env['account.fiscal.position'].map_account(prop_id)
         if not account_id:

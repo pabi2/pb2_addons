@@ -41,11 +41,11 @@ Feature List
 
     """,
     'website': 'www.ecosoft.co.th',
-    'depends': ['order_invoice_line_percentage',
+    'depends': ['sale_invoice_line_percentage',
                 'sale_order_line_prepare_order_line_invoice_line_hooks'],
     'data': [
         "wizard/sale_create_invoice_plan_view.xml",
-        "sale_view.xml",
+        "views/sale_view.xml",
         "security/ir.model.access.csv",
     ],
     'installable': True,
