@@ -18,7 +18,7 @@ class sale_order(osv.osv):
             tot_deposit = 0.0
             tot_non_deposit = 0.0
             for invoice in sale.invoice_ids:
-                if invoice.state not in ('cancel') and not invoice.is_deposit:
+                if invoice.state not in ('cancel') and not invoice.is_advance:
                     # Assume negative line amount to be Advance deduction
                     for line in invoice.invoice_line:
                         tot_non_deposit += line.price_subtotal > 0.0 and \

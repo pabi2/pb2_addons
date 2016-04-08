@@ -8,15 +8,9 @@
             <field name="inherit_id" ref="account.view_account_config_settings"/>
             <field name="arch" type="xml">
                 <field name="purchase_refund_journal_id" position="after">
-                    <separator string="Accounting"/>
+                    <separator string="Advance/Deposit Account for Supplier"/>
                     <group name="account_deposit_supplier">
-                        <label for="id" string="Account Advance (Supplier)"/>
-                        <div>
-		                    <div>
-		                        <label string="Supplier"/>
-		                        <field name="property_account_deposit_supplier" class="oe_inline"/>
-		                    </div>
-                        </div>
+		            	<field name="property_account_deposit_supplier" class="oe_inline"/>
                     </group>    
                 </field>
             </field>

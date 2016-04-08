@@ -22,19 +22,16 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//header" position="inside">
+                <xpath expr="//button[@name='view_picking']" position="before">
+                	<field name="plan_invoice_created" invisible="1"/>
                     <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
                             type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
-                                                 '|',('invoiced','=',True) 
-                                                    ,('invoice_created', '=', True)]}"/>
+                                                 '|',('plan_invoice_created','=',True)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='view_invoice']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>
-                </xpath>
-                <xpath expr="//field[@name='picking_type_id']" position="after">
-                    <field name="invoice_created"/>
                 </xpath>
                 <xpath expr='//form/sheet/notebook/page[3]' position="after">
                     <page string="Invoice Plan" attrs="{'invisible': [('invoice_method', '!=', 'invoice_plan')]}">
@@ -42,11 +39,8 @@
                             <group>
                                 <button name="%(action_purchase_create_invoice_plan)d" string="⇒ Create Invoice Plan"
                                     type="action" class="oe_link" states="draft"/>
-                                <button name="action_cancel_draft_invoices"
-                                        attrs="{'invisible': ['|', ('state', 'not in', ('confirmed', 'approved')),
-                                                              ('invoice_created', '=', False)]}" 
+                                <button name="action_cancel_draft_invoices" states="approved"
                                         string="Cancel Draft Invoices"
-                                        class="oe_highlight"
                                         type="object" 
                                         confirm="This will cancel all draft invoices, are you sure you want to proceed?" groups="base.group_user"/> 
                                 <field name="invoice_mode"/>
@@ -93,17 +87,6 @@
                         </field>
                     </page>
                 </xpath>
-            </field>
-        </record>
-
-        <record id="invoice_supplier_form_plan" model="ir.ui.view">
-            <field name="name">invoice.supplier.form</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_supplier_form"/>
-            <field name="arch" type="xml">
-                <field name="fiscal_position" position="after">
-                    <field name="copy_invoice_id"/>
-                </field>
             </field>
         </record>
     </data>

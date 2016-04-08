@@ -16,7 +16,7 @@ class sale_order_line_make_invoice(osv.osv_memory):
         obj_invoice_line = self.pool.get('account.invoice.line')
         for deposit_inv in order.invoice_ids:
             if deposit_inv.state not in ('cancel',) and \
-                    deposit_inv.is_deposit:
+                    deposit_inv.is_advance:
                 for preline in deposit_inv.invoice_line:
                     ratio = order.amount_untaxed and \
                         (invoice.amount_untaxed /

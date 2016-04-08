@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'Order to Invoice by Percent',
+    'name': 'Sales to Invoice by Percent',
     'version': '1.0',
     'author': 'Ecosoft',
     'category': 'Sales',
@@ -40,16 +40,13 @@ evenly by percentage of the invoice amount.
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': ['sale',
-                'purchase',
                 'sale_order_action_invoice_create_hooks',
                 'sale_order_make_invoice_hooks',
                 'sale_wizard_make_invoices_hooks',
                 ],
     'demo': [],
     'data': ['wizards/sale_make_invoice_advance.xml',
-             'wizards/purchase_make_invoice_advance.xml',
              'views/sale_view.xml',
-             'views/purchase_view.xml',
              'views/account_invoice_view.xml',
              'views/res_config_view.xml',
              'data/sale_workflow.xml', ],

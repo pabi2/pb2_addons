@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <field name="fiscal_position" position="after">
-                	<field name="is_deposit" attrs="{'invisible': [('is_deposit','=',False)]}"/>
+                	<field name="is_advance" attrs="{'invisible': [('is_advance','=',False)]}"/>
                 </field>
             </field>
         </record>
@@ -17,7 +17,7 @@
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
             <field name="arch" type="xml">
                 <search position="inside">
-                	<filter name="advance" string="Advance Invoice" domain="[('is_deposit','=',True)]" help="Advance Invoices"/>
+                	<filter name="advance" string="Advance Invoice" domain="[('is_advance','=',True)]" help="Advance Invoices"/>
                 </search>
             </field>
         </record>

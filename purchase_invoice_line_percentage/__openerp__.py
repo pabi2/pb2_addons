@@ -22,20 +22,6 @@ This result a real create invoice by percentage of completion.
 In addition, it also allow user to use Amount instead of percent
 (system will do the convert to percent).
 
-1st Deposit Invoice
-===================
-
-Only on the first invoice creation from a sales order, user can choose
-to create a Deposit, by percent or by amount.
-
-The created invoice will be using default Deposit Account Code from
-Account Configuration, and thus post account correctly.
-
-On the following invoice creation, no more deposit can be created,
-but rather a whole invoice or percent of completion.
-The 1st deposit amount will then be deducted on the following invoices,
-evenly by percentage of the invoice amount.
-
     """,
     'website': 'http://www.ecosoft.co.th',
     'images': [],

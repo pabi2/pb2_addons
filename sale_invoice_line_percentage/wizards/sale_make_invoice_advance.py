@@ -15,22 +15,22 @@ class sale_advance_payment_inv(osv.osv_memory):
             if sale_id:
                 sale = self.pool.get('sale.order').browse(cr, uid, sale_id)
                 valid_invoice = 0
-                is_deposit = False
+                is_advance = False
                 for i in sale.invoice_ids:
                     if i.state not in ['cancel']:
                         valid_invoice += 1
-                        if i.is_deposit:
-                            is_deposit = True
+                        if i.is_advance:
+                            is_advance = True
                 if sale.order_policy == 'manual':
                     if not valid_invoice:
                         res = [('all', 'Invoice the whole sales order'),
                                ('percentage', '1st Invoice Advance (%)'),
                                ('fixed', '1st Invoice Advance (Amt.)'),
                                ('line_percentage', 'Line Percentage')]
-                    elif valid_invoice == 1 and is_deposit:
+                    elif valid_invoice == 1 and is_advance:
                         res = [('all', 'Invoice the whole sales order'),
                                ('line_percentage', 'Line Percentage')]
-                    elif valid_invoice > 1 and is_deposit:
+                    elif valid_invoice > 1 and is_advance:
                         res = [('line_percentage', 'Line Percentage')]
                     elif valid_invoice:
                         res = [('line_percentage', 'Line Percentage')]
@@ -95,7 +95,7 @@ class sale_advance_payment_inv(osv.osv_memory):
             # Change values
             for sale_inv in res:
                 if sale.id == sale_inv[0]:
-                    sale_inv[1].update({'is_deposit': True})
+                    sale_inv[1].update({'is_advance': True})
                     invoice_line = sale_inv[1]['invoice_line']
                     if invoice_line:
                         if accounts.get(sale.id, False):

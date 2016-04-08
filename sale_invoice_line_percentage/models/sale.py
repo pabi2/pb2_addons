@@ -21,7 +21,7 @@ class sale_order(models.Model):
 
     @api.model
     def _append_invoice_line(self, invoice, lines):
-        if invoice.is_deposit:
+        if invoice.is_advance:
             lines = super(sale_order, self)._append_invoice_line(invoice,
                                                                  lines)
         return lines

@@ -69,10 +69,10 @@
             <field name="name">sale.order.form.2</field>
             <field name="model">sale.order</field>
             <field name="type">form</field>
-            <field name="inherit_id" ref="order_invoice_line_percentage.view_order_form"/>
+            <field name="inherit_id" ref="sale_invoice_line_percentage.view_order_form"/>
             <field name="arch" type="xml">
                 <data>
-                	<button name="%(order_invoice_line_percentage.action_view_sale_advance_payment_inv1)d" position="attributes" >
+                	<button name="%(sale_invoice_line_percentage.action_view_sale_advance_payment_inv1)d" position="attributes" >
                 		<attribute name="states"></attribute>
                 		<attribute name="attrs">{'invisible': ['|', ('state','not in',('invoice_except')), ('use_invoice_plan','=',True)]}</attribute>
                 	</button>

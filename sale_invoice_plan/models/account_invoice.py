@@ -1,19 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, fields
+from openerp import models, api
 
 
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
-
-    sale_ids = fields.Many2many(
-        'sale.order',
-        'sale_order_invoice_rel', 'invoice_id', 'order_id',
-        copy=False,
-        string='Sales Orders',
-        readonly=True,
-        help="This is the list of sale orders linked to this invoice.",
-    )
 
     @api.multi
     def action_cancel(self):
