@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning
+from openerp.exceptions import except_orm, Warning as UserError
 from openerp.tools.float_utils import float_round as round
 import openerp.addons.decimal_precision as dp
 
@@ -44,7 +44,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
          ],
         string='Invoice Mode',
         required=True,
-        default='change_price')
+        default='change_quantity')
 
     @api.onchange('use_advance')
     def _onchange_use_advance(self):
@@ -82,11 +82,22 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 % (amount_total, self.order_amount))
 
     @api.one
+    def _check_invoice_mode(self, order):
+        if order.invoice_method == 'invoice_plan':
+            if self.invoice_mode == 'change_price':
+                for order_line in order.order_line:
+                    if order_line.product_qty != 1:
+                        raise UserError(
+                            _('For invoice plan mode "As 1 Job", '
+                              'all line quantity must equal to 1'))
+
+    @api.one
     def do_create_purchase_invoice_plan(self):
         self._validate_total_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
             self.installment_ids)
         order = self.env['purchase.order'].browse(self._context['active_id'])
+        self._check_invoice_mode(order)
         order.invoice_plan_ids.unlink()
         lines = []
         obj_precision = self.env['decimal.precision']
