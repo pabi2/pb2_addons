@@ -136,7 +136,7 @@ class PurchaseRequisition(models.Model):
     approval_document_footer = fields.Text(
         string='Footer',
     )
-    cancel_reason_txt = fields.Char(
+    reject_reason_txt = fields.Char(
         string="Description",
         readonly=True,
     )

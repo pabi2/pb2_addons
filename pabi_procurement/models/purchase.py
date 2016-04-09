@@ -7,18 +7,6 @@ import time
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    _CONTRACT = [
-        ('1', 'from myContract'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-    ]
-
-    _RECEIVE_DATE_CONDITION = [
-        ('day', 'Day'),
-        ('date', 'Date'),
-    ]
-
     date_reference = fields.Date(
         string='Reference Date',
         default=fields.Date.today(),
@@ -26,12 +14,20 @@ class PurchaseOrder(models.Model):
         track_visibility='onchange',
     )
     mycontract_id = fields.Selection(
-        selection=_CONTRACT,
+        selection=[
+            ('1', 'from myContract'),
+            ('2', '2'),
+            ('3', '3'),
+            ('4', '4'),
+        ],
         string='myContract',
         default='1',
     )
     receive_date_condition = fields.Selection(
-        selection=_RECEIVE_DATE_CONDITION,
+        selection=[
+            ('day', 'Day'),
+            ('date', 'Date'),
+        ],
         string='Receive Date Condition',
         track_visibility='onchange',
         default='day',

@@ -10,7 +10,7 @@
                     Type in reason for Call for Bids rejection
                 </p>
                 <group>
-                    <field name="cancel_reason_txt" required="1"/>
+                    <field name="reject_reason_txt" required="1"/>
                 </group>
                 <footer>
                     <button name="confirm_reject"

@@ -13,13 +13,6 @@ class PurchaseRequest(models.Model):
         ('rejected', 'Cancelled')
     ]
 
-    _SEMINAR = [
-        ('1', 'from myProject'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-    ]
-
     state = fields.Selection(
         selection=_STATES,
     )
@@ -111,7 +104,12 @@ class PurchaseRequest(models.Model):
         string='PR Reference',
     )
     seminar_id = fields.Selection(
-        selection=_SEMINAR,
+        selection=[
+            ('1', 'from myProject'),
+            ('2', '2'),
+            ('3', '3'),
+            ('4', '4'),
+        ],
         string='Seminar',
         default='1',
     )

@@ -44,8 +44,8 @@
                 </xpath>
                 <xpath expr="//button[@name='sent_suppliers']" position="after">
                     <button name="to_verify" states="draft" string="Send to Verify" class="oe_highlight"/>
-                    <button name="verified" states="verify" string="Verify" class="oe_highlight"/>
-                    <button name="%(action_requisition_reject)d" type="action" states="verify" string="Reject"/>
+                    <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_manager" class="oe_highlight"/>
+                    <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
                 </xpath>
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
@@ -158,6 +158,7 @@
                             <field name="approval_document_date"/>
                             <field name="approval_document_header"/>
                             <field name="approval_document_footer"/>
+                            <field name="reject_reason_txt"/>
                         </group>
                     </page>
                 </xpath>

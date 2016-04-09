@@ -30,6 +30,7 @@ PABI2 - Procurement Module
         "stock_operating_unit"
     ],
     "data": [
+        "security/purchase_requisition.xml",
         "security/ir.model.access.csv",
         "wizard/purchase_request_line_make_purchase_requisition_view.xml",
         "wizard/cancel_reason_view.xml",
