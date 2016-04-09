@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_order_form">
+            <field name="name">view.purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id"
+                   ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_cancel']" position="after">
+                    <button name="%(action_order_cancel)d" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="action"/>
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="cancel_reason_txt" string="Cancel Reason"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
