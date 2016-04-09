@@ -10,4 +10,3 @@ class PurchaseRequisition(models.Model):
         string="Description",
         readonly=True,
     )
-

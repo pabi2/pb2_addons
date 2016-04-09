@@ -10,4 +10,3 @@ class PurchaseOrder(models.Model):
         string="Description",
         readonly=True,
     )
-
