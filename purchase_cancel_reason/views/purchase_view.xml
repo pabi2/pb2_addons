@@ -13,8 +13,11 @@
                 <xpath expr="//header/button[@name='action_cancel']" position="after">
                     <button name="%(action_order_cancel)d" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="action"/>
                 </xpath>
-                <xpath expr="//field[@name='picking_type_id']" position="after">
-                    <field name="cancel_reason_txt" string="Cancel Reason"/>
+                <xpath expr="/form/sheet//h1[1]" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                        <field name="cancel_reason_txt" class="oe_inline" />
+                    </h2>
                 </xpath>
             </field>
         </record>
