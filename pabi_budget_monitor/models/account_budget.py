@@ -10,7 +10,7 @@ class AccountBudget(models.Model):
         # Project Based
         'spa_id': 'SPA',
         'mission_id': 'Mission',
-        'program_scheme_id': 'Program Scheme',
+        'mission_area_id': 'Mission Area',
         'program_group_id': 'Program Group',
         'program_id': 'Program',
         'project_group_id': 'Project Group',
@@ -32,7 +32,7 @@ class AccountBudget(models.Model):
         'tag_type_id': 'res.tag.type',
         'tag_id': 'res.tag',
         # Project Based
-        'program_scheme_id': 'res.program.scheme',
+        'mission_area_id': 'res.mission.area',
         'program_group_id': 'res.program.group',
         'program_id': 'res.program',
         'project_group_id': 'res.project.group',
