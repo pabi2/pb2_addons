@@ -5,6 +5,7 @@
             <field name="name">PR/DEMO/001</field>
         	<field name="requested_by" ref="base.user_root"/>
         	<field name="picking_type_id" ref="stock.picking_type_in"/>
+        	<field name="currency_id" ref="base.THB"/>
         </record>
 <!--        <record id="demo_purchase_request_line_product_1" model="purchase.request.line">-->
 <!--        	<field name="request_id" ref="demo_purchase_request_0"/>-->
