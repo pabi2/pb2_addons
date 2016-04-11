@@ -13,18 +13,18 @@
                 	<field name="tag_type_id" invisible="1" />
                 	<field name="tag_id" invisible="1" />
                 	
-                	<field name="program_scheme_id" invisible="1" />
+                	<field name="mission_area_id" invisible="1" />
                 	<field name="program_group_id" invisible="1" />
                 	<field name="program_id" invisible="1" />
-                	<field name="project_group_id" invisible="1" />
-                	<field name="project_id" attrs="{'required': [('costcenter_id','=',False)]}"/>
+                    <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
+                    <field name="costcenter_id" invisible="0" />
                 	
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
                     <field name="department_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
-                    <field name="section_id" invisible="1" />
-                    <field name="costcenter_id" attrs="{'required': [('project_id','=',False)]}"/>
+                    <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
+                    <field name="costcenter_id" invisible="0" />
                     
                 </xpath>
             </field>
