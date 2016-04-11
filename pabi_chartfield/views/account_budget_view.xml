@@ -10,7 +10,7 @@
                 <xpath expr="/form/sheet/group/group//field[@name='validating_user_id']" position="after">
                 	<field name="chart_view" required="1"/>
 					<!-- Project Based -->
-                	<field name="program_scheme_id" attrs="{'invisible': [('chart_view','!=','project_base')], 'required': [('chart_view','=','project_base')]}"/>
+                	<field name="mission_area_id" attrs="{'invisible': [('chart_view','!=','project_base')], 'required': [('chart_view','=','project_base')]}"/>
                 	<field name="program_group_id" attrs="{'invisible': [('chart_view','!=','project_base')], 'required': [('chart_view','=','project_base')]}"/>
 					<!-- Unit Based -->
                 	<field name="org_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>             	
@@ -88,7 +88,7 @@
 	                    <form string="Budget Lines">
 	                    	<group>
 								<group string="Project Based">
-			                    	<field name="program_scheme_id" />
+			                    	<field name="mission_area_id" />
 			                    	<field name="program_group_id" />
 			                    	<field name="program_id" />
 			                    	<field name="project_group_id" />

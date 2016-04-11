@@ -65,7 +65,7 @@ class AccountBudgetLine(ChartField, models.Model):
         compute='_compute_all',
         readonly=True, store=True
     )
-    program_scheme_id = fields.Many2one(
+    mission_area_id = fields.Many2one(
         compute='_compute_all',
         readonly=True, store=True
     )
@@ -100,7 +100,7 @@ class AccountBudgetLine(ChartField, models.Model):
     )
 
     @api.multi
-    @api.depends('budget_id.program_scheme_id',
+    @api.depends('budget_id.mission_area_id',
                  'budget_id.program_group_id',
                  'budget_id.org_id',
                  'budget_id.sector_id',
@@ -113,7 +113,7 @@ class AccountBudgetLine(ChartField, models.Model):
         for rec in self:
 
             # Project base, line level choose program, project_group, project
-            rec.program_scheme_id = rec.budget_id.program_scheme_id
+            rec.mission_area_id = rec.budget_id.mission_area_id
             rec.program_group_id = rec.budget_id.program_group_id
 
             # Unit base

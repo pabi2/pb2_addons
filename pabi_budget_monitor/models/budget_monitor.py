@@ -188,16 +188,16 @@ class ResTagMonitorView(MonitorViewEx, models.Model):
 
 # ------------------ Project Based ------------------
 
-class ResProgramSchemeMonitorView(MonitorViewEx, models.Model):
-    _name = 'res.program.scheme.monitor.view'
+class ResMissionAreaMonitorView(MonitorViewEx, models.Model):
+    _name = 'res.mission.area.monitor.view'
     _auto = False
-    _budget_level = 'program_scheme_id'
+    _budget_level = 'mission_area_id'
 
-    program_scheme_id = fields.Many2one(
-        'res.program.scheme', 'Program Scheme', readonly=True)
+    mission_area_id = fields.Many2one(
+        'res.mission.area', 'Mission Area', readonly=True)
 
     def init(self, cr):
-        self._create_monitor_view(cr, self._table, 'program_scheme_id')
+        self._create_monitor_view(cr, self._table, 'mission_area_id')
 
 
 class ResProgramGroupMonitorView(MonitorViewEx, models.Model):
