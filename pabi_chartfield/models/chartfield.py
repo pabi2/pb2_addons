@@ -8,7 +8,7 @@ from openerp.exceptions import Warning as UserError
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)    (type/tag)
 #        (org)           (org)        (org)         (org)         (org)
-# program_scheme -> program_group -> program -> project_group -> project
+# mission_area -> program_group -> program -> project_group -> project
 #                                    (spa(s))                   (mission)
 
 CHART_VIEW = [
@@ -22,7 +22,7 @@ CHART_FIELDS = [
     ('tag_type_id', ['project_base']),
     ('tag_id', ['project_base']),
     # Project Based
-    ('program_scheme_id', ['project_base']),
+    ('mission_area_id', ['project_base']),
     ('program_group_id', ['project_base']),
     ('program_id', ['project_base']),
     ('project_group_id', ['project_base']),
@@ -57,14 +57,14 @@ class ChartField(object):
         string='Tag',
         domain="[('tag_type_id', '=', tag_type_id)]",
     )
-    program_scheme_id = fields.Many2one(
-        'res.program.scheme',
-        string='Program Scheme',
+    mission_area_id = fields.Many2one(
+        'res.mission.area',
+        string='Mission Area',
     )
     program_group_id = fields.Many2one(
         'res.program.group',
         string='Program Group',
-        domain="[('program_scheme_id', '=', program_scheme_id)]",
+        domain="[('mission_area_id', '=', mission_area_id)]",
     )
     program_id = fields.Many2one(
         'res.program',
@@ -138,10 +138,10 @@ class ChartField(object):
         self.section_id = False
         self.costcenter_id = False
 
-        self.program_scheme_id = self.project_id.program_scheme_id  # main
-        self.org_id = self.program_scheme_id.org_id
-        self.tag_type_id = self.program_scheme_id.tag_type_id
-        self.tag_id = self.program_scheme_id.tag_id
+        self.mission_area_id = self.project_id.mission_area_id  # main
+        self.org_id = self.mission_area_id.org_id
+        self.tag_type_id = self.mission_area_id.tag_type_id
+        self.tag_id = self.mission_area_id.tag_id
 
         self.program_group_id = self.project_id.program_group_id  # main
         self.org_id = self.program_group_id.org_id
@@ -170,17 +170,17 @@ class ChartField(object):
                        self.project_group_id.org_id or
                        self.program_id.org_id or
                        self.program_group_id.org_id or
-                       self.program_scheme_id.org_id)
+                       self.mission_area_id.org_id)
         self.tag_type_id = (self.project_id.tag_type_id or
                             self.project_group_id.tag_type_id or
                             self.program_id.tag_type_id or
                             self.program_group_id.tag_type_id or
-                            self.program_scheme_id.tag_type_id)
+                            self.mission_area_id.tag_type_id)
         self.tag_id = (self.project_id.tag_id or
                        self.project_group_id.tag_id or
                        self.program_id.tag_id or
                        self.program_group_id.tag_id or
-                       self.program_scheme_id.tag_id)
+                       self.mission_area_id.tag_id)
 
     @api.multi
     def validate_chartfields(self, chart_type):

@@ -38,12 +38,12 @@ class ResTag(models.Model):
     )
 
 
-class ResProgramScheme(models.Model):
-    _inherit = 'res.program.scheme'
+class ResMissionArea(models.Model):
+    _inherit = 'res.mission.area'
 
     monitor_ids = fields.One2many(
-        'res.program.scheme.monitor.view', 'program_scheme_id',
-        string='Program Scheme Monitor',
+        'res.mission.area.monitor.view', 'mission_area_id',
+        string='Mission Area Monitor',
     )
 
 
