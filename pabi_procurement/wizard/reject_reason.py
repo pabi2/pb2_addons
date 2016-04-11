@@ -8,7 +8,7 @@ class PurchaseRequisitionReject(models.TransientModel):
     _name = 'purchase.requisition.reject'
 
     reject_reason_txt = fields.Char(
-        string="Reason",
+        string="Rejected Reason",
         readonly=False)
 
     @api.one

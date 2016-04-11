@@ -137,13 +137,6 @@ class PurchaseOrder(models.Model):
             po_rec.state = 'done'
         return True
 
-    @api.multi
-    def action_print_po(self):
-        Report = self.env['report']
-        for rec in self:
-            return Report.get_action(rec.order_id,
-                                     'purchase.report_purchasequotation')
-
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'
@@ -210,6 +203,6 @@ class PurchaseOrderCommittee(models.Model):
         selection=_COMMITTEE_TYPE,
     )
     order_id = fields.Many2one(
-        'purchase_order',
+        'purchase.order',
         string='Purchase Order',
     )

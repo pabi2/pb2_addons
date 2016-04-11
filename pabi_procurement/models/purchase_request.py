@@ -15,6 +15,7 @@ class PurchaseRequest(models.Model):
 
     state = fields.Selection(
         selection=_STATES,
+        copy=False,
     )
     committee_ids = fields.One2many(
         'purchase.request.committee',
@@ -83,6 +84,7 @@ class PurchaseRequest(models.Model):
     currency_rate = fields.Float(
         string='Rate',
         digits=(12, 6),
+        copy=False,
     )
     objective = fields.Text(
         string='Objective',
@@ -102,6 +104,7 @@ class PurchaseRequest(models.Model):
     request_ref_id = fields.Many2one(
         'purchase.request',
         string='PR Reference',
+        copy=False,
     )
     seminar_id = fields.Selection(
         selection=[
@@ -404,7 +407,7 @@ class PurchaseRequestAttachment(models.Model):
     _description = 'Purchase Request Attachment'
 
     request_id = fields.Many2one(
-        'purchase_request',
+        'purchase.request',
         string='Purchase Request',
     )
     name = fields.Char(
@@ -449,6 +452,6 @@ class PurchaseRequestCommittee(models.Model):
         required=True,
     )
     request_id = fields.Many2one(
-        'purchase_request',
+        'purchase.request',
         string='Purchase Request',
     )

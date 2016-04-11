@@ -137,8 +137,9 @@ class PurchaseRequisition(models.Model):
         string='Footer',
     )
     reject_reason_txt = fields.Char(
-        string="Description",
+        string="Rejected Reason",
         readonly=True,
+        copy=False,
     )
 
     @api.one
@@ -227,7 +228,7 @@ class PurchaseRequisitionLine(models.Model):
         readonly=False,  # TODO: readonly=True
     )
     order_line_id = fields.Many2one(
-        'purchase_order_line',
+        'purchase.order.line',
         string='Purchase Order Line'
     )
     product_name = fields.Char(

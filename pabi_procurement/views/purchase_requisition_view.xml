@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="view_purchase_requisition_mock_form">
-            <field name="name">purchase.requisition.mock.form</field>
+        <record model="ir.ui.view" id="view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
             <field name="model">purchase.requisition</field>
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_form"/>
@@ -52,7 +52,6 @@
                 </xpath>
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
                     <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok"/>
-                    <button name="action_print_po" type="object" states="done" string="Print PO" icon="gtk-print"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
