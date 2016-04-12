@@ -24,6 +24,7 @@ Testing:
         'purchase_requisition',
         'purchase_request',
         'purchase_request_to_requisition',
+        'purchase_qty_invoiced_received',
     ],
     'data': [
         'data/account.activity.tag.csv',
