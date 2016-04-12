@@ -22,6 +22,7 @@ PABI2 - Procurement Module
     "application": False,
     "installable": True,
     "depends": [
+        "pabi_base",
         "purchase_double_validation",
         "purchase_request_to_requisition",
         "purchase_split_quote2order",
