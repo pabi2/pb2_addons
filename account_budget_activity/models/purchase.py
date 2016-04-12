@@ -42,28 +42,6 @@ class PurchaseOrderLine(models.Model):
         'purchase.requisition.line',
         string='Purchase Requisition Line',
     )
-    invoiced_qty = fields.Float(
-        string='Invoiced Quantity',
-        digits=(12, 6),
-        compute='_compute_invoiced_qty',
-        store=True,
-        help="This field calculate invoiced quantity at line level. "
-        "Will be used to calculate committed budget",
-    )
-
-    @api.multi
-    @api.depends('invoice_lines.invoice_id.state')
-    def _compute_invoiced_qty(self):
-        Uom = self.env['product.uom']
-        for po_line in self:
-            invoiced_qty = 0.0
-            for invoice_line in po_line.invoice_lines:
-                if invoice_line.invoice_id.state not in ['draft', 'cancel']:
-                    # Invoiced Qty in PO Line's UOM
-                    invoiced_qty += Uom._compute_qty(invoice_line.uos_id.id,
-                                                     invoice_line.quantity,
-                                                     po_line.product_uom.id)
-            po_line.invoiced_qty = min(po_line.product_qty, invoiced_qty)
 
     @api.one
     @api.depends('product_id', 'activity_id')
