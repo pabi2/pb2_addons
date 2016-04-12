@@ -8,6 +8,23 @@ import time
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
+    _STATES = [
+        ('draft', 'Draft'),
+        ('in_progress', 'Confirmed'),
+        ('verify', 'To Verify'),
+        ('rejected', 'Rejected'),
+        ('open', 'Bid Selection'),
+        ('done', 'PO Created'),
+        ('cancel', 'Cancelled'),
+    ]
+
+    state = fields.Selection(
+        _STATES,
+        string='Status',
+        track_visibility='onchange',
+        required=True,
+        copy=False,
+    )
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Type',
@@ -19,9 +36,9 @@ class PurchaseRequisition(models.Model):
         string='Total Budget Value',
         default=0.0,
     )
-    prototype = fields.Boolean(
+    purchase_prototype_id = fields.Many2one(
+        'purchase.prototype',
         string='Prototype',
-        default=False,
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
@@ -39,6 +56,43 @@ class PurchaseRequisition(models.Model):
         'purchase.requisition.committee',
         'requisition_id',
         string='Committee',
+        readonly=False,
+    )
+    committee_tor_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee TOR',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tor'),
+        ],
+    )
+    committee_tender_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee Tender',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'tender'),
+        ],
+    )
+    committee_receipt_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee Receipt',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'receipt'),
+        ],
+    )
+    committee_std_price_ids = fields.One2many(
+        'purchase.requisition.committee',
+        'requisition_id',
+        string='Committee Standard Price',
+        readonly=False,
+        domain=[
+            ('committee_type', '=', 'std_price'),
+        ],
     )
     attachment_ids = fields.One2many(
         'purchase.requisition.attachment',
@@ -81,6 +135,11 @@ class PurchaseRequisition(models.Model):
     )
     approval_document_footer = fields.Text(
         string='Footer',
+    )
+    reject_reason_txt = fields.Char(
+        string="Rejected Reason",
+        readonly=True,
+        copy=False,
     )
 
     @api.one
@@ -129,6 +188,20 @@ class PurchaseRequisition(models.Model):
         })
         return res
 
+    @api.multi
+    def to_verify(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.state = 'verify'
+        return True
+
+    @api.multi
+    def rejected(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.signal_workflow('rejected')
+        self.state = 'rejected'
+
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
@@ -155,7 +228,7 @@ class PurchaseRequisitionLine(models.Model):
         readonly=False,  # TODO: readonly=True
     )
     order_line_id = fields.Many2one(
-        'purchase_order_line',
+        'purchase.order.line',
         string='Purchase Order Line'
     )
     product_name = fields.Char(
@@ -218,6 +291,13 @@ class PurchaseRequisitionCommittee(models.Model):
     _description = 'Purchase Requisition Committee'
     _order = 'sequence, id'
 
+    _COMMITTEE_TYPE = [
+        ('tor', 'TOR'),
+        ('tender', 'Tender'),
+        ('receipt', 'Receipt'),
+        ('std_price', 'Standard Price')
+    ]
+
     requisition_id = fields.Many2one(
         'purchase.requisition',
         string='Purchase Requisition',
@@ -235,6 +315,7 @@ class PurchaseRequisitionCommittee(models.Model):
     responsible = fields.Char(
         string='Responsible',
     )
-    committee_type = fields.Char(
+    committee_type = fields.Selection(
         string='Type',
+        selection=_COMMITTEE_TYPE,
     )

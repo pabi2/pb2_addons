@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="view_purchase_requisition_mock_form">
-            <field name="name">purchase.requisition.mock.form</field>
+        <record model="ir.ui.view" id="view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
             <field name="model">purchase.requisition</field>
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="replace">
+                </xpath>
+                <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
+                </xpath>
                 <xpath expr="//field[@name='description']" position="replace">
-
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="after">
@@ -16,7 +19,11 @@
                     <field name="objective"/>
                     <field name="description"/>
                     <field name="total_budget_value"/>
-                    <field name="prototype"/>
+                    <field name="purchase_prototype_id"/>
+                </xpath>
+                <xpath expr="//field[@name='multiple_rfq_per_supplier']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
@@ -24,9 +31,21 @@
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
+                 <xpath expr="//form/sheet/group/group/field[@name='origin']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']"
                        position="after">
                     <field name="product_name"/>
+                </xpath>
+                <xpath expr="//button[@name='sent_suppliers']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='sent_suppliers']" position="after">
+                    <button name="to_verify" states="draft" string="Send to Verify" class="oe_highlight"/>
+                    <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_manager" class="oe_highlight"/>
+                    <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
                 </xpath>
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
@@ -63,9 +82,14 @@
                     </group>
                     <div class="oe_clear"/>
                 </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']"
+                       position="before">
+                        <field name="order_id" widget="many2one_clickable"/>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
-                        <field name="committee_ids">
+                        <field name="committee_tor_ids">
+                            <h2>Draft TOR</h2>
                             <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
@@ -74,6 +98,36 @@
                                 <field name="committee_type"/>
                             </tree>
                         </field>
+                        <field name="committee_tender_ids">
+                            <h2>Tender</h2>
+                            <tree editable="bottom">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                                <field name="committee_type"/>
+                            </tree>
+                       </field>
+                       <field name="committee_receipt_ids">
+                            <h2>Receipt</h2>
+                            <tree editable="bottom">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                                <field name="committee_type"/>
+                            </tree>
+                       </field>
+                       <field name="committee_std_price_ids">
+                            <h2>Std. Price</h2>
+                            <tree editable="bottom">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="responsible"/>
+                                <field name="committee_type"/>
+                            </tree>
+                       </field>
                     </page>
                     <page string="Attachment">
                         <field name="attachment_ids">
@@ -103,6 +157,7 @@
                             <field name="approval_document_date"/>
                             <field name="approval_document_header"/>
                             <field name="approval_document_footer"/>
+                            <field name="reject_reason_txt"/>
                         </group>
                     </page>
                 </xpath>

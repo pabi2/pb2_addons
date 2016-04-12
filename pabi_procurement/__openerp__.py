@@ -22,6 +22,7 @@ PABI2 - Procurement Module
     "application": False,
     "installable": True,
     "depends": [
+        "purchase_double_validation",
         "purchase_request_to_requisition",
         "purchase_split_quote2order",
         "purchase_requisition_operating_unit",
@@ -30,10 +31,13 @@ PABI2 - Procurement Module
         "stock_operating_unit"
     ],
     "data": [
+        "security/purchase_requisition.xml",
         "security/ir.model.access.csv",
+        "wizard/purchase_request_line_make_purchase_requisition_view.xml",
+        "wizard/reject_reason_view.xml",
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
-        "wizard/purchase_request_line_make_purchase_requisition_view.xml",
+        "workflow/purchase_requisition_workflow.xml",
     ],
 }

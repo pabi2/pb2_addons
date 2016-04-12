@@ -2,7 +2,8 @@
 # © 2015 TrinityRoots
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import fields, models, api
+from openerp import fields, models, api, _
+from openerp.exceptions import Warning
 import ast
 
 
@@ -44,7 +45,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'purchase_type_id': req_id.purchase_type_id.id,
             'purchase_method_id': req_id.purchase_method_id.id,
             'total_budget_value': req_id.total_budget_value,
-            'prototype': req_id.prototype,
+            'purchase_prototype_id': req_id.purchase_prototype_id.id,
         }
         res.update(vals)
         return res
@@ -98,19 +99,34 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         return committees
 
     @api.multi
+    def check_status_request_line(self):
+        for item in self.item_ids:
+            if item.request_id.state != 'approved':
+                raise Warning(
+                    _("Some Request hasn't been accepted yet : %s"
+                      % (item.request_id.name,))
+                )
+        return True
+
+    @api.multi
     def make_purchase_requisition(self):
-        res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
-            make_purchase_requisition()
-        domain = ast.literal_eval(res['domain'])
-        requisition_id = list(set(domain[0][2]))[0]
-        requisition = self.env['purchase.requisition'].browse(requisition_id)
-        requests = [item.line_id.request_id for item in self.item_ids]
-        requests = list(set(requests))  # remove duplicated requests
-        # Merge attachment and committee into Purchase Requisition
-        committees = self._prepare_all_committees(requisition, requests)
-        attachments = self._prepare_all_attachments(requisition, requests)
-        requisition.write({'committee_ids': committees,
-                           'attachment_ids': attachments})
+        res = False
+        if self.check_status_request_line():
+            res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
+                make_purchase_requisition()
+            domain = ast.literal_eval(res['domain'])
+            requisition_id = list(set(domain[0][2]))[0]
+            requisition = self.env['purchase.requisition'].\
+                browse(requisition_id)
+            requests = [item.line_id.request_id for item in self.item_ids]
+            requests = list(set(requests))  # remove duplicated requests
+            # Merge attachment and committee into Purchase Requisition
+            committees = self._prepare_all_committees(requisition, requests)
+            attachments = self._prepare_all_attachments(requisition, requests)
+            requisition.write({
+                'committee_ids': committees,
+                'attachment_ids': attachments
+            })
         return res
 
 
