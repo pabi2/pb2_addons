@@ -32,10 +32,10 @@ PABI2 - Procurement Module
         "stock_operating_unit"
     ],
     "data": [
-        "data/ir.sequence.csv",
-        "data/stock.warehouse.csv",
-        "data/stock.location.csv",
-        "data/stock.picking.type.csv",
+        # "data/ir.sequence.csv",
+        # "data/stock.warehouse.csv",
+        # "data/stock.location.csv",
+        # "data/stock.picking.type.csv",
         "security/purchase_requisition.xml",
         "security/ir.model.access.csv",
         "wizard/purchase_request_line_make_purchase_requisition_view.xml",
