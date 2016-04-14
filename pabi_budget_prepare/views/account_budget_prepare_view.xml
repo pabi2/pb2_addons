@@ -1,0 +1,158 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="account_budget_prepare_view_form">
+            <field name="name">account.budget.prepare.view.form</field>
+            <field name="model">account.budget.prepare</field>
+            <field name="arch" type="xml">
+                <form string="Budget Prepare">
+                    <header>
+                        <button string="Policy" name="policy" states="plan" type="workflow" class="oe_highlight"/>
+                        <button string="Release" name="release" states="policy" type="workflow" class="oe_highlight"/>
+                        <button string="Publish" name="publish" states="release" type="workflow" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="plan" states="cancel" type="workflow" />
+                        <button string="Cancel" name="cancel" states="policy,release" type="workflow"/>
+                        <field name="state" widget="statusbar" statusbar_visible="plan,policy,release,publish"/>
+                    </header>
+                    <sheet string="Budget Prepare">
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" attrs="{'readonly':[('state','!=','plan')]}"/>
+                            </h1>
+                        </div>
+	                    <div class="oe_right oe_button_box" name="buttons">
+	                    </div>
+                        <group>
+                            <group>
+                                <field name="creating_user_id" attrs="{'readonly':[('state','!=','plan')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                                <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','plan')]}"/>
+                            </group>
+                            <group>
+                                <field name="code" attrs="{'readonly':[('state','!=','plan')]}"/>
+                                <field name="fiscalyear_id" />
+                                <label for="date_from" string="Duration"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','plan')]}"/> - 
+                                    <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','plan')]}" nolabel="1"/>
+                                </div>
+                                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Budget Lines">
+                                <field name="prepare_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','plan')]}">
+                                    <tree string="Budget Lines">
+                                    	<field name="program_id" />
+                                    	<field name="project_id" />
+                                    </tree>
+                                    <form string="Budget Lines">
+                                        <group>
+                                            <group>
+		                                    	<field name="program_id" />
+		                                    	<field name="project_id" />
+                                            </group>
+                                            <group>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_budget_prepare_view_tree">
+            <field name="name">account.budget.prepare.view.tree</field>
+            <field name="model">account.budget.prepare</field>
+            <field name="arch" type="xml">
+               <tree colors="blue:state == 'plan';gray:state in ('publish','cancel');black:state in ('policy','release')" string="Budget">
+                    <field name="name" colspan="1"/>
+                    <field name="code" colspan="1"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    <field name="creating_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_budget_prepare_search" model="ir.ui.view">
+           <field name="name">account.budget.prepare.search</field>
+           <field name="model">account.budget.prepare</field>
+           <field name="arch" type="xml">
+               <search string="Budget">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Budget Prepare"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <filter string="Plan" icon="terp-document-new" domain="[('state','=','plan')]" help="Budget Planning"/>
+                    <filter string="Policy" icon="terp-camera_test" domain="[('state','=','policy')]" help="Budget Policy" />
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_account_budget_prepare_view">
+            <field name="name">Budget Prepare</field>
+            <field name="res_model">account.budget.prepare</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_prepare_view_tree"/>
+            <field name="search_view_id" ref="view_account_budget_prepare_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget preparation.
+              </p>
+            </field>
+        </record>
+        <menuitem parent="account_budget_activity.next_id_31"
+            id="menu_act_account_budget_prepare_view"
+            action="act_account_budget_prepare_view" sequence="0" />
+        
+        <record model="ir.ui.view" id="view_account_budget_prepare_line_tree">
+            <field name="name">account.budget.prepare.line.tree</field>
+            <field name="model">account.budget.prepare.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Prepare Lines">
+                    <field name="prepare_id" invisible="1"/>
+                    <field name="amount_total"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_account_budget_prepare_line_form">
+            <field name="name">account.budget.prepare.line.form</field>
+            <field name="model">account.budget.prepare.line</field>
+            <field name="arch" type="xml">
+                <form string="Budget Lines">
+                    <sheet>
+                        <group col="4">
+                            <field name="prepare_id"/>
+                            <field name="amount_total"/>
+                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_account_budget_prepare_line_view">
+            <field name="name">Budget Prepare Lines</field>
+            <field name="res_model">account.budget.prepare.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_budget_prepare_line_tree"/>
+        </record>
+
+        <menuitem parent="account_budget_activity.next_id_31"
+            id="menu_act_account_budget_prepare_line_view"
+            action="act_account_budget_prepare_line_view"
+        	sequence="0"/>
+
+    </data>
+</openerp>
+
+

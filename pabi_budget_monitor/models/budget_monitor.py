@@ -118,7 +118,7 @@ class ResSectionMonitorView(MonitorViewEx, models.Model):
     _budget_level = 'section_id'
 
     section_id = fields.Many2one(
-        'res.section.group', 'Section', readonly=True)
+        'res.section', 'Section', readonly=True)
 
     def init(self, cr):
         self._create_monitor_view(cr, self._table, 'section_id')
