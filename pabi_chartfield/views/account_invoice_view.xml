@@ -38,8 +38,8 @@
                     
                 	<field name="spa_id" invisible="1"/>
                 	<field name="mission_id" invisible="1" />
-                	<field name="tag_type_id" invisible="0" />
-                	<field name="tag_id" invisible="0" />
+                	<field name="tag_type_id" invisible="1" />
+                	<field name="tag_id" invisible="1" />
                 	
                 	<field name="mission_area_id" invisible="1" />
                 	<field name="program_group_id" invisible="1" />

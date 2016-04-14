@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+		
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account']" position="after">
+                    
+                	<field name="spa_id" invisible="1"/>
+                	<field name="mission_id" invisible="1" />
+                	<field name="tag_type_id" invisible="1" />
+                	<field name="tag_id" invisible="1" />
+                	
+                	<field name="mission_area_id" invisible="1" />
+                	<field name="program_group_id" invisible="1" />
+                	<field name="program_id" invisible="1" />
+                    <field name="project_group_id" invisible="1" />
+                	<field name="project_id" attrs="{'required': [('section_id','=',False)]}"/>
+                	
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="department_id" invisible="1"/>
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
+                    <field name="costcenter_id" invisible="0" />
+
+                </xpath>
+            </field>
+        </record>
+
+		
+	</data>
+</openerp>
