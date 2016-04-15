@@ -188,7 +188,7 @@ class AccountVoucher(models.Model):
                                                    company_currency,
                                                    current_currency)
 
-    @api.multi
+    @api.model
     def action_move_line_create_hook(self, rec_list_ids):
         voucher = self
         for rec_ids in rec_list_ids:
