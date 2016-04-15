@@ -127,7 +127,7 @@ class AccountVoucher(models.Model):
                 list_move_line.append(move_line)
         return ded_amount, list_move_line
 
-    @api.multi
+    @api.model
     def action_move_line_writeoff_hook(self, ml_writeoff):
         if self.multiple_reconcile_ids:
             if ml_writeoff:
