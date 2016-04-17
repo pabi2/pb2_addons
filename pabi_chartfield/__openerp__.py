@@ -18,6 +18,7 @@
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
         'views/analytic_view.xml',
+        'views/chartfield_view.xml',
         'views/hr_expense_view.xml',
         'views/account_move_view.xml',
         'views/purchase_view.xml',

@@ -46,7 +46,8 @@
 				                    <field name="activity_group_id" />
 				                    <field name="activity_id" />
 								</group>
-								<group>
+								<group string="Extra Dimension">
+				                    <field name="nstda_course_id" />
 								</group>
 								<group string="Tag">
 			                    	<field name="spa_id" />
@@ -98,7 +99,8 @@
 				                    <field name="activity_group_id" />
 				                    <field name="activity_id" />
 								</group>
-								<group>
+								<group string="Extra Dimension">
+				                    <field name="nstda_course_id" />
 								</group>
 								<group string="Tag">
 			                    	<field name="spa_id" />

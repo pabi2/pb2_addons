@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from openerp import api, fields, _
+from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 
 # org -> sector -> department -> division -> section -> costcenter
@@ -34,7 +34,23 @@ CHART_FIELDS = [
     ('division_id', ['unit_base']),
     ('section_id', ['unit_base']),
     ('costcenter_id', ['unit_base']),
+    # Non Binding
+    ('nstda_course_id', ['unit_base', 'project_base']),
     ]
+
+
+# Extra non-binding chartfield (similar to activity)
+class NSTDACourse(models.Model):
+    _name = 'nstda.course'
+    _description = 'NSTDA Courses'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    description = fields.Text(
+        string='Description',
+    )
 
 
 class ChartField(object):
@@ -108,6 +124,11 @@ class ChartField(object):
         'res.costcenter',
         string='Costcenter',
         domain="[('section_ids', '!=', False)]",
+    )
+    # Non Binding
+    nstda_course_id = fields.Many2one(
+        'nstda.course',
+        string='NSTDA Course',
     )
 
     @api.onchange('section_id')

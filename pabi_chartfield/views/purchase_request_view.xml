@@ -24,7 +24,9 @@
                     <field name="department_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
-                    <field name="costcenter_id" invisible="0" />
+                    <field name="costcenter_id" invisible="1" />
+                    
+                    <field name="nstda_course_id" />
 
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/form/sheet/group/group" position="after">
@@ -45,7 +47,10 @@
 	                    <field name="department_id" invisible="1"/>
 	                    <field name="division_id" invisible="1" />
 	                    <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
-	                    <field name="costcenter_id" invisible="0" />
+	                    <field name="costcenter_id" invisible="1" />
+                    
+                    	<field name="nstda_course_id" />
+                    	
 					</group>
                 </xpath>
             </field>
@@ -73,7 +78,9 @@
                     <field name="department_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
-                    <field name="costcenter_id" invisible="0" />
+                    <field name="costcenter_id" invisible="1" />
+                    
+                    <field name="nstda_course_id" />
 
                 </xpath>
             </field>
