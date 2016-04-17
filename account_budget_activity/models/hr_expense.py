@@ -54,4 +54,3 @@ class HRExpenseLine(models.Model):
         elif self.activity_id:
             self.activity_group_id = self.activity_id.activity_group_id
             self.name = self.activity_id.name
-
