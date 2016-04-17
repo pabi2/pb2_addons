@@ -27,6 +27,8 @@
                     <field name="section_id" />
                     <field name="costcenter_id"/>
                     
+                    <field name="nstda_course_id" />   
+                    	                 
                 </xpath> 
             </field>
         </record>         
@@ -54,6 +56,8 @@
                     <field name="division_id" />
                     <field name="section_id" />
                     <field name="costcenter_id"/>
+                    
+                    <field name="nstda_course_id" />
                     
                 </field>
             </field>
@@ -83,6 +87,8 @@
                     <filter string="Division" context="{'group_by':'division_id'}"/>
                     <filter string="Section" context="{'group_by':'section_id'}"/>
                     <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                    
+                    <filter string="NSTDA Course" context="{'group_by':'nstda_course_id'}"/>
                     
                 </xpath>
             </field>

@@ -1,12 +1,14 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8"?>
+
 <openerp>
-    <data>
-        <record id="purchase_requisition_form" model="ir.ui.view" >
-            <field name="name">purchase.requisition.form</field>
-            <field name="model">purchase.requisition</field>
-            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+	<data>
+		
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="after">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account']" position="after">
                     
                 	<field name="spa_id" invisible="1"/>
                 	<field name="mission_id" invisible="1" />
@@ -25,11 +27,13 @@
                     <field name="division_id" invisible="1" />
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
                     <field name="costcenter_id" invisible="1" />
-                    
+
                     <field name="nstda_course_id" />
                     
                 </xpath>
             </field>
         </record>
-    </data>
+
+		
+	</data>
 </openerp>

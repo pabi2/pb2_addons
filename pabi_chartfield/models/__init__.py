@@ -4,6 +4,7 @@ from . import analytic
 from . import account_budget
 from . import account_invoice
 from . import account_move_line
+from . import hr_expense
 from . import purchase
 from . import purchase_request
 from . import purchase_requisition
