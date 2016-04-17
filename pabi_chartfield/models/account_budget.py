@@ -25,7 +25,7 @@ class AccountBudget(ChartField, models.Model):
         CHART_VIEW,
         string='Budget View',
         states={'done': [('readonly', True)]},
-        required=True,
+        required=False,
         copy=True,
     )
 
