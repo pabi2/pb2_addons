@@ -43,6 +43,7 @@ PABI2 - Procurement Module
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
+        "views/stock_view.xml",
         "workflow/purchase_requisition_workflow.xml",
     ],
 }
