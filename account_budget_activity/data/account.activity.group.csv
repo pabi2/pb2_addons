@@ -1,0 +1,122 @@
+id,name
+base.activity_group_1,คชจ.ซื้อทรัพย์สิน/พัสดุ สำหรับโครงการ/งานบริการ
+base.activity_group_2,ค่าครุภัณฑ์เพื่อการส่งมอบ
+base.activity_group_3,ค่าครุภัณฑ์วิจัยต้นแบบ (ผูกรายตัว Settle มาเป็นค่าใช้จ่าย)
+base.activity_group_4,ค่าโฆษณาและเผยแพร่
+base.activity_group_5,ค่าจ้างดูแลสวนหย่อม
+base.activity_group_6,ค่าจ้างที่ปรึกษา/ผู้เชี่ยวชาญ
+base.activity_group_7,ค่าเช่าทรัพย์สินและอุปกรณ์
+base.activity_group_8,ค่าเช่าที่ดิน
+base.activity_group_9,ค่าเช่ารถ
+base.activity_group_10,ค่าเช่าสถานที่
+base.activity_group_11,ค่าใช้จ่ายเดินทางปฏิบัติงาน-ต่างประเทศ
+base.activity_group_12,ค่าใช้จ่ายเดินทางปฏิบัติงาน-ในประเทศ
+base.activity_group_13,ค่าใช้จ่ายในการจัดฝึกอบรม-ต่างประเทศ (บุคคลภายนอก)
+base.activity_group_14,ค่าใช้จ่ายในการจัดฝึกอบรม-ในประเทศ (บุคคลภายนอก)
+base.activity_group_15,ค่าใช้จ่ายในการพัฒนาบุคลากร สวทช.-ต่างประเทศ
+base.activity_group_16,ค่าใช้จ่ายในการพัฒนาบุคลากร สวทช.-ในประเทศ
+base.activity_group_17,ค่าซ่อมแซม
+base.activity_group_18,ค่าซื้อลิขสิทธิ์ และฐานข้อมูล
+base.activity_group_19,ค่าตรวจประเมินคุณภาพ
+base.activity_group_20,ค่าตอบแทนผู้ปฏิบัติงานให้สำนักงาน
+base.activity_group_21,ค่าตัดจำหน่าย-สินทรัพย์ไม่มีตัวตน
+base.activity_group_22,ค่าถ่ายเอกสาร
+base.activity_group_23,ค่าโทรศัพท์
+base.activity_group_24,ค่าธรรมเนียม
+base.activity_group_25,ค่านายหน้าจากการฝากขายหนังสือ
+base.activity_group_26,ค่าบริการรักษาความปลอดภัย
+base.activity_group_27,ค่าบริการรักษาความสะอาด
+base.activity_group_28,ค่าบริการรับส่งเอกสารและพัสดุ
+base.activity_group_29,ค่าบริการสื่อสารและโทรคมนาคม
+base.activity_group_30,ค่าบำรุงรักษา
+base.activity_group_31,ค่าเบี้ยประกันชีวิต
+base.activity_group_32,ค่าเบี้ยประกันภัย-ทรัพย์สิน
+base.activity_group_33,ค่าเบี้ยประกันสุขภาพและอุบัติเหตุพนักงาน สวทช.
+base.activity_group_34,ค่าเบี้ยประกันสุขภาพและอุบัติเหตุพนักงานโครงการ สวทช.
+base.activity_group_35,ค่าเบี้ยประชุม
+base.activity_group_36,ค่าประปา
+base.activity_group_37,ค่าไปรษณีย์
+base.activity_group_38,ค่าพนักงานต้อนรับ/ประชาสัมพันธ์
+base.activity_group_39,ค่าพัฒนาเว็บไซด์/สื่อการเรียนรู้/ฐานข้อมูล
+base.activity_group_40,ค่าไฟฟ้า
+base.activity_group_41,ค่าภาษี
+base.activity_group_42,ค่ารถรับส่งพนักงาน
+base.activity_group_43,ค่ารับรองและพิธีการ
+base.activity_group_44,ค่าล่วงเวลา-พนักงาน สวทช.
+base.activity_group_45,ค่าล่วงเวลาพนักงานโครงการ สวทช.
+base.activity_group_46,ค่าวัสดุก่อสร้าง
+base.activity_group_47,ค่าวัสดุการเกษตร/ปศุสัตว์/ประมง
+base.activity_group_48,ค่าวัสดุกีฬา/ดนตรีนาฎศิลป์
+base.activity_group_49,ค่าวัสดุครุภัณฑ์ไม่ถึงเกณฑ์
+base.activity_group_50,ค่าวัสดุความปลอดภัย
+base.activity_group_51,ค่าวัสดุคอมพิวเตอร์
+base.activity_group_52,ค่าวัสดุโฆษณาและเผยแพร่
+base.activity_group_53,ค่าวัสดุงานบ้านและงานครัว
+base.activity_group_54,"ค่าวัสดุงานวิจัยต้นแบบ (ต่ำกว่า 10,000)"
+base.activity_group_55,ค่าวัสดุเชื้อเพลิง/หล่อลื่น
+base.activity_group_56,ค่าวัสดุเพื่อขาย (ใช้กับศูนย์หนังสือ เมื่อล้าง Stock ออก)
+base.activity_group_57,ค่าวัสดุเพื่อขาย-INTERFACE (ปรับปรุง สตง.)
+base.activity_group_58,ค่าวัสดุไฟฟ้าและอิเล็กทรอนิกส์
+base.activity_group_59,ค่าวัสดุยานพาหนะ
+base.activity_group_60,ค่าวัสดุวิทยาศาสตร์
+base.activity_group_61,ค่าวัสดุสำนักงาน
+base.activity_group_62,ค่าวัสดุหนังสือ วารสาร และตำรา
+base.activity_group_63,ค่าวัสดุอื่น ๆ
+base.activity_group_64,ค่าวัสดุอุปกรณ์ทางการแพทย์
+base.activity_group_65,ค่าศึกษาความเป็นไปได้และวิเคราะห์โครงการ
+base.activity_group_66,ค่าส่งเสริมการขาย
+base.activity_group_67,ค่าสมนาคุณพิเศษ
+base.activity_group_68,ค่าสมาชิก
+base.activity_group_69,ค่าสอบเทียบและวิเคราะห์ทดสอบ
+base.activity_group_70,ค่าสอบบัญชี
+base.activity_group_71,ค่าเสื่อมราคา-ครุภัณฑ์การกีฬา
+base.activity_group_72,ค่าเสื่อมราคา-ครุภัณฑ์การเกษตร
+base.activity_group_73,ค่าเสื่อมราคา-ครุภัณฑ์การแพทย์
+base.activity_group_74,ค่าเสื่อมราคา-ครุภัณฑ์คอมพิวเตอร์
+base.activity_group_75,ค่าเสื่อมราคา-ครุภัณฑ์โฆษณาและเผยแพร่
+base.activity_group_76,ค่าเสื่อมราคา-ครุภัณฑ์งานบ้านงานครัว
+base.activity_group_77,ค่าเสื่อมราคา-ครุภัณฑ์ดนตรีและนาฏศิลป์
+base.activity_group_78,ค่าเสื่อมราคา-ครุภัณฑ์ไฟฟ้าและอิเล็กทรอนิกส์
+base.activity_group_79,ค่าเสื่อมราคา-ครุภัณฑ์วิทยาศาสตร์
+base.activity_group_80,ค่าเสื่อมราคา-ครุภัณฑ์สำนักงาน
+base.activity_group_81,ค่าเสื่อมราคา-ยานพาหนะ
+base.activity_group_82,ค่าเสื่อมราคา-ส่วนปรับปรุงที่ดิน
+base.activity_group_83,ค่าเสื่อมราคา-ส่วนปรับปรุงอาคาร
+base.activity_group_84,ค่าเสื่อมราคา-ส่วนปรับปรุงอาคารเพื่อการลงทุน
+base.activity_group_85,ค่าเสื่อมราคา-สิ่งปลูกสร้าง
+base.activity_group_86,ค่าเสื่อมราคา-สินทรัพย์ตามสัญญาเช่าการเงิน
+base.activity_group_87,ค่าเสื่อมราคา-อาคาร
+base.activity_group_88,ค่าเสื่อมราคา-อาคารชั่วคราว
+base.activity_group_89,ค่าเสื่อมราคา-อาคารเพื่อการลงทุน
+base.activity_group_90,ค่าแอร์การ์ด-ส่วนตัว
+base.activity_group_91,เงินชดเชยช่วยเหลือพนักงาน สวทช.
+base.activity_group_92,เงินชดเชยช่วยเหลือพนักงานโครงการ สวทช.
+base.activity_group_93,เงินช่วยเหลือค่าทำศพพนักงาน สวทช.
+base.activity_group_94,เงินช่วยเหลือค่าทำศพพนักงานโครงการ สวทช.
+base.activity_group_95,เงินช่วยเหลืออื่น ๆ (อุทกภัย ภัยภิบัติ)
+base.activity_group_96,เงินเดือน-พนักงานโครงการ สวทช.
+base.activity_group_97,เงินเดือนพนักงาน สวทช.
+base.activity_group_98,เงินเพิ่มพิเศษพนักงาน สวทช.
+base.activity_group_99,เงินเพิ่มพิเศษพนักงานโครงการ สวทช.
+base.activity_group_100,เงินสมทบกองทุนสำรองเลี้ยงชีพพนักงาน สวทช.
+base.activity_group_101,เงินสมทบกองทุนสำรองเลี้ยงชีพพนักงานโครงการ สวทช.
+base.activity_group_102,เงินส่วนเพิ่มค่าครองชีพพนักงาน สวทช.
+base.activity_group_103,เงินส่วนเพิ่มค่าครองชีพพนักงานโครงการ สวทช.
+base.activity_group_104,เงินสวัสดิการ-ค่ารักษาพยาบาลพนักงาน สวทช.
+base.activity_group_105,เงินสวัสดิการ-ค่ารักษาพยาบาลพนักงานโครงการ สวทช.
+base.activity_group_106,เงินสวัสดิการ-ค่าเล่าเรียนบุตรพนักงาน สวทช.
+base.activity_group_107,เงินสวัสดิการ-ค่าเล่าเรียนบุตรพนักงานโครงการ สวทช.
+base.activity_group_108,เงินสวัสดิการ-บำเหน็จพนักงาน สวทช.
+base.activity_group_109,เงินสวัสดิการเสริมสร้างสุขภาพพนักงาน สวทช.
+base.activity_group_110,เงินสวัสดิการเสริมสร้างสุขภาพพนักงานโครงการ สวทช.
+base.activity_group_111,ทุนการศึกษา
+base.activity_group_112,บัญชีด้อยค่าจากเงินลงทุน
+base.activity_group_113,ปรับปรุงมูลค่าจาก Price Diff (ส่งหนังสือคืน สนพ. เก็บหนังสือ ยกเลิกโอนสินค้าข้าม Plant )
+base.activity_group_114,หนี้สงสัยจะสูญ
+base.activity_group_115,หนี้สูญ
+base.activity_group_116,อุดหนุนการเข้าร่วมประชุมสัมมนา/ปฏิบัติงาน
+base.activity_group_117,อุดหนุนการวิจัย
+base.activity_group_118,อุดหนุนความร่วมมือการวิจัย
+base.activity_group_119,อุดหนุนเพื่อจัดประชุม/สัมมนา/ฝึกอบรม
+base.activity_group_120,อุดหนุนหน่วยเครือข่าย
+base.activity_group_121,อุดหนุนอื่นๆ

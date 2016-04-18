@@ -288,26 +288,3 @@ class AccountBudgetLine(models.Model):
     @api.onchange('activity_id')
     def onchange_activity_id(self):
         self.activity_group_id = self.activity_id.activity_group_id
-
-    #     @api.multi
-    #     def create_analytic_account_activity(self):
-    #         """ Create analytic account for those not been created """
-    #         Analytic = self.env['account.analytic.account']
-    #         for line in self:
-    #             if line.activity_id:
-    #                 line.analytic_account_id = \
-    #                     Analytic.create_matched_analytic(line)
-    #             else:
-    #                 line.analytic_account_id = False
-    #         return
-
-    # class account_analytic_account(models.Model):
-    #     _inherit = "account.analytic.account"
-    #     budget_line_ids = fields.One2many(
-    #         'account.budget.line',
-    #         'analytic_account_id',
-    #         string='Budget Lines',
-    #     )
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

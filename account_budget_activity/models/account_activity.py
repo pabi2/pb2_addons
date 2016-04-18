@@ -54,6 +54,14 @@ class AccountActivity(models.Model):
         'account.activity.group',
         string='Activity Group',
         required=True,
+        ondelete='restrict',
+    )
+    tag_ids = fields.Many2many(
+        'account.activity.tag',
+        'account_activity_tag_rel',
+        'activity_id', 'tag_id',
+        string='Tags',
+        ondelete='restrict',
     )
     name = fields.Char(
         string='Activity',
@@ -94,3 +102,16 @@ class AccountActivity(models.Model):
             raise UserError(
                 _('Please select account for activity in group %s!' %
                   (self.activity_group_id.name,)))
+
+
+class AccountActivityTag(models.Model):
+    _name = 'account.activity.tag'
+    _description = 'Activity Tags'
+
+    name = fields.Char(
+        string='Name',
+    )
+    _sql_constraints = [
+        ('activity_tag_uniq', 'unique(name)',
+         'Activity Tag be unique!'),
+    ]

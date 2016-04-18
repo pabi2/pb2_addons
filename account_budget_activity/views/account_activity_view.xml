@@ -116,8 +116,8 @@
                     	</group>
                         <group>
                     		<field name="activity_group_id"/>
-                    		<!--field name="account_id"/-->
-                        </group>
+							<field name="tag_ids" widget="many2many_tags"/>                    		
+                    	</group>
                     </group>
                     <notebook>
 	                    <page string="Budget Monitor">
@@ -137,5 +137,50 @@
             </field>
         </record>
 
+    	# Activity Tag
+        <record id="view_account_activity_tag_search" model="ir.ui.view">
+            <field name="name">view.account.activity.tag.search</field>
+            <field name="model">account.activity.tag</field>
+            <field name="arch" type="xml">
+                <search string="Activity Tag">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Tag"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_account_activity_tag_tree" model="ir.ui.view">
+            <field name="name">view.account.activity.tag.tree</field>
+            <field name="model">account.activity.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Activity Tag">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_account_activity_tag" model="ir.actions.act_window">
+            <field name="name">Activity Tag</field>
+            <field name="res_model">account.activity.tag</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_activity_tag_tree"/>
+            <field name="search_view_id" ref="view_account_activity_tag_search"/>
+        </record>
+        <menuitem action="action_account_activity_tag" id="menu_account_activity_tag" parent="next_id_pos" sequence="120"/>
+
+        <record id="view_account_activity_tag_form" model="ir.ui.view">
+            <field name="name">view.account.activity.tag.form</field>
+            <field name="model">account.activity.tag</field>
+            <field name="arch" type="xml">
+                <form string="Activity Tag">
+                    <group>
+                    	<group>
+	                        <field name="name"/>
+                    	</group>
+                        <group>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
     </data>
 </openerp>

@@ -10,7 +10,6 @@ class ResPartner(models.Model):
         'account.account',
         string="Account Advance Customer",
         company_dependent=True,
-        view_load=True,
         domain="[('type', '!=', 'view')]",
         required=True,
         readonly=True,

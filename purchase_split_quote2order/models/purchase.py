@@ -37,10 +37,8 @@ class PurchaseOrder(models.Model):
          ('done', 'Done'), ],
         string='Status',
         readonly=True,
-        select=True,
-        copy=False,
+        related='state',
         help="A dummy state used for Quotation",
-        default='draft',
     )
 
     @api.model
