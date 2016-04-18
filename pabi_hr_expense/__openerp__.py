@@ -15,6 +15,7 @@
     "depends": [
         "hr_expense_auto_invoice",
         "pabi_budget_monitor",
+        "pabi_bank",
     ],
     "data": [
         "security/ir.model.access.csv",

@@ -17,6 +17,10 @@ class HRExpense(models.Model):
         'hr.expense.expense',
         string='Clearing for Advance',
     )
+    employee_bank_id = fields.Many2one(
+        'res.bank.master',
+        string='Bank',
+    )
 
 
 class HRExpenseRule(models.Model):

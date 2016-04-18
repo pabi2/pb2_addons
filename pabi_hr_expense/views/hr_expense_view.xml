@@ -14,7 +14,8 @@
 				<field name="currency_id" position="after">
 					<field name="is_employee_advance" /><!-- TODO: attrs="{'invisible': [('is_employee_advance', '=', False)]}" -->
 					<field name="advance_expense_id" /><!-- TODO: attrs="{'invisible': [('advance_expense_id', '=', False)]}" -->
-		    	</field>
+		    		<field name="employee_bank_id" />
+				</field>
             </field>
         </record>
 
@@ -25,7 +26,7 @@
 
         <!-- Employee Advance -->
         <record id="action_employee_advance" model="ir.actions.act_window">
-            <field name="name">Employee's Advance</field>
+            <field name="name">Employee Advance</field>
             <field name="res_model">hr.expense.expense</field>
             <field name="view_type">form</field>
             <field name="search_view_id" ref="hr_expense.view_hr_expense_filter"/>
@@ -39,7 +40,7 @@
             </field>
         </record>
 
-        <menuitem action="action_employee_advance" id="menu_employee_advance" name="Employee's Advance" parent="hr_expense.next_id_49" sequence="50"/>
+        <menuitem action="action_employee_advance" id="menu_employee_advance" name="Employee Advance" parent="hr_expense.next_id_49" sequence="50"/>
         
 		<!-- Expense Regulations -->
         <record id="view_hr_expense_rule_tree" model="ir.ui.view">
