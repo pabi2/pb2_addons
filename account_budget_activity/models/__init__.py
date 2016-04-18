@@ -9,7 +9,6 @@ from . import account_budget
 from . import account_invoice
 from . import account_move_line
 from . import analytic
+from . import hr_expense
 from . import account
 from . import budget_monitor
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

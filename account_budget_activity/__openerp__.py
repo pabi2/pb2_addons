@@ -25,6 +25,8 @@ Testing:
         'purchase_request',
         'purchase_request_to_requisition',
         'purchase_qty_invoiced_received',
+        'hr_expense',
+        'hr_expense_auto_invoice',
     ],
     'data': [
         'data/account.activity.tag.csv',
@@ -42,6 +44,7 @@ Testing:
         'views/account_invoice_view.xml',
         'views/account_move_line_view.xml',
         'views/analytic_view.xml',
+        'views/hr_expense_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
         'workflow/account_budget_workflow.xml',
     ],
