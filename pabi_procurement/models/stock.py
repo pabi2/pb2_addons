@@ -45,7 +45,7 @@ class StockPicking(models.Model):
             'This action should only be used for a single id at a time.'
         if self.state == 'assigned':
             self.state2 = 'to_verify'
-        return True
+        return res
 
     @api.multi
     def action_verify(self):
