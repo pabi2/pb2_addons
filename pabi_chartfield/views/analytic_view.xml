@@ -14,7 +14,7 @@
                 	<field name="tag_type_id" />
                 	<field name="tag_id" />
                 	
-                	<field name="mission_area_id" />
+                	<field name="functional_area_id" />
                 	<field name="program_group_id" />
                 	<field name="program_id" />
                 	<field name="project_group_id" />
@@ -44,7 +44,7 @@
                 	<field name="tag_type_id" />
                 	<field name="tag_id" />
                 	
-                	<field name="mission_area_id" />
+                	<field name="functional_area_id" />
                 	<field name="program_group_id" />
                 	<field name="program_id" />
                 	<field name="project_group_id" />
@@ -75,7 +75,7 @@
                     <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
                     <filter string="Tag" context="{'group_by':'tag_id'}"/>
 
-                    <filter string="Mission Area" context="{'group_by':'mission_area_id'}"/>
+                    <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
                     <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
                     <filter string="Program" context="{'group_by':'program_id'}"/>
                     <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
