@@ -89,8 +89,10 @@ class AccountInvoiceLine(models.Model):
             self.product_id = self.activity_id = False
             self.name = False
         if self.product_id:
+            account_id = self.product_id.property_account_expense.id or \
+                self.product_id.categ_id.property_account_expense_categ.id
             activity_group = self.env['account.activity.group'].\
-                search([('account_id', '=', self.account_id.id)])
+                search([('account_id', '=', account_id)])
             self.activity_group_id = activity_group
         elif self.activity_id:
             self.activity_group_id = self.activity_id.activity_group_id
