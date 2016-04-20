@@ -8,14 +8,13 @@
             <field name="arch" type="xml">
                 <form string="Budget Prepare">
                     <header>
-                        <button string="Policy" name="policy" states="plan" type="workflow" class="oe_highlight"/>
-                        <button string="Release" name="release" states="policy" type="workflow" class="oe_highlight"/>
-                        <button string="Publish" name="publish" states="release" type="workflow" class="oe_highlight"/>
+                        <button string="Submit" name="policy" states="plan" type="workflow" class="oe_highlight"/>
+                        <button string="Approve" name="release" states="policy" type="workflow" class="oe_highlight"/>
+                        <button string="Release" name="publish" states="release" type="workflow" class="oe_highlight"/>
                         <button string="Reset to Draft" name="plan" states="cancel" type="workflow" />
                         <button string="Cancel" name="cancel" states="policy,release" type="workflow"/>
                         <field name="state" widget="statusbar" statusbar_visible="plan,policy,release,publish"/>
                     </header>
-                    <sheet string="Budget Prepare">
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
@@ -28,8 +27,11 @@
                             <group>
                                 <field name="creating_user_id" attrs="{'readonly':[('state','!=','plan')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
                                 <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','plan')]}"/>
+                            	<field name="amount_budget_policy" />
+                            	<field name="amount_budget_release" />
                             </group>
                             <group>
+                            	<field name="input_file" />
                                 <field name="code" attrs="{'readonly':[('state','!=','plan')]}"/>
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration"/>
@@ -43,24 +45,115 @@
                         <notebook>
                             <page string="Budget Lines">
                                 <field name="prepare_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','plan')]}">
-                                    <tree string="Budget Lines">
-                                    	<field name="program_id" />
-                                    	<field name="project_id" />
+                                    <tree string="Budget Lines" editable="bottom">
+
+										<field name="project_kind" />
+										<field name="project_id" />
+										<field name="functional_area_id" />
+										<field name="program_group_id" />
+										<field name="program_id" />
+										<field name="project_group_id" />
+										<field name="mission_id" />
+										<field name="project_type" />
+										<field name="org_id" />
+										<field name="main_program" />
+										<field name="project_category" />
+										<field name="section_id" />
+										<field name="division_id" />
+										<field name="manager_user_id" />
+
+										<field name="date_from" />
+										<field name="date_to" />
+										<field name="project_duration_yr" />
+										<field name="project_status" />
+
+										<field name="planned_amount" sum="Amount"/>
+										<field name="revenue_planned" sum="Amount"/>
+										<field name="revenue_to_date" sum="Amount"/>
+										<field name="revenue_this_year" sum="Amount"/>
+
+										<field name="total_budget_planned" sum="Amount"/>
+										<field name="total_budget_expense" sum="Amount"/>
+										<field name="total_budget_commit" sum="Amount"/>
+										<field name="total_budget_balance" sum="Amount"/>
+
+										<field name="yearly_budget_current" sum="Amount"/>
+										<field name="yearly_budget_release" sum="Amount"/>
+										<field name="yearly_budget_commit" sum="Amount"/>
+										<field name="yearly_budget_expense" sum="Amount"/>
+										<field name="yearly_budget_balance" sum="Amount"/>
+
+										<field name="amount_fy1_q1" sum="Amount"/>
+										<field name="amount_fy1_q2" sum="Amount"/>
+										<field name="amount_fy1_q3" sum="Amount"/>
+										<field name="amount_year1_q4" sum="Amount"/>
+										<field name="amount_fy1" sum="Amount"/>
+										<field name="amount_fy2" sum="Amount"/>
+										<field name="amount_fy3" sum="Amount"/>
+										<field name="amount_fy4" sum="Amount"/>
+										<field name="amount_fy5" sum="Amount"/>
+										<field name="amount_total" sum="Amount"/>   
                                     </tree>
                                     <form string="Budget Lines">
-                                        <group>
-                                            <group>
-		                                    	<field name="program_id" />
-		                                    	<field name="project_id" />
+                                        <group col="6">
+                                            <group string="General Info">
+												<field name="project_kind" />
+												<field name="project_id" />
+												<field name="functional_area_id" />
+												<field name="program_group_id" />
+												<field name="program_id" />
+												<field name="project_group_id" />
+												<field name="mission_id" />
+												<field name="project_type" />
+												<field name="org_id" />
+												<field name="main_program" />
+												<field name="project_category" />
+												<field name="section_id" />
+												<field name="division_id" />
+												<field name="manager_user_id" />
                                             </group>
-                                            <group>
+                                            <group string="Duration">
+												<field name="date_from" />
+												<field name="date_to" />
+												<field name="project_duration_yr" />
+												<field name="project_status" />
+                                            </group>
+                                            <group string="Revenue">
+												<field name="planned_amount" />
+												<field name="revenue_planned" />
+												<field name="revenue_to_date" />
+												<field name="revenue_this_year" />
+                                            </group>
+                                            <group string="Total">
+												<field name="total_budget_planned" />
+												<field name="total_budget_expense" />
+												<field name="total_budget_commit" />
+												<field name="total_budget_balance" />
+                                            </group>
+                                            <group string="Budget Status">
+												<field name="yearly_budget_current" />
+												<field name="yearly_budget_release" />
+												<field name="yearly_budget_commit" />
+												<field name="yearly_budget_expense" />
+												<field name="yearly_budget_balance" />
+                                            </group>
+                                            <group string="Budget Projection">
+												<field name="amount_fy1_q1" />
+												<field name="amount_fy1_q2" />
+												<field name="amount_fy1_q3" />
+												<field name="amount_year1_q4" />
+												<field name="amount_fy1" />
+												<field name="amount_fy2" />
+												<field name="amount_fy3" />
+												<field name="amount_fy4" />
+												<field name="amount_fy5" />
+												<field name="amount_total" />       
                                             </group>
                                         </group>
                                     </form>
                                 </field>
                             </page>
                         </notebook>
-                    </sheet>
                 </form>
             </field>
         </record>
@@ -113,16 +206,101 @@
             id="menu_act_account_budget_prepare_view"
             action="act_account_budget_prepare_view" sequence="0" />
         
+            	
+            	
+            	
+        <record id="view_account_budget_prepare_line_filter" model="ir.ui.view">
+            <field name="name">account.budget.prepare.line.filter</field>
+            <field name="model">account.budget.prepare.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Prepare Line">
+                    <group expand="0" string="Group By">
+                        <filter name="project_kind" string="C/N" domain="[]" context="{'group_by':'project_kind'}"/>
+                        <filter name="project_id" string="Project" domain="[]" context="{'group_by':'project_id'}"/>
+                        <filter name="functional_area_id" string="Functional Area" domain="[]" context="{'group_by':'functional_area_id'}"/>
+                        <filter name="program_group_id" string="Program Group" domain="[]" context="{'group_by':'program_group_id'}"/>
+                        <filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
+                        <filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
+                        <filter name="mission_id" string="MIssion" domain="[]" context="{'group_by':'mission_id'}"/>
+                        <filter name="project_type" string="Project Type" domain="[]" context="{'group_by':'project_type'}"/>
+                        <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
+                        <filter name="main_program" string="Main Program" domain="[]" context="{'group_by':'main_program'}"/>
+                        <filter name="project_category" string="Project Category" domain="[]" context="{'group_by':'project_category'}"/>
+                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
+                        <filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
+                        <filter name="manager_user_id" string="Manager" domain="[]" context="{'group_by':'manager_user_id'}"/>
+                        <filter name="project_duration_yr" string="Project Duration" domain="[]" context="{'group_by':'project_duration_yr'}"/>
+                        <filter name="project_status" string="Project Status" domain="[]" context="{'group_by':'project_status'}"/>                    
+               	</group>
+               </search>
+            </field>
+        </record>
+            	
         <record model="ir.ui.view" id="view_account_budget_prepare_line_tree">
             <field name="name">account.budget.prepare.line.tree</field>
             <field name="model">account.budget.prepare.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Prepare Lines">
-                    <field name="prepare_id" invisible="1"/>
-                    <field name="amount_total"/>
+					<field name="project_kind" invisible="0"/>
+					<field name="project_id" invisible="0"/>
+					<field name="functional_area_id" invisible="1"/>
+					<field name="program_group_id" invisible="1"/>
+					<field name="program_id" invisible="1"/>
+					<field name="project_group_id" invisible="1"/>
+					<field name="mission_id" invisible="1"/>
+					<field name="project_type" invisible="1"/>
+					<field name="org_id" invisible="1"/>
+					<field name="main_program" invisible="1"/>
+					<field name="project_category" invisible="1"/>
+					<field name="section_id" invisible="1"/>
+					<field name="division_id" invisible="1"/>
+					<field name="manager_user_id" invisible="1"/>
+
+					<field name="date_from" />
+					<field name="date_to" />
+					<field name="project_duration_yr" />
+					<field name="project_status" />
+
+					<field name="planned_amount" sum="Amount"/>
+					<field name="revenue_planned" sum="Amount"/>
+					<field name="revenue_to_date" sum="Amount"/>
+					<field name="revenue_this_year" sum="Amount"/>
+
+					<field name="total_budget_planned" sum="Amount"/>
+					<field name="total_budget_expense" sum="Amount"/>
+					<field name="total_budget_commit" sum="Amount"/>
+					<field name="total_budget_balance" sum="Amount"/>
+
+					<field name="yearly_budget_current" sum="Amount"/>
+					<field name="yearly_budget_release" sum="Amount"/>
+					<field name="yearly_budget_commit" sum="Amount"/>
+					<field name="yearly_budget_expense" sum="Amount"/>
+					<field name="yearly_budget_balance" sum="Amount"/>
+
+					<field name="amount_fy1_q1" sum="Amount"/>
+					<field name="amount_fy1_q2" sum="Amount"/>
+					<field name="amount_fy1_q3" sum="Amount"/>
+					<field name="amount_year1_q4" sum="Amount"/>
+					<field name="amount_fy1" sum="Amount"/>
+					<field name="amount_fy2" sum="Amount"/>
+					<field name="amount_fy3" sum="Amount"/>
+					<field name="amount_fy4" sum="Amount"/>
+					<field name="amount_fy5" sum="Amount"/>
+					<field name="amount_total" sum="Amount"/>   
                 </tree>
             </field>
         </record>
+	    <record id="view_account_budget_prepare_line_graph" model="ir.ui.view">
+	         <field name="name">view.account.budget.prepare.line.graph</field>
+	         <field name="model">account.budget.prepare.line</field>
+	         <field name="arch" type="xml">
+	             <graph string="Budget Prepare Lines" type="pivot">
+	                <field name="project_id" type="row"/>
+	                <field name="mission_id" type="col"/>
+	                <field name="amount_total" type="measure"/>
+	             </graph>
+	         </field>
+	    </record>
         <record model="ir.ui.view" id="view_account_budget_prepare_line_form">
             <field name="name">account.budget.prepare.line.form</field>
             <field name="model">account.budget.prepare.line</field>
@@ -143,7 +321,7 @@
             <field name="name">Budget Prepare Lines</field>
             <field name="res_model">account.budget.prepare.line</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_account_budget_prepare_line_tree"/>
         </record>
 
