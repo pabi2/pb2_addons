@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import api, fields, models, _
+from openerp.exceptions import Warning as UserError
 
 
 class HRExpenseExpense(models.Model):
@@ -58,6 +59,11 @@ class HRExpenseLine(models.Model):
     @api.model
     def _get_non_product_account_id(self):
         if 'activity_group_id' in self:
-            return self.activity_group_id.account_id.id
+            if not self.activity_group_id.account_id:
+                raise UserError(
+                    _('No Account Code assigned to Activity Group - %s') %
+                    (self.activity_group_id.name,))
+            else:
+                return self.activity_group_id.account_id.id
         else:
             return super(HRExpenseLine, self)._get_non_product_account_id()
