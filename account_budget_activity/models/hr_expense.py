@@ -54,3 +54,10 @@ class HRExpenseLine(models.Model):
         elif self.activity_id:
             self.activity_group_id = self.activity_id.activity_group_id
             self.name = self.activity_id.name
+
+    @api.model
+    def _get_non_product_account_id(self):
+        if 'activity_group_id' in self:
+            return self.activity_group_id.account_id.id
+        else:
+            return super(HRExpenseLine, self)._get_non_product_account_id()

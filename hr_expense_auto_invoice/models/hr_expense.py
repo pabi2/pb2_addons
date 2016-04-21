@@ -112,7 +112,6 @@ class HRExpenseExpese(models.Model):
     @api.model
     def _choose_account_from_exp_line(self, exp_line, fpos=False):
         FiscalPos = self.env['account.fiscal.position']
-        Property = self.env['ir.property']
         account_id = False
         if exp_line.product_id:
             account_id = exp_line.product_id.property_account_expense.id
@@ -126,8 +125,7 @@ class HRExpenseExpese(models.Model):
                       'product: "%s" (id:%d).') %
                     (exp_line.product_id.name, exp_line.product_id.id,))
         else:
-            account_id = Property.get('property_account_expense_categ',
-                                      'product.category').id
+            account_id = exp_line._get_non_product_account_id()
         if fpos:
             fiscal_pos = FiscalPos.browse(fpos)
             account_id = fiscal_pos.map_account(account_id)
@@ -207,3 +205,9 @@ class HRExpenseLine(models.Model):
             taxes = [tax.id for tax in product.supplier_taxes_id]
             res['value']['tax_ids'] = [(6, 0, taxes)]
         return res
+
+    @api.model
+    def _get_non_product_account_id(self):
+        Property = self.env['ir.property']
+        return Property.get('property_account_expense_categ',
+                            'product.category').id
