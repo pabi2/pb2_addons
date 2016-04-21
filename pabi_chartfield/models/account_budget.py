@@ -82,7 +82,7 @@ class AccountBudgetLine(ChartField, models.Model):
         compute='_compute_all',
         readonly=True, store=True
     )
-    department_id = fields.Many2one(
+    subsector_id = fields.Many2one(
         compute='_compute_all',
         readonly=True, store=True
     )
@@ -104,7 +104,7 @@ class AccountBudgetLine(ChartField, models.Model):
                  'budget_id.program_group_id',
                  'budget_id.org_id',
                  'budget_id.sector_id',
-                 'budget_id.department_id',
+                 'budget_id.subsector_id',
                  'budget_id.division_id',
                  'budget_id.section_id',
                  'budget_id.costcenter_id',)
@@ -119,7 +119,7 @@ class AccountBudgetLine(ChartField, models.Model):
             # Unit base
             rec.org_id = rec.budget_id.org_id
             rec.sector_id = rec.budget_id.sector_id
-            rec.department_id = rec.budget_id.department_id
+            rec.subsector_id = rec.budget_id.subsector_id
             rec.division_id = rec.budget_id.division_id
             rec.section_id = rec.budget_id.section_id
             rec.costcenter_id = rec.budget_id.costcenter_id

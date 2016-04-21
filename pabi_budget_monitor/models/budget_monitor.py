@@ -88,16 +88,16 @@ class ResSectorMonitorView(MonitorViewEx, models.Model):
         self._create_monitor_view(cr, self._table, 'sector_id')
 
 
-class ResDepartmentMonitorView(MonitorViewEx, models.Model):
-    _name = 'res.department.monitor.view'
+class ResSubsectorMonitorView(MonitorViewEx, models.Model):
+    _name = 'res.subsector.monitor.view'
     _auto = False
-    _budget_level = 'department_id'
+    _budget_level = 'subsector_id'
 
-    department_id = fields.Many2one(
-        'res.department', 'Department', readonly=True)
+    subsector_id = fields.Many2one(
+        'res.subsector', 'Subsector', readonly=True)
 
     def init(self, cr):
-        self._create_monitor_view(cr, self._table, 'department_id')
+        self._create_monitor_view(cr, self._table, 'subsector_id')
 
 
 class ResDivisionMonitorView(MonitorViewEx, models.Model):

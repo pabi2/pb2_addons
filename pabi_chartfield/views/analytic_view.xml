@@ -22,7 +22,7 @@
                 	
                     <field name="org_id" />
                     <field name="sector_id" />
-                    <field name="department_id"/>
+                    <field name="subsector_id"/>
                     <field name="division_id" />
                     <field name="section_id" />
                     <field name="costcenter_id"/>
@@ -52,7 +52,7 @@
                 	
                     <field name="org_id" />
                     <field name="sector_id" />
-                    <field name="department_id"/>
+                    <field name="subsector_id"/>
                     <field name="division_id" />
                     <field name="section_id" />
                     <field name="costcenter_id"/>
@@ -83,7 +83,7 @@
                     
                     <filter string="Org" context="{'group_by':'org_id'}"/>
                     <filter string="Sector" context="{'group_by':'sector_id'}"/>
-                    <filter string="Department" context="{'group_by':'department_id'}"/>
+                    <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
                     <filter string="Division" context="{'group_by':'division_id'}"/>
                     <filter string="Section" context="{'group_by':'section_id'}"/>
                     <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>

@@ -54,18 +54,18 @@
             </field>
         </record>  
         
-    	# Department
-        <record id="view_res_department_form" model="ir.ui.view" >
-            <field name="name">view.res.department.form</field>
-            <field name="model">res.department</field>
-            <field name="inherit_id" ref="pabi_base.view_res_department_form"/>
+    	# Subsector
+        <record id="view_res_subsector_form" model="ir.ui.view" >
+            <field name="name">view.res.subsector.form</field>
+            <field name="model">res.subsector</field>
+            <field name="inherit_id" ref="pabi_base.view_res_subsector_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
 	                    <page string="Budget Monitor">
 		                    <field name="monitor_ids">
 				                <tree string="Monitor" editable="bottom">
-		                    		<field name="department_id" invisible="1"/>
+		                    		<field name="subsector_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="amount_plan" />
 		                    		<field name="amount_pr_commit" />

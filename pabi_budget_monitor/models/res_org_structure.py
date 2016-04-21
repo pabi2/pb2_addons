@@ -20,12 +20,12 @@ class ResSector(models.Model):
     )
 
 
-class ResDepartment(models.Model):
-    _inherit = 'res.department'
+class ResSubsector(models.Model):
+    _inherit = 'res.subsector'
 
     monitor_ids = fields.One2many(
-        'res.department.monitor.view', 'department_id',
-        string='Department Monitor',
+        'res.subsector.monitor.view', 'subsector_id',
+        string='Subsector Monitor',
     )
 
 

@@ -18,7 +18,7 @@ class AccountBudget(models.Model):
         # Unit Based
         'org_id': 'Org',
         'sector_id': 'Sector',
-        'department_id': 'Department',
+        'subsector_id': 'Subsector',
         'division_id': 'Division',
         'section_id': 'Section',
         'costcenter_id': 'Costcenter',
@@ -40,7 +40,7 @@ class AccountBudget(models.Model):
         # Unit Based
         'org_id': 'res.org',
         'sector_id': 'res.sector',
-        'department_id': 'res.department',
+        'subsector_id': 'res.subsector',
         'division_id': 'res.division',
         'section_id': 'res.section',
         'costcenter_id': 'res.costcenter',

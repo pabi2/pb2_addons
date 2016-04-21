@@ -3,7 +3,7 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 
-# org -> sector -> department -> division -> section -> costcenter
+# org -> sector -> subsector -> division -> section -> costcenter
 #                                                       (mission)
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)    (type/tag)
@@ -30,7 +30,7 @@ CHART_FIELDS = [
     # Unit Based
     ('org_id', ['unit_base', 'project_base']),  # both
     ('sector_id', ['unit_base']),
-    ('department_id', ['unit_base']),
+    ('subsector_id', ['unit_base']),
     ('division_id', ['unit_base']),
     ('section_id', ['unit_base']),
     ('costcenter_id', ['unit_base']),
@@ -106,15 +106,15 @@ class ChartField(object):
         string='Sector',
         domain="[('org_id', '=', org_id)]",
     )
-    department_id = fields.Many2one(
-        'res.department',
-        string='Department',
+    subsector_id = fields.Many2one(
+        'res.subsector',
+        string='Subsector',
         domain="[('sector_id', '=', sector_id)]",
     )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
-        domain="[('department_id', '=', department_id)]",
+        domain="[('subsector_id', '=', subsector_id)]",
     )
     section_id = fields.Many2one(
         'res.section',
@@ -136,7 +136,7 @@ class ChartField(object):
 
         self.org_id = self.section_id.org_id  # main
         self.sector_id = self.section_id.sector_id  # main
-        self.department_id = self.section_id.department_id  # main
+        self.subsector_id = self.section_id.subsector_id  # main
         self.division_id = self.section_id.division_id  # main
         self.costcenter_id = self.section_id.costcenter_id  # main
 
