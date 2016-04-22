@@ -29,9 +29,6 @@ Testing:
         'hr_expense_auto_invoice',
     ],
     'data': [
-        'data/account.activity.tag.csv',
-        'data/account.activity.group.csv',
-        'data/account.activity.csv',
         'security/ir.model.access.csv',
         'security/account_budget_security.xml',
         'views/purchase_view.xml',
