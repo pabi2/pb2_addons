@@ -8,6 +8,9 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group[last()]" position="inside">
+                	<field name="taxbranch_id"/>
+				</xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account']" position="after">
                     
                 	<field name="spa_id" invisible="1"/>
@@ -27,6 +30,7 @@
                     <field name="division_id" invisible="1" />
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
                     <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
 
                     <field name="nstda_course_id" />
                     

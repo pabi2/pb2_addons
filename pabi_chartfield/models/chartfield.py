@@ -3,12 +3,12 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 
-# org -> sector -> subsector -> division -> section -> costcenter
+# org -> sector -> subsector -> division -> section -> costcenter = taxbranch
 #                                                       (mission)
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)    (type/tag)
 #        (org)           (org)        (org)         (org)         (org)
-# functional_area -> program_group -> program -> project_group -> project
+# functional_area -> program_group -> program -> project_group -> project = taxbranch
 #                                    (spa(s))                   (mission)
 
 CHART_VIEW = [
@@ -34,6 +34,7 @@ CHART_FIELDS = [
     ('division_id', ['unit_base']),
     ('section_id', ['unit_base']),
     ('costcenter_id', ['unit_base']),
+    ('taxbranch_id', ['unit_base', 'project_base']),
     # Non Binding
     ('nstda_course_id', ['unit_base', 'project_base']),
     ]
@@ -51,6 +52,22 @@ class NSTDACourse(models.Model):
     description = fields.Text(
         string='Description',
     )
+
+
+class HeaderTaxBranch(object):
+
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Tax Branch',
+    )
+
+    def _check_taxbranch_id(self, lines):
+        taxbranch_ids = list(set([x.taxbranch_id.id for x in lines]))
+        if len(taxbranch_ids) > 1:
+            raise UserError(_('Selected Section or Project will '
+                              'result in multiple Tax Branches'))
+        else:
+            return taxbranch_ids and taxbranch_ids[0] or False
 
 
 class ChartField(object):
@@ -125,6 +142,10 @@ class ChartField(object):
         string='Costcenter',
         domain="[('section_ids', '!=', False)]",
     )
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Tax Branch',
+    )
     # Non Binding
     nstda_course_id = fields.Many2one(
         'nstda.course',
@@ -149,6 +170,8 @@ class ChartField(object):
 
         self.section_id = len(self.costcenter_id.section_ids) == 1 and \
             self.costcenter_id.section_ids[0]  # main
+        self.taxbranch_id = self.costcenter_id.taxbranch_id
+
         self.mission_id = self.costcenter_id.mission_id
 
         self.project_id = False
@@ -160,30 +183,16 @@ class ChartField(object):
         self.costcenter_id = False
 
         self.functional_area_id = self.project_id.functional_area_id  # main
-        self.org_id = self.functional_area_id.org_id
-        self.tag_type_id = self.functional_area_id.tag_type_id
-        self.tag_id = self.functional_area_id.tag_id
 
         self.program_group_id = self.project_id.program_group_id  # main
-        self.org_id = self.program_group_id.org_id
-        self.tag_type_id = self.program_group_id.tag_type_id
-        self.tag_id = self.program_group_id.tag_id
 
         self.program_id = self.project_id.program_id  # main
-        self.org_id = self.program_id.org_id
-        self.tag_type_id = self.program_id.tag_type_id
-        self.tag_id = self.program_id.tag_id
         self.spa_id = self.program_id.current_spa_id
 
         self.project_group_id = self.project_id.project_group_id  # main
-        self.org_id = self.project_group_id.org_id
-        self.tag_type_id = self.project_group_id.tag_type_id
-        self.tag_id = self.project_group_id.tag_id
 
         self.project_id = self.project_id  # main
-        self.org_id = self.project_id.org_id
-        self.tag_type_id = self.project_id.tag_type_id
-        self.tag_id = self.project_id.tag_id
+        self.taxbranch_id = self.project_id.costcenter_id.taxbranch_id
         self.mission_id = self.project_id.mission_id
 
         # Tags
