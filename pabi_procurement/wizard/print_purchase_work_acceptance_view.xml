@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="view_print_purchase_work_acceptance" model="ir.ui.view">
+            <field name="name">Print Work Acceptance</field>
+            <field name="model">print.purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+             <form string="Print Work Acceptance" version="7.0">
+                <p class="oe_grey">
+                    Please in put acceptance detail.
+                </p>
+                <group>
+                    <field name="name"/>
+                </group>
+                <group>
+                    <field name="acceptance_line">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="balance_qty"/>
+                            <field name="to_receive_qty"/>
+                        </tree>
+                    </field>
+                </group>
+                <footer>
+                    <button name="action_print"
+                        string="Print" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_print_purchase_work_acceptance" model="ir.actions.act_window">
+            <field name="name">Print Work Acceptance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">print.purchase.work.acceptance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_print_purchase_work_acceptance"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

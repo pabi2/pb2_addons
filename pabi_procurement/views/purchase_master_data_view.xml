@@ -1,0 +1,143 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <menuitem
+            id="menu_purchase_config_pabi_master" name="PABI Purchase Master Data"
+            parent="purchase.menu_purchase_config_purchase" sequence="50" groups="purchase.group_purchase_manager"/>
+
+        <record id="view_purchase_type_form" model="ir.ui.view">
+            <field name="name">purchase.type.form</field>
+            <field name="model">purchase.type</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Type" version="7.0">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_purchase_type_tree" model="ir.ui.view">
+            <field name="name">purchase.type.tree</field>
+            <field name="model">purchase.type</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_purchase_type_search" model="ir.ui.view">
+            <field name="name">purchase.type.search</field>
+            <field name="model">purchase.type</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Type">
+                    <field name="name" string="Purchase Type"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_purchase_type_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Type</field>
+            <field name="res_model">purchase.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Type.
+              </p>
+            </field>
+        </record>
+       <menuitem action="action_purchase_type_tree"
+                 id="menu_action_purchase_type_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_prototype_form" model="ir.ui.view">
+            <field name="name">purchase.prototype.form</field>
+            <field name="model">purchase.prototype</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Prototype" version="7.0">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_prototype_tree" model="ir.ui.view">
+            <field name="name">purchase.prototype.tree</field>
+            <field name="model">purchase.prototype</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Prototype">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_prototype_search" model="ir.ui.view">
+            <field name="name">purchase.prototype.search</field>
+            <field name="model">purchase.prototype</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Prototype">
+                    <field name="name" string="Purchase Prototype"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_prototype_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Prototype</field>
+            <field name="res_model">purchase.prototype</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Prototype.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_prototype_tree"
+                 id="menu_action_purchase_prototype_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_method_form" model="ir.ui.view">
+            <field name="name">purchase.method.form</field>
+            <field name="model">purchase.method</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Method" version="7.0">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_method_tree" model="ir.ui.view">
+            <field name="name">purchase.method.tree</field>
+            <field name="model">purchase.method</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Method">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_method_search" model="ir.ui.view">
+            <field name="name">purchase.method.search</field>
+            <field name="model">purchase.method</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Method">
+                    <field name="name" string="Purchase Method"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_method_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Method</field>
+            <field name="res_model">purchase.method</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Method.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_method_tree"
+                 id="menu_action_purchase_method_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+    </data>
+</openerp>

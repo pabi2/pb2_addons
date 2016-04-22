@@ -80,10 +80,12 @@ class PurchaseRequest(models.Model):
         'res.currency',
         string='Currency',
         required=True,
+        default=140,
     )
     currency_rate = fields.Float(
         string='Rate',
         digits=(12, 6),
+        default=1.000,
         copy=False,
     )
     objective = fields.Text(
@@ -118,6 +120,7 @@ class PurchaseRequest(models.Model):
     )
     total_budget_value = fields.Float(
         'Total Budget Value',
+        readonly=True,
         default=0.0,
     )
     purchase_type_id = fields.Many2one(
