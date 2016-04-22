@@ -85,15 +85,15 @@ class AccountActivity(models.Model):
          'Activity must be unique per group!'),
     ]
 
-    @api.multi
-    def name_get(self):
-        result = []
-        for activity in self:
-            result.append(
-                (activity.id,
-                 "%s / %s" % (activity.activity_group_id.name or '-',
-                              activity.name or '-')))
-        return result
+#     @api.multi
+#     def name_get(self):
+#         result = []
+#         for activity in self:
+#             result.append(
+#                 (activity.id,
+#                  "%s / %s" % (activity.activity_group_id.name or '-',
+#                               activity.name or '-')))
+#         return result
 
     @api.one
     @api.constrains('account_id')
