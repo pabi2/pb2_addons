@@ -5,7 +5,7 @@
     'author': 'Ecosoft',
     'summary': 'Account Voucher Move Line - Doc Ref',
     'description': """
-Account Voucher Move Line - Doc Ref
+Account Voucher Move Line - Doc Ref.
     """,
     'category': 'Accounting',
     'website': 'http://www.ecosoft.co.th',
