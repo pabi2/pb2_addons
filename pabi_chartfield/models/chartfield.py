@@ -3,12 +3,12 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 
-# org -> sector -> department -> division -> section -> costcenter
+# org -> sector -> subsector -> division -> section -> costcenter = taxbranch
 #                                                       (mission)
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)    (type/tag)
 #        (org)           (org)        (org)         (org)         (org)
-# mission_area -> program_group -> program -> project_group -> project
+# functional_area -> program_group -> program -> project_group -> project = taxbranch
 #                                    (spa(s))                   (mission)
 
 CHART_VIEW = [
@@ -22,7 +22,7 @@ CHART_FIELDS = [
     ('tag_type_id', ['project_base']),
     ('tag_id', ['project_base']),
     # Project Based
-    ('mission_area_id', ['project_base']),
+    ('functional_area_id', ['project_base']),
     ('program_group_id', ['project_base']),
     ('program_id', ['project_base']),
     ('project_group_id', ['project_base']),
@@ -30,10 +30,11 @@ CHART_FIELDS = [
     # Unit Based
     ('org_id', ['unit_base', 'project_base']),  # both
     ('sector_id', ['unit_base']),
-    ('department_id', ['unit_base']),
+    ('subsector_id', ['unit_base']),
     ('division_id', ['unit_base']),
     ('section_id', ['unit_base']),
     ('costcenter_id', ['unit_base']),
+    ('taxbranch_id', ['unit_base', 'project_base']),
     # Non Binding
     ('nstda_course_id', ['unit_base', 'project_base']),
     ]
@@ -51,6 +52,22 @@ class NSTDACourse(models.Model):
     description = fields.Text(
         string='Description',
     )
+
+
+class HeaderTaxBranch(object):
+
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Tax Branch',
+    )
+
+    def _check_taxbranch_id(self, lines):
+        taxbranch_ids = list(set([x.taxbranch_id.id for x in lines]))
+        if len(taxbranch_ids) > 1:
+            raise UserError(_('Selected Section or Project will '
+                              'result in multiple Tax Branches'))
+        else:
+            return taxbranch_ids and taxbranch_ids[0] or False
 
 
 class ChartField(object):
@@ -73,14 +90,14 @@ class ChartField(object):
         string='Tag',
         domain="[('tag_type_id', '=', tag_type_id)]",
     )
-    mission_area_id = fields.Many2one(
-        'res.mission.area',
-        string='Mission Area',
+    functional_area_id = fields.Many2one(
+        'res.functional.area',
+        string='Functional Area',
     )
     program_group_id = fields.Many2one(
         'res.program.group',
         string='Program Group',
-        domain="[('mission_area_id', '=', mission_area_id)]",
+        domain="[('functional_area_id', '=', functional_area_id)]",
     )
     program_id = fields.Many2one(
         'res.program',
@@ -106,15 +123,15 @@ class ChartField(object):
         string='Sector',
         domain="[('org_id', '=', org_id)]",
     )
-    department_id = fields.Many2one(
-        'res.department',
-        string='Department',
+    subsector_id = fields.Many2one(
+        'res.subsector',
+        string='Subsector',
         domain="[('sector_id', '=', sector_id)]",
     )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
-        domain="[('department_id', '=', department_id)]",
+        domain="[('subsector_id', '=', subsector_id)]",
     )
     section_id = fields.Many2one(
         'res.section',
@@ -124,6 +141,10 @@ class ChartField(object):
         'res.costcenter',
         string='Costcenter',
         domain="[('section_ids', '!=', False)]",
+    )
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Tax Branch',
     )
     # Non Binding
     nstda_course_id = fields.Many2one(
@@ -136,7 +157,7 @@ class ChartField(object):
 
         self.org_id = self.section_id.org_id  # main
         self.sector_id = self.section_id.sector_id  # main
-        self.department_id = self.section_id.department_id  # main
+        self.subsector_id = self.section_id.subsector_id  # main
         self.division_id = self.section_id.division_id  # main
         self.costcenter_id = self.section_id.costcenter_id  # main
 
@@ -149,6 +170,8 @@ class ChartField(object):
 
         self.section_id = len(self.costcenter_id.section_ids) == 1 and \
             self.costcenter_id.section_ids[0]  # main
+        self.taxbranch_id = self.costcenter_id.taxbranch_id
+
         self.mission_id = self.costcenter_id.mission_id
 
         self.project_id = False
@@ -159,31 +182,17 @@ class ChartField(object):
         self.section_id = False
         self.costcenter_id = False
 
-        self.mission_area_id = self.project_id.mission_area_id  # main
-        self.org_id = self.mission_area_id.org_id
-        self.tag_type_id = self.mission_area_id.tag_type_id
-        self.tag_id = self.mission_area_id.tag_id
+        self.functional_area_id = self.project_id.functional_area_id  # main
 
         self.program_group_id = self.project_id.program_group_id  # main
-        self.org_id = self.program_group_id.org_id
-        self.tag_type_id = self.program_group_id.tag_type_id
-        self.tag_id = self.program_group_id.tag_id
 
         self.program_id = self.project_id.program_id  # main
-        self.org_id = self.program_id.org_id
-        self.tag_type_id = self.program_id.tag_type_id
-        self.tag_id = self.program_id.tag_id
         self.spa_id = self.program_id.current_spa_id
 
         self.project_group_id = self.project_id.project_group_id  # main
-        self.org_id = self.project_group_id.org_id
-        self.tag_type_id = self.project_group_id.tag_type_id
-        self.tag_id = self.project_group_id.tag_id
 
         self.project_id = self.project_id  # main
-        self.org_id = self.project_id.org_id
-        self.tag_type_id = self.project_id.tag_type_id
-        self.tag_id = self.project_id.tag_id
+        self.taxbranch_id = self.project_id.costcenter_id.taxbranch_id
         self.mission_id = self.project_id.mission_id
 
         # Tags
@@ -191,17 +200,17 @@ class ChartField(object):
                        self.project_group_id.org_id or
                        self.program_id.org_id or
                        self.program_group_id.org_id or
-                       self.mission_area_id.org_id)
+                       self.functional_area_id.org_id)
         self.tag_type_id = (self.project_id.tag_type_id or
                             self.project_group_id.tag_type_id or
                             self.program_id.tag_type_id or
                             self.program_group_id.tag_type_id or
-                            self.mission_area_id.tag_type_id)
+                            self.functional_area_id.tag_type_id)
         self.tag_id = (self.project_id.tag_id or
                        self.project_group_id.tag_id or
                        self.program_id.tag_id or
                        self.program_group_id.tag_id or
-                       self.mission_area_id.tag_id)
+                       self.functional_area_id.tag_id)
 
     @api.multi
     def validate_chartfields(self, chart_type):

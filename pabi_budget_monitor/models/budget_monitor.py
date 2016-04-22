@@ -88,16 +88,16 @@ class ResSectorMonitorView(MonitorViewEx, models.Model):
         self._create_monitor_view(cr, self._table, 'sector_id')
 
 
-class ResDepartmentMonitorView(MonitorViewEx, models.Model):
-    _name = 'res.department.monitor.view'
+class ResSubsectorMonitorView(MonitorViewEx, models.Model):
+    _name = 'res.subsector.monitor.view'
     _auto = False
-    _budget_level = 'department_id'
+    _budget_level = 'subsector_id'
 
-    department_id = fields.Many2one(
-        'res.department', 'Department', readonly=True)
+    subsector_id = fields.Many2one(
+        'res.subsector', 'Subsector', readonly=True)
 
     def init(self, cr):
-        self._create_monitor_view(cr, self._table, 'department_id')
+        self._create_monitor_view(cr, self._table, 'subsector_id')
 
 
 class ResDivisionMonitorView(MonitorViewEx, models.Model):
@@ -188,16 +188,16 @@ class ResTagMonitorView(MonitorViewEx, models.Model):
 
 # ------------------ Project Based ------------------
 
-class ResMissionAreaMonitorView(MonitorViewEx, models.Model):
-    _name = 'res.mission.area.monitor.view'
+class ResFunctionalAreaMonitorView(MonitorViewEx, models.Model):
+    _name = 'res.functional.area.monitor.view'
     _auto = False
-    _budget_level = 'mission_area_id'
+    _budget_level = 'functional_area_id'
 
-    mission_area_id = fields.Many2one(
-        'res.mission.area', 'Mission Area', readonly=True)
+    functional_area_id = fields.Many2one(
+        'res.functional.area', 'Functional Area', readonly=True)
 
     def init(self, cr):
-        self._create_monitor_view(cr, self._table, 'mission_area_id')
+        self._create_monitor_view(cr, self._table, 'functional_area_id')
 
 
 class ResProgramGroupMonitorView(MonitorViewEx, models.Model):

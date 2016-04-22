@@ -47,7 +47,7 @@ class AccountInvoice(models.Model):
                                                      budget_level,
                                                      rec[budget_level],
                                                      rec['amount'],
-                                                     pu_id=rec[pu_field])
+                                                     pu_id=rec.get(pu_field))
                     if not res['budget_ok']:
                         raise UserError(res['message'])
         return True

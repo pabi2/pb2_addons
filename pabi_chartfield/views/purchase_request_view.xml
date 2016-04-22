@@ -13,7 +13,7 @@
                 	<field name="tag_type_id" invisible="1" />
                 	<field name="tag_id" invisible="1" />
                 	
-                	<field name="mission_area_id" invisible="1" />
+                	<field name="functional_area_id" invisible="1" />
                 	<field name="program_group_id" invisible="1" />
                 	<field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
@@ -21,10 +21,11 @@
                 	
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
-                    <field name="department_id" invisible="1"/>
+                    <field name="subsector_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
                     <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
                     
                     <field name="nstda_course_id" />
 
@@ -36,7 +37,7 @@
 	                	<field name="tag_type_id" invisible="1" />
 	                	<field name="tag_id" invisible="1" />
 	                	
-	                	<field name="mission_area_id" invisible="1" />
+	                	<field name="functional_area_id" invisible="1" />
 	                	<field name="program_group_id" invisible="1" />
 	                	<field name="program_id" invisible="1" />
 	                    <field name="project_group_id" invisible="1" />
@@ -44,10 +45,11 @@
 	                	
 	                    <field name="org_id" invisible="1" />
 	                    <field name="sector_id" invisible="1" />
-	                    <field name="department_id" invisible="1"/>
+	                    <field name="subsector_id" invisible="1"/>
 	                    <field name="division_id" invisible="1" />
 	                    <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
 	                    <field name="costcenter_id" invisible="1" />
+                    	<field name="taxbranch_id" invisible="1" />
                     
                     	<field name="nstda_course_id" />
                     	
@@ -67,7 +69,7 @@
                 	<field name="tag_type_id" invisible="1" />
                 	<field name="tag_id" invisible="1" />
                 	
-                	<field name="mission_area_id" invisible="1" />
+                	<field name="functional_area_id" invisible="1" />
                 	<field name="program_group_id" invisible="1" />
                 	<field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
@@ -75,10 +77,11 @@
                 	
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
-                    <field name="department_id" invisible="1"/>
+                    <field name="subsector_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
                     <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
                     
                     <field name="nstda_course_id" />
 
