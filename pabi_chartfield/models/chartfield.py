@@ -3,12 +3,12 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 
-# org -> sector -> subsector -> division -> section -> costcenter = taxbranch
+# org -> sector -> subsector -> division -> section -> costcenter
 #                                                       (mission)
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)    (type/tag)
 #        (org)           (org)        (org)         (org)         (org)
-# functional_area -> program_group -> program -> project_group -> project = taxbranch
+# functional_area -> program_group -> program -> project_group -> project
 #                                    (spa(s))                   (mission)
 
 CHART_VIEW = [
