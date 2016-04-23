@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm
+from openerp.exceptions import Warning as UserError
 from openerp.addons import decimal_precision as dp
 
 
@@ -71,21 +71,18 @@ class HRExpenseExpese(models.Model):
                                       ('company_id', '=',
                                        expense.company_id.id)])
             if not journal:
-                raise except_orm(
-                    _('Error!'),
+                raise UserError(
                     _("No expense journal found. Please make sure you "
                       "have a journal with type 'purchase' configured."))
             journal_id = journal[0].id
         # Partner, account_id, payment_term
         if expense.pay_to == 'employee':
             if not expense.employee_id.address_home_id:
-                raise except_orm(
-                    _('Error!'),
+                raise UserError(
                     _('The employee must have a home address.'))
             if not expense.employee_id.address_home_id.\
                     property_account_payable:
-                raise except_orm(
-                    _('Error!'),
+                raise UserError(
                     _('The employee must have a payable account '
                       'set on his home address.'))
         partner = (expense.pay_to == 'employee' and
@@ -112,7 +109,6 @@ class HRExpenseExpese(models.Model):
     @api.model
     def _choose_account_from_exp_line(self, exp_line, fpos=False):
         FiscalPos = self.env['account.fiscal.position']
-        Property = self.env['ir.property']
         account_id = False
         if exp_line.product_id:
             account_id = exp_line.product_id.property_account_expense.id
@@ -120,14 +116,12 @@ class HRExpenseExpese(models.Model):
                 categ = exp_line.product_id.categ_id
                 account_id = categ.property_account_expense_categ.id
             if not account_id:
-                raise except_orm(
-                    _('Error!'),
+                raise UserError(
                     _('Define an expense account for this '
                       'product: "%s" (id:%d).') %
                     (exp_line.product_id.name, exp_line.product_id.id,))
         else:
-            account_id = Property.get('property_account_expense_categ',
-                                      'product.category').id
+            account_id = exp_line._get_non_product_account_id()
         if fpos:
             fiscal_pos = FiscalPos.browse(fpos)
             account_id = fiscal_pos.map_account(account_id)
@@ -207,3 +201,9 @@ class HRExpenseLine(models.Model):
             taxes = [tax.id for tax in product.supplier_taxes_id]
             res['value']['tax_ids'] = [(6, 0, taxes)]
         return res
+
+    @api.model
+    def _get_non_product_account_id(self):
+        Property = self.env['ir.property']
+        return Property.get('property_account_expense_categ',
+                            'product.category').id
