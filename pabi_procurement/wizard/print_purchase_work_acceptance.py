@@ -48,8 +48,35 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         res['acceptance_line'] = items
         return res
 
+    @api.model
+    def _prepare_acceptance(self):
+        lines = []
+        vals = {}
+        PWAcceptance = self.env['purchase.work.acceptance']
+        vals['name'] = self.name
+        acceptance = PWAcceptance.create(vals)
+        for act_line in self.acceptance_line:
+            line_vals = {
+                'name': act_line.name,
+                'product_id': act_line.product_id.id or False,
+                'balance_qty': act_line.balance_qty,
+                'to_receive_qty': act_line.to_receive_qty,
+                'product_uom': act_line.product_uom.id,
+            }
+            lines.append([0, 0, line_vals])
+        acceptance.acceptance_line = lines
+        return acceptance
+
+    @api.multi
     def action_print(self):
-        True
+        act_close = {'type': 'ir.actions.act_window_close'}
+        active_ids = self._context.get('active_ids')
+        if active_ids is None:
+            return act_close
+        assert len(active_ids) == 1, "Only 1 Purchase Order expected"
+        acceptance = self._prepare_acceptance()
+        acceptance.order_id = active_ids[0]
+        return act_close
 
 
 class PrintPurchaseWorkAcceptanceItem(models.TransientModel):
@@ -66,9 +93,14 @@ class PrintPurchaseWorkAcceptanceItem(models.TransientModel):
         string='Purchase Order Line',
         required=True,
         readonly=True)
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+        readonly=True)
     name = fields.Char(
         string='Description',
         required=True,
+        readonly=True
     )
     balance_qty = fields.Float(
         string='Balance Quantity',
@@ -80,4 +112,7 @@ class PrintPurchaseWorkAcceptanceItem(models.TransientModel):
         digits_compute=dp.get_precision('Product Unit of Measure'),
         required=True
     )
-    product_uom = fields.Many2one('product.uom', string='UoM')
+    product_uom = fields.Many2one(
+        'product.uom',
+        string='UoM',
+    )

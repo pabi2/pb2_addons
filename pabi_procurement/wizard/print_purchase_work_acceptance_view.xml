@@ -15,6 +15,7 @@
                 <group>
                     <field name="acceptance_line">
                         <tree editable="bottom">
+                            <field name="product_id"/>
                             <field name="name"/>
                             <field name="balance_qty"/>
                             <field name="to_receive_qty"/>

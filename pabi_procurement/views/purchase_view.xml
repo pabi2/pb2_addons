@@ -69,6 +69,24 @@
                             </tree>
                         </field>
                     </page>
+                    <page string="Work Acceptance">
+                        <field name="acceptance_ids">
+                            <form string="Work Acceptance">
+                                <group>
+                                    <field name="name"/>
+                                </group>
+                                <field name="acceptance_line">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="name"/>
+                                        <field name="balance_qty"/>
+                                        <field name="to_receive_qty"/>
+                                        <field name="product_uom"/>
+                                    </tree>
+                                </field>
+                            </form>
+                        </field>
+                    </page>
                 </xpath>
                 <xpath expr="//field[@name='shipped']" position="after">
                     <field name="create_by"/>

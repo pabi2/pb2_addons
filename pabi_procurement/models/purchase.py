@@ -2,6 +2,7 @@
 
 from openerp import fields, models, api
 import time
+import openerp.addons.decimal_precision as dp
 
 
 class PurchaseOrder(models.Model):
@@ -123,6 +124,12 @@ class PurchaseOrder(models.Model):
         readonly=True,
         track_visibility='onchange',
     )
+    acceptance_ids = fields.One2many(
+        'purchase.work.acceptance',
+        'order_id',
+        string='Acceptance',
+        readonly=False,
+    )
 
     @api.one
     @api.depends('amount_total', 'fine_rate')
@@ -205,4 +212,55 @@ class PurchaseOrderCommittee(models.Model):
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+    )
+
+
+class PurchaseWorkAcceptance(models.Model):
+    _name = 'purchase.work.acceptance'
+    _description = 'Purchase Work Acceptance'
+
+    name = fields.Char(
+        string="Acceptance No.",
+    )
+    acceptance_line = fields.One2many(
+        'purchase.work.acceptance.line',
+        'acceptance_id',
+        string='Work Acceptance',
+    )
+    order_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+    )
+
+
+class PurchaseWorkAcceptanceLine(models.Model):
+    _name = 'purchase.work.acceptance.line'
+    _description = 'Purchase Work Acceptance Line'
+
+    acceptance_id = fields.Many2one(
+        'purchase.work.acceptance',
+        string='Acceptance Reference',
+        ondelete='cascade',
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+        readonly=True)
+    name = fields.Char(
+        string='Description',
+        required=True,
+    )
+    balance_qty = fields.Float(
+        string='Balance Quantity',
+        digits_compute=dp.get_precision('Product Unit of Measure'),
+        required=True,
+    )
+    to_receive_qty = fields.Float(
+        string='To Receive Quantity',
+        digits_compute=dp.get_precision('Product Unit of Measure'),
+        required=True,
+    )
+    product_uom = fields.Many2one(
+        'product.uom',
+        string='UoM',
     )
