@@ -80,12 +80,12 @@ class PurchaseRequest(models.Model):
         'res.currency',
         string='Currency',
         required=True,
-        default=140,
+        default=lambda self: self.company_id.currency_id.id,
     )
     currency_rate = fields.Float(
         string='Rate',
         digits=(12, 6),
-        default=1.000,
+        default=1.0,
         copy=False,
     )
     objective = fields.Text(

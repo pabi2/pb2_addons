@@ -5,7 +5,7 @@
             <field name="name">Print Work Acceptance</field>
             <field name="model">print.purchase.work.acceptance</field>
             <field name="arch" type="xml">
-             <form string="Print Work Acceptance" version="7.0">
+             <form string="Print Work Acceptance">
                 <p class="oe_grey">
                     Please in put acceptance detail.
                 </p>

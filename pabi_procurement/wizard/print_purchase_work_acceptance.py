@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, _, exceptions
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 
 
@@ -42,7 +43,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         order_lines = OrderLine.search([('order_id', 'in', order_ids)])
         for line in order_lines:
             if not hasattr(line, 'product_uom'):
-                raise exceptions.Warning(
+                raise UserError(
                     _("Unit of Measure is missing in some PO line."))
             items.append([0, 0, self._prepare_item(line)])
         res['acceptance_line'] = items

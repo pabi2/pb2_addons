@@ -245,7 +245,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
     product_id = fields.Many2one(
         'product.product',
         string='Product',
-        readonly=True)
+        readonly=True,
+    )
     name = fields.Char(
         string='Description',
         required=True,
@@ -253,6 +254,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     balance_qty = fields.Float(
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
+        readonly=True,
         required=True,
     )
     to_receive_qty = fields.Float(

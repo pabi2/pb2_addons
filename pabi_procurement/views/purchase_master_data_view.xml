@@ -9,7 +9,7 @@
             <field name="name">purchase.type.form</field>
             <field name="model">purchase.type</field>
             <field name="arch" type="xml">
-                <form string="Purchase Type" version="7.0">
+                <form string="Purchase Type">
                     <group>
                         <field name="name"/>
                     </group>
@@ -54,7 +54,7 @@
             <field name="name">purchase.prototype.form</field>
             <field name="model">purchase.prototype</field>
             <field name="arch" type="xml">
-                <form string="Purchase Prototype" version="7.0">
+                <form string="Purchase Prototype">
                     <group>
                         <field name="name"/>
                     </group>
@@ -99,7 +99,7 @@
             <field name="name">purchase.method.form</field>
             <field name="model">purchase.method</field>
             <field name="arch" type="xml">
-                <form string="Purchase Method" version="7.0">
+                <form string="Purchase Method">
                     <group>
                         <field name="name"/>
                     </group>
