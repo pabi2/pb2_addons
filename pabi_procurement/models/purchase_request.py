@@ -174,10 +174,10 @@ class PurchaseRequest(models.Model):
             'requested_by': u'Administrator',
             'responsible_user_id': u'Administrator',
             'date_approved': u'2016-01-31',
-            'prototype': u'True',
+            'purchase_prototype_id': u'Type 1',
             'total_budget_value': u'240000',
-            'purchase_type_id': u'AAAA',
-            'purchase_method_id': u'AAAA',
+            'purchase_type_id': u'Proc Type1',
+            'purchase_method_id': u'Buy',
             'description': u'Put your PR description here.',
             'objective': u'Put your PR objective here',
             'currency_id': u'THB',
@@ -188,17 +188,31 @@ class PurchaseRequest(models.Model):
             'operating_unit_id': u'Main Operating Unit',
             'line_ids': (
                 {
+                    'product_id': u'',
                     'name': u'Computer',
                     'product_qty': u'20',
                     'price_unit': u'10000',
+                    'product_uom_id': u'Unit(s)',
+                    'activity_id': u'ค่าวัสดุสำนักงาน',
                     'date_required': u'2016-01-31',
+                    'section_id': u'งานแผนกลยุทธ์คลัสเตอร์และโปรแกรมวิจัย',
+                    'project_id': u'',
+                    'nstda_course_id': u'',
+                    'fixed_asset': u'False',
                     'tax_ids': u'Tax 7.00%',
                 },
                 {
+                    'product_id': u'',
                     'name': u'HDD',
                     'product_qty': u'20',
                     'price_unit': u'1030',
+                    'product_uom_id': u'Unit(s)',
+                    'activity_id': u'ค่าวัสดุสำนักงาน',
                     'date_required': u'2016-01-31',
+                    'section_id': u'งานแผนกลยุทธ์คลัสเตอร์และโปรแกรมวิจัย',
+                    'project_id': u'',
+                    'nstda_course_id': u'',
+                    'fixed_asset': u'False',
                     'tax_ids': u'Tax 7.00%',
                 }
             ),
@@ -325,41 +339,41 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def generate_purchase_request(self, data_dict):
+        ret = {}
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data
-        fields, data = self._finalize_data_to_load(fields, data)
-        load_res = self.load(fields, data)
-        res_id = load_res['ids'] and load_res['ids'][0] or False
-        if not res_id:
-            return {
-                'is_success': False,
-                'result': False,
-                'messages': [m['message'] for m in load_res['messages']],
-            }
-        else:
-            # TODO: https://mobileapp.nstda.or.th/redmine/issues/326
-            res = self.browse(res_id)
-            attachment = self.create_purchase_request_attachment(data_dict,
-                                                                 res_id)
-            committee = self.create_purchase_request_committee(data_dict,
-                                                               res_id)
-            if not attachment or not committee:
-                return {
+        try:
+            fields, data = self._finalize_data_to_load(fields, data)
+            load_res = self.load(fields, data)
+            res_id = load_res['ids'] and load_res['ids'][0] or False
+            if not res_id:
+                ret = {
                     'is_success': False,
                     'result': False,
-                    'messages': _('Error on create attachment '
-                                  'or committee list'),
+                    'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                return {
-                    'is_success': True,
-                    'result': {
-                        'request_id': res.id,
-                        'name': res.name,
-                    },
-                    'messages': _('PR has been created.'),
-                }
+                    res = self.browse(res_id)
+                    self.create_purchase_request_attachment(data_dict, res_id)
+                    self.create_purchase_request_committee(data_dict, res_id)
+                    ret = {
+                        'is_success': True,
+                        'result': {
+                            'request_id': res.id,
+                            'name': res.name,
+                        },
+                        'messages': _('PR has been created.'),
+                    }
+            self._cr.commit()
+        except Exception:
+            ret = {
+                'is_success': False,
+                'result': False,
+                'messages': _('There is something wrong while creating PR.'),
+            }
+            self._cr.rollback()
+        return ret
 
 
 class PurchaseRequestLine(models.Model):
