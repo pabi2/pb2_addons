@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 import ast
 
 
@@ -102,7 +102,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def check_status_request_line(self):
         for item in self.item_ids:
             if item.request_id.state != 'approved':
-                raise Warning(
+                raise UserError(
                     _("Some Request hasn't been accepted yet : %s"
                       % (item.request_id.name,))
                 )
