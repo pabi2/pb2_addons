@@ -1,13 +1,16 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="purchase_order_form" >
+        <record model="ir.ui.view" id="view_purchase_order_form" >
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>
-            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="inherit_id" ref="purchase_split_quote2order.view_purchase_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_ref']" position="after">
                     <field name="date_reference" />
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']" position="before">
+                    <button name="%(action_print_purchase_work_acceptance)d" type="action" states="approved" groups="purchase.group_purchase_manager" string="Print Work Acceptance"/>
                 </xpath>
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field name="mycontract_id" />
@@ -64,6 +67,24 @@
                                 <field name="responsible"/>
                                 <field name="committee_type"/>
                             </tree>
+                        </field>
+                    </page>
+                    <page string="Work Acceptance">
+                        <field name="acceptance_ids">
+                            <form string="Work Acceptance">
+                                <group>
+                                    <field name="name"/>
+                                </group>
+                                <field name="acceptance_line">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="name"/>
+                                        <field name="balance_qty"/>
+                                        <field name="to_receive_qty"/>
+                                        <field name="product_uom"/>
+                                    </tree>
+                                </field>
+                            </form>
                         </field>
                     </page>
                 </xpath>

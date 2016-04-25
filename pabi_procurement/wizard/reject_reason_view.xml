@@ -5,7 +5,7 @@
             <field name="name">Reject Reason</field>
             <field name="model">purchase.requisition.reject</field>
             <field name="arch" type="xml">
-             <form string="Reject Reason" version="7.0">
+             <form string="Reject Reason">
                 <p class="oe_grey">
                     Type in reason for Call for Bids rejection
                 </p>
