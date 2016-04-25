@@ -93,15 +93,17 @@ class PrintPurchaseWorkAcceptanceItem(models.TransientModel):
         'purchase.order.line',
         string='Purchase Order Line',
         required=True,
-        readonly=True)
+        readonly=True,
+    )
     product_id = fields.Many2one(
         'product.product',
         string='Product',
-        readonly=True)
+        readonly=True,
+    )
     name = fields.Char(
         string='Description',
         required=True,
-        readonly=True
+        readonly=True,
     )
     balance_qty = fields.Float(
         string='Balance Quantity',
@@ -111,7 +113,7 @@ class PrintPurchaseWorkAcceptanceItem(models.TransientModel):
     to_receive_qty = fields.Float(
         string='To Receive Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
-        required=True
+        required=True,
     )
     product_uom = fields.Many2one(
         'product.uom',
