@@ -6,14 +6,19 @@
     "category": "Uncategorized",
     "description": """
 
-* Load 3 data: Warehouses, Locations, Picking Types
+Load 3 data: Warehouses, Locations, Picking Types
+
+Note:
+
+* This module will be used only with no Demo data (it conflicts)
+* Currently this module is marked as uninstallable
 
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitit U.,",
     "license": "AGPL-3",
     "application": False,
-    "installable": True,
+    "installable": False,  # conflict with demo database
     "depends": [
         "purchase",
         "stock",
