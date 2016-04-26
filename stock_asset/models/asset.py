@@ -22,8 +22,8 @@
 from openerp import models, fields, api
 
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
 
     financial_asset = fields.Boolean(string='Is a financial Asset')
 
@@ -31,7 +31,7 @@ class ProductProduct(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    generate_asset = fields.Boolean(string='Generate Asset')
+    generate_asset = fields.Boolean(string='Generate Asset',)
 
     @api.multi
     def write(self, vals):
