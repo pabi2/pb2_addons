@@ -5,23 +5,22 @@
             <field name="name">stock.move.tree</field>
             <field name="model">stock.move</field>
             <field name="inherit_id" ref="stock.view_move_picking_tree"/>
-            <field name="type">form</field>
+            <field name="type">tree</field>
             <field name="arch" type="xml">
                 <field name="state" position="after">
-                    <field name="generate_asset" invisible="1"/>
+                    <field name="generate_asset"/>
                 </field>
             </field>
         </record>
         
-        <record id="view_move_picking_form_inherit" model="ir.ui.view">
-            <field name="name">stock.move.tree</field>
+        <record model="ir.ui.view" id="view_move_picking_form" >
+            <field name="name">stock.move.form</field>
             <field name="model">stock.move</field>
             <field name="inherit_id" ref="stock.view_move_picking_form"/>
-            <field name="type">form</field>
             <field name="arch" type="xml">
-                <field name="location_dest_id" position="after">
-                    <field name="generate_asset" invisible="1"/>
-                </field>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="generate_asset" />
+                </xpath>
             </field>
         </record>
         
@@ -68,18 +67,18 @@
                 </field>
             </field>       
         </record>
-        
-        <record id="view_asset_product_form_inherit" model="ir.ui.view">
-            <field name="name">product.product.form</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_normal_form_view"/>
+
+        <record id="product_template_form_view" model="ir.ui.view">
+            <field name="name">product.template.common.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <field name="cost_method" position="before">
+                <field name="standard_price" position="before">
                     <field name="financial_asset"/>
                 </field>
-            </field>       
+            </field>
         </record>
-        
+
     </data>
 </openerp>
