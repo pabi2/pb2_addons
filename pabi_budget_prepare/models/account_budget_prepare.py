@@ -10,13 +10,6 @@ class AccountBudgetPrepare(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
-        states={'published': [('readonly', True)]},
-    )
-    code = fields.Char(
-        string='Code',
-        size=16,
-        required=True,
-        states={'published': [('readonly', True)]},
     )
     creating_user_id = fields.Many2one(
         'res.users',
@@ -25,7 +18,28 @@ class AccountBudgetPrepare(models.Model):
     )
     validating_user_id = fields.Many2one(
         'res.users',
-        string='Responsible User',
+        copy=False,
+        string='Validating User',
+    )
+    date = fields.Date(
+        string='Date',
+        copy=False,
+        default=fields.Date.today(),
+    )
+    date_submit = fields.Date(
+        string='Submitted Date',
+        copy=False,
+        readonly=True,
+    )
+    date_approve = fields.Date(
+        string='Approved Date',
+        copy=False,
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+        required=True,
     )
     date_from = fields.Date(
         string='Start Date',
@@ -39,44 +53,50 @@ class AccountBudgetPrepare(models.Model):
         readonly=True,
         store=True,
     )
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
+    program_id = fields.Many2one(
+        'res.program',
+        string='Program',
+        required='True',
+    )
+    functional_area_id = fields.Many2one(
+        'res.functional.area',
+        string='Functional Area',
+        compute='_compute_all',
+    )
+    program_group_id = fields.Many2one(
+        'res.program.group',
+        string='Program Group',
+        compute='_compute_all',
     )
     state = fields.Selection(
-        [('plan', 'Draft'),
+        [('draft', 'Draft'),
+         ('submit', 'Submitted'),
          ('cancel', 'Cancelled'),
-         ('policy', 'Submited'),
-         ('release', 'Approved'),
-         ('publish', 'Released')],
+         ('reject', 'Rejected'),
+         ('approve', 'Approved')],
         string='Status',
-        default='plan',
+        default='draft',
         index=True,
         required=True,
         readonly=True,
         copy=False,
     )
-    prepare_line_ids = fields.One2many(
+    project_line_ids = fields.One2many(
         'account.budget.prepare.line',
         'prepare_id',
         string='Budget Prepare Lines',
-        states={'publish': [('readonly', True)]},
         copy=True,
     )
-    continue_prepare_line_ids = fields.One2many(
+    performance_line_ids = fields.One2many(
         'account.budget.prepare.line',
         'prepare_id',
-        string='Continue Budget Prepare Lines',
-        states={'publish': [('readonly', True)]},
-        domain=[('project_kind', '=', 'continue')],
+        string='Budget Prepare Lines',
         copy=True,
     )
-    new_prepare_line_ids = fields.One2many(
+    budget_line_ids = fields.One2many(
         'account.budget.prepare.line',
         'prepare_id',
-        string='new Budget Prepare Lines',
-        states={'publish': [('readonly', True)]},
-        domain=[('project_kind', '=', 'new')],
+        string='Budget Prepare Lines',
         copy=True,
     )
     company_id = fields.Many2one(
@@ -84,24 +104,27 @@ class AccountBudgetPrepare(models.Model):
         string='Company',
         required=True,
         default=lambda self: self.env[
-            'res.company']._company_default_get('account.budget')
+            'res.company']._company_default_get('account.budget'),
     )
-    fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        string='Fiscal Year',
-        required=True,
+    amount_budget_request = fields.Float(
+        string='Budget Request',
     )
     amount_budget_policy = fields.Float(
         string='Budget Policy',
-        digits_compute=dp.get_precision('Account'),
     )
     amount_budget_release = fields.Float(
         string='Budget Release',
-        digits_compute=dp.get_precision('Account'),
     )
     input_file = fields.Binary(
         string='Import myProject (.xlsx)',
     )
+
+    @api.multi
+    @api.depends('program_id')
+    def _compute_all(self):
+        for rec in self:
+            rec.program_group_id = rec.program_id.program_group_id
+            rec.functional_area_id = rec.program_group_id.functional_area_id
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -110,21 +133,16 @@ class AccountBudgetPrepare(models.Model):
         self.date_to = self.fiscalyear_id.date_stop
 
     @api.multi
-    def budget_release(self):
+    def budget_submit(self):
         self.write({
-            'state': 'release',
-            'validating_user_id': self._uid,
+            'state': 'submit',
+            'date_submit': fields.Date.today(),
         })
         return True
 
     @api.multi
-    def budget_policy(self):
-        self.write({'state': 'policy'})
-        return True
-
-    @api.multi
-    def budget_plan(self):
-        self.write({'state': 'plan'})
+    def budget_draft(self):
+        self.write({'state': 'draft'})
         return True
 
     @api.multi
@@ -133,8 +151,17 @@ class AccountBudgetPrepare(models.Model):
         return True
 
     @api.multi
-    def budget_publish(self):
-        self.write({'state': 'publish'})
+    def budget_reject(self):
+        self.write({'state': 'reject'})
+        return True
+
+    @api.multi
+    def budget_approve(self):
+        self.write({
+            'state': 'approve',
+            'validating_user_id': self._uid,
+            'date_approve': fields.Date.today(),
+        })
         return True
 
 
@@ -143,6 +170,12 @@ class AccountBudgetPrepareLine(models.Model):
     _name = "account.budget.prepare.line"
     _description = "Budget Line"
 
+    c_or_n = fields.Selection(
+        [('continue', 'Continue'),
+         ('new', 'New')],
+        string='C/N',
+        default='new',
+    )
     prepare_id = fields.Many2one(
         'account.budget.prepare',
         string='Budget Prepare',
@@ -158,169 +191,206 @@ class AccountBudgetPrepareLine(models.Model):
         store=True,
         readonly=True,
     )
-    # Dimensions
-    project_kind = fields.Selection(
-        [('continue', 'Continue'),
-         ('new', 'New')],
-        string='C/N',
-        default='new',
-    )
+    # Project Structure
     project_id = fields.Many2one(
         'res.project',
         string='Project',
     )
     functional_area_id = fields.Many2one(
         'res.functional.area',
-        string='Functional_Area',
+        string='Functional Area',
+        compute='_compute_all',
+        store=True,  # Follow header
     )
     program_group_id = fields.Many2one(
         'res.program.group',
-        string='Program_Group',
+        string='Program Group',
+        compute='_compute_all',
+        store=True,  # Follow header
     )
     program_id = fields.Many2one(
         'res.program',
         string='Program',
+        compute='_compute_all',
+        store=True,  # Follow header
     )
     project_group_id = fields.Many2one(
         'res.project.group',
-        string='Project_Group',
+        string='Project Group',
     )
     mission_id = fields.Many2one(
         'res.mission',
         string='Mission',
     )
-    project_type = fields.Selection(
+    project_kind = fields.Selection(
         [('research', 'Research'),
          ('non_research', 'Non-Research')],
-        string='Project_Type',
+        string='Research / Non-Research',
+    )
+    project_objective = fields.Char(
+        string='Objective',
+    )
+    project_type = fields.Char(
+        string='Project Type',
     )
     org_id = fields.Many2one(
         'res.org',
         string='Org',
     )
-    main_program = fields.Char(
-        string='Main_Program',
-    )
-    project_category = fields.Char(
-        string='Project_Category',
-    )
-    section_id = fields.Many2one(
-        'res.section',
-        string='Section',
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
     )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
     )
-    manager_user_id = fields.Many2one(
-        'res.users',
-        string='Project_Manager',
+    # Project Info (myProject)
+    manager_employee_id = fields.Many2one(
+        'hr.employee',
+        string='Project Manager',
     )
     date_from = fields.Date(
-        string='Start_Date',
+        string='Start Date',
     )
     date_to = fields.Date(
-        string='End_Date',
+        string='End Date',
     )
-    project_duration_yr = fields.Integer(
-        string='Project_Duration_(Yrs)',
+    project_duration = fields.Integer(
+        string='Duration',
     )
     project_status = fields.Char(
-        string='Project_Status',
+        string='Project Status',
     )
-    # Monetary
-    planned_amount = fields.Float(
-        string='Planned_Amount',
-        digits_compute=dp.get_precision('Account'),
+    analyst_employee_id = fields.Many2one(
+        'hr.employee',
+        string='Project Analyst',
     )
-    revenue_planned = fields.Float(
-        string='Revenue_Planned',
-        digits_compute=dp.get_precision('Account'),
+    ref_program_id = fields.Many2one(
+        'res.program',
+        string='Program Reference',
     )
-    revenue_to_date = fields.Float(
-        string='Revenue_Actual',
-        digits_compute=dp.get_precision('Account'),
+    external_fund_type = fields.Selection(
+        [('government', 'Government'),
+         ('private', 'Private Organization'),
+         ('oversea', 'Oversea')],
+        string='External Fund Type',
     )
-    revenue_this_year = fields.Float(
-        string='Revenue_Actual_(this_year)',
-        digits_compute=dp.get_precision('Account'),
+    external_fund_name = fields.Char(
+        string='External Fund Name',
     )
-    total_budget_planned = fields.Float(
-        string='Total_Budget_Planned',
-        digits_compute=dp.get_precision('Account'),
+    priority = fields.Char(
+        string='Priority',
     )
-    total_budget_expense = fields.Float(
-        string='Total_Expense',
-        digits_compute=dp.get_precision('Account'),
+    # Project Performance (myPerformance)
+    pfm_publications = fields.Integer(
+        string='Publication',
     )
-    total_budget_commit = fields.Float(
-        string='Total_Commitment',
-        digits_compute=dp.get_precision('Account'),
+    pfm_patents = fields.Integer(
+        string='Patent',
     )
-    total_budget_balance = fields.Float(
-        string='Total_Balance',
-        digits_compute=dp.get_precision('Account'),
+    pfm_petty_patents = fields.Integer(
+        string='Petty Patent',
     )
-    yearly_budget_current = fields.Float(
-        string='Yearly_Budget_Current',
-        digits_compute=dp.get_precision('Account'),
+    pfm_copyrights = fields.Integer(
+        string='Copy Right',
     )
-    yearly_budget_release = fields.Float(
-        string='Yearly_Budget_Release',
-        digits_compute=dp.get_precision('Account'),
+    pfm_trademarks = fields.Integer(
+        string='Trademark',
     )
-    yearly_budget_commit = fields.Float(
-        string='Yearly_Commitment',
-        digits_compute=dp.get_precision('Account'),
+    pfm_plant_varieties = fields.Integer(
+        string='Plant Varieties',
     )
-    yearly_budget_expense = fields.Float(
-        string='Yearly_Expense',
-        digits_compute=dp.get_precision('Account'),
+    pfm_laboratory_prototypes = fields.Integer(
+        string='Laboratory Prototype',
     )
-    yearly_budget_balance = fields.Float(
-        string='Yearly_Balance',
-        digits_compute=dp.get_precision('Account'),
+    pfm_field_prototypes = fields.Integer(
+        string='Field Prototype',
     )
-    amount_fy1_q1 = fields.Float(
+    pfm_commercial_prototypes = fields.Integer(
+        string='Commercial Prototype',
+    )
+    pfm_revenue_budget = fields.Float(
+        string='Revenue Budget',
+    )
+    pfm_revenue_overall_plan = fields.Float(
+        string='Overall Revenue Plan',
+    )
+    pfm_revenue_accum = fields.Float(
+        string='Accum. Revenue',
+    )
+    pfm_revenue_current_year = fields.Float(
+        string='Current Year Revenue',
+    )
+    pfm_expense_overall_budget = fields.Float(
+        string='Overall Expense Budget',
+    )
+    pfm_expense_accum = fields.Float(
+        string='Accum. Expense',
+    )
+    pfm_commitment_accum = fields.Float(
+        string='Accum. Commitment',
+    )
+    pfm_expense_remaining_budget = fields.Float(
+        string='Remaining Expense Budget',
+    )
+    # Budget Control
+    cur_current_budget = fields.Float(
+        string='Current Budget',
+    )
+    cur_release_budget = fields.Float(
+        string='Release Budget',
+    )
+    cur_commit_budget = fields.Float(
+        string='Commit Budget',
+    )
+    cur_actual = fields.Float(
+        string='Actual',
+    )
+    cur_remaining_budget = fields.Float(
+        string='Remaining Budget',
+    )
+    cur_estimated_commitment = fields.Float(
+        string='Estimated Commitment',
+    )
+    fy1q1 = fields.Float(
         string='FY1/Q1',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy1_q2 = fields.Float(
+    fy1q2 = fields.Float(
         string='FY1/Q2',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy1_q3 = fields.Float(
+    fy1q3 = fields.Float(
         string='FY1/Q3',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_year1_q4 = fields.Float(
+    fy1q4 = fields.Float(
         string='FY1/Q4',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy1 = fields.Float(
+    fy1 = fields.Float(
         string='FY1',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy2 = fields.Float(
+    fy2 = fields.Float(
         string='FY2',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy3 = fields.Float(
+    fy3 = fields.Float(
         string='FY3',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy4 = fields.Float(
+    fy4 = fields.Float(
         string='FY4',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_fy5 = fields.Float(
+    fy5 = fields.Float(
         string='FY5',
-        digits_compute=dp.get_precision('Account'),
     )
-    amount_total = fields.Float(
-        string='Amount_Total',
-        digits_compute=dp.get_precision('Account'),
+    total = fields.Float(
+        string='Total',
     )
 
+    @api.multi
+    @api.depends('prepare_id.program_id')
+    def _compute_all(self):
+        for rec in self:
+            # Default for functional area and program group
+            rec.program_id = rec.prepare_id.program_id
+            rec.program_group_id = rec.program_id.program_group_id
+            rec.functional_area_id = rec.program_group_id.functional_area_id
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -10,27 +10,26 @@
         <field name="on_create">True</field>
     </record>
 
-    <record model="workflow.activity" id="act_plan">
+    <record model="workflow.activity" id="act_draft">
         <field name="wkf_id" ref="wkf_account_budget_prepare" />
         <field name="flow_start">True</field>
-        <field name="name">plan</field>
-        <field name="action">write({'state':'plan'})</field>
+        <field name="name">draft</field>
+        <field name="action">write({'state':'draft'})</field>
         <field name="kind">function</field>
     </record>
 
-    <record model="workflow.activity" id="act_policy">
+    <record model="workflow.activity" id="act_submit">
         <field name="wkf_id" ref="wkf_account_budget_prepare" />
-        <field name="name">policy</field>
+        <field name="name">submit</field>
         <field name="kind">function</field>
-        <field name="action">budget_policy()</field>
-        <field name="split_mode">OR</field>
+        <field name="action">budget_submit()</field>
     </record>
 
-    <record model="workflow.activity" id="act_release">
+    <record model="workflow.activity" id="act_reject">
         <field name="wkf_id" ref="wkf_account_budget_prepare" />
-        <field name="name">release</field>
+        <field name="name">reject</field>
         <field name="kind">function</field>
-        <field name="action">budget_release()</field>
+        <field name="action">budget_reject()</field>
     </record>
 
     <record model="workflow.activity" id="act_cancel">
@@ -40,50 +39,49 @@
         <field name="action">budget_cancel()</field>
     </record>
 
-    <record model="workflow.activity" id="act_publish">
+    <record model="workflow.activity" id="act_approve">
         <field name="wkf_id" ref="wkf_account_budget_prepare" />
-        <field name="name">publish</field>
+        <field name="name">approve</field>
         <field name="flow_stop">True</field>
         <field name="kind">stopall</field>
-        <field name="action">budget_publish()</field>
-        <field name="join_mode">XOR</field>
-
+        <field name="action">budget_approve()</field>
     </record>
 
     <record model="workflow.transition" id="t1">
-        <field name="act_from" ref="act_plan" />
-        <field name="act_to" ref="act_policy" />
-        <field name="signal">policy</field>
+        <field name="act_from" ref="act_draft" />
+        <field name="act_to" ref="act_submit" />
+        <field name="signal">submit</field>
     </record>
 
     <record model="workflow.transition" id="t2">
-        <field name="act_from" ref="act_policy" />
-        <field name="act_to" ref="act_release" />
-        <field name="signal">release</field>
+        <field name="act_from" ref="act_submit" />
+        <field name="act_to" ref="act_approve" />
+        <field name="signal">approve</field>
     </record>
 
     <record model="workflow.transition" id="t3">
-        <field name="act_from" ref="act_policy" />
-        <field name="act_to" ref="act_cancel" />
-        <field name="signal">cancel</field>
+        <field name="act_from" ref="act_submit" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">reject</field>
     </record>
 
     <record model="workflow.transition" id="t4">
-        <field name="act_from" ref="act_release" />
+        <field name="act_from" ref="act_reject" />
         <field name="act_to" ref="act_cancel" />
         <field name="signal">cancel</field>
     </record>
 
     <record model="workflow.transition" id="t5">
-        <field name="act_from" ref="act_release" />
-        <field name="act_to" ref="act_publish" />
-        <field name="signal">publish</field>
+        <field name="act_from" ref="act_draft" />
+        <field name="act_to" ref="act_cancel" />
+        <field name="signal">cancel</field>
     </record>
+    
 
     <record model="workflow.transition" id="t6">
         <field name="act_from" ref="act_cancel" />
-        <field name="act_to" ref="act_plan" />
-        <field name="signal">plan</field>
+        <field name="act_to" ref="act_draft" />
+        <field name="signal">draft</field>
     </record>
 
 </data>
