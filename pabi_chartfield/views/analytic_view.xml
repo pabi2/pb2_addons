@@ -28,7 +28,8 @@
                     <field name="costcenter_id"/>
                     <field name="taxbranch_id" />
                     
-                    <field name="nstda_course_id" />   
+				    <field name="cost_control_type_id"/>
+                    <field name="cost_control_id" />   
                     	                 
                 </xpath> 
             </field>
@@ -59,7 +60,8 @@
                     <field name="costcenter_id"/>
                     <field name="taxbranch_id" />
                     
-                    <field name="nstda_course_id" />
+                    <field name="cost_control_type_id"/>
+                    <field name="cost_control_id" />
                     
                 </field>
             </field>
@@ -91,7 +93,8 @@
                     <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
                     <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
                     
-                    <filter string="NSTDA Course" context="{'group_by':'nstda_course_id'}"/>
+                    <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
+                    <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
                     
                 </xpath>
             </field>

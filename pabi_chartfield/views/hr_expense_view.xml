@@ -31,8 +31,9 @@
                     <field name="section_id" attrs="{'required': [('project_id','=',False)]}"/>
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
-
-                    <field name="nstda_course_id" />
+                    
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" />
                     
                 </xpath>
             </field>
