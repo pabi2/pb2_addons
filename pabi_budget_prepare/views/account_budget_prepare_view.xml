@@ -57,6 +57,8 @@
                             <field name="project_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
                                 <tree string="Budget Lines" editable="bottom">
 			
+									<field name="c_or_n" />
+			
 									<field name="project_id" />
 									
 									<field name="functional_area_id" />
@@ -87,6 +89,8 @@
                             <field name="performance_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
                                 <tree string="Budget Lines" editable="bottom">
 			
+									<field name="c_or_n" />
+									
 									<field name="project_id" />
 									
 									<field name="pfm_publications" sum="Total"/>
@@ -112,6 +116,8 @@
                         <page string="Budget Control">
                             <field name="budget_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
                                 <tree string="Budget Lines" editable="bottom">
+			
+									<field name="c_or_n" />
 
 									<field name="project_id" />
 			
@@ -193,24 +199,27 @@
             <field name="arch" type="xml">
                 <search string="Search Budget Prepare Line">
                     <group expand="0" string="Group By">
-                    <!-- 
-                        <filter name="project_kind" string="C/N" domain="[]" context="{'group_by':'project_kind'}"/>
-                        <filter name="project_id" string="Project" domain="[]" context="{'group_by':'project_id'}"/>
-                        <filter name="functional_area_id" string="Functional Area" domain="[]" context="{'group_by':'functional_area_id'}"/>
-                        <filter name="program_group_id" string="Program Group" domain="[]" context="{'group_by':'program_group_id'}"/>
-                        <filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
-                        <filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
-                        <filter name="mission_id" string="MIssion" domain="[]" context="{'group_by':'mission_id'}"/>
-                        <filter name="project_type" string="Project Type" domain="[]" context="{'group_by':'project_type'}"/>
-                        <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
-                        <filter name="main_program" string="Main Program" domain="[]" context="{'group_by':'main_program'}"/>
-                        <filter name="project_category" string="Project Category" domain="[]" context="{'group_by':'project_category'}"/>
-                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
-                        <filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
-                        <filter name="manager_user_id" string="Manager" domain="[]" context="{'group_by':'manager_user_id'}"/>
-                        <filter name="project_duration_yr" string="Project Duration" domain="[]" context="{'group_by':'project_duration_yr'}"/>
-                        <filter name="project_status" string="Project Status" domain="[]" context="{'group_by':'project_status'}"/>                    
-               	 -->
+	                    <filter name="c_or_n" string="C/N" domain="[]" context="{'group_by':'c_or_n'}"/>
+						<filter name="project_id" string="Project" domain="[]" context="{'group_by':'project_id'}"/>
+						<filter name="functional_area_id" string="Functional Area" domain="[]" context="{'group_by':'functional_area_id'}"/>
+						<filter name="program_group_id" string="Program Group" domain="[]" context="{'group_by':'program_group_id'}"/>
+						<filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
+						<filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
+						<filter name="mission_id" string="Mission" domain="[]" context="{'group_by':'mission_id'}"/>
+						<filter name="project_kind" string="Project Kind" domain="[]" context="{'group_by':'project_kind'}"/>
+						<filter name="project_objective" string="Objective" domain="[]" context="{'group_by':'project_objective'}"/>
+						<filter name="project_type" string="Type" domain="[]" context="{'group_by':'project_type'}"/>
+						<filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
+						<filter name="costcenter_id" string="Costcenter" domain="[]" context="{'group_by':'costcenter_id'}"/>
+						<filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
+						<filter name="manager_employee_id" string="Manager" domain="[]" context="{'group_by':'manager_employee_id'}"/>
+						<filter name="project_duration" string="Duration" domain="[]" context="{'group_by':'project_duration'}"/>
+						<filter name="project_status" string="Status" domain="[]" context="{'group_by':'project_status'}"/>
+						<filter name="analyst_employee_id" string="Analyst" domain="[]" context="{'group_by':'analyst_employee_id'}"/>
+						<filter name="ref_program_id" string="Ref Program" domain="[]" context="{'group_by':'ref_program_id'}"/>
+						<filter name="external_fund_type" string="Ext. Fund Type" domain="[]" context="{'group_by':'external_fund_type'}"/>
+						<filter name="external_fund_name" string="Ext. Fund Name" domain="[]" context="{'group_by':'external_fund_name'}"/>
+						<filter name="priority" string="Priority" domain="[]" context="{'group_by':'priority'}"/>
                	</group>
                </search>
             </field>
@@ -221,11 +230,67 @@
             <field name="model">account.budget.prepare.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Prepare Lines">
+            
+   					<field name="c_or_n" invisible="1" />
+   					<field name="project_id" invisible="0" />
+					
+					<field name="functional_area_id" invisible="1" />
+					<field name="program_group_id" invisible="1" />
+					<field name="program_id" invisible="1" />
+					<field name="project_group_id" invisible="1" />
+					<field name="mission_id" invisible="1" />
+					<field name="project_kind" invisible="1" />
+					<field name="project_objective" invisible="1" />
+					<field name="project_type" invisible="1" />
+					<field name="org_id" invisible="1" />
+					<field name="costcenter_id" invisible="1" />
+					<field name="division_id" invisible="1" />
+					<field name="manager_employee_id" invisible="1" />
+					<field name="date_from" invisible="1" />
+					<field name="date_to" invisible="1" />
+					<field name="project_duration" invisible="1" />
+					<field name="project_status" invisible="1" />
+					<field name="analyst_employee_id" invisible="1" />
+					<field name="ref_program_id" invisible="1" />
+					<field name="external_fund_type" invisible="1" />
+					<field name="external_fund_name" invisible="1" />
+					<field name="priority" invisible="1" />
+					
+					<field name="pfm_publications" sum="Total"/>
+					<field name="pfm_patents" sum="Total" />
+					<field name="pfm_petty_patents" sum="Total" />
+					<field name="pfm_copyrights" sum="Total" />
+					<field name="pfm_trademarks" sum="Total" />
+					<field name="pfm_plant_varieties" sum="Total" />
+					<field name="pfm_laboratory_prototypes" sum="Total" />
+					<field name="pfm_field_prototypes" sum="Total" />
+					<field name="pfm_commercial_prototypes" sum="Total" />
+					<field name="pfm_revenue_budget" sum="Total" />
+					<field name="pfm_revenue_overall_plan" sum="Total" />
+					<field name="pfm_revenue_accum" sum="Total" />
+					<field name="pfm_revenue_current_year" sum="Total" />
+					<field name="pfm_expense_overall_budget" sum="Total" />
+					<field name="pfm_expense_accum" sum="Total" />
+					<field name="pfm_commitment_accum" sum="Total" />
+					<field name="pfm_expense_remaining_budget" sum="Total" />
+
+					<field name="cur_current_budget" sum="Total" />
+					<field name="cur_release_budget" sum="Total" />
+					<field name="cur_commit_budget" sum="Total" />
+					<field name="cur_actual" sum="Total" />
+					<field name="cur_remaining_budget" sum="Total" />
+					<field name="cur_estimated_commitment" sum="Total" />
+					<field name="fy1q1" sum="Total" />
+					<field name="fy1q2" sum="Total" />
+					<field name="fy1q3" sum="Total" />
+					<field name="fy1q4" sum="Total" />
+					<field name="fy1" sum="Total" />
+					<field name="fy2" sum="Total" />
+					<field name="fy3" sum="Total" />
+					<field name="fy4" sum="Total" />
+					<field name="fy5" sum="Total" />
+					<field name="total" sum="Total" />
                 
-                
-                
-                
-                  
                 </tree>
             </field>
         </record>
