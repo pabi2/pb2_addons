@@ -80,7 +80,7 @@ class PurchaseRequest(models.Model):
         'res.currency',
         string='Currency',
         required=True,
-        default=lambda self: self.company_id.currency_id.id,
+        default=lambda self: self.company_id.currency_id,
     )
     currency_rate = fields.Float(
         string='Rate',

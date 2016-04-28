@@ -16,6 +16,8 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/cost_control_data.xml',
+        'data/cost.control.csv',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
         'views/analytic_view.xml',

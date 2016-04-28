@@ -36,14 +36,15 @@ CHART_FIELDS = [
     ('costcenter_id', ['unit_base']),
     ('taxbranch_id', ['unit_base', 'project_base']),
     # Non Binding
-    ('nstda_course_id', ['unit_base', 'project_base']),
+    ('cost_control_type_id', ['unit_base', 'project_base']),
+    ('cost_control_id', ['unit_base', 'project_base']),
     ]
 
 
 # Extra non-binding chartfield (similar to activity)
-class NSTDACourse(models.Model):
-    _name = 'nstda.course'
-    _description = 'NSTDA Courses'
+class CostControlType(models.Model):
+    _name = 'cost.control.type'
+    _description = 'Cost Control Type'
 
     name = fields.Char(
         string='Name',
@@ -52,6 +53,34 @@ class NSTDACourse(models.Model):
     description = fields.Text(
         string='Description',
     )
+
+
+class CostControl(models.Model):
+    _name = 'cost.control'
+    _description = 'Cost Control'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    description = fields.Text(
+        string='Description',
+    )
+    cost_control_type_id = fields.Many2one(
+        'cost.control.type',
+        string='Cost Control Type',
+        required=True,
+    )
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for cc in self:
+            result.append(
+                (cc.id,
+                 "%s / %s" % (cc.cost_control_type_id.name or '-',
+                              cc.name or '-')))
+        return result
 
 
 class HeaderTaxBranch(object):
@@ -147,10 +176,18 @@ class ChartField(object):
         string='Tax Branch',
     )
     # Non Binding
-    nstda_course_id = fields.Many2one(
-        'nstda.course',
-        string='NSTDA Course',
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Cost Control',
     )
+    cost_control_type_id = fields.Many2one(
+        'cost.control.type',
+        string='Cost Control Type',
+    )
+
+    @api.onchange('section_id')
+    def _onchange_cost_control_id(self):
+        self.cost_control_type_id = self.cost_control_id.cost_control_type_id
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_nstda_course,access_nstda_course,model_nstda_course,,1,0,0,0
+access_cost_control,access_cost_control,model_cost_control,,1,0,0,0
+access_cost_control_type,access_cost_control_type,model_cost_control_type,,1,0,0,0
