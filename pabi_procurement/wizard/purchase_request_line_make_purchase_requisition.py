@@ -24,6 +24,9 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         taxes = [(4, tax.id) for tax in item.line_id.tax_ids]
         res.update({
             'price_unit': item.price_unit,
+            'price_standard': item.price_unit,
+            'schedule_date': item.date_required,
+            'fixed_asset': item.fixed_asset,
             'product_name': item.name,
             'tax_ids': taxes
         })
@@ -54,8 +57,12 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def _prepare_item(self, line):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
             _prepare_item(line)
-        res.update({'price_unit': line.price_unit,
-                    'tax_ids': line.tax_ids.ids})
+        res.update({
+            'price_unit': line.price_unit,
+            'tax_ids': line.tax_ids.ids,
+            'date_required': line.date_required,
+            'fixed_asset': line.fixed_asset,
+        })
         return res
 
     @api.model
@@ -137,6 +144,9 @@ class PurchaseRequestLineMakePurchaseRequisitionItem(models.TransientModel):
         'Unit Price',
         track_visibility='onchange',
     )
+    price_standard = fields.Float(
+        'Standard Price',
+    )
     tax_ids = fields.Many2many(
         'account.tax',
         'purchase_request_make_requisition_taxes_rel',
@@ -144,4 +154,10 @@ class PurchaseRequestLineMakePurchaseRequisitionItem(models.TransientModel):
         'tax_id',
         string='Taxes',
         readonly=True,
+    )
+    fixed_asset = fields.Boolean(
+        string='Fixed Asset',
+    )
+    date_required = fields.Date(
+        string='Request Date',
     )

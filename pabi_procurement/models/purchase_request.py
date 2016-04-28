@@ -171,34 +171,50 @@ class PurchaseRequest(models.Model):
         # for testing generate pr
         gen_dict = {
             'name': u'PR0000001',
-            'requested_by': u'Administrator',
-            'responsible_user_id': u'Administrator',
+            'requested_by.id': u'1',
+            'responsible_user_id.id': u'1',
+            'assigned_to.id': u'1',
             'date_approved': u'2016-01-31',
-            'prototype': u'True',
             'total_budget_value': u'240000',
-            'purchase_type_id': u'AAAA',
-            'purchase_method_id': u'AAAA',
+            'purchase_prototype_id.id': u'1',
+            'purchase_type_id.id': u'1',
+            'purchase_method_id.id': u'1',
+            'purchase_unit_id.id': u'1',
             'description': u'Put your PR description here.',
             'objective': u'Put your PR objective here',
-            'currency_id': u'THB',
+            'currency_id.id': u'140',
             'currency_rate': u'1',
             'delivery_address': u'Put your PR delivery address here',
             'date_start': u'2016-01-31',
-            'picking_type_id': u'Receipts',
-            'operating_unit_id': u'Main Operating Unit',
+            'picking_type_id.id': u'1',
+            'operating_unit_id.id': u'1',
             'line_ids': (
                 {
+                    'product_id.id': u'',
                     'name': u'Computer',
                     'product_qty': u'20',
                     'price_unit': u'10000',
+                    'product_uom_id.id': u'1',
+                    'activity_id.id': u'1',
                     'date_required': u'2016-01-31',
+                    'section_id.id': u'1',
+                    'project_id.id': u'1',
+                    'nstda_course_id.id': u'',
+                    'fixed_asset': u'False',
                     'tax_ids': u'Tax 7.00%',
                 },
                 {
+                    'product_id.id': u'',
                     'name': u'HDD',
                     'product_qty': u'20',
                     'price_unit': u'1030',
+                    'product_uom_id.id': u'1',
+                    'activity_id.id': u'1',
                     'date_required': u'2016-01-31',
+                    'section_id.id': u'1',
+                    'project_id.id': u'1',
+                    'nstda_course_id.id': u'',
+                    'fixed_asset': u'False',
                     'tax_ids': u'Tax 7.00%',
                 }
             ),
@@ -325,41 +341,41 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def generate_purchase_request(self, data_dict):
+        ret = {}
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data
-        fields, data = self._finalize_data_to_load(fields, data)
-        load_res = self.load(fields, data)
-        res_id = load_res['ids'] and load_res['ids'][0] or False
-        if not res_id:
-            return {
-                'is_success': False,
-                'result': False,
-                'messages': [m['message'] for m in load_res['messages']],
-            }
-        else:
-            # TODO: https://mobileapp.nstda.or.th/redmine/issues/326
-            res = self.browse(res_id)
-            attachment = self.create_purchase_request_attachment(data_dict,
-                                                                 res_id)
-            committee = self.create_purchase_request_committee(data_dict,
-                                                               res_id)
-            if not attachment or not committee:
-                return {
+        try:
+            fields, data = self._finalize_data_to_load(fields, data)
+            load_res = self.load(fields, data)
+            res_id = load_res['ids'] and load_res['ids'][0] or False
+            if not res_id:
+                ret = {
                     'is_success': False,
                     'result': False,
-                    'messages': _('Error on create attachment '
-                                  'or committee list'),
+                    'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                return {
-                    'is_success': True,
-                    'result': {
-                        'request_id': res.id,
-                        'name': res.name,
-                    },
-                    'messages': _('PR has been created.'),
-                }
+                    res = self.browse(res_id)
+                    self.create_purchase_request_attachment(data_dict, res_id)
+                    self.create_purchase_request_committee(data_dict, res_id)
+                    ret = {
+                        'is_success': True,
+                        'result': {
+                            'request_id': res.id,
+                            'name': res.name,
+                        },
+                        'messages': _('PR has been created.'),
+                    }
+            self._cr.commit()
+        except Exception:
+            ret = {
+                'is_success': False,
+                'result': False,
+                'messages': _('There is something wrong while creating PR.'),
+            }
+            self._cr.rollback()
+        return ret
 
 
 class PurchaseRequestLine(models.Model):

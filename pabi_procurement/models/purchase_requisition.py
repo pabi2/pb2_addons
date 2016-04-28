@@ -209,6 +209,9 @@ class PurchaseRequisitionLine(models.Model):
     price_unit = fields.Float(
         string='Unit Price',
     )
+    price_standard = fields.Float(
+        string='Standard Price',
+    )
     fixed_asset = fields.Boolean(
         string='Fixed Asset',
         default=False,
