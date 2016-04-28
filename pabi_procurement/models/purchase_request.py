@@ -375,7 +375,6 @@ class PurchaseRequest(models.Model):
                 'messages': _('There is something wrong while creating PR.'),
             }
             self._cr.rollback()
-        print ret
         return ret
 
 
