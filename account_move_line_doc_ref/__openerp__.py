@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Account Move Line - Doc Ref',
-    'version': '1.0',
+    'version': '8.0.1.0.0',
     'author': 'Ecosoft',
     'summary': 'Account Move Line - Doc Ref',
     'description': """
