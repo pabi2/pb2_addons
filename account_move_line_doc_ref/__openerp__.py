@@ -11,11 +11,16 @@ Account Move Line - Doc Ref
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': [
-        'account',
+        'account_reversal',
+        'account_asset',
+        'account_voucher',
+        'account_check_deposit',
+        'stock_account',
     ],
     'demo': [],
     'data': [
         'views/account_move_line_view.xml',
+        'views/account_voucher_view.xml',
     ],
     'test': [
     ],
