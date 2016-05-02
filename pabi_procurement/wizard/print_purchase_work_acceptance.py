@@ -119,6 +119,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         elif order.fine_condition == 'date':
             end_date = "{:%Y-%m-%d}".format(order.fine_by_date)
         return end_date
+
     @api.model
     def default_get(self, fields):
         res = {}
@@ -149,8 +150,8 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         PWAcceptance = self.env['purchase.work.acceptance']
         vals['name'] = self.name
         vals.update({
-            'name' : self.name,
-            'total_fine' : self.total_fine,
+            'name': self.name,
+            'total_fine': self.total_fine,
         })
         acceptance = PWAcceptance.create(vals)
         for act_line in self.acceptance_line:

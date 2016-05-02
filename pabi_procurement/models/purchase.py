@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models, api, _
+from openerp import fields, models, api
 import time
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
 
 
 class PurchaseOrder(models.Model):
@@ -135,7 +134,6 @@ class PurchaseOrder(models.Model):
         if po_rec.state != 'done':
             po_rec.state = 'done'
         return True
-
 
 
 class PurchaseType(models.Model):
