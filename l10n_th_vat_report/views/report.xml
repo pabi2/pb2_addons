@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <report 
+            id="action_report_vat"
+            model="account.vat.report"
+            string="Vat Report"
+            report_type="qweb-pdf"
+            name="l10n_th_vat_report.report_vat" 
+            file="l10n_th_vat_report.report_vat"
+        />
+
+    </data>
+</openerp>
