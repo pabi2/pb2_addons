@@ -11,6 +11,10 @@
                 </p>
                 <group>
                     <field name="name"/>
+                    <field name="receive_date"/>
+                    <field name="date_contract_end"/>
+                    <field name="total_fine"/>
+                    <field name="invoice_id"/>
                 </group>
                 <group>
                     <field name="acceptance_line">
