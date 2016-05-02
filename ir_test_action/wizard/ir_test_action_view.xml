@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_ir_test_action" model="ir.ui.view">
+            <field name="name">Test Action</field>
+            <field name="model">ir.test.action</field>
+            <field name="arch" type="xml">
+                <form string="Test action">
+                    <group>
+                        <label string="Please specify Object, Method and Arguments, then Execute" />
+                    </group>	
+                    <group>
+                        <field name="model" placeholder="e.g., res.partner"/>
+                        <field name="function" placeholder="e.g., write"/>
+                        <field name="args" placeholder="e.g., ([2,3,4], {'name': 'MyCompany', 'code': 'MC})"/>
+                    </group>
+					<h2><p>
+						<field name="state" invisible="1"/>
+						<field name="message" readonly="1" attrs="{'invisible': [('state', '=', 'new')]}"/>
+					</p></h2>	
+                    <footer>
+                        <div>
+                            <button name="execute" string="Execute" type="object" class="oe_highlight"/> or
+                            <button special="cancel" string="Cancel" class="oe_link"/>
+                        </div>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ir_test_action" model="ir.actions.act_window">
+            <field name="name">Test Action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.test.action</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+            name="Test Action"
+            action="action_ir_test_action"
+            id="menu_ir_test_action"
+            groups="base.group_no_one"
+            parent="base.menu_automation"
+            sequence="40" />
+
+    </data>
+</openerp>

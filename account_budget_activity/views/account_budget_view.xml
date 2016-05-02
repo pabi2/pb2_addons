@@ -2,9 +2,10 @@
 <openerp>
     <data>
 
-        <menuitem name="Budgets" id="menu_action_account_budget_post_tree" parent="account.menu_finance_generic_reporting" sequence="6"/>
-        <menuitem id="next_id_31" name="Budgets" parent="account.menu_finance" sequence="6"/>
-        <menuitem id="next_id_pos" name="Budgets" parent="account.menu_finance_configuration" sequence="50"/>
+        <menuitem name="Budgeting" id="menu_budgeting" sequence="51"/>
+	        <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="20"/>
+	        <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="30"/>
+        
 
         <record model="ir.ui.view" id="account_budget_view_form">
             <field name="name">account.budget.view.form</field>
@@ -145,7 +146,7 @@
               </p>
             </field>
         </record>
-        <menuitem parent="next_id_31"
+        <menuitem parent="menu_action_account_budget_control"
             id="menu_act_account_budget_view"
             action="act_account_budget_view" sequence="1" />
         
@@ -199,7 +200,7 @@
             <field name="view_id" ref="view_account_budget_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_account_budget_post_tree"
+        <menuitem parent="menu_action_account_budget_control"
             id="menu_act_account_budget_line_view"
             action="act_account_budget_line_view" />
 
