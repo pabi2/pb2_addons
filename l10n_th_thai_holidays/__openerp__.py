@@ -20,7 +20,8 @@ Skip Due Date on Thai Holidays
     'depends': ['calendar'],
     'data': [
         'data/res.users.csv',
-        'data/calendar.event.csv'
+        'data/calendar.event.csv',
+        'security/ir.model.access.csv',
     ],
     'auto_install': False,
     'application': True,
