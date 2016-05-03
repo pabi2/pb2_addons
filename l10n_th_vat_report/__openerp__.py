@@ -2,7 +2,7 @@
 
 {
     'name': "Thai Vat Report",
-    'version': '0.1',
+    'version': '8.0.1.0.0',
     'category': 'Accounting',
     'description': """
 Thai Vat Report
