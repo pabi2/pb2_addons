@@ -26,6 +26,7 @@ PABI2 - Procurement Module
         "purchase_double_validation",
         "purchase_request_to_requisition",
         "purchase_split_quote2order",
+        "purchase_invoice_plan",
         "purchase_requisition_operating_unit",
         "purchase_request_to_requisition_operating_unit",
         "purchase_operating_unit",
