@@ -17,6 +17,12 @@
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="purchase_type_id"/>
                 </xpath>
+                <xpath expr="//field[@name='date_required']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_start']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="after">
                     <field name="objective"/>
                     <field name="currency_id"/>
@@ -87,7 +93,6 @@
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="responsible"/>
                                 <field name="committee_type"/>
                             </tree>
                         </field>
@@ -97,7 +102,6 @@
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="responsible"/>
                                 <field name="committee_type"/>
                             </tree>
                         </field>
@@ -107,7 +111,6 @@
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="responsible"/>
                                 <field name="committee_type"/>
                             </tree>
                         </field>
@@ -117,7 +120,6 @@
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="responsible"/>
                                 <field name="committee_type"/>
                             </tree>
                         </field>
@@ -126,6 +128,7 @@
                         <field name="attachment_ids">
                             <tree>
                                 <field name="name"/>
+                                <field name="description"/>
                                 <field name="file"/>
                                 <field name="file_url"/>
                             </tree>
@@ -133,6 +136,9 @@
                             	<group>
 	                            	<group>
 	                            		<field name="name"/>
+	                        		</group>
+                                    <group>
+                                		<field name="description"/>
 	                        		</group>
 	                            	<group>
                                 		<field name="file"/>
@@ -186,6 +192,16 @@
                         <filter string="Responsible"
                                 domain="[]"
                                 context="{'group_by':'responsible_user_id'}"/>
+                </xpath>
+            </field>
+    </record>
+    <record model="ir.ui.view" id="purchase_request_line_tree">
+        <field name="name">purchase.request.line.tree</field>
+        <field name="model">purchase.request.line</field>
+        <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_required']" position="attributes">
+                        <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
     </record>

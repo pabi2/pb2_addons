@@ -28,11 +28,10 @@ class PurchaseOrder(models.Model):
         selection=[
             ('day', 'Day'),
             ('date', 'Date'),
-            ('manual', 'Manual'),
         ],
         string='Fine Condition',
         default='day',
-        Required=True,
+        required=True,
     )
     fine_by_date = fields.Date(
         string='Fine Date',
@@ -41,10 +40,6 @@ class PurchaseOrder(models.Model):
     fine_by_num_of_days = fields.Integer(
         string='No. of Days',
         default=15,
-    )
-    fine_by_manual_rate = fields.Float(
-        string='Manual Rate',
-        default=1.0,
     )
     fine_rate = fields.Float(
         string='Fine Rate',
@@ -213,8 +208,36 @@ class PurchaseWorkAcceptance(models.Model):
     name = fields.Char(
         string="Acceptance No.",
     )
+    date_scheduled_end = fields.Date(
+        string="Scheduled End Date",
+    )
+    date_contract_end = fields.Date(
+        string="Contract End Date",
+    )
+    date_received = fields.Date(
+        string="Receive Date",
+    )
+    is_manual_fine = fields.Boolean(
+        string="Use Manual Fine",
+    )
+    manual_fine = fields.Float(
+        string="Manual Fine",
+        default=0.0,
+    )
+    manual_days = fields.Integer(
+        string="No. of Days",
+        default=1,
+    )
     total_fine = fields.Float(
         string="Total Fine",
+    )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice',
+    )
+    picking_id = fields.Many2one(
+        'stock.picking',
+        string='Incoming',
     )
     acceptance_line = fields.One2many(
         'purchase.work.acceptance.line',

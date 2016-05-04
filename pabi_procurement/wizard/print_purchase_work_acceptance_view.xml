@@ -11,10 +11,17 @@
                 </p>
                 <group>
                     <field name="name"/>
-                    <field name="receive_date"/>
+                    <field name="date_scheduled_end"/>
+                    <field name="date_received"/>
                     <field name="date_contract_end"/>
+                    <field name="is_manual_fine"/>
+                    <field name="manual_fine"
+                        attrs="{'invisible':[('is_manual_fine', '!=', True)]}"/>
+                    <field name="manual_days"
+                        attrs="{'invisible':[('is_manual_fine', '!=', True)]}"/>
                     <field name="total_fine"/>
                     <field name="invoice_id"/>
+                    <field name="picking_id"/>
                 </group>
                 <group>
                     <field name="acceptance_line">

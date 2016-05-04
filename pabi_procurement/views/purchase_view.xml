@@ -50,7 +50,11 @@
                             attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
-                    <button name="%(action_print_purchase_work_acceptance)d" type="action" states="approved" groups="purchase.group_purchase_manager" string="Print Work Acceptance"/>
+                    <button name="%(action_print_purchase_work_acceptance)d"
+                            type="action"
+                            groups="purchase.group_purchase_manager"
+                            string="Print Work Acceptance"
+                            attrs="{'invisible':[('state', 'not in', ('approved', 'done')),]}"/>
                 </xpath>
                 <xpath expr="//button[@name='view_invoice']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'line_percentage', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>
@@ -106,12 +110,28 @@
                         <field name="acceptance_ids">
                             <tree>
                                 <field name="name"/>
+                                <field name="date_received"/>
+                                <field name="date_scheduled_end"/>
+                                <field name="date_contract_end"/>
+                                <field name="invoice_id"/>
+                                <field name="picking_id"/>
+                                <field name="is_manual_fine"/>
+                                <field name="manual_fine"/>
+                                <field name="manual_days"/>
                                 <field name="total_fine"/>
                             </tree>
                             <form string="Work Acceptance">
                                 <group>
                                     <field name="name"/>
+                                    <field name="date_received"/>
+                                    <field name="date_scheduled_end"/>
+                                    <field name="date_contract_end"/>
+                                    <field name="is_manual_fine"/>
+                                    <field name="manual_fine"/>
+                                    <field name="manual_days"/>
                                     <field name="total_fine"/>
+                                    <field name="invoice_id"/>
+                                    <field name="picking_id"/>
                                 </group>
                                 <field name="acceptance_line">
                                     <tree editable="bottom">
@@ -127,14 +147,12 @@
                     </page>
                     <page string="Fine">
                         <group>
+                            <field name="fine_rate"/>
                             <field name="fine_condition"/>
                             <field name="fine_by_date"
                                 attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
                             <field name="fine_by_num_of_days"
                                 attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
-                            <field name="fine_by_manual_rate"
-                                attrs="{'invisible':[('fine_condition', '!=', 'manual')]}"/>
-                            <field name="fine_rate"/>
                         </group>
                     </page>
                 </xpath>

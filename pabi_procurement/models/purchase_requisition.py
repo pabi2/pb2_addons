@@ -281,6 +281,9 @@ class PurchaseRequisitionAttachment(models.Model):
     name = fields.Char(
         string='File Name',
     )
+    description = fields.Char(
+        string='File Description',
+    )
     file_url = fields.Char(
         string='File Url',
     )
@@ -314,9 +317,6 @@ class PurchaseRequisitionCommittee(models.Model):
     )
     position = fields.Char(
         string='Position',
-    )
-    responsible = fields.Char(
-        string='Responsible',
     )
     committee_type = fields.Selection(
         string='Type',
