@@ -24,7 +24,7 @@
                     <field name="picking_id"/>
                 </group>
                 <group>
-                    <field name="acceptance_line">
+                    <field name="acceptance_line_ids">
                         <tree editable="bottom">
                             <field name="product_id"/>
                             <field name="name"/>

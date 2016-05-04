@@ -133,7 +133,7 @@
                                     <field name="invoice_id"/>
                                     <field name="picking_id"/>
                                 </group>
-                                <field name="acceptance_line">
+                                <field name="acceptance_line_ids">
                                     <tree editable="bottom">
                                         <field name="product_id"/>
                                         <field name="name"/>
@@ -149,9 +149,9 @@
                         <group>
                             <field name="fine_rate"/>
                             <field name="fine_condition"/>
-                            <field name="fine_by_date"
+                            <field name="date_fine"
                                 attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
-                            <field name="fine_by_num_of_days"
+                            <field name="fine_num_days"
                                 attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
                         </group>
                     </page>

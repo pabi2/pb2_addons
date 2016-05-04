@@ -33,11 +33,11 @@ class PurchaseOrder(models.Model):
         default='day',
         required=True,
     )
-    fine_by_date = fields.Date(
+    date_fine = fields.Date(
         string='Fine Date',
         default=fields.Date.today(),
     )
-    fine_by_num_of_days = fields.Integer(
+    fine_num_days = fields.Integer(
         string='No. of Days',
         default=15,
     )
@@ -239,7 +239,7 @@ class PurchaseWorkAcceptance(models.Model):
         'stock.picking',
         string='Incoming',
     )
-    acceptance_line = fields.One2many(
+    acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
         'acceptance_id',
         string='Work Acceptance',

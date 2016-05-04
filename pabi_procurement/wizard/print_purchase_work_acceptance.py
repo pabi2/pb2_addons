@@ -14,7 +14,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         string="Acceptance No.",
         required=True,
     )
-    acceptance_line = fields.One2many(
+    acceptance_line_ids = fields.One2many(
         'print.purchase.work.acceptance.item',
         'wiz_id',
         string='Acceptance Lines',
@@ -99,9 +99,10 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _check_product_type(self):
         check_type = False
-        for line in self.acceptance_line:
+        for line in self.acceptance_line_ids:
             if not check_type:
                 check_type = line.product_id.type
+                continue
             if check_type != line.product_id.type:
                 raise UserError(
                     _("All products must have the same type."))
@@ -121,7 +122,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         delta = end_date - received
         overdue_day = delta.days
         if overdue_day < 0:
-            for line in self.acceptance_line:
+            for line in self.acceptance_line_ids:
                 fine_rate = line.line_id.order_id.fine_rate
                 unit_price = line.line_id.price_unit
                 to_receive_qty = 1
@@ -143,7 +144,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
         delta = end_date - received
         overdue_day = delta.days
         if overdue_day < 0:
-            for line in self.acceptance_line:
+            for line in self.acceptance_line_ids:
                 fine_rate = line.line_id.order_id.fine_rate
                 unit_price = line.line_id.price_unit
                 to_receive_qty = 1
@@ -179,15 +180,15 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
             "%Y-%m-%d",
         )
         if order.fine_condition == 'day':
-            num_of_day = order.fine_by_num_of_days
+            num_of_day = order.fine_num_days
             end_date = start_date + datetime.timedelta(days=num_of_day)
             date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
             next_working_end_date = THHoliday.\
                 find_next_working_day(date_scheduled_end)
         elif order.fine_condition == 'date':
-            date_scheduled_end = order.fine_by_date
+            date_scheduled_end = order.date_fine
             next_working_end_date = THHoliday.\
-                find_next_working_day(order.fine_by_date)
+                find_next_working_day(order.date_fine)
         return date_scheduled_end, next_working_end_date
 
     @api.model
@@ -205,7 +206,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
                 raise UserError(
                     _("Unit of Measure is missing in some PO line."))
             items.append([0, 0, self._prepare_item(line)])
-        res['acceptance_line'] = items
+        res['acceptance_line_ids'] = items
         order = Order.search([('id', 'in', order_ids)])
         date_scheduled_end, end_date = self._get_contract_end_date(order)
         res['date_scheduled_end'] = date_scheduled_end
@@ -236,7 +237,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
             'total_fine': total,
         })
         acceptance = PWAcceptance.create(vals)
-        for act_line in self.acceptance_line:
+        for act_line in self.acceptance_line_ids:
             line_vals = {
                 'name': act_line.name,
                 'product_id': act_line.product_id.id or False,
@@ -245,7 +246,7 @@ class PrintPurchaseWorkAcceptance(models.TransientModel):
                 'product_uom': act_line.product_uom.id,
             }
             lines.append([0, 0, line_vals])
-        acceptance.acceptance_line = lines
+        acceptance.acceptance_line_ids = lines
         return acceptance
 
     @api.multi
