@@ -1,6 +1,40 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+        <!-- purchase split quote2order replaced the header so generic invoice plan buttons is not going to show-->
+        <record id="view_purchase_create_invoice_form" model="ir.ui.view">
+            <field name="name">Create Invoice</field>
+            <field name="model">purchase.create.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create Invoice">
+                    <label string="This wizard will create the invoices based on configured invoice plan. Tick if
+                                    you want to proceed ahead."/>
+                    <group>
+                        <group>
+                            <field name="create_invoice" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="create_purchase_invoices" string="_Create" type="object" class="oe_highlight"/>
+                        or
+                        <button string="_Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_purchase_create_invoices" model="ir.actions.act_window">
+            <field name="name">Create Invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.create.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_purchase_create_invoice_form"/>
+            <field name="target">new</field>
+        </record>
+
         <record model="ir.ui.view" id="view_purchase_order_form" >
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>
@@ -10,21 +44,24 @@
                     <field name="date_reference" />
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="before">
-                    <button name="%(action_print_purchase_work_acceptance)d" type="action" states="approved" groups="purchase.group_purchase_manager" string="Print Work Acceptance"/>
+                	<field name="plan_invoice_created" invisible="1"/>
+                    <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
+                            type="action" class="oe_highlight"
+                            attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),
+                                                 '|',('invoice_method', '!=', 'invoice_plan'),
+                                                 '|',('plan_invoice_created','=',True)]}"/>
+                    <button name="%(action_print_purchase_work_acceptance)d"
+                            type="action"
+                            groups="purchase.group_purchase_manager"
+                            string="Print Work Acceptance"
+                            attrs="{'invisible':[('state', 'not in', ('approved', 'done')),]}"/>
+                </xpath>
+                <xpath expr="//button[@name='view_invoice']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'line_percentage', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field name="mycontract_id" />
                     <field name="date_contract_start" />
-                    <field name="date_contract_end" />
-                </xpath>
-                <xpath expr="//div[@class='oe_clear']" position="before">
-                    <group>
-                        <field name="fine_rate" />
-                        <field name="total_fine"/>
-                        <field name="receive_date_condition"/>
-                        <field name="picking_receive_date" nolabel="1"
-                        	attrs="{'invisible':[('receive_date_condition', '!=', 'date')]}"/>
-                    </group>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
@@ -71,11 +108,32 @@
                     </page>
                     <page string="Work Acceptance">
                         <field name="acceptance_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="date_received"/>
+                                <field name="date_scheduled_end"/>
+                                <field name="date_contract_end"/>
+                                <field name="invoice_id"/>
+                                <field name="picking_id"/>
+                                <field name="is_manual_fine"/>
+                                <field name="manual_fine"/>
+                                <field name="manual_days"/>
+                                <field name="total_fine"/>
+                            </tree>
                             <form string="Work Acceptance">
                                 <group>
                                     <field name="name"/>
+                                    <field name="date_received"/>
+                                    <field name="date_scheduled_end"/>
+                                    <field name="date_contract_end"/>
+                                    <field name="is_manual_fine"/>
+                                    <field name="manual_fine"/>
+                                    <field name="manual_days"/>
+                                    <field name="total_fine"/>
+                                    <field name="invoice_id"/>
+                                    <field name="picking_id"/>
                                 </group>
-                                <field name="acceptance_line">
+                                <field name="acceptance_line_ids">
                                     <tree editable="bottom">
                                         <field name="product_id"/>
                                         <field name="name"/>
@@ -86,6 +144,16 @@
                                 </field>
                             </form>
                         </field>
+                    </page>
+                    <page string="Fine">
+                        <group>
+                            <field name="fine_rate"/>
+                            <field name="fine_condition"/>
+                            <field name="date_fine"
+                                attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
+                            <field name="fine_num_days"
+                                attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
+                        </group>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='shipped']" position="after">

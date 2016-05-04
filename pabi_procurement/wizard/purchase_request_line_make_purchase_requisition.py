@@ -80,7 +80,6 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'requisition_id': requisition_id,
             'name': line.name,
             'sequence': line.sequence,
-            'responsible': line.responsible,
             'position': line.position,
             'committee_type': line.committee_type,
         }

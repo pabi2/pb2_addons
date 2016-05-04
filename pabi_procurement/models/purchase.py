@@ -24,40 +24,31 @@ class PurchaseOrder(models.Model):
         string='myContract',
         default='1',
     )
-    receive_date_condition = fields.Selection(
+    fine_condition = fields.Selection(
         selection=[
             ('day', 'Day'),
             ('date', 'Date'),
         ],
-        string='Receive Date Condition',
-        track_visibility='onchange',
+        string='Fine Condition',
         default='day',
+        required=True,
     )
-    picking_receive_date = fields.Date(
-        string='Picking Receive Date',
+    date_fine = fields.Date(
+        string='Fine Date',
         default=fields.Date.today(),
-        track_visibility='onchange',
+    )
+    fine_num_days = fields.Integer(
+        string='No. of Days',
+        default=15,
+    )
+    fine_rate = fields.Float(
+        string='Fine Rate',
+        default=0.1,
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
         default=fields.Date.today(),
         track_visibility='onchange',
-    )
-    date_contract_end = fields.Date(
-        string='Contract End Date',
-        help="Date when the contract is ended",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        track_visibility='onchange',
-    )
-    fine_rate = fields.Float(
-        string='Fine Rate',
-        default=0.0,
-    )
-    total_fine = fields.Float(
-        string='Total Fine',
-        compute='_compute_total_fine',
-        store=True,
     )
     committee_ids = fields.One2many(
         'purchase.order.committee',
@@ -130,11 +121,6 @@ class PurchaseOrder(models.Model):
         string='Acceptance',
         readonly=False,
     )
-
-    @api.one
-    @api.depends('amount_total', 'fine_rate')
-    def _compute_total_fine(self):
-        self.total_fine = self.amount_total * self.fine_rate
 
     @api.model
     def by_pass_approve(self, ids):
@@ -222,7 +208,38 @@ class PurchaseWorkAcceptance(models.Model):
     name = fields.Char(
         string="Acceptance No.",
     )
-    acceptance_line = fields.One2many(
+    date_scheduled_end = fields.Date(
+        string="Scheduled End Date",
+    )
+    date_contract_end = fields.Date(
+        string="Contract End Date",
+    )
+    date_received = fields.Date(
+        string="Receive Date",
+    )
+    is_manual_fine = fields.Boolean(
+        string="Use Manual Fine",
+    )
+    manual_fine = fields.Float(
+        string="Manual Fine",
+        default=0.0,
+    )
+    manual_days = fields.Integer(
+        string="No. of Days",
+        default=1,
+    )
+    total_fine = fields.Float(
+        string="Total Fine",
+    )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice',
+    )
+    picking_id = fields.Many2one(
+        'stock.picking',
+        string='Incoming',
+    )
+    acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
         'acceptance_id',
         string='Work Acceptance',

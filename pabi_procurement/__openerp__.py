@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# © 2015 TrinityRoots>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     "name": "NSTDA :: PABI2 - Procurement",
     "summary": "Pabi2 Procurement",
@@ -26,6 +24,8 @@ PABI2 - Procurement Module
         "purchase_double_validation",
         "purchase_request_to_requisition",
         "purchase_split_quote2order",
+        "purchase_invoice_plan",
+        "l10n_th_thai_holidays",
         "purchase_requisition_operating_unit",
         "purchase_request_to_requisition_operating_unit",
         "purchase_operating_unit",
@@ -45,3 +45,5 @@ PABI2 - Procurement Module
         "workflow/purchase_requisition_workflow.xml",
     ],
 }
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
