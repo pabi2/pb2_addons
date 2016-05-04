@@ -60,7 +60,7 @@ class purchase_order_line(osv.osv):
                     this.product_qty, this.product_id.uom_id.id)
                 iline_qty = 0.0
                 for iline in this.invoice_lines:
-                    if iline.invoice_id.state != 'cancel':
+                    if iline.invoice_id.state not in ('draft', 'cancel'):
                         iline_qty += uom_obj._compute_qty(
                             cr, uid, iline.uos_id.id, iline.quantity,
                             iline.product_id and iline.product_id.uom_id.id or
