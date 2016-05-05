@@ -249,6 +249,8 @@ class PurchaseRequisitionLine(models.Model):
         if 'value' in res:
             if 'product_qty' in res['value']:
                 del res['value']['product_qty']
+            if 'product_uom_id' in res['value']:
+                del res['value']['product_uom_id']
         return res
 
     @api.multi
