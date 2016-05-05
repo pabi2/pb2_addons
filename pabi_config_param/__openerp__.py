@@ -17,6 +17,11 @@ m2x Options
 * web_m2x_options.limit: 10
 * web_m2x_options.search_more: True
 
+Product
+=======
+
+* Remove account properties
+
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitit U.,",
@@ -28,5 +33,6 @@ m2x Options
     ],
     "data": [
         "data/config_param.xml",
+        "data/config_product.xml",
     ],
 }
