@@ -60,7 +60,7 @@ class PurchaseWorkAcceptance(models.Model):
                 to_receive_qty = 1
                 fine_per_day = fine_rate * (to_receive_qty * unit_price)
                 total_fine += -1 * overdue_day * fine_per_day
-                total_fine = 100.0 if 0< total_fine < 100.0 else total_fine
+                total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.total_fine = total_fine
 
     @api.model
@@ -83,7 +83,7 @@ class PurchaseWorkAcceptance(models.Model):
                 to_receive_qty = line.to_receive_qty
                 fine_per_day = fine_rate * (to_receive_qty * unit_price)
                 total_fine += -1 * overdue_day * fine_per_day
-                total_fine = 100.0 if 0< total_fine < 100.0 else total_fine
+                total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.total_fine = total_fine
 
     @api.one

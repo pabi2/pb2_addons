@@ -64,6 +64,7 @@ class PurchaseOrder(models.Model):
         }
         return result
 
+
 class PurchaseWorkAcceptance(models.Model):
     _name = 'purchase.work.acceptance'
     _description = 'Purchase Work Acceptance'
