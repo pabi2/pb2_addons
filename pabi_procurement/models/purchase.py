@@ -2,7 +2,6 @@
 
 from openerp import fields, models, api
 import time
-import openerp.addons.decimal_precision as dp
 
 
 class PurchaseOrder(models.Model):
@@ -23,27 +22,6 @@ class PurchaseOrder(models.Model):
         ],
         string='myContract',
         default='1',
-    )
-    fine_condition = fields.Selection(
-        selection=[
-            ('day', 'Day'),
-            ('date', 'Date'),
-        ],
-        string='Fine Condition',
-        default='day',
-        required=True,
-    )
-    date_fine = fields.Date(
-        string='Fine Date',
-        default=fields.Date.today(),
-    )
-    fine_num_days = fields.Integer(
-        string='No. of Days',
-        default=15,
-    )
-    fine_rate = fields.Float(
-        string='Fine Rate',
-        default=0.1,
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
@@ -114,12 +92,6 @@ class PurchaseOrder(models.Model):
         time.strftime('%Y-%m-%d %H:%M:%S'),
         readonly=True,
         track_visibility='onchange',
-    )
-    acceptance_ids = fields.One2many(
-        'purchase.work.acceptance',
-        'order_id',
-        string='Acceptance',
-        readonly=False,
     )
 
     @api.model
@@ -209,88 +181,4 @@ class PurchaseOrderCommittee(models.Model):
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
-    )
-
-
-class PurchaseWorkAcceptance(models.Model):
-    _name = 'purchase.work.acceptance'
-    _description = 'Purchase Work Acceptance'
-
-    name = fields.Char(
-        string="Acceptance No.",
-    )
-    date_scheduled_end = fields.Date(
-        string="Scheduled End Date",
-    )
-    date_contract_end = fields.Date(
-        string="Contract End Date",
-    )
-    date_received = fields.Date(
-        string="Receive Date",
-    )
-    is_manual_fine = fields.Boolean(
-        string="Use Manual Fine",
-    )
-    manual_fine = fields.Float(
-        string="Manual Fine",
-        default=0.0,
-    )
-    manual_days = fields.Integer(
-        string="No. of Days",
-        default=1,
-    )
-    total_fine = fields.Float(
-        string="Total Fine",
-    )
-    invoice_id = fields.Many2one(
-        'account.invoice',
-        string='Invoice',
-    )
-    picking_id = fields.Many2one(
-        'stock.picking',
-        string='Incoming',
-    )
-    acceptance_line_ids = fields.One2many(
-        'purchase.work.acceptance.line',
-        'acceptance_id',
-        string='Work Acceptance',
-    )
-    order_id = fields.Many2one(
-        'purchase.order',
-        string='Purchase Order',
-    )
-
-
-class PurchaseWorkAcceptanceLine(models.Model):
-    _name = 'purchase.work.acceptance.line'
-    _description = 'Purchase Work Acceptance Line'
-
-    acceptance_id = fields.Many2one(
-        'purchase.work.acceptance',
-        string='Acceptance Reference',
-        ondelete='cascade',
-    )
-    product_id = fields.Many2one(
-        'product.product',
-        string='Product',
-        readonly=True,
-    )
-    name = fields.Char(
-        string='Description',
-        required=True,
-    )
-    balance_qty = fields.Float(
-        string='Balance Quantity',
-        digits_compute=dp.get_precision('Product Unit of Measure'),
-        readonly=True,
-        required=True,
-    )
-    to_receive_qty = fields.Float(
-        string='To Receive Quantity',
-        digits_compute=dp.get_precision('Product Unit of Measure'),
-        required=True,
-    )
-    product_uom = fields.Many2one(
-        'product.uom',
-        string='UoM',
     )

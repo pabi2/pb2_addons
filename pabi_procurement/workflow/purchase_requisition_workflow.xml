@@ -14,13 +14,13 @@
             <field name="action">rejected()</field>
         </record>
         <record id="trans_sent_to_verify" model="workflow.transition">
-            <field name="act_from" ref="purchase_requisition.act_draft"/>
+            <field name="act_from" ref="purchase_requisition.act_sent"/>
             <field name="act_to" ref="act_to_verify"/>
             <field name="signal">to_verify</field>
         </record>
          <record id="trans_to_verify_verified" model="workflow.transition">
             <field name="act_from" ref="act_to_verify"/>
-            <field name="act_to" ref="purchase_requisition.act_sent"/>
+            <field name="act_to" ref="purchase_requisition.act_open"/>
             <field name="signal">verified</field>
         </record>
         <record id="trans_to_verify_draft" model="workflow.transition">
