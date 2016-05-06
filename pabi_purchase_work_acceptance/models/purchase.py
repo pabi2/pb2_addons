@@ -8,7 +8,7 @@ import openerp.addons.decimal_precision as dp
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    @api.one
+    @api.multi
     def _count_acceptances(self):
         PWAcceptance = self.env['purchase.work.acceptance']
         acceptance = PWAcceptance.search([('order_id', '=', self.id)])
