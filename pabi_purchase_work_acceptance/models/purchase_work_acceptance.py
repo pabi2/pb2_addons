@@ -100,12 +100,15 @@ class PurchaseWorkAcceptance(models.Model):
     )
     date_scheduled_end = fields.Date(
         string="Scheduled End Date",
+        default=fields.Date.today(),
     )
     date_contract_end = fields.Date(
         string="Contract End Date",
+        default=fields.Date.today(),
     )
     date_received = fields.Date(
         string="Receive Date",
+        default=fields.Date.today(),
     )
     is_manual_fine = fields.Boolean(
         string="Use Manual Fine",
