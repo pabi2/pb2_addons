@@ -130,6 +130,17 @@ class PurchaseOrder(models.Model):
             po_rec.state = 'done'
         return True
 
+    @api.multi
+    def wkf_validate_invoice_method(self):
+        """ Change invoice method to 'or' when picking + service """
+        for po in self:
+            if po.invoice_method == 'picking' and \
+                not any([l.product_id and
+                         l.product_id.type in ('product', 'consu') and
+                         l.state != 'cancel' for l in po.order_line]):
+                po.invoice_method = 'order'
+        return True
+
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'

@@ -6,7 +6,7 @@
 	
 	<!-- Delete existing report -->
 	<delete model="ir.actions.report.xml" search="[('id', '=', ref('account.account_invoices'))]" />
-
+	<!-- 
 	<record id="nstda_msd_invoice" model="ir.actions.report.xml">
 		<field name="string">Invoice</field>
 		<field name="auto">True</field>
@@ -28,6 +28,7 @@
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(nstda_msd_invoice)" />
 	</record>
+	-->
 
 </data>
 </openerp>
