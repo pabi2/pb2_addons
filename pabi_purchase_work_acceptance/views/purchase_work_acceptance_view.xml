@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_purchase_work_acceptance_form" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.form</field>
+            <field name="model">purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Type">
+                    <sheet>
+                    <h2>Work Acceptance</h2>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name ="order_id"/>
+                            <field name="date_received"/>
+                            <field name="date_scheduled_end"/>
+                            <field name="date_contract_end"/>
+                            <field name="total_fine"/>
+                        </group>
+                        <group>
+                            <field name="is_manual_fine"/>
+                            <field name="manual_fine"/>
+                            <field name="manual_days"/>
+                        </group>
+                    </group>
+                    <field name="acceptance_line_ids">
+                        <tree editable="bottom">
+                            <field name="product_id"/>
+                            <field name="name"/>
+                            <field name="balance_qty"/>
+                            <field name="to_receive_qty"/>
+                            <field name="product_uom"/>
+                        </tree>
+                    </field>
+                    <h2>Rate Supplier</h2>
+                    <group>
+                        <field name="eval_receiving"/>
+                        <field name="eval_quality"/>
+                        <field name="eval_service"/>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_purchase_work_acceptance_tree" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.tree</field>
+            <field name="model">purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Work Acceptance">
+                    <field name="name"/>
+                    <field name="date_received"/>
+                    <field name="date_scheduled_end"/>
+                    <field name="date_contract_end"/>
+                    <field name="is_manual_fine"/>
+                    <field name="manual_fine"/>
+                    <field name="manual_days"/>
+                    <field name="total_fine"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_purchase_work_acceptance_search" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.search</field>
+            <field name="model">purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Work Acceptance">
+                    <field name="name" string="Purchase Work Acceptance"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_purchase_work_acceptance_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Work Acceptance</field>
+            <field name="res_model">purchase.work.acceptance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Work Acceptance.
+              </p>
+            </field>
+        </record>
+       <menuitem action="action_purchase_work_acceptance_tree"
+                 id="menu_purchase_work_acceptance_action"
+                 parent="purchase.menu_procurement_management"/>
+    </data>
+</openerp>
