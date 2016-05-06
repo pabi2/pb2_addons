@@ -33,6 +33,12 @@
                 <xpath expr="//button[@name='view_invoice']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>
                 </xpath>
+				<xpath expr='/form/sheet/notebook' position="before">
+	               	<div>
+	               		<field name="use_invoice_plan"/>
+	               		<label for="use_invoice_plan"/>
+	               	</div>
+            	</xpath>
                 <xpath expr='//form/sheet/notebook/page[3]' position="after">
                     <page string="Invoice Plan" attrs="{'invisible': [('invoice_method', '!=', 'invoice_plan')]}">
                         <group>

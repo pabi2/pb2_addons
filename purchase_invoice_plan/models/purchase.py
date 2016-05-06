@@ -13,6 +13,12 @@ class PurchaseOrder(models.Model):
     invoice_method = fields.Selection(
         selection_add=[('invoice_plan', 'Invoice Plan')],
     )
+    use_invoice_plan = fields.Boolean(
+        string='Use Invoice Plan',
+        default=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     invoice_plan_ids = fields.One2many(
         'purchase.invoice.plan',
         'order_id',
@@ -106,6 +112,19 @@ class PurchaseOrder(models.Model):
                             _("You are trying deleting line(s) "
                               "that has not been cancelled!\n"
                               "Please discard change and try again!"))
+
+    @api.onchange('invoice_method')
+    def _onchange_invoice_method(self):
+        self.use_invoice_plan = self.invoice_method == 'invoice_plan'
+
+    @api.onchange('use_invoice_plan')
+    def _onchange_use_invoice_plan(self):
+        if self.use_invoice_plan:
+            self.invoice_method = 'invoice_plan'
+        else:
+            default_invoice_method = self.env['ir.values'].get_default(
+                'purchase.order', 'invoice_method')
+            self.invoice_method = default_invoice_method or 'order'
 
     # Don't know why, but can't use v8 API !!, so revert to v7
     def copy(self, cr, uid, id, default=None, context=None):

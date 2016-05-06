@@ -8,11 +8,11 @@
             <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="before">
-                    <field name="activity_group_id" required="1" invisible="0"/>
+                    <field name="activity_group_id" required="0" invisible="0"/>
                     <field name="activity_id" attrs="{'readonly': [('is_editable','=', False)]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/form//field[@name='analytic_account_id']" position="before">
-                    <field name="activity_group_id" required="1" invisible="0"/>
+                    <field name="activity_group_id" required="0" invisible="0"/>
                     <field name="activity_id" attrs="{'readonly': [('is_editable','=', False)]}"/>
                 </xpath>
             </field>

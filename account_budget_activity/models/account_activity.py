@@ -6,10 +6,33 @@ from openerp.exceptions import Warning as UserError
 class AccountActivityGroup(models.Model):
     _name = 'account.activity.group'
     _description = 'Activity Group'
+    _parent_name = "parent_id"
+    _parent_store = True
+    _parent_order = 'name'
+    _order = 'parent_left'
 
     name = fields.Char(
         string='Activity Group',
         required=True,
+    )
+    parent_id = fields.Many2one(
+        'account.activity.group',
+        string='Parent Activity Group',
+        select=True,
+        ondelete='cascade',
+    )
+    child_id = fields.One2many(
+        'account.activity.group',
+        'parent_id',
+        string='Child Activity Group',
+    )
+    parent_left = fields.Integer(
+        string='Left Parent',
+        select=True,
+    )
+    parent_right = fields.Integer(
+        string='Right Parent',
+        select=True,
     )
     activity_ids = fields.One2many(
         'account.activity',
@@ -34,6 +57,14 @@ class AccountActivityGroup(models.Model):
         ('account_uniq', 'unique(account_id)',
          'Each Activity Group must have unique account'),
     ]
+
+    @api.multi
+    @api.constrains('parent_id')
+    def _check_recursion(self):
+        if self.parent_id and \
+                not super(AccountActivityGroup, self)._check_recursion():
+            raise UserError(
+                _('You cannot create recursive Activity Group!'))
 
     @api.one
     @api.constrains('account_id', 'activity_ids')

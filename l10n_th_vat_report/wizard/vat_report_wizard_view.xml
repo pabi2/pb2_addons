@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_vat_report_wizard" model="ir.ui.view">
+            <field name="name">account.vat.report.form</field>
+            <field name="model">account.vat.report</field>
+            <field name="arch" type="xml">
+                <form string="Vat Report">
+                    <group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="period_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="tax_id" domain="[('company_id', '=', company_id)]"/>
+                        </group>
+                        <group>
+                            <field name="base_code_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="tax_code_id" domain="[('company_id', '=', company_id)]"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Execute" name="print_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+             </field>
+        </record>
+
+        <record id="action_account_vat_report" model="ir.actions.act_window">
+            <field name="name">Vat Report</field>
+            <field name="res_model">account.vat.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_vat_report_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+       <menuitem id="menu_main_thai_report"
+                 sequence="100"
+                 name="Thai Reports"
+                 parent="account.menu_finance_reports" />
+
+        <menuitem action="action_account_vat_report"
+                  name="Vat Report"
+                  id="menu_account_vat_report"
+                  parent="menu_main_thai_report" />
+
+    </data>
+</openerp>

@@ -33,7 +33,7 @@ class PurchaseRequestLineMakePurchaseRequisitionItem(models.TransientModel):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=True,
+        required=False,
     )
     activity_id = fields.Many2one(
         'account.activity',

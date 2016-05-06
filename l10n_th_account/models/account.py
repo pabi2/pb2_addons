@@ -2,6 +2,33 @@
 from openerp import models, fields, api
 
 
+class account_tax_template(models.Model):
+
+    _inherit = 'account.tax.template'
+
+    is_undue_tax = fields.Boolean(
+        string='Undue Tax',
+        default=False,
+        help="""This is a undue tax account.
+                The tax point will be deferred to the time of payment""",
+    )
+    is_wht = fields.Boolean(
+        string='Withholding Tax',
+        help="Tax will be withhold and will be used in Payment",
+    )
+    threshold_wht = fields.Float(
+        string='Threshold Amount',
+        help="""Withholding Tax will be applied only if base amount more
+                or equal to threshold amount""",
+    )
+    refer_tax_id = fields.Many2one(
+        'account.tax',
+        string='Counterpart Tax',
+        ondelete='restrict',
+        help="Counterpart Tax for payment process",
+    )
+
+
 class account_tax(models.Model):
 
     _inherit = 'account.tax'
