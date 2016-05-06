@@ -28,29 +28,43 @@ class PurchaseRequisition(models.Model):
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Type',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     objective = fields.Text(
         string='Objective',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     total_budget_value = fields.Float(
         string='Total Budget Value',
         default=0.0,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     purchase_prototype_id = fields.Many2one(
         'purchase.prototype',
         string='Prototype',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
         string='Method',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     currency_rate = fields.Float(
         string='Rate',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     committee_ids = fields.One2many(
         'purchase.requisition.committee',
@@ -122,9 +136,13 @@ class PurchaseRequisition(models.Model):
     )
     approval_document_no = fields.Char(
         string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     approval_document_date = fields.Date(
         string='Date of Approval',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Date of the order has been approved ",
         default=lambda *args:
         time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -132,6 +150,8 @@ class PurchaseRequisition(models.Model):
     )
     approval_document_header = fields.Text(
         string='Header',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     approval_document_footer = fields.Text(
         string='Footer',
@@ -140,6 +160,12 @@ class PurchaseRequisition(models.Model):
         string="Rejected Reason",
         readonly=True,
         copy=False,
+    )
+    is_central_purchase = fields.Boolean(
+        string='Central Purchase',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default=False,
     )
 
     @api.one

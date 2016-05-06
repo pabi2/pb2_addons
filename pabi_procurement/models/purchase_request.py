@@ -67,46 +67,63 @@ class PurchaseRequest(models.Model):
     )
     date_approved = fields.Date(
         string='Approved Date',
-        readonly=False,  # TODO: False for testing, True when live.
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         track_visibility='onchange',
         help="Date when the request has been approved",
     )
     responsible_user_id = fields.Many2one(
         'res.users',
         string='Responsible Person',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         default=lambda self: self.company_id.currency_id,
     )
     currency_rate = fields.Float(
         string='Rate',
         digits=(12, 6),
         default=1.0,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         copy=False,
     )
     objective = fields.Text(
         string='Objective',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
         string='Procurement Method',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     purchase_prototype_id = fields.Many2one(
         'purchase.prototype',
         string='Prototype',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     purchase_unit_id = fields.Many2one(
         'purchase.unit',
         string='Procurement Unit',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     request_ref_id = fields.Many2one(
         'purchase.request',
         string='PR Reference',
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     seminar_id = fields.Selection(
         selection=[
@@ -117,6 +134,8 @@ class PurchaseRequest(models.Model):
         ],
         string='Seminar',
         default='1',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     total_budget_value = fields.Float(
         'Total Budget Value',
@@ -126,9 +145,13 @@ class PurchaseRequest(models.Model):
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Procurement Type',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     delivery_address = fields.Text(
         string='Delivery Address',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     amount_untaxed = fields.Float(
         string='Untaxed Amount',

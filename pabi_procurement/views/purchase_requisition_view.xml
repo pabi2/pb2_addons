@@ -15,6 +15,7 @@
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="after">
+                    <field name="is_central_purchase"/>
                     <field name="purchase_type_id"/>
                     <field name="objective"/>
                     <field name="description"/>
@@ -23,7 +24,7 @@
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">0</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
