@@ -47,7 +47,7 @@ class PurchaseOrder(models.Model):
     )
     count_acceptance = fields.Integer(
         string='Count Acceptance',
-        compute="_count_all",
+        compute="_count_acceptances",
         store=True,
     )
 
