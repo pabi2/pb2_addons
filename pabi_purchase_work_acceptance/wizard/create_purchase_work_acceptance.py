@@ -7,7 +7,6 @@ import datetime
 
 
 class CreatePurchaseWorkAcceptance(models.TransientModel):
-
     _name = 'create.purchase.work.acceptance'
 
     name = fields.Char(
@@ -40,106 +39,21 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         string='Invoice Plan',
         domain="[('order_id', '=',order_id)]",
     )
-    # @api.onchange('manual_fine')
-    # def _onchange_manual_fine(self):
-    #     self.total_fine = self.manual_fine
-    #
-    # @api.onchange('date_scheduled_end')
-    # def _onchange_date_scheduled_end(self):
-    #     THHoliday = self.env['thai.holiday']
-    #     next_working_end_date = THHoliday.\
-    #         find_next_working_day(self.date_scheduled_end)
-    #     self.date_contract_end = next_working_end_date
-    #
-    # @api.onchange('is_manual_fine')
-    # def _onchange_is_manual_fine(self):
-    #     if not self.is_manual_fine:
-    #         self._compute_total_fine()
-    #         self.manual_fine = 0.0
-    #         self.manual_days = 0
 
-    # @api.one
-    # @api.depends('date_received')
-    # def _prepare_invoice(self):
-    #     inv_list = []
-    #     AcctInvoice = self.env['account.invoice']
-    #     AcctInvoiceLine = self.env['account.invoice.line']
-    #     for accptline in self.acceptance_line:
-    #         inv_line = AcctInvoiceLine.search([
-    #             ('purchase_line_id.id', '=', accptline.line_id.id),
-    #         ])
-    #         inv_list.append(inv_line.invoice_id.id)
-    #     AcctInv = AcctInvoice.search([
-    #         ('id', 'in', inv_list),
-    #         ('state', 'in', ['draft']),
-    #     ])
-    #     if len(AcctInv) > 0:
-    #         self.invoice_id = AcctInv._ids
-
-    # @api.model
-    # def _check_product_type(self):
-    #     check_type = False
-    #     for line in self.acceptance_line_ids:
-    #         if not check_type:
-    #             check_type = line.product_id.type
-    #             continue
-    #         if check_type != line.product_id.type:
-    #             raise UserError(
-    #                 _("All products must have the same type."))
-    #     return check_type
-    #
-    # @api.model
-    # def _calculate_service_fine(self):
-    #     total_fine = 0.0
-    #     received = datetime.datetime.strptime(
-    #         self.date_received,
-    #         "%Y-%m-%d",
-    #     )
-    #     end_date = datetime.datetime.strptime(
-    #         self.date_contract_end,
-    #         "%Y-%m-%d",
-    #     )
-    #     delta = end_date - received
-    #     overdue_day = delta.days
-    #     if overdue_day < 0:
-    #         for line in self.acceptance_line_ids:
-    #             fine_rate = line.line_id.order_id.fine_rate
-    #             unit_price = line.line_id.price_unit
-    #             to_receive_qty = 1
-    #             fine_per_day = fine_rate * (to_receive_qty * unit_price)
-    #             total_fine += -1 * overdue_day * fine_per_day
-    #         self.total_fine = total_fine
-    #
-    # @api.model
-    # def _calculate_incoming_fine(self):
-    #     total_fine = 0.0
-    #     received = datetime.datetime.strptime(
-    #         self.date_received,
-    #         "%Y-%m-%d",
-    #     )
-    #     end_date = datetime.datetime.strptime(
-    #         self.date_contract_end,
-    #         "%Y-%m-%d",
-    #     )
-    #     delta = end_date - received
-    #     overdue_day = delta.days
-    #     if overdue_day < 0:
-    #         for line in self.acceptance_line_ids:
-    #             fine_rate = line.line_id.order_id.fine_rate
-    #             unit_price = line.line_id.price_unit
-    #             to_receive_qty = 1
-    #             fine_per_day = fine_rate * (to_receive_qty * unit_price)
-    #             total_fine += -1 * overdue_day * fine_per_day
-    #         self.total_fine = total_fine
-
-    # @api.one
-    # @api.depends('date_received', 'date_contract_end')
-    # def _compute_total_fine(self):
-    #     product_type = self._check_product_type()
-    #     if product_type == 'service':
-    #         self._calculate_service_fine()
-    #     else:
-    #         self._calculate_incoming_fine()
+    @api.model
+    def _prepare_acceptance_plan_line(self, plan):
+        items = []
+        for inv_line in plan.ref_invoice_id.invoice_line:
+            vals = {
+                'line_id': inv_line.purchase_line_id.id,
+                'product_id': inv_line.product_id.id,
+                'name': inv_line.name or inv_line.product_id.name,
+                'balance_qty': 0,
+                'to_receive_qty': inv_line.quantity,
+                'product_uom': inv_line.uos_id.id,
+            }
+            items.append([0, 0, vals])
+        return items
 
     @api.model
     def _prepare_item(self, line):
@@ -212,15 +126,20 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'order_id': self.order_id.id,
         })
         acceptance = PWAcceptance.create(vals)
-        for act_line in self.acceptance_line_ids:
-            line_vals = {
-                'name': act_line.name,
-                'product_id': act_line.product_id.id or False,
-                'balance_qty': act_line.balance_qty,
-                'to_receive_qty': act_line.to_receive_qty,
-                'product_uom': act_line.product_uom.id,
-            }
-            lines.append([0, 0, line_vals])
+        if self.is_invoice_plan:
+            items = self._prepare_acceptance_plan_line(self.invoice_plan_id)
+            lines = items
+        else:
+            for act_line in self.acceptance_line_ids:
+                line_vals = {
+                    'line_id': act_line.line_id.id,
+                    'name': act_line.name,
+                    'product_id': act_line.product_id.id or False,
+                    'balance_qty': act_line.balance_qty,
+                    'to_receive_qty': act_line.to_receive_qty,
+                    'product_uom': act_line.product_uom.id,
+                }
+                lines.append([0, 0, line_vals])
         acceptance.acceptance_line_ids = lines
         return acceptance
 
@@ -276,3 +195,20 @@ class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
         'product.uom',
         string='UoM',
     )
+
+
+class PurchaseInvoicePlan(models.Model):
+    _inherit = 'purchase.invoice.plan'
+
+    name = fields.Char(
+        string='Invoice Plan',
+    )
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for invoice_plan in self:
+            result.append(
+                (invoice_plan.id,
+                 "Installment #%s" % (invoice_plan.installment)))
+        return result

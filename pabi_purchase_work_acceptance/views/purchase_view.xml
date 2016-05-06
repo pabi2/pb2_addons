@@ -13,6 +13,14 @@
                             string="Create Work Acceptance"
                             attrs="{'invisible':[('state', '!=', 'approved'),]}"/>
                 </xpath>
+                <xpath expr="//button[@name='invoice_open']" position="before">
+                    <button type="object"  name="acceptance_open"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o"
+                        >
+                    <field name="count_acceptance" widget="statinfo" string="Work Acceptances"/>
+                    </button>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Fine">
                         <group>

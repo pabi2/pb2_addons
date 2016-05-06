@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models
+from openerp import fields, models, api, _
+from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
+
+    @api.one
+    def _count_acceptances(self):
+        PWAcceptance = self.env['purchase.work.acceptance']
+        acceptance = PWAcceptance.search([('order_id', '=', self.id)])
+        return {
+            self.id: {
+                'count_acceptance': len(acceptance),
+            }
+        }
 
     fine_condition = fields.Selection(
         selection=[
@@ -34,7 +45,24 @@ class PurchaseOrder(models.Model):
         string='Acceptance',
         readonly=False,
     )
+    count_acceptance = fields.Integer(
+        string='Count Acceptance',
+        compute="_count_all",
+        store=True,
+    )
 
+    @api.multi
+    def acceptance_open(self):
+        return {
+            'name': _('Purchase Work Acceptance'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'purchase.work.acceptance',
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+            'domain': "[('order_id', '=', "+str(self.id)+")]",
+        }
+        return result
 
 class PurchaseWorkAcceptance(models.Model):
     _name = 'purchase.work.acceptance'

@@ -1,209 +1,99 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models, api
-import time
+from openerp import fields, models, api, _
+import datetime
 import openerp.addons.decimal_precision as dp
-
-
-class PurchaseOrder(models.Model):
-    _inherit = 'purchase.order'
-
-    date_reference = fields.Date(
-        string='Reference Date',
-        default=fields.Date.today(),
-        readonly=True,
-        track_visibility='onchange',
-    )
-    mycontract_id = fields.Selection(
-        selection=[
-            ('1', 'from myContract'),
-            ('2', '2'),
-            ('3', '3'),
-            ('4', '4'),
-        ],
-        string='myContract',
-        default='1',
-    )
-    fine_condition = fields.Selection(
-        selection=[
-            ('day', 'Day'),
-            ('date', 'Date'),
-        ],
-        string='Fine Condition',
-        default='day',
-        required=True,
-    )
-    date_fine = fields.Date(
-        string='Fine Date',
-        default=fields.Date.today(),
-    )
-    fine_num_days = fields.Integer(
-        string='No. of Days',
-        default=15,
-    )
-    fine_rate = fields.Float(
-        string='Fine Rate',
-        default=0.1,
-    )
-    date_contract_start = fields.Date(
-        string='Contract Start Date',
-        default=fields.Date.today(),
-        track_visibility='onchange',
-    )
-    committee_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee',
-        readonly=False,
-    )
-    committee_tor_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
-    )
-    create_by = fields.Many2one(
-        'res.users',
-        string='Create By',
-    )
-    verified_by = fields.Many2one(
-        'res.users',
-        string='Verified By',
-    )
-    approved_by = fields.Many2one(
-        'res.users',
-        string='Approved By',
-    )
-    position = fields.Char(
-        string='Position',
-    )
-    date_approval = fields.Date(
-        string='Approved Date',
-        help="Date when the PO has been approved",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        readonly=True,
-        track_visibility='onchange',
-    )
-    acceptance_ids = fields.One2many(
-        'purchase.work.acceptance',
-        'order_id',
-        string='Acceptance',
-        readonly=False,
-    )
-
-    @api.model
-    def by_pass_approve(self, ids):
-        po_rec = self.browse(ids)
-        po_rec.action_button_convert_to_order()
-        if po_rec.state != 'done':
-            po_rec.state = 'done'
-        return True
-
-
-class PurchaseType(models.Model):
-    _name = 'purchase.type'
-    _description = 'PABI2 Purchase Type'
-
-    name = fields.Char(
-        string='Purchase Type',
-    )
-
-
-class PurchasePrototype(models.Model):
-    _name = 'purchase.prototype'
-    _description = 'PABI2 Purchase Prototype'
-
-    name = fields.Char(
-        string='Prototype',
-    )
-
-
-class PurchaseMethod(models.Model):
-    _name = 'purchase.method'
-    _description = 'PABI2 Purchase Method'
-
-    name = fields.Char(
-        string='Purchase Method',
-    )
-
-
-class PurchaseUnit(models.Model):
-    _name = 'purchase.unit'
-    _description = 'PABI2 Purchase Unit'
-
-    name = fields.Char(
-        string='Purchase Unit',
-    )
-
-
-class PurchaseOrderCommittee(models.Model):
-    _name = 'purchase.order.committee'
-    _description = 'Purchase Order Committee'
-
-    _COMMITTEE_TYPE = [
-        ('tor', 'TOR'),
-        ('tender', 'Tender'),
-        ('receipt', 'Receipt'),
-        ('std_price', 'Standard Price')
-    ]
-
-    sequence = fields.Integer(
-        string='Sequence',
-        default=1,
-    )
-    name = fields.Char(
-        string='Name',
-    )
-    position = fields.Char(
-        string='Position',
-    )
-    responsible = fields.Char(
-        string='Responsible',
-    )
-    committee_type = fields.Selection(
-        string='Type',
-        selection=_COMMITTEE_TYPE,
-    )
-    order_id = fields.Many2one(
-        'purchase.order',
-        string='Purchase Order',
-    )
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseWorkAcceptance(models.Model):
     _name = 'purchase.work.acceptance'
     _description = 'Purchase Work Acceptance'
+
+    @api.onchange('manual_fine')
+    def _onchange_manual_fine(self):
+        self.total_fine = self.manual_fine
+
+    @api.onchange('date_scheduled_end')
+    def _onchange_date_scheduled_end(self):
+        THHoliday = self.env['thai.holiday']
+        next_working_end_date = THHoliday.\
+            find_next_working_day(self.date_scheduled_end)
+        self.date_contract_end = next_working_end_date
+
+    @api.onchange('is_manual_fine')
+    def _onchange_is_manual_fine(self):
+        if not self.is_manual_fine:
+            self._compute_total_fine()
+            self.manual_fine = 0.0
+            self.manual_days = 0
+
+    @api.model
+    def _check_product_type(self):
+        check_type = False
+        for line in self.acceptance_line_ids:
+            if not check_type:
+                check_type = line.product_id.type
+                continue
+            if check_type != line.product_id.type:
+                raise UserError(
+                    _("All products must have the same type."))
+        return check_type
+
+    @api.model
+    def _calculate_service_fine(self):
+        total_fine = 0.0
+        received = datetime.datetime.strptime(
+            self.date_received,
+            "%Y-%m-%d",
+        )
+        end_date = datetime.datetime.strptime(
+            self.date_contract_end,
+            "%Y-%m-%d",
+        )
+        delta = end_date - received
+        overdue_day = delta.days
+        if overdue_day < 0:
+            for line in self.acceptance_line_ids:
+                fine_rate = self.order_id.fine_rate
+                unit_price = line.line_id.price_unit
+                to_receive_qty = 1
+                fine_per_day = fine_rate * (to_receive_qty * unit_price)
+                total_fine += -1 * overdue_day * fine_per_day
+                total_fine = 100.0 if 0< total_fine < 100.0 else total_fine
+            self.total_fine = total_fine
+
+    @api.model
+    def _calculate_incoming_fine(self):
+        total_fine = 0.0
+        received = datetime.datetime.strptime(
+            self.date_received,
+            "%Y-%m-%d",
+        )
+        end_date = datetime.datetime.strptime(
+            self.date_contract_end,
+            "%Y-%m-%d",
+        )
+        delta = end_date - received
+        overdue_day = delta.days
+        if overdue_day < 0:
+            for line in self.acceptance_line_ids:
+                fine_rate = self.order_id.fine_rate
+                unit_price = line.line_id.price_unit
+                to_receive_qty = line.to_receive_qty
+                fine_per_day = fine_rate * (to_receive_qty * unit_price)
+                total_fine += -1 * overdue_day * fine_per_day
+                total_fine = 100.0 if 0< total_fine < 100.0 else total_fine
+            self.total_fine = total_fine
+
+    @api.one
+    @api.depends('date_received', 'date_contract_end')
+    def _compute_total_fine(self):
+        product_type = self._check_product_type()
+        if product_type == 'service':
+            self._calculate_service_fine()
+        else:
+            self._calculate_incoming_fine()
 
     name = fields.Char(
         string="Acceptance No.",
@@ -230,6 +120,7 @@ class PurchaseWorkAcceptance(models.Model):
     )
     total_fine = fields.Float(
         string="Total Fine",
+        compute="_compute_total_fine",
     )
     invoice_id = fields.Many2one(
         'account.invoice',
@@ -283,6 +174,12 @@ class PurchaseWorkAcceptanceLine(models.Model):
         'purchase.work.acceptance',
         string='Acceptance Reference',
         ondelete='cascade',
+    )
+    line_id = fields.Many2one(
+        'purchase.order.line',
+        string='Purchase Order Line',
+        required=True,
+        readonly=True,
     )
     product_id = fields.Many2one(
         'product.product',
