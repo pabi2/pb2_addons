@@ -84,8 +84,15 @@
                     </group>
                     <div class="oe_clear"/>
                 </xpath>
-                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='name']" position="before">
+                <xpath expr="//notebook/page/field[@name='purchase_ids']" position="attributes">
+                	<attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree" position="attributes">
+                	<attribute name="editable">bottom</attribute>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='name']" position="replace">
                 	<field name="operating_unit_id" />
+                	<field name="dummy_quote_id" widget="many2one_clickable"/>
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']" position="before">
                 	<field name="order_id" widget="many2one_clickable"/>

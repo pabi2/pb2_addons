@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, fields, models
+from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
+from openerp.exceptions import Warning as UserError
+from openerp.tools import float_compare
 import time
 
 
@@ -225,7 +227,6 @@ class PurchaseRequisition(models.Model):
                 'operating_unit_id': operating_unit_id,
                 'picking_type_id': picking_type_id,
             })
-        print res
         return res
 
     @api.model
@@ -255,6 +256,22 @@ class PurchaseRequisition(models.Model):
             'This option should only be used for a single id at a time.'
         self.signal_workflow('rejected')
         self.state = 'rejected'
+
+    @api.multi
+    def wkf_validate_vs_quotation(self):
+        """ Case Central Purchase, quotation amount should not exceed """
+        decimal_prec = self.env['decimal.precision']
+        precision = decimal_prec.precision_get('Account')
+        for requisition in self:
+            if not requisition.is_central_purchase:
+                continue
+            total = sum([o.amount_total for o in requisition.purchase_ids])
+            if float_compare(total, requisition.amount_total,
+                             precision) == 1:
+                raise UserError(
+                    _('Total quotation amount exceed Call for Bid amount')
+                )
+        return True
 
 
 class PurchaseRequisitionLine(models.Model):
