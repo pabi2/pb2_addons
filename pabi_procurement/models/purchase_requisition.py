@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, fields, models
+from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
+from openerp.exceptions import Warning as UserError
+from openerp.tools import float_compare
 import time
 
 
@@ -182,6 +184,19 @@ class PurchaseRequisition(models.Model):
         self.amount_tax = amount_tax
         self.amount_total = amount_untaxed + amount_tax
 
+    @api.onchange('is_central_purchase')
+    def _onchange_is_central_purchase(self):
+        domain = []
+        if self.is_central_purchase:
+            self.exclusive = 'multiple'
+            self.multiple_rfq_per_supplier = True
+            domain = []
+        else:
+            self.exclusive = 'exclusive'
+            self.multiple_rfq_per_supplier = False
+            domain = self.env['operating.unit']._ou_domain()
+        return {'domain': {'operating_unit_id': domain}}
+
     @api.model
     def open_price_comparison(self, ids):
         window_obj = self.env["ir.actions.act_window"]
@@ -199,6 +214,20 @@ class PurchaseRequisition(models.Model):
         po_obj = self.env["purchase.order"]
         po_obj.action_button_convert_to_order()
         return True
+
+    @api.model
+    def _prepare_purchase_order(self, requisition, supplier):
+        res = super(PurchaseRequisition, self).\
+            _prepare_purchase_order(requisition, supplier)
+        # Case central purchase, use selected OU
+        if self._context.get('sel_operating_unit_id', False):
+            operating_unit_id = self._context.get('sel_operating_unit_id')
+            picking_type_id = self._context.get('sel_picking_type_id')
+            res.update({
+                'operating_unit_id': operating_unit_id,
+                'picking_type_id': picking_type_id,
+            })
+        return res
 
     @api.model
     def _prepare_purchase_order_line(self, requisition, requisition_line,
@@ -227,6 +256,22 @@ class PurchaseRequisition(models.Model):
             'This option should only be used for a single id at a time.'
         self.signal_workflow('rejected')
         self.state = 'rejected'
+
+    @api.multi
+    def wkf_validate_vs_quotation(self):
+        """ Case Central Purchase, quotation amount should not exceed """
+        decimal_prec = self.env['decimal.precision']
+        precision = decimal_prec.precision_get('Account')
+        for requisition in self:
+            if not requisition.is_central_purchase:
+                continue
+            total = sum([o.amount_total for o in requisition.purchase_ids])
+            if float_compare(total, requisition.amount_total,
+                             precision) == 1:
+                raise UserError(
+                    _('Total quotation amount exceed Call for Bid amount')
+                )
+        return True
 
 
 class PurchaseRequisitionLine(models.Model):

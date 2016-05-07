@@ -22,6 +22,11 @@ Product
 
 * Remove account properties
 
+Language
+========
+
+* Thai
+
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitit U.,",
@@ -34,5 +39,6 @@ Product
     "data": [
         "data/config_param.xml",
         "data/config_product.xml",
+        "data/config_lang.xml",
     ],
 }

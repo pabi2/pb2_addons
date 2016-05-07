@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models, api
+from openerp import fields, models, api, _
+from openerp.exceptions import Warning as UserError
+from openerp.tools import float_compare
 import time
 
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    dummy_quote_id = fields.Many2one(
+        'purchase.order',
+        string='Quotation Reference',
+        compute='_compute_dummy_quote_id',
+    )
     date_reference = fields.Date(
         string='Reference Date',
         default=fields.Date.today(),
@@ -94,6 +101,10 @@ class PurchaseOrder(models.Model):
         track_visibility='onchange',
     )
 
+    @api.one
+    def _compute_dummy_quote_id(self):
+        self.dummy_quote_id = self.id
+
     @api.model
     def by_pass_approve(self, ids):
         po_rec = self.browse(ids)
@@ -112,6 +123,28 @@ class PurchaseOrder(models.Model):
                          l.state != 'cancel' for l in po.order_line]):
                 po.invoice_method = 'order'
         return True
+
+    @api.multi
+    def wkf_validate_vs_requisition(self):
+        """ Amount should not exceed that in Requisition """
+        decimal_prec = self.env['decimal.precision']
+        precision = decimal_prec.precision_get('Account')
+        for po in self:
+            # Quotation or Purchase Order
+            requisition = po.requisition_id or po.quote_id.requisition_id
+            if requisition:
+                if float_compare(po.amount_total,
+                                 requisition.amount_total,
+                                 precision) == 1:
+                    raise UserError(
+                        _('Confirmed amount exceed Call for Bid amount')
+                    )
+        return True
+
+    @api.multi
+    def action_button_convert_to_order(self):
+        self.wkf_validate_vs_requisition()
+        return super(PurchaseOrder, self).action_button_convert_to_order()
 
 
 class PurchaseType(models.Model):

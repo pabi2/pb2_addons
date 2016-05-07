@@ -28,5 +28,11 @@
             <field name="act_to" ref="act_rejected"/>
             <field name="signal">rejected</field>
         </record>
+        <!-- Validate CFB Amount VS Quotation Amount -->
+        <record id="purchase_requisition.act_open" model="workflow.activity">
+            <field name="action">
+	           	wkf_validate_vs_quotation()
+	           	tender_open()</field>
+        </record>
     </data>
 </openerp>

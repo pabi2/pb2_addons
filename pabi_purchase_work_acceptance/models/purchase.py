@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 
 
@@ -60,5 +59,4 @@ class PurchaseOrder(models.Model):
             'target': 'current',
             'domain': "[('order_id', '=', "+str(self.id)+")]",
         }
-        return result
 
