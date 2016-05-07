@@ -20,14 +20,12 @@ PABI2 - Procurement Module
     "application": False,
     "installable": True,
     "depends": [
-        "web_tree_many2one_clickable",
         "pabi_base",
         "purchase_double_validation",
         "purchase_request_to_requisition",
         "purchase_split_quote2order",
         "purchase_invoice_plan",
         "l10n_th_thai_holidays",
-        "pabi_operating_unit_ext",
         "purchase_requisition_operating_unit",
         "purchase_request_to_requisition_operating_unit",
         "purchase_operating_unit",
@@ -38,7 +36,6 @@ PABI2 - Procurement Module
         "security/ir.model.access.csv",
         "wizard/purchase_request_line_make_purchase_requisition_view.xml",
         "wizard/reject_reason_view.xml",
-        "wizard/purchase_requisition_partner_view.xml",
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
@@ -46,6 +43,7 @@ PABI2 - Procurement Module
         "views/purchase_master_data_view.xml",
         "workflow/purchase_requisition_workflow.xml",
         "workflow/purchase_workflow.xml",
+        "data/ir.config_parameter.csv",
     ],
 }
 
