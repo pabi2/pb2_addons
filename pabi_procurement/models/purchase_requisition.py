@@ -258,6 +258,13 @@ class PurchaseRequisition(models.Model):
         self.state = 'rejected'
 
     @api.multi
+    def send_pd(self):
+        """ Case Central Purchase, quotation amount should not exceed """
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pd(self)
+        return True
+
+    @api.multi
     def wkf_validate_vs_quotation(self):
         """ Case Central Purchase, quotation amount should not exceed """
         decimal_prec = self.env['decimal.precision']

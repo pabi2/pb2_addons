@@ -30,5 +30,28 @@
 	</record>
 	-->
 
+	<record id="purchase_work_acceptance" model="ir.actions.report.xml">
+		<field name="string">Work Acceptance</field>
+		<field name="auto">True</field>
+		<field name="model">purchase.work.acceptance</field>
+		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
+		<field name="name">Work Acceptance</field>
+		<field name="report_name">purchase.work.acceptance</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/work_acceptance.jrxml</field>
+		<field name="menu">True</field>
+		<field name="header">False</field>
+		<field name="jasper_report">True</field>
+		<field name="jasper_output">pdf</field>
+		<field name="copies">3</field>
+	</record>
+
+	<record id="purchase_work_acceptance_values" model="ir.values">
+		<field name="name">Work Acceptance</field>
+		<field name="model">purchase.work.acceptance</field>
+		<field name="key2" eval="'client_print_multi'" />
+		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_work_acceptance)" />
+	</record>
+
+
 </data>
 </openerp>

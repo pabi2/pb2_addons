@@ -1,4 +1,4 @@
 id,key,value
-base.ir_config_parameter_1,pabiweb_url,http://127.0.0.1
+base.ir_config_parameter_1,pabiweb_url,http://10.226.202.134/share
 base.ir_config_parameter_2,pabiweb_username,admin
 base.ir_config_parameter_3,pabiweb_password,admin
