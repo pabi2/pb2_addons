@@ -642,7 +642,7 @@ class account_voucher_tax(common_voucher, models.Model):
         'account.voucher',
         string='Voucher',
         ondelete='cascade',
-        select=True)
+        index=True)
     invoice_id = fields.Many2one(
         'account.invoice',
         string='Invoice')
