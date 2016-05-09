@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api, _
-import openerp.addons.decimal_precision as dp
 
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    @api.multi
+    @api.one
     @api.depends('acceptance_ids')
     def _count_acceptances(self):
         PWAcceptance = self.env['purchase.work.acceptance']
         acceptance = PWAcceptance.search([('order_id', '=', self.id)])
-        print len(acceptance)
         self.count_acceptance = len(acceptance)
 
     fine_condition = fields.Selection(
@@ -59,4 +57,3 @@ class PurchaseOrder(models.Model):
             'target': 'current',
             'domain': "[('order_id', '=', "+str(self.id)+")]",
         }
-

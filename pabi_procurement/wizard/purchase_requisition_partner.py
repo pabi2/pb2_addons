@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 
 
 class PurchaseRequisitionPartner(models.TransientModel):
@@ -23,9 +23,9 @@ class PurchaseRequisitionPartner(models.TransientModel):
     def create_order(self):
         return super(PurchaseRequisitionPartner,
                      self.with_context(
-                        sel_operating_unit_id=self.operating_unit_id.id,
-                        sel_picking_type_id=self.picking_type_id.id)).\
-                        create_order()
+                         sel_operating_unit_id=self.operating_unit_id.id,
+                         sel_picking_type_id=self.picking_type_id.id)).\
+            create_order()
 
     @api.onchange('operating_unit_id')
     def _onchange_operating_unit_id(self):
