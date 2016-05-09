@@ -131,7 +131,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             attachments = self._prepare_all_attachments(requisition, requests)
             requisition.write({
                 'committee_ids': committees,
-                'attachment_ids': attachments
+                'attachment_ids': attachments,
+                'exclusive': 'exclusive',
             })
         return res
 

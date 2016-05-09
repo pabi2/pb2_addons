@@ -17,10 +17,16 @@
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="purchase_type_id"/>
                 </xpath>
-                <xpath expr="//field[@name='date_required']" position="attributes">
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='date_start']" position="attributes">
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='date_required']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='product_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='date_required']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="after">
@@ -29,7 +35,6 @@
                     <field name="currency_rate"/>
                     <field name="purchase_method_id"/>
                     <field name="request_ref_id"/>
-                    <field name="seminar_id"/>
                 </xpath>
                 <xpath expr="//button[@name='button_rejected']" position="attributes">
                     <attribute name="states">to_approve</attribute>
@@ -75,9 +80,6 @@
                         options="{'currency_field': 'currency_id'}"/>
                         <div class="oe_subtotal_footer_separator oe_inline">
                         <label for="amount_total"/>
-                        <!--<button name="button_dummy"-->
-                        <!--states="draft" string="(update)" type="object"-->
-                        <!--class="oe_edit_only oe_link"/>-->
                         </div>
                         <field name="amount_total" nolabel="1"
                                class="oe_subtotal_footer_separator" widget="monetary"
@@ -202,6 +204,25 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='date_required']" position="attributes">
                         <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+    </record>
+    <record model="ir.ui.view" id="acc_budget_view_purchase_request_form">
+        <field name="name">purchase.request.form</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_group_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_group_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
     </record>

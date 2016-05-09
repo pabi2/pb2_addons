@@ -125,18 +125,6 @@ class PurchaseRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    seminar_id = fields.Selection(
-        selection=[
-            ('1', 'from myProject'),
-            ('2', '2'),
-            ('3', '3'),
-            ('4', '4'),
-        ],
-        string='Seminar',
-        default='1',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
     total_budget_value = fields.Float(
         'Total Budget Value',
         readonly=True,

@@ -169,6 +169,9 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
         default=False,
     )
+    exclusive = fields.Selection(
+        default='exclusive',
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -256,6 +259,12 @@ class PurchaseRequisition(models.Model):
             'This option should only be used for a single id at a time.'
         self.signal_workflow('rejected')
         self.state = 'rejected'
+
+    @api.multi
+    def send_pbweb_requisition(self):
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_requisition(self)
+        return True
 
     @api.multi
     def wkf_validate_vs_quotation(self):
