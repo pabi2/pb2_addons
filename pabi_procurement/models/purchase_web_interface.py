@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import Warning as UserError
 import xmlrpclib
 import base64
 import os
@@ -21,19 +22,26 @@ class PurchaseWebInterface(models.Model):
             return encoded
 
     @api.model
+    def check_pdf_extension(self, filename):
+        if '.pdf' not in filename:
+            filename += '.pdf'
+        return filename
+
+    @api.model
     def send_pd_test(self):
         ConfParam = self.env['ir.config_parameter']
         url = ConfParam.get_param('pabiweb_url')
-        print url
-        alfresco = xmlrpclib.ServerProxy(url)
-
+        username = ConfParam.get_param('pabiweb_username')
+        password = ConfParam.get_param('pabiweb_password')
+        connect_string = "http://"+username+":"+password+"@"+url
+        alfresco = xmlrpclib.ServerProxy(connect_string)
         doc = self.encode_base64('PR_2015011901.pdf')
         att1 = self.encode_base64('PR_2015011901.pdf')
         att2 = self.encode_base64('PR_2015011901.pdf')
 
         arg = {
             'action': '1',
-            'pdNo': 'PD16000002',
+            'pdNo': 'PD16000003',
             'sectionId': '1',
             'prNo': 'PR16000001,PR16000002',
             'docType': 'PD1',
@@ -61,15 +69,28 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pd(self, PD):
+        assert len(PD) == 1, "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
+        Attachment = self.env['ir.attachment']
         url = ConfParam.get_param('pabiweb_url')
-        alfresco = xmlrpclib.ServerProxy(url)
-        doc_name = 'PR_2015011901.pdf'
-        doc = self.encode_base64(doc_name)
+        username = ConfParam.get_param('pabiweb_username')
+        password = ConfParam.get_param('pabiweb_password')
+        connect_string = "http://"+username+":"+password+"@"+url
+        alfresco = xmlrpclib.ServerProxy(connect_string)
+        pd_file = Attachment.search([
+            ('res_id', '=', PD.id),
+            ('res_model', '=', 'purchase.requisition'),
+        ])
+        if len(pd_file) != 1:
+            raise UserError(
+                _("Only 1 PD Form could be done at a time.")
+            )
+        doc_name = pd_file.name
+        doc = pd_file.datas
         attachment = []
         for pd_att in PD.attachment_ids:
             pd_attach = {
-                'name': pd_att.name,
+                'name': self.check_pdf_extension(pd_att.name),
                 'content': pd_att.file
             }
             attachment.append(pd_attach)
@@ -84,15 +105,19 @@ class PurchaseWebInterface(models.Model):
             'sectionId': str(PD.line_ids[0].section_id.id),
             'prNo': pr_name,
             'docType': 'PD1',
-            'objective': PD.objective,
-            'total': PD.amount_total,
+            'objective': PD.objective or '',
+            'total': str(PD.amount_total),
             'reqBy': '002648',
             'appBy': '001509',
             'doc': {
-                'name': doc_name,
+                'name': self.check_pdf_extension(doc_name),
                 'content': doc
             },
             'attachments': attachment,
         }
         result = alfresco.ord.create(arg)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
         return result

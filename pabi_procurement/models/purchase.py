@@ -100,6 +100,11 @@ class PurchaseOrder(models.Model):
         readonly=True,
         track_visibility='onchange',
     )
+    order_state = fields.Selection(
+        string='PO Status',
+        related='order_id.state',
+        readonly=True,
+    )
 
     @api.one
     def _compute_dummy_quote_id(self):

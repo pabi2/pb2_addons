@@ -169,6 +169,15 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
         default=False,
     )
+    exclusive = fields.Selection(
+        [
+            ('exclusive', 'Select only one RFQ (exclusive)'),
+            ('multiple', 'Select multiple RFQ'),
+        ],
+        string='Bid Selection Type',
+        required=True,
+        default='exclusive',
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')

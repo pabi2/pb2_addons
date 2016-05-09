@@ -1,4 +1,4 @@
 id,key,value
-base.ir_config_parameter_1,pabiweb_url,http://10.226.202.134/share
-base.ir_config_parameter_2,pabiweb_username,admin
-base.ir_config_parameter_3,pabiweb_password,admin
+base.ir_config_parameter_1,pabiweb_url,10.226.202.134/alfresco/s/pb/pcm/inf
+base.ir_config_parameter_2,pabiweb_username,002648
+base.ir_config_parameter_3,pabiweb_password,password
