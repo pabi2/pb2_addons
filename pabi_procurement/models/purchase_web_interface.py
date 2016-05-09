@@ -69,7 +69,8 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition(self, requisition):
-        assert len(requisition) == 1, "Only 1 Call for Bids could be done at a time."
+        assert len(requisition) == 1, \
+            "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
         Attachment = self.env['ir.attachment']
         url = ConfParam.get_param('pabiweb_url')
