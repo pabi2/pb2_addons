@@ -43,10 +43,14 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_service_fine(self):
         total_fine = 0.0
+        if not self.date_received:
+            self.date_received = fields.date.today().strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
             self.date_received,
             "%Y-%m-%d",
         )
+        if not self.date_contract_end:
+            self.date_contract_end = fields.date.today().strftime('%Y-%m-%d')
         end_date = datetime.datetime.strptime(
             self.date_contract_end,
             "%Y-%m-%d",
@@ -66,10 +70,14 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
+        if not self.date_received:
+            self.date_received = fields.date.today().strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
-            self.date_received,
+            self.date_received or '',
             "%Y-%m-%d",
         )
+        if not self.date_contract_end:
+            self.date_contract_end = fields.date.today().strftime('%Y-%m-%d')
         end_date = datetime.datetime.strptime(
             self.date_contract_end,
             "%Y-%m-%d",
