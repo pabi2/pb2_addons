@@ -28,12 +28,12 @@ class PurchaseWebInterface(models.Model):
         return filename
 
     @api.model
-    def send_pd_test(self):
+    def send_pbweb_requisition_test(self):
         ConfParam = self.env['ir.config_parameter']
         url = ConfParam.get_param('pabiweb_url')
         username = ConfParam.get_param('pabiweb_username')
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://"+username+":"+password+"@"+url
+        connect_string = "http://%s:%s@%s" % (username, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string)
         doc = self.encode_base64('PR_2015011901.pdf')
         att1 = self.encode_base64('PR_2015011901.pdf')
@@ -68,45 +68,45 @@ class PurchaseWebInterface(models.Model):
         return result
 
     @api.model
-    def send_pd(self, PD):
-        assert len(PD) == 1, "Only 1 Call for Bids could be done at a time."
+    def send_pbweb_requisition(self, requisition):
+        assert len(requisition) == 1, "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
         Attachment = self.env['ir.attachment']
         url = ConfParam.get_param('pabiweb_url')
         username = ConfParam.get_param('pabiweb_username')
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://"+username+":"+password+"@"+url
+        connect_string = "http://%s:%s@%s" % (username, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string)
         pd_file = Attachment.search([
-            ('res_id', '=', PD.id),
+            ('res_id', '=', requisition.id),
             ('res_model', '=', 'purchase.requisition'),
         ])
         if len(pd_file) != 1:
             raise UserError(
-                _("Only 1 PD Form could be done at a time.")
+                _("Only 1 Requisition Form could be done at a time.")
             )
         doc_name = pd_file.name
         doc = pd_file.datas
         attachment = []
-        for pd_att in PD.attachment_ids:
+        for pd_att in requisition.attachment_ids:
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
                 'content': pd_att.file
             }
             attachment.append(pd_attach)
         pr_name = ''
-        for pd_line in PD.line_ids:
+        for pd_line in requisition.line_ids:
             for pd_pr_line in pd_line.purchase_request_lines:
                 pr_name += pd_pr_line.request_id.name + ','
             pr_name = pr_name[:-1]
         arg = {
             'action': '1',
-            'pdNo': PD.name,
-            'sectionId': str(PD.line_ids[0].section_id.id),
+            'pdNo': requisition.name,
+            'sectionId': str(requisition.line_ids[0].section_id.id),
             'prNo': pr_name,
             'docType': 'PD1',
-            'objective': PD.objective or '',
-            'total': str(PD.amount_total),
+            'objective': requisition.objective or '',
+            'total': str(requisition.amount_total),
             'reqBy': '002648',
             'appBy': '001509',
             'doc': {

@@ -170,12 +170,6 @@ class PurchaseRequisition(models.Model):
         default=False,
     )
     exclusive = fields.Selection(
-        [
-            ('exclusive', 'Select only one RFQ (exclusive)'),
-            ('multiple', 'Select multiple RFQ'),
-        ],
-        string='Bid Selection Type',
-        required=True,
         default='exclusive',
     )
 
@@ -267,10 +261,9 @@ class PurchaseRequisition(models.Model):
         self.state = 'rejected'
 
     @api.multi
-    def send_pd(self):
-        """ Case Central Purchase, quotation amount should not exceed """
+    def send_pbweb_requisition(self):
         PWInterface = self.env['purchase.web.interface']
-        PWInterface.send_pd(self)
+        PWInterface.send_pbweb_requisition(self)
         return True
 
     @api.multi
