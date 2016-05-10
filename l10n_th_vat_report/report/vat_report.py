@@ -36,10 +36,14 @@ class VatReportParser(report_sxw.rml_parse):
         self.cr.execute("""
             SELECT
                 avt.id,
-                SUM(avt.base_amount) as base_amount,
-                SUM(avt.amount) as tax_amount,
+                CASE WHEN voucher.state = 'cancel' THEN 0.0
+                    ELSE SUM(avt.base_amount) END as base_amount,
+                CASE WHEN voucher.state = 'cancel' THEN 0.0
+                    ELSE SUM(avt.tax_amount) END as tax_amount,
                 voucher.date as date,
-                voucher.number as number,
+                CASE WHEN voucher.state = 'cancel'
+                    THEN voucher.number || ' (CANCELLED)'
+                    ELSE voucher.number END as number,
                 p.name as partner_name,
                 p.vat as tax_id,
                 avt.tax_id as tax
@@ -50,13 +54,14 @@ class VatReportParser(report_sxw.rml_parse):
             LEFT JOIN res_partner p ON
                 (voucher.partner_id = p.id)
             WHERE
+                voucher.state in ('cancel', 'posted') AND
                 avt.tax_id = %s AND
                 avt.base_code_id = %s AND
                 avt.tax_code_id = %s AND
                 voucher.period_id = %s AND
                 avt.company_id =%s
             GROUP BY
-                avt.id,voucher.date,voucher.number,p.name,p.vat,avt.tax_id
+                voucher.state,avt.id,voucher.date,voucher.number,p.name,p.vat,avt.tax_id
         """, (tax.id, base_code.id, tax_code.id, period.id, company.id))
         voucher_tax = self.cr.dictfetchall()
         return voucher_tax
@@ -76,10 +81,14 @@ class VatReportParser(report_sxw.rml_parse):
         self.cr.execute("""
             SELECT
                 ait.id,
-                SUM(ait.base_amount) as base_amount,
-                SUM(ait.amount) as tax_amount,
+                CASE WHEN invoice.state = 'cancel' THEN 0.0
+                    ELSE SUM(ait.base_amount) END as base_amount,
+                CASE WHEN invoice.state = 'cancel' THEN 0.0
+                    ELSE SUM(ait.tax_amount) END as tax_amount,
                 invoice.date_invoice as date,
-                invoice.number as number,
+                CASE WHEN invoice.state = 'cancel'
+                    THEN invoice.internal_number || ' (CANCELLED)'
+                    ELSE invoice.internal_number END as number,
                 p.name as partner_name,
                 p.vat as tax_id
             FROM
@@ -89,12 +98,14 @@ class VatReportParser(report_sxw.rml_parse):
             LEFT JOIN res_partner p ON
                 (invoice.partner_id = p.id)
             WHERE
+                invoice.state in ('cancel', 'open', 'paid') AND
+                invoice.internal_number is not null AND
                 ait.base_code_id = %s AND
                 ait.tax_code_id = %s AND
                 invoice.period_id = %s AND
                 ait.company_id =%s
             GROUP BY
-                ait.id,invoice.date_invoice,invoice.number,p.name,p.vat
+                invoice.state,ait.id,invoice.date_invoice,invoice.internal_number,p.name,p.vat
         """, (base_code.id, tax_code.id, period.id, company.id))
         invoice_tax = self.cr.dictfetchall()
         return invoice_tax

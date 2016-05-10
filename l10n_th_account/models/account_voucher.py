@@ -3,7 +3,7 @@
 import datetime
 import time
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm
+from openerp.exceptions import except_orm, Warning as UserError
 import openerp.addons.decimal_precision as dp
 
 
@@ -722,14 +722,14 @@ class account_voucher_tax(common_voucher, models.Model):
             val['name'] = tax['name']
             val['amount'] = self._to_voucher_currency(
                 invoice, journal,
-                (-tax['amount'] *
+                (tax['amount'] *
                  payment_ratio *
                  line_sign))
             val['manual'] = False
             val['sequence'] = tax['sequence']
             val['base'] = self._to_voucher_currency(
                 invoice, journal,
-                -voucher_cur.round(
+                voucher_cur.round(
                     tax['price_unit'] * line.quantity) *
                 payment_ratio * line_sign)
             # For Undue
@@ -740,7 +740,7 @@ class account_voucher_tax(common_voucher, models.Model):
             vals['name'] = tax['name']
             vals['amount'] = self._to_invoice_currency(
                 invoice, journal,
-                (tax['amount'] *
+                (-tax['amount'] *
                  payment_ratio *
                  line_sign))
             vals['manual'] = False
@@ -748,7 +748,7 @@ class account_voucher_tax(common_voucher, models.Model):
             vals['base'] = self._to_invoice_currency(
                 invoice, journal,
                 voucher_cur.round(
-                    tax['price_unit'] * line.quantity) *
+                    -tax['price_unit'] * line.quantity) *
                 payment_ratio * line_sign)
 
             # Register Currency Gain for Normal
@@ -823,41 +823,44 @@ class account_voucher_tax(common_voucher, models.Model):
             # --> Adding Tax for Posting 1) Contra-Undue 2) Non-Undue
             elif tax1.is_undue_tax:
                 # First: Do the Cr: with Non-Undue Account
-                refer_tax = tax_obj.browse(val['tax_id']).refer_tax_id
+                refer_tax = tax1.refer_tax_id
+                if not refer_tax:
+                    raise UserError(
+                        _('Undue Tax require Counterpart Tax when setup'))
                 # Change name to refer_tax_id
-                vals['name'] = tax1.refer_tax_id.name
+                val['name'] = refer_tax.name
                 if voucher.type in ('receipt', 'payment'):
                     val['tax_id'] = refer_tax and refer_tax.id or val['tax_id']
-                    val['base_code_id'] = tax['base_code_id']
-                    val['tax_code_id'] = tax['tax_code_id']
+                    val['base_code_id'] = refer_tax.base_code_id.id
+                    val['tax_code_id'] = refer_tax.tax_code_id.id
                     val['base_amount'] = voucher_cur.compute(
                         val['base'] *
-                        tax['base_sign'],
+                        refer_tax.base_sign,
                         company_currency) * payment_ratio
                     val['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
-                        tax['tax_sign'],
+                        refer_tax.tax_sign,
                         company_currency) * payment_ratio
-                    val['account_id'] = (tax['account_collected_id'] or
+                    val['account_id'] = (refer_tax.account_collected_id.id or
                                          line.account_id.id)
                     val['account_analytic_id'] = \
-                        tax['account_analytic_collected_id']
+                        refer_tax.account_analytic_collected_id.id
                 else:
                     val['tax_id'] = refer_tax and refer_tax.id or val['tax_id']
-                    val['base_code_id'] = tax['ref_base_code_id']
-                    val['tax_code_id'] = tax['ref_tax_code_id']
+                    val['base_code_id'] = refer_tax.ref_base_code_id.id
+                    val['tax_code_id'] = refer_tax.ref_tax_code_id.id
                     val['base_amount'] = voucher_cur.compute(
                         val['base'] *
-                        tax['ref_base_sign'],
+                        refer_tax.ref_base_sign,
                         company_currency) * payment_ratio
                     val['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
-                        tax['ref_tax_sign'],
+                        refer_tax.ref_tax_sign,
                         company_currency) * payment_ratio
-                    val['account_id'] = (tax['account_paid_id'] or
+                    val['account_id'] = (refer_tax.account_paid_id.id or
                                          line.account_id.id)
                     val['account_analytic_id'] = \
-                        tax['account_analytic_paid_id']
+                        refer_tax.account_analytic_paid_id.id
 
                 if not val.get('account_analytic_id', False) and \
                         line.account_analytic_id and \
@@ -880,34 +883,34 @@ class account_voucher_tax(common_voucher, models.Model):
                 if voucher.type in ('receipt', 'payment'):
                     vals['base_code_id'] = tax['base_code_id']
                     vals['tax_code_id'] = tax['tax_code_id']
-                    vals['base_amount'] = -voucher_cur.compute(
+                    vals['base_amount'] = voucher_cur.compute(
                         val['base'] *
                         tax['base_sign'],
                         company_currency) * payment_ratio
-                    vals['tax_amount'] = -voucher_cur.compute(
+                    vals['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         tax['tax_sign'],
                         company_currency) * payment_ratio
                     # USE UNDUE ACCOUNT HERE
                     vals['account_id'] = \
-                        (tax1.refer_tax_id.account_collected_id.id or
+                        (tax1.account_collected_id.id or
                          line.account_id.id)
                     vals['account_analytic_id'] = \
                         tax['account_analytic_collected_id']
                 else:
                     vals['base_code_id'] = tax['ref_base_code_id']
                     vals['tax_code_id'] = tax['ref_tax_code_id']
-                    vals['base_amount'] = -voucher_cur.compute(
+                    vals['base_amount'] = voucher_cur.compute(
                         val['base'] *
                         tax['ref_base_sign'],
                         company_currency) * payment_ratio
-                    vals['tax_amount'] = -voucher_cur.compute(
+                    vals['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         tax['ref_tax_sign'],
                         company_currency) * payment_ratio
                     # USE UNDUE ACCOUNT HERE
                     vals['account_id'] = \
-                        (tax1.refer_tax_id.account_paid_id.id or
+                        (tax1.account_paid_id.id or
                          line.account_id.id)
                     vals['account_analytic_id'] = \
                         tax['account_analytic_paid_id']
