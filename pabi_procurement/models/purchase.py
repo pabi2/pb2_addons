@@ -141,12 +141,6 @@ class PurchaseMethod(models.Model):
     name = fields.Char(
         string='Purchase Method',
     )
-    committee_type_ids = fields.One2many(
-        'purchase.committee.type',
-        'method_id',
-        string='Committee Type',
-        readonly=False,
-    )
 
 
 class PurchaseCommitteeType(models.Model):
