@@ -13,6 +13,10 @@ class PurchaseRequest(models.Model):
         ('rejected', 'Cancelled')
     ]
 
+    @api.model
+    def _get_default_responsible_by(self):
+        return self.env['res.users'].browse(self.env.uid)
+
     state = fields.Selection(
         selection=_STATES,
         copy=False,
@@ -22,42 +26,6 @@ class PurchaseRequest(models.Model):
         'request_id',
         string='Committee',
         readonly=False,
-    )
-    committee_tor_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
     )
     attachment_ids = fields.One2many(
         'purchase.request.attachment',
@@ -103,6 +71,29 @@ class PurchaseRequest(models.Model):
     purchase_method_id = fields.Many2one(
         'purchase.method',
         string='Procurement Method',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    confidential_detail = fields.Text(
+        string='Confidential Detail',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -206,8 +197,6 @@ class PurchaseRequest(models.Model):
                     'product_qty': u'20',
                     'price_unit': u'10000',
                     'product_uom_id.id': u'1',
-                    'activity_id.id': u'1',
-                    'date_required': u'2016-01-31',
                     'section_id.id': u'1',
                     'project_id.id': u'1',
                     'nstda_course_id.id': u'',
@@ -367,23 +356,24 @@ class PurchaseRequest(models.Model):
                     'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                    res = self.browse(res_id)
-                    self.create_purchase_request_attachment(data_dict, res_id)
-                    self.create_purchase_request_committee(data_dict, res_id)
-                    ret = {
-                        'is_success': True,
-                        'result': {
-                            'request_id': res.id,
-                            'name': res.name,
-                        },
-                        'messages': _('PR has been created.'),
-                    }
+                res = self.browse(res_id)
+                self.create_purchase_request_attachment(data_dict, res_id)
+                self.create_purchase_request_committee(data_dict, res_id)
+                ret = {
+                    'is_success': True,
+                    'result': {
+                        'request_id': res.id,
+                        'name': res.name,
+                    },
+                    'messages': _('PR has been created.'),
+                }
+                res.state = 'to_approve'
             self._cr.commit()
-        except Exception:
+        except Exception, e:
             ret = {
                 'is_success': False,
                 'result': False,
-                'messages': _('There is something wrong while creating PR.'),
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         return ret

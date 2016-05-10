@@ -45,6 +45,12 @@ PABI2 - Procurement Module
         "workflow/purchase_requisition_workflow.xml",
         "workflow/purchase_workflow.xml",
         "data/ir.config_parameter.csv",
+        "data/purchase.type.csv",
+        "data/purchase.method.csv",
+        "data/purchase.price.range.csv",
+        "data/purchase.condition.csv",
+        "data/purchase.confidential.csv",
+        "data/purchase.committee.type.csv",
     ],
 }
 

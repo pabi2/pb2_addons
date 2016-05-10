@@ -33,6 +33,10 @@
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
                     <field name="purchase_method_id"/>
+                    <field name="purchase_price_range_id"/>
+                    <field name="purchase_condition_id"/>
+                    <field name="purchase_confidential_id"/>
+                    <field name="confidential_detail"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
@@ -104,8 +108,7 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
-                        <field name="committee_tor_ids">
-                            <h2>Draft TOR</h2>
+                        <field name="committee_ids">
                             <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
@@ -113,33 +116,6 @@
                                 <field name="committee_type"/>
                             </tree>
                         </field>
-                        <field name="committee_tender_ids">
-                            <h2>Tender</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type"/>
-                            </tree>
-                       </field>
-                       <field name="committee_receipt_ids">
-                            <h2>Receipt</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type"/>
-                            </tree>
-                       </field>
-                       <field name="committee_std_price_ids">
-                            <h2>Std. Price</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type"/>
-                            </tree>
-                       </field>
                     </page>
                     <page string="Attachment">
                         <field name="attachment_ids">
