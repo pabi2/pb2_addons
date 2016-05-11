@@ -58,6 +58,10 @@
                     <field name="mycontract_id" />
                     <field name="date_contract_start" />
                 </xpath>
+                <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="delete">false</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
                         <field name="committee_ids">
