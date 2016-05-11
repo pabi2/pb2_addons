@@ -65,8 +65,7 @@
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="responsible"/>
-                                <field name="committee_type"/>
+                                <field name="committee_type_id"/>
                             </tree>
                         </field>
                     </page>

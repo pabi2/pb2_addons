@@ -85,7 +85,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'name': line.name,
             'sequence': line.sequence,
             'position': line.position,
-            'committee_type': line.committee_type,
+            'committee_type_id': line.committee_type_id.id,
         }
 
     @api.model
@@ -114,6 +114,11 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             if item.request_id.state != 'approved':
                 raise UserError(
                     _("Some Request hasn't been accepted yet : %s"
+                      % (item.request_id.name,))
+                )
+            elif item.line_id.requisition_state != 'none':
+                raise UserError(
+                    _("Each Request bid status should be 'No Bid' : %s"
                       % (item.request_id.name,))
                 )
         return True

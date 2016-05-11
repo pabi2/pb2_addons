@@ -206,6 +206,36 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.model
+    def _prepare_committee_line(self, line, order_id):
+        return {
+            'order_id': order_id,
+            'name': line.name,
+            'sequence': line.sequence,
+            'position': line.position,
+            'committee_type_id': line.committee_type_id.id,
+        }
+
+    @api.model
+    def _prepare_order_committees(self, order_id):
+        committees = []
+        for line in self.committee_ids:
+            committee_line = self._prepare_committee_line(line,
+                                                          order_id)
+            committees.append([0, False, committee_line])
+        return committees
+
+    @api.multi
+    def make_purchase_order(self, partner_id):
+        res = super(PurchaseRequisition, self).\
+            make_purchase_order(partner_id)
+        Order = self.env['purchase.order']
+        for order_id in res.itervalues():
+            orders = Order.search([('id', '=', order_id)])
+            for order in orders:
+                order.committee_ids = self._prepare_order_committees(order_id)
+        return res
+
+    @api.model
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
@@ -216,6 +246,7 @@ class PurchaseRequisition(models.Model):
             res.update({
                 'operating_unit_id': operating_unit_id,
                 'picking_type_id': picking_type_id,
+                'committee_ids': self._prepare_order_committees(requisition),
             })
         return res
 
@@ -366,13 +397,6 @@ class PurchaseRequisitionCommittee(models.Model):
     _description = 'Purchase Requisition Committee'
     _order = 'sequence, id'
 
-    _COMMITTEE_TYPE = [
-        ('tor', 'TOR'),
-        ('tender', 'Tender'),
-        ('receipt', 'Receipt'),
-        ('std_price', 'Standard Price')
-    ]
-
     requisition_id = fields.Many2one(
         'purchase.requisition',
         string='Purchase Requisition',
@@ -387,7 +411,7 @@ class PurchaseRequisitionCommittee(models.Model):
     position = fields.Char(
         string='Position',
     )
-    committee_type = fields.Selection(
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
         string='Type',
-        selection=_COMMITTEE_TYPE,
     )

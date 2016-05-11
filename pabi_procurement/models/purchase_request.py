@@ -378,6 +378,20 @@ class PurchaseRequest(models.Model):
             self._cr.rollback()
         return ret
 
+    @api.multi
+    def button_approved(self):
+        res = super(PurchaseRequest, self).button_approved()
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_action_request(self, 'accept')
+        return res
+
+    @api.multi
+    def button_rejected(self):
+        res = super(PurchaseRequest, self).button_rejected()
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_action_request(self, 'cancel')
+        return res
+
 
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
@@ -466,10 +480,9 @@ class PurchaseRequestCommittee(models.Model):
     position = fields.Char(
         string='Position',
     )
-    committee_type = fields.Selection(
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
         string='Type',
-        selection=_COMMITTEE_TYPE,
-        required=True,
     )
     request_id = fields.Many2one(
         'purchase.request',
