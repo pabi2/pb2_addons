@@ -1,0 +1,11 @@
+id,name
+base.purchase_method_1,วิธีตกลง
+base.purchase_method_2,วิธีประกวดราคา
+base.purchase_method_3,วิธีสอบราคา
+base.purchase_method_4,วิธีการตกลงราคา
+base.purchase_method_5,วิธีกรณีพิเศษ
+base.purchase_method_6,วิธีพิเศษ
+base.purchase_method_7,วิธีคัดเลือกแบบจำกัดข้อกำหนด
+base.purchase_method_8,วิธีประกวดราคาด้วยวิธีการอิเล็กทรอนิกส์
+base.purchase_method_9,วิธีคัดเลือก
+base.purchase_method_10,วิธีตกลงราคา

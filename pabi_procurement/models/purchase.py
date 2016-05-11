@@ -41,42 +41,6 @@ class PurchaseOrder(models.Model):
         string='Committee',
         readonly=False,
     )
-    committee_tor_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
-    )
     create_by = fields.Many2one(
         'res.users',
         string='Create By',
@@ -176,6 +140,42 @@ class PurchaseMethod(models.Model):
 
     name = fields.Char(
         string='Purchase Method',
+    )
+
+
+class PurchaseCommitteeType(models.Model):
+    _name = 'purchase.committee.type'
+    _description = 'PABI2 Purchase Committee Type'
+
+    name = fields.Char(
+        string='Purchase Committee Type',
+    )
+
+
+class PurchasePriceRange(models.Model):
+    _name = 'purchase.price.range'
+    _description = 'PABI2 Price Range'
+
+    name = fields.Char(
+        string='Purchase Price Range',
+    )
+
+
+class PurchaseCondition(models.Model):
+    _name = 'purchase.condition'
+    _description = 'PABI2 Purchase Condition'
+
+    name = fields.Char(
+        string='Purchase Condition',
+    )
+
+
+class PurchaseConfidential(models.Model):
+    _name = 'purchase.confidential'
+    _description = 'PABI2 Purchase Confidential'
+
+    name = fields.Char(
+        string='Purchase Confidential',
     )
 
 

@@ -57,6 +57,29 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
+    purchase_price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    confidential_detail = fields.Text(
+        string='Confidential Detail',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
@@ -73,42 +96,6 @@ class PurchaseRequisition(models.Model):
         'requisition_id',
         string='Committee',
         readonly=False,
-    )
-    committee_tor_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
     )
     attachment_ids = fields.One2many(
         'purchase.requisition.attachment',
