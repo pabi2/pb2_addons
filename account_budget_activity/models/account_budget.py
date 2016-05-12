@@ -233,27 +233,6 @@ class AccountBudgetLine(models.Model):
         index=True,
         required=True,
     )
-    #     analytic_account_id = fields.Many2one(
-    #         'account.analytic.account',
-    #         string='Analytic Account',
-    #     )
-    date_from = fields.Date(
-        string='Start Date',
-        compute='_compute_date',
-        readonly=True,
-        store=True,
-    )
-    date_to = fields.Date(
-        string='End Date',
-        compute='_compute_date',
-        readonly=True,
-        store=True,
-    )
-    planned_amount = fields.Float(
-        string='Planned Amount',
-        required=True,
-        digits_compute=dp.get_precision('Account'),
-    )
     company_id = fields.Many2one(
         'res.company',
         related='budget_id.company_id',
@@ -272,11 +251,12 @@ class AccountBudgetLine(models.Model):
         domain="['|', ('activity_group_id', '=', activity_group_id),"
         "('activity_group_id', '=', False)]"
     )
-    period_id = fields.Many2one(
-        'account.period',
-        string='Period',
-        required=False,
-        domain="[('fiscalyear_id', '=', parent.fiscalyear_id)]",
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+        related='budget_id.fiscalyear_id',
+        store=True,
+        readonly=True,
     )
     m1 = fields.Float(
         string='M1',
@@ -338,12 +318,22 @@ class AccountBudgetLine(models.Model):
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+        compute='_compute_planned_amount',
+        digits_compute=dp.get_precision('Account'),
+        store=True,
+    )
 
-    @api.one
-    @api.depends('period_id')
-    def _compute_date(self):
-        self.date_from = self.period_id.date_start
-        self.date_to = self.period_id.date_stop
+    @api.multi
+    @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
+                 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',)
+    def _compute_planned_amount(self):
+        for rec in self:
+            rec.planned_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
+                                      rec.m5, rec.m6, rec.m7, rec.m8,
+                                      rec.m9, rec.m10, rec.m11, rec.m12
+                                      ])
 
     @api.onchange('activity_id')
     def onchange_activity_id(self):
