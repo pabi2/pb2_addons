@@ -128,7 +128,7 @@
 	                        		</group>
                         		</group>
                         		<group>
-                        			<field name="file_url"/>
+                        			<field name="file_url" widget="url"/>
                        			</group>
                         	</form>
                     	</field>

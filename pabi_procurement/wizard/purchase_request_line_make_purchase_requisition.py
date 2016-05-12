@@ -53,6 +53,10 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'confidential_detail': req_id.confidential_detail,
             'total_budget_value': req_id.total_budget_value,
             'purchase_prototype_id': req_id.purchase_prototype_id.id,
+            'requested_by': req_id.requested_by.id,
+            'assigned_to': req_id.assigned_to.id,
+            'date_approved': req_id.date_approved,
+            'request_ref_id': req_id.request_ref_id.id,
         }
         res.update(vals)
         return res

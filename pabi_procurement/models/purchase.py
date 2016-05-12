@@ -43,26 +43,39 @@ class PurchaseOrder(models.Model):
     )
     create_by = fields.Many2one(
         'res.users',
-        string='Create By',
+        string='Created By',
     )
     verified_by = fields.Many2one(
         'res.users',
-        string='Verified By',
+        string='Verified by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
-    approved_by = fields.Many2one(
+    date_verified = fields.Date(
+        string='Verified Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been verified",
+    )
+    approval_document_date = fields.Date(
+        string='Approved Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date of the PD has been approved ",
+    )
+    approval_document_approver = fields.Many2one(
         'res.users',
-        string='Approved By',
+        string='Approved by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    approval_document_no = fields.Char(
+        string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     position = fields.Char(
         string='Position',
-    )
-    date_approval = fields.Date(
-        string='Approved Date',
-        help="Date when the PO has been approved",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        readonly=True,
-        track_visibility='onchange',
     )
     order_state = fields.Selection(
         string='PO Status',

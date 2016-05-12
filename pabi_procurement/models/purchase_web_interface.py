@@ -34,7 +34,7 @@ class PurchaseWebInterface(models.Model):
         username = ConfParam.get_param('pabiweb_username')
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         doc = self.encode_base64('PR_2015011901.pdf')
         att1 = self.encode_base64('PR_2015011901.pdf')
         att2 = self.encode_base64('PR_2015011901.pdf')
@@ -69,15 +69,16 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition(self, requisition):
+        users = self.env['res.users'].search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
         Attachment = self.env['ir.attachment']
         url = ConfParam.get_param('pabiweb_url')
-        username = ConfParam.get_param('pabiweb_username')
+        username = users.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
             ('res_model', '=', 'purchase.requisition'),
@@ -130,10 +131,10 @@ class PurchaseWebInterface(models.Model):
             "Only 1 Purchase Request could be done at a time."
         ConfParam = self.env['ir.config_parameter']
         url = ConfParam.get_param('pabiweb_url')
-        username = ConfParam.get_param('pabiweb_username')
+        username = users.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         if action == "accept":
             send_act = "C2"
         else:

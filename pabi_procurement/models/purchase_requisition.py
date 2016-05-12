@@ -123,19 +123,59 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         default=0.0,
     )
-    approval_document_no = fields.Char(
-        string='No.',
+    requested_by = fields.Many2one(
+        'res.users',
+        string='PR. Requested by',
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    assigned_to = fields.Many2one(
+        'res.users',
+        string='PR. Approver',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_approved = fields.Date(
+        string='PR. Approved Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been approved",
+    )
+    request_ref_id = fields.Many2one(
+        'purchase.request',
+        string='PR Reference',
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    verified_by = fields.Many2one(
+        'res.users',
+        string='Verified by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_verified = fields.Date(
+        string='Verified Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been verified",
     )
     approval_document_date = fields.Date(
         string='Date of Approval',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date of the order has been approved ",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        track_visibility='onchange',
+    )
+    approval_document_approver = fields.Many2one(
+        'res.users',
+        string='Approver',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    approval_document_no = fields.Char(
+        string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     approval_document_header = fields.Text(
         string='Header',
@@ -233,6 +273,12 @@ class PurchaseRequisition(models.Model):
             orders = Order.search([('id', '=', order_id)])
             for order in orders:
                 order.committee_ids = self._prepare_order_committees(order_id)
+                order.verified_by = self.verified_by.id
+                order.date_verified = self.date_verified
+                order.approval_document_no = self.approval_document_no
+                order.approval_document_approver = self.\
+                    approval_document_approver.id
+                order.approval_document_date = self.approval_document_date
         return res
 
     @api.model
@@ -246,7 +292,6 @@ class PurchaseRequisition(models.Model):
             res.update({
                 'operating_unit_id': operating_unit_id,
                 'picking_type_id': picking_type_id,
-                'committee_ids': self._prepare_order_committees(requisition),
             })
         return res
 
