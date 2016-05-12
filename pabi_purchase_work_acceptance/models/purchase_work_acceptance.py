@@ -10,6 +10,12 @@ class PurchaseWorkAcceptance(models.Model):
     _name = 'purchase.work.acceptance'
     _description = 'Purchase Work Acceptance'
 
+    _STATES = [
+        ('draft', 'Draft'),
+        ('evaluationn', 'Evaluation'),
+        ('done', 'Done'),
+    ]
+
     @api.onchange('manual_fine')
     def _onchange_manual_fine(self):
         self.total_fine = self.manual_fine
@@ -175,7 +181,10 @@ class PurchaseWorkAcceptance(models.Model):
         ],
         string='Rate - Service',
     )
-
+    state = fields.Selection(
+        selection=_STATES,
+        copy=False,
+    )
 
 class PurchaseWorkAcceptanceLine(models.Model):
     _name = 'purchase.work.acceptance.line'
