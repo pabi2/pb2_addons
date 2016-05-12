@@ -9,128 +9,141 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/group/group//field[@name='validating_user_id']" position="after">
                 	<field name="chart_view" required="1"/>
-					<!-- Project Based -->
-                	<field name="functional_area_id" attrs="{'invisible': [('chart_view','!=','project_base')], 'required': [('chart_view','=','project_base')]}"/>
-                	<field name="program_group_id" attrs="{'invisible': [('chart_view','!=','project_base')], 'required': [('chart_view','=','project_base')]}"/>
-					<!-- Unit Based -->
-                	<field name="org_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>             	
-					<field name="sector_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>      	
-					<field name="subsector_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>     	
-					<field name="division_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
-					<field name="section_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>    
-					<field name="costcenter_id" attrs="{'invisible': [('chart_view','!=','unit_base')], 'required': [('chart_view','=','unit_base')]}"/>
+                	<field name="program_id"	
+                		attrs="{'invisible': [('chart_view','!=','project_base')],
+                				'required': [('chart_view','=','project_base')]}"/>
+					<field name="section_id" 
+						attrs="{'invisible': [('chart_view','!=','unit_base')],
+								'required': [('chart_view','=','unit_base')]}"/>    
             	</xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='budget_line_ids']" position="replace">
-	                <!-- Unit Based -->
                 	<field name="budget_line_unit_base" colspan="4" nolabel="1"
-                			attrs="{'readonly':[('state','!=','draft')], 'invisible':[('chart_view','!=','unit_base')]}">
-	                    <tree string="Budget Lines">
-	                    	<field name="activity_group_id" />
-	                    	<field name="activity_id" />
-	                        <field name="period_id" />
-	                        <field name="date_from" invisible="0"/>
-	                        <field name="date_to" invisible="0"/>
-	                        <field name="planned_amount" sum="Planned Amount"/>
-	                    </tree>
-	                    <form string="Budget Lines">
-	                    	<group>
-								<group string="Unit Based">
-				                    <field name="org_id" />
-				                    <field name="sector_id" />
-				                    <field name="subsector_id" />
-				                    <field name="division_id" />
-				                    <field name="section_id" />
-				                    <field name="costcenter_id" />
-								</group>
-								<group string="Activity" >
-				                    <field name="activity_group_id" />
-				                    <field name="activity_id" />
-								</group>
-								<group string="Extra Dimension">
-				                    <field name="cost_control_type_id" invisible="1"/>
-				                    <field name="cost_control_id" />
-								</group>
-								<group string="Tag">
-			                    	<field name="spa_id" />
-			                    	<field name="mission_id" />
-			                    	<field name="tag_type_id" />
-			                    	<field name="tag_id" />
-								</group>
-	                    	</group>
-	                        <group>
-	                            <group>
-	                                <field name="planned_amount"/>
-	                            </group>
-	                            <group>
-	                                <label for="date_from" string="Duration"/>
-	                                <div>
-	                                	<field name="period_id" />
-	                                    <field name="date_from" class="oe_inline" invisible="0"/> - 
-	                                    <field name="date_to" class="oe_inline" invisible="0"/>
-	                                </div>
-	                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
-	                            </group>
-	                        </group>
-	                    </form>
-	                </field>           
-	                <!-- Project Based -->
+                			attrs="{'invisible':[('chart_view','!=','unit_base')]}"
+                			context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
+                						'section_id': section_id}" 
+                	/>    
                 	<field name="budget_line_project_base" colspan="4" nolabel="1"
-                			attrs="{'readonly':[('state','!=','draft')], 'invisible':[('chart_view','!=','project_base')]}">
-	                    <tree string="Budget Lines">
-	                    	<field name="program_id" />
-	                    	<field name="project_group_id" />
-	                    	<field name="project_id" />
-	                    	<field name="activity_group_id" />
-	                    	<field name="activity_id" />
-	                        <field name="period_id" />
-	                        <field name="date_from" invisible="0"/>
-	                        <field name="date_to" invisible="0"/>
-	                        <field name="planned_amount" sum="Planned Amount"/>
-	                    </tree>
-	                    <form string="Budget Lines">
-	                    	<group>
-								<group string="Project Based">
-			                    	<field name="functional_area_id" />
-			                    	<field name="program_group_id" />
-			                    	<field name="program_id" />
-			                    	<field name="project_group_id" />
-			                    	<field name="project_id" />
-								</group>
-								<group string="Activity" >
-				                    <field name="activity_group_id" />
-				                    <field name="activity_id" />
-								</group>
-								<group string="Extra Dimension">
-				                    <field name="cost_control_type_id" invisible="1"/>
-				                    <field name="cost_control_id" />
-								</group>
-								<group string="Tag">
-			                    	<field name="spa_id" />
-			                    	<field name="mission_id" />
-			                    	<field name="org_id" />
-			                    	<field name="tag_type_id" />
-			                    	<field name="tag_id" />
-								</group>
-	                    	</group>
-	                        <group>
-	                            <group>
-	                                <field name="planned_amount"/>
-	                            </group>
-	                            <group>
-	                                <label for="date_from" string="Duration"/>
-	                                <div>
-	                                	<field name="period_id" />
-	                                    <field name="date_from" class="oe_inline" invisible="0"/> - 
-	                                    <field name="date_to" class="oe_inline" invisible="0"/>
-	                                </div>
-	                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
-	                            </group>
-	                        </group>
-	                    </form>
-	                </field>             
+                			attrs="{'invisible':[('chart_view','!=','project_base')]}"
+                			context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
+                						'program_id': program_id}"
+                	/>             
             	</xpath>
         	</field>
         </record>
+        
+        <record id="unit_base_tree_view" model="ir.ui.view">
+            <field name="name">unit.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+	        	<tree string="Budget Lines" editable="bottom" >
+		
+		        	<field name="spa_id" invisible="1"/>
+		        	<field name="mission_id" invisible="1" />
+		        	<field name="tag_type_id" invisible="1" />
+		        	<field name="tag_id" invisible="1" />
+		        	
+		        	<field name="functional_area_id" invisible="1" />
+		        	<field name="program_group_id" invisible="1" />
+		        	<field name="program_id" invisible="1" />
+		            <field name="project_group_id" invisible="1" />
+		        	<field name="project_id" invisible="1" />
+		        	
+		            <field name="org_id" invisible="1" />
+		            <field name="sector_id" invisible="1" />
+		            <field name="subsector_id" invisible="1"/>
+		            <field name="division_id" invisible="1" />
+		            <field name="section_id" invisible="0" />
+		            
+		            <field name="invest_asset_id" invisible="1" />
+		        		
+		            <field name="invest_construction_id" invisible="1"/>
+		            <field name="invest_construction_phase_id" invisible="1" />
+		    
+		            <field name="personnel_costcenter_id" invisible="1" />
+		            
+					<field name="cost_control_type_id" invisible="1"/>
+		            <field name="cost_control_id" invisible="1" />
+		            
+		            <!-- ACTIVITY -->
+					<field name="activity_group_id" invisible="0"/>
+					<field name="activity_id" invisible="0"/>
+					
+					<!-- PERIOD -->
+					<field name="m1"/>
+					<field name="m2"/>
+					<field name="m3"/>
+					<field name="m4"/>
+					<field name="m5"/>
+					<field name="m6"/>
+					<field name="m7"/>
+					<field name="m8"/>
+					<field name="m9"/>
+					<field name="m10"/>
+					<field name="m11"/>
+					<field name="m12"/>
+					   
+					<field name="planned_amount"/>
+	
+	 			</tree>
+            </field>
+        </record>        
+        
+        <record id="project_base_tree_view" model="ir.ui.view">
+            <field name="name">project.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+	        	<tree string="Budget Lines" editable="bottom" >
+	        	
+	               	<field name="spa_id" invisible="1"/>
+	               	<field name="mission_id" invisible="1" />
+	               	<field name="tag_type_id" invisible="1" />
+	               	<field name="tag_id" invisible="1" />
+	               	
+	               	<field name="functional_area_id" invisible="1" />
+	               	<field name="program_group_id" invisible="0" />
+	               	<field name="program_id" invisible="1" />
+	               	<field name="project_group_id" invisible="1" />
+	               	<field name="project_id" invisible="0" />
+	               	
+		            <field name="org_id" invisible="1" />
+		            <field name="sector_id" invisible="1" />
+		            <field name="subsector_id" invisible="1"/>
+		            <field name="division_id" invisible="1" />
+		            <field name="section_id" invisible="1" />
+		            
+		            <field name="invest_asset_id" invisible="1" />
+		        		
+		            <field name="invest_construction_id" invisible="1"/>
+		            <field name="invest_construction_phase_id" invisible="1" />
+		    
+		            <field name="personnel_costcenter_id" invisible="1" />
+		            
+					<field name="cost_control_type_id" invisible="1"/>
+		            <field name="cost_control_id" invisible="1" />
+		            
+		            <!-- ACTIVITY -->
+					<field name="activity_group_id" invisible="0"/>
+					<field name="activity_id" invisible="0"/>
+	                   
+	                <!-- PERIOD -->
+					<field name="m1"/>
+					<field name="m2"/>
+					<field name="m3"/>
+					<field name="m4"/>
+					<field name="m5"/>
+					<field name="m6"/>
+					<field name="m7"/>
+					<field name="m8"/>
+					<field name="m9"/>
+					<field name="m10"/>
+					<field name="m11"/>
+					<field name="m12"/>
+	               	
+	               	<field name="planned_amount"/>
+	
+	 			</tree>
+            </field>
+        </record>             
         
      </data>
 </openerp>
