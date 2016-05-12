@@ -4,7 +4,6 @@ from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
-import time
 
 
 class PurchaseRequisition(models.Model):

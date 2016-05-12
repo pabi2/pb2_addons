@@ -3,7 +3,6 @@
 from openerp import fields, models, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
-import time
 
 
 class PurchaseOrder(models.Model):
