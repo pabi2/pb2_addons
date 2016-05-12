@@ -14,7 +14,7 @@ class MonitorViewEx(MonitorView):
     )
 
     def _prepare_pr_commit_amount_sql(self):
-        """ Commit amount will involce purchase_request """
+        """ Commit amount will involve purchase_request """
         sql = """
         select sum((price_unit / cr.rate)
                 * (product_qty - purchased_qty)) amount_commit
@@ -289,16 +289,15 @@ class MonitorProjectView(object):
     )
 
     _monitor_view_tempalte = """CREATE or REPLACE VIEW %s as (
-            select min(abl.id) id, abl.project_id,
-            ap.fiscalyear_id, abl.%s,
+        select min(abl.id) id, abl.project_id,
+            abl.fiscalyear_id, abl.%s,
             coalesce(sum(planned_amount), 0.0) amount_plan
-        from account_period ap
-            join account_budget_line abl on ap.id = abl.period_id
+        from account_budget_line abl
             join account_budget ab on ab.id = abl.budget_id
         where ab.latest_version = true and ab.state in ('validate', 'done')
             and abl.%s is not null
             and abl.project_id is not null
-        group by ap.fiscalyear_id, abl.project_id, abl.%s)
+        group by abl.fiscalyear_id, abl.project_id, abl.%s)
     """
 
     def _create_monitor_view(self, cr, table, field):
@@ -484,16 +483,15 @@ class MonitorUnitView(object):
     )
 
     _monitor_view_tempalte = """CREATE or REPLACE VIEW %s as (
-            select min(abl.id) id, abl.costcenter_id,
-            ap.fiscalyear_id, abl.%s,
+        select min(abl.id) id, abl.costcenter_id,
+            abl.fiscalyear_id, abl.%s,
             coalesce(sum(planned_amount), 0.0) amount_plan
-        from account_period ap
-            join account_budget_line abl on ap.id = abl.period_id
+        from account_budget_line abl
             join account_budget ab on ab.id = abl.budget_id
         where ab.latest_version = true and ab.state in ('validate', 'done')
             and abl.%s is not null
             and abl.costcenter_id is not null
-        group by ap.fiscalyear_id, abl.costcenter_id, abl.%s)
+        group by abl.fiscalyear_id, abl.costcenter_id, abl.%s)
     """
 
     def _create_monitor_view(self, cr, table, field):

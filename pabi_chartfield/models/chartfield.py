@@ -227,8 +227,29 @@ class ChartField(object):
         string='Cost Control Type',
     )
 
+    @api.multi
+    def validate_chartfields(self, chart_type):
+        # Only same chart type as specified will remains
+        for line in self:
+            for d in CHART_FIELDS:
+                if chart_type not in d[1]:
+                    line[d[0]] = False
+
+
+class ChartFieldAction(ChartField):
+    """ Chartfield + Onchange for Document Transaction
+        1) No Filter Domain from 1 field to another. Free to choose
+        2) Choosing only folloiwng fields will auto populate others
+            - const_control_id (extra)
+            - section_id
+            - project_id
+            - personnel_costcenter_id
+            - invest_asset_id
+            - invest_construction_id
+    """
+
     # Unit Base
-    @api.onchange('section_id')
+    @api.onchange('cost_control_id')
     def _onchange_cost_control_id(self):
         self.cost_control_type_id = self.cost_control_id.cost_control_type_id
 
@@ -285,7 +306,6 @@ class ChartField(object):
 
         self.project_group_id = self.project_id.project_group_id  # main
 
-        self.project_id = self.project_id  # main
         self.taxbranch_id = self.project_id.costcenter_id.taxbranch_id
         self.mission_id = self.project_id.mission_id
 
@@ -347,11 +367,3 @@ class ChartField(object):
             self.invest_construction_phase_id.invest_construction_id
 
         self.org_id = self.invest_construction_id.org_id
-
-    @api.multi
-    def validate_chartfields(self, chart_type):
-        # Only same chart type as specified will remains
-        for line in self:
-            for d in CHART_FIELDS:
-                if chart_type not in d[1]:
-                    line[d[0]] = False

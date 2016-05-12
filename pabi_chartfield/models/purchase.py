@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from .chartfield import ChartField, HeaderTaxBranch
+from .chartfield import ChartFieldAction, HeaderTaxBranch
 
 
 class PurchaseOrder(HeaderTaxBranch, models.Model):
@@ -18,5 +18,5 @@ class PurchaseOrder(HeaderTaxBranch, models.Model):
         self.taxbranch_id = self._check_taxbranch_id(lines)
 
 
-class PurchaseOrderLine(ChartField, models.Model):
+class PurchaseOrderLine(ChartFieldAction, models.Model):
     _inherit = 'purchase.order.line'

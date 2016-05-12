@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields
-from .chartfield import ChartField, HeaderTaxBranch
+from .chartfield import ChartFieldAction, HeaderTaxBranch
 
 
 class HRExpenseExpense(HeaderTaxBranch, models.Model):
@@ -18,5 +18,5 @@ class HRExpenseExpense(HeaderTaxBranch, models.Model):
         self.taxbranch_id = self._check_taxbranch_id(lines)
 
 
-class HRExpenseLine(ChartField, models.Model):
+class HRExpenseLine(ChartFieldAction, models.Model):
     _inherit = 'hr.expense.line'

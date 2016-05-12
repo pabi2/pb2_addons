@@ -15,18 +15,39 @@
 					<field name="section_id" 
 						attrs="{'invisible': [('chart_view','!=','unit_base')],
 								'required': [('chart_view','=','unit_base')]}"/>    
+					<field name="personnel_costcenter_id" 
+						attrs="{'invisible': [('chart_view','!=','personnel')],
+								'required': [('chart_view','=','personnel')]}"/>  
+					<field name="org_id" 
+						attrs="{'invisible': [('chart_view','not in',('invest_asset','invest_construction'))],
+								'required': [('chart_view','in',('invest_asset','invest_construction'))]}"/>     
             	</xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='budget_line_ids']" position="replace">
+                
                 	<field name="budget_line_unit_base" colspan="4" nolabel="1"
                 			attrs="{'invisible':[('chart_view','!=','unit_base')]}"
                 			context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
-                						'section_id': section_id}" 
-                	/>    
+                						'section_id': section_id}" />
+                						
                 	<field name="budget_line_project_base" colspan="4" nolabel="1"
                 			attrs="{'invisible':[('chart_view','!=','project_base')]}"
                 			context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
-                						'program_id': program_id}"
-                	/>             
+                						'program_id': program_id}" />      
+                						
+                	<field name="budget_line_personnel" colspan="4" nolabel="1"
+                			attrs="{'invisible':[('chart_view','!=','personnel')]}"
+                			context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
+                						'personnel_costcenter_id': personnel_costcenter_id}" />          
+                						
+                	<field name="budget_line_invest_asset" colspan="4" nolabel="1"
+                			attrs="{'invisible':[('chart_view','!=','invest_asset')]}"
+                			context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
+                						'org_id': org_id}" />    
+                						
+                	<field name="budget_line_invest_construction" colspan="4" nolabel="1"
+                			attrs="{'invisible':[('chart_view','!=','invest_construction')]}"
+                			context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
+                						'org_id': org_id}" />                
             	</xpath>
         	</field>
         </record>
@@ -52,7 +73,9 @@
 		            <field name="sector_id" invisible="1" />
 		            <field name="subsector_id" invisible="1"/>
 		            <field name="division_id" invisible="1" />
-		            <field name="section_id" invisible="0" />
+		            <field name="section_id" invisible="1" />
+		            <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
 		            
 		            <field name="invest_asset_id" invisible="1" />
 		        		
@@ -100,9 +123,9 @@
 	               	<field name="tag_id" invisible="1" />
 	               	
 	               	<field name="functional_area_id" invisible="1" />
-	               	<field name="program_group_id" invisible="0" />
+	               	<field name="program_group_id" invisible="1" />
 	               	<field name="program_id" invisible="1" />
-	               	<field name="project_group_id" invisible="1" />
+	               	<field name="project_group_id" invisible="0" />
 	               	<field name="project_id" invisible="0" />
 	               	
 		            <field name="org_id" invisible="1" />
@@ -110,6 +133,8 @@
 		            <field name="subsector_id" invisible="1"/>
 		            <field name="division_id" invisible="1" />
 		            <field name="section_id" invisible="1" />
+		            <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
 		            
 		            <field name="invest_asset_id" invisible="1" />
 		        		
@@ -143,7 +168,184 @@
 	
 	 			</tree>
             </field>
-        </record>             
+        </record>      
+        
+        <record id="personnel_tree_view" model="ir.ui.view">
+            <field name="name">personnel.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+	        	<tree string="Budget Lines" editable="bottom" >
+	        	
+	               	<field name="spa_id" invisible="1"/>
+	               	<field name="mission_id" invisible="1" />
+	               	<field name="tag_type_id" invisible="1" />
+	               	<field name="tag_id" invisible="1" />
+	               	
+	               	<field name="functional_area_id" invisible="1" />
+	               	<field name="program_group_id" invisible="1" />
+	               	<field name="program_id" invisible="1" />
+	               	<field name="project_group_id" invisible="1" />
+	               	<field name="project_id" invisible="1" />
+	               	
+		            <field name="org_id" invisible="1" />
+		            <field name="sector_id" invisible="1" />
+		            <field name="subsector_id" invisible="1"/>
+		            <field name="division_id" invisible="1" />
+		            <field name="section_id" invisible="1" />
+		            <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+		            
+		            <field name="invest_asset_id" invisible="1" />
+		        		
+		            <field name="invest_construction_id" invisible="1"/>
+		            <field name="invest_construction_phase_id" invisible="1" />
+		    
+		            <field name="personnel_costcenter_id" invisible="1" />
+		            
+					<field name="cost_control_type_id" invisible="1"/>
+		            <field name="cost_control_id" invisible="1" />
+		            
+		            <!-- ACTIVITY -->
+					<field name="activity_group_id" invisible="0"/>
+					<field name="activity_id" invisible="0"/>
+	                   
+	                <!-- PERIOD -->
+					<field name="m1"/>
+					<field name="m2"/>
+					<field name="m3"/>
+					<field name="m4"/>
+					<field name="m5"/>
+					<field name="m6"/>
+					<field name="m7"/>
+					<field name="m8"/>
+					<field name="m9"/>
+					<field name="m10"/>
+					<field name="m11"/>
+					<field name="m12"/>
+	               	
+	               	<field name="planned_amount"/>
+	
+	 			</tree>
+            </field>
+        </record>       
+        
+        <record id="invest_asset_tree_view" model="ir.ui.view">
+            <field name="name">invest.asset.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+	        	<tree string="Budget Lines" editable="bottom" >
+	        	
+	               	<field name="spa_id" invisible="1"/>
+	               	<field name="mission_id" invisible="1" />
+	               	<field name="tag_type_id" invisible="1" />
+	               	<field name="tag_id" invisible="1" />
+	               	
+	               	<field name="functional_area_id" invisible="1" />
+	               	<field name="program_group_id" invisible="1" />
+	               	<field name="program_id" invisible="1" />
+	               	<field name="project_group_id" invisible="1" />
+	               	<field name="project_id" invisible="1" />
+	               	
+		            <field name="org_id" invisible="1" />
+		            <field name="sector_id" invisible="1" />
+		            <field name="subsector_id" invisible="1"/>
+		            <field name="division_id" invisible="1" />
+		            <field name="section_id" invisible="1" />
+		            <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+                    
+		            <field name="invest_asset_id" invisible="0" />
+		        		
+		            <field name="invest_construction_id" invisible="1"/>
+		            <field name="invest_construction_phase_id" invisible="1" />
+		    
+		            <field name="personnel_costcenter_id" invisible="1" />
+		            
+					<field name="cost_control_type_id" invisible="1"/>
+		            <field name="cost_control_id" invisible="1" />
+		            
+		            <!-- ACTIVITY -->
+					<field name="activity_group_id" invisible="1"/>
+					<field name="activity_id" invisible="1"/>
+	                   
+	                <!-- PERIOD -->
+					<field name="m1"/>
+					<field name="m2"/>
+					<field name="m3"/>
+					<field name="m4"/>
+					<field name="m5"/>
+					<field name="m6"/>
+					<field name="m7"/>
+					<field name="m8"/>
+					<field name="m9"/>
+					<field name="m10"/>
+					<field name="m11"/>
+					<field name="m12"/>
+	               	
+	               	<field name="planned_amount"/>
+	
+	 			</tree>
+            </field>
+        </record>         
+        
+        <record id="invest_construction_tree_view" model="ir.ui.view">
+            <field name="name">invest.construction.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+	        	<tree string="Budget Lines" editable="bottom" >
+	        	
+	               	<field name="spa_id" invisible="1"/>
+	               	<field name="mission_id" invisible="1" />
+	               	<field name="tag_type_id" invisible="1" />
+	               	<field name="tag_id" invisible="1" />
+	               	
+	               	<field name="functional_area_id" invisible="1" />
+	               	<field name="program_group_id" invisible="1" />
+	               	<field name="program_id" invisible="1" />
+	               	<field name="project_group_id" invisible="1" />
+	               	<field name="project_id" invisible="1" />
+	               	
+		            <field name="org_id" invisible="1" />
+		            <field name="sector_id" invisible="1" />
+		            <field name="subsector_id" invisible="1"/>
+		            <field name="division_id" invisible="1" />
+		            <field name="section_id" invisible="1" />
+		            <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+		            
+		            <field name="invest_asset_id" invisible="1" />
+		        		
+		            <field name="invest_construction_id" invisible="0"/>
+		            <field name="invest_construction_phase_id" invisible="0" />
+		    
+		            <field name="personnel_costcenter_id" invisible="1" />
+		            
+					<field name="cost_control_type_id" invisible="1"/>
+		            <field name="cost_control_id" invisible="1" />
+		            
+		            <!-- ACTIVITY -->
+					<field name="activity_group_id" invisible="1"/>
+					<field name="activity_id" invisible="1"/>
+	                   
+	                <!-- PERIOD -->
+					<field name="m1"/>
+					<field name="m2"/>
+					<field name="m3"/>
+					<field name="m4"/>
+					<field name="m5"/>
+					<field name="m6"/>
+					<field name="m7"/>
+					<field name="m8"/>
+					<field name="m9"/>
+					<field name="m10"/>
+					<field name="m11"/>
+					<field name="m12"/>
+	               	
+	               	<field name="planned_amount"/>
+	
+	 			</tree>
+            </field>
+        </record>        
         
      </data>
 </openerp>
