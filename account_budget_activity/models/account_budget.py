@@ -275,8 +275,68 @@ class AccountBudgetLine(models.Model):
     period_id = fields.Many2one(
         'account.period',
         string='Period',
-        required=True,
+        required=False,
         domain="[('fiscalyear_id', '=', parent.fiscalyear_id)]",
+    )
+    m1 = fields.Float(
+        string='M1',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m2 = fields.Float(
+        string='M2',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m3 = fields.Float(
+        string='M3',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m4 = fields.Float(
+        string='M4',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m5 = fields.Float(
+        string='M5',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m6 = fields.Float(
+        string='M6',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m7 = fields.Float(
+        string='M7',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m8 = fields.Float(
+        string='M8',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m9 = fields.Float(
+        string='M9',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m10 = fields.Float(
+        string='M10',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m11 = fields.Float(
+        string='M11',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m12 = fields.Float(
+        string='M12',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
     )
 
     @api.one
