@@ -12,7 +12,7 @@ class PurchaseWorkAcceptance(models.Model):
 
     _STATES = [
         ('draft', 'Draft'),
-        ('evaluationn', 'Evaluation'),
+        ('evaluation', 'Evaluation'),
         ('done', 'Done'),
     ]
 
@@ -139,13 +139,11 @@ class PurchaseWorkAcceptance(models.Model):
         string="Total Fine",
         compute="_compute_total_fine",
     )
-    invoice_id = fields.Many2one(
-        'account.invoice',
-        string='Invoice',
+    supplier_invoice = fields.Char(
+        string="Invoice No.",
     )
-    picking_id = fields.Many2one(
-        'stock.picking',
-        string='Incoming',
+    date_invoiced = fields.Date(
+        string="Invoice Date",
     )
     acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
@@ -184,7 +182,21 @@ class PurchaseWorkAcceptance(models.Model):
     state = fields.Selection(
         selection=_STATES,
         copy=False,
+        default='draft',
     )
+
+    @api.multi
+    def action_evaluate(self):
+        self.state = 'evaluation'
+
+    @api.multi
+    def action_done(self):
+        self.state = 'done'
+
+    @api.multi
+    def action_set_draft(self):
+        self.state = 'draft'
+
 
 class PurchaseWorkAcceptanceLine(models.Model):
     _name = 'purchase.work.acceptance.line'

@@ -7,9 +7,9 @@
             <field name="arch" type="xml">
                 <form string="Purchase Work Acceptance">
                     <header>
-                        <button name="evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
-                        <button name="done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
-                        <button name="set_to_draft"  type="object" states="evaluation,done" string="Set to draft"/>
+                        <button name="action_evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
+                        <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
+                        <button name="action_set_draft" type="object" states="evaluation,done" string="Set to draft"/>
                         <field name="state" widget="statusbar" readonly="1"/>
                     </header>
                     <sheet>
@@ -20,21 +20,23 @@
                     </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name ="order_id"/>
-                            <field name="date_received"/>
-                            <field name="date_scheduled_end"/>
-                            <field name="date_contract_end"/>
-                            <field name="total_fine"/>
+                            <field name="name" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name ="order_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_scheduled_end" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_contract_end" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </group>
                         <group>
-                            <field name="is_manual_fine"/>
-                            <field name="manual_fine"/>
-                            <field name="manual_days"/>
+                            <field name="is_manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="manual_days" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="supplier_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_invoiced" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_received" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </group>
                     </group>
                     <field name="acceptance_line_ids">
-                        <tree editable="bottom">
+                        <tree editable="bottom" create="false" delete="false">
                             <field name="product_id"/>
                             <field name="name"/>
                             <field name="balance_qty"/>
