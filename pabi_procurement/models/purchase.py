@@ -80,6 +80,7 @@ class PurchaseOrder(models.Model):
         po_rec.action_button_convert_to_order()
         if po_rec.state != 'done':
             po_rec.state = 'done'
+        po_rec.order_id.committee_ids = po_rec.committee_ids
         return True
 
     @api.multi
@@ -192,13 +193,6 @@ class PurchaseOrderCommittee(models.Model):
     _name = 'purchase.order.committee'
     _description = 'Purchase Order Committee'
 
-    _COMMITTEE_TYPE = [
-        ('tor', 'TOR'),
-        ('tender', 'Tender'),
-        ('receipt', 'Receipt'),
-        ('std_price', 'Standard Price')
-    ]
-
     sequence = fields.Integer(
         string='Sequence',
         default=1,
@@ -209,12 +203,9 @@ class PurchaseOrderCommittee(models.Model):
     position = fields.Char(
         string='Position',
     )
-    responsible = fields.Char(
-        string='Responsible',
-    )
-    committee_type = fields.Selection(
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
         string='Type',
-        selection=_COMMITTEE_TYPE,
     )
     order_id = fields.Many2one(
         'purchase.order',
