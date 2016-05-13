@@ -203,6 +203,7 @@ class PurchaseCommitteeType(models.Model):
         string='Method',
     )
 
+
 class PurchasePriceRange(models.Model):
     _name = 'purchase.price.range'
     _description = 'PABI2 Price Range'
