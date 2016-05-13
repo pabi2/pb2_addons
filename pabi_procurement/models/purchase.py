@@ -128,6 +128,7 @@ class PurchaseOrder(models.Model):
         self.wkf_validate_vs_requisition()
         return super(PurchaseOrder, self).action_button_convert_to_order()
 
+
 class Purchase(models.Model):
     _name = 'purchase.method'
     _description = 'PABI2 Purchase Method'
@@ -135,6 +136,16 @@ class Purchase(models.Model):
     name = fields.Char(
         string='Purchase Method',
     )
+
+
+class PurchaseType(models.Model):
+    _name = 'purchase.type'
+    _description = 'PABI2 Purchase Type'
+
+    name = fields.Char(
+        string='Purchase Type',
+    )
+
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'

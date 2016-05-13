@@ -18,7 +18,7 @@
                     />
                     <field name="order_id" invisible="1"/>
                     <field name="date_scheduled_end" invisible="1"/>
-                    <field name="date_received" invisible="1"/>
+                    <field name="date_receive" invisible="1"/>
                     <field name="date_contract_end" invisible="1"/>
                     <field name="is_invoice_plan" invisible="1"/>
                     <field name="acceptance_line_ids" invisible="1"/>

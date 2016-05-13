@@ -69,7 +69,8 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition(self, requisition):
-        users = self.env['res.users'].search([('id', '=', self._uid)])
+        User = self.env['res.users']
+        users = User.search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
@@ -89,6 +90,8 @@ class PurchaseWebInterface(models.Model):
             )
         doc_name = pd_file.name
         doc = pd_file.datas
+        request_usr = User.search([('id', '=', requisition.request_uid.id)])
+        assign_usr = User.search([('id', '=',  requisition.assign_uid.id)])
         attachment = []
         for pd_att in requisition.attachment_ids:
             pd_attach = {
@@ -109,8 +112,8 @@ class PurchaseWebInterface(models.Model):
             'docType': 'PD1',
             'objective': requisition.objective or '',
             'total': str(requisition.amount_total),
-            'reqBy': '002648',
-            'appBy': '001509',
+            'reqBy': request_usr,
+            'appBy': assign_usr,
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
                 'content': doc

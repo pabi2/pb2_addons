@@ -31,8 +31,8 @@
                             <field name="manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="manual_days" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="supplier_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
-                            <field name="date_invoiced" attrs="{'readonly': [('state','!=','draft')]}"/>
-                            <field name="date_received" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_receive" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </group>
                     </group>
                     <field name="acceptance_line_ids">
@@ -60,7 +60,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Work Acceptance">
                     <field name="name"/>
-                    <field name="date_received"/>
+                    <field name="date_receive"/>
                     <field name="date_scheduled_end"/>
                     <field name="date_contract_end"/>
                     <field name="is_manual_fine"/>

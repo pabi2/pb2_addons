@@ -122,7 +122,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'name': self.name,
             'date_scheduled_end': self.date_scheduled_end,
             'date_contract_end': self.date_contract_end,
-            'date_receive': self.date_received,
+            'date_receive': self.date_receive,
             'order_id': self.order_id.id,
         })
         acceptance = PWAcceptance.create(vals)

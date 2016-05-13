@@ -272,19 +272,13 @@ class PurchaseRequisition(models.Model):
             orders = Order.search([('id', '=', order_id)])
             for order in orders:
                 order.write({
-                    'committee_ids' : self._prepare_order_committees(order_id),
-                    'verify_uid' : self.verify_uid.id,
-                    'date_verify' : self.date_verify,
-                    'doc_no' : self.doc_no,
-                    'doc_approve_uid' : self.doc_approve_uid.id,
-                    'date_doc_approve' : self.date_doc_approve,
+                    'committee_ids': self._prepare_order_committees(order_id),
+                    'verify_uid': self.verify_uid.id,
+                    'date_verify': self.date_verify,
+                    'doc_no': self.doc_no,
+                    'doc_approve_uid': self.doc_approve_uid.id,
+                    'date_doc_approve': self.date_doc_approve,
                 })
-                # order.committee_ids = self._prepare_order_committees(order_id)
-                # order.verify_uid = self.verify_uid.id
-                # order.date_verify = self.date_verify
-                # order.doc_no = self.doc_no
-                # order.doc_approve_uid = self.doc_approve_uid.id
-                # order.date_doc_approve = self.date_doc_approve
         return res
 
     @api.model
