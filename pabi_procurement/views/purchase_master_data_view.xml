@@ -331,6 +331,7 @@
                     <group>
                         <field name="type_id"/>
                         <field name="method_id"/>
+                        <field name="doctype_id"/>
                         <field name="price_range_id"/>
                         <field name="condition_id"/>
                         <field name="confidential_id"/>
@@ -345,6 +346,7 @@
                 <tree string="PRWeb Method">
                     <field name="type_id"/>
                     <field name="method_id"/>
+                    <field name="doctype_id"/>
                     <field name="price_range_id"/>
                     <field name="condition_id"/>
                     <field name="confidential_id"/>
@@ -358,6 +360,7 @@
                 <search string="Search PRWeb Method">
                     <field name="type_id" string="Type"/>
                     <field name="method_id" string="Method"/>
+                    <field name="doctype_id" string="Doc Type"/>
                     <field name="price_range_id" string="Price Range"/>
                     <field name="condition_id" string="Condition"/>
                     <field name="confidential_id" string="Confidential"/>

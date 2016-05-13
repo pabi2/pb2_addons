@@ -150,6 +150,11 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.method',
         string='Method',
     )
+    doctype_id = fields.Many2one(
+        'wkf.config.doctype',
+        string='Doc Type',
+        domain=[('module', '=', 'purchase')],
+    )
     price_range_id = fields.Many2one(
         'purchase.price.range',
         string='Price Range',

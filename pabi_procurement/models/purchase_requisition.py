@@ -331,6 +331,12 @@ class PurchaseRequisition(models.Model):
 
     @api.model
     def done_order(self, data_dict):
+        {
+            'name': 'TE00017',
+            'approve_uid': '002241',
+            'file_name': 'TE00017',
+            'file_url': 'aaaaas.pdf',
+        }
         ret = {}
         fields = data_dict.keys()
         data = data_dict.values()
