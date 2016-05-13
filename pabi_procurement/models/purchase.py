@@ -138,12 +138,29 @@ class Purchase(models.Model):
     )
 
 
-class PurchaseType(models.Model):
-    _name = 'purchase.type'
-    _description = 'PABI2 Purchase Type'
+class PRWebPurchaseMethod(models.Model):
+    _name = 'prweb.purchase.method'
+    _description = 'PRWeb Purchase Method'
 
-    name = fields.Char(
-        string='Purchase Type',
+    type_id = fields.Many2one(
+        'purchase.type',
+        string='Type',
+    )
+    method_id = fields.Many2one(
+        'purchase.method',
+        string='Method',
+    )
+    price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+    )
+    condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+    )
+    confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
     )
 
 
@@ -181,7 +198,10 @@ class PurchaseCommitteeType(models.Model):
     name = fields.Char(
         string='Purchase Committee Type',
     )
-
+    method_id = fields.Many2one(
+        'purchase.method',
+        string='Method',
+    )
 
 class PurchasePriceRange(models.Model):
     _name = 'purchase.price.range'

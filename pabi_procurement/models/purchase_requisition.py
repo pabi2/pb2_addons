@@ -329,6 +329,45 @@ class PurchaseRequisition(models.Model):
         PWInterface.send_pbweb_requisition(self)
         return True
 
+    @api.model
+    def done_order(self, data_dict):
+        ret = {}
+        fields = data_dict.keys()
+        data = data_dict.values()
+        # Final Preparation of fields and data
+        try:
+            fields, data = self._finalize_data_to_load(fields, data)
+            load_res = self.load(fields, data)
+            res_id = load_res['ids'] and load_res['ids'][0] or False
+            if not res_id:
+                ret = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': [m['message'] for m in load_res['messages']],
+                }
+            else:
+                res = self.browse(res_id)
+                self.create_purchase_request_attachment(data_dict, res_id)
+                self.create_purchase_request_committee(data_dict, res_id)
+                ret = {
+                    'is_success': True,
+                    'result': {
+                        'request_id': res.id,
+                        'name': res.name,
+                    },
+                    'messages': _('PR has been created.'),
+                }
+                res.state = 'to_approve'
+            self._cr.commit()
+        except Exception, e:
+            ret = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+            self._cr.rollback()
+        return ret
+
     @api.multi
     def wkf_validate_vs_quotation(self):
         """ Case Central Purchase, quotation amount should not exceed """
