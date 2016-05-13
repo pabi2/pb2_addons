@@ -49,10 +49,10 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_service_fine(self):
         total_fine = 0.0
-        if not self.date_received:
-            self.date_received = fields.date.today().strftime('%Y-%m-%d')
+        if not self.date_receive:
+            self.date_receive = fields.date.today().strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
-            self.date_received,
+            self.date_receive,
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
@@ -76,10 +76,10 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
-        if not self.date_received:
-            self.date_received = fields.date.today().strftime('%Y-%m-%d')
+        if not self.date_receive:
+            self.date_receive = fields.date.today().strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
-            self.date_received or '',
+            self.date_receive or '',
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
@@ -101,7 +101,7 @@ class PurchaseWorkAcceptance(models.Model):
             self.total_fine = total_fine
 
     @api.one
-    @api.depends('date_received', 'date_contract_end')
+    @api.depends('date_receive', 'date_contract_end')
     def _compute_total_fine(self):
         product_type = self._check_product_type()
         if product_type == 'service':
@@ -120,7 +120,7 @@ class PurchaseWorkAcceptance(models.Model):
         string="Contract End Date",
         default=fields.Date.today(),
     )
-    date_received = fields.Date(
+    date_receive = fields.Date(
         string="Receive Date",
         default=fields.Date.today(),
     )
@@ -142,7 +142,7 @@ class PurchaseWorkAcceptance(models.Model):
     supplier_invoice = fields.Char(
         string="Invoice No.",
     )
-    date_invoiced = fields.Date(
+    date_invoice = fields.Date(
         string="Invoice Date",
     )
     acceptance_line_ids = fields.One2many(
@@ -187,14 +187,17 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.multi
     def action_evaluate(self):
+        self.ensure_one()
         self.state = 'evaluation'
 
     @api.multi
     def action_done(self):
+        self.ensure_one()
         self.state = 'done'
 
     @api.multi
     def action_set_draft(self):
+        self.ensure_one()
         self.state = 'draft'
 
 

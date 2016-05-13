@@ -13,5 +13,5 @@ class StockInvoiceOnShipping(models.TransientModel):
         Picking = self.env['stock.picking']
         picking_ids = self.env.context['active_ids'] or []
         picking = Picking.browse(picking_ids)
-        res['invoice_date'] = picking.acceptance_id.date_invoiced
+        res['invoice_date'] = picking.acceptance_id.date_invoice
         return res

@@ -44,31 +44,31 @@ class PurchaseOrder(models.Model):
         'res.users',
         string='Created By',
     )
-    verified_by = fields.Many2one(
+    verify_uid = fields.Many2one(
         'res.users',
         string='Verified by',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    date_verified = fields.Date(
+    date_verify = fields.Date(
         string='Verified Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date when the request has been verified",
     )
-    approval_document_date = fields.Date(
+    date_doc_approve = fields.Date(
         string='Approved Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date of the PD has been approved ",
     )
-    approval_document_approver = fields.Many2one(
+    doc_approve_uid = fields.Many2one(
         'res.users',
         string='Approved by',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_no = fields.Char(
+    doc_no = fields.Char(
         string='No.',
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -128,6 +128,13 @@ class PurchaseOrder(models.Model):
         self.wkf_validate_vs_requisition()
         return super(PurchaseOrder, self).action_button_convert_to_order()
 
+class Purchase(models.Model):
+    _name = 'purchase.method'
+    _description = 'PABI2 Purchase Method'
+
+    name = fields.Char(
+        string='Purchase Method',
+    )
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'

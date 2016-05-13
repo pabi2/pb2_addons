@@ -75,11 +75,11 @@
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='shipped']" position="after">
-                    <field name="verified_by"/>
-                    <field name="date_verified"/>
-                    <field name="approval_document_no"/>
-                    <field name="approval_document_approver"/>
-                    <field name="approval_document_date"/>
+                    <field name="verify_uid"/>
+                    <field name="date_verify"/>
+                    <field name="doc_no"/>
+                    <field name="doc_approve_uid"/>
+                    <field name="date_doc_approve"/>
                     <field name="position"/>
                 </xpath>
             </field>

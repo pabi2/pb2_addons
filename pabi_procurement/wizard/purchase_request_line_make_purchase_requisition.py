@@ -40,7 +40,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         active_id = self._context['active_ids'][0]
         req_id = pr_line_obj.browse(active_id).request_id
         vals = {
-            'user_id': req_id.responsible_user_id.id,
+            'user_id': req_id.responsible_uid.id,
             'description': req_id.description,
             'objective': req_id.objective,
             'currency_id': req_id.currency_id.id,
@@ -53,9 +53,9 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'confidential_detail': req_id.confidential_detail,
             'total_budget_value': req_id.total_budget_value,
             'purchase_prototype_id': req_id.purchase_prototype_id.id,
-            'requested_by': req_id.requested_by.id,
-            'assigned_to': req_id.assigned_to.id,
-            'date_approved': req_id.date_approved,
+            'request_uid': req_id.requested_by.id,
+            'assign_uid': req_id.assigned_to.id,
+            'date_approve': req_id.date_approve,
             'request_ref_id': req_id.request_ref_id.id,
         }
         res.update(vals)

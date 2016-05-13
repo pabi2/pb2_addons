@@ -122,19 +122,19 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         default=0.0,
     )
-    requested_by = fields.Many2one(
+    request_uid = fields.Many2one(
         'res.users',
         string='PR. Requested by',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    assigned_to = fields.Many2one(
+    assign_uid = fields.Many2one(
         'res.users',
         string='PR. Approver',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    date_approved = fields.Date(
+    date_approve = fields.Date(
         string='PR. Approved Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -147,41 +147,41 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    verified_by = fields.Many2one(
+    verify_uid = fields.Many2one(
         'res.users',
         string='Verified by',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    date_verified = fields.Date(
+    date_verify = fields.Date(
         string='Verified Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date when the request has been verified",
     )
-    approval_document_date = fields.Date(
+    date_doc_approve = fields.Date(
         string='Date of Approval',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date of the order has been approved ",
     )
-    approval_document_approver = fields.Many2one(
+    doc_approve_uid = fields.Many2one(
         'res.users',
         string='Approver',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_no = fields.Char(
+    doc_no = fields.Char(
         string='No.',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_header = fields.Text(
+    doc_header = fields.Text(
         string='Header',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_footer = fields.Text(
+    doc_footer = fields.Text(
         string='Footer',
     )
     reject_reason_txt = fields.Char(
@@ -271,13 +271,20 @@ class PurchaseRequisition(models.Model):
         for order_id in res.itervalues():
             orders = Order.search([('id', '=', order_id)])
             for order in orders:
-                order.committee_ids = self._prepare_order_committees(order_id)
-                order.verified_by = self.verified_by.id
-                order.date_verified = self.date_verified
-                order.approval_document_no = self.approval_document_no
-                order.approval_document_approver = self.\
-                    approval_document_approver.id
-                order.approval_document_date = self.approval_document_date
+                order.write({
+                    'committee_ids' : self._prepare_order_committees(order_id),
+                    'verify_uid' : self.verify_uid.id,
+                    'date_verify' : self.date_verify,
+                    'doc_no' : self.doc_no,
+                    'doc_approve_uid' : self.doc_approve_uid.id,
+                    'date_doc_approve' : self.date_doc_approve,
+                })
+                # order.committee_ids = self._prepare_order_committees(order_id)
+                # order.verify_uid = self.verify_uid.id
+                # order.date_verify = self.date_verify
+                # order.doc_no = self.doc_no
+                # order.doc_approve_uid = self.doc_approve_uid.id
+                # order.date_doc_approve = self.date_doc_approve
         return res
 
     @api.model

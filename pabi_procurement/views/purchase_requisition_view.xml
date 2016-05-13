@@ -21,9 +21,9 @@
                     <field name="description"/>
                     <field name="total_budget_value"/>
                     <field name="purchase_prototype_id"/>
-                    <field name="requested_by"/>
-                    <field name="assigned_to"/>
-                    <field name="date_approved"/>
+                    <field name="request_uid"/>
+                    <field name="assign_uid"/>
+                    <field name="date_approve"/>
                     <field name="request_ref_id"/>
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
@@ -148,13 +148,13 @@
                     </page>
                     <page string="Approval Report">
                         <group>
-                            <field name="verified_by"/>
-                            <field name="date_verified"/>
-                            <field name="approval_document_no"/>
-                            <field name="approval_document_approver"/>
-                            <field name="approval_document_date"/>
-                            <field name="approval_document_header"/>
-                            <field name="approval_document_footer"/>
+                            <field name="verify_uid"/>
+                            <field name="date_verify"/>
+                            <field name="doc_no"/>
+                            <field name="doc_approve_uid"/>
+                            <field name="date_doc_approve"/>
+                            <field name="doc_header"/>
+                            <field name="doc_footer"/>
                             <field name="reject_reason_txt"/>
                         </group>
                     </page>
@@ -169,7 +169,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="create_date" widget="date" string="Create Date"/>
-                    <field name="requested_by" string="Requested by"/>
+                    <field name="request_uid" string="Requested by"/>
                     <field name="purchase_type_id"/>
                     <field name="objective"/>
                     <field name="amount_total" string="Total Amount"/>
