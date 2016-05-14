@@ -4,7 +4,6 @@ from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
-import time
 
 
 class PurchaseRequisition(models.Model):
@@ -123,26 +122,66 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         default=0.0,
     )
-    approval_document_no = fields.Char(
-        string='No.',
+    request_uid = fields.Many2one(
+        'res.users',
+        string='PR. Requested by',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_date = fields.Date(
+    assign_uid = fields.Many2one(
+        'res.users',
+        string='PR. Approver',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_approve = fields.Date(
+        string='PR. Approved Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been approved",
+    )
+    request_ref_id = fields.Many2one(
+        'purchase.request',
+        string='PR Reference',
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    verify_uid = fields.Many2one(
+        'res.users',
+        string='Verified by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_verify = fields.Date(
+        string='Verified Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been verified",
+    )
+    date_doc_approve = fields.Date(
         string='Date of Approval',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date of the order has been approved ",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        track_visibility='onchange',
     )
-    approval_document_header = fields.Text(
+    doc_approve_uid = fields.Many2one(
+        'res.users',
+        string='Approver',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    doc_no = fields.Char(
+        string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    doc_header = fields.Text(
         string='Header',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_footer = fields.Text(
+    doc_footer = fields.Text(
         string='Footer',
     )
     reject_reason_txt = fields.Char(
@@ -232,7 +271,14 @@ class PurchaseRequisition(models.Model):
         for order_id in res.itervalues():
             orders = Order.search([('id', '=', order_id)])
             for order in orders:
-                order.committee_ids = self._prepare_order_committees(order_id)
+                order.write({
+                    'committee_ids': self._prepare_order_committees(order_id),
+                    'verify_uid': self.verify_uid.id,
+                    'date_verify': self.date_verify,
+                    'doc_no': self.doc_no,
+                    'doc_approve_uid': self.doc_approve_uid.id,
+                    'date_doc_approve': self.date_doc_approve,
+                })
         return res
 
     @api.model
@@ -246,7 +292,6 @@ class PurchaseRequisition(models.Model):
             res.update({
                 'operating_unit_id': operating_unit_id,
                 'picking_type_id': picking_type_id,
-                'committee_ids': self._prepare_order_committees(requisition),
             })
         return res
 
@@ -283,6 +328,51 @@ class PurchaseRequisition(models.Model):
         PWInterface = self.env['purchase.web.interface']
         PWInterface.send_pbweb_requisition(self)
         return True
+
+    @api.model
+    def done_order(self, data_dict):
+        # {
+        #     'name': 'TE00017',
+        #     'approve_uid': '002241',
+        #     'file_name': 'TE00017',
+        #     'file_url': 'aaaaas.pdf',
+        # }
+        ret = {}
+        fields = data_dict.keys()
+        data = data_dict.values()
+        # Final Preparation of fields and data
+        try:
+            fields, data = self._finalize_data_to_load(fields, data)
+            load_res = self.load(fields, data)
+            res_id = load_res['ids'] and load_res['ids'][0] or False
+            if not res_id:
+                ret = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': [m['message'] for m in load_res['messages']],
+                }
+            else:
+                res = self.browse(res_id)
+                self.create_purchase_request_attachment(data_dict, res_id)
+                self.create_purchase_request_committee(data_dict, res_id)
+                ret = {
+                    'is_success': True,
+                    'result': {
+                        'request_id': res.id,
+                        'name': res.name,
+                    },
+                    'messages': _('PR has been created.'),
+                }
+                res.state = 'to_approve'
+            self._cr.commit()
+        except Exception, e:
+            ret = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+            self._cr.rollback()
+        return ret
 
     @api.multi
     def wkf_validate_vs_quotation(self):

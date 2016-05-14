@@ -33,14 +33,14 @@ class PurchaseRequest(models.Model):
         string='Attach Files',
         readonly=False,
     )
-    date_approved = fields.Date(
+    date_approve = fields.Date(
         string='Approved Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
         help="Date when the request has been approved",
     )
-    responsible_user_id = fields.Many2one(
+    responsible_uid = fields.Many2one(
         'res.users',
         string='Responsible Person',
         readonly=True,
@@ -174,9 +174,9 @@ class PurchaseRequest(models.Model):
         gen_dict = {
             'name': u'PR0000001',
             'requested_by.id': u'1',
-            'responsible_user_id.id': u'1',
+            'responsible_uid.id': u'1',
             'assigned_to.id': u'1',
-            'date_approved': u'2016-01-31',
+            'date_approve': u'2016-01-31',
             'total_budget_value': u'240000',
             'purchase_prototype_id.id': u'1',
             'purchase_type_id.id': u'1',
@@ -416,10 +416,10 @@ class PurchaseRequestLine(models.Model):
         string='Taxes',
         readonly=False,  # TODO: readonly=True
     )
-    responsible_user_id = fields.Many2one(
+    responsible_uid = fields.Many2one(
         'res.users',
         string='Responsible Person',
-        related='request_id.responsible_user_id',
+        related='request_id.responsible_uid',
         store=True,
         readonly=True,
     )

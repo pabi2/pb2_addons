@@ -24,7 +24,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     date_contract_end = fields.Date(
         string="Contract End Date",
     )
-    date_received = fields.Date(
+    date_receive = fields.Date(
         string="Receive Date",
     )
     order_id = fields.Many2one(
@@ -110,7 +110,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         res['date_scheduled_end'] = date_scheduled_end
         res['date_contract_end'] = end_date
         today = datetime.datetime.now()
-        res['date_received'] = "{:%Y-%m-%d}".format(today)
+        res['date_receive'] = "{:%Y-%m-%d}".format(today)
         return res
 
     @api.model
@@ -122,7 +122,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'name': self.name,
             'date_scheduled_end': self.date_scheduled_end,
             'date_contract_end': self.date_contract_end,
-            'date_received': self.date_received,
+            'date_receive': self.date_receive,
             'order_id': self.order_id.id,
         })
         acceptance = PWAcceptance.create(vals)

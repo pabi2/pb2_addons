@@ -75,13 +75,21 @@
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='shipped']" position="after">
-                    <field name="create_by"/>
-                    <field name="verified_by"/>
-                    <field name="approved_by"/>
+                    <field name="verify_uid"/>
+                    <field name="date_verify"/>
+                    <field name="doc_no"/>
+                    <field name="doc_approve_uid"/>
+                    <field name="date_doc_approve"/>
                     <field name="position"/>
-                    <field name="date_approval"/>
                 </xpath>
             </field>
+        </record>
+        <!--Hide Merge PO action-->
+        <record id="make_invisible" model="res.groups">
+            <field name="name">Invisible</field>
+        </record>
+        <record model="ir.actions.act_window" id="purchase.action_view_purchase_order_group">
+            <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
         </record>
     </data>
 </openerp>

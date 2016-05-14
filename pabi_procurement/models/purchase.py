@@ -3,7 +3,6 @@
 from openerp import fields, models, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
-import time
 
 
 class PurchaseOrder(models.Model):
@@ -43,26 +42,39 @@ class PurchaseOrder(models.Model):
     )
     create_by = fields.Many2one(
         'res.users',
-        string='Create By',
+        string='Created By',
     )
-    verified_by = fields.Many2one(
+    verify_uid = fields.Many2one(
         'res.users',
-        string='Verified By',
+        string='Verified by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
-    approved_by = fields.Many2one(
+    date_verify = fields.Date(
+        string='Verified Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been verified",
+    )
+    date_doc_approve = fields.Date(
+        string='Approved Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date of the PD has been approved ",
+    )
+    doc_approve_uid = fields.Many2one(
         'res.users',
-        string='Approved By',
+        string='Approved by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    doc_no = fields.Char(
+        string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     position = fields.Char(
         string='Position',
-    )
-    date_approval = fields.Date(
-        string='Approved Date',
-        help="Date when the PO has been approved",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        readonly=True,
-        track_visibility='onchange',
     )
     order_state = fields.Selection(
         string='PO Status',
@@ -117,6 +129,46 @@ class PurchaseOrder(models.Model):
         return super(PurchaseOrder, self).action_button_convert_to_order()
 
 
+class Purchase(models.Model):
+    _name = 'purchase.method'
+    _description = 'PABI2 Purchase Method'
+
+    name = fields.Char(
+        string='Purchase Method',
+    )
+
+
+class PRWebPurchaseMethod(models.Model):
+    _name = 'prweb.purchase.method'
+    _description = 'PRWeb Purchase Method'
+
+    type_id = fields.Many2one(
+        'purchase.type',
+        string='Type',
+    )
+    method_id = fields.Many2one(
+        'purchase.method',
+        string='Method',
+    )
+    doctype_id = fields.Many2one(
+        'wkf.config.doctype',
+        string='Doc Type',
+        domain=[('module', '=', 'purchase')],
+    )
+    price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+    )
+    condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+    )
+    confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
+    )
+
+
 class PurchaseType(models.Model):
     _name = 'purchase.type'
     _description = 'PABI2 Purchase Type'
@@ -150,6 +202,10 @@ class PurchaseCommitteeType(models.Model):
 
     name = fields.Char(
         string='Purchase Committee Type',
+    )
+    method_id = fields.Many2one(
+        'purchase.method',
+        string='Method',
     )
 
 

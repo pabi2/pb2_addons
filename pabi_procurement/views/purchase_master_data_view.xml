@@ -282,6 +282,7 @@
                 <form string="Purchase Committee Type">
                     <group>
                         <field name="name"/>
+                        <field name="method_id"/>
                     </group>
                 </form>
             </field>
@@ -292,6 +293,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Committee Type">
                     <field name="name"/>
+                    <field name="method_id"/>
                 </tree>
             </field>
        </record>
@@ -301,6 +303,7 @@
             <field name="arch" type="xml">
                 <search string="Search Purchase Committee Type">
                     <field name="name" string="Purchase Committee Type"/>
+                    <field name="method_id" string="Purchase Method"/>
                 </search>
             </field>
        </record>
@@ -317,6 +320,66 @@
        </record>
        <menuitem action="action_purchase_committee_type_tree"
                  id="menu_action_purchase_committee_type_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_prweb_purchase_method_form" model="ir.ui.view">
+            <field name="name">prweb.purchase.method.form</field>
+            <field name="model">prweb.purchase.method</field>
+            <field name="arch" type="xml">
+                <form string="PRWeb Method">
+                    <group>
+                        <field name="type_id"/>
+                        <field name="method_id"/>
+                        <field name="doctype_id"/>
+                        <field name="price_range_id"/>
+                        <field name="condition_id"/>
+                        <field name="confidential_id"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_prweb_purchase_method_tree" model="ir.ui.view">
+            <field name="name">prweb.purchase.method.tree</field>
+            <field name="model">prweb.purchase.method</field>
+            <field name="arch" type="xml">
+                <tree string="PRWeb Method">
+                    <field name="type_id"/>
+                    <field name="method_id"/>
+                    <field name="doctype_id"/>
+                    <field name="price_range_id"/>
+                    <field name="condition_id"/>
+                    <field name="confidential_id"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_prweb_purchase_method_search" model="ir.ui.view">
+            <field name="name">prweb.purchase.method.search</field>
+            <field name="model">prweb.purchase.method</field>
+            <field name="arch" type="xml">
+                <search string="Search PRWeb Method">
+                    <field name="type_id" string="Type"/>
+                    <field name="method_id" string="Method"/>
+                    <field name="doctype_id" string="Doc Type"/>
+                    <field name="price_range_id" string="Price Range"/>
+                    <field name="condition_id" string="Condition"/>
+                    <field name="confidential_id" string="Confidential"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_prweb_purchase_method_tree" model="ir.actions.act_window">
+            <field name="name">PRWeb Method</field>
+            <field name="res_model">prweb.purchase.method</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new PRWeb Method.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_prweb_purchase_method_tree"
+                 id="menu_action__prweb_purchase_method_tree"
                  parent="menu_purchase_config_pabi_master"
                  groups="purchase.group_purchase_manager"/>
     </data>

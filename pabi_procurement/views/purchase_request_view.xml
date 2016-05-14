@@ -8,8 +8,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">
                     <field name="purchase_unit_id"/>
-                    <field name="responsible_user_id"/>
-                    <field name="date_approved"/>
+                    <field name="responsible_uid"/>
+                    <field name="date_approve"/>
                     <field name="purchase_prototype_id"/>
                     <field name="total_budget_value"/>
                     <field name="delivery_address"/>
@@ -128,7 +128,7 @@
 	                        		</group>
                         		</group>
                         		<group>
-                        			<field name="file_url"/>
+                        			<field name="file_url" widget="url"/>
                        			</group>
                         	</form>
                     	</field>
@@ -160,7 +160,7 @@
                 <xpath expr="//group/filter[@string='Assigned to']" position="replace">
                         <filter string="Responsible"
                                 domain="[]"
-                                context="{'group_by':'responsible_user_id'}"/>
+                                context="{'group_by':'responsible_uid'}"/>
                 </xpath>
                 <xpath expr="//group/filter[@string='Start Date']" position="after">
                         <filter string="Status"
@@ -168,7 +168,7 @@
                                 context="{'group_by':'state'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='state_rejected']" position="after">
-                        <filter name="my_responsible" domain="[('responsible_user_id','=',uid)]" string="My Responsible"/>"
+                        <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>"
                         />
                 </xpath>
             </field>
@@ -198,7 +198,7 @@
         <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='assigned_to']" position="replace">
-                    <field name="responsible_user_id"/>
+                    <field name="responsible_uid"/>
                 </xpath>
                 <xpath expr="//field[@name='supplier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -213,7 +213,7 @@
                 <xpath expr="//group/filter[@string='Assigned to']" position="replace">
                         <filter string="Responsible"
                                 domain="[]"
-                                context="{'group_by':'responsible_user_id'}"/>
+                                context="{'group_by':'responsible_uid'}"/>
                 </xpath>
             </field>
     </record>
