@@ -274,6 +274,13 @@ class ChartFieldAction(ChartField):
         res.update_related_dimension(vals)
         return res
 
+    @api.v7
+    def create(self, cr, uid, vals, context=None):
+        new_id = super(ChartFieldAction, self).create(cr, uid, vals,
+                                                      context=context)
+        self.update_related_dimension(cr, uid, [new_id], vals)
+        return new_id
+
     @api.multi
     def update_related_dimension(self, vals):
         # Find selected dimension that is in CHART_SELECT list
