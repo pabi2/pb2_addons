@@ -183,6 +183,8 @@ class PurchaseRequisition(models.Model):
     )
     doc_footer = fields.Text(
         string='Footer',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
