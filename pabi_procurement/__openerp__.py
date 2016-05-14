@@ -31,7 +31,6 @@ PABI2 - Procurement Module
         "purchase_request_to_requisition_operating_unit",
         "purchase_operating_unit",
         "stock_operating_unit",
-        "install_demo_data",
     ],
     "data": [
         "security/purchase_requisition.xml",
