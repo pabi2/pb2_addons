@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError, Warning as UserError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                                       (mission)
@@ -21,6 +21,20 @@ from openerp.exceptions import Warning as UserError
 #        (org)
 # invest_construction -> invest_construction_phase
 
+
+# Budget structure and its selection field in document)
+# Only following field will be visible for selection
+# Only 1 field in a group can exists together
+CHART_SELECT = [
+    'section_id',  # Binding
+    'project_id',
+    'personnel_costcenter_id',
+    'invest_asset_id',
+    'invest_construction_phase_id',
+    'cost_control_id',  # Non-Binding
+    ]
+
+# All types of budget structure
 CHART_VIEW = [
     ('unit_base', 'Unit Based'),
     ('project_base', 'Project Based'),
@@ -29,6 +43,7 @@ CHART_VIEW = [
     ('invest_construction', 'Investment Construction'),
     ]
 
+# For verification, to ensure that no field is valid outside of its view
 CHART_FIELDS = [
     ('spa_id', ['project_base']),
     ('mission_id', ['project_base', 'unit_base']),  # both
@@ -217,7 +232,7 @@ class ChartField(object):
         'res.invest.construction.phase',
         string='Construction Phase',
     )
-    # Non Binding
+    # Non Binding Dimension
     cost_control_id = fields.Many2one(
         'cost.control',
         string='Cost Control',
@@ -247,123 +262,147 @@ class ChartFieldAction(ChartField):
             - invest_asset_id
             - invest_construction_id
     """
+    @api.multi
+    def write(self, vals):
+        res = super(ChartFieldAction, self).write(vals)
+        self.update_related_dimension(vals)
+        return res
 
-    # Unit Base
-    @api.onchange('cost_control_id')
-    def _onchange_cost_control_id(self):
-        self.cost_control_type_id = self.cost_control_id.cost_control_type_id
+    @api.model
+    def create(self, vals):
+        res = super(ChartFieldAction, self).create(vals)
+        res.update_related_dimension(vals)
+        return res
+
+    @api.multi
+    def update_related_dimension(self, vals):
+        # Find selected dimension that is in CHART_SELECT list
+        selects = list(set(CHART_SELECT) & set(vals.keys()))
+        if selects:
+            selects = dict([(x, vals[x]) for x in selects])
+            selects_no = {k: v for k, v in selects.items() if not v}
+            selects_yes = {k: v for k, v in selects.items() if v}
+            # update value = false first, the sequence is important
+            for field, value in selects_no.items():
+                self._update_selected_dimension(field, value)
+            for field, value in selects_yes.items():
+                self._update_selected_dimension(field, value)
+
+    @api.model
+    def _update_selected_dimension(self, field, value):
+
+        # Start filling in
+        if field == 'section_id':
+            section = self.env['res.section'].browse(value)
+            org = section.org_id
+            sector = section.sector_id
+            subsector = section.subsector_id
+            division = section.division_id
+            costcenter = section.costcenter_id
+            self.write({'org_id': org.id,
+                        'sector_id': sector.id,
+                        'subsector_id': subsector.id,
+                        'division_id': division.id,
+                        'costcenter_id': costcenter.id})
+
+        if field == 'project_id':
+            project = self.env['res.project'].browse(value)
+            functional_area = project.functional_area_id
+            program_group = project.program_group_id
+            program = project.program_id
+            spa = project.program_id.current_spa_id  # from program
+            project_group = project.project_group_id
+            taxbranch = project.costcenter_id.taxbranch_id
+            mission = project.mission_id
+            self.write({'functional_area_id': functional_area.id,
+                        'program_group_id': program_group.id,
+                        'program_id': program.id,
+                        'spa_id': spa.id,
+                        'project_group_id': project_group.id,
+                        'taxbranch_id': taxbranch.id,
+                        'mission_id': mission.id})
+            # Tags
+            org = (project.org_id or
+                   project_group.org_id or
+                   program.org_id or
+                   program_group.org_id or
+                   functional_area.org_id)
+            tag_type = (project.tag_type_id or
+                        project_group.tag_type_id or
+                        program.tag_type_id or
+                        program_group.tag_type_id or
+                        functional_area.tag_type_id)
+            tag = (project.tag_id or
+                   project_group.tag_id or
+                   program.tag_id or
+                   program_group.tag_id or
+                   functional_area.tag_id)
+            self.write({'org_id': org.id,
+                        'tag_type_id': tag_type.id,
+                        'tag_id': tag.id})
+
+        if field == 'personnel_costcenter_id':
+            pcostcenter = self.env['res.personnel.costcenter'].browse(value)
+            org = pcostcenter.org_id
+            self.write({'org_id': org.id})
+
+        if field == 'invest_asset_id':
+            asset = self.env['res.invest.asset'].browse(value)
+            org = asset.org_id
+            self.write({'org_id': org.id})
+
+        if field == 'invest_construction_phase_id':
+            phase = self.env['res.invest.construction.phase'].browse(value)
+            invest_construction = phase.invest_construction_id
+            org = invest_construction.org_id
+            self.write({'invest_construction_id': invest_construction.id,
+                        'org_id': org.id})
+
+        if field == 'cost_control_id':
+            control = self.env['cost.control'].browse(value)
+            cost_control_type = control.cost_control_type_id
+            self.write({'cost_control_type_id': cost_control_type.id})
 
     @api.onchange('section_id')
     def _onchange_section_id(self):
-
         if self.section_id:
             self.project_id = False
             self.personnel_costcenter_id = False
             self.invest_asset_id = False
             self.invest_construction_phase_id = False
 
-        self.org_id = self.section_id.org_id  # main
-        self.sector_id = self.section_id.sector_id  # main
-        self.subsector_id = self.section_id.subsector_id  # main
-        self.division_id = self.section_id.division_id  # main
-        self.costcenter_id = self.section_id.costcenter_id  # main
-
-    @api.onchange('costcenter_id')
-    def _onchange_costcenter_id(self):
-
-        if self.costcenter_id:
-            self.project_id = False
-            self.personnel_costcenter_id = False
-            self.invest_asset_id = False
-            self.invest_construction_phase_id = False
-
-        if len(self.costcenter_id.section_ids) > 1:
-            raise UserError(_('More than 1 sections is using this costcenter'))
-
-        self.section_id = len(self.costcenter_id.section_ids) == 1 and \
-            self.costcenter_id.section_ids[0]  # main
-        self.taxbranch_id = self.costcenter_id.taxbranch_id
-
-        self.mission_id = self.costcenter_id.mission_id
-
     # Project Base
     @api.onchange('project_id')
     def _onchange_project_id(self):
-
         if self.project_id:
             self.section_id = False
-            self.costcenter_id = False
             self.personnel_costcenter_id = False
             self.invest_asset_id = False
             self.invest_construction_phase_id = False
-
-        self.functional_area_id = self.project_id.functional_area_id  # main
-
-        self.program_group_id = self.project_id.program_group_id  # main
-
-        self.program_id = self.project_id.program_id  # main
-        self.spa_id = self.program_id.current_spa_id
-
-        self.project_group_id = self.project_id.project_group_id  # main
-
-        self.taxbranch_id = self.project_id.costcenter_id.taxbranch_id
-        self.mission_id = self.project_id.mission_id
-
-        # Tags
-        self.org_id = (self.project_id.org_id or
-                       self.project_group_id.org_id or
-                       self.program_id.org_id or
-                       self.program_group_id.org_id or
-                       self.functional_area_id.org_id)
-        self.tag_type_id = (self.project_id.tag_type_id or
-                            self.project_group_id.tag_type_id or
-                            self.program_id.tag_type_id or
-                            self.program_group_id.tag_type_id or
-                            self.functional_area_id.tag_type_id)
-        self.tag_id = (self.project_id.tag_id or
-                       self.project_group_id.tag_id or
-                       self.program_id.tag_id or
-                       self.program_group_id.tag_id or
-                       self.functional_area_id.tag_id)
 
     # Personnel
     @api.onchange('personnel_costcenter_id')
     def _onchange_personnel_costcenter_id(self):
-
         if self.personnel_costcenter_id:
             self.section_id = False
-            self.costcenter_id = False
             self.project_id = False
             self.invest_asset_id = False
             self.invest_construction_phase_id = False
-
-        self.org_id = self.personnel_costcenter_id.org_id
 
     # Investment Asset
     @api.onchange('invest_asset_id')
     def _onchange_invest_asset_id(self):
-
         if self.invest_asset_id:
             self.section_id = False
-            self.costcenter_id = False
             self.project_id = False
             self.personnel_costcenter_id = False
             self.invest_construction_phase_id = False
 
-        self.org_id = self.invest_asset_id.org_id
-
     # Investment Construction
     @api.onchange('invest_construction_phase_id')
     def _onchange_invest_construction_phase_id(self):
-
         if self.invest_construction_phase_id:
             self.section_id = False
-            self.costcenter_id = False
             self.project_id = False
             self.invest_asset_id = False
             self.personnel_costcenter_id = False
-
-        self.invest_construction_id = \
-            self.invest_construction_phase_id.invest_construction_id
-
-        self.org_id = self.invest_construction_id.org_id
