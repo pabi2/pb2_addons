@@ -129,7 +129,6 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_action_request_test(self, request_name, action, user_name):
-        users = self.env['res.users'].search([('id', '=', self._uid)])
         ConfParam = self.env['ir.config_parameter']
         url = ConfParam.get_param('pabiweb_url')
         password = ConfParam.get_param('pabiweb_password')
@@ -144,7 +143,6 @@ class PurchaseWebInterface(models.Model):
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
-        print result
         return result
 
     @api.model
