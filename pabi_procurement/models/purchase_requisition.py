@@ -349,7 +349,7 @@ class PurchaseRequisition(models.Model):
             try:
                 attachments = {
                     'requisition_id': requisition.id,
-                    'file_name': af_info['file_name'],
+                    'name': af_info['file_name'],
                     'file_url': af_info['file_url'],
                 }
                 att_file.append([0, False, attachments])
