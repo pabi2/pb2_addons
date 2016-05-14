@@ -337,7 +337,7 @@ class PurchaseRequisition(models.Model):
         #     'name': 'TE00017',
         #     'approve_uid': '002241',
         #     'action' : 'C1' or 'W2'
-        #     'file_name': 'TE00017',
+        #     'file_name': 'TE00017.pdf',
         #     'file_url': 'aaaaas.pdf',
         # }
         user = self.env['res.users']
@@ -346,26 +346,33 @@ class PurchaseRequisition(models.Model):
         uid = user.search([('login', '=', af_info['approve_uid'])])
         if af_info['action'] == 'C1':
             att_file = []
-            attachments = {
-                'requisition_id': requisition.id,
-                'file_name': af_info['file_name'],
-                'file_url': af_info['file_url'],
-            }
-            att_file.append([0, False, attachments])
-            for order in requisition.purchase_ids:
-                if requisition.state == 'confirmed' \
-                        and requisition.order_type == 'quotation':
-                    requisition.write({
-                        'approve_uid': uid.id,
-                        'date_approve': fields.date.today(),
-                        'attachment_ids': att_file,
-                    })
-                    order.action_button_convert_to_order()
+            try:
+                attachments = {
+                    'requisition_id': requisition.id,
+                    'file_name': af_info['file_name'],
+                    'file_url': af_info['file_url'],
+                }
+                att_file.append([0, False, attachments])
+                for order in requisition.purchase_ids:
+                    if requisition.state == 'confirmed' \
+                            and order.order_type == 'quotation':
+                        order.action_button_convert_to_order()
+                requisition.write({
+                    'doc_approve_uid': uid.id,
+                    'date_doc_approve': fields.date.today(),
+                    'attachment_ids': att_file,
+                })
                 res.update({
                     'is_success': True,
                 })
-            if requisition.state != 'done':
-                requisition.tender_done()
+                if requisition.state != 'done':
+                    requisition.tender_done()
+            except Exception, e:
+                res.update({
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(str(e)),
+                })
         return res
 
     @api.multi
