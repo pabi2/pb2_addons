@@ -9,3 +9,13 @@ class AccountMoveLine(models.Model):
         string='Doc Ref',
         copy=False,
     )
+    doc_id = fields.Reference(
+        [('account.invoice', 'Invoice'),
+         ('account.move', 'Journal Entry'),
+         ('account.voucher', 'Voucher'),
+         ('account.asset.asset', 'Asset'),
+         ('account.check.deposit', 'Check Deposit'),
+         ('stock.picking', 'Picking')],
+        string='Doc Ref',
+        readonly=True,
+    )

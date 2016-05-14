@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import api, fields, models, _
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseOrder(models.Model):
@@ -42,6 +43,26 @@ class PurchaseOrderLine(models.Model):
         'purchase.requisition.line',
         string='Purchase Requisition Line',
     )
+    temp_invoiced_qty = fields.Float(
+        string='Temporary Invoiced Quantity',
+        digits=(12, 6),
+        compute='_compute_temp_invoiced_qty',
+        store=True,
+        copy=False,
+        default=0.0,
+        help="This field is used to keep the previous invoice qty, "
+        "for calculate release commitment amount",
+    )
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for line in self:
+            result.append(
+                (line.id,
+                 "%s / %s" % (line.order_id.name or '-',
+                              line.name or '-')))
+        return result
 
     @api.one
     @api.depends('product_id', 'activity_id')
@@ -73,3 +94,89 @@ class PurchaseOrderLine(models.Model):
             date_planned = date_planned or fields.Date.today()
             res['value'].update({'date_planned': date_planned})
         return res
+
+    # ================= Purchase Commitment =====================
+
+    @api.model
+    def _price_subtotal(self, line_qty):
+        line_price = self._calc_line_base_price(self)
+        taxes = self.taxes_id.compute_all(line_price, line_qty,
+                                          self.product_id,
+                                          self.order_id.partner_id)
+        cur = self.order_id.pricelist_id.currency_id
+        return cur.round(taxes['total'])
+
+    @api.model
+    def _prepare_analytic_line(self, reverse=False):
+        general_account_id = self.pool['purchase.order'].\
+            _choose_account_from_po_line(self._cr, self._uid,
+                                         self, self._context)
+        general_journal = self.env['account.journal'].search(
+            [('type', '=', 'purchase'),
+             ('company_id', '=', self.company_id.id)], limit=1)
+        if not general_journal:
+            raise Warning(_('Define an accounting journal for purchase'))
+        if not general_journal.commitment_analytic_journal_id:
+            raise UserError(
+                _("No analytic journal for commitments defined on the "
+                  "accounting journal '%s'") % general_journal.name)
+
+        line_qty = 0.0
+        if 'diff_invoiced_qty' in self._context:
+            line_qty = self._context.get('diff_invoiced_qty')
+        else:
+            line_qty = self.product_qty - self.invoiced_qty
+        if not line_qty:
+            return False
+        sign = reverse and -1 or 1
+        return {
+            'name': self.name,
+            'product_id': self.product_id.id,
+            'account_id': self.account_analytic_id.id,
+            'unit_amount': line_qty,
+            'product_uom_id': self.product_uom.id,
+            'amount': sign * self._price_subtotal(line_qty),
+            'general_account_id': general_account_id,
+            'journal_id': general_journal.commitment_analytic_journal_id.id,
+            'ref': self.order_id.name,
+            'user_id': self._uid,
+            'doc_ref': self.order_id.name,
+            'doc_id': '%s,%s' % ('purchase.order', self.order_id.id),
+        }
+
+    @api.one
+    def _create_analytic_line(self, reverse=False):
+        if self.account_analytic_id:
+            vals = self._prepare_analytic_line(reverse=reverse)
+            if vals:
+                self.env['account.analytic.line'].create(vals)
+
+    # When confirm PO Line, create full analytic lines
+    @api.multi
+    def action_confirm(self):
+        res = super(PurchaseOrderLine, self).action_confirm()
+        self._create_analytic_line(reverse=True)
+        return res
+
+    # When cancel or set done
+    @api.multi
+    def write(self, vals):
+        # Create negative amount for the remain product_qty - invoiced_qty
+        if vals.get('state') in ('done', 'cancel'):
+            self.filtered(lambda l: l.state not in ('done',
+                                                    'draft', 'cancel')).\
+                _create_analytic_line(reverse=False)
+        return super(PurchaseOrderLine, self).write(vals)
+
+    # When partial invoiced_qty
+    @api.multi
+    @api.depends('invoiced_qty')
+    def _compute_temp_invoiced_qty(self):
+        # As inoviced_qty increased, release the commitment
+        diff_invoiced_qty = self.invoiced_qty - self.temp_invoiced_qty
+        self.filtered(lambda l: l.state not in ('done', 'draft', 'cancel')).\
+            with_context(diff_invoiced_qty=diff_invoiced_qty).\
+            _create_analytic_line(reverse=False)
+        self.temp_invoiced_qty = self.invoiced_qty
+
+    # ======================================================

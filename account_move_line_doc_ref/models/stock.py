@@ -13,6 +13,8 @@ class StockQuant(models.Model):
                                        credit_account_id,
                                        debit_account_id)
         for res in result:
-            res[2].update(doc_ref=move.picking_id and
-                          move.picking_id.name or False)
+            picking = move.picking_id
+            if picking:
+                res[2].update(doc_ref=picking.name,
+                              doc_id='%s,%s' % ('stock.picking', picking.id))
         return result

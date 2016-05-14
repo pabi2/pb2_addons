@@ -14,6 +14,16 @@ class AccountAnalyticLine(models.Model):
         'account.activity',
         string='Activity',
     )
+    doc_id = fields.Reference(
+        [('purchase.order', 'Purchase Order'),
+         ('account.invoice', 'Invoice')],
+        string='Doc Ref',
+        readonly=True,
+    )
+    doc_ref = fields.Char(
+        string='Doc Ref',
+        readonly=True,
+    )
 
     @api.model
     def create(self, vals):

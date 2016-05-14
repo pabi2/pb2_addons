@@ -15,5 +15,7 @@ class AccountMove(models.Model):
         self.ensure_one()
         reverse_move = self.browse(reverse_move_id)
         if reverse_move.line_id:
-            reverse_move.line_id.write({'doc_ref': self.name})
+            reverse_move.line_id.write(
+                {'doc_ref': self.name,
+                 'doc_id': '%s,%s' % ('account.move', self.id)})
         return reverse_move_id

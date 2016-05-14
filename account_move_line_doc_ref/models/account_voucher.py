@@ -15,6 +15,7 @@ class AccountVoucher(models.Model):
                 self.pool.get('account.move.line').write(
                     cr, uid,
                     voucher.move_id.line_id.ids,
-                    {'doc_ref': voucher.number}
+                    {'doc_ref': voucher.number,
+                     'doc_id': '%s,%s' % ('account.voucher', voucher.id)}
                 )
         return result
