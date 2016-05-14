@@ -282,7 +282,7 @@
                 <form string="Purchase Committee Type">
                     <group>
                         <field name="name"/>
-                        <field name="method_id"/>
+                        <field name="web_method_ids"/>
                     </group>
                 </form>
             </field>
@@ -293,7 +293,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Committee Type">
                     <field name="name"/>
-                    <field name="method_id"/>
+                    <field name="web_method_ids"/>
                 </tree>
             </field>
        </record>
@@ -303,7 +303,7 @@
             <field name="arch" type="xml">
                 <search string="Search Purchase Committee Type">
                     <field name="name" string="Purchase Committee Type"/>
-                    <field name="method_id" string="Purchase Method"/>
+                    <field name="web_method_ids" string="Purchase Method"/>
                 </search>
             </field>
        </record>
