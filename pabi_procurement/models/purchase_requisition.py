@@ -359,11 +359,14 @@ class PurchaseRequisition(models.Model):
                 if order.state == 'confirmed' \
                         and order.order_type == 'quotation':
                     requisition.write({
-                        'approve_uid': uid.id,
-                        'date_approve': fields.date.today(),
+                        'doc_approve_uid': uid.id,
+                        'date_doc_approve': fields.date.today(),
                         'attachment_ids': att_file,
                     })
                     order.action_button_convert_to_order()
+                    if order.state2 != 'done' or order.state != 'done':
+                        order.state2 = 'done'
+                        order.state = 'done'
                 res.update({
                     'is_success': True,
                 })
