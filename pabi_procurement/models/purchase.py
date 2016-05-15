@@ -203,9 +203,12 @@ class PurchaseCommitteeType(models.Model):
     name = fields.Char(
         string='Purchase Committee Type',
     )
-    method_id = fields.Many2one(
-        'purchase.method',
-        string='Method',
+    web_method_ids = fields.Many2many(
+        string='PRWeb Method',
+        comodel_name='prweb.purchase.method',
+        relation='prweb_purchase_method_rel',
+        column1='committee_type_id',
+        column2='method_id',
     )
 
 
@@ -233,15 +236,6 @@ class PurchaseConfidential(models.Model):
 
     name = fields.Char(
         string='Purchase Confidential',
-    )
-
-
-class PurchaseUnit(models.Model):
-    _name = 'purchase.unit'
-    _description = 'PABI2 Purchase Unit'
-
-    name = fields.Char(
-        string='Purchase Unit',
     )
 
 

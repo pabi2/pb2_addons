@@ -183,6 +183,8 @@ class PurchaseRequisition(models.Model):
     )
     doc_footer = fields.Text(
         string='Footer',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
@@ -278,6 +280,7 @@ class PurchaseRequisition(models.Model):
                     'doc_no': self.doc_no,
                     'doc_approve_uid': self.doc_approve_uid.id,
                     'date_doc_approve': self.date_doc_approve,
+                    'fine_rate': 0.1,
                 })
         return res
 
@@ -330,49 +333,41 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.model
-    def done_order(self, data_dict):
+    def done_order(self, af_info):
         # {
         #     'name': 'TE00017',
         #     'approve_uid': '002241',
+        #     'action' : 'C1' or 'W2'
         #     'file_name': 'TE00017',
         #     'file_url': 'aaaaas.pdf',
         # }
-        ret = {}
-        fields = data_dict.keys()
-        data = data_dict.values()
-        # Final Preparation of fields and data
-        try:
-            fields, data = self._finalize_data_to_load(fields, data)
-            load_res = self.load(fields, data)
-            res_id = load_res['ids'] and load_res['ids'][0] or False
-            if not res_id:
-                ret = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': [m['message'] for m in load_res['messages']],
-                }
-            else:
-                res = self.browse(res_id)
-                self.create_purchase_request_attachment(data_dict, res_id)
-                self.create_purchase_request_committee(data_dict, res_id)
-                ret = {
-                    'is_success': True,
-                    'result': {
-                        'request_id': res.id,
-                        'name': res.name,
-                    },
-                    'messages': _('PR has been created.'),
-                }
-                res.state = 'to_approve'
-            self._cr.commit()
-        except Exception, e:
-            ret = {
-                'is_success': False,
-                'result': False,
-                'messages': _(str(e)),
+        user = self.env['res.users']
+        res = {}
+        requisition = self.search([('name', '=', af_info['name'])])
+        uid = user.search([('login', '=', af_info['approve_uid'])])
+        if af_info['action'] == 'C1':
+            att_file = []
+            attachments = {
+                'requisition_id': requisition.id,
+                'file_name': af_info['file_name'],
+                'file_url': af_info['file_url'],
             }
-            self._cr.rollback()
-        return ret
+            att_file.append([0, False, attachments])
+            for order in requisition.purchase_ids:
+                if requisition.state == 'confirmed' \
+                        and requisition.order_type == 'quotation':
+                    requisition.write({
+                        'approve_uid': uid.id,
+                        'date_approve': fields.date.today(),
+                        'attachment_ids': att_file,
+                    })
+                    order.action_button_convert_to_order()
+                res.update({
+                    'is_success': True,
+                })
+            if requisition.state != 'done':
+                requisition.tender_done()
+        return res
 
     @api.multi
     def wkf_validate_vs_quotation(self):

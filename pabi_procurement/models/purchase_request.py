@@ -44,7 +44,10 @@ class PurchaseRequest(models.Model):
         'res.users',
         string='Responsible Person',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)],
+            },
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
@@ -104,7 +107,7 @@ class PurchaseRequest(models.Model):
         states={'draft': [('readonly', False)]},
     )
     purchase_unit_id = fields.Many2one(
-        'purchase.unit',
+        'wkf.config.purchase.unit',
         string='Procurement Unit',
         readonly=True,
         states={'draft': [('readonly', False)]},
