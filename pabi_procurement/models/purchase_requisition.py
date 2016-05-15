@@ -280,6 +280,7 @@ class PurchaseRequisition(models.Model):
                     'doc_no': self.doc_no,
                     'doc_approve_uid': self.doc_approve_uid.id,
                     'date_doc_approve': self.date_doc_approve,
+                    'fine_rate': 0.1,
                 })
         return res
 
