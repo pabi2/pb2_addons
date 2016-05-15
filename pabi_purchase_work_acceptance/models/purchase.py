@@ -33,6 +33,7 @@ class PurchaseOrder(models.Model):
     fine_rate = fields.Float(
         string='Fine Rate',
         required=True,
+        default=0.0,
     )
     acceptance_ids = fields.One2many(
         'purchase.work.acceptance',
