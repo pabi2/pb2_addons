@@ -37,6 +37,7 @@ PABI2 - Procurement Module
         "security/ir.model.access.csv",
         "wizard/purchase_request_line_make_purchase_requisition_view.xml",
         "wizard/reject_reason_view.xml",
+        "wizard/purchase_requisition_partner_view.xml",
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",

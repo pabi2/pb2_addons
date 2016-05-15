@@ -292,9 +292,11 @@ class PurchaseRequisition(models.Model):
         if self._context.get('sel_operating_unit_id', False):
             operating_unit_id = self._context.get('sel_operating_unit_id')
             picking_type_id = self._context.get('sel_picking_type_id')
+            location_id = self._context.get('sel_location_id')
             res.update({
                 'operating_unit_id': operating_unit_id,
                 'picking_type_id': picking_type_id,
+                'location_id': location_id,
             })
         return res
 
