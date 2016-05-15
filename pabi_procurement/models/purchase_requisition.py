@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import openerp
+import base64
+import time
+import re
 from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError
@@ -386,6 +389,38 @@ class PurchaseRequisition(models.Model):
                     _('Total quotation amount exceed Call for Bid amount')
                 )
         return True
+
+    @api.multi
+    def print_call_for_bid_form(self):
+        self.ensure_one()
+        Report = self.env['ir.actions.report.xml']
+        matching_reports = Report.search([
+            ('model', '=', self._name),
+            ('report_type', '=', 'qweb-pdf'),
+            ('report_name', '=',
+             'purchase_requisition.report_purchaserequisitions')],)
+        if matching_reports:
+            report = matching_reports[0]
+            result, _ = openerp.report.render_report(self._cr, self._uid,
+                                                     [self.id],
+                                                     report.report_name,
+                                                     {'model': self._name})
+            eval_context = {'time': time, 'object': self}
+            print report.attachment
+            print eval_context
+            if not report.attachment or not eval(report.attachment,
+                                                 eval_context):
+                # no auto-saving of report as attachment, need to do manually
+                result = base64.b64encode(result)
+                file_name = self.name_get()[0][1]
+                file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
+                file_name += ".pdf"
+                self.env['ir.attachment'].create({'name': file_name,
+                                                  'datas': result,
+                                                  'datas_fname': file_name,
+                                                  'res_model': self._name,
+                                                  'res_id': self.id,
+                                                  'type': 'binary'})
 
 
 class PurchaseRequisitionLine(models.Model):
