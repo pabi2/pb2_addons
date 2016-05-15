@@ -23,7 +23,7 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def check_pdf_extension(self, filename):
-        if '.pdf' not in filename:
+        if '.pdf' not in filename and '.' not in filename:
             filename += '.pdf'
         return filename
 
@@ -120,6 +120,7 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
+        print arg
         result = alfresco.ord.create(arg)
         if not result['success']:
             raise UserError(
