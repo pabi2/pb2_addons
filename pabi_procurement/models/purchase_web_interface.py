@@ -120,7 +120,6 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
-        print arg
         result = alfresco.ord.create(arg)
         if not result['success']:
             raise UserError(

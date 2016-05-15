@@ -354,8 +354,8 @@ class PurchaseRequisition(models.Model):
             }
             att_file.append([0, False, attachments])
             for order in requisition.purchase_ids:
-                if requisition.state == 'confirmed' \
-                        and requisition.order_type == 'quotation':
+                if order.state == 'confirmed' \
+                        and order.order_type == 'quotation':
                     requisition.write({
                         'approve_uid': uid.id,
                         'date_approve': fields.date.today(),
