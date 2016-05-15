@@ -11,7 +11,7 @@
             	<button name="cancel_requisition" >
             		<button name="print_call_for_bid_form" type="object" string="Print Form" />
             	</button>
-            	<!-- ---------------------------------------------------- -->
+
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
                 <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
