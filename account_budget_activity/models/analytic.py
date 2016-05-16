@@ -42,7 +42,8 @@ class AccountAnalyticLine(models.Model):
         string='Activity',
     )
     doc_id = fields.Reference(
-        [('purchase.order', 'Purchase Order'),
+        [('purchase.request', 'Purchase Request'),
+         ('purchase.order', 'Purchase Order'),
          ('account.invoice', 'Invoice')],
         string='Doc Ref',
         readonly=True,

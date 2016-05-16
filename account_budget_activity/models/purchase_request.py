@@ -15,6 +15,21 @@ class PurchaseRequest(models.Model):
                     Analytic.create_matched_analytic(line)
         return super(PurchaseRequest, self).button_to_approve()
 
+    @api.multi
+    def write(self, vals):
+        if vals.get('state') in ['approved']:
+            self.line_ids.filtered(lambda l:
+                                   l.request_state not in ('approved',)).\
+                _create_analytic_line(reverse=True)
+        # Create negative amount for the remain product_qty - invoiced_qty
+        if vals.get('state') in ['rejected']:
+            self.line_ids.filtered(lambda l:
+                                   l.request_state not in ('draft',
+                                                           'rejected',
+                                                           'to_approve')).\
+                _create_analytic_line(reverse=False)
+        return super(PurchaseRequest, self).write(vals)
+
 
 class PurchaseRequestLine(models.Model):
     _inherit = 'purchase.request.line'
@@ -46,6 +61,9 @@ class PurchaseRequestLine(models.Model):
         default=0.0,
         help="This field is used to keep the previous purchase qty, "
         "for calculate release commitment amount",
+    )
+    price_unit = fields.Float(
+        string='Unit Price',
     )
 
     @api.multi
@@ -82,21 +100,23 @@ class PurchaseRequestLine(models.Model):
             self.name = self.activity_id.name
 
     # ================= PR Commitment =====================
+    @api.model
+    def _get_account_id_from_pr_line(self):
+        # For PABI, account is always from activity group
+        account = self.activity_group_id.account_id
+        # If not exist, use the default expense account
+        if not account:
+            account = self.env['ir.property'].search(
+                [('name', '=', 'property_account_expense_categ')])
+        return account and account.id or False
 
     @api.model
     def _price_subtotal(self, line_qty):
-        line_price = self._calc_line_base_price(self)
-        taxes = self.taxes_id.compute_all(line_price, line_qty,
-                                          self.product_id,
-                                          self.order_id.partner_id)
-        cur = self.order_id.pricelist_id.currency_id
-        return cur.round(taxes['total'])
+        return self.price_unit * line_qty
 
     @api.model
     def _prepare_analytic_line(self, reverse=False):
-        general_account_id = self.pool['purchase.order'].\
-            _choose_account_from_po_line(self._cr, self._uid,
-                                         self, self._context)
+        general_account_id = self._get_account_id_from_pr_line()
         general_journal = self.env['account.journal'].search(
             [('type', '=', 'purchase'),
              ('company_id', '=', self.company_id.id)], limit=1)
@@ -111,57 +131,47 @@ class PurchaseRequestLine(models.Model):
         if 'diff_purchased_qty' in self._context:
             line_qty = self._context.get('diff_purchased_qty')
         else:
-            line_qty = self.product_qty - self.invoiced_qty
+            line_qty = self.product_qty - self.purchased_qty
         if not line_qty:
             return False
         sign = reverse and -1 or 1
         return {
             'name': self.name,
-            'product_id': self.product_id.id,
-            'account_id': self.account_analytic_id.id,
+            'product_id': False,
+            'account_id': self.analytic_account_id.id,
             'unit_amount': line_qty,
-            'product_uom_id': self.product_uom.id,
+            'product_uom_id': False,
             'amount': sign * self._price_subtotal(line_qty),
             'general_account_id': general_account_id,
             'journal_id': general_journal.pr_commitment_analytic_journal_id.id,
-            'ref': self.order_id.name,
+            'ref': self.request_id.name,
             'user_id': self._uid,
-            'doc_ref': self.order_id.name,
-            'doc_id': '%s,%s' % ('purchase.order', self.order_id.id),
+            'doc_ref': self.request_id.name,
+            'doc_id': '%s,%s' % ('purchase.request', self.request_id.id),
         }
 
     @api.one
     def _create_analytic_line(self, reverse=False):
-        if self.account_analytic_id:
-            vals = self._prepare_analytic_line(reverse=reverse)
-            if vals:
-                self.env['account.analytic.line'].create(vals)
-
-    # When cancel or set done
-    @api.multi
-    def write(self, vals):
-        # Create negative amount for the remain product_qty - invoiced_qty
-        if vals.get('request_state') in ('approved'):
-            self.filtered(lambda l: l.request_state not in ('approved',)).\
-                _create_analytic_line(reverse=True)
-        # Create negative amount for the remain product_qty - invoiced_qty
-        if vals.get('request_state') in ('rejected'):
-            self.filtered(lambda l: l.request_state not in ('draft',
-                                                            'rejected',
-                                                            'to_approve')).\
-                _create_analytic_line(reverse=False)
-        return super(PurchaseRequestLine, self).write(vals)
+        vals = self._prepare_analytic_line(reverse=reverse)
+        if vals:
+            self.env['account.analytic.line'].create(vals)
 
     # When partial purchased_qty
     @api.multi
     @api.depends('purchased_qty')
     def _compute_temp_purchased_qty(self):
         # As purchased_qty increased, release the commitment
-        diff_purchased_qty = self.purchased_qty - self.temp_purchased_qty
-        self.filtered(lambda l: l.request_state not in ('draft', 'to_approve',
-                                                        'rejected')).\
-            with_context(diff_purchased_qty=diff_purchased_qty).\
-            _create_analytic_line(reverse=False)
-        self.temp_purchased_qty = self.purchased_qty
+        for rec in self:
+            # On compute filed of temp_purchased_qty, ORM is not working
+            self._cr.execute("""
+                select temp_purchased_qty
+                from purchase_request_line where id = %s
+            """, (rec.id,))
+            temp_purchased_qty = self._cr.fetchone()[0] or 0.0
+            diff_purchased_qty = rec.purchased_qty - temp_purchased_qty
+            if rec.request_state not in ('draft', 'to_approve', 'rejected'):
+                rec.with_context(diff_purchased_qty=diff_purchased_qty).\
+                    _create_analytic_line(reverse=False)
+            rec.temp_purchased_qty = rec.purchased_qty
 
     # ======================================================

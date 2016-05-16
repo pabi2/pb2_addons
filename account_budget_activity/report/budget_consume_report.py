@@ -22,7 +22,8 @@ class BudgetConsumeReport(models.Model):
         string='Document Ref'
     )
     doc_id = fields.Reference(
-        [('purchase.order', 'Purchase Order'),
+        [('purchase.request', 'Purchase Request'),
+         ('purchase.order', 'Purchase Order'),
          ('account.invoice', 'Invoice')],
         string='Document ID',
         readonly=True,

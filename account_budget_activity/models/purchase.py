@@ -98,6 +98,16 @@ class PurchaseOrderLine(models.Model):
     # ================= Purchase Commitment =====================
 
     @api.model
+    def _get_account_id_from_po_line(self):
+        # For PABI, account is always from activity group
+        account = self.activity_group_id.account_id
+        # If not exist, use the default expense account
+        if not account:
+            account = self.env['ir.property'].search(
+                [('name', '=', 'property_account_expense_categ')])
+        return account and account.id or False
+
+    @api.model
     def _price_subtotal(self, line_qty):
         line_price = self._calc_line_base_price(self)
         taxes = self.taxes_id.compute_all(line_price, line_qty,
@@ -108,9 +118,7 @@ class PurchaseOrderLine(models.Model):
 
     @api.model
     def _prepare_analytic_line(self, reverse=False):
-        general_account_id = self.pool['purchase.order'].\
-            _choose_account_from_po_line(self._cr, self._uid,
-                                         self, self._context)
+        general_account_id = self._get_account_id_from_po_line()
         general_journal = self.env['account.journal'].search(
             [('type', '=', 'purchase'),
              ('company_id', '=', self.company_id.id)], limit=1)
@@ -146,10 +154,9 @@ class PurchaseOrderLine(models.Model):
 
     @api.one
     def _create_analytic_line(self, reverse=False):
-        if self.account_analytic_id:
-            vals = self._prepare_analytic_line(reverse=reverse)
-            if vals:
-                self.env['account.analytic.line'].create(vals)
+        vals = self._prepare_analytic_line(reverse=reverse)
+        if vals:
+            self.env['account.analytic.line'].create(vals)
 
     # When confirm PO Line, create full analytic lines
     @api.multi
@@ -173,10 +180,17 @@ class PurchaseOrderLine(models.Model):
     @api.depends('invoiced_qty')
     def _compute_temp_invoiced_qty(self):
         # As inoviced_qty increased, release the commitment
-        diff_invoiced_qty = self.invoiced_qty - self.temp_invoiced_qty
-        self.filtered(lambda l: l.state not in ('done', 'draft', 'cancel')).\
-            with_context(diff_invoiced_qty=diff_invoiced_qty).\
-            _create_analytic_line(reverse=False)
-        self.temp_invoiced_qty = self.invoiced_qty
+        for rec in self:
+            # On compute filed of temp_purchased_qty, ORM is not working
+            self._cr.execute("""
+                select temp_invoiced_qty
+                from purchase_order_line where id = %s
+            """, (rec.id,))
+            temp_invoiced_qty = self._cr.fetchone()[0] or 0.0
+            diff_invoiced_qty = rec.invoiced_qty - temp_invoiced_qty
+            if rec.state not in ('done', 'draft', 'cancel'):
+                rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
+                    _create_analytic_line(reverse=False)
+            rec.temp_invoiced_qty = rec.invoiced_qty
 
     # ======================================================
