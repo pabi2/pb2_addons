@@ -7,7 +7,7 @@ import xlwt
 import cStringIO
 from xlutils.copy import copy
 from xlwt.Utils import rowcol_pair_to_cellrange
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
