@@ -47,6 +47,9 @@ Testing:
         'views/account_journal_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
         'workflow/account_budget_workflow.xml',
+        'report/budget_consume_report_view.xml',
+        'report/budget_plan_report_view.xml',
+        'report/budget_monitor_report_view.xml',
     ],
     'demo': [
         'demo/activity_demo.xml',

@@ -8,7 +8,8 @@
             <field name="inherit_id" ref="account.view_account_journal_1"/>
             <field name="arch" type="xml">
                 <field name="analytic_journal_id" position="after">
-                    <field name="commitment_analytic_journal_id"/>
+                    <field name="pr_commitment_analytic_journal_id"/>
+                    <field name="po_commitment_analytic_journal_id"/>
                 </field>
             </field>
         </record>

@@ -3,9 +3,36 @@ from openerp import api, fields, models, _
 from openerp.exceptions import Warning as UserError
 
 
+class AccountAnalyticJournal(models.Model):
+    _inherit = 'account.analytic.journal'
+
+    budget_commit_type = fields.Selection(
+        [('po_commit', 'PO Commitment'),
+         ('pr_commit', 'PR Commitment'),
+         ('actual', 'Actual'),
+         ]
+    )
+
+    def init(self, cr):
+        # update budget_commit_type for account.exp, as it was noupdate=True
+        cr.execute("""
+            update account_analytic_journal
+            set budget_commit_type = 'actual'
+            where id = (select res_id from ir_model_data
+                where module = 'account' and name = 'exp')
+        """)
+
+
 class AccountAnalyticLine(models.Model):
     _inherit = 'account.analytic.line'
 
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+        compute='_compute_fiscalyear_id',
+        store=True,
+        readonly=True,
+    )
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
@@ -24,6 +51,13 @@ class AccountAnalyticLine(models.Model):
         string='Doc Ref',
         readonly=True,
     )
+
+    @api.multi
+    @api.depends('date')
+    def _compute_fiscalyear_id(self):
+        for rec in self:
+            FiscalYear = self.env['account.fiscalyear']
+            rec.fiscalyear_id = FiscalYear.find(rec.date)
 
     @api.model
     def create(self, vals):

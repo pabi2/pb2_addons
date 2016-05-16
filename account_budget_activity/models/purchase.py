@@ -116,7 +116,7 @@ class PurchaseOrderLine(models.Model):
              ('company_id', '=', self.company_id.id)], limit=1)
         if not general_journal:
             raise Warning(_('Define an accounting journal for purchase'))
-        if not general_journal.commitment_analytic_journal_id:
+        if not general_journal.po_commitment_analytic_journal_id:
             raise UserError(
                 _("No analytic journal for commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
@@ -137,7 +137,7 @@ class PurchaseOrderLine(models.Model):
             'product_uom_id': self.product_uom.id,
             'amount': sign * self._price_subtotal(line_qty),
             'general_account_id': general_account_id,
-            'journal_id': general_journal.commitment_analytic_journal_id.id,
+            'journal_id': general_journal.po_commitment_analytic_journal_id.id,
             'ref': self.order_id.name,
             'user_id': self._uid,
             'doc_ref': self.order_id.name,

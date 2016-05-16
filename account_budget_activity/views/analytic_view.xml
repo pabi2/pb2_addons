@@ -2,6 +2,18 @@
 <openerp>
     <data>
     
+        <record id="view_account_analytic_journal_form" model="ir.ui.view" >
+            <field name="name">view.account.analytic.journal.form</field>
+            <field name="model">account.analytic.journal</field>
+            <field name="inherit_id" ref="account.view_account_analytic_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="after">
+                	<field name="budget_commit_type" />
+                </xpath> 
+            </field>
+        </record>   
+        
+        
         <record id="view_account_analytic_account_form" model="ir.ui.view" >
             <field name="name">view.account.analytic.account.form</field>
             <field name="model">account.analytic.account</field>
