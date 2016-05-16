@@ -44,7 +44,10 @@ class PurchaseRequest(models.Model):
         'res.users',
         string='Responsible Person',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)],
+            },
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(

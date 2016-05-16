@@ -18,13 +18,18 @@ class PurchaseRequisitionPartner(models.TransientModel):
         'stock.picking.type',
         string='Picking Type',
     )
+    location_id = fields.Many2one(
+        'stock.location',
+        string='Location',
+    )
 
     @api.multi
     def create_order(self):
         return super(PurchaseRequisitionPartner,
                      self.with_context(
                          sel_operating_unit_id=self.operating_unit_id.id,
-                         sel_picking_type_id=self.picking_type_id.id)).\
+                         sel_picking_type_id=self.picking_type_id.id,
+                         sel_location_id=self.location_id.id)).\
             create_order()
 
     @api.onchange('operating_unit_id')
@@ -36,6 +41,9 @@ class PurchaseRequisitionPartner(models.TransientModel):
                                       self.operating_unit_id.id)])
             if types:
                 self.picking_type_id = types[:1]
+                res = self.env['purchase.order'].\
+                    onchange_picking_type_id(self.picking_type_id.id)
+                self.location_id = res['value']['location_id']
             else:
                 raise Warning(_("No Warehouse found with the "
                                 "Operating Unit indicated in the "

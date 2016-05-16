@@ -23,7 +23,7 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def check_pdf_extension(self, filename):
-        if '.pdf' not in filename:
+        if '.pdf' not in filename and '.' not in filename:
             filename += '.pdf'
         return filename
 
@@ -112,8 +112,8 @@ class PurchaseWebInterface(models.Model):
             'docType': 'PD1',
             'objective': requisition.objective or '',
             'total': str(requisition.amount_total),
-            'reqBy': request_usr,
-            'appBy': assign_usr,
+            'reqBy': request_usr.login,
+            'appBy': assign_usr.login,
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
                 'content': doc,
