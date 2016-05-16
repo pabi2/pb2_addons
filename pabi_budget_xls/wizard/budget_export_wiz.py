@@ -17,7 +17,7 @@ class BudgetExportWizard(models.Model):
     attachment_id = fields.Many2one('ir.attachment', 'Template')
 
     @api.multi
-    def update_budget_xls(self, budget_ids=[], template_id=None):
+    def update_budget_xls(self, budget_ids, template_id=None):
         if not template_id:
             raise UserError(_('Please add .xlsx template.'))
         if not budget_ids:
