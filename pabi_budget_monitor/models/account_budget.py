@@ -22,6 +22,15 @@ class AccountBudget(models.Model):
         'division_id': 'Division',
         'section_id': 'Section',
         'costcenter_id': 'Costcenter',
+        # Personnel
+        'personnel_costcenter_id': 'Personnel Costcenter',
+        # Investment
+        # - Asset
+        'invest_asset_categ_id': 'Invest. Asset Category',
+        'invest_asset_id': 'Invest. Asset',
+        # - Construction
+        'invest_construct_id': 'Construction',
+        'invest_construct_phase_id': 'Construction Phase',
     }
 
     BUDGET_LEVEL_MODEL = {
@@ -44,12 +53,24 @@ class AccountBudget(models.Model):
         'division_id': 'res.division',
         'section_id': 'res.section',
         'costcenter_id': 'res.costcenter',
+        # Personnel
+        'personnel_costcenter_id': 'res.personnel.costceter',
+        # Investment
+        # - Asset
+        'invest_asset_categ_id': 'res.invest.asset.category',
+        'invest_asset_id': 'res.invest.asset',
+        # - Construction
+        'invest_construction_id': 'res.invest.construction',
+        'invest_construction_phase_id': 'res.invest.construction.phase',
     }
 
     BUDGET_LEVEL_TYPE = {
         'check_budget_project_create': 'Project Creation',
         'check_budget_project_base': 'Project Based',
         'check_budget_unit_base': 'Unit Based',
+        'check_budget_personnel': 'Personnel',
+        'check_budget_invest_asset': 'Investment Asset',
+        'check_budget_invest_construction': 'Investment Construction',
     }
 
     @api.one

@@ -21,6 +21,27 @@ class AccountBudget(ChartField, models.Model):
         states={'done': [('readonly', True)]},
         copy=True,
     )
+    budget_line_personnel = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_line_invest_asset = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_line_invest_construction = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
     chart_view = fields.Selection(
         CHART_VIEW,
         string='Budget View',
@@ -45,99 +66,63 @@ class AccountBudget(ChartField, models.Model):
             line.validate_chartfields(self.chart_view)
         return super(AccountBudget, self).budget_confirm()
 
+    # TODO: When confirm budget, validate all fields has relationship
+
 
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
 
-    spa_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    mission_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    tag_type_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    tag_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    functional_area_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    program_group_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    # Only Program, Program Group and Project will be chosen @ header
-    org_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    sector_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    subsector_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
-    division_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
-    )
+    # Default from header selection
     section_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
+        default=lambda self: self.env['res.section'].
+        browse(self._context.get('section_id')),
     )
-    costcenter_id = fields.Many2one(
-        compute='_compute_all',
-        readonly=True, store=True
+    program_id = fields.Many2one(
+        default=lambda self: self.env['res.program'].
+        browse(self._context.get('program_id')),
+    )
+    personnel_costcenter_id = fields.Many2one(
+        default=lambda self: self.env['res.personnel.costcenter'].
+        browse(self._context.get('personnel_costcenter_id')),
+    )
+    org_id = fields.Many2one(
+        default=lambda self: self.env['res.org'].
+        browse(self._context.get('org_id')),
     )
 
-    @api.multi
-    @api.depends('budget_id.functional_area_id',
-                 'budget_id.program_group_id',
-                 'budget_id.org_id',
-                 'budget_id.sector_id',
-                 'budget_id.subsector_id',
-                 'budget_id.division_id',
-                 'budget_id.section_id',
-                 'budget_id.costcenter_id',)
-    def _compute_all(self):
+    # Domain for visible fields in budget line
+    project_group_id = fields.Many2one(
+        domain="[('program_id', '=', program_id)]"
+    )
+    project_id = fields.Many2one(
+        domain="[('project_group_id', '=', project_group_id)]"
+    )
+    invest_asset_id = fields.Many2one(
+        domain="[('org_id', '=', org_id)]"
+    )
+    invest_construction_id = fields.Many2one(
+        domain="[('org_id', '=', org_id)]"
+    )
+    invest_construction_phase_id = fields.Many2one(
+        domain="[('org_id', '=', org_id)]"
+    )
 
-        for rec in self:
+    # Unit Based
+    @api.onchange('section_id')
+    def _onchange_section_id(self):
+        self.org_id = self.section_id.org_id
+        self.sector_id = self.section_id.sector_id
+        self.subsector_id = self.section_id.subsector_id
+        self.division_id = self.section_id.division_id
+        self.costcenter_id = self.section_id.costcenter_id
 
-            # Project base, line level choose program, project_group, project
-            rec.functional_area_id = rec.budget_id.functional_area_id
-            rec.program_group_id = rec.budget_id.program_group_id
+    # Project Based
+    @api.onchange('program_id')
+    def _onchange_program_id(self):
+        self.program_group_id = self.program_id.program_group_id
+        self.functional_area_id = self.program_id.functional_area_id
 
-            # Unit base
-            rec.org_id = rec.budget_id.org_id
-            rec.sector_id = rec.budget_id.sector_id
-            rec.subsector_id = rec.budget_id.subsector_id
-            rec.division_id = rec.budget_id.division_id
-            rec.section_id = rec.budget_id.section_id
-            rec.costcenter_id = rec.budget_id.costcenter_id
-
-            # Project base, more follows program, project_group, project
-            if rec.budget_id.chart_view == 'project_base':
-                rec.spa_id = (rec.program_id.current_spa_id)
-                rec.mission_id = (rec.project_id.mission_id)
-                rec.org_id = (rec.program_id.org_id or
-                              rec.project_group_id.org_id or
-                              rec.project_id.org_id)
-                rec.tag_type_id = (rec.program_id.tag_type_id or
-                                   rec.project_group_id.tag_type_id or
-                                   rec.project_id.tag_type_id)
-                rec.tag_id = (rec.program_id.tag_id or
-                              rec.project_group_id.tag_id or
-                              rec.project_id.tag_id)
-
-            # Unit base, more dimension follows costcenter_id
-            if rec.budget_id.chart_view == 'unit_base':
-                rec.mission_id = rec.budget_id.costcenter_id.mission_id
+    # Personnel
+    @api.onchange('personnel_costcenter_id')
+    def _onchange_personnel_costcenter_id(self):
+        self.org_id = self.personnel_costcenter_id.org_id
