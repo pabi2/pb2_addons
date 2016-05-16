@@ -58,58 +58,38 @@
                     <field name="mycontract_id" />
                     <field name="date_contract_start" />
                 </xpath>
+                <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="delete">false</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
-                        <field name="committee_tor_ids">
-                            <h2>Draft TOR</h2>
+                        <field name="committee_ids">
                             <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="responsible"/>
-                                <field name="committee_type"/>
-                            </tree>
-                        </field>
-                        <field name="committee_tender_ids">
-                            <h2>Tender</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="responsible"/>
-                                <field name="committee_type"/>
-                            </tree>
-                        </field>
-                       <field name="committee_receipt_ids">
-                            <h2>Receipt</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="responsible"/>
-                                <field name="committee_type"/>
-                            </tree>
-                        </field>
-                       <field name="committee_std_price_ids">
-                            <h2>Std. Price</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="responsible"/>
-                                <field name="committee_type"/>
+                                <field name="committee_type_id"/>
                             </tree>
                         </field>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='shipped']" position="after">
-                    <field name="create_by"/>
-                    <field name="verified_by"/>
-                    <field name="approved_by"/>
+                    <field name="verify_uid"/>
+                    <field name="date_verify"/>
+                    <field name="doc_no"/>
+                    <field name="doc_approve_uid"/>
+                    <field name="date_doc_approve"/>
                     <field name="position"/>
-                    <field name="date_approval"/>
                 </xpath>
             </field>
+        </record>
+        <!--Hide Merge PO action-->
+        <record id="make_invisible" model="res.groups">
+            <field name="name">Invisible</field>
+        </record>
+        <record model="ir.actions.act_window" id="purchase.action_view_purchase_order_group">
+            <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
         </record>
     </data>
 </openerp>

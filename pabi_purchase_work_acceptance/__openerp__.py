@@ -29,6 +29,7 @@ PABI2 - Purchase Work Acceptance
         "wizard/create_purchase_work_acceptance_view.xml",
         "views/purchase_view.xml",
         "views/purchase_work_acceptance_view.xml",
+        "views/stock_view.xml",
     ],
 }
 

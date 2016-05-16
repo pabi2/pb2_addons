@@ -3,7 +3,6 @@
 from openerp import fields, models, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
-import time
 
 
 class PurchaseOrder(models.Model):
@@ -41,64 +40,41 @@ class PurchaseOrder(models.Model):
         string='Committee',
         readonly=False,
     )
-    committee_tor_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.order.committee',
-        'order_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
-    )
     create_by = fields.Many2one(
         'res.users',
-        string='Create By',
+        string='Created By',
     )
-    verified_by = fields.Many2one(
+    verify_uid = fields.Many2one(
         'res.users',
-        string='Verified By',
+        string='Verified by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
-    approved_by = fields.Many2one(
+    date_verify = fields.Date(
+        string='Verified Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been verified",
+    )
+    date_doc_approve = fields.Date(
+        string='Approved Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date of the PD has been approved ",
+    )
+    doc_approve_uid = fields.Many2one(
         'res.users',
-        string='Approved By',
+        string='Approved by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    doc_no = fields.Char(
+        string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     position = fields.Char(
         string='Position',
-    )
-    date_approval = fields.Date(
-        string='Approved Date',
-        help="Date when the PO has been approved",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        readonly=True,
-        track_visibility='onchange',
     )
     order_state = fields.Selection(
         string='PO Status',
@@ -116,6 +92,7 @@ class PurchaseOrder(models.Model):
         po_rec.action_button_convert_to_order()
         if po_rec.state != 'done':
             po_rec.state = 'done'
+        po_rec.order_id.committee_ids = po_rec.committee_ids
         return True
 
     @api.multi
@@ -152,6 +129,46 @@ class PurchaseOrder(models.Model):
         return super(PurchaseOrder, self).action_button_convert_to_order()
 
 
+class Purchase(models.Model):
+    _name = 'purchase.method'
+    _description = 'PABI2 Purchase Method'
+
+    name = fields.Char(
+        string='Purchase Method',
+    )
+
+
+class PRWebPurchaseMethod(models.Model):
+    _name = 'prweb.purchase.method'
+    _description = 'PRWeb Purchase Method'
+
+    type_id = fields.Many2one(
+        'purchase.type',
+        string='Type',
+    )
+    method_id = fields.Many2one(
+        'purchase.method',
+        string='Method',
+    )
+    doctype_id = fields.Many2one(
+        'wkf.config.doctype',
+        string='Doc Type',
+        domain=[('module', '=', 'purchase')],
+    )
+    price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+    )
+    condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+    )
+    confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
+    )
+
+
 class PurchaseType(models.Model):
     _name = 'purchase.type'
     _description = 'PABI2 Purchase Type'
@@ -179,25 +196,52 @@ class PurchaseMethod(models.Model):
     )
 
 
-class PurchaseUnit(models.Model):
-    _name = 'purchase.unit'
-    _description = 'PABI2 Purchase Unit'
+class PurchaseCommitteeType(models.Model):
+    _name = 'purchase.committee.type'
+    _description = 'PABI2 Purchase Committee Type'
 
     name = fields.Char(
-        string='Purchase Unit',
+        string='Purchase Committee Type',
+    )
+    web_method_ids = fields.Many2many(
+        string='PRWeb Method',
+        comodel_name='prweb.purchase.method',
+        relation='prweb_purchase_method_rel',
+        column1='committee_type_id',
+        column2='method_id',
+    )
+
+
+class PurchasePriceRange(models.Model):
+    _name = 'purchase.price.range'
+    _description = 'PABI2 Price Range'
+
+    name = fields.Char(
+        string='Purchase Price Range',
+    )
+
+
+class PurchaseCondition(models.Model):
+    _name = 'purchase.condition'
+    _description = 'PABI2 Purchase Condition'
+
+    name = fields.Char(
+        string='Purchase Condition',
+    )
+
+
+class PurchaseConfidential(models.Model):
+    _name = 'purchase.confidential'
+    _description = 'PABI2 Purchase Confidential'
+
+    name = fields.Char(
+        string='Purchase Confidential',
     )
 
 
 class PurchaseOrderCommittee(models.Model):
     _name = 'purchase.order.committee'
     _description = 'Purchase Order Committee'
-
-    _COMMITTEE_TYPE = [
-        ('tor', 'TOR'),
-        ('tender', 'Tender'),
-        ('receipt', 'Receipt'),
-        ('std_price', 'Standard Price')
-    ]
 
     sequence = fields.Integer(
         string='Sequence',
@@ -209,12 +253,9 @@ class PurchaseOrderCommittee(models.Model):
     position = fields.Char(
         string='Position',
     )
-    responsible = fields.Char(
-        string='Responsible',
-    )
-    committee_type = fields.Selection(
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
         string='Type',
-        selection=_COMMITTEE_TYPE,
     )
     order_id = fields.Many2one(
         'purchase.order',

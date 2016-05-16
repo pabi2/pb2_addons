@@ -1,8 +1,12 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_prweb_purchase_method,access_prweb_purchase_method,model_prweb_purchase_method,base.group_user,1,0,0,0
 access_purchase_type,access_purchase_type,model_purchase_type,base.group_user,1,0,0,0
 access_purchase_method,access_purchase_method,model_purchase_method,base.group_user,1,0,0,0
+access_purchase_price_range,access_purchase_price_range,model_purchase_price_range,base.group_user,1,0,0,0
+access_purchase_condition,access_purchase_condition,model_purchase_condition,base.group_user,1,0,0,0
+access_purchase_confidential,access_purchase_confidential,model_purchase_confidential,base.group_user,1,0,0,0
+access_purchase_committee_type,access_purchase_committee_type,model_purchase_committee_type,base.group_user,1,0,0,0
 access_purchase_prototype,access_purchase_prototype,model_purchase_prototype,base.group_user,1,0,0,0
-access_purchase_unit,access_purchase_unit,model_purchase_unit,base.group_user,1,0,0,0
 access_purchase_request_committee,access_purchase_request_committee,model_purchase_request_committee,base.group_user,1,0,0,0
 access_purchase_requisition_committee,access_purchase_requisition_committee,model_purchase_requisition_committee,base.group_user,1,0,0,0
 access_purchase_order_committee,access_purchase_order_committee,model_purchase_order_committee,base.group_user,1,0,0,0

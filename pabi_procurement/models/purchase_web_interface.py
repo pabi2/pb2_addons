@@ -23,7 +23,7 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def check_pdf_extension(self, filename):
-        if '.pdf' not in filename:
+        if '.pdf' not in filename and '.' not in filename:
             filename += '.pdf'
         return filename
 
@@ -34,7 +34,7 @@ class PurchaseWebInterface(models.Model):
         username = ConfParam.get_param('pabiweb_username')
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         doc = self.encode_base64('PR_2015011901.pdf')
         att1 = self.encode_base64('PR_2015011901.pdf')
         att2 = self.encode_base64('PR_2015011901.pdf')
@@ -69,15 +69,17 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition(self, requisition):
+        User = self.env['res.users']
+        users = User.search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
         Attachment = self.env['ir.attachment']
         url = ConfParam.get_param('pabiweb_url')
-        username = ConfParam.get_param('pabiweb_username')
+        username = users.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
             ('res_model', '=', 'purchase.requisition'),
@@ -88,6 +90,8 @@ class PurchaseWebInterface(models.Model):
             )
         doc_name = pd_file.name
         doc = pd_file.datas
+        request_usr = User.search([('id', '=', requisition.request_uid.id)])
+        assign_usr = User.search([('id', '=',  requisition.assign_uid.id)])
         attachment = []
         for pd_att in requisition.attachment_ids:
             pd_attach = {
@@ -108,8 +112,8 @@ class PurchaseWebInterface(models.Model):
             'docType': 'PD1',
             'objective': requisition.objective or '',
             'total': str(requisition.amount_total),
-            'reqBy': '002648',
-            'appBy': '001509',
+            'reqBy': request_usr.login,
+            'appBy': assign_usr.login,
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
                 'content': doc
@@ -117,6 +121,28 @@ class PurchaseWebInterface(models.Model):
             'attachments': attachment,
         }
         result = alfresco.ord.create(arg)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
+        return result
+
+    @api.model
+    def send_pbweb_action_request(self, request, action):
+        users = self.env['res.users'].search([('id', '=', self._uid)])
+        assert len(request) == 1, \
+            "Only 1 Purchase Request could be done at a time."
+        ConfParam = self.env['ir.config_parameter']
+        url = ConfParam.get_param('pabiweb_url')
+        username = users.login
+        password = ConfParam.get_param('pabiweb_password')
+        connect_string = "http://%s:%s@%s" % (username, password, url)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
+        if action == "accept":
+            send_act = "C2"
+        else:
+            send_act = "X2"
+        result = alfresco.req.action(request.name, send_act, users.login)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

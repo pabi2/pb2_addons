@@ -13,6 +13,10 @@ class PurchaseRequest(models.Model):
         ('rejected', 'Cancelled')
     ]
 
+    @api.model
+    def _get_default_responsible_by(self):
+        return self.env['res.users'].browse(self.env.uid)
+
     state = fields.Selection(
         selection=_STATES,
         copy=False,
@@ -23,60 +27,27 @@ class PurchaseRequest(models.Model):
         string='Committee',
         readonly=False,
     )
-    committee_tor_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.request.committee',
-        'request_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
-    )
     attachment_ids = fields.One2many(
         'purchase.request.attachment',
         'request_id',
         string='Attach Files',
         readonly=False,
     )
-    date_approved = fields.Date(
+    date_approve = fields.Date(
         string='Approved Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
         help="Date when the request has been approved",
     )
-    responsible_user_id = fields.Many2one(
+    responsible_uid = fields.Many2one(
         'res.users',
         string='Responsible Person',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)],
+            },
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
@@ -106,6 +77,29 @@ class PurchaseRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    purchase_price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    confidential_detail = fields.Text(
+        string='Confidential Detail',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     purchase_prototype_id = fields.Many2one(
         'purchase.prototype',
         string='Prototype',
@@ -113,7 +107,7 @@ class PurchaseRequest(models.Model):
         states={'draft': [('readonly', False)]},
     )
     purchase_unit_id = fields.Many2one(
-        'purchase.unit',
+        'wkf.config.purchase.unit',
         string='Procurement Unit',
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -183,9 +177,9 @@ class PurchaseRequest(models.Model):
         gen_dict = {
             'name': u'PR0000001',
             'requested_by.id': u'1',
-            'responsible_user_id.id': u'1',
+            'responsible_uid.id': u'1',
             'assigned_to.id': u'1',
-            'date_approved': u'2016-01-31',
+            'date_approve': u'2016-01-31',
             'total_budget_value': u'240000',
             'purchase_prototype_id.id': u'1',
             'purchase_type_id.id': u'1',
@@ -206,8 +200,6 @@ class PurchaseRequest(models.Model):
                     'product_qty': u'20',
                     'price_unit': u'10000',
                     'product_uom_id.id': u'1',
-                    'activity_id.id': u'1',
-                    'date_required': u'2016-01-31',
                     'section_id.id': u'1',
                     'project_id.id': u'1',
                     'nstda_course_id.id': u'',
@@ -367,26 +359,41 @@ class PurchaseRequest(models.Model):
                     'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                    res = self.browse(res_id)
-                    self.create_purchase_request_attachment(data_dict, res_id)
-                    self.create_purchase_request_committee(data_dict, res_id)
-                    ret = {
-                        'is_success': True,
-                        'result': {
-                            'request_id': res.id,
-                            'name': res.name,
-                        },
-                        'messages': _('PR has been created.'),
-                    }
+                res = self.browse(res_id)
+                self.create_purchase_request_attachment(data_dict, res_id)
+                self.create_purchase_request_committee(data_dict, res_id)
+                ret = {
+                    'is_success': True,
+                    'result': {
+                        'request_id': res.id,
+                        'name': res.name,
+                    },
+                    'messages': _('PR has been created.'),
+                }
+                res.state = 'to_approve'
             self._cr.commit()
-        except Exception:
+        except Exception, e:
             ret = {
                 'is_success': False,
                 'result': False,
-                'messages': _('There is something wrong while creating PR.'),
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         return ret
+
+    @api.multi
+    def button_approved(self):
+        res = super(PurchaseRequest, self).button_approved()
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_action_request(self, 'accept')
+        return res
+
+    @api.multi
+    def button_rejected(self):
+        res = super(PurchaseRequest, self).button_rejected()
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_action_request(self, 'cancel')
+        return res
 
 
 class PurchaseRequestLine(models.Model):
@@ -412,10 +419,10 @@ class PurchaseRequestLine(models.Model):
         string='Taxes',
         readonly=False,  # TODO: readonly=True
     )
-    responsible_user_id = fields.Many2one(
+    responsible_uid = fields.Many2one(
         'res.users',
         string='Responsible Person',
-        related='request_id.responsible_user_id',
+        related='request_id.responsible_uid',
         store=True,
         readonly=True,
     )
@@ -476,10 +483,9 @@ class PurchaseRequestCommittee(models.Model):
     position = fields.Char(
         string='Position',
     )
-    committee_type = fields.Selection(
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
         string='Type',
-        selection=_COMMITTEE_TYPE,
-        required=True,
     )
     request_id = fields.Many2one(
         'purchase.request',

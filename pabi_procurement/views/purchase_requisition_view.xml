@@ -7,6 +7,11 @@
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
+            	<!-- THIS PRINT BUTTON IS ONLY FOR TESTING, PLEASE REMOVE -->
+            	<button name="cancel_requisition" >
+            		<button name="print_call_for_bid_form" type="object" string="Print Form" />
+            	</button>
+            	<!-- ---------------------------------------------------- -->
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
                 <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
@@ -21,6 +26,10 @@
                     <field name="description"/>
                     <field name="total_budget_value"/>
                     <field name="purchase_prototype_id"/>
+                    <field name="request_uid"/>
+                    <field name="assign_uid"/>
+                    <field name="date_approve"/>
+                    <field name="request_ref_id"/>
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="attributes">
@@ -33,6 +42,10 @@
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
                     <field name="purchase_method_id"/>
+                    <field name="purchase_price_range_id"/>
+                    <field name="purchase_condition_id"/>
+                    <field name="purchase_confidential_id"/>
+                    <field name="confidential_detail"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
@@ -104,42 +117,14 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
-                        <field name="committee_tor_ids">
-                            <h2>Draft TOR</h2>
+                        <field name="committee_ids">
                             <tree editable="bottom">
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="position"/>
-                                <field name="committee_type"/>
+                                <field name="committee_type_id"/>
                             </tree>
                         </field>
-                        <field name="committee_tender_ids">
-                            <h2>Tender</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type"/>
-                            </tree>
-                       </field>
-                       <field name="committee_receipt_ids">
-                            <h2>Receipt</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type"/>
-                            </tree>
-                       </field>
-                       <field name="committee_std_price_ids">
-                            <h2>Std. Price</h2>
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type"/>
-                            </tree>
-                       </field>
                     </page>
                     <page string="Attachment">
                         <field name="attachment_ids">
@@ -168,13 +153,51 @@
                     </page>
                     <page string="Approval Report">
                         <group>
-                            <field name="approval_document_no"/>
-                            <field name="approval_document_date"/>
-                            <field name="approval_document_header"/>
-                            <field name="approval_document_footer"/>
+                            <field name="verify_uid"/>
+                            <field name="date_verify"/>
+                            <field name="doc_no"/>
+                            <field name="doc_approve_uid"/>
+                            <field name="date_doc_approve"/>
+                            <field name="doc_header"/>
+                            <field name="doc_footer"/>
                             <field name="reject_reason_txt"/>
                         </group>
                     </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_requisition_tree">
+            <field name="name">purchase.requisition.tree</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition.view_purchase_requisition_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="create_date" widget="date" string="Create Date"/>
+                    <field name="request_uid" string="Requested by"/>
+                    <field name="purchase_type_id"/>
+                    <field name="objective"/>
+                    <field name="amount_total" string="Total Amount"/>
+                </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="requisition_ou_view_purchase_requisition_tree">
+            <field name="name">purchase.requisition.tree</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition_operating_unit.view_purchase_requisition_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='operating_unit_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
         </record>

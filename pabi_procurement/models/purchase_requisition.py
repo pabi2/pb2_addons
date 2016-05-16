@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-
+import openerp
+import base64
+import time
+import re
 from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
-import time
 
 
 class PurchaseRequisition(models.Model):
@@ -57,6 +59,29 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
+    purchase_price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    purchase_confidential_id = fields.Many2one(
+        'purchase.confidential',
+        string='Confidential',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    confidential_detail = fields.Text(
+        string='Confidential Detail',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
@@ -73,42 +98,6 @@ class PurchaseRequisition(models.Model):
         'requisition_id',
         string='Committee',
         readonly=False,
-    )
-    committee_tor_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee TOR',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tor'),
-        ],
-    )
-    committee_tender_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee Tender',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'tender'),
-        ],
-    )
-    committee_receipt_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee Receipt',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'receipt'),
-        ],
-    )
-    committee_std_price_ids = fields.One2many(
-        'purchase.requisition.committee',
-        'requisition_id',
-        string='Committee Standard Price',
-        readonly=False,
-        domain=[
-            ('committee_type', '=', 'std_price'),
-        ],
     )
     attachment_ids = fields.One2many(
         'purchase.requisition.attachment',
@@ -136,27 +125,69 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         default=0.0,
     )
-    approval_document_no = fields.Char(
-        string='No.',
+    request_uid = fields.Many2one(
+        'res.users',
+        string='PR. Requested by',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_date = fields.Date(
+    assign_uid = fields.Many2one(
+        'res.users',
+        string='PR. Approver',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_approve = fields.Date(
+        string='PR. Approved Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been approved",
+    )
+    request_ref_id = fields.Many2one(
+        'purchase.request',
+        string='PR Reference',
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    verify_uid = fields.Many2one(
+        'res.users',
+        string='Verified by',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_verify = fields.Date(
+        string='Verified Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Date when the request has been verified",
+    )
+    date_doc_approve = fields.Date(
         string='Date of Approval',
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Date of the order has been approved ",
-        default=lambda *args:
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        track_visibility='onchange',
     )
-    approval_document_header = fields.Text(
+    doc_approve_uid = fields.Many2one(
+        'res.users',
+        string='Approver',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    doc_no = fields.Char(
+        string='No.',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    doc_header = fields.Text(
         string='Header',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    approval_document_footer = fields.Text(
+    doc_footer = fields.Text(
         string='Footer',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
@@ -219,6 +250,44 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.model
+    def _prepare_committee_line(self, line, order_id):
+        return {
+            'order_id': order_id,
+            'name': line.name,
+            'sequence': line.sequence,
+            'position': line.position,
+            'committee_type_id': line.committee_type_id.id,
+        }
+
+    @api.model
+    def _prepare_order_committees(self, order_id):
+        committees = []
+        for line in self.committee_ids:
+            committee_line = self._prepare_committee_line(line,
+                                                          order_id)
+            committees.append([0, False, committee_line])
+        return committees
+
+    @api.multi
+    def make_purchase_order(self, partner_id):
+        res = super(PurchaseRequisition, self).\
+            make_purchase_order(partner_id)
+        Order = self.env['purchase.order']
+        for order_id in res.itervalues():
+            orders = Order.search([('id', '=', order_id)])
+            for order in orders:
+                order.write({
+                    'committee_ids': self._prepare_order_committees(order_id),
+                    'verify_uid': self.verify_uid.id,
+                    'date_verify': self.date_verify,
+                    'doc_no': self.doc_no,
+                    'doc_approve_uid': self.doc_approve_uid.id,
+                    'date_doc_approve': self.date_doc_approve,
+                    'fine_rate': 0.1,
+                })
+        return res
+
+    @api.model
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
@@ -226,9 +295,11 @@ class PurchaseRequisition(models.Model):
         if self._context.get('sel_operating_unit_id', False):
             operating_unit_id = self._context.get('sel_operating_unit_id')
             picking_type_id = self._context.get('sel_picking_type_id')
+            location_id = self._context.get('sel_location_id')
             res.update({
                 'operating_unit_id': operating_unit_id,
                 'picking_type_id': picking_type_id,
+                'location_id': location_id,
             })
         return res
 
@@ -266,6 +337,43 @@ class PurchaseRequisition(models.Model):
         PWInterface.send_pbweb_requisition(self)
         return True
 
+    @api.model
+    def done_order(self, af_info):
+        # {
+        #     'name': 'TE00017',
+        #     'approve_uid': '002241',
+        #     'action' : 'C1' or 'W2'
+        #     'file_name': 'TE00017',
+        #     'file_url': 'aaaaas.pdf',
+        # }
+        user = self.env['res.users']
+        res = {}
+        requisition = self.search([('name', '=', af_info['name'])])
+        uid = user.search([('login', '=', af_info['approve_uid'])])
+        if af_info['action'] == 'C1':
+            att_file = []
+            attachments = {
+                'requisition_id': requisition.id,
+                'file_name': af_info['file_name'],
+                'file_url': af_info['file_url'],
+            }
+            att_file.append([0, False, attachments])
+            for order in requisition.purchase_ids:
+                if order.state == 'confirmed' \
+                        and order.order_type == 'quotation':
+                    requisition.write({
+                        'approve_uid': uid.id,
+                        'date_approve': fields.date.today(),
+                        'attachment_ids': att_file,
+                    })
+                    order.action_button_convert_to_order()
+                res.update({
+                    'is_success': True,
+                })
+            if requisition.state != 'done':
+                requisition.tender_done()
+        return res
+
     @api.multi
     def wkf_validate_vs_quotation(self):
         """ Case Central Purchase, quotation amount should not exceed """
@@ -281,6 +389,38 @@ class PurchaseRequisition(models.Model):
                     _('Total quotation amount exceed Call for Bid amount')
                 )
         return True
+
+    @api.multi
+    def print_call_for_bid_form(self):
+        self.ensure_one()
+        Report = self.env['ir.actions.report.xml']
+        matching_reports = Report.search([
+            ('model', '=', self._name),
+            ('report_type', '=', 'qweb-pdf'),
+            ('report_name', '=',
+             'purchase_requisition.report_purchaserequisitions')],)
+        if matching_reports:
+            report = matching_reports[0]
+            result, _ = openerp.report.render_report(self._cr, self._uid,
+                                                     [self.id],
+                                                     report.report_name,
+                                                     {'model': self._name})
+            eval_context = {'time': time, 'object': self}
+            print report.attachment
+            print eval_context
+            if not report.attachment or not eval(report.attachment,
+                                                 eval_context):
+                # no auto-saving of report as attachment, need to do manually
+                result = base64.b64encode(result)
+                file_name = self.name_get()[0][1]
+                file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
+                file_name += ".pdf"
+                self.env['ir.attachment'].create({'name': file_name,
+                                                  'datas': result,
+                                                  'datas_fname': file_name,
+                                                  'res_model': self._name,
+                                                  'res_id': self.id,
+                                                  'type': 'binary'})
 
 
 class PurchaseRequisitionLine(models.Model):
@@ -379,13 +519,6 @@ class PurchaseRequisitionCommittee(models.Model):
     _description = 'Purchase Requisition Committee'
     _order = 'sequence, id'
 
-    _COMMITTEE_TYPE = [
-        ('tor', 'TOR'),
-        ('tender', 'Tender'),
-        ('receipt', 'Receipt'),
-        ('std_price', 'Standard Price')
-    ]
-
     requisition_id = fields.Many2one(
         'purchase.requisition',
         string='Purchase Requisition',
@@ -400,7 +533,7 @@ class PurchaseRequisitionCommittee(models.Model):
     position = fields.Char(
         string='Position',
     )
-    committee_type = fields.Selection(
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
         string='Type',
-        selection=_COMMITTEE_TYPE,
     )

@@ -40,15 +40,23 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         active_id = self._context['active_ids'][0]
         req_id = pr_line_obj.browse(active_id).request_id
         vals = {
-            'user_id': req_id.responsible_user_id.id,
+            'user_id': req_id.responsible_uid.id,
             'description': req_id.description,
             'objective': req_id.objective,
             'currency_id': req_id.currency_id.id,
             'currency_rate': req_id.currency_rate,
             'purchase_type_id': req_id.purchase_type_id.id,
             'purchase_method_id': req_id.purchase_method_id.id,
+            'purchase_price_range_id': req_id.purchase_price_range_id.id,
+            'purchase_condition_id': req_id.purchase_condition_id.id,
+            'purchase_confidential_id': req_id.purchase_confidential_id.id,
+            'confidential_detail': req_id.confidential_detail,
             'total_budget_value': req_id.total_budget_value,
             'purchase_prototype_id': req_id.purchase_prototype_id.id,
+            'request_uid': req_id.requested_by.id,
+            'assign_uid': req_id.assigned_to.id,
+            'date_approve': req_id.date_approve,
+            'request_ref_id': req_id.request_ref_id.id,
         }
         res.update(vals)
         return res
@@ -81,7 +89,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'name': line.name,
             'sequence': line.sequence,
             'position': line.position,
-            'committee_type': line.committee_type,
+            'committee_type_id': line.committee_type_id.id,
         }
 
     @api.model
@@ -110,6 +118,11 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             if item.request_id.state != 'approved':
                 raise UserError(
                     _("Some Request hasn't been accepted yet : %s"
+                      % (item.request_id.name,))
+                )
+            elif item.line_id.requisition_state != 'none':
+                raise UserError(
+                    _("Each Request bid status should be 'No Bid' : %s"
                       % (item.request_id.name,))
                 )
         return True

@@ -139,5 +139,248 @@
                  id="menu_action_purchase_method_tree"
                  parent="menu_purchase_config_pabi_master"
                  groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_price_range_form" model="ir.ui.view">
+            <field name="name">purchase.price.range.form</field>
+            <field name="model">purchase.price.range</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Price Range">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_price_range_tree" model="ir.ui.view">
+            <field name="name">purchase.price.range.tree</field>
+            <field name="model">purchase.price.range</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Price Range">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_price_range_search" model="ir.ui.view">
+            <field name="name">purchase.price.range.search</field>
+            <field name="model">purchase.price.range</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Price Range">
+                    <field name="name" string="Purchase Price Range"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_price_range_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Price Range</field>
+            <field name="res_model">purchase.price.range</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Price Range.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_price_range_tree"
+                 id="menu_action_purchase_price_range_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_condition_form" model="ir.ui.view">
+            <field name="name">purchase.condition.form</field>
+            <field name="model">purchase.condition</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Condition">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_condition_tree" model="ir.ui.view">
+            <field name="name">purchase.condition.tree</field>
+            <field name="model">purchase.condition</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Condition">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_condition_search" model="ir.ui.view">
+            <field name="name">purchase.condition.search</field>
+            <field name="model">purchase.condition</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Condition">
+                    <field name="name" string="Purchase Condition"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_condition_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Condition</field>
+            <field name="res_model">purchase.condition</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Condition.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_condition_tree"
+                 id="menu_action_purchase_condition_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_confidential_form" model="ir.ui.view">
+            <field name="name">purchase.confidential.form</field>
+            <field name="model">purchase.confidential</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Confidential">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_confidential_tree" model="ir.ui.view">
+            <field name="name">purchase.confidential.tree</field>
+            <field name="model">purchase.confidential</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Confidential">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_confidential_search" model="ir.ui.view">
+            <field name="name">purchase.confidential.search</field>
+            <field name="model">purchase.confidential</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Confidential">
+                    <field name="name" string="Purchase Confidential"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_confidential_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Confidential</field>
+            <field name="res_model">purchase.confidential</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Confidential.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_confidential_tree"
+                 id="menu_action_purchase_confidential_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_committee_type_form" model="ir.ui.view">
+            <field name="name">purchase.committee.type.form</field>
+            <field name="model">purchase.committee.type</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Committee Type">
+                    <group>
+                        <field name="name"/>
+                        <field name="web_method_ids"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_committee_type_tree" model="ir.ui.view">
+            <field name="name">purchase.committee.type.tree</field>
+            <field name="model">purchase.committee.type</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Committee Type">
+                    <field name="name"/>
+                    <field name="web_method_ids"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_committee_type_search" model="ir.ui.view">
+            <field name="name">purchase.committee.type.search</field>
+            <field name="model">purchase.committee.type</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Committee Type">
+                    <field name="name" string="Purchase Committee Type"/>
+                    <field name="web_method_ids" string="Purchase Method"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_committee_type_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Committee Type</field>
+            <field name="res_model">purchase.committee.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Committee Type.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_committee_type_tree"
+                 id="menu_action_purchase_committee_type_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_prweb_purchase_method_form" model="ir.ui.view">
+            <field name="name">prweb.purchase.method.form</field>
+            <field name="model">prweb.purchase.method</field>
+            <field name="arch" type="xml">
+                <form string="PRWeb Method">
+                    <group>
+                        <field name="type_id"/>
+                        <field name="method_id"/>
+                        <field name="doctype_id"/>
+                        <field name="price_range_id"/>
+                        <field name="condition_id"/>
+                        <field name="confidential_id"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_prweb_purchase_method_tree" model="ir.ui.view">
+            <field name="name">prweb.purchase.method.tree</field>
+            <field name="model">prweb.purchase.method</field>
+            <field name="arch" type="xml">
+                <tree string="PRWeb Method">
+                    <field name="type_id"/>
+                    <field name="method_id"/>
+                    <field name="doctype_id"/>
+                    <field name="price_range_id"/>
+                    <field name="condition_id"/>
+                    <field name="confidential_id"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_prweb_purchase_method_search" model="ir.ui.view">
+            <field name="name">prweb.purchase.method.search</field>
+            <field name="model">prweb.purchase.method</field>
+            <field name="arch" type="xml">
+                <search string="Search PRWeb Method">
+                    <field name="type_id" string="Type"/>
+                    <field name="method_id" string="Method"/>
+                    <field name="doctype_id" string="Doc Type"/>
+                    <field name="price_range_id" string="Price Range"/>
+                    <field name="condition_id" string="Condition"/>
+                    <field name="confidential_id" string="Confidential"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_prweb_purchase_method_tree" model="ir.actions.act_window">
+            <field name="name">PRWeb Method</field>
+            <field name="res_model">prweb.purchase.method</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new PRWeb Method.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_prweb_purchase_method_tree"
+                 id="menu_action__prweb_purchase_method_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
     </data>
 </openerp>

@@ -5,26 +5,38 @@
             <field name="name">purchase.work.acceptance.form</field>
             <field name="model">purchase.work.acceptance</field>
             <field name="arch" type="xml">
-                <form string="Purchase Type">
+                <form string="Purchase Work Acceptance">
+                    <header>
+                        <button name="action_evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
+                        <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
+                        <button name="action_set_draft" type="object" states="evaluation,done" string="Set to draft"/>
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
                     <sheet>
-                    <h2>Work Acceptance</h2>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Work Acceptance"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name ="order_id"/>
-                            <field name="date_received"/>
-                            <field name="date_scheduled_end"/>
-                            <field name="date_contract_end"/>
-                            <field name="total_fine"/>
+                            <field name="name" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name ="order_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_scheduled_end" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_contract_end" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </group>
                         <group>
-                            <field name="is_manual_fine"/>
-                            <field name="manual_fine"/>
-                            <field name="manual_days"/>
+                            <field name="is_manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="manual_days" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="supplier_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_receive" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </group>
                     </group>
                     <field name="acceptance_line_ids">
-                        <tree editable="bottom">
+                        <tree editable="bottom" create="false" delete="false">
                             <field name="product_id"/>
                             <field name="name"/>
                             <field name="balance_qty"/>
@@ -32,11 +44,11 @@
                             <field name="product_uom"/>
                         </tree>
                     </field>
-                    <h2>Rate Supplier</h2>
+                    <h2>Supplier Evaluation</h2>
                     <group>
-                        <field name="eval_receiving"/>
-                        <field name="eval_quality"/>
-                        <field name="eval_service"/>
+                        <field name="eval_receiving" attrs="{'readonly': [('state','!=','evaluation')]}"/>
+                        <field name="eval_quality" attrs="{'readonly': [('state','!=','evaluation')]}"/>
+                        <field name="eval_service" attrs="{'readonly': [('state','!=','evaluation')]}"/>
                     </group>
                     </sheet>
                 </form>
@@ -48,7 +60,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Work Acceptance">
                     <field name="name"/>
-                    <field name="date_received"/>
+                    <field name="date_receive"/>
                     <field name="date_scheduled_end"/>
                     <field name="date_contract_end"/>
                     <field name="is_manual_fine"/>
