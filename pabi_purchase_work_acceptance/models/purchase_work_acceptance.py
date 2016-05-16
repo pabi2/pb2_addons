@@ -111,6 +111,9 @@ class PurchaseWorkAcceptance(models.Model):
 
     name = fields.Char(
         string="Acceptance No.",
+        default=lambda self:
+        self.env['ir.sequence'].get('purchase.work.acceptance'),
+        readonly=True,
     )
     date_scheduled_end = fields.Date(
         string="Scheduled End Date",

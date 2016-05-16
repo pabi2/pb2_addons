@@ -203,6 +203,10 @@ class PurchaseRequisition(models.Model):
     exclusive = fields.Selection(
         default='exclusive',
     )
+    name = fields.Char(
+        default=lambda self:
+        self.env['ir.sequence'].get('purchase.requisition'),
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -376,6 +380,7 @@ class PurchaseRequisition(models.Model):
                     requisition.tender_done()
                 res.update({
                     'is_success': True,
+                    'result': True,
                 })
             except Exception, e:
                 res.update({

@@ -104,6 +104,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     raise UserError(
                         _("Unit of Measure is missing in some PO line."))
                 items.append([0, 0, self._prepare_item(line)])
+        res['name'] = self.env['ir.sequence'].get('purchase.work.acceptance')
         res['order_id'] = order.id
         res['acceptance_line_ids'] = items
         date_scheduled_end, end_date = self._get_contract_end_date(order)
