@@ -116,11 +116,29 @@ class PurchaseWebInterface(models.Model):
             'appBy': assign_usr.login,
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
-                'content': doc
+                'content': doc,
             },
             'attachments': attachment,
         }
         result = alfresco.ord.create(arg)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
+        return result
+
+    @api.model
+    def send_pbweb_action_request_test(self, request_name, action, user_name):
+        ConfParam = self.env['ir.config_parameter']
+        url = ConfParam.get_param('pabiweb_url')
+        password = ConfParam.get_param('pabiweb_password')
+        connect_string = "http://%s:%s@%s" % (user_name, password, url)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
+        if action == "accept":
+            send_act = "C2"
+        else:
+            send_act = "X2"
+        result = alfresco.req.action(request_name, send_act, user_name)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

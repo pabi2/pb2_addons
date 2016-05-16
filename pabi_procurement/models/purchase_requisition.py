@@ -207,6 +207,10 @@ class PurchaseRequisition(models.Model):
     exclusive = fields.Selection(
         default='exclusive',
     )
+    name = fields.Char(
+        default=lambda self:
+        self.env['ir.sequence'].get('purchase.requisition'),
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -367,7 +371,7 @@ class PurchaseRequisition(models.Model):
         #     'name': 'TE00017',
         #     'approve_uid': '002241',
         #     'action' : 'C1' or 'W2'
-        #     'file_name': 'TE00017',
+        #     'file_name': 'TE00017.pdf',
         #     'file_url': 'aaaaas.pdf',
         # }
         user = self.env['res.users']
@@ -376,29 +380,38 @@ class PurchaseRequisition(models.Model):
         uid = user.search([('login', '=', af_info['approve_uid'])])
         if af_info['action'] == 'C1':
             att_file = []
-            attachments = {
-                'requisition_id': requisition.id,
-                'file_name': af_info['file_name'],
-                'file_url': af_info['file_url'],
-            }
-            att_file.append([0, False, attachments])
-            for order in requisition.purchase_ids:
-                if order.state == 'confirmed' \
-                        and order.order_type == 'quotation':
-                    requisition.write({
-                        'doc_approve_uid': uid.id,
-                        'date_doc_approve': fields.date.today(),
-                        'attachment_ids': att_file,
-                    })
-                    order.action_button_convert_to_order()
-                    if order.state2 != 'done' or order.state != 'done':
-                        order.state2 = 'done'
-                        order.state = 'done'
+            try:
+                attachments = {
+                    'requisition_id': requisition.id,
+                    'name': af_info['file_name'],
+                    'file_url': af_info['file_url'],
+                }
+                att_file.append([0, False, attachments])
+                for order in requisition.purchase_ids:
+                    if requisition.state == 'confirmed' \
+                            and order.order_type == 'quotation':
+                        order.action_button_convert_to_order()
+                requisition.write({
+                    'doc_approve_uid': uid.id,
+                    'date_doc_approve': fields.date.today(),
+                    'attachment_ids': att_file,
+                })
+                order.action_button_convert_to_order()
+                if order.state2 != 'done' or order.state != 'done':
+                    order.state2 = 'done'
+                    order.state = 'done'
+                if requisition.state != 'done':
+                    requisition.tender_done()
                 res.update({
                     'is_success': True,
+                    'result': True,
                 })
-            if requisition.state != 'done':
-                requisition.tender_done()
+            except Exception, e:
+                res.update({
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(str(e)),
+                })
         return res
 
     @api.multi
