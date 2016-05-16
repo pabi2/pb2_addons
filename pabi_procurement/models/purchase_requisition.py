@@ -40,6 +40,10 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    description = fields.Text(
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     total_budget_value = fields.Float(
         string='Total Budget Value',
         default=0.0,
@@ -318,9 +322,29 @@ class PurchaseRequisition(models.Model):
         return res
 
     @api.multi
+    def _check_product_type(self):
+        self.ensure_one()
+        if len(self.line_ids) == 0:
+            raise UserError(
+                _('Product line cannot be empty.')
+            )
+        check_type = self.line_ids[0].product_id.type
+        if check_type != 'service':
+            check_type = 'stock'
+        for line in self.line_ids:
+            if line.product_id.type in ('product', 'consu'):
+                line_type = 'stock'
+            if line_type != check_type:
+                raise UserError(
+                    _('All product line must have the same product type')
+                )
+        return True
+
+    @api.multi
     def to_verify(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
+        self._check_product_type()
         self.state = 'verify'
         return True
 
@@ -409,8 +433,8 @@ class PurchaseRequisition(models.Model):
                                                      report.report_name,
                                                      {'model': self._name})
             eval_context = {'time': time, 'object': self}
-            print report.attachment
-            print eval_context
+            # print report.attachment
+            # print eval_context
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually
