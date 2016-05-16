@@ -15,6 +15,14 @@
                     <field name="activity_group_id" required="0" invisible="0"/>
                     <field name="activity_id" attrs="{'readonly': [('is_editable','=', False)]}"/>
                 </xpath>
+
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_qty']" position="after">
+                    <field name="price_unit"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/form/sheet/group/group//field[@name='analytic_account_id']" position="after">
+                    <field name="price_unit" />
+                </xpath>                
+                
             </field>
         </record>
     	

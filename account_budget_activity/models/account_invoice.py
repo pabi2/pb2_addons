@@ -82,6 +82,16 @@ class AccountInvoiceLine(models.Model):
         string='Activity',
     )
 
+    @api.multi
+    def name_get(self):
+        result = []
+        for line in self:
+            result.append(
+                (line.id,
+                 "%s / %s" % (line.invoice_id.name or '-',
+                              line.name or '-')))
+        return result
+
     @api.one
     @api.depends('product_id', 'activity_id')
     def _compute_activity_group(self):

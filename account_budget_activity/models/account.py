@@ -46,3 +46,18 @@ class AccountFiscalyearBudgetLevel(models.Model):
         required=True,
         default='activity_group_id',
     )
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    po_commitment_analytic_journal_id = fields.Many2one(
+        'account.analytic.journal',
+        string='Analytic Journal for PO Commitments',
+        domain=[('type', '=', 'general')]
+    )
+    pr_commitment_analytic_journal_id = fields.Many2one(
+        'account.analytic.journal',
+        string='Analytic Journal for PR Commitments',
+        domain=[('type', '=', 'general')]
+    )
