@@ -417,8 +417,6 @@ class PurchaseRequisition(models.Model):
                                                      report.report_name,
                                                      {'model': self._name})
             eval_context = {'time': time, 'object': self}
-            print report.attachment
-            print eval_context
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually
