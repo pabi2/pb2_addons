@@ -399,10 +399,6 @@ class PurchaseRequest(models.Model):
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
 
-    price_unit = fields.Float(
-        string='Unit Price',
-        track_visibility='onchange',
-    )
     fixed_asset = fields.Boolean(
         string='Fixed Asset',
     )
