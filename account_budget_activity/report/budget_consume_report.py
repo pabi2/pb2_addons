@@ -53,12 +53,8 @@ class BudgetConsumeReport(models.Model):
         string='Activity',
     )
 
-    def _get_dimension(self):
-        return 'product_id, activity_group_id, activity_id'
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW %s as (
+    def _get_sql_view(self):
+        sql_view = """
             select aal.id, aal.user_id, aal.date, aal.fiscalyear_id,
                 aal.doc_ref, aal.doc_id,
                 -- Amount
@@ -73,4 +69,13 @@ class BudgetConsumeReport(models.Model):
                 %s
             from account_analytic_line aal
             join account_analytic_journal aaj on aaj.id = aal.journal_id
-        )""" % (self._table, self._get_dimension(),))
+        """ % (self._get_dimension(),)
+        return sql_view
+
+    def _get_dimension(self):
+        return 'aal.product_id, aal.activity_group_id, aal.activity_id'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, self._get_sql_view(),))

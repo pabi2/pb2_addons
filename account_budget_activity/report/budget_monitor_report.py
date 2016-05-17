@@ -38,7 +38,7 @@ class BudgetMonitorReport(models.Model):
     amount_actual = fields.Float(
         string='Actual',
     )
-    balance = fields.Float(
+    amount_balance = fields.Float(
         string='Balance',
     )
     activity_group_id = fields.Many2one(
@@ -50,25 +50,31 @@ class BudgetMonitorReport(models.Model):
         string='Activity',
     )
 
-    def _get_dimension(self):
-        return 'activity_group_id, activity_id'
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW %s as (
+    def _get_sql_view(self):
+        sql_view = """
             select row_number() over (order by doc_ref) as id, * from
             (select user_id, fiscalyear_id, doc_ref,
             'account.budget,' || budget_id as doc_id,
             planned_amount, 0.0 as amount_pr_commit, 0.0 as amount_po_commit,
-            0.0 as amount_actual, planned_amount as balance,
+            0.0 as amount_actual, planned_amount as amount_balance,
             -- Dimensions
             %s
             from budget_plan_report
             UNION
             select user_id, fiscalyear_id, doc_ref, doc_id,
             0.0 as planned_amount, amount_pr_commit, amount_po_commit,
-            amount_actual, amount as balance,
+            amount_actual, amount as amount_balance,
             -- Dimensions
             %s
             from budget_consume_report) a
-        )""" % (self._table, self._get_dimension(), self._get_dimension()))
+        """ % (self._get_dimension(), self._get_dimension(),)
+        return sql_view
+
+    def _get_dimension(self):
+        return 'activity_group_id, activity_id'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        print self._get_sql_view()
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, self._get_sql_view(),))
