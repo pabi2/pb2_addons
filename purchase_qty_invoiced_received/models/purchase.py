@@ -11,6 +11,8 @@ class PurchaseOrderLine(models.Model):
         digits=(12, 6),
         compute='_compute_invoiced_qty',
         store=True,
+        copy=False,
+        default=0.0,
         help="This field calculate invoiced quantity at line level. "
         "Will be used to calculate committed budget",
     )
@@ -19,6 +21,8 @@ class PurchaseOrderLine(models.Model):
         digits=(12, 6),
         compute='_compute_received_qty',
         store=True,
+        copy=False,
+        default=0.0,
         help="This field calculate received quantity at line level. ",
     )
 
@@ -28,7 +32,8 @@ class PurchaseOrderLine(models.Model):
         for po_line in self:
             invoiced_qty = 0.0
             for invoice_line in po_line.invoice_lines:
-                if invoice_line.invoice_id.state not in ['draft', 'cancel']:
+                invoice = invoice_line.invoice_id
+                if invoice.state and invoice.state not in ['draft', 'cancel']:
                     # Invoiced Qty in PO Line's UOM
                     invoiced_qty += Uom._compute_qty(invoice_line.uos_id.id,
                                                      invoice_line.quantity,

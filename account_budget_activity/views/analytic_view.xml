@@ -2,6 +2,18 @@
 <openerp>
     <data>
     
+        <record id="view_account_analytic_journal_form" model="ir.ui.view" >
+            <field name="name">view.account.analytic.journal.form</field>
+            <field name="model">account.analytic.journal</field>
+            <field name="inherit_id" ref="account.view_account_analytic_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="after">
+                	<field name="budget_commit_type" />
+                </xpath> 
+            </field>
+        </record>   
+        
+        
         <record id="view_account_analytic_account_form" model="ir.ui.view" >
             <field name="name">view.account.analytic.account.form</field>
             <field name="model">account.analytic.account</field>
@@ -47,5 +59,28 @@
             </field>
         </record>
         
+
+        <record id="view_account_analytic_line_form" model="ir.ui.view" >
+            <field name="name">view.account.analytic.line.form</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account.view_account_analytic_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group" position="inside">
+                	<group name="doc_ref" string="Doc Ref">
+               			<field name="doc_id" />
+                	</group>
+                </xpath> 
+            </field>
+        </record>   
+        <record id="view_account_analytic_line_tree" model="ir.ui.view" >
+            <field name="name">view.account.analytic.line.tree</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account.view_account_analytic_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="inside">
+              		<field name="doc_id" />
+                </xpath>
+            </field>
+        </record>         
 	</data>
 </openerp>

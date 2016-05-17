@@ -16,7 +16,7 @@ class AccountActivityGroup(models.Model):
         required=True,
     )
     parent_id = fields.Many2one(
-        'account.activity.group',   
+        'account.activity.group',
         string='Parent Activity Group',
         index=True,
         ondelete='cascade',

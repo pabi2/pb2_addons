@@ -20,6 +20,7 @@ Testing:
     'depends': [
         'account',
         'account_accountant',
+        'account_move_line_doc_ref',
         'purchase',
         'purchase_requisition',
         'purchase_request',
@@ -29,6 +30,7 @@ Testing:
         'hr_expense_auto_invoice',
     ],
     'data': [
+        'data/account_data.xml',
         'security/ir.model.access.csv',
         'security/account_budget_security.xml',
         'views/purchase_view.xml',
@@ -42,8 +44,12 @@ Testing:
         'views/account_move_line_view.xml',
         'views/analytic_view.xml',
         'views/hr_expense_view.xml',
+        'views/account_journal_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
         'workflow/account_budget_workflow.xml',
+        'report/budget_consume_report_view.xml',
+        'report/budget_plan_report_view.xml',
+        'report/budget_monitor_report_view.xml',
     ],
     'demo': [
         'demo/activity_demo.xml',

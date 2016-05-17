@@ -11,8 +11,10 @@ class AccountAssetDepreciationLine(models.Model):
         moves = self.env['account.move'].browse(move_ids)
         for move in moves:
             if move.line_id:
-                asset_name = self.env['account.move.line'].search(
+                asset = self.env['account.move.line'].search(
                     [('id', 'in', move.line_id.ids),
-                     ('asset_id', '!=', False)], limit=1).asset_id.name
-                move.line_id.write({'doc_ref': asset_name or False})
+                     ('asset_id', '!=', False)], limit=1).asset_id
+                move.line_id.write(
+                    {'doc_ref': asset.name or False,
+                     'doc_id': '%s,%s' % ('account.asset.asset', asset.id)})
         return move_ids

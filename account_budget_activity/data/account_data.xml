@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record id="account.po_commit" model="account.analytic.journal">
+            <field name="code">PO_COM</field>
+            <field name="name">PO Commitment</field>
+            <field name="type">general</field>
+            <field name="budget_commit_type">po_commit</field>
+        </record>
+
+        <record id="account.pr_commit" model="account.analytic.journal">
+            <field name="code">PR_COM</field>
+            <field name="name">PR Commitment</field>
+            <field name="type">general</field>
+            <field name="budget_commit_type">pr_commit</field>
+        </record>
+        
+        <record id="account.exp" model="account.analytic.journal">
+            <field name="budget_commit_type">actual</field>
+        </record>
+	</data>
+</openerp>

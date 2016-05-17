@@ -82,7 +82,7 @@
                     'order_type': 'quotation',
                 }
             </field>
-            <field name="domain">[('state', 'in', ('draft','sent','done')),('order_type', '=', 'quotation')]</field>
+            <field name="domain">[('order_type', '=', 'quotation')]</field>
         </record>
 
         <record id="purchase.purchase_form_action" model="ir.actions.act_window">

@@ -17,5 +17,6 @@ class AccountCheckDeposit(models.Model):
         result = super(AccountCheckDeposit, self
                        )._prepare_counterpart_move_lines_vals(
             deposit, total_debit, total_amount_currency)
-        result.update(doc_ref=deposit.name)
+        result.update(doc_ref=deposit.name,
+                      doc_id='%s,%s' % ('account.check.deposit', deposit.id))
         return result
