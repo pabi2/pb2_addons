@@ -17,9 +17,11 @@
 #         'data/account.activity.group.csv',
 #         'data/account.activity.csv',
         # View
-        'views/account_activity_view.xml',
         'views/res_org_structure_view.xml',
         'views/res_spa_structure_view.xml',
+        'report/budget_consume_report_view.xml',
+        'report/budget_plan_report_view.xml',
+        'report/budget_monitor_report_view.xml',
     ],
     'demo': [
     ],
