@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models
 from openerp import tools
-from pygments.lexer import _inherit
 
 
 class MonitorView(models.AbstractModel):
