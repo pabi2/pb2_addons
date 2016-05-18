@@ -1,5 +1,6 @@
 id,key,value
+base.ir_config_parameter_0,pabiweb_active,TRUE
 base.ir_config_parameter_1,pabiweb_url,10.226.202.134/alfresco/s/pb/pcm/inf
-base.ir_config_parameter_2,pabiweb_username,002648
+base.ir_config_parameter_2,pabiweb_username,2648
 base.ir_config_parameter_3,pabiweb_password,password
-base.ir_config_parameter_4,pabiweb_file_prefix,"http://10.226.202.134/share/proxy/alfresco/api/node/content/workspace/SpacesStore/"
+base.ir_config_parameter_4,pabiweb_file_prefix,http://10.226.202.134/share/proxy/alfresco/api/node/content/workspace/SpacesStore/
