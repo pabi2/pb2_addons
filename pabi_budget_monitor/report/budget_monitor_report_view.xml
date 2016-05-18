@@ -26,7 +26,7 @@
         <field name="model">budget.monitor.report</field>
         <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_tree"/>
         <field name="arch" type="xml">
-        	<xpath expr="//field[@name='doc_id']" position="after">
+        	<xpath expr="//field[@name='amount_balance']" position="after">
 
 				<field name="spa_id"/>
 				<field name="mission_id" />

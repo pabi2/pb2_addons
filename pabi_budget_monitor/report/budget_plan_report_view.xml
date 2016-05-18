@@ -34,7 +34,7 @@
         <field name="model">budget.plan.report</field>
         <field name="inherit_id" ref="account_budget_activity.view_budget_plan_report_tree"/>
         <field name="arch" type="xml">
-        	<xpath expr="//field[@name='fiscalyear_id']" position="after">
+        	<xpath expr="//field[@name='planned_amount']" position="after">
 
 				<field name="spa_id"/>
 				<field name="mission_id" />
