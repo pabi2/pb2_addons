@@ -17,8 +17,12 @@
     "depends": [
         "account_budget_activity",
         'web_widget_x2many_2d_matrix',
+        'pabi_budget_prepare',
     ],
     "data": [
+        'wizard/budget_export_wiz_view.xml',
         "views/account_budget_view.xml",
+        'views/output_xls_report.xml',
+        'views/attachment_view.xml'
     ],
 }
