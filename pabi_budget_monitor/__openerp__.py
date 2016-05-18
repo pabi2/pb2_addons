@@ -13,10 +13,10 @@
     ],
     'data': [
         'security/ir.model.access.csv',
-#         'data/account.activity.tag.csv',
-#         'data/account.activity.group.csv',
-#         'data/account.activity.csv',
-        # View
+        # 'data/account.activity.tag.csv',
+        # 'data/account.activity.group.csv',
+        #  'data/account.activity.csv',
+        #  View
         'views/account_activity_view.xml',
         'views/res_org_structure_view.xml',
         'views/res_spa_structure_view.xml',

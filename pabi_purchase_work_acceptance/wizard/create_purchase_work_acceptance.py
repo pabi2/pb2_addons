@@ -51,6 +51,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                 'balance_qty': 0,
                 'to_receive_qty': inv_line.quantity,
                 'product_uom': inv_line.uos_id.id,
+                'inv_line_id': inv_line.id,
             }
             items.append([0, 0, vals])
         return items

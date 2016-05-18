@@ -34,6 +34,18 @@ class PurchaseWorkAcceptance(models.Model):
             self.manual_fine = 0.0
             self.manual_days = 0
 
+    @api.onchange('date_invoice')
+    def _onchange_date_invoice(self):
+        if len(self.acceptance_line_ids) > 0 and self.date_invoice:
+            for acceptance_line in self.acceptance_line_ids:
+                if acceptance_line.product_id.type == 'service':
+                    Invoice = self.env['account.invoice']
+                    self.write_to_invoice = True
+                    invoice = Invoice.search([
+                        ('id', '=', acceptance_line.inv_line_id.invoice_id.id),
+                    ])
+                    invoice.date_invoice = self.date_invoice
+
     @api.model
     def _check_product_type(self):
         check_type = False
@@ -148,6 +160,9 @@ class PurchaseWorkAcceptance(models.Model):
     date_invoice = fields.Date(
         string="Invoice Date",
     )
+    write_to_invoice = fields.Boolean(
+        string="Write to invoice date",
+    )
     acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
         'acceptance_id',
@@ -218,6 +233,10 @@ class PurchaseWorkAcceptanceLine(models.Model):
         string='Purchase Order Line',
         required=True,
         readonly=True,
+    )
+    inv_line_id = fields.Many2one(
+        'account.invoice.line',
+        string='Account Invoice Line',
     )
     product_id = fields.Many2one(
         'product.product',

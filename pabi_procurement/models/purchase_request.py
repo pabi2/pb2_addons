@@ -48,6 +48,7 @@ class PurchaseRequest(models.Model):
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)],
             },
+        domain="[('operating_unit_ids', 'in', operating_unit_id)]",
         track_visibility='onchange',
     )
     currency_id = fields.Many2one(
@@ -323,9 +324,12 @@ class PurchaseRequest(models.Model):
         attachment_ids = []
         if 'attachment_ids' in data_dict:
             PRAttachment = self.env['purchase.request.attachment']
+            ConfParam = self.env['ir.config_parameter']
+            file_prefix = ConfParam.get_param('pabiweb_file_prefix')
             attachment_tup = data_dict['attachment_ids']
             for att_rec in attachment_tup:
                 att_rec['request_id'] = pr_id
+                att_rec['file_url'] = file_prefix + att_rec['file_url']
                 attachment = PRAttachment.create(att_rec)
                 attachment_ids.append(attachment.id)
         return attachment_ids
@@ -399,10 +403,6 @@ class PurchaseRequest(models.Model):
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
 
-    price_unit = fields.Float(
-        string='Unit Price',
-        track_visibility='onchange',
-    )
     fixed_asset = fields.Boolean(
         string='Fixed Asset',
     )
