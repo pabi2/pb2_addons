@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+     <record id="view_budget_monitor_report_wizard" model="ir.ui.view">
+         <field name="name">Budget Monitoring</field>
+         <field name="model">budget.monitor.report.wizard</field>
+         <field name="arch" type="xml">
+             <form string="budget.monitor.report.wizard">
+                 <group string="Select Budget Structure" col="4">
+                 </group>
+                 <footer>
+                     <button name="open_report" string="Open Report" type="object" class="oe_highlight"/>
+                     or
+                     <button string="Cancel" class="oe_link" special="cancel"/>
+                 </footer>
+             </form>
+         </field>
+     </record>
+
+     <record id="action_budget_monitor_report_wizard" model="ir.actions.act_window">
+         <field name="name">Budget Monitoring</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="res_model">budget.monitor.report.wizard</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="view_id" ref="view_budget_monitor_report_wizard"/>
+         <field name="target">new</field>
+     </record>    
+    			
+    <menuitem id="account_budget_activity.menu_action_budget_monitor_report"
+    		action="action_budget_monitor_report_wizard"
+    		parent="account_budget_activity.menu_action_budget_report" sequence="3"/>
+
+
+
+</data>
+</openerp>
