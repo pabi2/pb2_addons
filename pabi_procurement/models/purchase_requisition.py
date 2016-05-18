@@ -332,16 +332,11 @@ class PurchaseRequisition(models.Model):
             raise UserError(
                 _('Product line cannot be empty.')
             )
-        check_type = self.line_ids[0].product_id.type
-        if check_type != 'service':
-            check_type = 'stock'
-        for line in self.line_ids:
-            if line.product_id.type in ('product', 'consu'):
-                line_type = 'stock'
-            if line_type != check_type:
-                raise UserError(
-                    _('All product line must have the same product type')
-                )
+        types = [l.product_id.type for l in self.line_ids]
+        if len(list(set(types))) > 1:
+            raise UserError(
+                _('All products must be of the same type')
+            )
         return True
 
     @api.multi
