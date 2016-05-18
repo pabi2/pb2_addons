@@ -40,11 +40,27 @@ class PurchaseWorkAcceptance(models.Model):
             for acceptance_line in self.acceptance_line_ids:
                 if acceptance_line.product_id.type == 'service':
                     Invoice = self.env['account.invoice']
-                    self.write_to_invoice = True
+                    InvoiceLine = self.env['account.invoice.line']
+                    # invoice plan invoice
                     invoice = Invoice.search([
                         ('id', '=', acceptance_line.inv_line_id.invoice_id.id),
+                        ('state', '=', 'draft'),
                     ])
-                    invoice.date_invoice = self.date_invoice
+                    if len(invoice) > 0:
+                        for inv in invoice:
+                            self.write_to_invoice = True
+                            inv.date_invoice = self.date_invoice
+                            break
+                    else:
+                        # service invoice
+                        invoice_line = InvoiceLine.search([
+                            ('purchase_line_id', '=',
+                             acceptance_line.line_id.id),
+                        ])
+                        for inv_line in invoice_line:
+                            self.write_to_invoice = True
+                            inv_line.invoice_id.date_invoice = \
+                                self.date_invoice
 
     @api.model
     def _check_product_type(self):
