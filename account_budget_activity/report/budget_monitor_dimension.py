@@ -50,7 +50,6 @@ class MonitorView(models.AbstractModel):
 
     def _create_monitor_view(self, cr, field):
         tools.drop_view_if_exists(cr, self._table)
-        print self._monitor_view_tempalte % (self._table, field, field, field)
         cr.execute(
             self._monitor_view_tempalte %
             (self._table, field, field, field))

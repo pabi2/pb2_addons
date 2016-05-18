@@ -60,6 +60,7 @@ class BudgetMonitorReport(models.Model):
             -- Dimensions
             %s
             from budget_plan_report
+            where state in ('validate', 'done')
             UNION
             select user_id, fiscalyear_id, doc_ref, doc_id,
             0.0 as planned_amount, amount_pr_commit, amount_po_commit,
@@ -75,6 +76,5 @@ class BudgetMonitorReport(models.Model):
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        print self._get_sql_view()
         cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
                    (self._table, self._get_sql_view(),))

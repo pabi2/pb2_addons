@@ -69,6 +69,14 @@ class BudgetPlanReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('cancel', 'Cancelled'),
+         ('confirm', 'Confirmed'),
+         ('validate', 'Validated'),
+         ('done', 'Done')],
+        string='Status',
+    )
 
     def _get_sql_view(self):
         sql_view = """
@@ -76,7 +84,7 @@ class BudgetPlanReport(models.Model):
                 ab.name as doc_ref, ab.id as budget_id,
                 -- Amount
                 m1, m2, m3, m4, m5, m6, m7, m8,
-                m9, m10, m11, m12, planned_amount,
+                m9, m10, m11, m12, planned_amount, abl.budget_state as state,
                 -- Dimensions
                 %s
             from account_budget_line abl

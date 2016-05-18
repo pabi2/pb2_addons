@@ -3,6 +3,12 @@ from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import except_orm, Warning as UserError
 
+BUDGET_STATE = [('draft', 'Draft'),
+                ('cancel', 'Cancelled'),
+                ('confirm', 'Confirmed'),
+                ('validate', 'Validated'),
+                ('done', 'Done')]
+
 
 class AccountBudget(models.Model):
     _name = "account.budget"
@@ -27,12 +33,6 @@ class AccountBudget(models.Model):
         required=True,
         states={'done': [('readonly', True)]},
     )
-    code = fields.Char(
-        string='Code',
-        size=16,
-        required=True,
-        states={'done': [('readonly', True)]},
-    )
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
@@ -40,7 +40,7 @@ class AccountBudget(models.Model):
     )
     validating_user_id = fields.Many2one(
         'res.users',
-        string='Responsible User',
+        string='Validating User',
     )
     date_from = fields.Date(
         string='Start Date',
@@ -55,11 +55,7 @@ class AccountBudget(models.Model):
         store=True,
     )
     state = fields.Selection(
-        [('draft', 'Draft'),
-         ('cancel', 'Cancelled'),
-         ('confirm', 'Confirmed'),
-         ('validate', 'Validated'),
-         ('done', 'Done')],
+        BUDGET_STATE,
         string='Status',
         default='draft',
         index=True,
@@ -169,7 +165,7 @@ class AccountBudget(models.Model):
 
     @api.model
     def _get_budget_resource(self, fiscal, budget_type,
-                             budget_level, budget_level_res_id, pu_id=False):
+                             budget_level, budget_level_res_id):
         LEVEL_DICT = self.env['account.budget'].BUDGET_LEVEL
         MODEL_DICT = self.env['account.budget'].BUDGET_LEVEL_MODEL
         model = MODEL_DICT.get(budget_level, False)
@@ -182,25 +178,30 @@ class AccountBudget(models.Model):
 
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
-                            budget_level, resource, pu_id=False):
+                            budget_level, resource):
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal)
         return monitors
 
     @api.model
     def check_budget(self, fiscal_id, budget_type,
-                     budget_level, budget_level_res_id, amount, pu_id=False):
+                     budget_level, budget_level_res_id, amount):
         res = {'budget_ok': True,
                'message': False, }
         AccountFiscalyear = self.env['account.fiscalyear']
+        BudgetLevel = self.env['account.fiscalyear.budget.level']
         fiscal = AccountFiscalyear.browse(fiscal_id)
-        if not fiscal.budget_control:
+        blevel = BudgetLevel.search([('fiscal_id', '=', fiscal_id),
+                                    ('type', '=', budget_type),
+                                    ('budget_level', '=', budget_level)],
+                                    limit=1)
+        if not blevel.is_budget_control:
             return res
         resource = self._get_budget_resource(fiscal, budget_type,
                                              budget_level,
-                                             budget_level_res_id, pu_id)
+                                             budget_level_res_id)
         monitors = self._get_budget_monitor(fiscal, budget_type,
-                                            budget_level, resource, pu_id)
+                                            budget_level, resource)
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
@@ -322,6 +323,12 @@ class AccountBudgetLine(models.Model):
         string='Planned Amount',
         compute='_compute_planned_amount',
         digits_compute=dp.get_precision('Account'),
+        store=True,
+    )
+    budget_state = fields.Selection(
+        BUDGET_STATE,
+        string='Status',
+        related='budget_id.state',
         store=True,
     )
 
