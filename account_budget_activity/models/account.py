@@ -15,14 +15,18 @@ class AccountFiscalyear(models.Model):
         string='Budgeting Level',
     )
 
-    @api.onchange('budget_control')
-    def _onchange_budget_control(self):
+    @api.multi
+    def create_budget_level_config(self):
         AccountBudget = self.env['account.budget']
         BudgetLevel = self.env['account.fiscalyear.budget.level']
-        if not self.budget_level_ids:
+        budget_levels = AccountBudget.BUDGET_LEVEL_TYPE.items()
+        if len(self.budget_level_ids) != len(budget_levels):
+            print AccountBudget.BUDGET_LEVEL_TYPE.items()
             for level_type in AccountBudget.BUDGET_LEVEL_TYPE.items():
                 budget_level = BudgetLevel.new()
                 budget_level.type = level_type[0]
+                print level_type[0]
+                print budget_level
                 self.budget_level_ids += budget_level
 
 
@@ -43,8 +47,11 @@ class AccountFiscalyearBudgetLevel(models.Model):
     budget_level = fields.Selection(
         lambda self: self.env['account.budget'].BUDGET_LEVEL.items(),
         string='Budget Level',
-        required=True,
-        default='activity_group_id',
+        required=False,
+    )
+    is_budget_control = fields.Boolean(
+        string='Control',
+        default=False,
     )
 
 
