@@ -46,7 +46,6 @@ class PurchaseWorkAcceptance(models.Model):
                     ])
                     invoice.date_invoice = self.date_invoice
 
-
     @api.model
     def _check_product_type(self):
         check_type = False

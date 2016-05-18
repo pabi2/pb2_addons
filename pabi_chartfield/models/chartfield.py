@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import Warning as UserError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                                       (mission)
