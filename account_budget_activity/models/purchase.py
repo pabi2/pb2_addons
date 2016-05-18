@@ -103,8 +103,9 @@ class PurchaseOrderLine(models.Model):
         account = self.activity_group_id.account_id
         # If not exist, use the default expense account
         if not account:
-            account = self.env['ir.property'].search(
+            prop = self.env['ir.property'].search(
                 [('name', '=', 'property_account_expense_categ')])
+            account = prop.get_by_record(prop)
         return account and account.id or False
 
     @api.model
