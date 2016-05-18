@@ -2,7 +2,6 @@
 
 from . import account_activity
 from . import account_budget
-from . import budget_monitor
 from . import res_org_structure
 from . import res_spa_structure
 from . import account_invoice

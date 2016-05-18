@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import models
-from .chartfield import ChartFieldAction
+from .chartfield import ChartField
 
 
-class AccountMoveLine(ChartFieldAction, models.Model):
+class AccountMoveLine(ChartField, models.Model):
     _inherit = 'account.move.line'
