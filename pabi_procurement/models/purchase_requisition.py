@@ -299,6 +299,9 @@ class PurchaseRequisition(models.Model):
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
+        res.update({
+            'operating_unit_id': requisition.operating_unit_id.id,
+        })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
             operating_unit_id = self._context.get('sel_operating_unit_id')
