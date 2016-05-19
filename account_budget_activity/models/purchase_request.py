@@ -16,6 +16,15 @@ class PurchaseRequest(models.Model):
         return super(PurchaseRequest, self).button_to_approve()
 
     @api.multi
+    def button_approved(self):
+        for request in self:
+            for line in request.line_ids:
+                Analytic = self.env['account.analytic.account']
+                line.analytic_account_id = \
+                    Analytic.create_matched_analytic(line)
+        return super(PurchaseRequest, self).button_approved()
+
+    @api.multi
     def write(self, vals):
         if vals.get('state') in ['approved']:
             self.line_ids.filtered(lambda l:
