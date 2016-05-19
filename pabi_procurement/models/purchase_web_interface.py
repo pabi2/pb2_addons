@@ -147,12 +147,11 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_action_request(self, request, action):
-        users = self.env['res.users'].search([('id', '=', self._uid)])
-        assert len(request) == 1, \
-            "Only 1 Purchase Request could be done at a time."
         ConfParam = self.env['ir.config_parameter']
+        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+            return False
         url = ConfParam.get_param('pabiweb_url')
-        username = users.login
+        username = self.env.user.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
@@ -160,7 +159,7 @@ class PurchaseWebInterface(models.Model):
             send_act = "C2"
         else:
             send_act = "X2"
-        result = alfresco.req.action(request.name, send_act, users.login)
+        result = alfresco.req.action(request.name, send_act, username)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
