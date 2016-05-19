@@ -53,6 +53,33 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Budget Control">
+                            <field name="budget_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree string="Budget Lines" editable="bottom">
+			
+									<field name="c_or_n" />
+
+									<field name="project_id" />
+			
+									<field name="cur_current_budget" sum="Total" />
+									<field name="cur_release_budget" sum="Total" />
+									<field name="cur_commit_budget" sum="Total" />
+									<field name="cur_actual" sum="Total" />
+									<field name="cur_remaining_budget" sum="Total" />
+									<field name="cur_estimated_commitment" sum="Total" />
+									<field name="fy1q1" sum="Total" />
+									<field name="fy1q2" sum="Total" />
+									<field name="fy1q3" sum="Total" />
+									<field name="fy1q4" sum="Total" />
+									<field name="fy1" sum="Total" />
+									<field name="fy2" sum="Total" />
+									<field name="fy3" sum="Total" />
+									<field name="fy4" sum="Total" />
+									<field name="fy5" sum="Total" />
+									<field name="total" sum="Total" />
+                                </tree>
+                            </field>
+                        </page>
                         <page string="Project Detail">
                             <field name="project_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
                                 <tree string="Budget Lines" editable="bottom">
@@ -110,33 +137,6 @@
 									<field name="pfm_expense_accum" sum="Total" />
 									<field name="pfm_commitment_accum" sum="Total" />
 									<field name="pfm_expense_remaining_budget" sum="Total" />
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Budget Control">
-                            <field name="budget_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
-                                <tree string="Budget Lines" editable="bottom">
-			
-									<field name="c_or_n" />
-
-									<field name="project_id" />
-			
-									<field name="cur_current_budget" sum="Total" />
-									<field name="cur_release_budget" sum="Total" />
-									<field name="cur_commit_budget" sum="Total" />
-									<field name="cur_actual" sum="Total" />
-									<field name="cur_remaining_budget" sum="Total" />
-									<field name="cur_estimated_commitment" sum="Total" />
-									<field name="fy1q1" sum="Total" />
-									<field name="fy1q2" sum="Total" />
-									<field name="fy1q3" sum="Total" />
-									<field name="fy1q4" sum="Total" />
-									<field name="fy1" sum="Total" />
-									<field name="fy2" sum="Total" />
-									<field name="fy3" sum="Total" />
-									<field name="fy4" sum="Total" />
-									<field name="fy5" sum="Total" />
-									<field name="total" sum="Total" />
                                 </tree>
                             </field>
                         </page>

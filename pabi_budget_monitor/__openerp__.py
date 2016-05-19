@@ -13,7 +13,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
-        'views/account_activity_view.xml',
+        # View
         'views/res_org_structure_view.xml',
         'views/res_spa_structure_view.xml',
         'report/budget_consume_report_view.xml',
