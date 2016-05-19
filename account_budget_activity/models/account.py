@@ -58,13 +58,23 @@ class AccountFiscalyearBudgetLevel(models.Model):
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
 
+    pr_commitment_analytic_journal_id = fields.Many2one(
+        'account.analytic.journal',
+        string='Analytic Journal for PR Commitments',
+        domain=[('type', '=', 'general')]
+    )
+    pr_commitment_account_id = fields.Many2one(
+        'account.account',
+        string='Account for PR Commitment',
+        domain=[('type', '!=', 'view')]
+    )
     po_commitment_analytic_journal_id = fields.Many2one(
         'account.analytic.journal',
         string='Analytic Journal for PO Commitments',
         domain=[('type', '=', 'general')]
     )
-    pr_commitment_analytic_journal_id = fields.Many2one(
-        'account.analytic.journal',
-        string='Analytic Journal for PR Commitments',
-        domain=[('type', '=', 'general')]
+    po_commitment_account_id = fields.Many2one(
+        'account.account',
+        string='Account for PO Commitment',
+        domain=[('type', '!=', 'view')]
     )

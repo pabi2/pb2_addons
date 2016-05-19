@@ -100,16 +100,16 @@ class PurchaseRequestLine(models.Model):
             self.name = self.activity_id.name
 
     # ================= PR Commitment =====================
-    @api.model
-    def _get_account_id_from_pr_line(self):
-        # For PABI, account is always from activity group
-        account = self.activity_group_id.account_id
-        # If not exist, use the default expense account
-        if not account:
-            prop = self.env['ir.property'].search(
-                [('name', '=', 'property_account_expense_categ')])
-            account = prop.get_by_record(prop)
-        return account and account.id or False
+    # DO NOT DELETE, Pending decision on what to use.
+    #     @api.model
+    #     def _get_account_id_from_pr_line(self):
+    #         account = self.activity_group_id.account_id
+    #         # If not exist, use the default expense account
+    #         if not account:
+    #             prop = self.env['ir.property'].search(
+    #                 [('name', '=', 'property_account_expense_categ')])
+    #             account = prop.get_by_record(prop)
+    #         return account and account.id or False
 
     @api.model
     def _price_subtotal(self, line_qty):
@@ -117,16 +117,20 @@ class PurchaseRequestLine(models.Model):
 
     @api.model
     def _prepare_analytic_line(self, reverse=False):
-        general_account_id = self._get_account_id_from_pr_line()
+        # general_account_id = self._get_account_id_from_pr_line()
         general_journal = self.env['account.journal'].search(
             [('type', '=', 'purchase'),
              ('company_id', '=', self.company_id.id)], limit=1)
         if not general_journal:
             raise Warning(_('Define an accounting journal for purchase'))
-        if not general_journal.pr_commitment_analytic_journal_id:
+        if not general_journal.pr_commitment_analytic_journal_id or \
+                not general_journal.pr_commitment_account_id:
             raise UserError(
                 _("No analytic journal for PR commitment defined on the "
                   "accounting journal '%s'") % general_journal.name)
+
+        # Use PR Commitment Account
+        general_account_id = general_journal.pr_commitment_account_id.id
 
         line_qty = 0.0
         if 'diff_purchased_qty' in self._context:
