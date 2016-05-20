@@ -391,21 +391,21 @@ class PurchaseRequisition(models.Model):
                     if requisition.state == 'confirmed' \
                             and order.order_type == 'quotation':
                         order.action_button_convert_to_order()
-                requisition.write({
-                    'doc_approve_uid': uid.id,
-                    'date_doc_approve': fields.date.today(),
-                    'attachment_ids': att_file,
-                })
-                order.action_button_convert_to_order()
-                if order.state2 != 'done' or order.state != 'done':
-                    order.state2 = 'done'
-                    order.state = 'done'
-                if requisition.state != 'done':
-                    requisition.tender_done()
-                res.update({
-                    'is_success': True,
-                    'result': True,
-                })
+                    requisition.write({
+                        'doc_approve_uid': uid.id,
+                        'date_doc_approve': fields.date.today(),
+                        'attachment_ids': att_file,
+                    })
+                    order.action_button_convert_to_order()
+                    if order.state2 != 'done' or order.state != 'done':
+                        order.state2 = 'done'
+                        order.state = 'done'
+                    if requisition.state != 'done':
+                        requisition.tender_done()
+                    res.update({
+                        'is_success': True,
+                        'result': True,
+                    })
             except Exception, e:
                 res.update({
                     'is_success': False,
