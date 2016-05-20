@@ -20,14 +20,13 @@ class AccountFiscalyear(models.Model):
         AccountBudget = self.env['account.budget']
         BudgetLevel = self.env['account.fiscalyear.budget.level']
         budget_levels = AccountBudget.BUDGET_LEVEL_TYPE.items()
-        if len(self.budget_level_ids) != len(budget_levels):
-            print AccountBudget.BUDGET_LEVEL_TYPE.items()
-            for level_type in AccountBudget.BUDGET_LEVEL_TYPE.items():
-                budget_level = BudgetLevel.new()
-                budget_level.type = level_type[0]
-                print level_type[0]
-                print budget_level
-                self.budget_level_ids += budget_level
+        for rec in self:
+            if len(rec.budget_level_ids) != len(budget_levels):
+                rec.budget_level_ids = False
+                for level_type in AccountBudget.BUDGET_LEVEL_TYPE.items():
+                    budget_level = BudgetLevel.new()
+                    budget_level.type = level_type[0]
+                    rec.budget_level_ids += budget_level
 
 
 class AccountFiscalyearBudgetLevel(models.Model):

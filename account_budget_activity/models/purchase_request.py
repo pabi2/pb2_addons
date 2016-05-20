@@ -26,9 +26,10 @@ class PurchaseRequest(models.Model):
 
     @api.multi
     def write(self, vals):
-        if vals.get('state') in ['approved']:
+        # Create analytic when approve.
+        if vals.get('state') in ['to_approve']:
             self.line_ids.filtered(lambda l:
-                                   l.request_state not in ('approved',)).\
+                                   l.request_state not in ('to_approve',)).\
                 _create_analytic_line(reverse=True)
         # Create negative amount for the remain product_qty - invoiced_qty
         if vals.get('state') in ['rejected']:
