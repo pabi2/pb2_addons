@@ -438,7 +438,7 @@ class PurchaseRequisition(models.Model):
             ('model', '=', self._name),
             ('report_type', '=', 'qweb-pdf'),
             ('report_name', '=',
-             'purchase_requisition.report_purchaserequisitions')],)
+             'purchase_requisition.report_purchase_requisitions')],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
