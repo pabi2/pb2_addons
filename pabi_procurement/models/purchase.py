@@ -130,7 +130,7 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def action_picking_create(self):
-        res = super(PurchaseOrder, self).action_picking_create(self._ids)
+        res = super(PurchaseOrder, self).action_picking_create()
         res.verified = True
         return res
 
