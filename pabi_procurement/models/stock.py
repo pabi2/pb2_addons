@@ -52,6 +52,7 @@ class StockPicking(models.Model):
 
     @api.model
     def create(self, vals):
+        self.ensure_one()
         assert len(self) == 1, \
             'This action should only be used for a single id at a time.'
         res = super(StockPicking, self).create(vals)
