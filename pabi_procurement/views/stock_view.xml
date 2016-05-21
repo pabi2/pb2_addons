@@ -50,17 +50,17 @@
                     </div>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="after">
-                    <button name="action_verify" string="Verify" type="object" attrs="{'invisible': ['|',('state', '!=', 'assigned'), ('verified', '=', True)]}" class="oe_highlight"/>
-                    <button name="action_reject" string="Reject" type="object" attrs="{'invisible': ['|',('state', '!=', 'assigned'), ('verified', '=', True)]}"/>
+                    <button name="action_verify" string="Verify" type="object" attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|',('state', '!=', 'assigned'), ('verified', '=', True)]}" class="oe_highlight"/>
+                    <button name="action_reject" string="Reject" type="object" attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|',('state', '!=', 'assigned'), ('verified', '=', True)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='do_enter_transfer_details']" position="replace">
                     <button name="do_enter_transfer_details" attrs="{'invisible': ['|', ('state', 'in', ('draft', 'confirmed','done','cancel')), ('verified', '=', False)]}" string="Transfer" groups="stock.group_stock_user" type="object" class="oe_highlight"/>
                 </xpath>
                 <xpath expr="//button[@name='do_print_picking']" position="replace">
-                    <button name="do_print_picking" string="Print Picking List" groups="stock.group_stock_user" type="object" attrs="{'invisible': ['|', '|', ('picking_type_code', '=', 'outgoing'), ('state', '!=', 'assigned'), ('verified', '=', False)]}"/>
+                    <button name="do_print_picking" string="Print Picking List" groups="stock.group_stock_user" type="object" attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|', '|', ('picking_type_code', '=', 'outgoing'), ('state', '!=', 'assigned'), ('verified', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="replace">
-                    <button name="action_cancel" attrs="{'invisible': ['|', ('state', 'in', ('done','cancel')), ('verified', '=', False)]}" string="Cancel Transfer" groups="base.group_user" type="object"/>
+                    <button name="action_cancel" attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|', ('state', 'in', ('done','cancel')), ('verified', '=', False)]}" string="Cancel Transfer" groups="base.group_user" type="object"/>
                 </xpath>
             </field>
         </record>
