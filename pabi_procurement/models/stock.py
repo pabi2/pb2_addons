@@ -50,7 +50,7 @@ class StockPicking(models.Model):
             self.verified = True
         return res
 
-    @api.multi
+    @api.model
     def create(self, vals):
         assert len(self) == 1, \
             'This action should only be used for a single id at a time.'
