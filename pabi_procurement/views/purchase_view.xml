@@ -43,15 +43,6 @@
                 <xpath expr="//field[@name='partner_ref']" position="after">
                     <field name="date_reference" />
                 </xpath>
-                <xpath expr="//button[@name='action_cancel']" position="attributes">
-                    <attribute name="attrs">
-                        {'invisible':[
-                        '|',
-                        ('order_type', '=', 'quotation'),
-                        ('state', 'not in', ('draft')),
-                        ]}
-                    </attribute>
-                </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="before">
                 	<field name="plan_invoice_created" invisible="1"/>
                     <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
