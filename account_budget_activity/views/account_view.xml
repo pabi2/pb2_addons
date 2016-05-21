@@ -8,21 +8,23 @@
             <field name="model">account.fiscalyear</field>
             <field name="arch" type="xml">
             	<form>
+                    <div class="oe_right oe_button_box" name="buttons">
+	                	<button name="create_budget_level_config" string="Generate Budget Levels" type="object"/>
+                    </div>
 	                <group>
 	                    <group>
 	                        <field name="name" readonly="1"/>
-	                        <field name="code" readonly="1"/>
-	                        <field name="company_id" groups="base.group_multi_company"/>
 	                    </group>
 	                    <group>
-	                        <field name="budget_control"/>
+	                        <field name="code" readonly="1"/>
 	                    </group>
 	                </group>
 	                <field colspan="4" name="budget_level_ids" nolabel="1" widget="one2many_list">
 	                    <tree string="Budget Level" editable="bottom">
                             <field name="fiscal_id" invisible="1"/>
                             <field name="type"/>
-                            <field name="budget_level"/>
+                            <field name="budget_level" required="1"/>
+                            <field name="is_budget_control" />
 	                    </tree>
 	                </field>
                 </form>
@@ -35,7 +37,6 @@
                 <tree>
                     <field name="code"/>
                     <field name="name"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
                 </tree>
             </field>
         </record>

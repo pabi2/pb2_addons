@@ -767,6 +767,9 @@ class account_voucher_tax(common_voucher, models.Model):
                 t = tax_obj.browse(val['tax_id'])
                 if abs(base) and abs(base) < t.threshold_wht:
                     continue
+                # For WHT, change sign.
+                val['base'] = -val['base']
+                val['amount'] = -val['amount']
                 # Case Withholding Tax Dr.
                 if voucher.type in ('receipt', 'payment'):
                     val['base_code_id'] = tax['base_code_id']

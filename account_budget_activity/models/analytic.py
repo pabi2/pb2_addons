@@ -80,6 +80,7 @@ class AccountAnalyticAccount(models.Model):
     type = fields.Selection(
         [('view', 'Analytic View'),
          ('normal', 'Analytic Account'),
+         ('pr_product', 'PR Product'),
          ('product', 'Product'),
          ('activity', 'Activity'),
          ('contract', 'Contract or Project'),
@@ -125,6 +126,8 @@ class AccountAnalyticAccount(models.Model):
             domain.append(('type', '=', 'product'))
         elif rec.activity_id:
             domain.append(('type', '=', 'activity'))
+        else:
+            domain.append(('type', '=', 'pr_product'))
         analytics = self.env['account.analytic.account'].search(domain)
         if analytics:
             return analytics[0]
@@ -137,8 +140,6 @@ class AccountAnalyticAccount(models.Model):
             if rec.product_id and rec.activity_id:
                 raise UserError(_('Select both Product and '
                                   'Activity is prohibited'))
-        if not rec.product_id and not rec.activity_id:
-            return False
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account']
         domain = self.get_analytic_search_domain(rec)
@@ -146,11 +147,17 @@ class AccountAnalyticAccount(models.Model):
             domain.append(('type', '=', 'product'))
         elif rec.activity_id:
             domain.append(('type', '=', 'activity'))
+        else:
+            domain.append(('type', '=', 'pr_product'))
         analytics = Analytic.search(domain)
         if not analytics:
             vals = dict((x[0], x[2]) for x in domain)
-            vals['name'] = rec.product_id.name or rec.activity_id.name
-            vals['type'] = rec.product_id and 'product' or 'activity'
+            vals['name'] = (rec.product_id.name or
+                            rec.activity_id.name or
+                            rec.name)
+            vals['type'] = ((rec.product_id and 'product') or
+                            (rec.activity_id and 'activity') or
+                            'pr_product')
             return Analytic.create(vals)
         else:
             return analytics[0]

@@ -69,20 +69,34 @@ class BudgetPlanReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('cancel', 'Cancelled'),
+         ('confirm', 'Confirmed'),
+         ('validate', 'Validated'),
+         ('done', 'Done')],
+        string='Status',
+    )
 
-    def _get_dimension(self):
-        return 'activity_group_id, activity_id'
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW %s as (
+    def _get_sql_view(self):
+        sql_view = """
             select abl.id, ab.creating_user_id as user_id, abl.fiscalyear_id,
                 ab.name as doc_ref, ab.id as budget_id,
                 -- Amount
                 m1, m2, m3, m4, m5, m6, m7, m8,
-                m9, m10, m11, m12, planned_amount,
+                m9, m10, m11, m12, planned_amount, abl.budget_state as state,
                 -- Dimensions
                 %s
             from account_budget_line abl
             join account_budget ab on ab.id = abl.budget_id
-        )""" % (self._table, self._get_dimension(),))
+        """ % (self._get_dimension(),)
+        return sql_view
+
+    def _get_dimension(self):
+        return 'abl.activity_group_id, abl.activity_id'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, self._get_sql_view(),))
+

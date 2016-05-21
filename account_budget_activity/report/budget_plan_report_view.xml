@@ -57,6 +57,8 @@
         <field name="model">budget.plan.report</field>
         <field name="arch" type="xml">
             <search string="Budget Plan">
+                <filter name="released" string="Released" domain="[('state','in', ('validate', 'done'))]" help="Released Budget"/>
+                <filter name="drafting" string="Drafing" domain="[('state','in', ('draft', 'cancel', 'confirm'))]" help="Drafting Budget"/>
                 <group expand="1" string="Group By">
                     <filter string="Document" name="budget_id" context="{'group_by':'budget_id', 'residual_visible':True}"/>
                     <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
@@ -72,7 +74,7 @@
         <field name="res_model">budget.plan.report</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,graph</field>
-        <field name="context">{}</field>
+        <field name="context">{'search_default_released': 1}</field>
         <field name="search_view_id" ref="view_budget_plan_report_search"/>
         <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
 

@@ -43,7 +43,6 @@
                                 <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
                             </group>
                             <group>
-                                <field name="code" attrs="{'readonly':[('state','!=','draft')]}"/>
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration"/>
                                 <div>
@@ -89,7 +88,6 @@
             <field name="arch" type="xml">
                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
                     <field name="name" colspan="1"/>
-                    <field name="code" colspan="1"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="company_id" widget="selection" groups="base.group_multi_company"/>
@@ -104,7 +102,7 @@
            <field name="model">account.budget</field>
            <field name="arch" type="xml">
                <search string="Budget">
-                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Budget"/>
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <filter string="Draft" icon="terp-document-new" domain="[('state','=','draft')]" help="Draft Budgets"/>
