@@ -10,5 +10,4 @@ class AccountFiscalyear(models.Model):
     def init(self, cr):
         env = Environment(cr, SUPERUSER_ID, {})
         fiscalyears = env['account.fiscalyear'].search([])
-        print fiscalyears
         fiscalyears.create_budget_level_config()

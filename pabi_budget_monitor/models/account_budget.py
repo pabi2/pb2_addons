@@ -60,7 +60,7 @@ class AccountBudget(models.Model):
         'personnel_costcenter_id': 'res.personnel.costceter',
         # Investment
         # - Asset
-        #'invest_asset_categ_id': 'res.invest.asset.category',
+        # 'invest_asset_categ_id': 'res.invest.asset.category',
         'invest_asset_id': 'res.invest.asset',
         # - Construction
         'invest_construction_id': 'res.invest.construction',
@@ -81,19 +81,19 @@ class AccountBudget(models.Model):
             budget_type = 'check_budget_%s' % (rec.chart_view,)
             super(AccountBudget, rec)._validate_budget_level(budget_type)
 
-    @api.model
-    def _get_budget_type_by_selected_chartfield(self, vals):
-        if vals.get('project_id'):
-            return 'check_budget_project_base'
-        if vals.get('section_id'):
-            return 'check_budget_unit_base'
-        if vals.get('invest_asset_id'):
-            return 'check_budget_invest_asset'
-        if vals.get('invest_construction_phase_id'):
-            return 'check_budget_invest_construction'
-        if vals.get('personnel_costcenter_id'):
-            return 'check_budget_personnel'
-        return False
+#     @api.model
+#     def _get_budget_type_by_selected_chartfield(self, vals):
+#         if vals.get('project_id'):
+#             return 'check_budget_project_base'
+#         if vals.get('section_id'):
+#             return 'check_budget_unit_base'
+#         if vals.get('invest_asset_id'):
+#             return 'check_budget_invest_asset'
+#         if vals.get('invest_construction_phase_id'):
+#             return 'check_budget_invest_construction'
+#         if vals.get('personnel_costcenter_id'):
+#             return 'check_budget_personnel'
+#         return False
 
     # -- Budget Check for Activity Group Level --
     # DO NOT DELETE

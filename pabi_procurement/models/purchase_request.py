@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseRequest(models.Model):
@@ -390,6 +391,15 @@ class PurchaseRequest(models.Model):
         res = super(PurchaseRequest, self).button_approved()
         PWInterface = self.env['purchase.web.interface']
         PWInterface.send_pbweb_action_request(self, 'accept')
+        return res
+
+    @api.multi
+    def button_to_approve(self):
+        for rec in self:
+            if not rec.line_ids:
+                raise UserError(
+                    _(('You cannot confirm a request without any line.')))
+        res = super(PurchaseRequest, self).button_to_approve()
         return res
 
     @api.multi
