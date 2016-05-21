@@ -131,7 +131,8 @@ class PurchaseOrder(models.Model):
     @api.multi
     def action_picking_create(self):
         res = super(PurchaseOrder, self).action_picking_create()
-        res.verified = True
+        picking = self.env['stock.picking'].search([('id', '=', res[0])])
+        picking.verified = True
         return res
 
 class Purchase(models.Model):
