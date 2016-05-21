@@ -249,8 +249,6 @@ class AccountBudgetLine(models.Model):
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
-        domain="['|', ('activity_group_id', '=', activity_group_id),"
-        "('activity_group_id', '=', False)]"
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -342,6 +340,37 @@ class AccountBudgetLine(models.Model):
                                       rec.m9, rec.m10, rec.m11, rec.m12
                                       ])
 
+    @api.model
+    def _onchange_focus_field(self, focus_field=False,
+                              parent_field=False, child_field=False):
+        """ Helper method
+            - assign domain to child_field
+            - assign value to parent field
+        """
+        if parent_field:
+            if self[focus_field]:
+                self[parent_field] = self[focus_field][parent_field]
+        if child_field:
+            child_domain = []
+            if self[focus_field]:
+                child_ids = self.env[self[child_field]._name].\
+                    search([(focus_field, '=', self[focus_field].id)])
+                if self[child_field] not in child_ids:
+                    self[child_field] = False
+                child_domain = [(focus_field, '=', self[focus_field].id)]
+            else:
+                self[child_field] = False
+            return {'domain': {child_field: child_domain}}
+        return {'domain': {}}
+
     @api.onchange('activity_id')
-    def onchange_activity_id(self):
-        self.activity_group_id = self.activity_id.activity_group_id
+    def _onchange_activity_id(self):
+        return self._onchange_focus_field(focus_field='activity_id',
+                                          parent_field='activity_group_id',
+                                          child_field=False)
+
+    @api.onchange('activity_group_id')
+    def _onchange_activity_group_id(self):
+        return self._onchange_focus_field(focus_field='activity_group_id',
+                                          parent_field=False,
+                                          child_field='activity_id')

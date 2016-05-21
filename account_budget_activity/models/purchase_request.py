@@ -26,7 +26,7 @@ class PurchaseRequest(models.Model):
 
     @api.multi
     def write(self, vals):
-        # Create analytic when approve.
+        # Create analytic when approved by PRWeb and be come To Accept in PR
         if vals.get('state') in ['to_approve']:
             self.line_ids.filtered(lambda l:
                                    l.request_state not in ('to_approve',)).\
@@ -35,8 +35,7 @@ class PurchaseRequest(models.Model):
         if vals.get('state') in ['rejected']:
             self.line_ids.filtered(lambda l:
                                    l.request_state not in ('draft',
-                                                           'rejected',
-                                                           'to_approve')).\
+                                                           'rejected',)).\
                 _create_analytic_line(reverse=False)
         return super(PurchaseRequest, self).write(vals)
 
