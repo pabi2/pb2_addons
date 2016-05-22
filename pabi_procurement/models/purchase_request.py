@@ -356,7 +356,7 @@ class PurchaseRequest(models.Model):
                 ('operating_unit_id', '=', data_dict['operating_unit_id.id']),
             ])
             for wh in warehouse:
-                picking_type = PType.Warehouse.search([
+                picking_type = PType.search([
                     ('warehouse_id', '=', wh.id),
                     ('code', '=', 'incoming'),
                 ])
