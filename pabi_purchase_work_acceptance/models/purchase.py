@@ -21,19 +21,27 @@ class PurchaseOrder(models.Model):
         string='Fine Condition',
         default='day',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date_fine = fields.Date(
         string='Fine Date',
         default=fields.Date.today(),
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     fine_num_days = fields.Integer(
         string='No. of Days',
         default=15,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     fine_rate = fields.Float(
         string='Fine Rate',
         required=True,
         default=0.0,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     acceptance_ids = fields.One2many(
         'purchase.work.acceptance',
