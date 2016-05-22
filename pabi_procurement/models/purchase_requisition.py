@@ -365,6 +365,21 @@ class PurchaseRequisition(models.Model):
         PWInterface.send_pbweb_requisition(self)
         return True
 
+    @api.multi
+    def set_verification_info(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.write({
+            'verify_uid': self._uid,
+            'date_verify': fields.date.today(),
+        })
+        for order in self.purchase_ids:
+            order.write({
+                'verify_uid': self._uid,
+                'date_verify': fields.date.today(),
+            })
+        return True
+
     @api.model
     def done_order(self, af_info):
         # {
