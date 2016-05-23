@@ -97,7 +97,7 @@ class PurchaseOrder(models.Model):
             'verify_uid' : po_rec.verify_uid.id,
             'date_verify' : po_rec.date_verify,
             'doc_approve_uid' : po_rec.doc_approve_uid.id,
-            'date_doc_approe' : po_rec.date_doc_approe,
+            'date_doc_approve' : po_rec.date_doc_approve,
         })
         return True
 
