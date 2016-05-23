@@ -32,7 +32,6 @@
         <record id="purchase_requisition.act_open" model="workflow.activity">
             <field name="action">
                 set_verification_info()
-                print_call_for_bid_form()
                 send_pbweb_requisition()
 	           	wkf_validate_vs_quotation()
 	           	tender_open()</field>
