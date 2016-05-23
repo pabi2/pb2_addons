@@ -80,22 +80,24 @@ class BudgetImportWizard(models.Model):
 
             field_list = []
             data_list = []
-            # update the budget lines
-            field_list.append('prepare_id')
-            for row in range(new_data_row, budget_sheet.nrows):
-                line_data = []
-                line_data.append(tools.ustr(budget.name))
-                for col in range(budget_sheet.ncols):
-                    cellvalue = budget_sheet.cell_value(row, col)
-                    field = budget_line_col[col]
-                    if field in budget[line_field]._fields.keys():
-                        if field not in field_list:
-                            field_list.append(field)
-                        line_data.append(tools.ustr(cellvalue))
-                data_list.append(line_data)
-            result = self.env['account.budget.prepare.line'].\
-                load(field_list, data_list)
-            return result
+            if new_data_row != 0:
+                # update the budget lines
+                field_list.append('prepare_id')
+                for row in range(new_data_row, budget_sheet.nrows):
+                    line_data = []
+                    line_data.append(tools.ustr(budget.name))
+                    for col in range(budget_sheet.ncols):
+                        cellvalue = budget_sheet.cell_value(row, col)
+                        field = budget_line_col[col]
+                        if field in budget[line_field]._fields.keys():
+                            if field not in field_list:
+                                field_list.append(field)
+                            line_data.append(tools.ustr(cellvalue))
+                    data_list.append(line_data)
+                result = self.env['account.budget.prepare.line'].\
+                    load(field_list, data_list)
+                return result
+            return {}
 
     @api.multi
     def import_budget(self):
