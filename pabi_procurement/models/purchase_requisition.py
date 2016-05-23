@@ -404,9 +404,8 @@ class PurchaseRequisition(models.Model):
                     }
                     att_file.append([0, False, attachments])
                     for order in requisition.purchase_ids:
-                        if requisition.state == 'confirmed' \
-                                and order.order_type == 'quotation'\
-                                and order.state == 'confirmed':
+                        if order.order_type == 'quotation' \
+                                and order.state not in ('draft', 'cancel'):
                             requisition.write({
                                 'doc_approve_uid': uid.id,
                                 'date_doc_approve': fields.date.today(),
