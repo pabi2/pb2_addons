@@ -420,10 +420,10 @@ class PurchaseRequisition(models.Model):
                                 order.state = 'done'
                         if requisition.state != 'done':
                             requisition.tender_done()
-                    res.update({
-                        'is_success': True,
-                        'result': True,
-                    })
+                        res.update({
+                            'is_success': True,
+                            'result': True,
+                        })
                 except Exception, e:
                     res.update({
                         'is_success': False,
