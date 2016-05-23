@@ -369,6 +369,7 @@ class PurchaseRequisition(models.Model):
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
+        self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,
             'date_verify': fields.date.today(),
@@ -462,8 +463,6 @@ class PurchaseRequisition(models.Model):
                                                      report.report_name,
                                                      {'model': self._name})
             eval_context = {'time': time, 'object': self}
-            print report.attachment
-            print eval_context
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually
