@@ -289,8 +289,6 @@ class PurchaseRequisition(models.Model):
                     'verify_uid': self.verify_uid.id,
                     'date_verify': self.date_verify,
                     'doc_no': self.doc_no,
-                    'doc_approve_uid': self.doc_approve_uid.id,
-                    'date_doc_approve': self.date_doc_approve,
                     'fine_rate': 0.1,
                 })
         return res
@@ -416,14 +414,18 @@ class PurchaseRequisition(models.Model):
                             })
                             order.action_button_convert_to_order()
                             if order.state2 != 'done' or order.state != 'done':
-                                order.state2 = 'done'
-                                order.state = 'done'
-                        if requisition.state != 'done':
-                            requisition.tender_done()
-                        res.update({
-                            'is_success': True,
-                            'result': True,
-                        })
+                                order.write({
+                                    'state': 'done',
+                                    'state2': 'done',
+                                    'doc_approve_uid': uid.id,
+                                    'date_doc_approve': fields.date.today(),
+                                })
+                    if requisition.state != 'done':
+                        requisition.tender_done()
+                    res.update({
+                        'is_success': True,
+                        'result': True,
+                    })
                 except Exception, e:
                     res.update({
                         'is_success': False,
