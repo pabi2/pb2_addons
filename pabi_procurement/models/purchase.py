@@ -92,7 +92,13 @@ class PurchaseOrder(models.Model):
         po_rec.action_button_convert_to_order()
         if po_rec.state != 'done':
             po_rec.state = 'done'
-        po_rec.order_id.committee_ids = po_rec.committee_ids
+        po_rec.order_id.write({
+            'committee_ids' : po_rec.committee_ids,
+            'verify_uid' : po_rec.verify_uid.id,
+            'date_verify' : po_rec.date_verify,
+            'doc_approve_uid' : po_rec.doc_approve_uid.id,
+            'date_doc_approe' : po_rec.date_doc_approe,
+        })
         return True
 
     @api.multi

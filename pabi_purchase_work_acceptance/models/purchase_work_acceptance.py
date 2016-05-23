@@ -44,7 +44,8 @@ class PurchaseWorkAcceptance(models.Model):
                     invoice = Invoice.search([
                         ('id', '=', acceptance_line.inv_line_id.invoice_id.id),
                     ])
-                    invoice.date_invoice = self.date_invoice
+                    for inv in invoice:
+                        inv.date_invoice = self.date_invoice
 
     @api.model
     def _check_product_type(self):
