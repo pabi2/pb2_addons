@@ -88,17 +88,19 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def by_pass_approve(self, ids):
-        po_rec = self.browse(ids)
-        po_rec.action_button_convert_to_order()
-        if po_rec.state != 'done':
-            po_rec.state = 'done'
-        po_rec.order_id.write({
-            'committee_ids' : po_rec.committee_ids,
-            'verify_uid' : po_rec.verify_uid.id,
-            'date_verify' : po_rec.date_verify,
-            'doc_approve_uid' : po_rec.doc_approve_uid.id,
-            'date_doc_approve' : po_rec.date_doc_approve,
-        })
+        quotation = self.browse(ids)
+        quotation.action_button_convert_to_order()
+        if quotation.state != 'done':
+            quotation.state = 'done'
+        order = self.browse(quotation.order_id.id)
+        for po in order:
+            po.write({
+                'committee_ids': quotation.committee_ids,
+                'verify_uid': quotation.verify_uid.id,
+                'date_verify': quotation.date_verify,
+                'doc_approve_uid': quotation.doc_approve_uid.id,
+                'date_doc_approve': quotation.date_doc_approve,
+            })
         return True
 
     @api.multi
