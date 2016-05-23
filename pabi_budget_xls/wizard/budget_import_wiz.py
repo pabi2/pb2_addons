@@ -100,4 +100,14 @@ class BudgetImportWizard(models.Model):
     @api.multi
     def import_budget(self):
         budget_ids = self.env.context.get('active_ids')
-        self.update_budget_prepare(budget_ids, self.input_file)
+        result = self.update_budget_prepare(budget_ids, self.input_file)
+        if result.get('messages'):
+            msg = False
+            for line in result['messages']:
+                if not msg:
+                    msg = line['message']
+                else:
+                    msg = msg + '\n' + line['message']
+            if msg:
+                raise Warning(_('Error'),
+                              _('%s') %(msg))
