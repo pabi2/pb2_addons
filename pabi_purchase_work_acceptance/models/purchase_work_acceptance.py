@@ -37,23 +37,24 @@ class PurchaseWorkAcceptance(models.Model):
     @api.onchange('date_invoice')
     def _onchange_date_invoice(self):
         if len(self.acceptance_line_ids) > 0 and self.date_invoice:
-            for acpt_line in self.acceptance_line_ids:
-                if acpt_line.product_id.type == 'service':
+            for accept_line in self.acceptance_line_ids:
+                if accept_line.product_id.type == 'service':
                     Invoice = self.env['account.invoice']
                     InvoiceLine = self.env['account.invoice']
                     self.write_to_invoice = True
-                    if acpt_line.inv_line_id:
+                    if accept_line.inv_line_id:
                         invoice = Invoice.search([
-                            ('id', '=', acpt_line.inv_line_id.invoice_id.id),
+                            ('id', '=', accept_line.inv_line_id.invoice_id.id),
                         ])
                         for inv in invoice:
                             inv.date_invoice = self.date_invoice
                     else:
                         invoice_line = InvoiceLine.search([
-                            ('purchase_line_id', '=', acpt_line.line_id.id),
+                            ('purchase_line_id', '=', accept_line.line_id.id),
                         ])
-                        for inv in invoice_line:
-                            inv.date_invoice = self.date_invoice
+                        for inv_line in invoice_line:
+                            inv_line.invoice_id.date_invoice = \
+                                self.date_invoice
 
     @api.model
     def _check_product_type(self):
