@@ -403,7 +403,10 @@ class PurchaseRequisition(models.Model):
                         'file_url': af_info['file_url'],
                     }
                     att_file.append([0, False, attachments])
+                    print requisition.purchase_ids
                     for order in requisition.purchase_ids:
+                        print order.order_type
+                        print order.state
                         if order.order_type == 'quotation' \
                                 and order.state not in ('draft', 'cancel'):
                             requisition.write({
