@@ -395,40 +395,47 @@ class PurchaseRequisition(models.Model):
         res = {}
         requisition = self.search([('name', '=', af_info['name'])])
         uid = user.search([('login', '=', af_info['approve_uid'])])
-        if af_info['action'] == 'C1':
-            att_file = []
-            try:
-                attachments = {
-                    'requisition_id': requisition.id,
-                    'name': af_info['file_name'],
-                    'file_url': af_info['file_url'],
-                }
-                att_file.append([0, False, attachments])
-                for order in requisition.purchase_ids:
-                    if requisition.state == 'confirmed' \
-                            and order.order_type == 'quotation':
-                        order.action_button_convert_to_order()
-                    requisition.write({
-                        'doc_approve_uid': uid.id,
-                        'date_doc_approve': fields.date.today(),
-                        'attachment_ids': att_file,
-                    })
-                    order.action_button_convert_to_order()
-                    if order.state2 != 'done' or order.state != 'done':
-                        order.state2 = 'done'
-                        order.state = 'done'
-                    if requisition.state != 'done':
-                        requisition.tender_done()
+        if len(requisition) == 1:
+            if af_info['action'] == 'C1':
+                att_file = []
+                try:
+                    attachments = {
+                        'requisition_id': requisition.id,
+                        'name': af_info['file_name'],
+                        'file_url': af_info['file_url'],
+                    }
+                    att_file.append([0, False, attachments])
+                    for order in requisition.purchase_ids:
+                        if requisition.state == 'confirmed' \
+                                and order.order_type == 'quotation'\
+                                and order.state == 'confirmed':
+                            requisition.write({
+                                'doc_approve_uid': uid.id,
+                                'date_doc_approve': fields.date.today(),
+                                'attachment_ids': att_file,
+                            })
+                            order.action_button_convert_to_order()
+                            if order.state2 != 'done' or order.state != 'done':
+                                order.state2 = 'done'
+                                order.state = 'done'
+                        if requisition.state != 'done':
+                            requisition.tender_done()
                     res.update({
                         'is_success': True,
                         'result': True,
                     })
-            except Exception, e:
-                res.update({
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(str(e)),
-                })
+                except Exception, e:
+                    res.update({
+                        'is_success': False,
+                        'result': False,
+                        'messages': _(str(e)),
+                    })
+        else:
+            res.update({
+                'is_success': False,
+                'result': False,
+                'messages': 'Cannot assign done state to Call for Bids.',
+            })
         return res
 
     @api.multi
