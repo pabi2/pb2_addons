@@ -374,10 +374,11 @@ class PurchaseRequisition(models.Model):
             'date_verify': fields.date.today(),
         })
         for order in self.purchase_ids:
-            order.write({
-                'verify_uid': self._uid,
-                'date_verify': fields.date.today(),
-            })
+            if order.state != 'cancel':
+                order.write({
+                    'verify_uid': self._uid,
+                    'date_verify': fields.date.today(),
+                })
         return True
 
     @api.model
@@ -453,7 +454,7 @@ class PurchaseRequisition(models.Model):
             ('model', '=', self._name),
             ('report_type', '=', 'qweb-pdf'),
             ('report_name', '=',
-             'purchase_requisition.report_purchase_requisitions')],)
+             'purchase_requisition.report_purchaserequisitions')],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
@@ -461,8 +462,8 @@ class PurchaseRequisition(models.Model):
                                                      report.report_name,
                                                      {'model': self._name})
             eval_context = {'time': time, 'object': self}
-            # print report.attachment
-            # print eval_context
+            print report.attachment
+            print eval_context
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually
