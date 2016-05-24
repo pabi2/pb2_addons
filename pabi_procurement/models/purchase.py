@@ -92,7 +92,9 @@ class PurchaseOrder(models.Model):
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
-        order = self.browse(quotation.order_id.id)
+        order = self.search({
+            ('quote_id', '=', quotation.id)
+        })
         order.write({
             'committee_ids': quotation.committee_ids,
             'verify_uid': quotation.verify_uid.id,
@@ -100,6 +102,10 @@ class PurchaseOrder(models.Model):
             'doc_approve_uid': quotation.doc_approve_uid.id,
             'date_doc_approve': quotation.date_doc_approve,
         })
+        print quotation.id
+        print quotation.committee_ids
+        print quotation.verify_uid.id
+        print quotation.doc_approve_uid.id
         return True
 
     @api.multi

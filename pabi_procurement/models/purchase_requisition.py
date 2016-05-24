@@ -255,6 +255,7 @@ class PurchaseRequisition(models.Model):
     def by_pass_approve(self):
         po_obj = self.env["purchase.order"]
         po_obj.action_button_convert_to_order()
+        print 'by-pass requisition'
         return True
 
     @api.model
@@ -379,6 +380,15 @@ class PurchaseRequisition(models.Model):
                     'date_verify': fields.date.today(),
                 })
         return True
+
+    @api.multi
+    def tender_done(self):
+        # ensure the tender to be done in PABIWeb confirmation.
+        res = False
+        for requisition in self:
+            if requisition.state == 'open':
+                res = super(PurchaseRequisition, self).tender_done()
+        return res
 
     @api.model
     def done_order(self, af_info):

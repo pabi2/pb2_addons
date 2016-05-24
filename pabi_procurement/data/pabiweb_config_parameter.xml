@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="1">
-        <record id="pabiweb_active" model="ir.config_parameter">
-            <field name="external_id">base.ir_config_parameter_0</field>
+        <record id="base.ir_config_parameter_0" model="ir.config_parameter">
             <field name="key">pabiweb_active</field>
             <field name="value">TRUE</field>
         </record>
-        <record id="pabiweb_url" model="ir.config_parameter">
-            <field name="external_id">base.ir_config_parameter_1</field>
+        <record id="base.ir_config_parameter_1" model="ir.config_parameter">
             <field name="key">pabiweb_url</field>
             <field name="value">10.226.202.134/alfresco/s/pb/pcm/inf</field>
         </record>
-        <record id="pabiweb_username" model="ir.config_parameter">
-            <field name="external_id">base.ir_config_parameter_2</field>
+        <record id="base.ir_config_parameter_2" model="ir.config_parameter">
             <field name="key">pabiweb_username</field>
             <field name="value">002648</field>
         </record>
-        <record id="pabiweb_password" model="ir.config_parameter">
-            <field name="external_id">base.ir_config_parameter_3</field>
+        <record id="base.ir_config_parameter_3" model="ir.config_parameter">
             <field name="key">pabiweb_password</field>
             <field name="value">password</field>
         </record>
-        <record id="pabiweb_file_prefix" model="ir.config_parameter">
-            <field name="external_id">base.ir_config_parameter_4</field>
+        <record id="base.ir_config_parameter_4" model="ir.config_parameter">
             <field name="key">pabiweb_file_prefix</field>
             <field name="value">http://10.226.202.134/share/proxy/alfresco/api/node/content/workspace/SpacesStore/</field>
         </record>
