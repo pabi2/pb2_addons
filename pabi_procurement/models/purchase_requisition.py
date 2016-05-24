@@ -365,6 +365,21 @@ class PurchaseRequisition(models.Model):
         PWInterface.send_pbweb_requisition(self)
         return True
 
+    @api.multi
+    def set_verification_info(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.write({
+            'verify_uid': self._uid,
+            'date_verify': fields.date.today(),
+        })
+        for order in self.purchase_ids:
+            order.write({
+                'verify_uid': self._uid,
+                'date_verify': fields.date.today(),
+            })
+        return True
+
     @api.model
     def done_order(self, af_info):
         # {
@@ -391,21 +406,21 @@ class PurchaseRequisition(models.Model):
                     if requisition.state == 'confirmed' \
                             and order.order_type == 'quotation':
                         order.action_button_convert_to_order()
-                requisition.write({
-                    'doc_approve_uid': uid.id,
-                    'date_doc_approve': fields.date.today(),
-                    'attachment_ids': att_file,
-                })
-                order.action_button_convert_to_order()
-                if order.state2 != 'done' or order.state != 'done':
-                    order.state2 = 'done'
-                    order.state = 'done'
-                if requisition.state != 'done':
-                    requisition.tender_done()
-                res.update({
-                    'is_success': True,
-                    'result': True,
-                })
+                    requisition.write({
+                        'doc_approve_uid': uid.id,
+                        'date_doc_approve': fields.date.today(),
+                        'attachment_ids': att_file,
+                    })
+                    order.action_button_convert_to_order()
+                    if order.state2 != 'done' or order.state != 'done':
+                        order.state2 = 'done'
+                        order.state = 'done'
+                    if requisition.state != 'done':
+                        requisition.tender_done()
+                    res.update({
+                        'is_success': True,
+                        'result': True,
+                    })
             except Exception, e:
                 res.update({
                     'is_success': False,
@@ -438,7 +453,7 @@ class PurchaseRequisition(models.Model):
             ('model', '=', self._name),
             ('report_type', '=', 'qweb-pdf'),
             ('report_name', '=',
-             'purchase_requisition.report_purchaserequisitions')],)
+             'purchase_requisition.report_purchase_requisitions')],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,

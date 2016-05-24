@@ -45,13 +45,13 @@
                 </xpath>
                 <xpath expr="//div[@class='oe_right oe_button_box']" position="before">
                     <div class="oe_right">
-                        <h2 attrs="{'invisible': ['|',('state', '!=', 'assigned'), ('verified', '=', True)]}">Verifying</h2>
-                        <h2 attrs="{'invisible': ['|',('state', '!=', 'assigned'), ('verified', '=', False)]}">Verified</h2>
+                        <h2 attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|',('state', '!=', 'assigned'), ('verified', '=', True)]}">Verifying</h2>
+                        <h2 attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|',('state', '!=', 'assigned'), ('verified', '=', False)]}">Verified</h2>
                     </div>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="after">
-                    <button name="action_verify" string="Verify" type="object" attrs="{'invisible': ['|',('state', '!=', 'assigned'), ('verified', '=', True)]}" class="oe_highlight"/>
-                    <button name="action_reject" string="Reject" type="object" attrs="{'invisible': ['|',('state', '!=', 'assigned'), ('verified', '=', True)]}"/>
+                    <button name="action_verify" string="Verify" type="object" attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|',('state', '!=', 'assigned'), ('verified', '=', True)]}" class="oe_highlight"/>
+                    <button name="action_reject" string="Reject" type="object" attrs="{'invisible': ['|',('picking_type_code', '!=', 'internal'),'|',('state', '!=', 'assigned'), ('verified', '=', True)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='do_enter_transfer_details']" position="replace">
                     <button name="do_enter_transfer_details" attrs="{'invisible': ['|', ('state', 'in', ('draft', 'confirmed','done','cancel')), ('verified', '=', False)]}" string="Transfer" groups="stock.group_stock_user" type="object" class="oe_highlight"/>

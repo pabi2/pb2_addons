@@ -41,6 +41,15 @@ class StockPicking(models.Model):
         res = super(StockPicking, self).do_unreserve()
         return res
 
+    @api.multi
+    def action_confirm(self):
+        assert len(self) == 1, \
+            'This action should only be used for a single id at a time.'
+        res = super(StockPicking, self).action_confirm()
+        if self.picking_type_code != 'internal':
+            self.verified = True
+        return res
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'

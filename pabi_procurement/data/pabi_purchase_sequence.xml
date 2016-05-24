@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="purchase_requisition_sequence" model="ir.sequence">
+            <field name="external_id">base.ir_sequence_cfb_1</field>
+            <field name="name">Purchase Requisition Sequence</field>
+            <field name="prefix">PD%(y)s</field>
+            <field name="padding">6</field>
+            <field name="code">purchase.requisition</field>
+        </record>
+        <record id="purchase_requisition_sequence_type" model="ir.sequence.type">
+            <field name="external_id">base.ir_sequence_type_cfb_1</field>
+            <field name="name">Purchase Requisition</field>
+            <field name="code">purchase.requisition</field>
+        </record>
+    </data>
+</openerp>

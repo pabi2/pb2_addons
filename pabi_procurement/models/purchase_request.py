@@ -183,17 +183,15 @@ class PurchaseRequest(models.Model):
             'assigned_to.id': u'1',
             'date_approve': u'2016-01-31',
             'total_budget_value': u'240000',
-            'purchase_prototype_id.id': u'1',
-            'purchase_type_id.id': u'1',
-            'purchase_method_id.id': u'1',
-            'purchase_unit_id.id': u'1',
+            # 'purchase_prototype_id.id': u'1',
+            # 'purchase_type_id.id': u'1',
+            # 'purchase_method_id.id': u'1',
             'description': u'Put your PR description here.',
             'objective': u'Put your PR objective here',
             'currency_id.id': u'140',
             'currency_rate': u'1',
             'delivery_address': u'Put your PR delivery address here',
             'date_start': u'2016-01-31',
-            'picking_type_id.id': u'1',
             'operating_unit_id.id': u'1',
             'line_ids': (
                 {
@@ -241,29 +239,7 @@ class PurchaseRequest(models.Model):
                 {
                     'name': u'Mr. Steve Roger',
                     'position': u'Manager',
-                    'responsible': u'Responsible',
-                    'committee_type': u'tor',
-                    'sequence': u'1',
-                },
-                {
-                    'name': u'Mr. Samuel Jackson',
-                    'position': u'Staff',
-                    'responsible': u'Responsible',
-                    'committee_type': u'tor',
-                    'sequence': u'1',
-                },
-                {
-                    'name': u'Mr. Steve Roger',
-                    'position': u'Manager',
-                    'responsible': u'Responsible',
-                    'committee_type': u'receipt',
-                    'sequence': u'1',
-                },
-                {
-                    'name': u'Mr. Samuel Jackson',
-                    'position': u'Staff',
-                    'responsible': u'Responsible',
-                    'committee_type': u'std_price',
+                    'committee_type_id': u'คณะกรรมการเปิดซองสอบราคา',
                     'sequence': u'1',
                 },
             ),
@@ -348,8 +324,31 @@ class PurchaseRequest(models.Model):
         return commitee_ids
 
     @api.model
+    def _get_picking_type(self, data_dict):
+        if 'operating_unit_id.id' in data_dict:
+            type_id = 1
+            Warehouse = self.env['stock.warehouse']
+            PType = self.env['stock.picking.type']
+            warehouse = Warehouse.search([
+                ('operating_unit_id', '=', data_dict['operating_unit_id.id']),
+            ])
+            for wh in warehouse:
+                picking_type = PType.search([
+                    ('warehouse_id', '=', wh.id),
+                    ('code', '=', 'incoming'),
+                ])
+                for picking in picking_type:
+                    type_id = picking.id
+                    break
+            data_dict.update({
+                'picking_type_id.id': type_id,
+            })
+        return data_dict
+
+    @api.model
     def generate_purchase_request(self, data_dict):
         ret = {}
+        data_dict = self._get_picking_type(data_dict)
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data

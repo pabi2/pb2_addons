@@ -51,6 +51,9 @@
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
                 </xpath>
+                <xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//button[@name='view_invoice']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('invoice_method','in', ['picking', 'manual', 'line_percentage', 'invoice_plan']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}</attribute>
                 </xpath>

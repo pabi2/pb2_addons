@@ -128,6 +128,12 @@ class PurchaseOrder(models.Model):
         self.wkf_validate_vs_requisition()
         return super(PurchaseOrder, self).action_button_convert_to_order()
 
+    @api.multi
+    def action_picking_create(self):
+        res = super(PurchaseOrder, self).action_picking_create()
+        picking = self.env['stock.picking'].search([('id', '=', res[0])])
+        picking.verified = True
+        return res
 
 class Purchase(models.Model):
     _name = 'purchase.method'
