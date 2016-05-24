@@ -47,7 +47,7 @@ class PurchaseRequest(models.Model):
         states={
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)],
-            },
+        },
         domain="[('operating_unit_ids', 'in', operating_unit_id)]",
         track_visibility='onchange',
     )

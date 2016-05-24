@@ -143,6 +143,7 @@ class PurchaseOrder(models.Model):
         picking.verified = True
         return res
 
+
 class Purchase(models.Model):
     _name = 'purchase.method'
     _description = 'PABI2 Purchase Method'
