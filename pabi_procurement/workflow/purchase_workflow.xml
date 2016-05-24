@@ -9,7 +9,7 @@
         </record>
         <record id="purchase.act_router" model="workflow.activity">
             <field name="action">
-            	wkf_validate_vs_requisition()
+            	# wkf_validate_vs_requisition()
            		wkf_approve_order()
            	</field>
         </record>
