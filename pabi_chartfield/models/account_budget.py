@@ -103,6 +103,10 @@ class AccountBudgetLine(ChartField, models.Model):
         default=lambda self: self.env['res.org'].
         browse(self._context.get('org_id')),
     )
+    chart_view = fields.Selection(
+        related='budget_id.chart_view',
+        store=True,
+    )
 
     # === Project Base ===
     @api.onchange('program_id')

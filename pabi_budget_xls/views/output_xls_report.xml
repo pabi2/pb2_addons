@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <record id="budget_xls_output_view_tax" model="ir.ui.view">
+        <record id="budget_xls_output_view" model="ir.ui.view">
           <field name="name">Excel Output</field>
           <field name="model">budget.xls.output</field>
           <field name="arch" type="xml">

@@ -4,7 +4,7 @@ from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError, Warning as UserError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
-#                                                       (mission)
+#                                           (mission)
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)     (type/tag)
 #        (org)           (org)        (org)         (org)          (org)
@@ -319,6 +319,13 @@ class ChartField(object):
         'cost.control.type',
         string='Cost Control Type',
     )
+    chart_view = fields.Selection(
+        CHART_VIEW_LIST,
+        string='Budget View',
+        states={'done': [('readonly', True)]},
+        required=False,
+        copy=True,
+    )
 
     @api.multi
     def validate_chartfields(self, chart_type):
@@ -333,7 +340,6 @@ class ChartField(object):
         """ This method will use CHART_STRUCTURE to prepare data """
         res = {}
         _loop_structure(res, self, CHART_STRUCTURE, field, clear=clear)
-        print res
         if field in res:
             res.pop(field)  # To avoid recursive
         return res
@@ -369,6 +375,18 @@ class ChartFieldAction(ChartField):
         self.update_related_dimension(cr, uid, [new_id], vals)
         return new_id
 
+    @api.model
+    def _get_chart_view(self, selects_yes):
+        # update chart_view
+        chart_view = False
+        assert len(selects_yes.keys()) <= 1, 'Only 1 chart_view allowed!'
+        if selects_yes.keys():
+            selected_field = selects_yes.keys()[0]
+            for key, value in CHART_VIEW_FIELD.items():
+                if value == selected_field:
+                    chart_view = key
+        return chart_view
+
     @api.multi
     def update_related_dimension(self, vals):
         # Find selected dimension that is in CHART_SELECT list
@@ -380,10 +398,13 @@ class ChartFieldAction(ChartField):
             # update value = false first, the sequence is important
             for field, _ in selects_no.items():
                 res = self._get_chained_dimension(field, clear=True)
+                res.update({'chart_view': False})
                 self.write(res)
             for field, _ in selects_yes.items():
                 res = self._get_chained_dimension(field)
+                res.update({'chart_view': self._get_chart_view(selects_yes)})
                 self.write(res)
+            print res
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

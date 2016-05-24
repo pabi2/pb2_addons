@@ -5,7 +5,7 @@ import base64
 import xlrd
 import xlwt
 import cStringIO
-from xlutils.copy import copy
+import xlutils.copy
 from xlwt.Utils import rowcol_pair_to_cellrange
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
@@ -33,7 +33,7 @@ class BudgetExportWizard(models.Model):
                 file_contents=base64.decodestring(template_file.datas),
                 formatting_info=True,
             )
-            workbook = copy(rb)
+            workbook = xlutils.copy.copy(rb)
             # selected template sheet
             template_sheet = rb.sheet_by_index(0)
             # new budget sheet to export
@@ -116,6 +116,13 @@ class BudgetExportWizard(models.Model):
             for row_no in range(line_row, editable_row):
                 budget_sheet.row(row_no).set_style(editable)
 
+            new_sheet = workbook.add_sheet('Duplicate')
+            for new_row in range(template_sheet.nrows):
+                for new_col in range(template_sheet.ncols):
+                    val = template_sheet.cell_value(new_row, new_col)
+                    new_sheet.write(new_row, new_col, val)
+            new_sheet.protect = True
+            new_sheet.sheet_visible = False
             stream = cStringIO.StringIO()
             workbook.save(stream)
             filename = '%s.xls' % (template_file.name)

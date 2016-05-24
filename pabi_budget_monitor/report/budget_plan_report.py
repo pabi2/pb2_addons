@@ -13,6 +13,7 @@ class BudgetPlanReport(ChartField, models.Model):
         dimensions = super(BudgetPlanReport, self)._get_dimension()
         for d in dict(CHART_FIELDS).keys():
             dimensions += ', abl.%s' % (d,)
+        dimensions += ', abl.chart_view'
         return dimensions
 
     def init(self, cr):
