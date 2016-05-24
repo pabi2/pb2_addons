@@ -382,12 +382,12 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
-    def tender_done(self):
+    def tender_done(self, context):
         # ensure the tender to be done in PABIWeb confirmation.
         res = False
         for requisition in self:
             if requisition.state == 'open':
-                res = super(PurchaseRequisition, self).tender_done()
+                res = super(PurchaseRequisition, self).tender_done(context)
         return res
 
     @api.model
