@@ -8,9 +8,9 @@
                    ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
             	<!-- THIS PRINT BUTTON IS ONLY FOR TESTING, PLEASE REMOVE -->
-            	<button name="cancel_requisition" >
-            		<button name="print_call_for_bid_form" type="object" string="Print Form" />
-            	</button>
+            	<!--<button name="cancel_requisition" >-->
+            		<!--<button name="print_call_for_bid_form" type="object" string="Print Form" />-->
+            	<!--</button>-->
 
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
@@ -36,6 +36,10 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='exclusive']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='generate_po']"
                        position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
