@@ -56,7 +56,7 @@
         <field name="name">Budget Monitor</field>
         <field name="res_model">budget.monitor.report</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,graph</field>
+        <field name="view_mode">graph,tree</field>
         <field name="context">{}</field>
         <field name="search_view_id" ref="view_budget_monitor_report_search"/>
         <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
