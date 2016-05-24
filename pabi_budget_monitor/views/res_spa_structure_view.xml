@@ -18,6 +18,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -44,6 +45,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -70,6 +72,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -96,6 +99,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -122,6 +126,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -148,6 +153,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -174,6 +180,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -200,6 +207,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
@@ -226,6 +234,7 @@
 		                    		<field name="planned_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
+		                    		<field name="amount_exp_commit" />
 		                    		<field name="amount_actual" />
 		                    		<field name="amount_balance" />
 				                </tree>
