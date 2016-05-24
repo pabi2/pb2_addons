@@ -77,3 +77,13 @@ class AccountJournal(models.Model):
         string='Account for PO Commitment',
         domain=[('type', '!=', 'view')]
     )
+    exp_commitment_analytic_journal_id = fields.Many2one(
+        'account.analytic.journal',
+        string='Analytic Journal for Expense Commitments',
+        domain=[('type', '=', 'general')]
+    )
+    exp_commitment_account_id = fields.Many2one(
+        'account.account',
+        string='Account for Expense Commitment',
+        domain=[('type', '!=', 'view')]
+    )

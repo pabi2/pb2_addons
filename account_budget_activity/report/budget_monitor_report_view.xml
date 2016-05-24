@@ -11,6 +11,7 @@
                  <field name="planned_amount" type="measure"/>
                  <field name="amount_pr_commit" type="measure"/>
                  <field name="amount_po_commit" type="measure"/>
+                 <field name="amount_exp_commit" type="measure"/>
                  <field name="amount_actual" type="measure"/>
                  <field name="amount_balance" type="measure"/>
              </graph>
@@ -31,6 +32,7 @@
                  <field name="planned_amount" />
                  <field name="amount_pr_commit" />
                  <field name="amount_po_commit" />
+                 <field name="amount_exp_commit" />
                  <field name="amount_actual" />
                  <field name="amount_balance" />
              </tree>

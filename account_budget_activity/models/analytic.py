@@ -7,8 +7,9 @@ class AccountAnalyticJournal(models.Model):
     _inherit = 'account.analytic.journal'
 
     budget_commit_type = fields.Selection(
-        [('po_commit', 'PO Commitment'),
-         ('pr_commit', 'PR Commitment'),
+        [('pr_commit', 'PR Commitment'),
+         ('po_commit', 'PO Commitment'),
+         ('exp_commit', 'Expense Commitment'),
          ('actual', 'Actual'),
          ]
     )
@@ -44,6 +45,7 @@ class AccountAnalyticLine(models.Model):
     doc_id = fields.Reference(
         [('purchase.request', 'Purchase Request'),
          ('purchase.order', 'Purchase Order'),
+         ('hr.expense.expense', 'Expense'),
          ('account.invoice', 'Invoice')],
         string='Doc Ref',
         readonly=True,

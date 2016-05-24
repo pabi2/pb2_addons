@@ -17,6 +17,10 @@
                     <field name="po_commitment_account_id"
                     	attrs="{'invisible': [('po_commitment_analytic_journal_id', '=', False)],
                     			'required': [('po_commitment_analytic_journal_id', '!=', False)]}"/>
+                    <field name="exp_commitment_analytic_journal_id"/>
+                    <field name="exp_commitment_account_id"
+                    	attrs="{'invisible': [('exp_commitment_analytic_journal_id', '=', False)],
+                    			'required': [('exp_commitment_analytic_journal_id', '!=', False)]}"/>
                 </field>
             </field>
         </record>

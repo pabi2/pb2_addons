@@ -21,6 +21,7 @@ class BudgetMonitorReport(models.Model):
     doc_id = fields.Reference(
         [('purchase.request', 'Purchase Request'),
          ('purchase.order', 'Purchase Order'),
+         ('hr.expense.expense', 'Expense'),
          ('account.invoice', 'Invoice'),
          ('account.budget', 'Budget Plan')],
         string='Document ID',
@@ -34,6 +35,9 @@ class BudgetMonitorReport(models.Model):
     )
     amount_po_commit = fields.Float(
         string='PO Commitment',
+    )
+    amount_exp_commit = fields.Float(
+        string='Expense Commitment',
     )
     amount_actual = fields.Float(
         string='Actual',
@@ -56,6 +60,7 @@ class BudgetMonitorReport(models.Model):
             (select user_id, fiscalyear_id, doc_ref,
             'account.budget,' || budget_id as doc_id,
             planned_amount, 0.0 as amount_pr_commit, 0.0 as amount_po_commit,
+            0.0 as amount_exp_commit,
             0.0 as amount_actual, planned_amount as amount_balance,
             -- Dimensions
             %s
@@ -64,6 +69,7 @@ class BudgetMonitorReport(models.Model):
             UNION
             select user_id, fiscalyear_id, doc_ref, doc_id,
             0.0 as planned_amount, amount_pr_commit, amount_po_commit,
+            amount_exp_commit,
             amount_actual, amount as amount_balance,
             -- Dimensions
             %s

@@ -8,6 +8,7 @@
 	    <field name="model">hr.expense.expense</field>
 	    <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
 	    <field name="arch" type="xml">
+	    	<button name="draft" position="replace" />
 	    	<button name="done" position="replace" >
 	    		<button name="%(action_expense_create_supplier_invoice)d" states="accepted" string="Create Supplier Invoice" type="action"
 	    			groups="account.group_account_invoice" class="oe_highlight"/>

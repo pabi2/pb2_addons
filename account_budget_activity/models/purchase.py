@@ -128,7 +128,7 @@ class PurchaseOrderLine(models.Model):
         if not general_journal.po_commitment_analytic_journal_id or \
                 not general_journal.po_commitment_account_id:
             raise UserError(
-                _("No analytic journal for commitments defined on the "
+                _("No analytic journal for PO commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
 
         # Use PO Commitment Account

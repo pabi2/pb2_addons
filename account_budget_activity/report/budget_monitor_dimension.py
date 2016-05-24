@@ -23,6 +23,10 @@ class MonitorView(models.AbstractModel):
         string='PO Commitment',
         readonly=True,
     )
+    amount_exp_commit = fields.Float(
+        string='Expense Commitment',
+        readonly=True,
+    )
     amount_actual = fields.Float(
         string='Actual Amount',
         readonly=True,
@@ -39,6 +43,7 @@ class MonitorView(models.AbstractModel):
                 sum(planned_amount) planned_amount,
                 sum(amount_pr_commit) amount_pr_commit,
                 sum(amount_po_commit) amount_po_commit,
+                sum(amount_exp_commit) amount_exp_commit,
                 sum(amount_actual) amount_actual,
                 sum(amount_balance) amount_balance
             from budget_monitor_report
