@@ -132,7 +132,7 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def action_button_convert_to_order(self):
-        self.wkf_validate_vs_requisition()
+        # self.wkf_validate_vs_requisition()
         return super(PurchaseOrder, self).action_button_convert_to_order()
 
     @api.multi
