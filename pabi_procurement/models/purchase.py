@@ -93,14 +93,13 @@ class PurchaseOrder(models.Model):
         if quotation.state != 'done':
             quotation.state = 'done'
         order = self.browse(quotation.order_id.id)
-        for po in order:
-            po.write({
-                'committee_ids': quotation.committee_ids,
-                'verify_uid': quotation.verify_uid.id,
-                'date_verify': quotation.date_verify,
-                'doc_approve_uid': quotation.doc_approve_uid.id,
-                'date_doc_approve': quotation.date_doc_approve,
-            })
+        order.write({
+            'committee_ids': quotation.committee_ids,
+            'verify_uid': quotation.verify_uid.id,
+            'date_verify': quotation.date_verify,
+            'doc_approve_uid': quotation.doc_approve_uid.id,
+            'date_doc_approve': quotation.date_doc_approve,
+        })
         return True
 
     @api.multi
