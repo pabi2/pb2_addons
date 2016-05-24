@@ -387,7 +387,8 @@ class PurchaseRequisition(models.Model):
         res = False
         for requisition in self:
             if requisition.state == 'open':
-                res = super(PurchaseRequisition, self).tender_done(context)
+                res = super(PurchaseRequisition, self).\
+                    tender_done([requisition.id], context)
         return res
 
     @api.model
