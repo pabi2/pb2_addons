@@ -40,7 +40,7 @@ class PurchaseWorkAcceptance(models.Model):
             for accept_line in self.acceptance_line_ids:
                 if accept_line.product_id.type == 'service':
                     Invoice = self.env['account.invoice']
-                    InvoiceLine = self.env['account.invoice']
+                    InvoiceLine = self.env['account.invoice.line']
                     self.write_to_invoice = True
                     if accept_line.inv_line_id:
                         invoice = Invoice.search([
