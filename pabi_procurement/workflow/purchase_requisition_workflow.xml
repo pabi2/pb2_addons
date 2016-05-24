@@ -33,7 +33,6 @@
             <field name="action">
                 set_verification_info()
                 send_pbweb_requisition()
-	           	wkf_validate_vs_quotation()
 	           	tender_open()</field>
         </record>
     </data>
