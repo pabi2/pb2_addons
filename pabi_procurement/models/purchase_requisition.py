@@ -255,7 +255,6 @@ class PurchaseRequisition(models.Model):
     def by_pass_approve(self):
         po_obj = self.env["purchase.order"]
         po_obj.action_button_convert_to_order()
-        print 'by-pass requisition'
         return True
 
     @api.model
@@ -402,6 +401,7 @@ class PurchaseRequisition(models.Model):
         #     'file_url': 'aaaaas.pdf',
         # }
         user = self.env['res.users']
+        Order = self.env['purchase.order']
         res = {}
         requisition = self.search([('name', '=', af_info['name'])])
         uid = user.search([('login', '=', af_info['approve_uid'])])
@@ -430,6 +430,17 @@ class PurchaseRequisition(models.Model):
                                     'state2': 'done',
                                     'doc_approve_uid': uid.id,
                                     'date_doc_approve': fields.date.today(),
+                                })
+                                purchase = Order.search({
+                                ('id', '=', order.order_id.id)
+                                })
+                                purchase.write({
+                                    'committee_ids': order.committee_ids,
+                                    'verify_uid': order.verify_uid.id,
+                                    'date_verify': order.date_verify,
+                                    'doc_approve_uid':
+                                        order.doc_approve_uid.id,
+                                    'date_doc_approve': order.date_doc_approve,
                                 })
                     if requisition.state != 'done':
                         requisition.tender_done()
