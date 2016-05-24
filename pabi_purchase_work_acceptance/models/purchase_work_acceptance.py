@@ -57,7 +57,6 @@ class PurchaseWorkAcceptance(models.Model):
                                 ('id', '=', inv_line.invoice_id.id),
                             ])
                             for inv in invoice:
-                                print inv
                                 inv.write({
                                     'date_invoice': self.date_invoice,
                                 })
