@@ -37,6 +37,7 @@ class PurchaseWorkAcceptance(models.Model):
     @api.onchange('date_invoice')
     def _onchange_date_invoice(self):
         if len(self.acceptance_line_ids) > 0 and self.date_invoice:
+            print self.date_invoice
             for accept_line in self.acceptance_line_ids:
                 if accept_line.product_id.type == 'service':
                     Invoice = self.env['account.invoice']
