@@ -431,17 +431,19 @@ class PurchaseRequisition(models.Model):
                                     'doc_approve_uid': uid.id,
                                     'date_doc_approve': fields.date.today(),
                                 })
-                                purchase = Order.search({
+                                purchase_order = Order.search({
                                 ('id', '=', order.order_id.id)
                                 })
-                                purchase.write({
-                                    'committee_ids': order.committee_ids,
-                                    'verify_uid': order.verify_uid.id,
-                                    'date_verify': order.date_verify,
-                                    'doc_approve_uid':
-                                        order.doc_approve_uid.id,
-                                    'date_doc_approve': order.date_doc_approve,
-                                })
+                                for purchase in purchase_order:
+                                    purchase.write({
+                                        'committee_ids': order.committee_ids,
+                                        'verify_uid': order.verify_uid.id,
+                                        'date_verify': order.date_verify,
+                                        'doc_approve_uid':
+                                            order.doc_approve_uid.id,
+                                        'date_doc_approve':
+                                            order.date_doc_approve,
+                                    })
                     if requisition.state != 'done':
                         requisition.tender_done()
                     res.update({
