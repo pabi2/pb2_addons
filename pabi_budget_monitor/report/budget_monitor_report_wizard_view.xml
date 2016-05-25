@@ -49,7 +49,7 @@
                  		<field name="groupby_program_group" />
                  		<field name="groupby_program" />
                  		<field name="groupby_project_group" />
-                 		<field name="groupby_project_group" />
+                 		<field name="groupby_project" />
                  	</group>
 	             </group>
                  <footer>
