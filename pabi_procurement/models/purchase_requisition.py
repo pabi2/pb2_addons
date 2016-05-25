@@ -432,11 +432,11 @@ class PurchaseRequisition(models.Model):
                                     'date_doc_approve': fields.date.today(),
                                 })
                                 purchase_order = Order.search({
-                                ('id', '=', order.order_id.id)
+                                    ('id', '=', order.order_id.id)
                                 })
                                 for purchase in purchase_order:
                                     purchase.write({
-                                        'committee_ids': order.committee_ids,
+                                        # 'committee_ids': order.committee_ids,
                                         'verify_uid': order.verify_uid.id,
                                         'date_verify': order.date_verify,
                                         'doc_approve_uid': uid.id,
