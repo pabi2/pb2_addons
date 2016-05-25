@@ -159,6 +159,8 @@ class PurchaseOrderLine(models.Model):
 
     @api.one
     def _create_analytic_line(self, reverse=False):
+        if self.order_id.order_type == 'quotation':  # Not for quotation.
+            return
         vals = self._prepare_analytic_line(reverse=reverse)
         if vals:
             self.env['account.analytic.line'].create(vals)
