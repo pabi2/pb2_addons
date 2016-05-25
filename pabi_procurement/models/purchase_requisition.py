@@ -439,10 +439,9 @@ class PurchaseRequisition(models.Model):
                                         'committee_ids': order.committee_ids,
                                         'verify_uid': order.verify_uid.id,
                                         'date_verify': order.date_verify,
-                                        'doc_approve_uid':
-                                            order.doc_approve_uid.id,
+                                        'doc_approve_uid': uid.id,
                                         'date_doc_approve':
-                                            order.date_doc_approve,
+                                            fields.date.today(),
                                     })
                     if requisition.state != 'done':
                         requisition.tender_done()
