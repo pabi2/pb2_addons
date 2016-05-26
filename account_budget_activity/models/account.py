@@ -52,6 +52,30 @@ class AccountFiscalyearBudgetLevel(models.Model):
         string='Control',
         default=False,
     )
+#     pr_budget_control = fields.Boolean(
+#         string='Control on PR',
+#         default=False,
+#     )
+#     po_budget_control = fields.Boolean(
+#         string='Control on PO',
+#         default=False,
+#     )
+#     exp_budget_control = fields.Boolean(
+#         string='Control on Expense',
+#         default=False,
+#     )
+    release_interval = fields.Selection(
+        [('1mo', '1 Month'),
+         ('3mo', '3 Months'),
+         ('6mo', '6 Months'),
+         ('12mo', '12 Months'), ],
+        string='Budget Release Interval',
+        default='1mo'
+    )
+    is_auto_release = fields.Boolean(
+        string='Auto Release',
+        default=False,
+    )
 
 
 class AccountJournal(models.Model):

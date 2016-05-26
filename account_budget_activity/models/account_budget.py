@@ -323,12 +323,31 @@ class AccountBudgetLine(models.Model):
         digits_compute=dp.get_precision('Account'),
         store=True,
     )
+    released_amount = fields.Float(
+        string='Released Amount',
+        compute='_compute_released_amount',
+        digits_compute=dp.get_precision('Account'),
+        store=True,
+    )
     budget_state = fields.Selection(
         BUDGET_STATE,
         string='Status',
         related='budget_id.state',
         store=True,
     )
+    # Budget release flag
+    r1 = fields.Boolean(default=False)
+    r2 = fields.Boolean(default=False)
+    r3 = fields.Boolean(default=False)
+    r4 = fields.Boolean(default=False)
+    r5 = fields.Boolean(default=False)
+    r6 = fields.Boolean(default=False)
+    r7 = fields.Boolean(default=False)
+    r8 = fields.Boolean(default=False)
+    r9 = fields.Boolean(default=False)
+    r10 = fields.Boolean(default=False)
+    r11 = fields.Boolean(default=False)
+    r12 = fields.Boolean(default=False)
 
     @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
@@ -339,6 +358,40 @@ class AccountBudgetLine(models.Model):
                                       rec.m5, rec.m6, rec.m7, rec.m8,
                                       rec.m9, rec.m10, rec.m11, rec.m12
                                       ])
+
+    @api.multi
+    @api.depends('r1', 'r2', 'r3', 'r4', 'r5', 'r6',
+                 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', )
+    def _compute_released_amount(self):
+        for rec in self:
+            released_amount = sum([(rec.m1 * rec.r1), (rec.m2 * rec.r2),
+                                   (rec.m3 * rec.r3), (rec.m4 * rec.r4),
+                                   (rec.m5 * rec.r5), (rec.m6 * rec.r6),
+                                   (rec.m7 * rec.r7), (rec.m8 * rec.r8),
+                                   (rec.m9 * rec.r9), (rec.m10 * rec.r10),
+                                   (rec.m11 * rec.r11), (rec.m12 * rec.r12),
+                                   ])
+            rec.released_amount = released_amount
+
+    @api.multi
+    def release_budget_line(self, releases):
+        for rec in self:
+            rec.write({'r1': releases.get('r1'),
+                       'r2': releases.get('r2'),
+                       'r3': releases.get('r3'),
+                       'r4': releases.get('r4'),
+                       'r5': releases.get('r5'),
+                       'r6': releases.get('r6'),
+                       'r7': releases.get('r7'),
+                       'r8': releases.get('r8'),
+                       'r9': releases.get('r9'),
+                       'r10': releases.get('r10'),
+                       'r11': releases.get('r11'),
+                       'r12': releases.get('r12'),
+                       })
+        return
+
+
 
     @api.model
     def _onchange_focus_field(self, focus_field=False,

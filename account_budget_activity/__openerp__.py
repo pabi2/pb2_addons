@@ -33,6 +33,7 @@ Testing:
         'data/account_data.xml',
         'security/ir.model.access.csv',
         'security/account_budget_security.xml',
+        'wizard/budget_release_wizard_view.xml',
         'views/purchase_view.xml',
         'views/purchase_requisition_view.xml',
         'views/purchase_request_view.xml',
