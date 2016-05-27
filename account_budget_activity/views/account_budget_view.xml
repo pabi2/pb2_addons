@@ -88,9 +88,13 @@
             <field name="model">account.budget</field>
             <field name="arch" type="xml">
                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
-                    <field name="name" colspan="1"/>
+                    <field name="name"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
+                	<button name="%(action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
                     <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                     <field name="creating_user_id"/>
                     <field name="state"/>
@@ -184,36 +188,26 @@
             <field name="arch" type="xml">
                 <form string="Budget Lines">
                     <sheet>
-                        <group col="4">
-                            <field name="budget_id"/>             
-		                    <field name="fiscalyear_id" />
-							<field name="m1" />
-							<field name="r1" invisible="0" />
-							<field name="m2" />
-							<field name="r2" invisible="0" />
-							<field name="m3" />
-							<field name="r3" invisible="0" />
-							<field name="m4" />
-							<field name="r4" invisible="0" />
-							<field name="m5" />
-							<field name="r5" invisible="0" />
-							<field name="m6" />
-							<field name="r6" invisible="0" />
-							<field name="m7" />
-							<field name="r7" invisible="0" />
-							<field name="m8" />
-							<field name="r8" invisible="0" />
-							<field name="m9" />
-							<field name="r9" invisible="0" />
-							<field name="m10" />
-							<field name="r10" invisible="0" />
-							<field name="m11" />
-							<field name="r11" invisible="0" />
-							<field name="m12" />
-							<field name="r12" invisible="0" />
-                            <field name="planned_amount"/>
-                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
-                        </group>
+                    	<group>
+	                        <group>                	
+			                    <field name="planned_amount" sum="Planned Amount"/>
+			                    <field name="released_amount" sum="Released Amount"/>
+	                        </group>
+	                    	<group>
+			                    <field name="m1" />
+			                    <field name="m2" />
+			                    <field name="m3" />
+			                    <field name="m4" />
+			                    <field name="m5" />
+			                    <field name="m6" />
+			                    <field name="m7" />
+			                    <field name="m8" />
+			                    <field name="m9" />
+			                    <field name="m10" />
+			                    <field name="m11" />
+			                    <field name="m12" />
+	                    	</group>
+                    	</group>
                     </sheet>
                 </form>
             </field>

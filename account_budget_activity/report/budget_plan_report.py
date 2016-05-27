@@ -23,43 +23,46 @@ class BudgetPlanReport(models.Model):
         string='Budget Document',
     )
     m1 = fields.Float(
-        string='M1',
+        string='1',
     )
     m2 = fields.Float(
-        string='M2',
+        string='2',
     )
     m3 = fields.Float(
-        string='M3',
+        string='3',
     )
     m4 = fields.Float(
-        string='M4',
+        string='4',
     )
     m5 = fields.Float(
-        string='M5',
+        string='5',
     )
     m6 = fields.Float(
-        string='M6',
+        string='6',
     )
     m7 = fields.Float(
-        string='M7',
+        string='7',
     )
     m8 = fields.Float(
-        string='M8',
+        string='8',
     )
     m9 = fields.Float(
-        string='M9',
+        string='9',
     )
     m10 = fields.Float(
-        string='M10',
+        string='10',
     )
     m11 = fields.Float(
-        string='M11',
+        string='11',
     )
     m12 = fields.Float(
-        string='M12',
+        string='12',
     )
     planned_amount = fields.Float(
         string='Planned Amount',
+    )
+    released_amount = fields.Float(
+        string='Released Amount',
     )
     activity_group_id = fields.Many2one(
         'account.activity.group',
@@ -84,7 +87,8 @@ class BudgetPlanReport(models.Model):
                 ab.name as doc_ref, ab.id as budget_id,
                 -- Amount
                 m1, m2, m3, m4, m5, m6, m7, m8,
-                m9, m10, m11, m12, planned_amount, abl.budget_state as state,
+                m9, m10, m11, m12, abl.planned_amount, abl.released_amount,
+                abl.budget_state as state,
                 -- Dimensions
                 %s
             from account_budget_line abl

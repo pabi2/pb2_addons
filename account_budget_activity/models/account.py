@@ -65,12 +65,12 @@ class AccountFiscalyearBudgetLevel(models.Model):
 #         default=False,
 #     )
     release_interval = fields.Selection(
-        [('1mo', '1 Month'),
-         ('3mo', '3 Months'),
-         ('6mo', '6 Months'),
-         ('12mo', '12 Months'), ],
+        [('1', '1 Month'),
+         ('3', '3 Months'),
+         ('6', '6 Months'),
+         ('12', '12 Months'), ],
         string='Budget Release Interval',
-        default='1mo'
+        default='1'
     )
     is_auto_release = fields.Boolean(
         string='Auto Release',

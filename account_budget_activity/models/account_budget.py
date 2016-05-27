@@ -96,6 +96,27 @@ class AccountBudget(models.Model):
         string='Fiscal Year',
         required=True,
     )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+        compute='_compute_amount',
+        digits_compute=dp.get_precision('Account'),
+    )
+    released_amount = fields.Float(
+        string='Released Amount',
+        compute='_compute_amount',
+        digits_compute=dp.get_precision('Account'),
+    )
+
+    @api.multi
+    def _compute_amount(self):
+        for budget in self:
+            planned_amount = 0.0
+            released_amount = 0.0
+            for line in budget.budget_line_ids:
+                planned_amount += line.planned_amount
+                released_amount += line.released_amount
+            budget.planned_amount = planned_amount
+            budget.released_amount = released_amount
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -221,6 +242,32 @@ class AccountBudget(models.Model):
                  '{0:,}'.format(amount))
         return res
 
+    @api.multi
+    def _prepare_budget_release(self, periods):
+        self.ensure_one()
+        releases = []
+        for period in periods:
+            from_period = period[0]
+            to_period = period[-1]
+            planned_amount = 0.0
+            released_amount = 0.0
+            release = False
+            for budget_line in self.budget_line_ids:
+                rr = budget_line._prepare_budget_line_release(periods)
+                r = filter(lambda r: (r['from_period'] == from_period and
+                                      r['to_period'] == to_period), rr)
+                planned_amount += r and r[0]['planned_amount']
+                released_amount += r and r[0]['released_amount']
+                release = release or (r and r[0]['release'] or False)
+            line = {'from_period': from_period,
+                    'to_period': to_period,
+                    'planned_amount': planned_amount,
+                    'released_amount': released_amount,
+                    'release': release,
+                    }
+            releases.append(line)
+        return releases
+
 
 class AccountBudgetLine(models.Model):
 
@@ -258,62 +305,62 @@ class AccountBudgetLine(models.Model):
         readonly=True,
     )
     m1 = fields.Float(
-        string='M1',
+        string='1',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m2 = fields.Float(
-        string='M2',
+        string='2',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m3 = fields.Float(
-        string='M3',
+        string='3',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m4 = fields.Float(
-        string='M4',
+        string='4',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m5 = fields.Float(
-        string='M5',
+        string='5',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m6 = fields.Float(
-        string='M6',
+        string='6',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m7 = fields.Float(
-        string='M7',
+        string='7',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m8 = fields.Float(
-        string='M8',
+        string='8',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m9 = fields.Float(
-        string='M9',
+        string='9',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m10 = fields.Float(
-        string='M10',
+        string='10',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m11 = fields.Float(
-        string='M11',
+        string='11',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m12 = fields.Float(
-        string='M12',
+        string='12',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
@@ -391,7 +438,29 @@ class AccountBudgetLine(models.Model):
                        })
         return
 
-
+    @api.multi
+    def _prepare_budget_line_release(self, periods):
+        self.ensure_one()
+        releases = []
+        if not periods:
+            return []
+        for period in periods:
+            from_period = period[0]
+            to_period = period[-1]
+            release = self['r'+str(to_period)]
+            planned_amount = 0.0
+            released_amount = 0.0
+            for i in period:
+                planned_amount += self['m'+str(i)]
+                released_amount += self['r'+str(i)] and self['m'+str(i)] or 0.0
+            line = {'from_period': from_period,
+                    'to_period': to_period,
+                    'planned_amount': planned_amount,
+                    'released_amount': released_amount,
+                    'release': release,
+                    }
+            releases.append(line)
+        return releases
 
     @api.model
     def _onchange_focus_field(self, focus_field=False,
