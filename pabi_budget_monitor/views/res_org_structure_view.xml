@@ -16,6 +16,7 @@
 		                    		<field name="org_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="planned_amount" />
+		                    		<field name="released_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_exp_commit" />
@@ -43,6 +44,7 @@
 		                    		<field name="sector_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="planned_amount" />
+		                    		<field name="released_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_exp_commit" />
@@ -70,6 +72,7 @@
 		                    		<field name="subsector_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="planned_amount" />
+		                    		<field name="released_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_exp_commit" />
@@ -97,6 +100,7 @@
 		                    		<field name="division_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="planned_amount" />
+		                    		<field name="released_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_exp_commit" />
@@ -124,6 +128,7 @@
 		                    		<field name="section_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="planned_amount" />
+		                    		<field name="released_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_exp_commit" />
@@ -153,6 +158,7 @@
 		                    		<field name="costcenter_id" invisible="1"/>
 		                    		<field name="fiscalyear_id" />
 		                    		<field name="planned_amount" />
+		                    		<field name="released_amount" />
 		                    		<field name="amount_pr_commit" />
 		                    		<field name="amount_po_commit" />
 		                    		<field name="amount_exp_commit" />

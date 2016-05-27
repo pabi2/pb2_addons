@@ -11,6 +11,7 @@
 	             <graph string="Budget Monitor" type="pivot">
 	                 <field name="fiscalyear_id" type="col"/>
 	                 <field name="planned_amount" type="measure"/>
+	                 <field name="released_amount" type="measure"/>
 	                 <field name="amount_pr_commit" type="measure"/>
 	                 <field name="amount_po_commit" type="measure"/>
 	                 <field name="amount_exp_commit" type="measure"/>

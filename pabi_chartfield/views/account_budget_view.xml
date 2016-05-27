@@ -91,21 +91,23 @@
 					<field name="activity_group_id" invisible="0"/>
 					<field name="activity_id" invisible="0"/>
 					
-					<!-- PERIOD -->
-					<field name="m1" string="1"/>
-					<field name="m2" string="2"/>
-					<field name="m3" string="3"/>
-					<field name="m4" string="4"/>
-					<field name="m5" string="5"/>
-					<field name="m6" string="6"/>
-					<field name="m7" string="7"/>
-					<field name="m8" string="8"/>
-					<field name="m9" string="9"/>
-					<field name="m10" string="10"/>
-					<field name="m11" string="11"/>
-					<field name="m12" string="12"/>
-					   
-					<field name="planned_amount"/>
+					<!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -150,21 +152,23 @@
 					<field name="activity_group_id" invisible="0"/>
 					<field name="activity_id" invisible="0"/>
 					
-					<!-- PERIOD -->
-					<field name="m1" string="1"/>
-					<field name="m2" string="2"/>
-					<field name="m3" string="3"/>
-					<field name="m4" string="4"/>
-					<field name="m5" string="5"/>
-					<field name="m6" string="6"/>
-					<field name="m7" string="7"/>
-					<field name="m8" string="8"/>
-					<field name="m9" string="9"/>
-					<field name="m10" string="10"/>
-					<field name="m11" string="11"/>
-					<field name="m12" string="12"/>
-	               	
-	               	<field name="planned_amount"/>
+					<!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -209,21 +213,23 @@
 					<field name="activity_group_id" invisible="0"/>
 					<field name="activity_id" invisible="0"/>
 	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+	                <!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -268,21 +274,23 @@
 					<field name="activity_group_id" invisible="1"/>
 					<field name="activity_id" invisible="1"/>
 	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+	                <!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -327,21 +335,23 @@
 					<field name="activity_group_id" invisible="1"/>
 					<field name="activity_id" invisible="1"/>
 	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+	                <!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
