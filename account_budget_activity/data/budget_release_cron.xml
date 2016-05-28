@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="1">
+        <record id="ir_cron_auto_release_budget" forcecreate="True" model="ir.cron">
+            <field name="name">Auto Release Budget</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="True"/>
+            <field name="model" eval="'account.budget'"/>
+            <field name="function" eval="'do_cron_release_budget'"/>
+            <field name="args" eval="'()'"/>
+        </record>
+    </data>
+</openerp>

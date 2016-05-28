@@ -10,6 +10,7 @@
                  <field name="fiscalyear_id" type="col"/>
                  <field name="planned_amount" type="measure"/>
                  <field name="released_amount" type="measure"/>
+                 <field name="m0" type="measure"/>
                  <field name="m1" type="measure"/>
                  <field name="m2" type="measure"/>
                  <field name="m3" type="measure"/>
@@ -38,6 +39,7 @@
                  <field name="fiscalyear_id" />
                  <field name="planned_amount" />
                  <field name="released_amount" />
+                 <field name="m0" />
                  <field name="m1" />
                  <field name="m2" />
                  <field name="m3" />

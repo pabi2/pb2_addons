@@ -3,6 +3,7 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
+from dateutil.relativedelta import relativedelta
 
 
 class BudgetReleaseWizard(models.TransientModel):
@@ -13,6 +14,18 @@ class BudgetReleaseWizard(models.TransientModel):
         'wizard_id',
         string='Release Lines',
     )
+    progress = fields.Float(
+        string='Progress',
+    )
+
+    @api.onchange('release_ids')
+    def _compute_progress(self):
+        planned_amount = sum([x.planned_amount for x in self.release_ids])
+        released_amount = sum([x.released_amount for x in self.release_ids])
+        if not planned_amount:
+            self.progress = 0.0
+        else:
+            self.progress = released_amount / planned_amount * 100
 
     # TODO: Should move to budget plan object?
     @api.model
@@ -27,7 +40,8 @@ class BudgetReleaseWizard(models.TransientModel):
         interval = budget_level.release_interval and \
             int(budget_level.release_interval) or 1
         start_period = 1  # by default
-        return interval, start_period
+        is_auto_release = budget_level.is_auto_release
+        return interval, start_period, is_auto_release
 
     @api.model
     def _calc_release_periods(self, interval, start_period):
@@ -52,28 +66,52 @@ class BudgetReleaseWizard(models.TransientModel):
 
     @api.model
     def _prepare_budget_release_wizard(self, periods, plan):
+        releases = []
         if plan._name == 'account.budget.line':
-            return plan._prepare_budget_line_release(periods)
+            releases = plan._prepare_budget_line_release(periods)
         elif plan._name == 'account.budget':
-            return plan._prepare_budget_release(periods)
+            releases = plan._prepare_budget_release(periods)
         else:
             raise UserError(_('Not a budgeting model'))
+        # Update from_date and to_date
+        fiscal_date_start = \
+            fields.Date.from_string(plan.fiscalyear_id.date_start)
+        for r in releases:
+            from_date = fields.Date.to_string(
+                fiscal_date_start +
+                relativedelta(months=(r['from_period'] - 1)))
+            to_date = fields.Date.to_string(
+                fiscal_date_start +
+                relativedelta(months=r['to_period']) - relativedelta(days=1))
+            ready = fields.Date.today() >= from_date
+            past = fields.Date.today() >= to_date
+            r.update({'from_date': from_date,
+                      'to_date': to_date,
+                      'ready': ready,
+                      'past': past,
+                      })
+        return releases
+
+    @api.model
+    def _prepare_budget_release_table(self, res_model, res_id):
+        plan = False
+        if res_model == 'account.budget.line':
+            plan = self.env['account.budget.line'].browse(res_id)
+        elif res_model == 'account.budget':
+            plan = self.env['account.budget'].browse(res_id)
+        else:
+            raise UserError(_('Not a budgeting model'))
+        interval, start_period, _ = self._get_release_pattern(plan)
+        periods = self._calc_release_periods(interval, start_period)
+        releases = self._prepare_budget_release_wizard(periods, plan)
+        return releases
 
     @api.model
     def default_get(self, fields):
         res = super(BudgetReleaseWizard, self).default_get(fields)
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
-        plan = False
-        if active_model == 'account.budget.line':
-            plan = self.env['account.budget.line'].browse(active_id)
-        elif active_model == 'account.budget':
-            plan = self.env['account.budget'].browse(active_id)
-        else:
-            raise UserError(_('Not a budgeting model'))
-        interval, start_period = self._get_release_pattern(plan)
-        periods = self._calc_release_periods(interval, start_period)
-        releases = self._prepare_budget_release_wizard(periods, plan)
+        releases = self._prepare_budget_release_table(active_model, active_id)
         res['release_ids'] = [(0, 0, r) for r in releases]
         return res
 
@@ -88,11 +126,11 @@ class BudgetReleaseWizard(models.TransientModel):
             budget_lines = BudgetLine.search([('id', '=', active_id)])
         elif active_model == 'account.budget':
             budget_lines = BudgetLine.search([('budget_id', '=', active_id)])
-        releases = {}
+        release_result = {}
         for r in self.release_ids:
             for i in range(r.from_period, r.to_period + 1):
-                releases.update({'r'+str(i): r.release})
-        budget_lines.release_budget_line(releases)
+                release_result.update({'r'+str(i): r.release})
+        budget_lines.release_budget_line(release_result)
 
 
 class BudgetReleaseLine(models.TransientModel):
@@ -104,11 +142,19 @@ class BudgetReleaseLine(models.TransientModel):
         readonly=True,
     )
     from_period = fields.Integer(
-        string='From',
+        string='From Period',
         readonly=True,
     )
     to_period = fields.Integer(
-        string='To',
+        string='To Period',
+        readonly=True,
+    )
+    from_date = fields.Date(
+        string='From Date',
+        readonly=True,
+    )
+    to_date = fields.Date(
+        string='To Date',
         readonly=True,
     )
     planned_amount = fields.Float(
@@ -124,6 +170,14 @@ class BudgetReleaseLine(models.TransientModel):
     release = fields.Boolean(
         string='Release',
         default=False,
+    )
+    ready = fields.Boolean(
+        string='Ready to release',
+        help="Whether budget should be released according to release interval",
+    )
+    past = fields.Boolean(
+        string='Past release',
+        help="Whether this is past release, and can't be unreleased",
     )
 
     @api.onchange('release')

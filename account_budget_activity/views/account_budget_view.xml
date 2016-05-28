@@ -29,6 +29,8 @@
                             </h1>
                         </div>
 	                    <div class="oe_right oe_button_box" name="buttons">
+	                    	<button name="do_release_budget" string="Release Budget" 
+	                    		type="object"/>
 		                    <button class="oe_inline oe_stat_button" icon="fa-bookmark-o">
 		                        <field name="version" widget="statinfo"/>
 		                    </button>	       
@@ -62,6 +64,7 @@
                                         <field name="fiscalyear_id" invisible="1"/>
                                         <field name="planned_amount" sum="Planned Amount"/>
                                         <field name="released_amount" sum="Released Amount"/>
+                                        <field name="m0" />
                                         <field name="m1" />
                                         <field name="m2" />
                                         <field name="m3" />
@@ -167,6 +170,7 @@
                      	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
                     <field name="m1" />
                     <field name="m2" />
                     <field name="m3" />
@@ -194,6 +198,7 @@
 			                    <field name="released_amount" sum="Released Amount"/>
 	                        </group>
 	                    	<group>
+			                    <field name="m0" />
 			                    <field name="m1" />
 			                    <field name="m2" />
 			                    <field name="m3" />

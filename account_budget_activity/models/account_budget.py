@@ -3,6 +3,9 @@ from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import except_orm, Warning as UserError
 
+import logging
+_logger = logging.getLogger(__name__)
+
 BUDGET_STATE = [('draft', 'Draft'),
                 ('cancel', 'Cancelled'),
                 ('confirm', 'Confirmed'),
@@ -268,6 +271,40 @@ class AccountBudget(models.Model):
             releases.append(line)
         return releases
 
+    @api.model
+    def _set_release_on_ready(self, releases):
+        release_result = {}
+        for r in releases:
+            for i in range(r['from_period'], r['to_period'] + 1):
+                release_result.update({'r'+str(i): r['ready'] or r['release']})
+        return release_result
+
+    @api.multi
+    def do_release_budget(self):
+        Wizard = self.env['budget.release.wizard']
+        for budget in self:
+            _, _, is_auto_release = Wizard._get_release_pattern(budget)
+            if not is_auto_release:
+                continue
+            releases = Wizard._prepare_budget_release_table(budget._name,
+                                                            budget.id)
+            release_result = self._set_release_on_ready(releases)
+            budget.budget_line_ids.release_budget_line(release_result)
+        return True
+
+    @api.model
+    def do_cron_release_budget(self):
+        # TODO: This will update budget release flag very often.
+        # How can we prevent this?
+        # - how about write an release date, and do not repeat in a day
+        _logger.info("Auto Release Budget - Start")
+        fiscal_id = self.env['account.fiscalyear'].find(fields.Date.today())
+        budgets = self.search([('fiscalyear_id', '=', fiscal_id)])
+        _logger.info("=> Budget IDs = %s" % (budgets._ids,))
+        budgets.do_release_budget()
+        _logger.info("Auto Release Budget - END")
+        return True
+
 
 class AccountBudgetLine(models.Model):
 
@@ -303,6 +340,11 @@ class AccountBudgetLine(models.Model):
         related='budget_id.fiscalyear_id',
         store=True,
         readonly=True,
+    )
+    m0 = fields.Float(
+        string='0',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
     )
     m1 = fields.Float(
         string='1',
@@ -401,10 +443,11 @@ class AccountBudgetLine(models.Model):
                  'm7', 'm8', 'm9', 'm10', 'm11', 'm12',)
     def _compute_planned_amount(self):
         for rec in self:
-            rec.planned_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
-                                      rec.m5, rec.m6, rec.m7, rec.m8,
-                                      rec.m9, rec.m10, rec.m11, rec.m12
-                                      ])
+            planned_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
+                                  rec.m5, rec.m6, rec.m7, rec.m8,
+                                  rec.m9, rec.m10, rec.m11, rec.m12
+                                  ])
+            rec.planned_amount = planned_amount + rec.m0  # from last year
 
     @api.multi
     @api.depends('r1', 'r2', 'r3', 'r4', 'r5', 'r6',
@@ -418,24 +461,20 @@ class AccountBudgetLine(models.Model):
                                    (rec.m9 * rec.r9), (rec.m10 * rec.r10),
                                    (rec.m11 * rec.r11), (rec.m12 * rec.r12),
                                    ])
-            rec.released_amount = released_amount
+            rec.released_amount = released_amount + rec.m0  # from last year
 
     @api.multi
-    def release_budget_line(self, releases):
+    def release_budget_line(self, release_result):
+        # Always release the former period. I.e, r6 will include r1-r5
+        periods = list({int(k[1:]): v
+                        for k, v in release_result.iteritems()
+                        if v})
+        period = periods and max(periods) or 0
+        vals = {'r'+str(i+1): (i+1) <= period for i in range(12)}
         for rec in self:
-            rec.write({'r1': releases.get('r1'),
-                       'r2': releases.get('r2'),
-                       'r3': releases.get('r3'),
-                       'r4': releases.get('r4'),
-                       'r5': releases.get('r5'),
-                       'r6': releases.get('r6'),
-                       'r7': releases.get('r7'),
-                       'r8': releases.get('r8'),
-                       'r9': releases.get('r9'),
-                       'r10': releases.get('r10'),
-                       'r11': releases.get('r11'),
-                       'r12': releases.get('r12'),
-                       })
+            old_vals = {'r'+str(i+1): rec['r'+str(i+1)] for i in range(12)}
+            if old_vals != vals:
+                rec.write(vals)
         return
 
     @api.multi

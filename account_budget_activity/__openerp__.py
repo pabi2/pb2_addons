@@ -31,6 +31,7 @@ Testing:
     ],
     'data': [
         'data/account_data.xml',
+        'data/budget_release_cron.xml',
         'security/ir.model.access.csv',
         'security/account_budget_security.xml',
         'wizard/budget_release_wizard_view.xml',
