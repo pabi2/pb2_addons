@@ -27,6 +27,7 @@ class BudgetReleaseWizard(models.TransientModel):
         interval = budget_level.release_interval and \
             int(budget_level.release_interval) or 1
         start_period = 1
+        is_auto_release = budget_level.is_auto_release
         # Project, calculate start_period
         if budget_level.type == 'project_base':
             # Only if project and a valid start date, calc start_period
@@ -46,4 +47,4 @@ class BudgetReleaseWizard(models.TransientModel):
                     start_period = 100  # equal to unreachable
                 if period in periods:
                     start_period = periods.index(period) + 1
-        return interval, start_period
+        return interval, start_period, is_auto_release
