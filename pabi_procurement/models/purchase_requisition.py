@@ -381,7 +381,7 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
-    def tender_done(self,context=None):
+    def tender_done(self, context=None):
         # ensure the tender to be done in PABIWeb confirmation.
         res = False
         for requisition in self:
@@ -423,25 +423,26 @@ class PurchaseRequisition(models.Model):
                                 'date_doc_approve': fields.date.today(),
                                 'attachment_ids': att_file,
                             })
+                            today = fields.date.today()
                             order.action_button_convert_to_order()
                             if order.state2 != 'done' or order.state != 'done':
                                 order.write({
                                     'state': 'done',
                                     'state2': 'done',
                                     'doc_approve_uid': uid.id,
-                                    'date_doc_approve': fields.date.today(),
+                                    'date_doc_approve': today,
                                 })
-                                purchase = Order.search({
-                                ('id', '=', order.order_id.id)
-                                })
-                                purchase.write({
-                                    'committee_ids': order.committee_ids,
-                                    'verify_uid': order.verify_uid.id,
-                                    'date_verify': order.date_verify,
-                                    'doc_approve_uid':
-                                        order.doc_approve_uid.id,
-                                    'date_doc_approve': order.date_doc_approve,
-                                })
+                                purchase_order = Order.search([
+                                    ('id', '=', order.order_id.id)
+                                ])
+                                for purchase in purchase_order:
+                                    purchase.write({
+                                        'committee_ids': order.committee_ids,
+                                        'verify_uid': order.verify_uid.id,
+                                        'date_verify': order.date_verify,
+                                        'doc_approve_uid': uid.id,
+                                        'date_doc_approve': today,
+                                    })
                     if requisition.state != 'done':
                         requisition.tender_done()
                     res.update({
