@@ -47,7 +47,7 @@ class PurchaseRequest(models.Model):
         states={
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)],
-            },
+        },
         domain="[('operating_unit_ids', 'in', operating_unit_id)]",
         track_visibility='onchange',
     )
@@ -323,31 +323,40 @@ class PurchaseRequest(models.Model):
         return commitee_ids
 
     @api.model
-    def _get_picking_type(self, data_dict):
-        if 'operating_unit_id.id' in data_dict:
-            type_id = 1
-            Warehouse = self.env['stock.warehouse']
-            PType = self.env['stock.picking.type']
-            warehouse = Warehouse.search([
-                ('operating_unit_id', '=', data_dict['operating_unit_id.id']),
+    def _get_request_info(self, data_dict):
+        if 'org_id' in data_dict:
+            Org = self.env['res.org']
+            organization = Org.search([
+                ('id', '=', data_dict['org_id']),
             ])
-            for wh in warehouse:
-                picking_type = PType.search([
-                    ('warehouse_id', '=', wh.id),
-                    ('code', '=', 'incoming'),
+            for org in organization:
+                type_id = False
+                Warehouse = self.env['stock.warehouse']
+                PType = self.env['stock.picking.type']
+                warehouse = Warehouse.search([
+                    ('operating_unit_id', '=', org.operating_unit_id.id),
                 ])
-                for picking in picking_type:
-                    type_id = picking.id
+                for wh in warehouse:
+                    picking_type = PType.search([
+                        ('warehouse_id', '=', wh.id),
+                        ('code', '=', 'incoming'),
+                    ])
+                    for picking in picking_type:
+                        type_id = picking.id
+                        break
                     break
-            data_dict.update({
-                'picking_type_id.id': type_id,
-            })
+                data_dict.update({
+                    'picking_type_id.id': type_id,
+                    'operating_unit_id.id': org.operating_unit_id.id,
+                })
+                del data_dict['org_id']
+                break
         return data_dict
 
     @api.model
     def generate_purchase_request(self, data_dict):
         ret = {}
-        data_dict = self._get_picking_type(data_dict)
+        data_dict = self._get_request_info(data_dict)
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data

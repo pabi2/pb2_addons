@@ -58,11 +58,15 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
 
     @api.model
     def _prepare_item(self, line):
+        if line.product_id.type == 'service':
+            balance = line.product_qty
+        else:
+            balance = line.product_qty - line.received_qty
         return {
             'line_id': line.id,
             'product_id': line.product_id.id,
             'name': line.name or line.product_id.name,
-            'balance_qty': line.product_qty - line.received_qty,
+            'balance_qty': balance,
             'to_receive_qty': 0.0,
             'product_uom': line.product_uom.id,
         }
