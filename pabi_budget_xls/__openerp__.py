@@ -20,6 +20,7 @@
         'pabi_budget_prepare',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'wizard/budget_import_wiz_view.xml',
         'wizard/budget_export_wiz_view.xml',
         "views/account_budget_view.xml",
