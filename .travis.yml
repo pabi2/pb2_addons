@@ -11,7 +11,6 @@ addons:
       - expect-dev  # provides unbuffer utility
       - python-lxml  # because pip installation is slow
       - python-xlrd
-      - python-xlutils
 
 env:
   global:
@@ -26,6 +25,7 @@ virtualenv:
   system_site_packages: true
 
 install:
+  - pip install xlutils
   - git clone --depth=1 https://github.com/OCA/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
