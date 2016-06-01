@@ -112,7 +112,7 @@ class res_partner(models.Model):
                 len(category[0]) > 2 and \
                 len(category[0][2]) > 0 or False
             if not index_exists:
-                exit
+                return
             for partner in self:
                 prev_categ = partner.category_id
                 new_category_id = category[0][2][0]
@@ -126,7 +126,6 @@ class res_partner(models.Model):
                         raise ValidationError(
                             _("Changing of Partner Tag is not allowed, as it "
                               "will result in changing of its account code"))
-        return vals
 
     @api.model
     def _post_category_change(self, vals):
@@ -136,13 +135,12 @@ class res_partner(models.Model):
                 if partner.child_ids:
                     for child in partner.child_ids:
                         child.category_id = partner.category_id
-        return vals
 
     @api.multi
     def write(self, vals):
-        vals = self._pre_category_change(vals)
+        self._pre_category_change(vals)
         res = super(res_partner, self).write(vals)
-        vals = self._post_category_change(vals)
+        self._post_category_change(vals)
         return res
 
     @api.v7
