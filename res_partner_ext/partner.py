@@ -244,18 +244,18 @@ class res_partner(models.Model):
 
             query = """
             SELECT id
-                 FROM res_partner
+             FROM res_partner
               {where} ({email} {operator} '{percent}'
-                   OR {display_name} {operator} '{percent}'
-                   -- nstda: added search
-                   OR {name_en} {operator} '{percent}'
-                   OR {search_key} {operator} '{percent}'
-                   OR {vat} {operator} '{percent}'
-                   OR {taxbranch} {operator} '{percent}'
-                   -- nstda: special search, combination of display_name and taxbranch
-                   OR (lower({display_name}) SIMILAR TO lower('%%({percent})%%') 
-                       AND lower({taxbranch}) SIMILAR TO lower('%%({percent})%%')))
-                   --
+               OR {display_name} {operator} '{percent}'
+               -- nstda: added search
+               OR {name_en} {operator} '{percent}'
+               OR {search_key} {operator} '{percent}'
+               OR {vat} {operator} '{percent}'
+               OR {taxbranch} {operator} '{percent}'
+               -- nstda: special search
+               OR (lower({display_name}) SIMILAR TO lower('%%({percent})%%')
+                   AND lower({taxbranch}) SIMILAR TO lower('%%({percent})%%')))
+               --
              ORDER BY {display_name}
              """.format(where=where_str, operator=operator,
                         email=unaccent('email'),
