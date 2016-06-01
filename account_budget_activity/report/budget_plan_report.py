@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import fields, models
 from openerp import tools
 
 
@@ -107,4 +107,3 @@ class BudgetPlanReport(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
                    (self._table, self._get_sql_view(),))
-

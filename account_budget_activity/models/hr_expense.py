@@ -115,7 +115,7 @@ class HRExpenseLine(models.Model):
 
         # Use EXP Commitment Account
         general_account_id = general_journal.exp_commitment_account_id.id
-
+        journal_id = general_journal.exp_commitment_analytic_journal_id.id
         line_qty = 0.0
         if 'diff_invoiced_qty' in self._context:
             line_qty = self._context.get('diff_invoiced_qty')
@@ -124,6 +124,7 @@ class HRExpenseLine(models.Model):
         if not line_qty:
             return False
         sign = reverse and -1 or 1
+
         return {
             'name': self.name,
             'product_id': self.product_id.id,
@@ -132,7 +133,7 @@ class HRExpenseLine(models.Model):
             'product_uom_id': self.uom_id.id,
             'amount': sign * self._price_subtotal(line_qty),
             'general_account_id': general_account_id,
-            'journal_id': general_journal.exp_commitment_analytic_journal_id.id,
+            'journal_id': journal_id,
             'ref': self.expense_id.name,
             'user_id': self._uid,
             'doc_ref': self.expense_id.name,
