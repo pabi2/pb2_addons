@@ -6,7 +6,7 @@ import xlrd
 import sys
 from openerp import tools
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 
 class BudgetImportWizard(models.Model):
@@ -17,9 +17,9 @@ class BudgetImportWizard(models.Model):
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
         if not template:
-            raise Warning(_('Please add .xlsx template.'))
+            raise UserError(_('Please add .xlsx template.'))
         if not budget_ids:
-            raise Warning(_('No budget to import.'))
+            raise UserError(_('No budget to import.'))
 
         try:
             workbook = xlrd.open_workbook(
@@ -27,13 +27,12 @@ class BudgetImportWizard(models.Model):
                 formatting_info=True,
             )
         except IOError as e:
-            raise Warning(_('Import Error!'), _(e.strerror))
+            raise UserError(_(e.strerror))
         except ValueError as e:
-            raise Warning(_('Import Error!'), _(e.strerror))
+            raise UserError(_(e.strerror))
         except:
             e = sys.exc_info()[0]
-            raise Warning(_('Import Error!'),
-                          _('Wrong file format. Please enter .xlsx file.'))
+            raise UserError(_('Wrong file format. Please enter .xlsx file.'))
         budgets = self.env['account.budget.prepare'].browse(budget_ids)
 
         for budget in budgets:
@@ -67,7 +66,7 @@ class BudgetImportWizard(models.Model):
             # make dictionary with field name and column number
             for col in range(template_sheet.ncols):
                 line_title = \
-                        template_sheet.cell_value(line_row, col)
+                    template_sheet.cell_value(line_row, col)
                 line_title = line_title.split('/')
                 # manage the dictionary for mapping columns and fields
                 # data like {1: 'c_or_n'}
@@ -111,5 +110,4 @@ class BudgetImportWizard(models.Model):
                 else:
                     msg = msg + '\n' + line['message']
             if msg:
-                raise Warning(_('Error'),
-                              _('%s') %(msg))
+                raise UserError(_('%s') % (msg,))
