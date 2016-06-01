@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, models, fields
+from openerp import api, models, _
 from openerp.exceptions import ValidationError
-import openerp.addons.decimal_precision as dp
 
 
 class BudgetReleaseWizard(models.TransientModel):
