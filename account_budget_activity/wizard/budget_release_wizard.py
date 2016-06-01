@@ -101,7 +101,7 @@ class BudgetReleaseWizard(models.TransientModel):
             plan = self.env['account.budget'].browse(res_id)
         else:
             raise UserError(_('Not a budgeting model'))
-        interval, start_period, _ = self._get_release_pattern(plan)
+        interval, start_period, _dummy = self._get_release_pattern(plan)
         periods = self._calc_release_periods(interval, start_period)
         releases = self._prepare_budget_release_wizard(periods, plan)
         return releases
