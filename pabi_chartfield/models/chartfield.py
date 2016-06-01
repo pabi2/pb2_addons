@@ -404,7 +404,6 @@ class ChartFieldAction(ChartField):
                 res = self._get_chained_dimension(field)
                 res.update({'chart_view': self._get_chart_view(selects_yes)})
                 self.write(res)
-            print res
 
     @api.onchange('section_id')
     def _onchange_section_id(self):
