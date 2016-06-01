@@ -107,8 +107,6 @@ class HRExpenseLine(models.Model):
             [('type', '=', 'purchase')], limit=1)
         if not general_journal:
             raise Warning(_('Define an accounting journal for purchase'))
-        if 'exp_commitment_analytic_journal_id' not in general_journal:
-            return False
         if not general_journal.exp_commitment_analytic_journal_id or \
                 not general_journal.exp_commitment_account_id:
             raise UserError(
