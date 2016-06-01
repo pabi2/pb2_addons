@@ -30,7 +30,7 @@ def _loop_structure(res, rec, d, field, clear=False):
     elif rec[field]:
         res.update({field: rec[field].id})
 
-    for k, _ in d[field].iteritems():
+    for k, _dummy in d[field].iteritems():
         if isinstance(d, dict):
             if rec[field]:
                 _loop_structure(res, rec[field], d[field], k, clear)
@@ -396,11 +396,11 @@ class ChartFieldAction(ChartField):
             selects_no = {k: v for k, v in selects.items() if not v}
             selects_yes = {k: v for k, v in selects.items() if v}
             # update value = false first, the sequence is important
-            for field, _ in selects_no.items():
+            for field, _dummy in selects_no.items():
                 res = self._get_chained_dimension(field, clear=True)
                 res.update({'chart_view': False})
                 self.write(res)
-            for field, _ in selects_yes.items():
+            for field, _dummy in selects_yes.items():
                 res = self._get_chained_dimension(field)
                 res.update({'chart_view': self._get_chart_view(selects_yes)})
                 self.write(res)
