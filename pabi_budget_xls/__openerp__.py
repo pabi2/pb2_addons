@@ -20,6 +20,7 @@
         'pabi_budget_prepare',
     ],
     "data": [
+        'wizard/budget_import_wiz_view.xml',
         'wizard/budget_export_wiz_view.xml',
         "views/account_budget_view.xml",
         'views/output_xls_report.xml',

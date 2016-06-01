@@ -13,6 +13,7 @@
 	                <field name="date" type="col"/>
 	                <field name="amount_pr_commit" type="measure"/>
 	                <field name="amount_po_commit" type="measure"/>
+	                <field name="amount_exp_commit" type="measure"/>
 	                <field name="amount_actual" type="measure"/>
 	                <field name="amount" type="measure"/>
 	            </graph>

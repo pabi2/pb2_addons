@@ -9,11 +9,12 @@
         <field name="arch" type="xml">
         	<xpath expr="//graph" position="replace">
 	             <graph string="Budget Monitor" type="pivot">
-	                 <field name="org_id" type="row"/>
 	                 <field name="fiscalyear_id" type="col"/>
 	                 <field name="planned_amount" type="measure"/>
+	                 <field name="released_amount" type="measure"/>
 	                 <field name="amount_pr_commit" type="measure"/>
 	                 <field name="amount_po_commit" type="measure"/>
+	                 <field name="amount_exp_commit" type="measure"/>
 	                 <field name="amount_actual" type="measure"/>
 	                 <field name="amount_balance" type="measure"/>
 	             </graph>
@@ -21,45 +22,34 @@
          </field>
     </record>
 
-	<record id="view_budget_monitor_report_tree" model="ir.ui.view">
-		<field name="name">budget.monitor.report.graph</field>
+    <record id="view_budget_monitor_report_search" model="ir.ui.view">
+        <field name="name">budget.monitor.report.search</field>
         <field name="model">budget.monitor.report</field>
-        <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_tree"/>
+        <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_search"/>
         <field name="arch" type="xml">
-        	<xpath expr="//field[@name='amount_balance']" position="after">
-
-				<field name="spa_id"/>
-				<field name="mission_id" />
-				<field name="tag_type_id" />
-				<field name="tag_id" />
-				
-				<field name="functional_area_id" />
-				<field name="program_group_id" />
-				<field name="program_id" />
-				<field name="project_group_id" />
-				<field name="project_id"/>
-				
-				<field name="org_id" />
-				<field name="sector_id" />
-				<field name="subsector_id"/>
-				<field name="division_id" />
-				<field name="section_id" />
-				<field name="costcenter_id"/>
-				<field name="taxbranch_id" />
-				
-				<field name="invest_asset_id" />
-				
-				<field name="invest_construction_id" />
-				<field name="invest_construction_phase_id" />
-				    
-				<field name="personnel_costcenter_id" />
-				            
-				<field name="cost_control_type_id"/>
-				<field name="cost_control_id" />   
-                    
-         	</xpath>
-         </field>
-    </record>
+        	<xpath expr="//search" position="replace">
+            	<search string="Budget Monitor">
+	                <group expand="1" string="Group By">
+	                    <filter string="Document" name="groupby_doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
+	                    <filter string="Activity Group" name="groupby_activity_group" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
+	                    <filter string="Activity" name="groupby_activity" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+	                    <separator/>
+	                    <filter string="Functional Area" name="groupby_functional_area" context="{'group_by':'functional_area_id'}"/>
+	                    <filter string="Program Group" name="groupby_program_group" context="{'group_by':'program_group_id'}"/>
+	                    <filter string="Program" name="groupby_program" context="{'group_by':'program_id'}"/>
+	                    <filter string="Project Group" name="groupby_project_group" context="{'group_by':'project_group_id'}"/>
+	                    <filter string="Project" name="groupby_project" context="{'group_by':'project_id'}"/>
+	                    <separator/>
+	                    <filter string="Org" name="groupby_org" context="{'group_by':'org_id'}"/>
+	                    <filter string="Sector" name="groupby_sector" context="{'group_by':'sector_id'}"/>
+	                    <filter string="Subsector" name="groupby_subsector" context="{'group_by':'subsector_id'}"/>
+	                    <filter string="Division" name="groupby_division" context="{'group_by':'division_id'}"/>
+	                    <filter string="Section" name="groupby_section" context="{'group_by':'section_id'}"/>
+	                </group>
+                </search>
+            </xpath>
+        </field>
+    </record>    
 
 </data>
 </openerp>

@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/group/group//field[@name='validating_user_id']" position="after">
-                	<field name="chart_view" required="1"/>
+                	<field name="chart_view" required="1" readonly="1"/>
                 	<field name="program_id"	
                 		attrs="{'invisible': [('chart_view','!=','project_base')],
                 				'required': [('chart_view','=','project_base')]}"/>
@@ -91,21 +91,24 @@
 					<field name="activity_group_id" invisible="0"/>
 					<field name="activity_id" invisible="0"/>
 					
-					<!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-					   
-					<field name="planned_amount"/>
+					<!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -149,22 +152,25 @@
 		            <!-- ACTIVITY -->
 					<field name="activity_group_id" invisible="0"/>
 					<field name="activity_id" invisible="0"/>
-	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+					
+					<!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -209,21 +215,24 @@
 					<field name="activity_group_id" invisible="0"/>
 					<field name="activity_id" invisible="0"/>
 	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+	                <!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -268,21 +277,24 @@
 					<field name="activity_group_id" invisible="1"/>
 					<field name="activity_id" invisible="1"/>
 	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+	                <!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
@@ -327,25 +339,140 @@
 					<field name="activity_group_id" invisible="1"/>
 					<field name="activity_id" invisible="1"/>
 	                   
-	                <!-- PERIOD -->
-					<field name="m1"/>
-					<field name="m2"/>
-					<field name="m3"/>
-					<field name="m4"/>
-					<field name="m5"/>
-					<field name="m6"/>
-					<field name="m7"/>
-					<field name="m8"/>
-					<field name="m9"/>
-					<field name="m10"/>
-					<field name="m11"/>
-					<field name="m12"/>
-	               	
-	               	<field name="planned_amount"/>
+	                <!-- PERIOD -->                	
+					<button name="%(account_budget_activity.action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
+                    <field name="m1" />
+                    <field name="m2" />
+                    <field name="m3" />
+                    <field name="m4" />
+                    <field name="m5" />
+                    <field name="m6" />
+                    <field name="m7" />
+                    <field name="m8" />
+                    <field name="m9" />
+                    <field name="m10" />
+                    <field name="m11" />
+                    <field name="m12" />
 	
 	 			</tree>
             </field>
         </record>        
+        
+       	<!-- Menu for 5 types of budget structure -->
+       	
+		<!-- 1) Unit Base (reuse generic Budgets menu) -->
+
+        <record model="ir.actions.act_window" id="account_budget_activity.act_account_budget_view">
+            <field name="name">Unit Base</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'unit_base')]</field>
+            <field name="context">{'default_chart_view': 'unit_base'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="account_budget_activity.menu_act_account_budget_view"
+        	parent="account_budget_activity.menu_action_account_budget_control"
+            action="account_budget_activity.act_account_budget_view" sequence="1" />
+            
+		<!-- 2) Project Base -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_project_base">
+            <field name="name">Project Base</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'project_base')]</field>
+            <field name="context">{'default_chart_view': 'project_base'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_project_base"
+        	parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_project_base" sequence="2" />
+            
+		<!-- 3) Personnel -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_personnel">
+            <field name="name">Personnel</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'personnel')]</field>
+            <field name="context">{'default_chart_view': 'personnel'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_personnel"
+        	parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_personnel" sequence="3" />
+            
+		<!-- 4) Invest Asset -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_invest_asset">
+            <field name="name">Investment Asset</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'invest_asset')]</field>
+            <field name="context">{'default_chart_view': 'invest_asset'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_invest_asset"
+        	parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_invest_asset" sequence="4" />
+            
+		<!-- 4) Invest Construction -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_invest_construction">
+            <field name="name">Investment Construction</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'invest_construction')]</field>
+            <field name="context">{'default_chart_view': 'invest_construction'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_invest_construction"
+        	parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_invest_construction" sequence="5" />
         
      </data>
 </openerp>
