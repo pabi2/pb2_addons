@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import fields, models
 from openerp import tools
 
 
@@ -24,6 +24,7 @@ class BudgetConsumeReport(models.Model):
     doc_id = fields.Reference(
         [('purchase.request', 'Purchase Request'),
          ('purchase.order', 'Purchase Order'),
+         ('hr.expense.expense', 'Expense'),
          ('account.invoice', 'Invoice')],
         string='Document ID',
         readonly=True,
@@ -36,6 +37,9 @@ class BudgetConsumeReport(models.Model):
     )
     amount_po_commit = fields.Float(
         string='PO Commitment',
+    )
+    amount_exp_commit = fields.Float(
+        string='Expense Commitment',
     )
     amount_actual = fields.Float(
         string='Actual',
@@ -63,6 +67,8 @@ class BudgetConsumeReport(models.Model):
                     then aal.amount end as amount_pr_commit,
                 case when aaj.budget_commit_type = 'po_commit'
                     then aal.amount end as amount_po_commit,
+                case when aaj.budget_commit_type = 'exp_commit'
+                    then aal.amount end as amount_exp_commit,
                 case when aaj.budget_commit_type = 'actual'
                     then aal.amount end as amount_actual,
                 -- Dimensions

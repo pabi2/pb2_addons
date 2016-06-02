@@ -29,6 +29,8 @@
                             </h1>
                         </div>
 	                    <div class="oe_right oe_button_box" name="buttons">
+	                    	<button name="do_release_budget" string="Release Budget" 
+	                    		type="object"/>
 		                    <button class="oe_inline oe_stat_button" icon="fa-bookmark-o">
 		                        <field name="version" widget="statinfo"/>
 		                    </button>	       
@@ -60,6 +62,9 @@
                                     	<field name="activity_id" />
                                         <!--field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="0"/-->
                                         <field name="fiscalyear_id" invisible="1"/>
+                                        <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="released_amount" sum="Released Amount"/>
+                                        <field name="m0" />
                                         <field name="m1" />
                                         <field name="m2" />
                                         <field name="m3" />
@@ -72,7 +77,6 @@
                                         <field name="m10" />
                                         <field name="m11" />
                                         <field name="m12" />
-                                        <field name="planned_amount" sum="Planned Amount"/>
                                     </tree>
                                 </field>
                             </page>
@@ -87,9 +91,13 @@
             <field name="model">account.budget</field>
             <field name="arch" type="xml">
                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
-                    <field name="name" colspan="1"/>
+                    <field name="name"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
+                	<button name="%(action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
                     <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                     <field name="creating_user_id"/>
                     <field name="state"/>
@@ -157,7 +165,12 @@
                 <tree string="Budget Lines">
                     <!--field name="analytic_account_id" groups="analytic.group_analytic_accounting"/-->
                     <field name="budget_id" invisible="1"/>                                        
-                    <field name="fiscalyear_id" />
+                    <field name="fiscalyear_id" />                                            
+                	<button name="%(action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="m0" />
                     <field name="m1" />
                     <field name="m2" />
                     <field name="m3" />
@@ -170,7 +183,6 @@
                     <field name="m10" />
                     <field name="m11" />
                     <field name="m12" />
-                    <field name="planned_amount"/>
                 </tree>
             </field>
         </record>
@@ -180,24 +192,27 @@
             <field name="arch" type="xml">
                 <form string="Budget Lines">
                     <sheet>
-                        <group col="4">
-                            <field name="budget_id"/>             
-		                    <field name="fiscalyear_id" />
-		                    <field name="m1" />
-		                    <field name="m2" />
-		                    <field name="m3" />
-		                    <field name="m4" />
-		                    <field name="m5" />
-		                    <field name="m6" />
-		                    <field name="m7" />
-		                    <field name="m8" />
-		                    <field name="m9" />
-		                    <field name="m10" />
-		                    <field name="m11" />
-		                    <field name="m12" />
-                            <field name="planned_amount"/>
-                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
-                        </group>
+                    	<group>
+	                        <group>                	
+			                    <field name="planned_amount" sum="Planned Amount"/>
+			                    <field name="released_amount" sum="Released Amount"/>
+	                        </group>
+	                    	<group>
+			                    <field name="m0" />
+			                    <field name="m1" />
+			                    <field name="m2" />
+			                    <field name="m3" />
+			                    <field name="m4" />
+			                    <field name="m5" />
+			                    <field name="m6" />
+			                    <field name="m7" />
+			                    <field name="m8" />
+			                    <field name="m9" />
+			                    <field name="m10" />
+			                    <field name="m11" />
+			                    <field name="m12" />
+	                    	</group>
+                    	</group>
                     </sheet>
                 </form>
             </field>

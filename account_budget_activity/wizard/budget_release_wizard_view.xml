@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+       <record id="view_budget_release_wizard" model="ir.ui.view">
+            <field name="name">Budget Release</field>
+            <field name="model">budget.release.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Budget Release" >
+                    <div class="oe_right" >
+                    	<h2>
+	                    	<label string="Released: "/>
+	                    	<field name="progress" string="Released" class="oe_inline" readonly="1" />%  
+	                    </h2>     	
+                	</div>
+                   	<group>
+                   		<field name="release_ids" nolabel="1">
+                   			<tree editable="bottom" create="0" delete="0">
+                   				<field name="ready" invisible="1"/>
+                   				<field name="past" invisible="1"/>
+                   				<field name="release" 
+                   					attrs="{'readonly': [('ready', '=', False)],
+                   							'invisible': [('past', '=', True)]}"/>
+                   				<field name="from_period" />
+                   				<field name="to_period" />
+                   				<field name="from_date" />
+                   				<field name="to_date" />
+                   				<field name="planned_amount" sum="Planned"/>
+                   				<field name="released_amount" sum="Released"/>
+                   			</tree>
+                   		</field>
+                   	</group>
+                    <footer>
+                        <button name="do_release" string="Release Budget" type="object" class="oe_highlight"  />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_budget_release_wizard" model="ir.actions.act_window">
+            <field name="name">Budget Release</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">budget.release.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+    		<field name="context">{'readonly_by_pass': True}</field>
+        </record>
+    </data>
+</openerp>

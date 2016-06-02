@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import fields, models
 from openerp import tools
 
 
@@ -15,12 +15,20 @@ class MonitorView(models.AbstractModel):
         string='Planned Amount',
         readonly=True,
     )
+    released_amount = fields.Float(
+        string='Released Amount',
+        readonly=True,
+    )
     amount_pr_commit = fields.Float(
         string='PR Commitment',
         readonly=True,
     )
     amount_po_commit = fields.Float(
         string='PO Commitment',
+        readonly=True,
+    )
+    amount_exp_commit = fields.Float(
+        string='Expense Commitment',
         readonly=True,
     )
     amount_actual = fields.Float(
@@ -37,8 +45,10 @@ class MonitorView(models.AbstractModel):
             select min(id) as id, fiscalyear_id,
                 %s,
                 sum(planned_amount) planned_amount,
+                sum(released_amount) released_amount,
                 sum(amount_pr_commit) amount_pr_commit,
                 sum(amount_po_commit) amount_po_commit,
+                sum(amount_exp_commit) amount_exp_commit,
                 sum(amount_actual) amount_actual,
                 sum(amount_balance) amount_balance
             from budget_monitor_report

@@ -125,10 +125,12 @@ class PurchaseOrderLine(models.Model):
              ('company_id', '=', self.company_id.id)], limit=1)
         if not general_journal:
             raise Warning(_('Define an accounting journal for purchase'))
+        if not general_journal.is_budget_commit:
+            return False
         if not general_journal.po_commitment_analytic_journal_id or \
                 not general_journal.po_commitment_account_id:
             raise UserError(
-                _("No analytic journal for commitments defined on the "
+                _("No analytic journal for PO commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
 
         # Use PO Commitment Account
@@ -159,6 +161,8 @@ class PurchaseOrderLine(models.Model):
 
     @api.one
     def _create_analytic_line(self, reverse=False):
+        if self.order_id.order_type == 'quotation':  # Not for quotation.
+            return
         vals = self._prepare_analytic_line(reverse=reverse)
         if vals:
             self.env['account.analytic.line'].create(vals)

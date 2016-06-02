@@ -14,6 +14,13 @@
             <field name="type">general</field>
             <field name="budget_commit_type">pr_commit</field>
         </record>
+
+        <record id="account.exp_commit" model="account.analytic.journal">
+            <field name="code">EXP_COM</field>
+            <field name="name">EXP Commitment</field>
+            <field name="type">general</field>
+            <field name="budget_commit_type">exp_commit</field>
+        </record>
         
         <record id="account.exp" model="account.analytic.journal">
             <field name="budget_commit_type">actual</field>

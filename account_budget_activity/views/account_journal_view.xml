@@ -8,16 +8,25 @@
             <field name="inherit_id" ref="account.view_account_journal_1"/>
             <field name="arch" type="xml">
                 <field name="analytic_journal_id" position="after">
-                    <separator string="Budget Commitment" colspan="2"/>
-                    <field name="pr_commitment_analytic_journal_id"/>
-                    <field name="pr_commitment_account_id"
-                    	attrs="{'invisible': [('pr_commitment_analytic_journal_id', '=', False)],
-                    			'required': [('pr_commitment_analytic_journal_id', '!=', False)]}"/>
-                    <field name="po_commitment_analytic_journal_id"/>
-                    <field name="po_commitment_account_id"
-                    	attrs="{'invisible': [('po_commitment_analytic_journal_id', '=', False)],
-                    			'required': [('po_commitment_analytic_journal_id', '!=', False)]}"/>
+                	<field name="is_budget_commit" />
                 </field>
+                <group position="inside">
+	                <group string="Budget Commitment"
+	                		attrs="{'invisible': [('is_budget_commit', '=', False)]}" >
+	                    <field name="pr_commitment_analytic_journal_id"/>
+	                    <field name="pr_commitment_account_id"
+	                    	attrs="{'invisible': [('pr_commitment_analytic_journal_id', '=', False)],
+	                    			'required': [('pr_commitment_analytic_journal_id', '!=', False)]}"/>
+	                    <field name="po_commitment_analytic_journal_id"/>
+	                    <field name="po_commitment_account_id"
+	                    	attrs="{'invisible': [('po_commitment_analytic_journal_id', '=', False)],
+	                    			'required': [('po_commitment_analytic_journal_id', '!=', False)]}"/>
+	                    <field name="exp_commitment_analytic_journal_id"/>
+	                    <field name="exp_commitment_account_id"
+	                    	attrs="{'invisible': [('exp_commitment_analytic_journal_id', '=', False)],
+	                    			'required': [('exp_commitment_analytic_journal_id', '!=', False)]}"/>
+                    </group>                
+                </group>
             </field>
         </record>
 

@@ -26,16 +26,16 @@ class PurchaseRequest(models.Model):
 
     @api.multi
     def write(self, vals):
-        if vals.get('state') in ['approved']:
+        # Create analytic when approved by PRWeb and be come To Accept in PR
+        if vals.get('state') in ['to_approve']:
             self.line_ids.filtered(lambda l:
-                                   l.request_state not in ('approved',)).\
+                                   l.request_state not in ('to_approve',)).\
                 _create_analytic_line(reverse=True)
         # Create negative amount for the remain product_qty - invoiced_qty
         if vals.get('state') in ['rejected']:
             self.line_ids.filtered(lambda l:
                                    l.request_state not in ('draft',
-                                                           'rejected',
-                                                           'to_approve')).\
+                                                           'rejected',)).\
                 _create_analytic_line(reverse=False)
         return super(PurchaseRequest, self).write(vals)
 
@@ -132,6 +132,8 @@ class PurchaseRequestLine(models.Model):
              ('company_id', '=', self.company_id.id)], limit=1)
         if not general_journal:
             raise Warning(_('Define an accounting journal for purchase'))
+        if not general_journal.is_budget_commit:
+            return False
         if not general_journal.pr_commitment_analytic_journal_id or \
                 not general_journal.pr_commitment_account_id:
             raise UserError(

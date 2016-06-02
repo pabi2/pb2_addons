@@ -25,6 +25,8 @@
                             <field name="type"/>
                             <field name="budget_level" required="1"/>
                             <field name="is_budget_control" />
+                            <field name="release_interval" />
+                            <field name="is_auto_release" />
 	                    </tree>
 	                </field>
                 </form>

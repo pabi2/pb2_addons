@@ -8,6 +8,9 @@
              <graph string="Budget Plan" type="pivot">
                  <field name="activity_group_id" type="row"/>
                  <field name="fiscalyear_id" type="col"/>
+                 <field name="planned_amount" type="measure"/>
+                 <field name="released_amount" type="measure"/>
+                 <field name="m0" type="measure"/>
                  <field name="m1" type="measure"/>
                  <field name="m2" type="measure"/>
                  <field name="m3" type="measure"/>
@@ -20,7 +23,6 @@
                  <field name="m10" type="measure"/>
                  <field name="m11" type="measure"/>
                  <field name="m12" type="measure"/>
-                 <field name="planned_amount" type="measure"/>
              </graph>
          </field>
     </record>
@@ -35,6 +37,9 @@
                  <field name="activity_id" />
                  <field name="user_id" />
                  <field name="fiscalyear_id" />
+                 <field name="planned_amount" />
+                 <field name="released_amount" />
+                 <field name="m0" />
                  <field name="m1" />
                  <field name="m2" />
                  <field name="m3" />
@@ -47,7 +52,6 @@
                  <field name="m10" />
                  <field name="m11" />
                  <field name="m12" />
-                 <field name="planned_amount" />
              </tree>
          </field>
     </record>

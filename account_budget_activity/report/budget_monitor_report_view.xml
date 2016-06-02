@@ -9,8 +9,10 @@
                  <field name="activity_group_id" type="row"/>
                  <field name="fiscalyear_id" type="col"/>
                  <field name="planned_amount" type="measure"/>
+                 <field name="released_amount" type="measure"/>
                  <field name="amount_pr_commit" type="measure"/>
                  <field name="amount_po_commit" type="measure"/>
+                 <field name="amount_exp_commit" type="measure"/>
                  <field name="amount_actual" type="measure"/>
                  <field name="amount_balance" type="measure"/>
              </graph>
@@ -29,8 +31,10 @@
                  <field name="user_id" />
                  <field name="fiscalyear_id" />
                  <field name="planned_amount" />
+                 <field name="released_amount" />
                  <field name="amount_pr_commit" />
                  <field name="amount_po_commit" />
+                 <field name="amount_exp_commit" />
                  <field name="amount_actual" />
                  <field name="amount_balance" />
              </tree>
@@ -56,7 +60,7 @@
         <field name="name">Budget Monitor</field>
         <field name="res_model">budget.monitor.report</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,graph</field>
+        <field name="view_mode">graph,tree</field>
         <field name="context">{}</field>
         <field name="search_view_id" ref="view_budget_monitor_report_search"/>
         <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
