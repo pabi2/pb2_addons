@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import Warning as UserError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
-#                                                       (mission)
+#                                           (mission)
 #
 #      (type/tag)      (type/tag)   (type/tag)    (type/tag)     (type/tag)
 #        (org)           (org)        (org)         (org)          (org)
@@ -15,11 +15,84 @@ from openerp.exceptions import ValidationError, Warning as UserError
 # personnel_costcenter
 #
 #    (org)
-#   (invest_asset_category)
+#   (invest_asset_categ)  # not dimension
 # invest_asset
 #
 #        (org)
 # invest_construction -> invest_construction_phase
+
+
+def _loop_structure(res, rec, d, field, clear=False):
+    """ Loop through CHART_STRUCTURE to get the chained data """
+
+    if clear or (field not in rec):
+        res.update({field: False})
+    elif rec[field]:
+        res.update({field: rec[field].id})
+
+    for k, _dummy in d[field].iteritems():
+        if isinstance(d, dict):
+            if rec[field]:
+                _loop_structure(res, rec[field], d[field], k, clear)
+            else:
+                _loop_structure(res, rec, d[field], k, clear)
+
+
+CHART_STRUCTURE = \
+    {
+        'section_id': {
+            'division_id': {
+                'subsector_id': {
+                    'sector_id': {
+                        'org_id': {}
+                    },
+                },
+            },
+            'costcenter_id': {
+                'mission_id': {}
+            },
+        },
+        'project_id': {
+            'project_group_id': {
+                'program_id': {
+                    'program_group_id': {
+                        'functional_area_id': {},
+                        'org_id': {},
+                        'tag_id': {
+                            'tag_type_id': {}
+                        },
+                    },
+                    'org_id': {},
+                    'tag_id': {
+                        'tag_type_id': {}
+                    },
+                },
+                'org_id': {},
+                'tag_id': {
+                    'tag_type_id': {}
+                },
+            },
+            'org_id': {},
+            'tag_id': {
+                'tag_type_id': {}
+            },
+            'mission_id': {},
+        },
+        'personnel_costcenter_id': {
+            'org_id': {},
+        },
+        'invest_asset_id': {
+            'org_id': {},
+        },
+        'invest_construction_phase_id': {
+            'invest_construction_id': {
+                'org_id': {},
+            },
+        },
+        'cost_control_id': {
+            'cost_control_type_id': {},
+        },
+    }
 
 
 # Budget structure and its selection field in document)
@@ -35,13 +108,18 @@ CHART_SELECT = [
     ]
 
 # All types of budget structure
-CHART_VIEW = [
-    ('unit_base', 'Unit Based'),
-    ('project_base', 'Project Based'),
-    ('personnel', 'Personnel'),
-    ('invest_asset', 'Investment Asset'),
-    ('invest_construction', 'Investment Construction'),
-    ]
+# This is related to chart structure
+CHART_VIEW = {
+    'unit_base': ('Unit Based', 'section_id'),
+    'project_base': ('Project Based', 'project_id'),
+    'personnel': ('Personnel', 'personnel_costcenter_id'),
+    'invest_asset': ('Investment Asset', 'invest_asset_id'),
+    'invest_construction': ('Investment Construction',
+                            'invest_construction_id'),
+    }
+
+CHART_VIEW_LIST = [(x[0], x[1][0]) for x in CHART_VIEW.items()]
+CHART_VIEW_FIELD = dict([(x[0], x[1][1]) for x in CHART_VIEW.items()])
 
 # For verification, to ensure that no field is valid outside of its view
 CHART_FIELDS = [
@@ -241,6 +319,13 @@ class ChartField(object):
         'cost.control.type',
         string='Cost Control Type',
     )
+    chart_view = fields.Selection(
+        CHART_VIEW_LIST,
+        string='Budget View',
+        states={'done': [('readonly', True)]},
+        required=False,
+        copy=True,
+    )
 
     @api.multi
     def validate_chartfields(self, chart_type):
@@ -249,6 +334,15 @@ class ChartField(object):
             for d in CHART_FIELDS:
                 if chart_type not in d[1]:
                     line[d[0]] = False
+
+    @api.model
+    def _get_chained_dimension(self, field, clear=False):
+        """ This method will use CHART_STRUCTURE to prepare data """
+        res = {}
+        _loop_structure(res, self, CHART_STRUCTURE, field, clear=clear)
+        if field in res:
+            res.pop(field)  # To avoid recursive
+        return res
 
 
 class ChartFieldAction(ChartField):
@@ -281,6 +375,18 @@ class ChartFieldAction(ChartField):
         self.update_related_dimension(cr, uid, [new_id], vals)
         return new_id
 
+    @api.model
+    def _get_chart_view(self, selects_yes):
+        # update chart_view
+        chart_view = False
+        assert len(selects_yes.keys()) <= 1, 'Only 1 chart_view allowed!'
+        if selects_yes.keys():
+            selected_field = selects_yes.keys()[0]
+            for key, value in CHART_VIEW_FIELD.items():
+                if value == selected_field:
+                    chart_view = key
+        return chart_view
+
     @api.multi
     def update_related_dimension(self, vals):
         # Find selected dimension that is in CHART_SELECT list
@@ -290,85 +396,14 @@ class ChartFieldAction(ChartField):
             selects_no = {k: v for k, v in selects.items() if not v}
             selects_yes = {k: v for k, v in selects.items() if v}
             # update value = false first, the sequence is important
-            for field, value in selects_no.items():
-                self._update_selected_dimension(field, value)
-            for field, value in selects_yes.items():
-                self._update_selected_dimension(field, value)
-
-    @api.model
-    def _update_selected_dimension(self, field, value):
-
-        # Start filling in
-        if field == 'section_id':
-            section = self.env['res.section'].browse(value)
-            org = section.org_id
-            sector = section.sector_id
-            subsector = section.subsector_id
-            division = section.division_id
-            costcenter = section.costcenter_id
-            self.write({'org_id': org.id,
-                        'sector_id': sector.id,
-                        'subsector_id': subsector.id,
-                        'division_id': division.id,
-                        'costcenter_id': costcenter.id})
-
-        if field == 'project_id':
-            project = self.env['res.project'].browse(value)
-            functional_area = project.functional_area_id
-            program_group = project.program_group_id
-            program = project.program_id
-            spa = project.program_id.current_spa_id  # from program
-            project_group = project.project_group_id
-            taxbranch = project.costcenter_id.taxbranch_id
-            mission = project.mission_id
-            self.write({'functional_area_id': functional_area.id,
-                        'program_group_id': program_group.id,
-                        'program_id': program.id,
-                        'spa_id': spa.id,
-                        'project_group_id': project_group.id,
-                        'taxbranch_id': taxbranch.id,
-                        'mission_id': mission.id})
-            # Tags
-            org = (project.org_id or
-                   project_group.org_id or
-                   program.org_id or
-                   program_group.org_id or
-                   functional_area.org_id)
-            tag_type = (project.tag_type_id or
-                        project_group.tag_type_id or
-                        program.tag_type_id or
-                        program_group.tag_type_id or
-                        functional_area.tag_type_id)
-            tag = (project.tag_id or
-                   project_group.tag_id or
-                   program.tag_id or
-                   program_group.tag_id or
-                   functional_area.tag_id)
-            self.write({'org_id': org.id,
-                        'tag_type_id': tag_type.id,
-                        'tag_id': tag.id})
-
-        if field == 'personnel_costcenter_id':
-            pcostcenter = self.env['res.personnel.costcenter'].browse(value)
-            org = pcostcenter.org_id
-            self.write({'org_id': org.id})
-
-        if field == 'invest_asset_id':
-            asset = self.env['res.invest.asset'].browse(value)
-            org = asset.org_id
-            self.write({'org_id': org.id})
-
-        if field == 'invest_construction_phase_id':
-            phase = self.env['res.invest.construction.phase'].browse(value)
-            invest_construction = phase.invest_construction_id
-            org = invest_construction.org_id
-            self.write({'invest_construction_id': invest_construction.id,
-                        'org_id': org.id})
-
-        if field == 'cost_control_id':
-            control = self.env['cost.control'].browse(value)
-            cost_control_type = control.cost_control_type_id
-            self.write({'cost_control_type_id': cost_control_type.id})
+            for field, _dummy in selects_no.items():
+                res = self._get_chained_dimension(field, clear=True)
+                res.update({'chart_view': False})
+                self.write(res)
+            for field, _dummy in selects_yes.items():
+                res = self._get_chained_dimension(field)
+                res.update({'chart_view': self._get_chart_view(selects_yes)})
+                self.write(res)
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

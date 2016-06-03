@@ -5,7 +5,7 @@
 	# Customer Invoice 
 	
 	<!-- Delete existing report -->
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_work_acceptance.purchase_work_acceptance'))]" />
+	<!--<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_work_acceptance.purchase_work_acceptance'))]" />-->
 	<!-- 
 	<record id="nstda_msd_invoice" model="ir.actions.report.xml">
 		<field name="string">Invoice</field>
@@ -42,7 +42,7 @@
 		<field name="header">False</field>
 		<field name="jasper_report">True</field>
 		<field name="jasper_output">pdf</field>
-		<field name="copies">3</field>
+		<field name="copies">1</field>
 	</record>
 
 	<record id="purchase_work_acceptance_values" model="ir.values">
@@ -50,6 +50,28 @@
 		<field name="model">purchase.work.acceptance</field>
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_work_acceptance)" />
+	</record>
+
+	<record id="purchase_order" model="ir.actions.report.xml">
+		<field name="string">Purchase Order</field>
+		<field name="auto">True</field>
+		<field name="model">purchase.order</field>
+		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
+		<field name="name">Purchase Order</field>
+		<field name="report_name">purchase.order</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/purchase_order_th2.jrxml</field>
+		<field name="menu">True</field>
+		<field name="header">False</field>
+		<field name="jasper_report">True</field>
+		<field name="jasper_output">pdf</field>
+		<field name="copies">1</field>
+	</record>
+
+	<record id="purchase_order_values" model="ir.values">
+		<field name="name">Purchase Order</field>
+		<field name="model">purchase.order</field>
+		<field name="key2" eval="'client_print_multi'" />
+		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_order)" />
 	</record>
 
 

@@ -289,8 +289,6 @@ class PurchaseRequisition(models.Model):
                     'verify_uid': self.verify_uid.id,
                     'date_verify': self.date_verify,
                     'doc_no': self.doc_no,
-                    'doc_approve_uid': self.doc_approve_uid.id,
-                    'date_doc_approve': self.date_doc_approve,
                     'fine_rate': 0.1,
                 })
         return res
@@ -299,6 +297,9 @@ class PurchaseRequisition(models.Model):
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
+        res.update({
+            'requesting_operating_unit_id': requisition.operating_unit_id.id,
+        })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
             operating_unit_id = self._context.get('sel_operating_unit_id')
@@ -362,6 +363,34 @@ class PurchaseRequisition(models.Model):
         PWInterface.send_pbweb_requisition(self)
         return True
 
+    @api.multi
+    def set_verification_info(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.print_call_for_bid_form()
+        self.write({
+            'verify_uid': self._uid,
+            'date_verify': fields.date.today(),
+        })
+        for order in self.purchase_ids:
+            if order.state != 'cancel':
+                order.write({
+                    'verify_uid': self._uid,
+                    'date_verify': fields.date.today(),
+                })
+        return True
+
+    @api.multi
+    def tender_done(self, context=None):
+        # ensure the tender to be done in PABIWeb confirmation.
+        res = False
+        for requisition in self:
+            if requisition.state == 'open':
+                res = super(PurchaseRequisition, self).\
+                    tender_done()
+                break
+        return res
+
     @api.model
     def done_order(self, af_info):
         # {
@@ -372,43 +401,66 @@ class PurchaseRequisition(models.Model):
         #     'file_url': 'aaaaas.pdf',
         # }
         user = self.env['res.users']
+        Order = self.env['purchase.order']
         res = {}
         requisition = self.search([('name', '=', af_info['name'])])
         uid = user.search([('login', '=', af_info['approve_uid'])])
-        if af_info['action'] == 'C1':
-            att_file = []
-            try:
-                attachments = {
-                    'requisition_id': requisition.id,
-                    'name': af_info['file_name'],
-                    'file_url': af_info['file_url'],
-                }
-                att_file.append([0, False, attachments])
-                for order in requisition.purchase_ids:
-                    if requisition.state == 'confirmed' \
-                            and order.order_type == 'quotation':
-                        order.action_button_convert_to_order()
-                requisition.write({
-                    'doc_approve_uid': uid.id,
-                    'date_doc_approve': fields.date.today(),
-                    'attachment_ids': att_file,
-                })
-                order.action_button_convert_to_order()
-                if order.state2 != 'done' or order.state != 'done':
-                    order.state2 = 'done'
-                    order.state = 'done'
-                if requisition.state != 'done':
-                    requisition.tender_done()
-                res.update({
-                    'is_success': True,
-                    'result': True,
-                })
-            except Exception, e:
-                res.update({
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(str(e)),
-                })
+        if len(requisition) == 1:
+            if af_info['action'] == 'C1':
+                att_file = []
+                try:
+                    attachments = {
+                        'requisition_id': requisition.id,
+                        'name': af_info['file_name'],
+                        'file_url': af_info['file_url'],
+                    }
+                    att_file.append([0, False, attachments])
+                    for order in requisition.purchase_ids:
+                        if order.order_type == 'quotation' \
+                                and order.state not in ('draft', 'cancel'):
+                            requisition.write({
+                                'doc_approve_uid': uid.id,
+                                'date_doc_approve': fields.date.today(),
+                                'attachment_ids': att_file,
+                            })
+                            today = fields.date.today()
+                            order.action_button_convert_to_order()
+                            if order.state2 != 'done' or order.state != 'done':
+                                order.write({
+                                    'state': 'done',
+                                    'state2': 'done',
+                                    'doc_approve_uid': uid.id,
+                                    'date_doc_approve': today,
+                                })
+                                purchase_order = Order.search([
+                                    ('id', '=', order.order_id.id)
+                                ])
+                                for purchase in purchase_order:
+                                    purchase.write({
+                                        'committee_ids': order.committee_ids,
+                                        'verify_uid': order.verify_uid.id,
+                                        'date_verify': order.date_verify,
+                                        'doc_approve_uid': uid.id,
+                                        'date_doc_approve': today,
+                                    })
+                    if requisition.state != 'done':
+                        requisition.tender_done()
+                    res.update({
+                        'is_success': True,
+                        'result': True,
+                    })
+                except Exception, e:
+                    res.update({
+                        'is_success': False,
+                        'result': False,
+                        'messages': _(str(e)),
+                    })
+        else:
+            res.update({
+                'is_success': False,
+                'result': False,
+                'messages': 'Cannot assign done state to Call for Bids.',
+            })
         return res
 
     @api.multi
@@ -443,8 +495,6 @@ class PurchaseRequisition(models.Model):
                                                      report.report_name,
                                                      {'model': self._name})
             eval_context = {'time': time, 'object': self}
-            # print report.attachment
-            # print eval_context
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually

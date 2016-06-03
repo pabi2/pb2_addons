@@ -36,16 +36,16 @@
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
                     
-                    <field name="invest_asset_id" 
+                    <field name="invest_asset_id" invisible="1"
                 		attrs="{'required': [('section_id','=',False),('project_id','=',False),
                 		('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
                 		
                     <field name="invest_construction_id" invisible="1"/>
-                    <field name="invest_construction_phase_id" 
+                    <field name="invest_construction_phase_id" invisible="1"
                 		attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
                 		('project_id','=',False),('personnel_costcenter_id','=',False)]}"/>
             
-                    <field name="personnel_costcenter_id" 
+                    <field name="personnel_costcenter_id" invisible="1"
                 		attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
                 		('invest_construction_phase_id','=',False),('project_id','=',False)]}"/>
                     

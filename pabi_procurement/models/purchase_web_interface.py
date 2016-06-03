@@ -74,6 +74,8 @@ class PurchaseWebInterface(models.Model):
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
+        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+            return False
         Attachment = self.env['ir.attachment']
         url = ConfParam.get_param('pabiweb_url')
         username = users.login
@@ -131,6 +133,8 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_action_request_test(self, request_name, action, user_name):
         ConfParam = self.env['ir.config_parameter']
         url = ConfParam.get_param('pabiweb_url')
+        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+            return False
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (user_name, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)

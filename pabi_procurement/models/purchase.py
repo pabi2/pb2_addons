@@ -88,11 +88,10 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def by_pass_approve(self, ids):
-        po_rec = self.browse(ids)
-        po_rec.action_button_convert_to_order()
-        if po_rec.state != 'done':
-            po_rec.state = 'done'
-        po_rec.order_id.committee_ids = po_rec.committee_ids
+        quotation = self.browse(ids)
+        quotation.action_button_convert_to_order()
+        if quotation.state != 'done':
+            quotation.state = 'done'
         return True
 
     @api.multi
@@ -125,8 +124,15 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def action_button_convert_to_order(self):
-        self.wkf_validate_vs_requisition()
+        # self.wkf_validate_vs_requisition()
         return super(PurchaseOrder, self).action_button_convert_to_order()
+
+    @api.multi
+    def action_picking_create(self):
+        res = super(PurchaseOrder, self).action_picking_create()
+        picking = self.env['stock.picking'].search([('id', '=', res[0])])
+        picking.verified = True
+        return res
 
 
 class Purchase(models.Model):

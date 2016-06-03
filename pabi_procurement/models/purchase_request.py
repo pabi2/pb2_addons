@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseRequest(models.Model):
@@ -47,7 +48,7 @@ class PurchaseRequest(models.Model):
         states={
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)],
-            },
+        },
         domain="[('operating_unit_ids', 'in', operating_unit_id)]",
         track_visibility='onchange',
     )
@@ -182,17 +183,15 @@ class PurchaseRequest(models.Model):
             'assigned_to.id': u'1',
             'date_approve': u'2016-01-31',
             'total_budget_value': u'240000',
-            'purchase_prototype_id.id': u'1',
-            'purchase_type_id.id': u'1',
-            'purchase_method_id.id': u'1',
-            'purchase_unit_id.id': u'1',
+            # 'purchase_prototype_id.id': u'1',
+            # 'purchase_type_id.id': u'1',
+            # 'purchase_method_id.id': u'1',
             'description': u'Put your PR description here.',
             'objective': u'Put your PR objective here',
             'currency_id.id': u'140',
             'currency_rate': u'1',
             'delivery_address': u'Put your PR delivery address here',
             'date_start': u'2016-01-31',
-            'picking_type_id.id': u'1',
             'operating_unit_id.id': u'1',
             'line_ids': (
                 {
@@ -240,29 +239,7 @@ class PurchaseRequest(models.Model):
                 {
                     'name': u'Mr. Steve Roger',
                     'position': u'Manager',
-                    'responsible': u'Responsible',
-                    'committee_type': u'tor',
-                    'sequence': u'1',
-                },
-                {
-                    'name': u'Mr. Samuel Jackson',
-                    'position': u'Staff',
-                    'responsible': u'Responsible',
-                    'committee_type': u'tor',
-                    'sequence': u'1',
-                },
-                {
-                    'name': u'Mr. Steve Roger',
-                    'position': u'Manager',
-                    'responsible': u'Responsible',
-                    'committee_type': u'receipt',
-                    'sequence': u'1',
-                },
-                {
-                    'name': u'Mr. Samuel Jackson',
-                    'position': u'Staff',
-                    'responsible': u'Responsible',
-                    'committee_type': u'std_price',
+                    'committee_type_id': u'คณะกรรมการเปิดซองสอบราคา',
                     'sequence': u'1',
                 },
             ),
@@ -347,8 +324,40 @@ class PurchaseRequest(models.Model):
         return commitee_ids
 
     @api.model
+    def _get_request_info(self, data_dict):
+        if 'org_id' in data_dict:
+            Org = self.env['res.org']
+            organization = Org.search([
+                ('id', '=', data_dict['org_id']),
+            ])
+            for org in organization:
+                type_id = False
+                Warehouse = self.env['stock.warehouse']
+                PType = self.env['stock.picking.type']
+                warehouse = Warehouse.search([
+                    ('operating_unit_id', '=', org.operating_unit_id.id),
+                ])
+                for wh in warehouse:
+                    picking_type = PType.search([
+                        ('warehouse_id', '=', wh.id),
+                        ('code', '=', 'incoming'),
+                    ])
+                    for picking in picking_type:
+                        type_id = picking.id
+                        break
+                    break
+                data_dict.update({
+                    'picking_type_id.id': type_id,
+                    'operating_unit_id.id': org.operating_unit_id.id,
+                })
+                del data_dict['org_id']
+                break
+        return data_dict
+
+    @api.model
     def generate_purchase_request(self, data_dict):
         ret = {}
+        data_dict = self._get_request_info(data_dict)
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data
@@ -390,6 +399,15 @@ class PurchaseRequest(models.Model):
         res = super(PurchaseRequest, self).button_approved()
         PWInterface = self.env['purchase.web.interface']
         PWInterface.send_pbweb_action_request(self, 'accept')
+        return res
+
+    @api.multi
+    def button_to_approve(self):
+        for rec in self:
+            if not rec.line_ids:
+                raise UserError(
+                    _(('You cannot confirm a request without any line.')))
+        res = super(PurchaseRequest, self).button_to_approve()
         return res
 
     @api.multi

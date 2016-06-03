@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import models
 from openerp import tools
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_FIELDS, ChartField
@@ -13,6 +13,7 @@ class BudgetMonitorReport(ChartField, models.Model):
         dimensions = super(BudgetMonitorReport, self)._get_dimension()
         for d in dict(CHART_FIELDS).keys():
             dimensions += ', %s' % (d,)
+        dimensions += ', chart_view'
         return dimensions
 
     def init(self, cr):

@@ -60,7 +60,7 @@ class AccountBudget(models.Model):
         'personnel_costcenter_id': 'res.personnel.costceter',
         # Investment
         # - Asset
-        #'invest_asset_categ_id': 'res.invest.asset.category',
+        # 'invest_asset_categ_id': 'res.invest.asset.category',
         'invest_asset_id': 'res.invest.asset',
         # - Construction
         'invest_construction_id': 'res.invest.construction',
@@ -68,56 +68,15 @@ class AccountBudget(models.Model):
     }
 
     BUDGET_LEVEL_TYPE = {
-        'check_budget_project_base': 'Project Based',
-        'check_budget_unit_base': 'Unit Based',
-        'check_budget_personnel': 'Personnel',
-        'check_budget_invest_asset': 'Investment Asset',
-        'check_budget_invest_construction': 'Investment Construction',
+        'project_base': 'Project Based',
+        'unit_base': 'Unit Based',
+        'personnel': 'Personnel',
+        'invest_asset': 'Investment Asset',
+        'invest_construction': 'Investment Construction',
     }
 
     @api.multi
     def _validate_budget_level(self, budget_type='check_budget'):
         for rec in self:
-            budget_type = 'check_budget_%s' % (rec.chart_view,)
+            budget_type = rec.chart_view
             super(AccountBudget, rec)._validate_budget_level(budget_type)
-
-    @api.model
-    def _get_budget_type_by_selected_chartfield(self, vals):
-        if vals.get('project_id'):
-            return 'check_budget_project_base'
-        if vals.get('section_id'):
-            return 'check_budget_unit_base'
-        if vals.get('invest_asset_id'):
-            return 'check_budget_invest_asset'
-        if vals.get('invest_construction_phase_id'):
-            return 'check_budget_invest_construction'
-        if vals.get('personnel_costcenter_id'):
-            return 'check_budget_personnel'
-        return False
-
-    # -- Budget Check for Activity Group Level --
-    # DO NOT DELETE
-#     @api.model
-#     def _get_budget_monitor(self, fiscal, budget_type,
-#                             budget_level, resource, pu_id=False):
-#         """ Overwrite """
-#         if budget_type not in ['check_budget_unit_base',
-#                                'check_budget_project_base']:
-#             return super(AccountBudget, self)._get_budget_monitor(fiscal,
-#                                                                   budget_level,
-#                                                                   resource,
-#                                                                   pu_id)
-#         monitors = False
-#         if budget_level in ('activity_group_id', 'activity_id'):
-#             if budget_type == 'check_budget_unit_base':
-#                 monitors = resource.monitor_unit_ids.\
-#                     filtered(lambda x: x.fiscalyear_id == fiscal).\
-#                     filtered(lambda x: x['costcenter_id'].id == pu_id)
-#             elif budget_type == 'check_budget_project_base':
-#                 monitors = resource.monitor_ids.\
-#                     filtered(lambda x: x.fiscalyear_id == fiscal).\
-#                     filtered(lambda x: x['project_id'].id == pu_id)
-#         else:
-#             monitors = resource.monitor_ids.\
-#                 filtered(lambda x: x.fiscalyear_id == fiscal)
-#         return monitors
