@@ -170,6 +170,20 @@
                 </xpath>
             </field>
         </record>
+        <record model="ir.ui.view" id="acc_budget_view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="account_budget_activity.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_group_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_purchase_requisition_tree">
             <field name="name">purchase.requisition.tree</field>
             <field name="model">purchase.requisition</field>
