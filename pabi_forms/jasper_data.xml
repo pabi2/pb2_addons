@@ -59,7 +59,7 @@
 		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 		<field name="name">Purchase Order</field>
 		<field name="report_name">purchase.order</field>
-		<field name="report_rml">pabi_forms/jrxml_reports/purchase_order_th2.jrxml</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/purchase_order_TH.jrxml</field>
 		<field name="menu">True</field>
 		<field name="header">False</field>
 		<field name="jasper_report">True</field>

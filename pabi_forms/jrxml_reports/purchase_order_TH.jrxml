@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.2396694214876032"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="138"/>
+	<property name="ireport.x" value="161"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_id&quot;,&quot;operating_unit_id&quot;,&quot;picking_type_id&quot;]"/>
 	<queryString language="xPath">
 		<![CDATA[data/record]]>
@@ -87,6 +87,21 @@
 	</field>
 	<field name="payment_term" class="java.lang.String">
 		<fieldDescription><![CDATA[payment_term_id/name]]></fieldDescription>
+	</field>
+	<field name="image" class="java.lang.String">
+		<fieldDescription><![CDATA[operating_unit_id/partner_id/image]]></fieldDescription>
+	</field>
+	<field name="approve_by" class="java.lang.String">
+		<fieldDescription><![CDATA[doc_approve_uid/name]]></fieldDescription>
+	</field>
+	<field name="approve_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_doc_approve]]></fieldDescription>
+	</field>
+	<field name="verify_by" class="java.lang.String">
+		<fieldDescription><![CDATA[verify_uid/name]]></fieldDescription>
+	</field>
+	<field name="verify_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_verify]]></fieldDescription>
 	</field>
 	<variable name="subtotal" class="java.lang.Float">
 		<variableExpression><![CDATA[$F{line_qty}*$F{line_price_unit}]]></variableExpression>
@@ -264,6 +279,12 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ship_to_fax} != null ? "โทรศัพท์: " + $F{ship_to_fax} : ""]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="474" y="5" width="73" height="39">
+					<printWhenExpression><![CDATA[$F{image}!='']]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$F{image}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -500,45 +521,6 @@
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="33" y="96" width="127" height="12"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[( นางสาวศิวพร นาคจรณะ )]]></text>
-			</staticText>
-			<line>
-				<reportElement x="59" y="115" width="18" height="1"/>
-				<graphicElement>
-					<pen lineStyle="Dotted"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement x="86" y="115" width="18" height="1"/>
-				<graphicElement>
-					<pen lineStyle="Dotted"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement x="113" y="115" width="18" height="1"/>
-				<graphicElement>
-					<pen lineStyle="Dotted"/>
-				</graphicElement>
-			</line>
-			<staticText>
-				<reportElement x="107" y="108" width="7" height="16"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[/]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="79" y="108" width="7" height="16"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[/]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="176" y="83" width="104" height="28"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
 					<font isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -548,45 +530,6 @@
 			</staticText>
 			<line>
 				<reportElement x="33" y="150" width="127" height="2"/>
-				<graphicElement>
-					<pen lineStyle="Dotted"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement x="113" y="202" width="18" height="1"/>
-				<graphicElement>
-					<pen lineStyle="Dotted"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement x="86" y="202" width="18" height="1"/>
-				<graphicElement>
-					<pen lineStyle="Dotted"/>
-				</graphicElement>
-			</line>
-			<staticText>
-				<reportElement x="107" y="195" width="7" height="16"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[/]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="79" y="195" width="7" height="16"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[/]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="33" y="154" width="127" height="13"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[( นางสาวศิวพร นาคจรณะ )]]></text>
-			</staticText>
-			<line>
-				<reportElement x="59" y="202" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
@@ -713,6 +656,34 @@
 				</textElement>
 				<text><![CDATA[ประทับตราบริษัท (ถ้ามี)]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="33" y="154" width="126" height="13"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{approve_by} != '' ? "( " + $F{approve_by} + " )" : '']]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="33" y="195" width="126" height="13"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{approve_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="96" width="127" height="13"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{verify_by} != '' ? "( " + $F{verify_by} + " )" : '']]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="33" y="109" width="126" height="13"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{verify_date}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>

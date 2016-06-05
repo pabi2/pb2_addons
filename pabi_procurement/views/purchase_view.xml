@@ -94,5 +94,19 @@
         <record model="ir.actions.act_window" id="purchase.action_view_purchase_order_group">
             <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
         </record>
+        <!--Hide Acc Budget Activity-->
+        <record model="ir.ui.view" id="acc_budget_purchase_order_form">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="account_budget_activity.purchase_order_form"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_group_id']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                </field>
+        </record>
     </data>
 </openerp>

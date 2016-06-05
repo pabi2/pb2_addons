@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.4641000000000022"/>
-	<property name="ireport.x" value="22"/>
+	<property name="ireport.x" value="299"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_id&quot;,&quot;operating_unit_id&quot;,&quot;picking_type_id&quot;]"/>
 	<queryString language="xPath">
@@ -87,6 +87,9 @@
 	</field>
 	<field name="payment_term" class="java.lang.String">
 		<fieldDescription><![CDATA[payment_term_id/name]]></fieldDescription>
+	</field>
+	<field name="image" class="java.lang.String">
+		<fieldDescription><![CDATA[operating_unit_id/partner_id/image]]></fieldDescription>
 	</field>
 	<variable name="subtotal" class="java.lang.Float">
 		<variableExpression><![CDATA[$F{line_qty}*$F{line_price_unit}]]></variableExpression>
@@ -264,6 +267,12 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ship_to_fax} != null ? "โทรศัพท์: " + $F{ship_to_fax} : ""]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RealSize" isUsingCache="false" onErrorType="Blank">
+				<reportElement isPrintRepeatedValues="false" x="507" y="5" width="40" height="39" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{image}!=""]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$F{image}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
