@@ -1,14 +1,9 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <menuitem name="Budget Preparation" id="menu_action_account_budget_prepare" parent="account_budget_activity.menu_budgeting" sequence="10"/>
-       		<menuitem name="Project" id="menu_action_account_budget_prepare_project" parent="menu_action_account_budget_prepare" sequence="10"/>
-       		<menuitem name="Section" id="menu_action_account_budget_section" parent="menu_action_account_budget_prepare" sequence="20"/>
-       		<menuitem name="Investment" id="menu_action_account_budget_investment" parent="menu_action_account_budget_prepare" sequence="30"/>
-
-        <record model="ir.ui.view" id="account_budget_prepare_view_form">
-            <field name="name">account.budget.prepare.view.form</field>
-            <field name="model">account.budget.prepare</field>
+        <record model="ir.ui.view" id="view_budget_prepare_project_form">
+            <field name="name">view.budget.prepare.project.form</field>
+            <field name="model">budget.prepare.project</field>
             <field name="arch" type="xml">
                 <form string="Budget Prepare">
                     <header>
@@ -34,12 +29,12 @@
                         	<field name="program_group_id" />
                             <field name="creating_user_id" attrs="{'readonly':[('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
                             <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        	<field name="chart_view" required="1" readonly="1" />
                         	<field name="amount_budget_request" />
                         	<field name="amount_budget_policy" />
                         	<field name="amount_budget_release" />
                         </group>
                         <group>
-                        	<field name="input_file" />
                         	<field name="date" />
                         	<field name="date_submit" />
                         	<field name="date_approve" />
@@ -49,12 +44,11 @@
                                 <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
                                 <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                             </div>
-                            <field name="company_id" groups="base.group_multi_company" widget="selection"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Budget Control">
-                            <field name="budget_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                            <field name="prepare_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
                                 <tree string="Budget Lines" editable="bottom">
 			
 									<field name="c_or_n" />
@@ -145,57 +139,51 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="account_budget_prepare_view_tree">
-            <field name="name">account.budget.prepare.view.tree</field>
-            <field name="model">account.budget.prepare</field>
+        <record model="ir.ui.view" id="view_budget_prepare_project_tree">
+            <field name="name">view.budget.prepare.project.tree</field>
+            <field name="model">budget.prepare.project</field>
             <field name="arch" type="xml">
                <tree colors="blue:state == 'draft';gray:state in ('approve','cancel');black:state in ('reject','submit')" string="Budget">
                     <field name="name" />
                     <field name="date_from"/>
                     <field name="date_to"/>
-                    <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                     <field name="creating_user_id"/>
                     <field name="state"/>
                 </tree>
             </field>
         </record>
 
-        <record id="view_account_budget_prepare_search" model="ir.ui.view">
-           <field name="name">account.budget.prepare.search</field>
-           <field name="model">account.budget.prepare</field>
+        <record id="view_budget_prepare_project_search" model="ir.ui.view">
+           <field name="name">view.budget.prepare.project.search</field>
+           <field name="model">budget.prepare.project</field>
            <field name="arch" type="xml">
                <search string="Budget">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Prepare"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
-                    <field name="state"/>
                 </search>
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="act_account_budget_prepare_view">
+        <record model="ir.actions.act_window" id="action_budget_prepare_project_view">
             <field name="name">Budget Prepare</field>
-            <field name="res_model">account.budget.prepare</field>
+            <field name="res_model">budget.prepare.project</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="account_budget_prepare_view_tree"/>
-            <field name="search_view_id" ref="view_account_budget_prepare_search"/>
+            <field name="view_id" ref="view_budget_prepare_project_tree"/>
+            <field name="search_view_id" ref="view_budget_prepare_project_search"/>
+            <field name="context">{'default_chart_view': 'project_base'}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Click to create a new budget preparation.
               </p>
             </field>
         </record>
-        <menuitem parent="menu_action_account_budget_prepare_project"
-            id="menu_act_account_budget_prepare_view"
-            action="act_account_budget_prepare_view" sequence="10" />
-        
+        <menuitem parent="menu_action_budget_prepare_project"
+            id="menu_budget_prepare_project_view"
+            action="action_budget_prepare_project_view" sequence="10" />
             	
-            	
-            	
-        <record id="view_account_budget_prepare_line_filter" model="ir.ui.view">
-            <field name="name">account.budget.prepare.line.filter</field>
-            <field name="model">account.budget.prepare.line</field>
+        <record id="view_budget_prepare_project_line_search" model="ir.ui.view">
+            <field name="name">view.budget.prepare.project.line.search</field>
+            <field name="model">budget.prepare.project.line</field>
             <field name="arch" type="xml">
                 <search string="Search Budget Prepare Line">
                     <group expand="0" string="Group By">
@@ -225,9 +213,9 @@
             </field>
         </record>
             	
-        <record model="ir.ui.view" id="view_account_budget_prepare_line_tree">
-            <field name="name">account.budget.prepare.line.tree</field>
-            <field name="model">account.budget.prepare.line</field>
+        <record model="ir.ui.view" id="view_budget_prepare_project_line_tree">
+            <field name="name">view.budget.prepare.project.line.tree</field>
+            <field name="model">budget.prepare.project.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Prepare Lines">
             
@@ -294,9 +282,9 @@
                 </tree>
             </field>
         </record>
-	    <record id="view_account_budget_prepare_line_graph" model="ir.ui.view">
-	         <field name="name">view.account.budget.prepare.line.graph</field>
-	         <field name="model">account.budget.prepare.line</field>
+	    <record id="view_budget_prepare_project_line_graph" model="ir.ui.view">
+	         <field name="name">view.budget.prepare.project.line.graph</field>
+	         <field name="model">budget.prepare.project.line</field>
 	         <field name="arch" type="xml">
 	             <graph string="Budget Prepare Lines" type="pivot">
 	                <!-- field name="project_id" type="row"/>
@@ -305,31 +293,18 @@
 	             </graph>
 	         </field>
 	    </record>
-        <record model="ir.ui.view" id="view_account_budget_prepare_line_form">
-            <field name="name">account.budget.prepare.line.form</field>
-            <field name="model">account.budget.prepare.line</field>
-            <field name="arch" type="xml">
-                <form string="Budget Lines">
-                    <sheet>
-                        <group col="4">
 
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record model="ir.actions.act_window" id="act_account_budget_prepare_line_view">
+        <record model="ir.actions.act_window" id="action_budget_prepare_project_line_view">
             <field name="name">Budget Prepare Lines</field>
-            <field name="res_model">account.budget.prepare.line</field>
+            <field name="res_model">budget.prepare.project.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,graph</field>
-            <field name="view_id" ref="view_account_budget_prepare_line_tree"/>
+            <field name="view_id" ref="view_budget_prepare_project_tree"/>
         </record>
 
-        <menuitem parent="menu_action_account_budget_prepare_project"
-            id="menu_act_account_budget_prepare_line_view"
-            action="act_account_budget_prepare_line_view"
+        <menuitem parent="menu_action_budget_prepare_project"
+            id="menu_budget_prepare_project_line_view"
+            action="action_budget_prepare_project_line_view"
         	sequence="20"/>
 
     </data>

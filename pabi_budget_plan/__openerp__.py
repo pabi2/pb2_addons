@@ -14,11 +14,10 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/cost_control_breakdown_wizard.xml',
-        'views/budget_prepare_menu.xml',
-        'views/budget_prepare_project_view.xml',
-        'views/budget_prepare_unit_view.xml',
+        'views/budget_plan_menu.xml',
+        'views/budget_plan_project_view.xml',
+        'views/budget_plan_unit_view.xml',
         'views/budget_fiscal_policy_view.xml',
-        'workflow/account_budget_prepare_workflow.xml',
     ],
     'demo': [
     ],

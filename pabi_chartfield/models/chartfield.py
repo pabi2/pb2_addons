@@ -221,85 +221,113 @@ class ChartField(object):
     spa_id = fields.Many2one(
         'res.spa',
         string='SPA',
+        default=lambda self: self.env['res.spa'].
+        browse(self._context.get('spa_id')),
     )
     mission_id = fields.Many2one(
         'res.mission',
         string='Mission',
+        default=lambda self: self.env['res.mission'].
+        browse(self._context.get('mission_id')),
     )
     tag_type_id = fields.Many2one(
         'res.tag.type',
         string='Tag Type',
+        default=lambda self: self.env['res.tag.type'].
+        browse(self._context.get('tag_type_id')),
     )
     tag_id = fields.Many2one(
         'res.tag',
         string='Tag',
-        # domain="[('tag_type_id', '=', tag_type_id)]",
+        default=lambda self: self.env['res.tag'].
+        browse(self._context.get('tag_id')),
     )
     functional_area_id = fields.Many2one(
         'res.functional.area',
         string='Functional Area',
+        default=lambda self: self.env['res.functional.area'].
+        browse(self._context.get('functional_area_id')),
     )
     program_group_id = fields.Many2one(
         'res.program.group',
         string='Program Group',
-        # domain="[('functional_area_id', '=', functional_area_id)]",
+        default=lambda self: self.env['res.program.group'].
+        browse(self._context.get('program_group_id')),
     )
     program_id = fields.Many2one(
         'res.program',
         string='Program',
-        # domain="[('program_group_id', '=', program_group_id)]",
+        default=lambda self: self.env['res.program'].
+        browse(self._context.get('program_id')),
     )
     project_group_id = fields.Many2one(
         'res.project.group',
         string='Project Group',
-        # domain="[('program_id', '=', program_id)]",
+        default=lambda self: self.env['res.project.group'].
+        browse(self._context.get('project_group_id')),
     )
     project_id = fields.Many2one(
         'res.project',
         string='Project',
+        default=lambda self: self.env['res.project'].
+        browse(self._context.get('project_id')),
     )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+        default=lambda self: self.env['res.org'].
+        browse(self._context.get('org_id')),
     )
     sector_id = fields.Many2one(
         'res.sector',
         string='Sector',
-        # domain="[('org_id', '=', org_id)]",
+        default=lambda self: self.env['res.sector'].
+        browse(self._context.get('sector_id')),
     )
     subsector_id = fields.Many2one(
         'res.subsector',
         string='Subsector',
-        # domain="[('sector_id', '=', sector_id)]",
+        default=lambda self: self.env['res.subsector'].
+        browse(self._context.get('subsector_id')),
     )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
-        # domain="[('subsector_id', '=', subsector_id)]",
+        default=lambda self: self.env['res.division'].
+        browse(self._context.get('division_id')),
     )
     section_id = fields.Many2one(
         'res.section',
         string='Section',
+        default=lambda self: self.env['res.section'].
+        browse(self._context.get('section_id')),
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
         string='Costcenter',
-        # domain="[('section_ids', '!=', False)]",
+        default=lambda self: self.env['res.costcenter'].
+        browse(self._context.get('costcenter_id')),
     )
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
+        default=lambda self: self.env['res.taxbranch'].
+        browse(self._context.get('taxbranch_id')),
     )
     # Personnel
     personnel_costcenter_id = fields.Many2one(
         'res.personnel.costcenter',
         string='Personnel Costcenter',
+        default=lambda self: self.env['res.personnel.costcenter'].
+        browse(self._context.get('personnel_costcenter_id')),
     )
     # Investment - Asset
     invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
+        default=lambda self: self.env['res.invest.asset'].
+        browse(self._context.get('invest_asset_id')),
     )
     # Investment - Construction
     invest_construction_id = fields.Many2one(
@@ -309,20 +337,25 @@ class ChartField(object):
     invest_construction_phase_id = fields.Many2one(
         'res.invest.construction.phase',
         string='Construction Phase',
+        default=lambda self: self.env['res.invest.construction.phase'].
+        browse(self._context.get('invest_construction_id')),
     )
     # Non Binding Dimension
     cost_control_id = fields.Many2one(
         'cost.control',
         string='Cost Control',
+        default=lambda self: self.env['cost.control'].
+        browse(self._context.get('cost_control_id')),
     )
     cost_control_type_id = fields.Many2one(
         'cost.control.type',
         string='Cost Control Type',
+        default=lambda self: self.env['cost.control.type'].
+        browse(self._context.get('cost_control_type_id')),
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
         string='Budget View',
-        states={'done': [('readonly', True)]},
         required=False,
         copy=True,
     )

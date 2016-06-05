@@ -1,0 +1,313 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_budget_prepare_project_form">
+            <field name="name">view.budget.prepare.project.form</field>
+            <field name="model">budget.prepare.project</field>
+            <field name="arch" type="xml">
+                <form string="Budget Prepare">
+                    <header>
+                        <button string="Submit" name="submit" states="draft" type="workflow" class="oe_highlight"/>
+                        <button string="Approve" name="approve" states="submit" type="workflow" class="oe_highlight"/>
+                        <button string="Reject" name="reject" states="submit" type="workflow" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="draft" states="cancel" type="workflow" />
+                        <button string="Cancel" name="cancel" states="draft,reject" type="workflow"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,reject,approve"/>
+                    </header>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </h1>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons">
+                    </div>
+                    <group>
+                        <group>
+                        	<field name="program_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        	<field name="functional_area_id" />
+                        	<field name="program_group_id" />
+                            <field name="creating_user_id" attrs="{'readonly':[('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        	<field name="chart_view" required="1" readonly="1" />
+                        	<field name="amount_budget_request" />
+                        	<field name="amount_budget_policy" />
+                        	<field name="amount_budget_release" />
+                        </group>
+                        <group>
+                        	<field name="date" />
+                        	<field name="date_submit" />
+                        	<field name="date_approve" />
+                            <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <div>
+                                <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
+                                <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+                            </div>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Budget Control">
+                            <field name="prepare_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree string="Budget Lines" editable="bottom">
+			
+									<field name="c_or_n" />
+
+									<field name="project_id" />
+			
+									<field name="cur_current_budget" sum="Total" />
+									<field name="cur_release_budget" sum="Total" />
+									<field name="cur_commit_budget" sum="Total" />
+									<field name="cur_actual" sum="Total" />
+									<field name="cur_remaining_budget" sum="Total" />
+									<field name="cur_estimated_commitment" sum="Total" />
+									<field name="fy1q1" sum="Total" />
+									<field name="fy1q2" sum="Total" />
+									<field name="fy1q3" sum="Total" />
+									<field name="fy1q4" sum="Total" />
+									<field name="fy1" sum="Total" />
+									<field name="fy2" sum="Total" />
+									<field name="fy3" sum="Total" />
+									<field name="fy4" sum="Total" />
+									<field name="fy5" sum="Total" />
+									<field name="total" sum="Total" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Project Detail">
+                            <field name="project_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree string="Budget Lines" editable="bottom">
+			
+									<field name="c_or_n" />
+			
+									<field name="project_id" />
+									
+									<field name="functional_area_id" />
+									<field name="program_group_id" />
+									<field name="program_id" />
+									<field name="project_group_id" />
+									<field name="mission_id" />
+									<field name="project_kind" />
+									<field name="project_objective" />
+									<field name="project_type" />
+									<field name="org_id" />
+									<field name="costcenter_id" />
+									<field name="division_id" />
+									<field name="manager_employee_id" />
+									<field name="date_from" />
+									<field name="date_to" />
+									<field name="project_duration" />
+									<field name="project_status" />
+									<field name="analyst_employee_id" />
+									<field name="ref_program_id" />
+									<field name="external_fund_type" />
+									<field name="external_fund_name" />
+									<field name="priority" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Performance">
+                            <field name="performance_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree string="Budget Lines" editable="bottom">
+			
+									<field name="c_or_n" />
+									
+									<field name="project_id" />
+									
+									<field name="pfm_publications" sum="Total"/>
+									<field name="pfm_patents" sum="Total" />
+									<field name="pfm_petty_patents" sum="Total" />
+									<field name="pfm_copyrights" sum="Total" />
+									<field name="pfm_trademarks" sum="Total" />
+									<field name="pfm_plant_varieties" sum="Total" />
+									<field name="pfm_laboratory_prototypes" sum="Total" />
+									<field name="pfm_field_prototypes" sum="Total" />
+									<field name="pfm_commercial_prototypes" sum="Total" />
+									<field name="pfm_revenue_budget" sum="Total" />
+									<field name="pfm_revenue_overall_plan" sum="Total" />
+									<field name="pfm_revenue_accum" sum="Total" />
+									<field name="pfm_revenue_current_year" sum="Total" />
+									<field name="pfm_expense_overall_budget" sum="Total" />
+									<field name="pfm_expense_accum" sum="Total" />
+									<field name="pfm_commitment_accum" sum="Total" />
+									<field name="pfm_expense_remaining_budget" sum="Total" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_prepare_project_tree">
+            <field name="name">view.budget.prepare.project.tree</field>
+            <field name="model">budget.prepare.project</field>
+            <field name="arch" type="xml">
+               <tree colors="blue:state == 'draft';gray:state in ('approve','cancel');black:state in ('reject','submit')" string="Budget">
+                    <field name="name" />
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="creating_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_prepare_project_search" model="ir.ui.view">
+           <field name="name">view.budget.prepare.project.search</field>
+           <field name="model">budget.prepare.project</field>
+           <field name="arch" type="xml">
+               <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Prepare"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_budget_prepare_project_view">
+            <field name="name">Budget Prepare</field>
+            <field name="res_model">budget.prepare.project</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_prepare_project_tree"/>
+            <field name="search_view_id" ref="view_budget_prepare_project_search"/>
+            <field name="context">{'default_chart_view': 'project_base'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget preparation.
+              </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_prepare_project"
+            id="menu_budget_prepare_project_view"
+            action="action_budget_prepare_project_view" sequence="10" />
+            	
+        <record id="view_budget_prepare_project_line_search" model="ir.ui.view">
+            <field name="name">view.budget.prepare.project.line.search</field>
+            <field name="model">budget.prepare.project.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Prepare Line">
+                    <group expand="0" string="Group By">
+	                    <filter name="c_or_n" string="C/N" domain="[]" context="{'group_by':'c_or_n'}"/>
+						<filter name="project_id" string="Project" domain="[]" context="{'group_by':'project_id'}"/>
+						<filter name="functional_area_id" string="Functional Area" domain="[]" context="{'group_by':'functional_area_id'}"/>
+						<filter name="program_group_id" string="Program Group" domain="[]" context="{'group_by':'program_group_id'}"/>
+						<filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
+						<filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
+						<filter name="mission_id" string="Mission" domain="[]" context="{'group_by':'mission_id'}"/>
+						<filter name="project_kind" string="Project Kind" domain="[]" context="{'group_by':'project_kind'}"/>
+						<filter name="project_objective" string="Objective" domain="[]" context="{'group_by':'project_objective'}"/>
+						<filter name="project_type" string="Type" domain="[]" context="{'group_by':'project_type'}"/>
+						<filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
+						<filter name="costcenter_id" string="Costcenter" domain="[]" context="{'group_by':'costcenter_id'}"/>
+						<filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
+						<filter name="manager_employee_id" string="Manager" domain="[]" context="{'group_by':'manager_employee_id'}"/>
+						<filter name="project_duration" string="Duration" domain="[]" context="{'group_by':'project_duration'}"/>
+						<filter name="project_status" string="Status" domain="[]" context="{'group_by':'project_status'}"/>
+						<filter name="analyst_employee_id" string="Analyst" domain="[]" context="{'group_by':'analyst_employee_id'}"/>
+						<filter name="ref_program_id" string="Ref Program" domain="[]" context="{'group_by':'ref_program_id'}"/>
+						<filter name="external_fund_type" string="Ext. Fund Type" domain="[]" context="{'group_by':'external_fund_type'}"/>
+						<filter name="external_fund_name" string="Ext. Fund Name" domain="[]" context="{'group_by':'external_fund_name'}"/>
+						<filter name="priority" string="Priority" domain="[]" context="{'group_by':'priority'}"/>
+               	</group>
+               </search>
+            </field>
+        </record>
+            	
+        <record model="ir.ui.view" id="view_budget_prepare_project_line_tree">
+            <field name="name">view.budget.prepare.project.line.tree</field>
+            <field name="model">budget.prepare.project.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Prepare Lines">
+            
+   					<field name="c_or_n" invisible="1" />
+   					<field name="project_id" invisible="0" />
+					
+					<field name="functional_area_id" invisible="1" />
+					<field name="program_group_id" invisible="1" />
+					<field name="program_id" invisible="1" />
+					<field name="project_group_id" invisible="1" />
+					<field name="mission_id" invisible="1" />
+					<field name="project_kind" invisible="1" />
+					<field name="project_objective" invisible="1" />
+					<field name="project_type" invisible="1" />
+					<field name="org_id" invisible="1" />
+					<field name="costcenter_id" invisible="1" />
+					<field name="division_id" invisible="1" />
+					<field name="manager_employee_id" invisible="1" />
+					<field name="date_from" invisible="1" />
+					<field name="date_to" invisible="1" />
+					<field name="project_duration" invisible="1" />
+					<field name="project_status" invisible="1" />
+					<field name="analyst_employee_id" invisible="1" />
+					<field name="ref_program_id" invisible="1" />
+					<field name="external_fund_type" invisible="1" />
+					<field name="external_fund_name" invisible="1" />
+					<field name="priority" invisible="1" />
+					
+					<field name="pfm_publications" sum="Total"/>
+					<field name="pfm_patents" sum="Total" />
+					<field name="pfm_petty_patents" sum="Total" />
+					<field name="pfm_copyrights" sum="Total" />
+					<field name="pfm_trademarks" sum="Total" />
+					<field name="pfm_plant_varieties" sum="Total" />
+					<field name="pfm_laboratory_prototypes" sum="Total" />
+					<field name="pfm_field_prototypes" sum="Total" />
+					<field name="pfm_commercial_prototypes" sum="Total" />
+					<field name="pfm_revenue_budget" sum="Total" />
+					<field name="pfm_revenue_overall_plan" sum="Total" />
+					<field name="pfm_revenue_accum" sum="Total" />
+					<field name="pfm_revenue_current_year" sum="Total" />
+					<field name="pfm_expense_overall_budget" sum="Total" />
+					<field name="pfm_expense_accum" sum="Total" />
+					<field name="pfm_commitment_accum" sum="Total" />
+					<field name="pfm_expense_remaining_budget" sum="Total" />
+
+					<field name="cur_current_budget" sum="Total" />
+					<field name="cur_release_budget" sum="Total" />
+					<field name="cur_commit_budget" sum="Total" />
+					<field name="cur_actual" sum="Total" />
+					<field name="cur_remaining_budget" sum="Total" />
+					<field name="cur_estimated_commitment" sum="Total" />
+					<field name="fy1q1" sum="Total" />
+					<field name="fy1q2" sum="Total" />
+					<field name="fy1q3" sum="Total" />
+					<field name="fy1q4" sum="Total" />
+					<field name="fy1" sum="Total" />
+					<field name="fy2" sum="Total" />
+					<field name="fy3" sum="Total" />
+					<field name="fy4" sum="Total" />
+					<field name="fy5" sum="Total" />
+					<field name="total" sum="Total" />
+                
+                </tree>
+            </field>
+        </record>
+	    <record id="view_budget_prepare_project_line_graph" model="ir.ui.view">
+	         <field name="name">view.budget.prepare.project.line.graph</field>
+	         <field name="model">budget.prepare.project.line</field>
+	         <field name="arch" type="xml">
+	             <graph string="Budget Prepare Lines" type="pivot">
+	                <!-- field name="project_id" type="row"/>
+	                <field name="mission_id" type="col"/>
+	                <field name="amount_total" type="measure"/-->
+	             </graph>
+	         </field>
+	    </record>
+
+        <record model="ir.actions.act_window" id="action_budget_prepare_project_line_view">
+            <field name="name">Budget Prepare Lines</field>
+            <field name="res_model">budget.prepare.project.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_budget_prepare_project_tree"/>
+        </record>
+
+        <menuitem parent="menu_action_budget_prepare_project"
+            id="menu_budget_prepare_project_line_view"
+            action="action_budget_prepare_project_line_view"
+        	sequence="20"/>
+
+    </data>
+</openerp>
+
+

@@ -42,13 +42,6 @@ class AccountBudget(ChartField, models.Model):
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    chart_view = fields.Selection(
-        CHART_VIEW_LIST,
-        string='Budget View',
-        states={'done': [('readonly', True)]},
-        required=False,
-        copy=True,
-    )
 
     @api.multi
     def budget_validate(self):
@@ -86,23 +79,6 @@ class AccountBudget(ChartField, models.Model):
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
 
-    # Default from header selection
-    section_id = fields.Many2one(
-        default=lambda self: self.env['res.section'].
-        browse(self._context.get('section_id')),
-    )
-    program_id = fields.Many2one(
-        default=lambda self: self.env['res.program'].
-        browse(self._context.get('program_id')),
-    )
-    personnel_costcenter_id = fields.Many2one(
-        default=lambda self: self.env['res.personnel.costcenter'].
-        browse(self._context.get('personnel_costcenter_id')),
-    )
-    org_id = fields.Many2one(
-        default=lambda self: self.env['res.org'].
-        browse(self._context.get('org_id')),
-    )
     chart_view = fields.Selection(
         related='budget_id.chart_view',
         store=True,
