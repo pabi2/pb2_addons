@@ -21,6 +21,9 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     date_scheduled_end = fields.Date(
         string="Scheduled End Date",
     )
+    date_contract_start = fields.Date(
+        string="Contract Start Date",
+    )
     date_contract_end = fields.Date(
         string="Contract End Date",
     )
@@ -114,6 +117,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         res['acceptance_line_ids'] = items
         date_scheduled_end, end_date = self._get_contract_end_date(order)
         res['date_scheduled_end'] = date_scheduled_end
+        res['date_contract_start'] = order.date_contract_start
         res['date_contract_end'] = end_date
         today = datetime.datetime.now()
         res['date_receive'] = "{:%Y-%m-%d}".format(today)
@@ -127,6 +131,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         vals.update({
             'name': self.name,
             'date_scheduled_end': self.date_scheduled_end,
+            'date_contract_start': self.date_contract_start,
             'date_contract_end': self.date_contract_end,
             'date_receive': self.date_receive,
             'order_id': self.order_id.id,

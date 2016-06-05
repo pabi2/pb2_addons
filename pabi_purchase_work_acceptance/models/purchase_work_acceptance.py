@@ -143,6 +143,10 @@ class PurchaseWorkAcceptance(models.Model):
         self.env['ir.sequence'].get('purchase.work.acceptance'),
         readonly=True,
     )
+    date_contract_start = fields.Date(
+        string="Contract Start Date",
+        default=fields.Date.today(),
+    )
     date_scheduled_end = fields.Date(
         string="Scheduled End Date",
         default=fields.Date.today(),
