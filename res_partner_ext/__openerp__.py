@@ -64,6 +64,7 @@ Partner is a required field if patner in ('customer', supplier') (View level)
     'demo': [],
     'data': ['data/config_data_maintenance.xml',
              'partner_view.xml',
+             'security/ir.model.access.csv',
              ],
     'test': [
     ],
