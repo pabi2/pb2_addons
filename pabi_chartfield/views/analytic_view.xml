@@ -9,17 +9,17 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='chartfields']" position="inside">
                     
-                	<field name="spa_id"/>
-                	<field name="mission_id" />
-                	<field name="tag_type_id" />
-                	<field name="tag_id" />
-                	
-                	<field name="functional_area_id" />
-                	<field name="program_group_id" />
-                	<field name="program_id" />
-                	<field name="project_group_id" />
-                	<field name="project_id"/>
-                	
+                    <field name="spa_id"/>
+                    <field name="mission_id" />
+                    <field name="tag_type_id" />
+                    <field name="tag_id" />
+                    
+                    <field name="functional_area_id" />
+                    <field name="program_group_id" />
+                    <field name="program_id" />
+                    <field name="project_group_id" />
+                    <field name="project_id"/>
+                    
                     <field name="org_id" />
                     <field name="sector_id" />
                     <field name="subsector_id"/>
@@ -29,15 +29,15 @@
                     <field name="taxbranch_id" />
                     
                     <field name="invest_asset_id" />
-                		
+                        
                     <field name="invest_construction_id" />
                     <field name="invest_construction_phase_id" />
             
                     <field name="personnel_costcenter_id" />
                     
-				    <field name="cost_control_type_id"/>
+                    <field name="cost_control_type_id"/>
                     <field name="cost_control_id" />   
-                    	                 
+                                         
                 </xpath> 
             </field>
         </record>         
@@ -48,17 +48,17 @@
             <field name="arch" type="xml">
                 <field name="debit" position="before">
                     
-                	<field name="spa_id"/>
-                	<field name="mission_id" />
-                	<field name="tag_type_id" />
-                	<field name="tag_id" />
-                	
-                	<field name="functional_area_id" />
-                	<field name="program_group_id" />
-                	<field name="program_id" />
-                	<field name="project_group_id" />
-                	<field name="project_id"/>
-                	
+                    <field name="spa_id"/>
+                    <field name="mission_id" />
+                    <field name="tag_type_id" />
+                    <field name="tag_id" />
+                    
+                    <field name="functional_area_id" />
+                    <field name="program_group_id" />
+                    <field name="program_id" />
+                    <field name="project_group_id" />
+                    <field name="project_id"/>
+                    
                     <field name="org_id" />
                     <field name="sector_id" />
                     <field name="subsector_id"/>
@@ -68,7 +68,7 @@
                     <field name="taxbranch_id" />
                     
                     <field name="invest_asset_id" />
-                		
+                        
                     <field name="invest_construction_id" />
                     <field name="invest_construction_phase_id" />
             
@@ -87,7 +87,7 @@
             <field name="inherit_id" ref="account.view_account_analytic_account_search"/>
             <field name="arch" type="xml">
                 <xpath expr="/search/group" position="inside">
-                	
+                    
                     <filter string="SPA" context="{'group_by':'spa_id'}"/>
                     <filter string="Mission" context="{'group_by':'mission_id'}"/>
                     <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
@@ -108,7 +108,7 @@
                     <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
                     
                     <filter name="invest_asset_id" context="{'group_by':'invest_asset_id'}"/>
-                		
+                        
                     <filter name="invest_construction_id" context="{'group_by':'invest_construction_id'}"/>
                     <filter name="invest_construction_phase_id" context="{'group_by':'invest_construction_phase_id'}"/>
             
@@ -119,6 +119,6 @@
                     
                 </xpath>
             </field>
-		</record>
+        </record>
      </data>
 </openerp>
