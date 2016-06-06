@@ -44,7 +44,7 @@ class PurchaseWorkAcceptance(models.Model):
 
                     self.write_to_invoice = True
                     sup_inv = self.supplier_invoice
-                    #inv plan case
+                    # inv plan case
                     if accept_line.inv_line_id:
                         invoice = Invoice.search([
                             ('id', '=', accept_line.inv_line_id.invoice_id.id),
@@ -54,7 +54,7 @@ class PurchaseWorkAcceptance(models.Model):
                                 'date_invoice': self.date_invoice,
                                 'supplier_invoice_number': sup_inv,
                             })
-                    #service case
+                    # service case
                     else:
                         invoice_line = InvoiceLine.search([
                             ('purchase_line_id', '=', accept_line.line_id.id),
