@@ -15,7 +15,9 @@
         'purchase_request',
     ],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
+        'views/res_config_view.xml',
         'data/cost_control_data.xml',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
@@ -27,8 +29,6 @@
         'views/purchase_request_view.xml',
         'views/purchase_requisition_view.xml',
         'views/purchase_request_line_make_purchase_requisition_view.xml',
-        'views/res_config_view.xml',
-        'security/security.xml',
     ],
     'demo': [
     ],
