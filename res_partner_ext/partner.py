@@ -185,13 +185,6 @@ class res_partner(models.Model):
     @api.one
     @api.depends('category_id')
     def _is_government(self):
-        # if self.category_id and self.category_id.parent_id:
-        #     gov_categ_id = self.env['ir.model.data'].\
-        #         get_object_reference('nstda_msd', 'partner_tag_government')[1]
-        #     if self.category_id.parentx_id.id == gov_categ_id:
-        #         self.is_government = True
-        # else:
-        #     self.is_government = False
         # TODO: set False for now
         self.is_government = False
 
