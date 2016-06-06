@@ -45,6 +45,7 @@ class PurchaseOrder(models.Model):
          ('order', 'Based on generated draft invoice'),
          ('picking', 'Based on incoming shipments'), ]
     )
+
     @api.model
     def create(self, vals):
         if (vals.get('order_type', False) or
