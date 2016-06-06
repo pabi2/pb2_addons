@@ -41,13 +41,20 @@ class PurchaseWorkAcceptance(models.Model):
                 if accept_line.product_id.type == 'service':
                     Invoice = self.env['account.invoice']
                     InvoiceLine = self.env['account.invoice.line']
+
                     self.write_to_invoice = True
+                    sup_inv = self.supplier_invoice
+                    # inv plan case
                     if accept_line.inv_line_id:
                         invoice = Invoice.search([
                             ('id', '=', accept_line.inv_line_id.invoice_id.id),
                         ])
                         for inv in invoice:
-                            inv.date_invoice = self.date_invoice
+                            inv.write({
+                                'date_invoice': self.date_invoice,
+                                'supplier_invoice_number': sup_inv,
+                            })
+                    # service case
                     else:
                         invoice_line = InvoiceLine.search([
                             ('purchase_line_id', '=', accept_line.line_id.id),
@@ -59,6 +66,7 @@ class PurchaseWorkAcceptance(models.Model):
                             for inv in invoice:
                                 inv.write({
                                     'date_invoice': self.date_invoice,
+                                    'supplier_invoice_number': sup_inv,
                                 })
 
     @api.model
@@ -141,6 +149,10 @@ class PurchaseWorkAcceptance(models.Model):
         default=lambda self:
         self.env['ir.sequence'].get('purchase.work.acceptance'),
         readonly=True,
+    )
+    date_contract_start = fields.Date(
+        string="Contract Start Date",
+        default=fields.Date.today(),
     )
     date_scheduled_end = fields.Date(
         string="Scheduled End Date",
