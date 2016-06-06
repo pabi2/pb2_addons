@@ -68,15 +68,6 @@ class BudgetPlanTemplate(ChartField, models.Model):
         readonly=True,
         copy=False,
     )
-    amount_budget_request = fields.Float(
-        string='Budget Request',
-    )
-    amount_budget_policy = fields.Float(
-        string='Budget Policy',
-    )
-    amount_budget_release = fields.Float(
-        string='Budget Release',
-    )
 
     @api.multi
     @api.depends('fiscalyear_id')
@@ -123,6 +114,11 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
     _name = "budget.plan.line.template"
     _description = "Budget Line"
 
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+        required=False,
+    )
     name = fields.Char(
         string='Description',
     )

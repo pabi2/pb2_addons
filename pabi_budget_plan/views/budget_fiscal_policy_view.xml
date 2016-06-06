@@ -19,6 +19,7 @@
                         </h1>
                     </div>
                     <div class="oe_right oe_button_box" name="buttons">
+                    	<button name="prepare_fiscal_budget_policy" type="object" string="Generate Budget Policy Lines" />
                     </div>
                     <group>
                         <group>
@@ -104,9 +105,105 @@
               </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_prepare"
+        <menuitem parent="menu_action_budget_policy"
             id="menu_budget_fiscal_policy_view"
             action="action_budget_fiscal_policy_view" sequence="5" />
+
+
+		<!-- Budget Plan Analysis -->
+		
+        <record id="view_budget_plan_line_template_filter" model="ir.ui.view">
+            <field name="name">budget.plan.line.template.filter</field>
+            <field name="model">budget.plan.line.template</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Plan Analysis">
+                    <group expand="0" string="Group By">
+               		</group>
+               </search>
+            </field>
+        </record>
+            	
+        <record model="ir.ui.view" id="view_budget_plan_line_template_tree">
+            <field name="name">budget.plan.line.template.tree</field>
+            <field name="model">budget.plan.line.template</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Plan Analysis" create="0" delete="0" edit="0">
+
+                	<field name="spa_id" invisible="1"/>
+                	<field name="mission_id" invisible="1"/>
+                	<field name="tag_type_id" invisible="1"/>
+                	<field name="tag_id" invisible="1"/>
+                	
+                	<field name="functional_area_id" invisible="1"/>
+                	<field name="program_group_id" invisible="1"/>
+                	<field name="program_id" invisible="1"/>
+                	<field name="project_group_id" invisible="1"/>
+                	<field name="project_id" invisible="1"/>
+                	
+                    <field name="org_id" invisible="1"/>
+                    <field name="sector_id" invisible="1"/>
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1"/>
+                    <field name="section_id" invisible="1"/>
+                    <field name="costcenter_id" invisible="1"/>
+                    <field name="taxbranch_id" invisible="1"/>
+                    
+                    <field name="invest_asset_id" invisible="1"/>
+                		
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field name="invest_construction_phase_id" invisible="1"/>
+            
+                    <field name="personnel_costcenter_id" invisible="1"/>
+                    
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="1"/>
+                    
+                    <field name="chart_view" />
+                    <field name="fiscalyear_id" />
+					
+					<field name="m0" sum="Period 0" />
+					<field name="m1" sum="Period 1" />
+					<field name="m2" sum="Period 2" />
+					<field name="m3" sum="Period 3" />
+					<field name="m4" sum="Period 4" />
+					<field name="m5" sum="Period 5" />
+					<field name="m6" sum="Period 6" />
+					<field name="m7" sum="Period 7" />
+					<field name="m8" sum="Period 8" />
+					<field name="m9" sum="Period 9" />
+					<field name="m10" sum="Period 10" />
+					<field name="m11" sum="Period 11" />
+					<field name="m12" sum="Period 12" />
+					
+					<field name="planned_amount" sum="Planned Amount" />
+
+                </tree>
+            </field>
+        </record>
+	    <record id="view_budget_plan_line_template_graph" model="ir.ui.view">
+	         <field name="name">view.budget.plan.line.template.graph</field>
+	         <field name="model">budget.plan.line.template</field>
+	         <field name="arch" type="xml">
+	             <graph string="Budget Plan Analysis" type="pivot">
+	                <field name="org_id" type="col"/>
+	                <field name="planned_amount" type="measure"/>
+	             </graph>
+	         </field>
+	    </record>
+
+        <record model="ir.actions.act_window" id="act_budget_plan_line_template_view">
+            <field name="name">Budget Plan Analysis</field>
+            <field name="res_model">budget.plan.line.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_budget_plan_line_template_tree"/>
+        </record>
+
+        <menuitem parent="menu_action_budget_policy"
+            id="menu_act_budget_plan_line_template_view"
+            action="act_budget_plan_line_template_view"
+        	sequence="20"/>
+
 
     </data>
 </openerp>

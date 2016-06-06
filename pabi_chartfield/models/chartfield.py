@@ -48,8 +48,9 @@ CHART_STRUCTURE = \
                     },
                 },
             },
+            'mission_id': {},
             'costcenter_id': {
-                'mission_id': {}
+                'taxbranch_id': {}
             },
         },
         'project_id': {
@@ -77,6 +78,9 @@ CHART_STRUCTURE = \
                 'tag_type_id': {}
             },
             'mission_id': {},
+            'costcenter_id': {
+                'taxbranch_id': {}
+            },
         },
         'personnel_costcenter_id': {
             'org_id': {},

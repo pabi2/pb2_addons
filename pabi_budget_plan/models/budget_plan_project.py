@@ -33,6 +33,21 @@ class BudgetPlanProject(models.Model):
         string='Budget Plan Lines',
         copy=True,
     )
+    amount_budget_request = fields.Float(
+        string='Budget Request',
+        compute='_compute_budget_request',
+        store=True,
+    )
+    amount_budget_policy = fields.Float(
+        string='Budget Policy',
+    )
+
+    @api.multi
+    @api.depends('plan_line_ids')
+    def _compute_budget_request(self):
+        for rec in self:
+            planned_amounts = rec.plan_line_ids.mapped('planned_amount')
+            rec.amount_budget_request = sum(planned_amounts)
 
     @api.onchange('program_id')
     def _onchange_program_id(self):
@@ -42,7 +57,8 @@ class BudgetPlanProject(models.Model):
     # Call inherited methods
     @api.multi
     def unlink(self):
-        self.plan_line_ids.mapped('template_id').unlink()
+        for rec in self:
+            rec.plan_line_ids.mapped('template_id').unlink()
         self.mapped('template_id').unlink()
         return super(BudgetPlanProject, self).unlink()
 
@@ -80,10 +96,6 @@ class BudgetPlanProjectLine(models.Model):
     _inherits = {'budget.plan.line.template': 'template_id'}
     _description = "Project Based - Budget Plan Line"
 
-    chart_view = fields.Selection(
-        related='plan_id.chart_view',
-        store=True,
-    )
     plan_id = fields.Many2one(
         'budget.plan.project',
         string='Budget Plan',
@@ -229,18 +241,6 @@ class BudgetPlanProjectLine(models.Model):
     cur_estimated_commitment = fields.Float(
         string='Estimated Commitment',
     )
-    fy1q1 = fields.Float(
-        string='FY1/Q1',
-    )
-    fy1q2 = fields.Float(
-        string='FY1/Q2',
-    )
-    fy1q3 = fields.Float(
-        string='FY1/Q3',
-    )
-    fy1q4 = fields.Float(
-        string='FY1/Q4',
-    )
     fy1 = fields.Float(
         string='FY1',
     )
@@ -259,6 +259,13 @@ class BudgetPlanProjectLine(models.Model):
     total = fields.Float(
         string='Total',
     )
+
+    @api.model
+    def create(self, vals):
+        res = super(BudgetPlanProjectLine, self).create(vals)
+        res.write({'chart_view': res.plan_id.chart_view,
+                   'fiscalyear_id': res.plan_id.fiscalyear_id.id})
+        return res
 
     @api.multi
     def unlink(self):

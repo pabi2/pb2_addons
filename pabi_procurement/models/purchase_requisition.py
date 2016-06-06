@@ -435,9 +435,13 @@ class PurchaseRequisition(models.Model):
                                 purchase_order = Order.search([
                                     ('id', '=', order.order_id.id)
                                 ])
+
                                 for purchase in purchase_order:
+                                    po_id = purchase.id
+                                    committees = requisition.\
+                                        prepare_order_committees(po_id)
                                     purchase.write({
-                                        'committee_ids': order.committee_ids,
+                                        'committee_ids': committees,
                                         'verify_uid': order.verify_uid.id,
                                         'date_verify': order.date_verify,
                                         'doc_approve_uid': uid.id,

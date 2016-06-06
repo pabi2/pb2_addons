@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;order_id&quot;,&quot;picking_id&quot;,&quot;invoice_id&quot;]"/>
 	<property name="ireport.zoom" value="1.4641000000000022"/>
-	<property name="ireport.x" value="22"/>
+	<property name="ireport.x" value="104"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[data/record]]>
@@ -44,13 +44,13 @@
 		<fieldDescription><![CDATA[order_id/date_contract_start]]></fieldDescription>
 	</field>
 	<field name="acceptance_line_name" class="java.lang.String">
-		<fieldDescription><![CDATA[acceptance_line/name]]></fieldDescription>
+		<fieldDescription><![CDATA[acceptance_line_ids/name]]></fieldDescription>
 	</field>
 	<field name="acceptance_line_qty" class="java.lang.Number">
-		<fieldDescription><![CDATA[acceptance_line/to_receive_qty]]></fieldDescription>
+		<fieldDescription><![CDATA[acceptance_line_ids/to_receive_qty]]></fieldDescription>
 	</field>
 	<field name="acceptance_line_uom" class="java.lang.String">
-		<fieldDescription><![CDATA[acceptance_line/product_uom/name]]></fieldDescription>
+		<fieldDescription><![CDATA[acceptance_line_ids/product_uom/name]]></fieldDescription>
 	</field>
 	<field name="acceptance_total_fine" class="java.lang.Number">
 		<fieldDescription><![CDATA[total_fine]]></fieldDescription>
@@ -80,58 +80,78 @@
 		<band height="139" splitType="Stretch">
 			<textField>
 				<reportElement x="35" y="45" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="167" y="45" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_date}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="35" y="65" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{mycontract}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="167" y="85" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_date_contract_end}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="35" y="85" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_contract_start}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="309" y="45" width="233" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="309" y="65" width="110" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_tax_id}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="309" y="85" width="233" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxbranch}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="442" y="65" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxbranch}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="309" y="112" width="133" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_received_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="198" y="9" width="152" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ใบตรวจรับพัสดุ / งานจ้าง]]></text>
 			</staticText>
@@ -147,7 +167,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[รายการ]]></text>
 			</staticText>
 			<staticText>
@@ -158,7 +180,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[จำนวน/หน่วย]]></text>
 			</staticText>
 			<staticText>
@@ -169,7 +193,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[ราคา/หน่วย]]></text>
 			</staticText>
 			<staticText>
@@ -180,7 +206,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[จำนวนเงิน(บาท)]]></text>
 			</staticText>
 			<staticText>
@@ -206,7 +234,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_line_name}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -217,7 +247,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_line_qty}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -228,7 +260,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
@@ -239,7 +273,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
@@ -265,7 +301,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[จำนวนเงิน]]></text>
 			</staticText>
 			<staticText>
@@ -276,7 +314,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[ภาษีมูลค่าเพิ่ม]]></text>
 			</staticText>
 			<staticText>
@@ -287,7 +327,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[จำนวนเงิน]]></text>
 			</staticText>
 			<staticText>
@@ -298,7 +340,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
@@ -309,7 +353,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
@@ -320,7 +366,9 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>

@@ -2,11 +2,11 @@
 <openerp>
     <data>
 
-        <record model="ir.ui.view" id="view_budget_prepare_unit_form">
-            <field name="name">view.budget.prepare.unit.form</field>
-            <field name="model">budget.prepare.unit</field>
+        <record model="ir.ui.view" id="view_budget_plan_unit_form">
+            <field name="name">view.budget.plan.unit.form</field>
+            <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
-                <form string="Budget Prepare">
+                <form string="Budget Plan">
                     <header>
                         <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"/>
                         <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"/>
@@ -32,7 +32,6 @@
                         	<field name="chart_view" required="1" readonly="1"/>
                         	<field name="amount_budget_request" />
                         	<field name="amount_budget_policy" />
-                        	<field name="amount_budget_release" />
                         </group>
                         <group>
                         	<field name="date" />
@@ -48,7 +47,7 @@
                     </group>
                     <notebook>
                         <page string="Budget Control">
-                            <field name="prepare_line_ids" colspan="4" nolabel="1"
+                            <field name="plan_line_ids" colspan="4" nolabel="1"
                             	context="{'section_id': section_id}">
                                 <tree string="Budget Lines" editable="bottom">
 									
@@ -96,11 +95,11 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_budget_prepare_unit_tree">
-            <field name="name">view.budget.prepare.unit.tree</field>
-            <field name="model">budget.prepare.unit</field>
+        <record model="ir.ui.view" id="view_budget_plan_unit_tree">
+            <field name="name">view.budget.plan.unit.tree</field>
+            <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
-               <tree colors="blue:state == 'draft';gray:state in ('approve','cancel');black:state in ('reject','submit')" string="Budget">
+               <tree string="Budget" >
                     <field name="name" />
                     <field name="date_from"/>
                     <field name="date_to"/>
@@ -110,12 +109,12 @@
             </field>
         </record>
 
-        <record id="view_budget_prepare_unit_search" model="ir.ui.view">
-           <field name="name">view.budget.prepare.unit.search</field>
-           <field name="model">budget.prepare.unit</field>
+        <record id="view_budget_plan_unit_search" model="ir.ui.view">
+           <field name="name">view.budget.plan.unit.search</field>
+           <field name="model">budget.plan.unit</field>
            <field name="arch" type="xml">
                <search string="Budget">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Prepare"/>
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
@@ -123,13 +122,13 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_budget_prepare_unit_view">
-            <field name="name">Budget Prepare</field>
-            <field name="res_model">budget.prepare.unit</field>
+        <record model="ir.actions.act_window" id="action_budget_plan_unit_view">
+            <field name="name">Budget Plan</field>
+            <field name="res_model">budget.plan.unit</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_budget_prepare_unit_tree"/>
-            <field name="search_view_id" ref="view_budget_prepare_unit_search"/>
+            <field name="view_id" ref="view_budget_plan_unit_tree"/>
+            <field name="search_view_id" ref="view_budget_plan_unit_search"/>
             <field name="context">{'default_chart_view': 'unit_base'}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -137,18 +136,18 @@
               </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_prepare_unit"
-            id="menu_budget_prepare_unit_view"
-            action="action_budget_prepare_unit_view" sequence="10" />
+        <menuitem parent="menu_action_budget_plan_unit"
+            id="menu_budget_plan_unit_view"
+            action="action_budget_plan_unit_view" sequence="10" />
 
 
-		<!-- Budget Prepare Line -->
+		<!-- Budget Plan Line -->
 		
-        <record id="view_budget_prepare_unit_line_filter" model="ir.ui.view">
-            <field name="name">budget.prepare.unit.line.filter</field>
-            <field name="model">budget.prepare.unit.line</field>
+        <record id="view_budget_plan_unit_line_filter" model="ir.ui.view">
+            <field name="name">budget.plan.unit.line.filter</field>
+            <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
-                <search string="Search Budget Prepare Line">
+                <search string="Search Budget Plan Line">
                     <group expand="0" string="Group By">
                     	<filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
 						<filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
@@ -161,11 +160,11 @@
             </field>
         </record>
             	
-        <record model="ir.ui.view" id="view_budget_prepare_unit_line_tree">
-            <field name="name">budget.prepare.unit.line.tree</field>
-            <field name="model">budget.prepare.unit.line</field>
+        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree">
+            <field name="name">budget.plan.unit.line.tree</field>
+            <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
-                <tree string="Budget Prepare Lines">
+                <tree string="Budget Plan Lines">
 
 					<field name="org_id" />
 					<field name="section_id" />                
@@ -194,20 +193,20 @@
                 </tree>
             </field>
         </record>
-	    <record id="view_budget_prepare_unit_line_graph" model="ir.ui.view">
-	         <field name="name">view.budget.prepare.unit.line.graph</field>
-	         <field name="model">budget.prepare.unit.line</field>
+	    <record id="view_budget_plan_unit_line_graph" model="ir.ui.view">
+	         <field name="name">view.budget.plan.unit.line.graph</field>
+	         <field name="model">budget.plan.unit.line</field>
 	         <field name="arch" type="xml">
-	             <graph string="Budget Prepare Lines" type="pivot">
+	             <graph string="Budget Plan Lines" type="pivot">
 	                <!-- field name="project_id" type="row"/-->
 	                <field name="org_id" type="col"/>
 	                <field name="planned_amount" type="measure"/>
 	             </graph>
 	         </field>
 	    </record>
-        <record model="ir.ui.view" id="view_budget_prepare_unit_line_form">
-            <field name="name">budget.prepare.unit.line.form</field>
-            <field name="model">budget.prepare.unit.line</field>
+        <record model="ir.ui.view" id="view_budget_plan_unit_line_form">
+            <field name="name">budget.plan.unit.line.form</field>
+            <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
                 <form string="Budget Lines">
                     <sheet>
@@ -219,17 +218,17 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="act_budget_prepare_unit_line_view">
-            <field name="name">Budget Prepare Lines</field>
-            <field name="res_model">budget.prepare.unit.line</field>
+        <record model="ir.actions.act_window" id="act_budget_plan_unit_line_view">
+            <field name="name">Budget Plan Lines</field>
+            <field name="res_model">budget.plan.unit.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,graph</field>
-            <field name="view_id" ref="view_budget_prepare_unit_line_tree"/>
+            <field name="view_id" ref="view_budget_plan_unit_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_prepare_unit"
-            id="menu_act_budget_prepare_unit_line_view"
-            action="act_budget_prepare_unit_line_view"
+        <menuitem parent="menu_action_budget_plan_unit"
+            id="menu_act_budget_plan_unit_line_view"
+            action="act_budget_plan_unit_line_view"
         	sequence="20"/>
 
     </data>

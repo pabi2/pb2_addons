@@ -22,7 +22,7 @@
                         <group>
                             <field name="name"/>
                             <field name ="order_id" attrs="{'readonly': [('state','!=','draft')]}"/>
-                            <field name="date_scheduled_end" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_contract_start" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_contract_end" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </group>
@@ -61,7 +61,7 @@
                 <tree string="Purchase Work Acceptance">
                     <field name="name"/>
                     <field name="date_receive"/>
-                    <field name="date_scheduled_end"/>
+                    <field name="date_contract_start"/>
                     <field name="date_contract_end"/>
                     <field name="is_manual_fine"/>
                     <field name="manual_fine"/>

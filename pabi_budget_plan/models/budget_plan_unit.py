@@ -4,28 +4,43 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, CHART_VIEW_FIELD, ChartField
 
 
-class BudgetPrepareUnit(models.Model):
-    _name = 'budget.prepare.unit'
-    _inherits = {'budget.prepare.template': 'template_id'}
-    _description = "Unit Based - Budget Prepare"
+class BudgetPlanUnit(models.Model):
+    _name = 'budget.plan.unit'
+    _inherits = {'budget.plan.template': 'template_id'}
+    _description = "Unit Based - Budget Plan"
 
     template_id = fields.Many2one(
-        'budget.prepare.template',
+        'budget.plan.template',
         required=True,
         ondelete='cascade',
     )
-    prepare_line_ids = fields.One2many(
-        'budget.prepare.unit.line',
-        'prepare_id',
-        string='Budget Prepare Lines',
+    plan_line_ids = fields.One2many(
+        'budget.plan.unit.line',
+        'plan_id',
+        string='Budget Plan Lines',
         copy=False,
     )
     cost_control_ids = fields.One2many(
-        'budget.prepare.unit.cost.control',
-        'prepare_id',
+        'budget.plan.unit.cost.control',
+        'plan_id',
         string='Cost Control',
         copy=True,
     )
+    amount_budget_request = fields.Float(
+        string='Budget Request',
+        compute='_compute_budget_request',
+        store=True,
+    )
+    amount_budget_policy = fields.Float(
+        string='Budget Policy',
+    )
+
+    @api.multi
+    @api.depends('plan_line_ids')
+    def _compute_budget_request(self):
+        for rec in self:
+            planned_amounts = rec.plan_line_ids.mapped('planned_amount')
+            rec.amount_budget_request = sum(planned_amounts)
 
     @api.onchange('section_id')
     def _onchange_section_id(self):
@@ -34,9 +49,10 @@ class BudgetPrepareUnit(models.Model):
     # Call inherited methods
     @api.multi
     def unlink(self):
-        self.prepare_line_ids.mapped('template_id').unlink()
+        for rec in self:
+            rec.plan_line_ids.mapped('template_id').unlink()
         self.mapped('template_id').unlink()
-        return super(BudgetPrepareUnit, self).unlink()
+        return super(BudgetPlanUnit, self).unlink()
 
     @api.multi
     def button_submit(self):
@@ -44,7 +60,7 @@ class BudgetPrepareUnit(models.Model):
             res = rec.template_id.\
                 _get_chained_dimension(CHART_VIEW_FIELD[rec.chart_view])
             rec.write(res)
-            for line in rec.prepare_line_ids:
+            for line in rec.plan_line_ids:
                 res = line.mapped('template_id').\
                     _get_chained_dimension(CHART_VIEW_FIELD[line.chart_view])
                 line.write(res)
@@ -67,30 +83,26 @@ class BudgetPrepareUnit(models.Model):
         return self.mapped('template_id').button_approve()
 
 
-class BudgetPrepareUnitLine(models.Model):
-    _name = 'budget.prepare.unit.line'
-    _inherits = {'budget.prepare.line.template': 'template_id'}
-    _description = "Unit Based - Budget Prepare Line"
+class BudgetPlanUnitLine(models.Model):
+    _name = 'budget.plan.unit.line'
+    _inherits = {'budget.plan.line.template': 'template_id'}
+    _description = "Unit Based - Budget Plan Line"
 
-    chart_view = fields.Selection(
-        related='prepare_id.chart_view',
-        store=True,
-    )
-    prepare_id = fields.Many2one(
-        'budget.prepare.unit',
-        string='Budget Prepare',
+    plan_id = fields.Many2one(
+        'budget.plan.unit',
+        string='Budget Plan',
         ondelete='cascade',
         index=True,
         required=True,
     )
     fk_costcontrol_id = fields.Many2one(
-        'budget.prepare.unit.cost.control',
+        'budget.plan.unit.cost.control',
         string='FK Cost Control',
         ondelete='cascade',
         index=True,
     )
     template_id = fields.Many2one(
-        'budget.prepare.line.template',
+        'budget.plan.line.template',
         required=True,
         ondelete='cascade',
     )
@@ -103,18 +115,25 @@ class BudgetPrepareUnitLine(models.Model):
         string='Activity',
     )
 
+    @api.model
+    def create(self, vals):
+        res = super(BudgetPlanUnitLine, self).create(vals)
+        res.write({'chart_view': res.plan_id.chart_view,
+                   'fiscalyear_id': res.plan_id.fiscalyear_id.id})
+        return res
+
     @api.multi
     def unlink(self):
         self.mapped('template_id').unlink()
-        return super(BudgetPrepareUnitLine, self).unlink()
+        return super(BudgetPlanUnitLine, self).unlink()
 
 
-class BudgetPrepareUnitCostControl(models.Model):
-    _name = 'budget.prepare.unit.cost.control'
+class BudgetPlanUnitCostControl(models.Model):
+    _name = 'budget.plan.unit.cost.control'
 
-    prepare_id = fields.Many2one(
-        'budget.prepare.unit',
-        string='Budget Prepare',
+    plan_id = fields.Many2one(
+        'budget.plan.unit',
+        string='Budget Plan',
         ondelete='cascade',
         index=True,
         required=True,
@@ -128,7 +147,7 @@ class BudgetPrepareUnitCostControl(models.Model):
         compute='_compute_amount_total',
     )
     detail_ids = fields.One2many(
-        'budget.prepare.unit.line',
+        'budget.plan.unit.line',
         'fk_costcontrol_id',
         string='Cost Control Detail',
     )

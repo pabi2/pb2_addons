@@ -77,35 +77,91 @@ class BudgetFiscalPolicy(models.Model):
         readonly=True,
         store=True,
     )
+    # PLAN
     amount_overall = fields.Float(
         string='Overall Amount',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
     )
     amount_project_base = fields.Float(
         string='Project Based',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
     )
     amount_unit_base = fields.Float(
         string='Unit Based',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
     )
     amount_personnel = fields.Float(
         string='Personnel',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
     )
     amount_invest_asset = fields.Float(
         string='Investment Asset',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
     )
     amount_invest_construction = fields.Float(
         string='Investment Construction',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
+    )
+    # POLICY
+    policy_overall = fields.Float(
+        string='Overall Amount',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
+    )
+    policy_project_base = fields.Float(
+        string='Project Based',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
+    )
+    policy_unit_base = fields.Float(
+        string='Unit Based',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
+    )
+    policy_personnel = fields.Float(
+        string='Personnel',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
+    )
+    policy_invest_asset = fields.Float(
+        string='Investment Asset',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
+    )
+    policy_invest_construction = fields.Float(
+        string='Investment Construction',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        compute='_compute_all',
+        store=True,
     )
     line_ids = fields.One2many(
         'budget.fiscal.policy.line',
@@ -120,6 +176,7 @@ class BudgetFiscalPolicy(models.Model):
         string='Project Based Budget Policy',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'project_base')],
     )
     unit_base_ids = fields.One2many(
         'budget.fiscal.policy.line',
@@ -127,7 +184,29 @@ class BudgetFiscalPolicy(models.Model):
         string='Unit Based Budget Policy',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'unit_base')],
     )
+
+    @api.multi
+    @api.depends('line_ids')
+    def _compute_all(self):
+        for rec in self:
+            # PLAN
+            rec.amount_project_base = sum(rec.project_base_ids.
+                                          mapped('planned_amount'))
+            rec.amount_unit_base = sum(rec.unit_base_ids.
+                                       mapped('planned_amount'))
+            # POLICY
+            rec.policy_project_base = sum(rec.project_base_ids.
+                                          mapped('policy_amount'))
+            rec.policy_unit_base = sum(rec.unit_base_ids.
+                                       mapped('policy_amount'))
+
+            # Overall
+            rec.amount_overall = sum([rec.amount_project_base,
+                                      rec.amount_unit_base])
+            rec.policy_overall = sum([rec.policy_project_base,
+                                      rec.policy_unit_base])
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -158,6 +237,49 @@ class BudgetFiscalPolicy(models.Model):
             'date_confirm': fields.Date.today(),
         })
         return True
+
+    @api.multi
+    def prepare_fiscal_budget_policy(self):
+        self.ensure_one()
+        self.line_ids.unlink()  # Delete all
+
+        _states = ('submit', 'approve')
+
+        # Projects
+        _sql = """
+            select tmpl.chart_view, tmpl.program_id, bpp.amount_budget_request
+            from budget_plan_project bpp
+            join budget_plan_template tmpl on tmpl.id = bpp.template_id
+            where tmpl.fiscalyear_id = %s and tmpl.state in %s
+        """
+        self._cr.execute(_sql % (self.fiscalyear_id.id, _states))
+        res = self._cr.dictfetchall()
+        lines = []
+        for r in res:
+            vals = {'chart_view': r['chart_view'],
+                    'program_id': r['program_id'],
+                    'planned_amount': r['amount_budget_request']}
+            lines.append((0, 0, vals))
+        self.write({'project_base_ids': lines})
+
+        # Org
+        _sql = """
+            select tmpl.chart_view, tmpl.org_id,
+            sum(bpu.amount_budget_request) as amount_budget_request
+            from budget_plan_unit bpu
+            join budget_plan_template tmpl on tmpl.id = bpu.template_id
+            where tmpl.fiscalyear_id = %s and tmpl.state in %s
+            group by tmpl.chart_view, tmpl.org_id
+        """
+        self._cr.execute(_sql % (self.fiscalyear_id.id, _states))
+        res = self._cr.dictfetchall()
+        lines = []
+        for r in res:
+            vals = {'chart_view': r['chart_view'],
+                    'org_id': r['org_id'],
+                    'planned_amount': r['amount_budget_request']}
+            lines.append((0, 0, vals))
+        self.write({'unit_base_ids': lines})
 
 
 class BudgetFiscalPolicyLine(ChartField, models.Model):
