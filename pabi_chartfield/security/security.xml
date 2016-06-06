@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="group_invoice_chartfields" model="res.groups">
+            <field name="name">Chartfields on invoice lines</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+        </record>
+        
+        <record id="group_hr_expense_chartfields" model="res.groups">
+            <field name="name">Chartfields on expense lines</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+        </record>
+    </data>
+</openerp>
