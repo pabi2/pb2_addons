@@ -202,10 +202,10 @@ class HRExpenseLine(models.Model):
         readonly=True,
         copy=False,
     )
-    invoiced_qty = fields.Float(
+    open_invoiced_qty = fields.Float(
         string='Invoiced Quantity',
         digits=(12, 6),
-        compute='_compute_invoiced_qty',
+        compute='_compute_open_invoiced_qty',
         store=True,
         copy=False,
         default=0.0,
@@ -214,19 +214,20 @@ class HRExpenseLine(models.Model):
     )
 
     @api.depends('invoice_line_ids.invoice_id.state')
-    def _compute_invoiced_qty(self):
+    def _compute_open_invoiced_qty(self):
         Uom = self.env['product.uom']
         for expense_line in self:
-            invoiced_qty = 0.0
+            open_invoiced_qty = 0.0
             for invoice_line in expense_line.invoice_line_ids:
                 invoice = invoice_line.invoice_id
                 if invoice.state and invoice.state not in ['draft', 'cancel']:
                     # Invoiced Qty in PO Line's UOM
-                    invoiced_qty += Uom._compute_qty(invoice_line.uos_id.id,
-                                                     invoice_line.quantity,
-                                                     expense_line.uom_id.id)
-            expense_line.invoiced_qty = min(expense_line.unit_quantity,
-                                            invoiced_qty)
+                    open_invoiced_qty += \
+                        Uom._compute_qty(invoice_line.uos_id.id,
+                                         invoice_line.quantity,
+                                         expense_line.uom_id.id)
+            expense_line.open_invoiced_qty = min(expense_line.unit_quantity,
+                                                 open_invoiced_qty)
 
     @api.one
     @api.depends('unit_amount', 'unit_quantity', 'tax_ids', 'product_id',
