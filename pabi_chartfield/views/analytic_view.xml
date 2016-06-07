@@ -119,9 +119,6 @@
                     
                 </xpath>
             </field>
-<<<<<<< HEAD
-        </record>
-=======
 		</record>
 		
 		<!-- Analytic Line -->
@@ -223,6 +220,5 @@
 		    <field name="view_mode">tree,form,graph</field>
 		</record>	
 		
->>>>>>> refs/remotes/origin/master
      </data>
 </openerp>

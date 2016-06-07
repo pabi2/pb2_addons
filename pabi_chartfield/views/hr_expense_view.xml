@@ -22,7 +22,7 @@
                     <field name="program_group_id" invisible="1" />
                     <field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
-                    <field name="project_id" invisible="1" 
+                    <field name="project_id" invisible="0" 
                         attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
                         ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
                     
@@ -30,7 +30,7 @@
                     <field name="sector_id" invisible="1" />
                     <field name="subsector_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
-                    <field name="section_id" invisible="1" 
+                    <field name="section_id" invisible="0" 
                         attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
                         ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
                     <field name="costcenter_id" invisible="1" />
@@ -50,7 +50,7 @@
                         ('invest_construction_phase_id','=',False),('project_id','=',False)]}"/>
                     
                     <field name="cost_control_type_id" invisible="1"/>
-                    <field name="cost_control_id" invisible="1"  />
+                    <field name="cost_control_id" invisible="0"  />
                     
                 </xpath>
             </field>
@@ -65,45 +65,59 @@
                 <xpath expr="//field[@name='line_ids']/tree" position="attributes">
                     <attribute name="editable"/>
                 </xpath>
+                
                 <xpath expr="//field[@name='line_ids']/form//field[@name='product_id']" position="after">
-                    <field name="spa_id" invisible="1"/>
-                    <field name="mission_id" invisible="1" />
-                    <field name="tag_type_id" invisible="1" />
-                    <field name="tag_id" invisible="1" />
-                    
-                    <field name="functional_area_id" invisible="1" />
-                    <field name="program_group_id" invisible="1" />
-                    <field name="program_id" invisible="1" />
-                    <field name="project_group_id" invisible="1" />
-                    <field name="project_id"
-                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
-                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
-                    
-                    <field name="org_id" invisible="1" />
-                    <field name="sector_id" invisible="1" />
-                    <field name="subsector_id" invisible="1"/>
-                    <field name="division_id" invisible="1" />
-                    <field name="section_id" 
-                        attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
-                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
-                    <field name="costcenter_id" invisible="1" />
-                    <field name="taxbranch_id" invisible="1" />
-                    
-                    <field name="invest_asset_id" invisible="1"
-                        attrs="{'required': [('section_id','=',False),('project_id','=',False),
-                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
-                        
-                    <field name="invest_construction_id" invisible="1"/>
-                    <field name="invest_construction_phase_id" invisible="1"
-                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
-                        ('project_id','=',False),('personnel_costcenter_id','=',False)]}"/>
-            
-                    <field name="personnel_costcenter_id" invisible="1"
-                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
-                        ('invest_construction_phase_id','=',False),('project_id','=',False)]}"/>
-                    
-                    <field name="cost_control_type_id" invisible="1"/>
-                    <field name="cost_control_id" />
+                	<field name="activity_id" />
+                	<field name="activity_group_id" />
+                </xpath>
+                
+                <xpath expr="//field[@name='line_ids']/form//field[@name='date_value']" position="after">
+                	<field name="total_amount" />
+                </xpath>
+                
+                <xpath expr="//field[@name='line_ids']/form/group" position="inside">
+                
+                	<group string="Chartfields"> 
+	                
+	                    <field name="spa_id" invisible="1"/>
+	                    <field name="mission_id" invisible="1" />
+	                    <field name="tag_type_id" invisible="1" />
+	                    <field name="tag_id" invisible="1" />
+	                    
+	                    <field name="functional_area_id" invisible="1" />
+	                    <field name="program_group_id" invisible="1" />
+	                    <field name="program_id" invisible="1" />
+	                    <field name="project_group_id" invisible="1" />
+	                    <field name="project_id"
+	                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+	                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
+	                    
+	                    <field name="org_id" invisible="1" />
+	                    <field name="sector_id" invisible="1" />
+	                    <field name="subsector_id" invisible="1"/>
+	                    <field name="division_id" invisible="1" />
+	                    <field name="section_id" 
+	                        attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
+	                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
+	                    <field name="costcenter_id" invisible="1" />
+	                    <field name="taxbranch_id" invisible="1" />
+	                    
+	                    <field name="invest_asset_id" invisible="1"
+	                        attrs="{'required': [('section_id','=',False),('project_id','=',False),
+	                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False)]}"/>
+	                        
+	                    <field name="invest_construction_id" invisible="1"/>
+	                    <field name="invest_construction_phase_id" invisible="1"
+	                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+	                        ('project_id','=',False),('personnel_costcenter_id','=',False)]}"/>
+	            
+	                    <field name="personnel_costcenter_id" invisible="1"
+	                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+	                        ('invest_construction_phase_id','=',False),('project_id','=',False)]}"/>
+	                    
+	                    <field name="cost_control_type_id" invisible="1"/>
+	                    <field name="cost_control_id" />
+                    </group>                
                 </xpath>
             </field>
         </record>
