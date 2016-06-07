@@ -1,0 +1,172 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+    	# Investment Asset
+        <record id="view_res_invest_asset_tree" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.tree</field>
+            <field name="model">res.invest.asset</field>
+            <field name="arch" type="xml">
+                <tree string="Investment Asset">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_invest_asset_form" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.form</field>
+            <field name="model">res.invest.asset</field>
+            <field name="arch" type="xml">
+            	<form string="Investment Asset">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                    	<group>
+                    		<field name="invest_asset_categ_id" />
+                    	</group>
+                    	<group>
+                    		<field name="org_id" />
+                    	</group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_res_invest_asset_search" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.search</field>
+            <field name="model">res.invest.asset</field>
+            <field name="arch" type="xml">
+                <search string="Investment Asset">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                 </search>
+            </field>
+        </record>    
+
+        <record id="action_res_invest_asset" model="ir.actions.act_window">
+            <field name="name">Investment Asset</field>
+            <field name="res_model">res.invest.asset</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_invest_asset_tree"/>
+        </record>
+        
+        <menuitem name="Investment Asset"
+        	id="menu_res_invest_asset" 
+        	action="action_res_invest_asset" 
+        	parent="menu_investment_structure" 
+        	sequence="20"/>
+        	
+
+    	# Asset Category
+        <record id="view_res_invest_asset_category_tree" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.category.tree</field>
+            <field name="model">res.invest.asset.category</field>
+            <field name="arch" type="xml">
+                <tree string="Investment Asset Category">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_invest_asset_category_form" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.category.form</field>
+            <field name="model">res.invest.asset.category</field>
+            <field name="arch" type="xml">
+            	<form string="Investment Asset Category">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_res_invest_asset_category_search" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.category.search</field>
+            <field name="model">res.invest.asset.category</field>
+            <field name="arch" type="xml">
+                <search string="Investment Asset Category">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                 </search>
+            </field>
+        </record>    
+
+        <record id="action_res_invest_asset_category" model="ir.actions.act_window">
+            <field name="name">Investment Asset Category</field>
+            <field name="res_model">res.invest.asset.category</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_invest_asset_category_tree"/>
+        </record>
+        
+        <menuitem name="Asset Category"
+        	id="menu_res_invest_asset_category" 
+        	action="action_res_invest_asset_category" 
+        	parent="menu_investment_structure" 
+        	sequence="10"/>
+        	
+
+    	# Investment Construction
+        <record id="view_res_invest_construction_tree" model="ir.ui.view">
+            <field name="name">view.res.invest.construction.tree</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+                <tree string="Investment Construction">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_invest_construction_form" model="ir.ui.view">
+            <field name="name">view.res.invest.construction.form</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+            	<form string="Investment Construction">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                    	<group>
+                    		<field name="org_id" />
+                    	</group>
+                    	<group>
+	                    	<field name="phase_ids" nolabel="1">
+	                    		<tree editable="bottom">
+	                    			<field name="sequence" widget="handle"/>
+	                    			<field name="phase"/>
+	                    		</tree>
+	                    	</field>
+                    	</group>
+                   	</group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_res_invest_construction_search" model="ir.ui.view">
+            <field name="name">view.res.invest.construction.search</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+                <search string="Investment Construction">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                 </search>
+            </field>
+        </record>    
+
+        <record id="action_res_invest_construction" model="ir.actions.act_window">
+            <field name="name">Investment Construction</field>
+            <field name="res_model">res.invest.construction</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_invest_construction_tree"/>
+        </record>
+        
+        <menuitem name="Investment Construction"
+        	id="menu_res_invest_construction" 
+        	action="action_res_invest_construction" 
+        	parent="menu_investment_structure" 
+        	sequence="30"/>
+        	
+	</data>
+</openerp>

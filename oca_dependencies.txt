@@ -1,0 +1,4 @@
+pb2_base_technical https://github.com/pabi2/pb2_base_technical.git master
+pb2_base_functional https://github.com/pabi2/pb2_base_functional.git master
+pb2_operating-units https://github.com/pabi2/pb2_operating-units.git master
+pb2_generic https://github.com/pabi2/pb2_generic.git master

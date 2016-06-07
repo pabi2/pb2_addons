@@ -1,0 +1,396 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+    	# Org
+        <record id="view_res_org_tree" model="ir.ui.view">
+            <field name="name">view.res.org.tree</field>
+            <field name="model">res.org</field>
+            <field name="arch" type="xml">
+                <tree string="Org">
+                    <field name="name"/>
+                    <field name="description" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_org_form" model="ir.ui.view">
+            <field name="name">view.res.org.form</field>
+            <field name="model">res.org</field>
+            <field name="arch" type="xml">
+            	<form string="Org">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+	                        <field name="description" />
+                        </group>
+                        <group>
+	                        <field name="operating_unit_id" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>        
+
+        <record id="view_res_org_search" model="ir.ui.view">
+            <field name="name">view.res.org.search</field>
+            <field name="model">res.org</field>
+            <field name="arch" type="xml">
+                <search string="Org">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                    </group>
+                </search>
+            </field>
+        </record>       
+
+        <record id="action_res_org" model="ir.actions.act_window">
+            <field name="name">Org</field>
+            <field name="res_model">res.org</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_org_tree"/>
+        </record>
+        
+        <menuitem name="Org"
+         	id="menu_res_org"
+        	action="action_res_org" 
+        	parent="menu_org_structure" 
+        	sequence="1"/>
+        	
+    	# Sector
+        <record id="view_res_sector_tree" model="ir.ui.view">
+            <field name="name">view.res.sector.tree</field>
+            <field name="model">res.sector</field>
+            <field name="arch" type="xml">
+                <tree string="Sector">
+                    <field name="name"/>
+                    <field name="description" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_sector_form" model="ir.ui.view">
+            <field name="name">view.res.sector.form</field>
+            <field name="model">res.sector</field>
+            <field name="arch" type="xml">
+            	<form string="Sector">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                    		<field name="org_id"/>
+                        </group>
+                        <group>
+	                		<field name="description" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>        
+
+
+        <record id="view_res_sector_search" model="ir.ui.view">
+            <field name="name">view.res.sector.search</field>
+            <field name="model">res.sector</field>
+            <field name="arch" type="xml">
+                <search string="Org">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                    	<filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>     
+          
+        <record id="action_res_sector" model="ir.actions.act_window">
+            <field name="name">Sector</field>
+            <field name="res_model">res.sector</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_sector_tree"/>
+        </record>
+        
+        <menuitem name="Sector"
+         	id="menu_res_sector"
+        	action="action_res_sector" 
+        	parent="menu_org_structure" 
+        	sequence="2"/>
+        
+    	# Subsector
+        <record id="view_res_subsector_tree" model="ir.ui.view">
+            <field name="name">view.res.subsector.tree</field>
+            <field name="model">res.subsector</field>
+            <field name="arch" type="xml">
+                <tree string="Subsector">
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_subsector_form" model="ir.ui.view">
+            <field name="name">view.res.subsector.form</field>
+            <field name="model">res.subsector</field>
+            <field name="arch" type="xml">
+            	<form string="Subsector">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                   	 		<field name="sector_id"/>
+                        </group>
+                        <group>
+                    		<field name="description"/>
+                        </group>
+                        <group string="Based On">
+                        	<field name="org_id"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>        
+
+        <record id="view_res_subsector_search" model="ir.ui.view">
+            <field name="name">view.res.subsector.search</field>
+            <field name="model">res.subsector</field>
+            <field name="arch" type="xml">
+                <search string="Subsector">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                    	<filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
+                    	<filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>     
+
+        <record id="action_res_subsector" model="ir.actions.act_window">
+            <field name="name">Subsector</field>
+            <field name="res_model">res.subsector</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_subsector_tree"/>
+        </record>
+        
+        <menuitem name="Subsector"
+        	id="menu_res_subsector"
+        	action="action_res_subsector"
+        	parent="menu_org_structure" 
+        	sequence="3" /> 
+
+    	# Division
+        <record id="view_res_division_tree" model="ir.ui.view">
+            <field name="name">view.res.division.tree</field>
+            <field name="model">res.division</field>
+            <field name="arch" type="xml">
+                <tree string="Division">
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_division_form" model="ir.ui.view">
+            <field name="name">view.res.division.form</field>
+            <field name="model">res.division</field>
+            <field name="arch" type="xml">
+            	<form string="Division">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                    		<field name="subsector_id"/>
+                        </group>
+                        <group>
+	                        <field name="description" />
+                        </group>
+                        <group string="Based On">
+	                        <field name="org_id" />
+	                        <field name="sector_id" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>        
+
+        <record id="view_res_division_search" model="ir.ui.view">
+            <field name="name">view.res.division.search</field>
+            <field name="model">res.division</field>
+            <field name="arch" type="xml">
+                <search string="Subsector">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                    	<filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
+                    	<filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
+                    	<filter name="subsector_id" string="Subsector" context="{'group_by':'subsector_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>     
+
+        <record id="action_res_division" model="ir.actions.act_window">
+            <field name="name">Division</field>
+            <field name="res_model">res.division</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_division_tree"/>
+        </record>
+        
+        <menuitem name="Division"
+        	id="menu_res_division"
+        	action="action_res_division"
+        	parent="menu_org_structure"
+        	sequence="4" /> 
+
+    	# Section
+        <record id="view_res_section_tree" model="ir.ui.view">
+            <field name="name">view.res.section.tree</field>
+            <field name="model">res.section</field>
+            <field name="arch" type="xml">
+                <tree string="Section">
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_section_form" model="ir.ui.view">
+            <field name="name">view.res.section.form</field>
+            <field name="model">res.section</field>
+            <field name="arch" type="xml">
+            	<form string="Section">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+		                    <field name="division_id"/>
+                        </group>
+                        <group>
+	                        <field name="description" />
+                        </group>
+                        <group string="Based On">
+		                    <field name="org_id"/>
+		                    <field name="sector_id"/>
+		                    <field name="subsector_id"/>
+                        </group>
+                        <group string="Tag">
+		                    <field name="costcenter_id"/>
+		                    <field name="mission_id"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>        
+
+        <record id="view_res_section_search" model="ir.ui.view">
+            <field name="name">view.res.section.search</field>
+            <field name="model">res.section</field>
+            <field name="arch" type="xml">
+                <search string="Subsector">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                    	<filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
+                    	<filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
+                    	<filter name="subsector_id" string="Subsector" context="{'group_by':'subsector_id'}"/>
+                    	<filter name="division_id" string="Division" context="{'group_by':'division_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>     
+        
+        <record id="action_res_section" model="ir.actions.act_window">
+            <field name="name">Section</field>
+            <field name="res_model">res.section</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_section_tree"/>
+        </record>
+        
+        <menuitem name="Section"
+         	id="menu_res_section"
+        	action="action_res_section"
+        	parent="menu_org_structure"
+        	sequence="5" />        		
+        	
+    	# Cost Center
+        <record id="view_res_costcenter_tree" model="ir.ui.view">
+            <field name="name">view.res.costcenter.tree</field>
+            <field name="model">res.costcenter</field>
+            <field name="arch" type="xml">
+                <tree string="Cost Center">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="section_ids"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_res_costcenter_form" model="ir.ui.view">
+            <field name="name">view.res.costcenter.form</field>
+            <field name="model">res.costcenter</field>
+            <field name="arch" type="xml">
+				<form string="Cost Center">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+		                    <field name="section_ids" widget="many2many_tags"/>
+		                    <field name="taxbranch_id"/>
+                        </group>
+                        <group>
+	                        <field name="description" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>   
+             
+        <record id="view_res_costcenter_search" model="ir.ui.view">
+            <field name="name">view.res.costcenter.search</field>
+            <field name="model">res.costcenter</field>
+            <field name="arch" type="xml">
+                <search string="Cost Center">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <group expand="1" string="Group By">		                    
+	                    <filter string="Org" name="org_id" context="{'group_by':'org_id'}"/>
+	                    <filter string="Sector" name="sector_id" context="{'group_by':'sector_id'}"/>
+	                    <filter string="Subsector" name="subsector_id" context="{'group_by':'subsector_id'}"/>
+	                    <filter string="Division" name="division_id" context="{'group_by':'division_id'}"/>
+                 	</group>
+                </search>
+            </field>
+        </record>
+        
+        <record id="action_res_costcenter" model="ir.actions.act_window">
+            <field name="name">Costcenter</field>
+            <field name="res_model">res.costcenter</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_costcenter_tree"/>
+        </record>
+        
+        <menuitem name="(Costcenter)"
+         	id="menu_res_costcenter"
+        	action="action_res_costcenter"
+        	parent="menu_org_structure"
+        	sequence="20" /> 	 
+        	
+        <menuitem name="(Costcenter)"
+         	id="menu_res_costcenter_for_project"
+        	action="action_res_costcenter"
+        	parent="menu_spa_structure"
+        	sequence="20" /> 	 
+
+        	
+	</data>
+</openerp>

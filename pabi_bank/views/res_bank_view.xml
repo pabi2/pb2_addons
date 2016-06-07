@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- res.bank.master.master -->
+        <record id="view_res_bank_master_form" model="ir.ui.view">
+            <field name="name">res.bank.master.form</field>
+            <field name="model">res.bank.master</field>
+            <field name="arch" type="xml">
+                <form string="Bank Master">
+                    <group>
+                    	<group>
+	                        <field name="code"/>
+	                        <field name="abbrev"/>
+						</group>             
+	                    <group>
+	                    	<field name="name"/>
+	                    </group>           
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_res_bank_master_tree" model="ir.ui.view">
+            <field name="name">res.bank.master.tree</field>
+            <field name="model">res.bank.master</field>
+            <field name="arch" type="xml">
+                <tree string="Bank Master">
+                    <field name="code"/>
+                    <field name="abbrev"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_res_bank_master_form" model="ir.actions.act_window">
+            <field name="name">Bank Master</field>
+            <field name="res_model">res.bank.master</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new bank master
+              </p><p>
+                Manage bank records you want to be used in the system.
+              </p>
+            </field>
+        </record>
+        <menuitem action="action_res_bank_master_form" id="menu_action_res_bank_master_form" parent="base.menu_config_address_book" sequence="10" groups="base.group_no_one"/>
+    </data>
+</openerp>

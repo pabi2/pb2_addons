@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+		# Temp Menu
+		<menuitem name="PABI2 Structure" id="menu_pabi2_top" />
+			<menuitem name="Project Budget Structure" id="menu_spa_structure" parent="menu_pabi2_top" sequence="1"/>
+			<menuitem name="Section Budget Structure" id="menu_org_structure" parent="menu_pabi2_top" sequence="2"/>
+			<menuitem name="Personnel Budget Structure" id="menu_personnel_structure" parent="menu_pabi2_top" sequence="3"/>
+			<menuitem name="Investment Budget Structure" id="menu_investment_structure" parent="menu_pabi2_top" sequence="4"/>
+			<!-- menuitem name="Investment Budget Structure" id="menu_org_structure" parent="menu_pabi2_top" sequence="3"/-->
+			<menuitem name="Dimensions" id="menu_pabi_dimension" parent="menu_pabi2_top" sequence="10"/>
+				<menuitem name="Structured" id="menu_structured_dimension" parent="menu_pabi_dimension" sequence="1"/>
+				<menuitem name="Open" id="menu_open_dimension" parent="menu_pabi_dimension" sequence="2"/>
+    </data>
+</openerp>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>        
+		<record id="view_res_section_purchasing_unit_form" model="ir.ui.view">
+            <field name="name">res.section.purchasing.unit.form</field>
+            <field name="model">res.section</field>
+            <field name="inherit_id" ref="pabi_base.view_res_section_form"/>
+            <field name="arch" type="xml">
+	            <xpath expr='/form/group' position="after">
+                    <notebook>
+                        <page string="Purchasing Unit">
+                    		<field name="purchasing_unit_id">
+								<tree string="Responsible" editable="bottom">
+									<field name="doctype_id"/>
+									<field name="name"/>
+								</tree>
+							</field>
+						</page>
+                        <page string="Boss Level Approval">
+                    		<field name="boss_ids">
+								<tree string="Boss Level Approval" editable="bottom">
+									<field name="employee_id"/>
+									<field name="level"/>
+									<field name="create_date"/>
+								</tree>
+							</field>
+						</page>
+					</notebook>	 	
+				</xpath> 
+			</field>
+        </record>	
+    </data>
+</openerp>
