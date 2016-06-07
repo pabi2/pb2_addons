@@ -202,13 +202,13 @@
                     <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
                     <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
                     
-                    <filter name="invest_asset_id" context="{'group_by':'invest_asset_id'}"/>
+                    <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
                 		
-                    <filter name="invest_construction_id" context="{'group_by':'invest_construction_id'}"/>
-                    <filter name="invest_construction_phase_id" context="{'group_by':'invest_construction_phase_id'}"/>
+                    <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
+                    <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
             
-                    <filter name="personnel_costcenter_id" context="{'group_by':'personnel_costcenter_id'}"/>
-
+                    <filter string="Personnel Costcenter" context="{'group_by':'personnel_costcenter_id'}"/>
+                    
                     <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
                     <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
                     
