@@ -78,42 +78,42 @@ class BudgetFiscalPolicy(models.Model):
         store=True,
     )
     # PLAN
-    amount_overall = fields.Float(
-        string='Overall Amount',
+    planned_overall = fields.Float(
+        string='Planned Overall',
         readonly=True,
         states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
-    amount_project_base = fields.Float(
+    planned_project_base = fields.Float(
         string='Project Based',
         readonly=True,
         states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
-    amount_unit_base = fields.Float(
+    planned_unit_base = fields.Float(
         string='Unit Based',
         readonly=True,
         states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
-    amount_personnel = fields.Float(
+    planned_personnel = fields.Float(
         string='Personnel',
         readonly=True,
         states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
-    amount_invest_asset = fields.Float(
+    planned_invest_asset = fields.Float(
         string='Investment Asset',
         readonly=True,
         states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
-    amount_invest_construction = fields.Float(
+    planned_invest_construction = fields.Float(
         string='Investment Construction',
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -122,7 +122,7 @@ class BudgetFiscalPolicy(models.Model):
     )
     # POLICY
     policy_overall = fields.Float(
-        string='Overall Amount',
+        string='Policy Overall',
         readonly=True,
         states={'draft': [('readonly', False)]},
         compute='_compute_all',
@@ -192,9 +192,9 @@ class BudgetFiscalPolicy(models.Model):
     def _compute_all(self):
         for rec in self:
             # PLAN
-            rec.amount_project_base = sum(rec.project_base_ids.
+            rec.planned_project_base = sum(rec.project_base_ids.
                                           mapped('planned_amount'))
-            rec.amount_unit_base = sum(rec.unit_base_ids.
+            rec.planned_unit_base = sum(rec.unit_base_ids.
                                        mapped('planned_amount'))
             # POLICY
             rec.policy_project_base = sum(rec.project_base_ids.
@@ -203,8 +203,8 @@ class BudgetFiscalPolicy(models.Model):
                                        mapped('policy_amount'))
 
             # Overall
-            rec.amount_overall = sum([rec.amount_project_base,
-                                      rec.amount_unit_base])
+            rec.planned_overall = sum([rec.planned_project_base,
+                                      rec.planned_unit_base])
             rec.policy_overall = sum([rec.policy_project_base,
                                       rec.policy_unit_base])
 
