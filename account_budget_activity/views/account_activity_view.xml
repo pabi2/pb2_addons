@@ -142,7 +142,7 @@
             <field name="arch" type="xml">
                 <tree string="Activity">
                     <field name="name"/>
-                    <field name="activity_group_id" required="1"/>
+                    <field name="activity_group_id"/>
                    	<!--field name="account_id"/-->
                 </tree>
             </field>
@@ -167,7 +167,7 @@
 	                        <field name="name"/>
                     	</group>
                         <group>
-                    		<field name="activity_group_id"/>
+                    		<field name="activity_group_id" required="1"/>
 							<field name="tag_ids" widget="many2many_tags"/>                    		
                     	</group>
                     </group>
