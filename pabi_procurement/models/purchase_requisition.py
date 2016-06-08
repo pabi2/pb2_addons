@@ -439,7 +439,7 @@ class PurchaseRequisition(models.Model):
                                 for purchase in purchase_order:
                                     po_id = purchase.id
                                     committees = requisition.\
-                                        prepare_order_committees(po_id)
+                                        _prepare_order_committees(po_id)
                                     purchase.write({
                                         'committee_ids': committees,
                                         'verify_uid': order.verify_uid.id,
