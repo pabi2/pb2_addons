@@ -31,7 +31,7 @@ class PurchaseRequest(models.Model):
             self.line_ids.filtered(lambda l:
                                    l.request_state not in ('to_approve',)).\
                 _create_analytic_line(reverse=True)
-        # Create negative amount for the remain product_qty - invoiced_qty
+        # Create negative amount for the remain product_qty - open_invoiced_qty
         if vals.get('state') in ['rejected']:
             self.line_ids.filtered(lambda l:
                                    l.request_state not in ('draft',

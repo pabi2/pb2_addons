@@ -79,8 +79,23 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="inside">
               		<field name="doc_id" />
+              		<field name="activity_group_id" invisible="1"/>
+              		<field name="activity_id" invisible="1"/>
                 </xpath>
             </field>
-        </record>         
+        </record>     
+
+        <record id="view_account_analytic_line_filter" model="ir.ui.view">
+            <field name="name">view.account.analytic.line.filter</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account.view_account_analytic_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/group" position="inside">
+                    <filter string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
+                    <filter string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
+                </xpath>
+            </field>
+        </record>        
+            
 	</data>
 </openerp>

@@ -31,7 +31,7 @@ class HRExpenseExpense(models.Model):
         # TODO: will only AP and not AV be in commitment?
         if vals.get('state', False) == 'draft':
             self.line_ids._create_analytic_line(reverse=True)
-        # Create negative amount for the remain product_qty - invoiced_qty
+        # Create negative amount for the remain product_qty - open_invoiced_qty
         if vals.get('state') in ('cancelled',):
             self.filtered(lambda x: x.state not in ('cancelled',)).\
                 line_ids._create_analytic_line(reverse=False)
@@ -122,7 +122,7 @@ class HRExpenseLine(models.Model):
         if 'diff_invoiced_qty' in self._context:
             line_qty = self._context.get('diff_invoiced_qty')
         else:
-            line_qty = self.unit_quantity - self.invoiced_qty
+            line_qty = self.unit_quantity - self.open_invoiced_qty
         if not line_qty:
             return False
         sign = reverse and -1 or 1
@@ -148,9 +148,9 @@ class HRExpenseLine(models.Model):
         if vals:
             self.env['account.analytic.line'].create(vals)
 
-    # When partial invoiced_qty
+    # When partial open_invoiced_qty
     @api.multi
-    @api.depends('invoiced_qty')
+    @api.depends('open_invoiced_qty')
     def _compute_temp_invoiced_qty(self):
         # As inoviced_qty increased, release the commitment
         for rec in self:
@@ -160,10 +160,11 @@ class HRExpenseLine(models.Model):
                 from hr_expense_line where id = %s
             """, (rec.id,))
             temp_invoiced_qty = self._cr.fetchone()[0] or 0.0
-            diff_invoiced_qty = rec.invoiced_qty - temp_invoiced_qty
+            diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
             if rec.expense_state not in ('cancelled',):
-                rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
+                rec.with_context(diff_invoiced_qty=
+                                 diff_invoiced_qty).\
                     _create_analytic_line(reverse=False)
-            rec.temp_invoiced_qty = rec.invoiced_qty
+            rec.temp_invoiced_qty = rec.open_invoiced_qty
 
     # ======================================================
