@@ -5,7 +5,7 @@ from openerp.exceptions import ValidationError
 from openerp.osv.expression import get_unaccent_wrapper
 
 
-class res_partner(models.Model):
+class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     id = fields.Integer(
@@ -48,6 +48,14 @@ class res_partner(models.Model):
         compute='_get_require_taxbranch',
         store=True,
         multi='taxbranch',
+    )
+    category_id = fields.Many2one(
+        'res.partner.category',
+        string='Category',
+    )
+    tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Tags',
     )
 
     @api.one
@@ -92,7 +100,7 @@ class res_partner(models.Model):
 
     @api.model
     def create(self, vals):
-        partner = super(res_partner, self).create(vals)
+        partner = super(ResPartner, self).create(vals)
         # Always use same tag as parent.
         if vals.get('parent_id', False):
             partner.category_id = partner.parent_id.category_id
@@ -108,14 +116,11 @@ class res_partner(models.Model):
         if check == 'true' and vals.get('category_id', False):
             # Test whether index exists to prevent exception
             category = vals.get('category_id')
-            index_exists = len(category) > 0 and \
-                len(category[0]) > 2 and \
-                len(category[0][2]) > 0 or False
-            if not index_exists:
+            if not category:
                 return
             for partner in self:
                 prev_categ = partner.category_id
-                new_category_id = category[0][2][0]
+                new_category_id = category
                 new_categ = \
                     self.env['res.partner.category'].browse(new_category_id)
                 if prev_categ:
@@ -139,33 +144,38 @@ class res_partner(models.Model):
     @api.multi
     def write(self, vals):
         self._pre_category_change(vals)
-        res = super(res_partner, self).write(vals)
+        res = super(ResPartner, self).write(vals)
         self._post_category_change(vals)
         return res
 
     @api.v7
     def onchange_address(self, cr, uid, ids,
                          use_parent_address, parent_id, context=None):
-        result = super(res_partner, self).onchange_address(cr, uid, ids,
-                                                           use_parent_address,
-                                                           parent_id,
-                                                           context=context)
+        result = super(ResPartner, self).\
+            onchange_address(
+                cr,
+                uid,
+                ids,
+                use_parent_address,
+                parent_id,
+                context=context
+            )
         parent = self.browse(cr, uid, parent_id, context=context)
-        category_id = parent.category_id and parent.category_id[0].id or False
+        category_id = parent.category_id.id or False
         if category_id:
             if result.get('value', False):
                 result['value'].update(
-                    {'category_id': [(6, 0, [category_id])]})
+                    {'category_id': category_id})
             else:
                 result.update(
-                    {'value': {'category_id': [(6, 0, [category_id])]}})
+                    {'value': {'category_id': category_id}})
         return result
 
     @api.one
     @api.depends('category_id')
     def _get_single_category_id(self):
         if self.category_id:
-            self.single_category_id = self.category_id[0].id
+            self.single_category_id = self.category_id.id
 
     @api.one
     @api.depends('category_id', 'parent_id')
@@ -180,13 +190,8 @@ class res_partner(models.Model):
     @api.one
     @api.depends('category_id')
     def _is_government(self):
-        if self.category_id and self.category_id[0].parent_id:
-            gov_categ_id = self.env['ir.model.data'].\
-                get_object_reference('nstda_msd', 'partner_tag_government')[1]
-            if self.category_id[0].parent_id.id == gov_categ_id:
-                self.is_government = True
-        else:
-            self.is_government = False
+        # TODO: set False for now
+        self.is_government = False
 
     @api.one
     @api.depends('name')
@@ -194,23 +199,18 @@ class res_partner(models.Model):
         if type(self.id) in (int,):
             self.search_key = '%0*d' % (7, self.id)
 
-    @api.constrains('category_id')
-    def _check_one_partner_category(self):
-        if len(self.category_id) > 1:
-            raise ValidationError(_('Please select only 1 partner category'))
-
     @api.onchange('category_id')
     def _onchange_category_id(self):
         if self.category_id:
-            if self.category_id[0].receivable_account_id:
+            if self.category_id.receivable_account_id:
                 self.property_account_receivable = \
-                    self.category_id[0].receivable_account_id.id
-            if self.category_id[0].payable_account_id:
+                    self.category_id.receivable_account_id.id
+            if self.category_id.payable_account_id:
                 self.property_account_payable = \
-                    self.category_id[0].payable_account_id.id
-            if self.category_id[0].fiscal_position_id:
+                    self.category_id.payable_account_id.id
+            if self.category_id.fiscal_position_id:
                 self.property_account_position = \
-                    self.category_id[0].fiscal_position_id.id
+                    self.category_id.fiscal_position_id.id
         else:
             self.property_account_receivable = False
             self.property_account_payable = False
@@ -281,12 +281,12 @@ class res_partner(models.Model):
                 return self.name_get(cr, uid, ids, context)
             else:
                 return []
-        return super(res_partner, self).\
+        return super(ResPartner, self).\
             name_search(cr, uid, name, args, operator=operator,
                         context=context, limit=limit)
 
 
-class res_partner_category(models.Model):
+class ResPartnerCategory(models.Model):
 
     _inherit = 'res.partner.category'
 
@@ -325,3 +325,25 @@ class res_partner_category(models.Model):
         string='Validate Tax/Branch Unique',
         help="Non-Government, checking this flag will ensure that Tax ID "
         "and Branch combination must be unique per company of this category")
+
+
+class ResPartnerTag(models.Model):
+    _description = 'Partner Tags'
+    _name = 'res.partner.tag'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    parent_id = fields.Many2one(
+        'res.partner.tag',
+        string='Parent Tag',
+    )
+    child_ids = fields.One2many(
+        'res.partner.tag',
+        'parent_id',
+        string='Child Tags',
+    )
+    active = fields.Boolean(
+        string='Active',
+    )
