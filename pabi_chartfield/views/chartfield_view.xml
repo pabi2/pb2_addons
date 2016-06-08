@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-    	# Cost Control Type
+        # Cost Control Type
         <record id="view_cost_control_type_tree" model="ir.ui.view">
             <field name="name">view.cost.control.type.tree</field>
             <field name="model">cost.control.type</field>
@@ -17,14 +17,14 @@
             <field name="name">view.cost.control.type.form</field>
             <field name="model">cost.control.type</field>
             <field name="arch" type="xml">
-            	<form string="Cost Control Type">
+                <form string="Cost Control Type">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" class="oe_inline" placeholder="Name"/>
                     </h1>
                     <group>
                         <group>
-	                        <field name="description" />
+                            <field name="description" />
                         </group>
                         <group>
                         </group>
@@ -41,12 +41,12 @@
         </record>
         
         <menuitem name="Cost Control Type"
-        	id="menu_cost_control_type" 
-        	action="action_cost_control_type" 
-        	parent="pabi_base.menu_open_dimension" 
-        	sequence="9"/>
-		
-    	# Cost Control
+            id="menu_cost_control_type" 
+            action="action_cost_control_type" 
+            parent="pabi_base.menu_open_dimension" 
+            sequence="9"/>
+        
+        # Cost Control
         <record id="view_cost_control_tree" model="ir.ui.view">
             <field name="name">view.cost.control.tree</field>
             <field name="model">cost.control</field>
@@ -63,17 +63,17 @@
             <field name="name">view.cost.control.form</field>
             <field name="model">cost.control</field>
             <field name="arch" type="xml">
-            	<form string="Cost Control">
+                <form string="Cost Control">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" class="oe_inline" placeholder="Name"/>
                     </h1>
                     <group>
                         <group>
-	                        <field name="cost_control_type_id" />
+                            <field name="cost_control_type_id" />
                         </group>
                         <group>
-	                        <field name="description" />
+                            <field name="description" />
                         </group>
                     </group>
                 </form>
@@ -88,10 +88,10 @@
         </record>
         
         <menuitem name="Cost Control"
-        	id="menu_cost_control" 
-        	action="action_cost_control" 
-        	parent="pabi_base.menu_open_dimension" 
-        	sequence="10"/>
+            id="menu_cost_control" 
+            action="action_cost_control" 
+            parent="pabi_base.menu_open_dimension" 
+            sequence="10"/>
 
-	</data>
+    </data>
 </openerp>
