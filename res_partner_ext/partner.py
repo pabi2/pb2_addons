@@ -5,7 +5,7 @@ from openerp.exceptions import ValidationError
 from openerp.osv.expression import get_unaccent_wrapper
 
 
-class res_partner(models.Model):
+class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     id = fields.Integer(
@@ -100,7 +100,7 @@ class res_partner(models.Model):
 
     @api.model
     def create(self, vals):
-        partner = super(res_partner, self).create(vals)
+        partner = super(ResPartner, self).create(vals)
         # Always use same tag as parent.
         if vals.get('parent_id', False):
             partner.category_id = partner.parent_id.category_id
@@ -144,17 +144,22 @@ class res_partner(models.Model):
     @api.multi
     def write(self, vals):
         self._pre_category_change(vals)
-        res = super(res_partner, self).write(vals)
+        res = super(ResPartner, self).write(vals)
         self._post_category_change(vals)
         return res
 
     @api.v7
     def onchange_address(self, cr, uid, ids,
                          use_parent_address, parent_id, context=None):
-        result = super(res_partner, self).onchange_address(cr, uid, ids,
-                                                           use_parent_address,
-                                                           parent_id,
-                                                           context=context)
+        result = super(ResPartner, self).\
+            onchange_address(
+                cr,
+                uid,
+                ids,
+                use_parent_address,
+                parent_id,
+                context=context
+            )
         parent = self.browse(cr, uid, parent_id, context=context)
         category_id = parent.category_id.id or False
         if category_id:
@@ -276,12 +281,12 @@ class res_partner(models.Model):
                 return self.name_get(cr, uid, ids, context)
             else:
                 return []
-        return super(res_partner, self).\
+        return super(ResPartner, self).\
             name_search(cr, uid, name, args, operator=operator,
                         context=context, limit=limit)
 
 
-class res_partner_category(models.Model):
+class ResPartnerCategory(models.Model):
 
     _inherit = 'res.partner.category'
 
@@ -322,7 +327,7 @@ class res_partner_category(models.Model):
         "and Branch combination must be unique per company of this category")
 
 
-class res_partner_tag(models.Model):
+class ResPartnerTag(models.Model):
     _description = 'Partner Tags'
     _name = 'res.partner.tag'
 
