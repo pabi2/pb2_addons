@@ -84,7 +84,6 @@ class AccountActivity(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=True,
         ondelete='restrict',
     )
     tag_ids = fields.Many2many(
