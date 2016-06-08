@@ -5,7 +5,7 @@
     'author': "Ecosoft",
     'website': "http://ecosoft.co.th",
     'category': 'Account',
-    'version': '0.1.0',
+    'version': '8.0.1.0.0',
     'depends': [
         'pabi_base',
         'account_budget_activity',
@@ -15,7 +15,9 @@
         'purchase_request',
     ],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
+        'views/res_config_view.xml',
         'data/cost_control_data.xml',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
