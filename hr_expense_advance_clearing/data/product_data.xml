@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="product_product_employee_advance" model="product.product">
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="name">Employee Advance</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="hr_expense_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+        </record>
+    </data>
+</openerp>

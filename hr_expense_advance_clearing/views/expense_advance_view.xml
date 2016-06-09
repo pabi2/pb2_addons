@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_expenses_form_advance" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="is_employee_advance" attrs="{'invisible': [('is_employee_advance', '=', False)]}"/>
+                    <field name="is_advance_clearing" invisible="True"/>
+                    <field name="advance_expense_id" 
+                           domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
+                                    ('employee_id', '=', employee_id), ('to_clearing_expense_amount', '&gt;', 0.0)]"
+                           attrs="{'invisible': [('is_advance_clearing', '=', False)],
+                                   'required': [('is_advance_clearing', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Advance Clearing Expenses" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
+                        <group>
+                            <group>
+                                <field name="to_clearing_expense_amount"/>
+                            </group>
+                            <group/>
+                        </group>
+                        <field name="advance_clearing_ids"/>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']" position="before">
+                    <field name="is_advance_product_line" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_expense_filter" model="ir.ui.view">
+            <field name="name">hr.expense.filter</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[last()]" position="after">
+                    <filter string="Employee Advance" 
+                            name="is_employee_advance"
+                            domain="[('is_employee_advance', '=', True)]"/>
+                    <filter string="Advance Clearing" 
+                            name="is_advance_clearing"
+                            domain="[('is_advance_clearing', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="action_expense_advance" model="ir.actions.act_window">
+            <field name="name">Employee Advance</field>
+            <field name="res_model">hr.expense.expense</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="hr_expense.view_hr_expense_filter"/>
+            <field name="view_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="context">{'default_is_employee_advance':True, 'is_employee_advance':True}</field>
+            <field name="domain">[('is_employee_advance', '=', True)]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register new expenses. 
+              </p><p>
+                Odoo will ensure the whole process is followed; the expense
+                sheet is validated by manager(s), the employee is reimbursed
+                from his expenses, some expenses must be re-invoiced to the
+                customers.
+              </p>
+            </field>
+        </record>
+        
+        <record id="action_expense_clearing" model="ir.actions.act_window">
+            <field name="name">Employee Clearing</field>
+            <field name="res_model">hr.expense.expense</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="hr_expense.view_hr_expense_filter"/>
+            <field name="view_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="context">{'default_is_employee_advance':False, 'default_is_advance_clearing': True,
+                                    'is_advance_clearing': True}</field>
+            <field name="domain">[('is_advance_clearing', '=', True)]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register new expenses. 
+              </p><p>
+                Odoo will ensure the whole process is followed; the expense
+                sheet is validated by manager(s), the employee is reimbursed
+                from his expenses, some expenses must be re-invoiced to the
+                customers.
+              </p>
+            </field>
+        </record>
+        
+        <menuitem action="action_expense_advance"
+                  id="menu_expense_advance"
+                  name="Employee Advance"
+                  parent="hr_expense.next_id_49"/>
+
+        <menuitem action="action_expense_clearing"
+                  id="menu_expense_clearing"
+                  name="Employee Clearing"
+                  parent="hr_expense.next_id_49"/>
+        
+    </data>
+</openerp>

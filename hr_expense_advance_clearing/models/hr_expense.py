@@ -1,0 +1,125 @@
+# -*- coding: utf-8 -*-
+# © <YEAR(S)> <AUTHOR(S)>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+from lxml import etree
+from datetime import date
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
+from openerp.osv.orm import setup_modifiers
+
+
+class HRExpenseLine(models.Model):
+    _inherit = "hr.expense.line"
+
+    is_advance_product_line = fields.Boolean('Advance Product Line')
+
+
+class HRExpenseExpense(models.Model):
+    _inherit = "hr.expense.expense"
+
+    is_employee_advance = fields.Boolean('Employee Advance', readonly=True,)
+    is_advance_clearing = fields.Boolean('Advance Clearing')
+    advance_expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Clear Advance',)
+    advance_clearing_ids = fields.One2many(
+        'hr.expense.expense',
+        'advance_expense_id',
+        string='Advance Clearing Expenses',
+    )
+    to_clearing_expense_amount = fields.Float(
+        string='Amount to Clearing',
+        compute='_compute_to_clearing_expense_amount',
+        store=True,
+        copy=False,
+    )
+
+    @api.depends('advance_clearing_ids',
+                 'advance_clearing_ids.state',
+                 'advance_clearing_ids.amount',
+                 'state')
+    def _compute_to_clearing_expense_amount(self):
+        for expense in self:
+            clearing_amount = 0.0
+            if expense.state == 'paid':
+                clearing_amount = expense.amount
+                if expense.advance_clearing_ids:
+                    for clearing_advance in expense.advance_clearing_ids:
+                        if clearing_advance.state == 'paid':
+                            clearing_amount -= clearing_advance.amount
+            expense.to_clearing_expense_amount = clearing_amount
+
+    @api.model
+    def default_get(self, fields):
+        result = super(HRExpenseExpense, self).default_get(fields)
+        advance_product =\
+            self.env.ref(
+                'hr_expense_advance_clearing.product_product_employee_advance')
+        if result.get('is_employee_advance', False):
+            line = [(0, 0, {'product_id': advance_product.id,
+                            'date_value': date.today().strftime('%Y-%m-%d'),
+                            'name': advance_product.name,
+                            'uom_id': advance_product.uom_id.id,
+                            'unit_quantity': 1.0,
+                            'is_advance_product_line': True, })]
+            result.update({'line_ids': line})
+        return result
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type=False,
+                        toolbar=False, submenu=False):
+        res = super(HRExpenseExpense, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+
+        if self._context.get('is_employee_advance', False) and \
+                view_type == 'form':
+            doc = etree.XML(res['fields']['line_ids']['views']['tree']['arch'])
+            nodes = doc.xpath("/tree")
+            for node in nodes:
+                node.set('create', 'false')
+            amount_nodes = doc.xpath("//field")
+            for amt_node in amount_nodes:
+                if not amt_node.attrib['name'] == 'unit_amount':
+                    amt_node.set('readonly', '1')
+                line_fields =\
+                    res['fields']['line_ids']['views']['tree']['fields']
+                setup_modifiers(amt_node, line_fields[amt_node.attrib['name']])
+            res['fields']['line_ids']['views']['tree']['arch'] =\
+                etree.tostring(doc)
+        return res
+
+    @api.multi
+    def _create_supplier_invoice_from_expense(self):
+        invoice = super(HRExpenseExpense, self).\
+            _create_supplier_invoice_from_expense()
+        expense = self
+        if expense.is_advance_clearing:
+            advance_product = self.env.ref(
+                'hr_expense_advance_clearing.product_product_employee_advance'
+            )
+            if not advance_product.property_account_expense:
+                raise UserError(
+                    _('Please define expense account \
+                    on Employee Advance Product.'))
+
+            employee_advance = expense.amount
+            if expense.amount > expense.advance_expense_id.amount:
+                employee_advance = expense.advance_expense_id.amount
+            expense_advance_move =\
+                expense.advance_expense_id.invoice_id.move_id.line_id
+            move_line =\
+                expense_advance_move.filtered(
+                    lambda x: x.account_id.reconcile is True and
+                    x.account_id.type == 'other')
+            line_vals = {'product_id': advance_product.id,
+                         'name': advance_product.name,
+                         'price_unit': -1 * employee_advance,
+                         'account_id':
+                         advance_product.property_account_expense.id,
+                         'quantity': 1.0,
+                         'sequence': 1,
+                         'invoice_id': invoice.id}
+            self.env['account.invoice.line'].create(line_vals)
+            invoice.write({'advance_move_line_id': move_line.id})
+        return invoice
