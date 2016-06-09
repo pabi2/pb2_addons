@@ -11,5 +11,9 @@
             <field name="name">Purchase Requisition</field>
             <field name="code">purchase.requisition</field>
         </record>
+        <record id="purchase.seq_purchase_order" model="ir.sequence">
+            <field name="prefix">PO%(y)s</field>
+            <field name="padding">6</field>
+        </record>
     </data>
 </openerp>
