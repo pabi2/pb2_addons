@@ -61,13 +61,13 @@ class PurchaseWorkAcceptance(models.Model):
                     invoice = Invoice.search([
                         ('origin', 'like', self.order_id.name),
                     ])
-                if len(invoice) > 0:
-                    for inv in invoice:
-                        inv.write({
-                            'date_invoice': self.date_invoice,
-                            'supplier_invoice_number': sup_inv,
-                            'reference': self.order_id.name,
-                        })
+                    if len(invoice) > 0:
+                        for inv in invoice:
+                            inv.write({
+                                'date_invoice': self.date_invoice,
+                                'supplier_invoice_number': sup_inv,
+                                'reference': self.order_id.name,
+                            })
 
     @api.model
     def _check_product_type(self):

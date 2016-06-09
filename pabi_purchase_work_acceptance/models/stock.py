@@ -14,10 +14,16 @@ class StockPicking(models.Model):
 
     @api.model
     def _create_invoice_from_picking(self, picking, vals):
-        if picking.acceptance_id:
+        acceptance = picking.acceptance_id
+        if acceptance:
             vals.update({
-                'origin': "%s:%s" % (vals['origin'],
-                                     picking.acceptance_id.name)
+                'origin': "%s:%s" % (
+                    vals['origin'],
+                    acceptance.name,
+                ),
+                'date_invoice': acceptance.date_invoice,
+                'supplier_invoice_number': acceptance.supplier_invoice,
+                'reference': acceptance.order_id.name,
             })
         res = super(StockPicking,
                     self)._create_invoice_from_picking(picking, vals)
