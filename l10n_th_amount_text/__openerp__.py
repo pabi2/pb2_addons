@@ -10,6 +10,7 @@ Total Fields include,
 
 * Invoice Amount
 * Sales Order
+* Purchase Order
 * Payment
 
 
@@ -20,6 +21,7 @@ Total Fields include,
     'images': [],
     'depends': ['account',
                 'sale',
+                'purchase',
                 'account_voucher'],
     'demo': [],
     'data': ['all_docs_view.xml'],
