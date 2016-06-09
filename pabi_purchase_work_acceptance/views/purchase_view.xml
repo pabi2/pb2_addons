@@ -6,6 +6,9 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase_split_quote2order.view_purchase_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//button[@name='view_picking']" position="replace">
+                    <button name="view_picking" string="Receive Products" type="object" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}"/>
+                </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="before">
                     <button name="%(action_create_purchase_work_acceptance)d"
                             type="action"
