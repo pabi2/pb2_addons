@@ -10,7 +10,7 @@ class AmountToWord(object):
     def _get_amount_total(self, obj):
         amount_total = 0.0
         # Order, Invoice
-        if obj._name in ('account.invoice', 'sale.order'):
+        if obj._name in ('account.invoice', 'sale.order', 'purchase.order'):
             amount_total = obj.amount_total
         elif obj._name == 'account.voucher':
             for cr_line in obj.line_cr_ids:
@@ -175,5 +175,49 @@ class sale_order(AmountToWord, osv.osv):
                                      'discount', 'product_uom_qty'], 10),
             }),
     }
+
+
+class purchase_order(AmountToWord, osv.osv):
+
+    _inherit = 'purchase.order'
+
+    def _amount_total_text_en(
+            self, cursor, user, ids, name, arg, context=None):
+        return self._amount_to_word_en(cursor, user, ids, name,
+                                       arg, context=context)
+
+    def _amount_total_text_th(
+            self, cursor, user, ids, name, arg, context=None):
+        return self._amount_to_word_th(cursor, user, ids, name,
+                                       arg, context=context)
+
+    def _get_order(self, cr, uid, ids, context=None):
+        result = {}
+        for line in self.pool.get('purchase.order.line').\
+                browse(cr, uid, ids, context=context):
+            result[line.order_id.id] = True
+        return result.keys()
+
+    _columns = {
+        'amount_total_text_en': fields.function(
+            _amount_total_text_en, string='Amount Total (EN)', type='char',
+            store={
+                'purchase.order': (lambda self, cr, uid, ids, c={}:
+                                   ids, ['order_line'], 10),
+                'purchase.order.line': (_get_order,
+                                        ['price_unit', 'taxes_id',
+                                         'product_qty'], 10),
+            }),
+        'amount_total_text_th': fields.function(
+            _amount_total_text_th, string='Amount Total (TH)', type='char',
+            store={
+                'sale.order': (lambda self, cr, uid, ids, c={}:
+                               ids, ['order_line'], 10),
+                'purchase.order.line': (_get_order,
+                                        ['price_unit', 'taxes_id',
+                                         'product_qty'], 10),
+            }),
+    }
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -10,7 +10,7 @@ class AmountToWordExt(AmountToWord):
         """ Overwrite (ok) """
         amount_total = 0.0
         # Order, Invoice
-        if obj._name in ('account.invoice', 'sale.order'):
+        if obj._name in ('account.invoice', 'sale.order', 'purchase.order'):
             amount_total = obj.amount_total
         elif obj._name == 'account.voucher':
             for cr_line in obj.line_cr_ids:
@@ -28,6 +28,11 @@ class AmountToWordExt(AmountToWord):
 class sale_order(AmountToWordExt, osv.osv):
 
     _inherit = 'sale.order'
+
+
+class purchase_order(AmountToWordExt, osv.osv):
+
+    _inherit = 'purchase.order'
 
 
 class account_invoice(AmountToWordExt, osv.osv):
