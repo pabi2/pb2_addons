@@ -11,6 +11,7 @@
                             type="action"
                             groups="purchase.group_purchase_manager"
                             string="Create Work Acceptance"
+                            class="oe_highlight"
                             attrs="{'invisible':[('state', '!=', 'approved'),]}"/>
                 </xpath>
                 <xpath expr="//button[@name='invoice_open']" position="before">
