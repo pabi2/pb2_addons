@@ -425,18 +425,54 @@ class AccountBudgetLine(models.Model):
         store=True,
     )
     # Budget release flag
-    r1 = fields.Boolean(default=False)
-    r2 = fields.Boolean(default=False)
-    r3 = fields.Boolean(default=False)
-    r4 = fields.Boolean(default=False)
-    r5 = fields.Boolean(default=False)
-    r6 = fields.Boolean(default=False)
-    r7 = fields.Boolean(default=False)
-    r8 = fields.Boolean(default=False)
-    r9 = fields.Boolean(default=False)
-    r10 = fields.Boolean(default=False)
-    r11 = fields.Boolean(default=False)
-    r12 = fields.Boolean(default=False)
+    r1 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r2 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r3 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r4 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r5 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r6 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r7 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r8 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r9 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r10 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r11 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
+    r12 = fields.Boolean(
+        default=False,
+        copy=False,
+    )
 
     @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
