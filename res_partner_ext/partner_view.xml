@@ -62,7 +62,7 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <field name="category_id" position="replace">
-					<field name="category_id"/>
+					<field name="category_id" placeholder="Category..."/>
                     <field name="tag_ids" widget="many2many_tags" placeholder="Tags..." style="width: 70%%"/>
 				</field>
 	            <field name="category_id" position="attributes" >
@@ -74,7 +74,7 @@
 					<attribute name="style">width: 100%%</attribute>
 				</field>
 				<field name="name" position="before">
-	            	<field name="title" style="width: 50%%"  options='{"no_open": True}'/>
+	            	<field name="title" style="width: 50%%"  options='{"no_open": True}' placeholder="Title"/>
 				</field>			
 	            <field name="name" position="after">
 	            	<field name="id" invisible="1"/>
