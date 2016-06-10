@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='currency_id']" position="after">
                     <field name="is_employee_advance" attrs="{'invisible': [('is_employee_advance', '=', False)]}"/>
-                    <field name="is_advance_clearing" invisible="True"/>
+                    <field name="is_advance_clearing" invisible="1"/>
                     <field name="advance_expense_id" 
                            domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
                                     ('employee_id', '=', employee_id), ('to_clearing_expense_amount', '&gt;', 0.0)]"
@@ -47,7 +47,12 @@
                 </xpath>
             </field>
         </record>
-        
+
+        <record id="hr_expense.expense_all" model="ir.actions.act_window">
+            <field name="context">{'is_advance_clearing':False, 'is_employee_advance':False,
+                                    'default_is_advance_clearing':False, 'default_is_employee_advance':False}</field>
+        </record>
+
         <record id="action_expense_advance" model="ir.actions.act_window">
             <field name="name">Employee Advance</field>
             <field name="res_model">hr.expense.expense</field>

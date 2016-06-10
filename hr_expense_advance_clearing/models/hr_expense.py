@@ -71,23 +71,35 @@ class HRExpenseExpense(models.Model):
         res = super(HRExpenseExpense, self).\
             fields_view_get(view_id=view_id, view_type=view_type,
                             toolbar=toolbar, submenu=submenu)
-
+        READONLY_FIELDS = ['product_id', 'uom_id', 'unit_quantity', 'tax_ids']
+        LINE_VIEWS = ['tree', 'form']
         if self._context.get('is_employee_advance', False) and \
                 view_type == 'form':
-            doc = etree.XML(res['fields']['line_ids']['views']['tree']['arch'])
-            nodes = doc.xpath("/tree")
-            for node in nodes:
-                node.set('create', 'false')
-            amount_nodes = doc.xpath("//field")
-            for amt_node in amount_nodes:
-                if not amt_node.attrib['name'] == 'unit_amount':
-                    amt_node.set('readonly', '1')
-                line_fields =\
-                    res['fields']['line_ids']['views']['tree']['fields']
-                setup_modifiers(amt_node, line_fields[amt_node.attrib['name']])
-            res['fields']['line_ids']['views']['tree']['arch'] =\
-                etree.tostring(doc)
+            for line_view in LINE_VIEWS:
+                viewref = res['fields']['line_ids']['views'][line_view]
+                doc = etree.XML(viewref['arch'])
+                if line_view == 'tree':
+                    nodes = doc.xpath("/tree")
+                    for node in nodes:
+                        node.set('create', 'false')
+                for readonly_field in READONLY_FIELDS:
+                    field_nodes =\
+                        doc.xpath("//field[@name='%s']" % (readonly_field))
+                    for field_node in field_nodes:
+                        field_node.set('readonly', '1')
+                        line_fields = viewref['fields']
+                        setup_modifiers(field_node,
+                                        line_fields[field_node.attrib['name']])
+                viewref['arch'] = etree.tostring(doc)
         return res
+
+    @api.multi
+    def expense_confirm(self):
+        for expense in self:
+            if expense.is_employee_advance and expense.amount < 0.0:
+                raise UserError(_('Negative amount not allowed.\
+                    Please insert positive amount.'))
+        return super(HRExpenseExpense, self).expense_confirm()
 
     @api.multi
     def _create_supplier_invoice_from_expense(self):
