@@ -103,6 +103,6 @@
                   id="menu_expense_clearing"
                   name="Employee Clearing"
                   parent="hr_expense.next_id_49"/>
-        
+
     </data>
 </openerp>
