@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_partner_form_ext" >
+            <field name="name">view.partner.form.ext</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="res_partner_ext.view_partner_form_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group/group/field[@name='vat']" position="replace"/>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group/group/field[@name='taxbranch']" position="replace"/>
+                <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='supplier']" position="before">
+                    <group attrs="{'invisible': [('use_parent_address', '=', True)]}">
+                        <field name="vat" string="Tax ID"/>
+                        <field name="taxbranch" />
+                    </group>
+				</xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -36,24 +36,18 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.onchange('date_invoice')
     def _onchange_date_invoice(self):
+        Invoice = self.env['account.invoice']
+        InvoiceLine = self.env['account.invoice.line']
+        self.write_to_invoice = True
+        sup_inv = self.supplier_invoice
         if len(self.acceptance_line_ids) > 0 and self.date_invoice:
             for accept_line in self.acceptance_line_ids:
                 if accept_line.product_id.type == 'service':
-                    Invoice = self.env['account.invoice']
-                    InvoiceLine = self.env['account.invoice.line']
-
-                    self.write_to_invoice = True
-                    sup_inv = self.supplier_invoice
                     # inv plan case
                     if accept_line.inv_line_id:
                         invoice = Invoice.search([
                             ('id', '=', accept_line.inv_line_id.invoice_id.id),
                         ])
-                        for inv in invoice:
-                            inv.write({
-                                'date_invoice': self.date_invoice,
-                                'supplier_invoice_number': sup_inv,
-                            })
                     # service case
                     else:
                         invoice_line = InvoiceLine.search([
@@ -63,11 +57,17 @@ class PurchaseWorkAcceptance(models.Model):
                             invoice = Invoice.search([
                                 ('id', '=', inv_line.invoice_id.id),
                             ])
-                            for inv in invoice:
-                                inv.write({
-                                    'date_invoice': self.date_invoice,
-                                    'supplier_invoice_number': sup_inv,
-                                })
+                elif accept_line.product_id.type == 'product':
+                    invoice = Invoice.search([
+                        ('origin', 'like', self.order_id.name),
+                    ])
+                    if len(invoice) > 0:
+                        for inv in invoice:
+                            inv.write({
+                                'date_invoice': self.date_invoice,
+                                'supplier_invoice_number': sup_inv,
+                                'reference': self.order_id.name,
+                            })
 
     @api.model
     def _check_product_type(self):
