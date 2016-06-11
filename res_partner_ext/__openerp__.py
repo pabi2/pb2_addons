@@ -60,7 +60,7 @@ Partner is a required field if patner in ('customer', supplier') (View level)
     'category': 'Base',
     'website': 'http://www.ecosoft.co.th',
     'images': [],
-    'depends': ['base'],
+    'depends': ['base','l10n_th_fields'],
     'demo': [],
     'data': ['data/config_data_maintenance.xml',
              'partner_view.xml',

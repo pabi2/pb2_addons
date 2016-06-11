@@ -19,13 +19,13 @@ class ResPartner(models.Model):
         string='Government',
         compute='_is_government',
     )
-    vat = fields.Char(
-        size=13,
-    )
-    taxbranch = fields.Char(
-        string='Tax Branch ID',
-        size=5,
-    )
+    # vat = fields.Char(
+    #     size=13,
+    # )
+    # taxbranch = fields.Char(
+    #     string='Tax Branch ID',
+    #     size=5,
+    # )
     search_key = fields.Char(
         string='Search Key',
         compute='_get_search_key',
