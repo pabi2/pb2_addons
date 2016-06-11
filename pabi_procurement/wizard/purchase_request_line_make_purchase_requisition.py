@@ -57,6 +57,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'assign_uid': req_id.assigned_to.id,
             'date_approve': req_id.date_approve,
             'request_ref_id': req_id.request_ref_id.id,
+            'delivery_address': req_id.delivery_address,
         }
         res.update(vals)
         return res

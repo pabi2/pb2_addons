@@ -8,6 +8,15 @@ from openerp.tools import float_compare
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    @api.multi
+    @api.depends('doc_approve_uid')
+    def _get_position(self):
+        self.ensure_one()
+        Employee = self.env['hr.employee']
+        employee = Employee.search([('user_id', '=', self.doc_approve_uid.id)])
+        for emp in employee:
+            self.position = emp.position_id.name
+
     dummy_quote_id = fields.Many2one(
         'purchase.order',
         string='Quotation Reference',
@@ -74,7 +83,9 @@ class PurchaseOrder(models.Model):
         states={'draft': [('readonly', False)]},
     )
     position = fields.Char(
+        compute="_get_position",
         string='Position',
+        store=True,
     )
     order_state = fields.Selection(
         string='PO Status',
@@ -133,15 +144,6 @@ class PurchaseOrder(models.Model):
         picking = self.env['stock.picking'].search([('id', '=', res[0])])
         picking.verified = True
         return res
-
-
-class Purchase(models.Model):
-    _name = 'purchase.method'
-    _description = 'PABI2 Purchase Method'
-
-    name = fields.Char(
-        string='Purchase Method',
-    )
 
 
 class PRWebPurchaseMethod(models.Model):
