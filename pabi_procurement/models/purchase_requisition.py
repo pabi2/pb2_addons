@@ -178,6 +178,7 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+
     doc_no = fields.Char(
         string='No.',
         readonly=True,
@@ -210,6 +211,11 @@ class PurchaseRequisition(models.Model):
     name = fields.Char(
         default=lambda self:
         self.env['ir.sequence'].get('purchase.requisition'),
+    )
+    delivery_address = fields.Text(
+        string='Delivery Address',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.one
@@ -299,6 +305,7 @@ class PurchaseRequisition(models.Model):
             _prepare_purchase_order(requisition, supplier)
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
+            'notes': requisition.delivery_address,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):

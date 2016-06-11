@@ -9,3 +9,6 @@ class ProductTemplate(models.Model):
     sale_ok = fields.Boolean(
         default=False,
     )
+    cost_method = fields.Selection(
+        default='average',
+    )
