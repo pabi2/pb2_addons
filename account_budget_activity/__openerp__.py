@@ -47,6 +47,7 @@ Testing:
         'views/analytic_view.xml',
         'views/hr_expense_view.xml',
         'views/account_journal_view.xml',
+        'views/product_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
         'workflow/account_budget_workflow.xml',
         'report/budget_consume_report_view.xml',
