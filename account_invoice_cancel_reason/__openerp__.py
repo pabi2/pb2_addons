@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'Customer Invoice Cancel Reason',
+    'name': 'Invoice Cancel Reason',
     'version': '1.0',
     'author': "Ecosoft",
     'category': 'Accounting & Finance',
@@ -9,7 +9,7 @@
     'images': [],
     'website': "http://ecosoft.co.th",
     'description': """
-    When a customer invoice is canceled, a reason must be given as text.
+    When an invoice is canceled, a reason must be given as text.
     """,
     'depends': ['account'
                 ],
