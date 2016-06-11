@@ -110,10 +110,12 @@ class HRExpenseExpense(models.Model):
             advance_product = self.env.ref(
                 'hr_expense_advance_clearing.product_product_employee_advance'
             )
-            if not advance_product.property_account_expense:
+            product_categ = advance_product.categ_id
+            if (not advance_product.property_account_expense and
+                    not product_categ.property_account_expense_categ):
                 raise UserError(
-                    _('Please define expense account \
-                    on Employee Advance Product.'))
+                    _('Please define expense account '
+                      'on Employee Advance Product.'))
 
             employee_advance = expense.amount
             if expense.amount > expense.advance_expense_id.amount:
@@ -128,7 +130,8 @@ class HRExpenseExpense(models.Model):
                          'name': advance_product.name,
                          'price_unit': -1 * employee_advance,
                          'account_id':
-                         advance_product.property_account_expense.id,
+                         advance_product.property_account_expense.id or
+                         product_categ.property_account_expense_categ.id,
                          'quantity': 1.0,
                          'sequence': 1,
                          'invoice_id': invoice.id}
