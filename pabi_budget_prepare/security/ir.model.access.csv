@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_account_budget_prepare,access_account_budget_prepare,model_account_budget_prepare,,1,1,1,1
-access_account_budget_prepare_line,access_account_budget_prepare_line,model_account_budget_prepare_line,,1,1,1,1
