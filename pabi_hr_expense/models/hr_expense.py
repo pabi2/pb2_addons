@@ -9,14 +9,6 @@ class HRExpense(models.Model):
     apweb_ref_url = fields.Char(
         string='AP-Web Ref.',
     )
-    is_employee_advance = fields.Boolean(
-        string='Employee Advance',
-        default=lambda self: self._context.get('is_employee_advance', False),
-    )
-    advance_expense_id = fields.Many2one(
-        'hr.expense.expense',
-        string='Clearing for Advance',
-    )
     employee_bank_id = fields.Many2one(
         'res.bank.master',
         string='Bank',
