@@ -193,9 +193,9 @@ class BudgetFiscalPolicy(models.Model):
         for rec in self:
             # PLAN
             rec.planned_project_base = sum(rec.project_base_ids.
-                                          mapped('planned_amount'))
+                                           mapped('planned_amount'))
             rec.planned_unit_base = sum(rec.unit_base_ids.
-                                       mapped('planned_amount'))
+                                        mapped('planned_amount'))
             # POLICY
             rec.policy_project_base = sum(rec.project_base_ids.
                                           mapped('policy_amount'))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, fields, models
-from .chartfield import CHART_VIEW_LIST, CHART_VIEW_FIELD, ChartField
+from .chartfield import CHART_VIEW_FIELD, ChartField
 
 
 class AccountBudget(ChartField, models.Model):
