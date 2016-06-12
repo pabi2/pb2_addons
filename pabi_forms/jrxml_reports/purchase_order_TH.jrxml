@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.6105100000000039"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="358"/>
+	<property name="ireport.x" value="295"/>
+	<property name="ireport.y" value="96"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<queryString language="xPath">
 		<![CDATA[data/record]]>
@@ -134,7 +134,7 @@
 		<fieldDescription><![CDATA[partner_ref]]></fieldDescription>
 	</field>
 	<field name="validate_by" class="java.lang.String">
-		<fieldDescription><![CDATA[validator]]></fieldDescription>
+		<fieldDescription><![CDATA[validator/name]]></fieldDescription>
 	</field>
 	<variable name="subtotal" class="java.lang.Number">
 		<variableExpression><![CDATA[$F{line_qty}*$F{line_price_unit}]]></variableExpression>
@@ -278,14 +278,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fax} != null ? "โทรสาร: " + $F{fax} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="4" y="135" width="293" height="15"/>
+				<reportElement x="4" y="135" width="286" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{vendor_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="150" width="211" height="25"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="150" width="286" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -299,7 +299,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{vendor_phone} != null ? "โทรศัพท์: " + $F{vendor_phone} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="159" y="175" width="138" height="17"/>
+				<reportElement x="159" y="175" width="131" height="17"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -319,13 +319,12 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ship_to_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="301" y="150" width="201" height="25"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="301" y="150" width="253" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ship_to_street} + ' ' +
-$F{ship_to_country} + ' ' +
 $F{ship_to_province} + ' ' +
 $F{ship_to_district} + ' ' + $F{ship_to_zip}]]></textFieldExpression>
 			</textField>
@@ -440,7 +439,7 @@ $F{ship_to_district} + ' ' + $F{ship_to_zip}]]></textFieldExpression>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_term}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{validate_by}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
