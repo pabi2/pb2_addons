@@ -21,6 +21,7 @@ PABI2 - Procurement Module
     "installable": True,
     "depends": [
         "pabi_base",
+        "pabi_user_profile",
         "web_tree_many2one_clickable",
         "purchase_double_validation",
         "purchase_request_to_requisition",
