@@ -13,11 +13,11 @@
     "author": "Kitti U.",
     "license": "AGPL-3",
     "application": False,
-    "installable": True,
+    "installable": False,  # Mark uninstallable for now.
     "depends": [
         "account_budget_activity",
         'web_widget_x2many_2d_matrix',
-        'pabi_budget_prepare',
+        'pabi_budget_plan',
     ],
     "data": [
         'security/ir.model.access.csv',
