@@ -8,15 +8,6 @@ from openerp.tools import float_compare
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    @api.multi
-    @api.depends('doc_approve_uid')
-    def _get_position(self):
-        self.ensure_one()
-        Employee = self.env['hr.employee']
-        employee = Employee.search([('user_id', '=', self.doc_approve_uid.id)])
-        for emp in employee:
-            self.position = emp.position_id.name
-
     dummy_quote_id = fields.Many2one(
         'purchase.order',
         string='Quotation Reference',
@@ -83,7 +74,7 @@ class PurchaseOrder(models.Model):
         states={'draft': [('readonly', False)]},
     )
     position = fields.Char(
-        compute="_get_position",
+        compute="_compute_position",
         string='Position',
         store=True,
     )
@@ -92,6 +83,16 @@ class PurchaseOrder(models.Model):
         related='order_id.state',
         readonly=True,
     )
+
+    @api.multi
+    @api.depends('doc_approve_uid')
+    def _compute_position(self):
+        for rec in self:
+            Employee = self.env['hr.employee']
+            employee = Employee.search([('user_id', '=',
+                                         rec.doc_approve_uid.id)])
+            for emp in employee:
+                rec.position = emp.position_id.name
 
     @api.one
     def _compute_dummy_quote_id(self):
