@@ -1,1 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_plan_template,access_budget_plan_template,model_budget_plan_template,,1,0,0,0
+access_budget_plan_line_template,access_budget_plan_line_template,model_budget_plan_line_template,,1,0,0,0
+access_budget_plan_unit,access_budget_plan_unit,model_budget_plan_unit,,1,0,0,0
+access_budget_plan_unit_line,access_budget_plan_unit_line,model_budget_plan_unit_line,,1,0,0,0
+access_budget_plan_unit_cost_control,access_budget_plan_unit_cost_control,model_budget_plan_unit_cost_control,,1,0,0,0
+access_budget_plan_project,access_budget_plan_project,model_budget_plan_project,,1,0,0,0
+access_budget_plan_project_line,access_budget_plan_project_line,model_budget_plan_project_line,,1,0,0,0
+access_budget_fiscal_policy,access_budget_fiscal_policy,model_budget_fiscal_policy,,1,0,0,0
+access_budget_fiscal_policy_line,access_budget_fiscal_policy_line,model_budget_fiscal_policy_line,,1,0,0,0
