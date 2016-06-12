@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseRequest(models.Model):
@@ -103,10 +103,6 @@ class PurchaseRequestLine(models.Model):
                 self.product_id.categ_id.property_account_expense_categ.id
             activity_group = self.env['account.activity.group'].\
                 search([('account_id', '=', account_id)])
-            if not activity_group:
-                raise ValidationError(
-                    _("Not found activity group for product: %s") %
-                    (self.product_id.name))
             self.activity_group_id = activity_group
         elif self.activity_id:
             self.activity_group_id = self.activity_id.activity_group_id
