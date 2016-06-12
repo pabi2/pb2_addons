@@ -73,10 +73,10 @@ class PurchaseOrder(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    position = fields.Char(
-        compute="_compute_position",
+    doc_approve_position_id = fields.Many2one(
+        'hr.position',
         string='Position',
-        store=True,
+        compute="_compute_doc_approve_position_id",
     )
     order_state = fields.Selection(
         string='PO Status',
@@ -86,13 +86,13 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     @api.depends('doc_approve_uid')
-    def _compute_position(self):
+    def _compute_doc_approve_position_id(self):
         for rec in self:
             Employee = self.env['hr.employee']
             employee = Employee.search([('user_id', '=',
                                          rec.doc_approve_uid.id)])
             for emp in employee:
-                rec.position = emp.position_id.name
+                rec.doc_approve_position_id = emp.position_id
 
     @api.one
     def _compute_dummy_quote_id(self):

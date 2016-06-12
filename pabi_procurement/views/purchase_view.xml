@@ -83,7 +83,7 @@
                     <field name="doc_no"/>
                     <field name="doc_approve_uid"/>
                     <field name="date_doc_approve"/>
-                    <field name="position"/>
+                    <field name="doc_approve_position_id"/>
                 </xpath>
             </field>
         </record>
