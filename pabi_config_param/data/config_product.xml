@@ -6,6 +6,8 @@
 		<!-- Delete default account expense from product -->
 	    <delete model="ir.property" search="[('name', '=', 'property_account_expense'), ('res_id', '=', False)]"/>
 	    <delete model="ir.property" search="[('name', '=', 'property_account_income'), ('res_id', '=', False)]"/>
+		<delete model="ir.property" search="[('name', '=', 'property_account_expense_categ'), ('res_id', '=', False)]"/>
+	    <delete model="ir.property" search="[('name', '=', 'property_account_income_categ'), ('res_id', '=', False)]"/>
 	
 	</data>
 </openerp>
