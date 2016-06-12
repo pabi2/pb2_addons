@@ -166,8 +166,7 @@ class HRExpenseLine(models.Model):
             temp_invoiced_qty = self._cr.fetchone()[0] or 0.0
             diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
             if rec.expense_state not in ('cancelled',):
-                rec.with_context(diff_invoiced_qty=
-                                 diff_invoiced_qty).\
+                rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
                     _create_analytic_line(reverse=False)
             rec.temp_invoiced_qty = rec.open_invoiced_qty
 

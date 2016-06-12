@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models, _
-from openerp.exceptions import ValidationError
+from openerp import api, fields, models
 
 
 class ProductCategory(models.Model):
