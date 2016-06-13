@@ -8,12 +8,40 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
+            	<field name="employee_id" position="after">
+            		<field name="create_uid" />
+            	</field>
 				<field name="date" position="after">
+					<field name="advance_type" attrs="{'invisible': [('is_employee_advance', '=', False)], 'required': [('is_employee_advance', '=', True)]}"/>
+					<field name="date_back" attrs="{'invisible': [('advance_type', '!=', 'attend_seminar')], 'required': [('advance_type', '=', 'attend_seminar')]}"/>
 					<field name="apweb_ref_url" widget="url" /><!-- TODO: attrs="{'invisible': [('apweb_ref_url', '=', False)]}" -->
 		    	</field>
 				<field name="currency_id" position="after">
 		    		<field name="employee_bank_id" />
 				</field>
+				<field name="department_id" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</field>
+				<notebook position="inside" >
+					<page string="Due History" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
+		                <group>
+		                	<group>
+		                		<field name="date_due" />
+		                	</group>
+		                	<group>
+		                		<button name="%(action_change_advance_date_due)d"
+						    		string="⇒ Update Due Date" type="action" class="oe_link"/>
+		                	</group>
+		                </group>
+						<field name="advance_due_history_ids" >
+							<tree>
+								<field name="date_due" />
+								<field name="write_uid" />
+								<field name="write_date" />
+							</tree>
+						</field>
+					</page>
+				</notebook>
             </field>
         </record>
 
