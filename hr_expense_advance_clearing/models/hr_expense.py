@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-# © <YEAR(S)> <AUTHOR(S)>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 from lxml import etree
 from datetime import date
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.osv.orm import setup_modifiers
+import openerp.addons.decimal_precision as dp
 
 
 class HRExpenseLine(models.Model):
@@ -18,11 +17,17 @@ class HRExpenseExpense(models.Model):
     _inherit = "hr.expense.expense"
     _rec_name = "number"
 
-    is_employee_advance = fields.Boolean('Employee Advance', readonly=True,)
-    is_advance_clearing = fields.Boolean('Advance Clearing')
+    is_employee_advance = fields.Boolean(
+        string='Employee Advance',
+        readonly=True,
+    )
+    is_advance_clearing = fields.Boolean(
+        string='Advance Clearing',
+    )
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
-        string='Clear Advance',)
+        string='Clear Advance',
+    )
     advance_clearing_ids = fields.One2many(
         'hr.expense.expense',
         'advance_expense_id',
@@ -38,11 +43,17 @@ class HRExpenseExpense(models.Model):
         string='Outstanding Advance Count',
         compute='_compute_outstanding_advance_count',
     )
+    residual = fields.Float(
+        string='Balance',
+        digits=dp.get_precision('Account'),
+        related='invoice_id.residual',
+    )
 
     @api.model
     def _get_outstanding_advance_domain(self):
         domain = [('employee_id', '=', self.employee_id.id),
-                  ('is_employee_advance', '=', True)]
+                  ('is_employee_advance', '=', True),
+                  ('amount_to_clearing', '>', 0.0)]
         return domain
 
     @api.multi
@@ -75,7 +86,10 @@ class HRExpenseExpense(models.Model):
                     for clearing_advance in expense.advance_clearing_ids:
                         if clearing_advance.invoice_id.state in ('open',
                                                                  'paid'):
-                            clearing_amount -= clearing_advance.amount
+                            clearing_amount = clearing_amount - \
+                                clearing_advance.amount + \
+                                clearing_advance.invoice_id.amount_total - \
+                                clearing_advance.residual
             expense.amount_to_clearing = clearing_amount
 
     @api.model
@@ -86,7 +100,7 @@ class HRExpenseExpense(models.Model):
                 'hr_expense_advance_clearing.product_product_employee_advance')
         if result.get('is_employee_advance', False):
             line = [(0, 0, {'product_id': advance_product.id,
-                            'date_value': date.today().strftime('%Y-%m-%d'),
+                            'date_value': fields.Date.today(),
                             'name': advance_product.name,
                             'uom_id': advance_product.uom_id.id,
                             'unit_quantity': 1.0,
@@ -146,26 +160,15 @@ class HRExpenseExpense(models.Model):
                     _('Please define expense account '
                       'on Employee Advance Product.'))
             employee_advance = expense.amount
-            if expense.amount >\
-                    expense.advance_expense_id.amount_to_clearing:
-                employee_advance =\
+            if expense.amount > expense.advance_expense_id.amount_to_clearing:
+                employee_advance = \
                     expense.advance_expense_id.amount_to_clearing
-            expense_advance_move =\
-                expense.advance_expense_id.invoice_id.move_id.line_id
-            move_line =\
-                expense_advance_move.filtered(
-                    lambda x: x.account_id.reconcile is True and
-                    x.account_id.type == 'other')
-            line_vals = {'product_id': advance_product.id,
-                         'name': advance_product.name,
-                         'price_unit': -1 * employee_advance,
-                         'account_id':
-                         advance_product.property_account_expense.id or
-                         product_categ.property_account_expense_categ.id,
-                         'quantity': 1.0,
-                         'sequence': 1,
-                         'invoice_id': invoice.id}
-            self.env['account.invoice.line'].create(line_vals)
-            invoice.write({'advance_move_line_id': move_line.id,
-                           'is_advance_clearing': True})
+            invoice_line = expense.advance_expense_id.invoice_id.invoice_line
+            if not invoice_line:
+                raise UserError(_('No advance product line to reference'))
+            advance_line = invoice_line[0]
+            advance_line.copy({'invoice_id': invoice.id,
+                               'price_unit': -employee_advance,
+                               'sequence': 1, })
+            invoice.write({'is_advance_clearing': True})
         return invoice
