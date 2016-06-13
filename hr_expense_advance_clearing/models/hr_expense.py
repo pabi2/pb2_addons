@@ -16,6 +16,7 @@ class HRExpenseLine(models.Model):
 
 class HRExpenseExpense(models.Model):
     _inherit = "hr.expense.expense"
+    _rec_name = "number"
 
     is_employee_advance = fields.Boolean('Employee Advance', readonly=True,)
     is_advance_clearing = fields.Boolean('Advance Clearing')
@@ -27,19 +28,45 @@ class HRExpenseExpense(models.Model):
         'advance_expense_id',
         string='Advance Clearing Expenses',
     )
-    to_clearing_expense_amount = fields.Float(
+    amount_to_clearing = fields.Float(
         string='Amount to Clearing',
-        compute='_compute_to_clearing_expense_amount',
+        compute='_compute_amount_to_clearing',
         store=True,
         copy=False,
     )
+    outstanding_advance_count = fields.Integer(
+        string='Outstanding Advance Count',
+        compute='_compute_outstanding_advance_count',
+    )
+
+    @api.model
+    def _get_outstanding_advance_domain(self):
+        domain = [('employee_id', '=', self.employee_id.id),
+                  ('is_employee_advance', '=', True)]
+        return domain
+
+    @api.multi
+    def _compute_outstanding_advance_count(self):
+        for rec in self:
+            domain = rec._get_outstanding_advance_domain()
+            rec.outstanding_advance_count = self.search_count(domain)
+
+    @api.multi
+    def action_open_outstanding_advance(self):
+        self.ensure_one()
+        action = self.env.ref('hr_expense_advance_clearing.'
+                              'action_expense_advance')
+        result = action.read()[0]
+        domain = self._get_outstanding_advance_domain()
+        result.update({'domain': domain})
+        return result
 
     @api.depends('advance_clearing_ids',
                  'advance_clearing_ids.state',
                  'advance_clearing_ids.amount',
                  'advance_clearing_ids.invoice_id.state',
                  'state')
-    def _compute_to_clearing_expense_amount(self):
+    def _compute_amount_to_clearing(self):
         for expense in self:
             clearing_amount = 0.0
             if expense.state == 'paid':
@@ -49,7 +76,7 @@ class HRExpenseExpense(models.Model):
                         if clearing_advance.invoice_id.state in ('open',
                                                                  'paid'):
                             clearing_amount -= clearing_advance.amount
-            expense.to_clearing_expense_amount = clearing_amount
+            expense.amount_to_clearing = clearing_amount
 
     @api.model
     def default_get(self, fields):
@@ -120,9 +147,9 @@ class HRExpenseExpense(models.Model):
                       'on Employee Advance Product.'))
             employee_advance = expense.amount
             if expense.amount >\
-                    expense.advance_expense_id.to_clearing_expense_amount:
+                    expense.advance_expense_id.amount_to_clearing:
                 employee_advance =\
-                    expense.advance_expense_id.to_clearing_expense_amount
+                    expense.advance_expense_id.amount_to_clearing
             expense_advance_move =\
                 expense.advance_expense_id.invoice_id.move_id.line_id
             move_line =\

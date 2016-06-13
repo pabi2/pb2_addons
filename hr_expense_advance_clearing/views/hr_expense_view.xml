@@ -6,12 +6,21 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
+            	<group position="before" >
+            		<div class="oe_right oe_button_box" name="buttons">
+            			<button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+            					name="action_open_outstanding_advance" 
+            					attrs="{'invisible': [('is_employee_advance', '=', False)]}">
+                        	<field string="AV Outstanding" name="outstanding_advance_count" widget="statinfo" />
+                        </button>
+                    </div>
+            	</group>
                 <xpath expr="//field[@name='currency_id']" position="after">
                     <field name="is_employee_advance" attrs="{'invisible': [('is_employee_advance', '=', False)]}"/>
                     <field name="is_advance_clearing" invisible="1"/>
                     <field name="advance_expense_id" 
                            domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
-                                    ('employee_id', '=', employee_id), ('to_clearing_expense_amount', '&gt;', 0.0)]"
+                                    ('employee_id', '=', employee_id), ('amount_to_clearing', '&gt;', 0.0)]"
                            attrs="{'invisible': [('is_advance_clearing', '=', False)],
                                    'required': [('is_advance_clearing', '=', True)]}"/>
                 </xpath>
@@ -19,7 +28,7 @@
                     <page string="Advance Clearing Expenses" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
                         <group>
                             <group>
-                                <field name="to_clearing_expense_amount"/>
+                                <field name="amount_to_clearing"/>
                             </group>
                             <group/>
                         </group>
