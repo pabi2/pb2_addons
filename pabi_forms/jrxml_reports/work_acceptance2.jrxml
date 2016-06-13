@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
-	<property name="ireport.zoom" value="2.657341500000028"/>
-	<property name="ireport.x" value="112"/>
-	<property name="ireport.y" value="856"/>
+	<property name="ireport.zoom" value="1.2396694214876163"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="43"/>
 	<queryString language="xPath">
 		<![CDATA[data/record]]>
 	</queryString>
@@ -212,7 +212,7 @@
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{create_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{create_date}.year+543, $F{create_date}.month, $F{create_date}.date)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="411" y="56" width="57" height="20"/>
@@ -302,7 +302,7 @@
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{po_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{po_date}.year+543, $F{po_date}.month, $F{po_date}.date)]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="371" y="119" width="167" height="20"/>
@@ -330,14 +330,14 @@
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract_start_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{contract_start_date}.year+543, $F{contract_start_date}.month, $F{contract_start_date}.date)]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="139" y="159" width="61" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract_end_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{contract_end_date}.year+543, $F{contract_end_date}.month, $F{contract_end_date}.date)]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="371" y="159" width="65" height="20"/>
@@ -354,18 +354,18 @@
 				<text><![CDATA[ลงวันที่]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="458" y="159" width="49" height="20"/>
+				<reportElement x="458" y="159" width="61" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{invoice_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{invoice_date}.year+543, $F{invoice_date}.month, $F{invoice_date}.date)]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="371" y="179" width="65" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{receive_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{receive_date}.year+543, $F{receive_date}.month, $F{receive_date}.date)]]></textFieldExpression>
 			</textField>
 			<image hAlign="Right">
 				<reportElement x="378" y="0" width="160" height="50">
@@ -388,7 +388,7 @@
 				<text><![CDATA[สาขา]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="458" y="139" width="49" height="20"/>
+				<reportElement x="458" y="139" width="61" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -406,7 +406,7 @@
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{invoice_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{invoice_date}.year+543, $F{invoice_date}.month, $F{invoice_date}.date)]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
