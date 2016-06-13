@@ -8,15 +8,6 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-            	<group position="before" >
-            		<div class="oe_right oe_button_box" name="buttons">
-            			<button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
-            					name="action_open_outstanding_advance" 
-            					attrs="{'invisible': [('is_employee_advance', '=', False)]}">
-                        	<field string="AV Outstanding" name="outstanding_advance_count" widget="statinfo" />
-                        </button>
-                    </div>
-            	</group>
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>

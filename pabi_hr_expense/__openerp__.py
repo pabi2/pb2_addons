@@ -14,7 +14,6 @@
     "installable": True,
     "depends": [
         "hr_expense_auto_invoice",
-        # "pabi_budget_monitor",
         "account_budget_activity",
         "pabi_bank",
     ],

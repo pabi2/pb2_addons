@@ -15,6 +15,8 @@ class AccountInvoice(models.Model):
                                                            'in', self._ids)])
         history_obj = self.env['hr.expense.advance.due.history']
         for expense in expenses:
+            if not expense.is_employee_advance:
+                continue
             date_due = False
             # Case 1) buy_product, date_due = paid_date + 30 days
             if expense.advance_type == 'buy_product':
