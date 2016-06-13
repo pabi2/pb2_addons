@@ -25,12 +25,16 @@ class AccountInvoice(models.Model):
             expenses.signal_workflow('done_to_refuse')
         return super(AccountInvoice, self).action_cancel()
 
+    @api.model
+    def _get_invoice_total(self, invoice):
+        return invoice.amount_total
+
     @api.multi
     def invoice_validate(self):
         expenses = self.env['hr.expense.expense'].search([('invoice_id',
                                                            'in', self._ids)])
         for expense in expenses:
-            if expense.amount != expense.invoice_id.amount_total:
+            if expense.amount != self._get_invoice_total(expense.invoice_id):
                 raise except_orm(
                     _('Amount Error!'),
                     _("This invoice amount is not equal to amount in "
