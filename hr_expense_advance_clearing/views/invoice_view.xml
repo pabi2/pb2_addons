@@ -7,7 +7,8 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='check_total']" position="after">
-                    <field name="advance_move_line_id" invisible="1"/>
+                    <field name="advance_move_line_id" invisible="1"/> 
+                    <field name="is_advance_clearing" readonly="True"/>
                 </xpath>
             </field>
         </record>

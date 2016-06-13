@@ -37,6 +37,7 @@ class HRExpenseExpense(models.Model):
     @api.depends('advance_clearing_ids',
                  'advance_clearing_ids.state',
                  'advance_clearing_ids.amount',
+                 'advance_clearing_ids.invoice_id.state',
                  'state')
     def _compute_to_clearing_expense_amount(self):
         for expense in self:
@@ -45,7 +46,8 @@ class HRExpenseExpense(models.Model):
                 clearing_amount = expense.amount
                 if expense.advance_clearing_ids:
                     for clearing_advance in expense.advance_clearing_ids:
-                        if clearing_advance.state == 'paid':
+                        if clearing_advance.invoice_id.state in ('open',
+                                                                 'paid'):
                             clearing_amount -= clearing_advance.amount
             expense.to_clearing_expense_amount = clearing_amount
 
@@ -116,10 +118,11 @@ class HRExpenseExpense(models.Model):
                 raise UserError(
                     _('Please define expense account '
                       'on Employee Advance Product.'))
-
             employee_advance = expense.amount
-            if expense.amount > expense.advance_expense_id.amount:
-                employee_advance = expense.advance_expense_id.amount
+            if expense.amount >\
+                    expense.advance_expense_id.to_clearing_expense_amount:
+                employee_advance =\
+                    expense.advance_expense_id.to_clearing_expense_amount
             expense_advance_move =\
                 expense.advance_expense_id.invoice_id.move_id.line_id
             move_line =\
@@ -136,5 +139,6 @@ class HRExpenseExpense(models.Model):
                          'sequence': 1,
                          'invoice_id': invoice.id}
             self.env['account.invoice.line'].create(line_vals)
-            invoice.write({'advance_move_line_id': move_line.id})
+            invoice.write({'advance_move_line_id': move_line.id,
+                           'is_advance_clearing': True})
         return invoice
