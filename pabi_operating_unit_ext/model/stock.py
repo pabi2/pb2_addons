@@ -24,7 +24,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     operating_unit_id = fields.Many2one(
-        required=True,
+        required=False,  # Set to false temp, due to error on PO approve.
         domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 

@@ -22,6 +22,7 @@
                         </h1>
                     </div>
                     <div class="oe_right oe_button_box" name="buttons">
+	                	<button name="%(action_convert_to_budget_control)d" type="action" string="Convert to Budget Control" />
                     </div>
                     <group>
                         <group>

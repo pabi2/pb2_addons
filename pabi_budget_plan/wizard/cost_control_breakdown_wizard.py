@@ -53,6 +53,7 @@ class CostControlBreakdown(models.TransientModel):
                 vals = {
                     'plan_id': costcontrol.plan_id.id,
                     'fk_costcontrol_id': costcontrol.id,
+                    'section_id': costcontrol.plan_id.section_id.id,
                     'activity_group_id': line.activity_id.activity_group_id.id,
                     'activity_id': line.activity_id.id,
                     'cost_control_id': costcontrol.cost_control_id.id,

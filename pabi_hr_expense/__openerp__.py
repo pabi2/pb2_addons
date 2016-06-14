@@ -14,12 +14,13 @@
     "installable": True,
     "depends": [
         "hr_expense_auto_invoice",
-        # "pabi_budget_monitor",
         "account_budget_activity",
         "pabi_bank",
     ],
     "data": [
+        "data/hr_expense_workflow.xml",
         "security/ir.model.access.csv",
+        "wizard/hr_expense_change_advance_date_due_view.xml",
         "views/account_activity_view.xml",
         "views/hr_expense_view.xml",
     ],
