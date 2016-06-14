@@ -80,86 +80,62 @@ class BudgetFiscalPolicy(models.Model):
     # PLAN
     planned_overall = fields.Float(
         string='Planned Overall',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     planned_project_base = fields.Float(
         string='Project Based',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     planned_unit_base = fields.Float(
         string='Unit Based',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     planned_personnel = fields.Float(
         string='Personnel',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     planned_invest_asset = fields.Float(
         string='Investment Asset',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     planned_invest_construction = fields.Float(
         string='Investment Construction',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     # POLICY
     policy_overall = fields.Float(
         string='Policy Overall',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     policy_project_base = fields.Float(
         string='Project Based',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     policy_unit_base = fields.Float(
         string='Unit Based',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     policy_personnel = fields.Float(
         string='Personnel',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     policy_invest_asset = fields.Float(
         string='Investment Asset',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
     policy_invest_construction = fields.Float(
         string='Investment Construction',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         compute='_compute_all',
         store=True,
     )
@@ -188,7 +164,10 @@ class BudgetFiscalPolicy(models.Model):
     )
 
     @api.multi
-    @api.depends('line_ids')
+    @api.depends('line_ids',
+                 'line_ids.planned_amount',
+                 'line_ids.policy_amount',
+                 )
     def _compute_all(self):
         for rec in self:
             # PLAN
@@ -226,11 +205,6 @@ class BudgetFiscalPolicy(models.Model):
 
     @api.multi
     def button_confirm(self):
-        for rec in self:
-            for line in rec.line_ids:
-                res = line.\
-                    _get_chained_dimension(CHART_VIEW_FIELD[line.chart_view])
-                line.write(res)
         self.write({
             'state': 'confirm',
             'validating_user_id': self._uid,
@@ -243,16 +217,14 @@ class BudgetFiscalPolicy(models.Model):
         self.ensure_one()
         self.line_ids.unlink()  # Delete all
 
-        _states = ('submit', 'approve')
-
         # Projects
         _sql = """
             select tmpl.chart_view, tmpl.program_id, bpp.amount_budget_request
             from budget_plan_project bpp
             join budget_plan_template tmpl on tmpl.id = bpp.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state in %s
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
         """
-        self._cr.execute(_sql % (self.fiscalyear_id.id, _states))
+        self._cr.execute(_sql % (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
         lines = []
         for r in res:
@@ -262,16 +234,16 @@ class BudgetFiscalPolicy(models.Model):
             lines.append((0, 0, vals))
         self.write({'project_base_ids': lines})
 
-        # Org
+        # Unit Base, group by Org
         _sql = """
             select tmpl.chart_view, tmpl.org_id,
             sum(bpu.amount_budget_request) as amount_budget_request
             from budget_plan_unit bpu
             join budget_plan_template tmpl on tmpl.id = bpu.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state in %s
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
             group by tmpl.chart_view, tmpl.org_id
         """
-        self._cr.execute(_sql % (self.fiscalyear_id.id, _states))
+        self._cr.execute(_sql % (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
         lines = []
         for r in res:
@@ -281,6 +253,40 @@ class BudgetFiscalPolicy(models.Model):
             lines.append((0, 0, vals))
         self.write({'unit_base_ids': lines})
 
+    @api.multi
+    def create_fiscal_budget_policy_breakdown(self):
+        for rec in self:
+            # Unit base
+            Breakdown = self.env['budget.fiscal.policy.breakdown']
+            BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+            for unit in rec.unit_base_ids:
+                vals = {  # TODO: Sequence Numbering ???
+                    'name': unit.org_id.name,
+                    'chart_view': unit.chart_view,
+                    'org_id': unit.org_id.id,
+                    'planned_overall': unit.planned_amount,
+                    'policy_overall': unit.policy_amount,
+                    'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
+                    'ref_budget_policy_id': rec.id,
+                }
+                breakdown = Breakdown.create(vals)
+                plans = self.env['budget.plan.unit'].\
+                    search([('state', '=', 'approve'),
+                            ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
+                            ('org_id', '=', breakdown.org_id.id)])
+                for plan in plans:
+                    vals = {
+                        'breakdown_id': breakdown.id,
+                        'budget_plan_unit_id': plan.id,
+                        'chart_view': plan.chart_view,
+                        'section_id': plan.section_id.id,
+                        'planned_amount': plan.amount_budget_request,
+                        'policy_amount': 0.0,
+                    }
+                    BreakdownLine.create(vals)
+                # Upon creation of breakdown, ensure data integrity
+                breakdown._check_data_integrity()
+
 
 class BudgetFiscalPolicyLine(ChartField, models.Model):
     _name = 'budget.fiscal.policy.line'
@@ -288,6 +294,8 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
 
     budget_policy_id = fields.Many2one(
         'budget.fiscal.policy',
+        ondelete='cascade',
+        index=True,
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
@@ -296,6 +304,7 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     )
     planned_amount = fields.Float(
         string='Planned Amount',
+        readonly=True,
     )
     policy_amount = fields.Float(
         string='Policy Amount',
