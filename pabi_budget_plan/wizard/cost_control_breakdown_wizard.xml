@@ -10,7 +10,7 @@
     <field name="model">cost.control.breakdown</field>
     <field name="arch" type="xml">
         <form string="Cost Control Breakdown">
-            <p>Detail activities of this cost control</p>
+            <p class="oe_grey">Detail activities of this cost control</p>
             <field name="breakdown_line_ids" >
             	<tree editable="bottom" >
             		<field name="activity_id" />

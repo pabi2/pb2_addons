@@ -81,6 +81,45 @@ class BudgetPlanUnit(models.Model):
     def button_approve(self):
         return self.mapped('template_id').button_approve()
 
+    @api.model
+    def _prepare_copy_fields(self, source_model, target_model):
+        src_fields = [f for f, _x in source_model._fields.iteritems()]
+        no_fields = [
+            'id', 'state', 'display_name', '__last_update', 'state'
+            'write_date', 'create_date', 'create_uid', 'write_uid',
+            'date', 'date_approve', 'date_submit', 'date_from', 'date_to',
+            'template_id', 'validating_user_id', 'creating_user_id',
+        ]
+        trg_fields = [f for f, _x in target_model._fields.iteritems()]
+        return list((set(src_fields) & set(trg_fields)) - set(no_fields))
+
+    @api.model
+    def convert_plan_to_budget_control(self, active_ids):
+        head_src_model = self.env['budget.plan.unit']
+        head_trg_model = self.env['account.budget']
+        line_src_model = self.env['budget.plan.unit.line']
+        line_trg_model = self.env['account.budget.line']
+
+        header_fields = self._prepare_copy_fields(head_src_model,
+                                                  head_trg_model)
+        line_fields = self._prepare_copy_fields(line_src_model,
+                                                line_trg_model)
+
+        for plan in self.browse(active_ids):
+            vals = {}
+            for key in header_fields:
+                vals.update({key: (hasattr(plan[key], '__iter__') and
+                                   plan[key].id or plan[key])})
+            budget = head_trg_model.create(vals)
+            for line in plan.plan_line_ids:
+                for key in line_fields:
+                    print line_fields
+                    print line[key]
+                    vals.update({key: (hasattr(line[key], '__iter__') and
+                                       line[key].id or line[key])})
+                vals.update({'budget_id': budget.id})
+                line_trg_model.create(vals)
+
 
 class BudgetPlanUnitLine(models.Model):
     _name = 'budget.plan.unit.line'

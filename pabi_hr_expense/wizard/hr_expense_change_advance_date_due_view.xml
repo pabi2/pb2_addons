@@ -5,7 +5,7 @@
             <field name="name">Update Due Date</field>
             <field name="model">hr.expense.change.advance.date.due</field>
             <field name="arch" type="xml">
-                <form string="Update Credit Limit">
+                <form string="Update Due Date">
 					<p class="oe_grey">
 						You can set the new Advance Due Date. This date will be used to send reminding email.
                     </p>
@@ -18,9 +18,9 @@
 	                    </group>
                     </group>
                     <footer>
-                        <button name="change_advance_date_due" string="_Change Due Date" type="object" class="oe_highlight"/>
+                        <button name="change_advance_date_due" string="Change Due Date" type="object" class="oe_highlight"/>
                         or
-                        <button string="_Cancel" class="oe_link" special="cancel" />
+                        <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>
                 </form>
             </field>

@@ -14,6 +14,7 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/cost_control_breakdown_wizard.xml',
+        'wizard/convert_to_budget_control_wizard.xml',
         'views/budget_plan_menu.xml',
         'views/budget_plan_project_view.xml',
         'views/budget_plan_unit_view.xml',
