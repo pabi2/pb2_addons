@@ -8,6 +8,16 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
+                <field name="state" position="attributes" >
+					<attribute name="statusbar_visible">draft,wait_accept,confirm,accepted,done,paid</attribute>
+                </field>
+                <button name="confirm" position="before" >
+					<button name="to_wait_accept" string="To Wait Accept" type="workflow" states="draft" />            	
+            	</button>
+				<button name="confirm" position="attributes" >
+					<attribute name="string">Accept</attribute>
+					<attribute name="states">wait_accept</attribute>
+				</button>
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>

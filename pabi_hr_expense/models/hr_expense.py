@@ -31,8 +31,9 @@ class HRExpense(models.Model):
         readonly=True, states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
-        [('draft', 'Wait for Accept'),
+        [('draft', 'Draft'),
          ('cancelled', 'Refused'),
+         ('wait_accept', 'Wait for Accept'),
          ('confirm', 'Accepted'),
          ('accepted', 'Approved'),
          ('done', 'Waiting Payment'),
@@ -51,6 +52,15 @@ class HRExpense(models.Model):
         string='Due History',
         readonly=True,
     )
+
+    @api.multi
+    def expense_wait_accept(self):
+        for expense in self:
+            for line in expense.line_ids:
+                Analytic = self.env['account.analytic.account']
+                line.analytic_account = \
+                    Analytic.create_matched_analytic(line)
+        return self.write({'state': 'wait_accept'})
 
 
 class HRExpenseAdvanceDueHistory(models.Model):
