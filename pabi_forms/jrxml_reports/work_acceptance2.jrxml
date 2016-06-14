@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.2396694214876163"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="43"/>
+	<property name="ireport.y" value="187"/>
 	<queryString language="xPath">
 		<![CDATA[data/record]]>
 	</queryString>
@@ -515,21 +515,21 @@
 	<pageFooter>
 		<band height="444" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="74" width="489" height="20"/>
+				<reportElement x="0" y="74" width="538" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[คณะกรรมการตรวจรับพัสดุ/งานจ้าง ได้ทำการตรวจรับพัสดุ/งานจ้างดังกล่าวแล้ว โดยมีผลการตรวจรับเป็นมติเอกฉันท์ ดังนี้]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="77" y="94" width="415" height="20"/>
+				<reportElement x="77" y="94" width="461" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ถูกต้องครบถ้วนตามจำนวนข้อกำหนดคุณลักษณะเฉพาะ/ขอบเขตงานและส่งมอบภายในเวลาที่กำหนด]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="77" y="114" width="415" height="20"/>
+				<reportElement x="77" y="114" width="461" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -578,7 +578,7 @@
 				<text><![CDATA[บาท]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="168" width="131" height="20"/>
+				<reportElement x="0" y="168" width="212" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

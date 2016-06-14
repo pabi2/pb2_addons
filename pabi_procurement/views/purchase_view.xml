@@ -44,8 +44,7 @@
                     <field name="date_reference" />
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="before">
-                    <button name="wkf_send_rfq" states="draft" string="Send RFQ by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>
-                    <button name="wkf_send_rfq" states="sent" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}"/>
+                    <button name="wkf_send_rfq" states="approved" string="Send by Email" type="object" context="{'send_rfq':True}"/>
                 	<field name="plan_invoice_created" invisible="1"/>
                     <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
                             type="action" class="oe_highlight"
@@ -55,6 +54,9 @@
                 </xpath>
                 <xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header[@name='quotation']/button[@name='action_cancel']" position="before">
+                    <button name="wkf_send_rfq" states="draft" string="Send by Email" type="object" context="{'send_rfq':True}" class="oe_highlight" groups="base.group_user"/>
                 </xpath>
                 <xpath expr="//button[@name='view_picking']" position="replace">
                     <button name="view_picking" string="Receive Products" type="object" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}"/>
