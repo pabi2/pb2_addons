@@ -93,8 +93,8 @@ class HRExpenseExpense(models.Model):
             expense.amount_to_clearing = clearing_amount
 
     @api.model
-    def default_get(self, fields):
-        result = super(HRExpenseExpense, self).default_get(fields)
+    def default_get(self, field_list):
+        result = super(HRExpenseExpense, self).default_get(field_list)
         advance_product =\
             self.env.ref(
                 'hr_expense_advance_clearing.product_product_employee_advance')
