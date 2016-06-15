@@ -15,83 +15,85 @@
                         <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,reject,approve"/>
                     </header>
-                    <div class="oe_title">
-                        <label for="name" class="oe_edit_only"/>
-                        <h1>
-                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
-                        </h1>
-                    </div>
-                    <div class="oe_right oe_button_box" name="buttons">
-	                	<button name="%(action_convert_to_budget_control)d" type="action" string="Convert to Budget Control" />
-                    </div>
-                    <group>
-                        <group>
-                        	<field name="section_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
-                        	<field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
-                            <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
-                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
-                        	<field name="chart_view" required="1" readonly="1"/>
-                        	<field name="amount_budget_request" />
-                        	<field name="amount_budget_policy" />
-                        </group>
-                        <group>
-                        	<field name="date" />
-                        	<field name="date_submit" />
-                        	<field name="date_approve" />
-                            <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
-                            <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
-                            <div>
-                                <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
-                                <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
-                            </div>
-                        </group>
-                    </group>
-                    <notebook>
-                        <page string="Budget Control">
-                            <field name="plan_line_ids" colspan="4" nolabel="1"
-                            	context="{'section_id': section_id}">
-                                <tree string="Budget Lines" editable="bottom">
-									
-									<field name="section_id" />
-									
-									<field name="activity_group_id" />
-									<field name="activity_id" />
-
-									<field name="cost_control_id" />
-									
-									<field name="m0" />
-									<field name="m1" />
-									<field name="m2" />
-									<field name="m3" />
-									<field name="m4" />
-									<field name="m5" />
-									<field name="m6" />
-									<field name="m7" />
-									<field name="m8" />
-									<field name="m9" />
-									<field name="m10" />
-									<field name="m11" />
-									<field name="m12" />
-									
-									<field name="planned_amount" sum="Planned Amount" />
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Cost Control">
-                            <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
-                                <tree string="Cost Control" editable="bottom">
-			
-									<field name="cost_control_id" />
-                					<button name="%(action_add_cost_control_breakdown)d"
-				                        type="action"
-				                        string="Add Detail"
-				                        icon="gtk-ok"/>		
-									<field name="amount_total" sum="Total Amount"/>
-																
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+                	<sheet>
+	                    <div class="oe_title">
+	                        <label for="name" class="oe_edit_only"/>
+	                        <h1>
+	                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                        </h1>
+	                    </div>
+	                    <div class="oe_right oe_button_box" name="buttons">
+		                	<button name="%(action_convert_to_budget_control)d" type="action" string="Convert to Budget Control" />
+	                    </div>
+	                    <group>
+	                        <group>
+	                        	<field name="section_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
+	                        	<field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
+	                            <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+	                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                        	<field name="chart_view" required="1" readonly="1"/>
+	                        	<field name="planned_overall" />
+	                        	<field name="policy_overall" />
+	                        </group>
+	                        <group>
+	                        	<field name="date" />
+	                        	<field name="date_submit" />
+	                        	<field name="date_approve" />
+	                            <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                            <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                            <div>
+	                                <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
+	                                <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+	                            </div>
+	                        </group>
+	                    </group>
+	                    <notebook>
+	                        <page string="Budget Control">
+	                            <field name="plan_line_ids" colspan="4" nolabel="1"
+	                            	context="{'section_id': section_id}">
+	                                <tree string="Budget Lines" editable="bottom">
+										
+										<field name="section_id" />
+										
+										<field name="activity_group_id" />
+										<field name="activity_id" />
+	
+										<field name="cost_control_id" />
+										
+										<field name="m0" />
+										<field name="m1" />
+										<field name="m2" />
+										<field name="m3" />
+										<field name="m4" />
+										<field name="m5" />
+										<field name="m6" />
+										<field name="m7" />
+										<field name="m8" />
+										<field name="m9" />
+										<field name="m10" />
+										<field name="m11" />
+										<field name="m12" />
+										
+										<field name="planned_amount" sum="Planned Amount" />
+	                                </tree>
+	                            </field>
+	                        </page>
+	                        <page string="Cost Control">
+	                            <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+	                                <tree string="Cost Control" editable="bottom">
+				
+										<field name="cost_control_id" />
+	                					<button name="%(action_add_cost_control_breakdown)d"
+					                        type="action"
+					                        string="Add Detail"
+					                        icon="gtk-ok"/>		
+										<field name="amount_total" sum="Total Amount"/>
+																	
+	                                </tree>
+	                            </field>
+	                        </page>
+	                    </notebook>
+                	</sheet>
                 </form>
             </field>
         </record>

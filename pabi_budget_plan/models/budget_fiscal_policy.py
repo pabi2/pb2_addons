@@ -219,7 +219,7 @@ class BudgetFiscalPolicy(models.Model):
 
         # Projects
         _sql = """
-            select tmpl.chart_view, tmpl.program_id, bpp.amount_budget_request
+            select tmpl.chart_view, tmpl.program_id, bpp.planned_overall
             from budget_plan_project bpp
             join budget_plan_template tmpl on tmpl.id = bpp.template_id
             where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
@@ -230,14 +230,14 @@ class BudgetFiscalPolicy(models.Model):
         for r in res:
             vals = {'chart_view': r['chart_view'],
                     'program_id': r['program_id'],
-                    'planned_amount': r['amount_budget_request']}
+                    'planned_amount': r['planned_overall']}
             lines.append((0, 0, vals))
         self.write({'project_base_ids': lines})
 
         # Unit Base, group by Org
         _sql = """
             select tmpl.chart_view, tmpl.org_id,
-            sum(bpu.amount_budget_request) as amount_budget_request
+            sum(bpu.planned_overall) as planned_overall
             from budget_plan_unit bpu
             join budget_plan_template tmpl on tmpl.id = bpu.template_id
             where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
@@ -249,7 +249,7 @@ class BudgetFiscalPolicy(models.Model):
         for r in res:
             vals = {'chart_view': r['chart_view'],
                     'org_id': r['org_id'],
-                    'planned_amount': r['amount_budget_request']}
+                    'planned_amount': r['planned_overall']}
             lines.append((0, 0, vals))
         self.write({'unit_base_ids': lines})
 
@@ -280,7 +280,7 @@ class BudgetFiscalPolicy(models.Model):
                         'budget_plan_unit_id': plan.id,
                         'chart_view': plan.chart_view,
                         'section_id': plan.section_id.id,
-                        'planned_amount': plan.amount_budget_request,
+                        'planned_amount': plan.planned_overall,
                         'policy_amount': 0.0,
                     }
                     BreakdownLine.create(vals)

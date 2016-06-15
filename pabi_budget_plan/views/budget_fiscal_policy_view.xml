@@ -230,6 +230,36 @@
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Analysis">
                     <group expand="0" string="Group By">
+	                    
+	                    <filter string="SPA" context="{'group_by':'spa_id'}"/>
+	                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+	                    <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
+	                    <filter string="Tag" context="{'group_by':'tag_id'}"/>
+	
+	                    <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
+	                    <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
+	                    <filter string="Program" context="{'group_by':'program_id'}"/>
+	                    <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
+	                    <filter string="Project" context="{'group_by':'project_id'}"/>
+	                    
+	                    <filter string="Org" context="{'group_by':'org_id'}"/>
+	                    <filter string="Sector" context="{'group_by':'sector_id'}"/>
+	                    <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
+	                    <filter string="Division" context="{'group_by':'division_id'}"/>
+	                    <filter string="Section" context="{'group_by':'section_id'}"/>
+	                    <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+	                    <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
+	
+	                    <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
+	                		
+	                    <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
+	                    <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
+	
+	                    <filter string="Personnel Costcenter" context="{'group_by':'personnel_costcenter_id'}"/>
+	
+	                    <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
+	                    <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
+	                                       
                		</group>
                </search>
             </field>

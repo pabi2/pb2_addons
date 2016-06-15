@@ -32,21 +32,21 @@ class BudgetPlanProject(models.Model):
         string='Budget Plan Lines',
         copy=True,
     )
-    amount_budget_request = fields.Float(
+    planned_overall = fields.Float(
         string='Budget Request',
-        compute='_compute_budget_request',
+        compute='_compute_planned_overall',
         store=True,
     )
-    amount_budget_policy = fields.Float(
+    policy_overall = fields.Float(
         string='Budget Policy',
     )
 
     @api.multi
     @api.depends('plan_line_ids')
-    def _compute_budget_request(self):
+    def _compute_planned_overall(self):
         for rec in self:
             planned_amounts = rec.plan_line_ids.mapped('planned_amount')
-            rec.amount_budget_request = sum(planned_amounts)
+            rec.planned_overall = sum(planned_amounts)
 
     @api.onchange('program_id')
     def _onchange_program_id(self):

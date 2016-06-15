@@ -207,3 +207,71 @@ class ResProjectMonitorView(models.Model):
 
     def init(self, cr):
         self._create_monitor_view(cr, self._dimension)
+
+
+# ----------------- Personnel --------------------
+class ResPersonnelCostcenterMonitorView(models.Model):
+    _name = 'res.personnel.costcenter.monitor.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'personnel_costcenter_id'
+
+    personnel_costcenter_id = fields.Many2one(
+        'res.personnel.costcenter', 'Personnel Costcenter', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+# ----------------- Investment --------------------
+class ResInvestAssetMonitorView(models.Model):
+    _name = 'res.invest.asset.monitor.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'invest_asset_id'
+
+    invest_asset_id = fields.Many2one(
+        'res.invest.asset', 'Investment Asset', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+class ResInvestConstructionMonitorView(models.Model):
+    _name = 'res.invest.construction.monitor.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'invest_construction_id'
+
+    invest_construction_id = fields.Many2one(
+        'res.invest.construction', 'Investment Construction', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+# ------------------ Cost Control ------------------
+class ResCostControlMonitorView(models.Model):
+    _name = 'res.cost.control.monitor.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'cost_control_id'
+
+    cost_control_id = fields.Many2one(
+        'cost.control', 'Cost Control', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+class ResCostControlTypeMonitorView(models.Model):
+    _name = 'res.cost.control.type.monitor.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'cost_control_type_id'
+
+    cost_control_type_id = fields.Many2one(
+        'cost.control', 'Cost Control Type', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
