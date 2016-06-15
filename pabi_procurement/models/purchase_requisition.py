@@ -306,6 +306,7 @@ class PurchaseRequisition(models.Model):
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
             'notes': requisition.delivery_address,
+            'payment_term_id': supplier.property_supplier_payment_term,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
