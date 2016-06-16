@@ -3,9 +3,9 @@
     <data>
 
         <menuitem name="Budgeting" id="menu_budgeting" sequence="51"/>
-	        <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="20"/>
-	        <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="30"/>
-        	<menuitem name="Report" id="menu_action_budget_report" parent="menu_budgeting" sequence="30"/>
+	        <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="100"/>
+        	<menuitem name="Budget Monitor" id="menu_action_budget_report" parent="menu_budgeting" sequence="110"/>
+	        <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="120"/>
         
 
         <record model="ir.ui.view" id="account_budget_view_form">
@@ -29,8 +29,6 @@
                             </h1>
                         </div>
 	                    <div class="oe_right oe_button_box" name="buttons">
-	                    	<button name="do_release_budget" string="Release Budget" 
-	                    		type="object"/>
 		                    <button class="oe_inline oe_stat_button" icon="fa-bookmark-o">
 		                        <field name="version" widget="statinfo"/>
 		                    </button>	       
@@ -219,7 +217,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="act_account_budget_line_view">
-            <field name="name">Budget Lines</field>
+            <field name="name">Budget Control Analysis</field>
             <field name="res_model">account.budget.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
