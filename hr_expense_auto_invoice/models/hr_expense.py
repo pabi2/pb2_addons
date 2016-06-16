@@ -162,6 +162,19 @@ class HRExpenseExpese(models.Model):
                            'state': 'done'})
         return True
 
+    @api.multi
+    def action_view_move(self):
+        '''
+        Override this method to open Invoice instead of move lines
+        '''
+        self.ensure_one()
+        action = self.env.ref('account.action_invoice_tree2')
+        result = action.read()[0]
+        result.update({'domain': [('id', '=', self.invoice_id.id)],
+                       'views': [(False, u'form'), (False, u'tree')]})
+        print result
+        return result
+
 
 class HRExpenseLine(models.Model):
     _inherit = "hr.expense.line"

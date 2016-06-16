@@ -13,6 +13,9 @@
 	    		<button name="%(action_expense_create_supplier_invoice)d" states="accepted" string="Create Supplier Invoice" type="action"
 	    			groups="account.group_account_invoice" class="oe_highlight"/>
 	    	</button>
+	    	<button name="action_view_move" position="attributes">
+	    		<attribute name="string">View Invoice</attribute>
+	    	</button>
 			<field name="name" position="after">
 				<field name="pay_to" />
 				<field name="partner_id" attrs="{'invisible': [('pay_to', '!=', 'supplier')],
