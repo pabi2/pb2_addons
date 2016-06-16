@@ -6,6 +6,9 @@
             <field name="model">convert.to.budget.control.wizard</field>
             <field name="arch" type="xml">
                 <form string="Convert Budget Plan to Budget Control">
+                	<p class="oe_grey" >
+                		This will convert the finalized Budget Plan into Budget Control.
+                	</p>
                     <footer>
                         <button name="convert_to_budget_control" string="Convert to Budget Control" type="object" class="oe_highlight"/>
                         or

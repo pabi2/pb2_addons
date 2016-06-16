@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.addons.pabi_chartfield.models.chartfield import CHART_VIEW_FIELD
+from .budget_plan_template import BudgetPlanCommon
 
 
-class BudgetPlanProject(models.Model):
+class BudgetPlanProject(BudgetPlanCommon, models.Model):
     _name = 'budget.plan.project'
     _inherits = {'budget.plan.template': 'template_id'}
     _description = "Project Based - Budget Plan"
@@ -33,20 +34,10 @@ class BudgetPlanProject(models.Model):
         copy=True,
     )
     planned_overall = fields.Float(
-        string='Budget Request',
+        string='Budget Plan',
         compute='_compute_planned_overall',
         store=True,
     )
-    policy_overall = fields.Float(
-        string='Budget Policy',
-    )
-
-    @api.multi
-    @api.depends('plan_line_ids')
-    def _compute_planned_overall(self):
-        for rec in self:
-            planned_amounts = rec.plan_line_ids.mapped('planned_amount')
-            rec.planned_overall = sum(planned_amounts)
 
     @api.onchange('program_id')
     def _onchange_program_id(self):
@@ -60,34 +51,6 @@ class BudgetPlanProject(models.Model):
             rec.plan_line_ids.mapped('template_id').unlink()
         self.mapped('template_id').unlink()
         return super(BudgetPlanProject, self).unlink()
-
-    @api.multi
-    def button_submit(self):
-        for rec in self:
-            res = rec.template_id.\
-                _get_chained_dimension(CHART_VIEW_FIELD[rec.chart_view])
-            rec.write(res)
-            for line in rec.plan_line_ids:
-                res = line.mapped('template_id').\
-                    _get_chained_dimension(CHART_VIEW_FIELD[line.chart_view])
-                line.write(res)
-        return self.mapped('template_id').button_submit()
-
-    @api.multi
-    def button_draft(self):
-        return self.mapped('template_id').button_draft()
-
-    @api.multi
-    def button_cancel(self):
-        return self.mapped('template_id').button_cancel()
-
-    @api.multi
-    def button_reject(self):
-        return self.mapped('template_id').button_reject()
-
-    @api.multi
-    def button_approve(self):
-        return self.mapped('template_id').button_approve()
 
 
 class BudgetPlanProjectLine(models.Model):

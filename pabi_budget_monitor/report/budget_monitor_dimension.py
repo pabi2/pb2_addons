@@ -217,7 +217,7 @@ class ResPersonnelCostcenterMonitorView(models.Model):
     _dimension = 'personnel_costcenter_id'
 
     personnel_costcenter_id = fields.Many2one(
-        'res.personnel.costcenter', 'Personnel Costcenter', readonly=True)
+        'res.personnel.costcenter', 'Personnel Budget', readonly=True)
 
     def init(self, cr):
         self._create_monitor_view(cr, self._dimension)

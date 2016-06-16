@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-    	# Personnel Costcenter
+    	# Personnel Budget
         <record id="view_res_personnel_costcenter_form" model="ir.ui.view" >
             <field name="name">view.res.personnel.costcenter.form</field>
             <field name="model">res.personnel.costcenter</field>

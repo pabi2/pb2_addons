@@ -32,7 +32,6 @@
 	                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
 	                        	<field name="chart_view" required="1" readonly="1" />
 	                        	<field name="planned_overall" />
-	                        	<field name="policy_overall" />
 	                        </group>
 	                        <group>
 	                        	<field name="date" />

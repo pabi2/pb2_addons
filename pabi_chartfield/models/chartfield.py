@@ -11,7 +11,7 @@ from openerp.exceptions import Warning as UserError
 # functional_area -> program_group -> program -> project_group -> *project*
 #                                    (spa(s))                     (mission)
 #
-#    (org)
+#    (section)
 # personnel_costcenter
 #
 #    (org)
@@ -83,7 +83,19 @@ CHART_STRUCTURE = \
             },
         },
         'personnel_costcenter_id': {
-            'org_id': {},
+            'section_id': {
+                'division_id': {
+                    'subsector_id': {
+                        'sector_id': {
+                            'org_id': {}
+                        },
+                    },
+                },
+                'mission_id': {},
+                'costcenter_id': {
+                    'taxbranch_id': {}
+                },
+            },
         },
         'invest_asset_id': {
             'org_id': {},
@@ -128,7 +140,10 @@ CHART_VIEW_FIELD = dict([(x[0], x[1][1]) for x in CHART_VIEW.items()])
 # For verification, to ensure that no field is valid outside of its view
 CHART_FIELDS = [
     ('spa_id', ['project_base']),
-    ('mission_id', ['project_base', 'unit_base']),  # both
+    ('mission_id', ['project_base',
+                    'unit_base',
+                    'personnel',
+                    ]),  # both
     ('tag_type_id', ['project_base']),
     ('tag_id', ['project_base']),
     # Project Based
@@ -138,15 +153,31 @@ CHART_FIELDS = [
     ('project_group_id', ['project_base']),
     ('project_id', ['project_base']),
     # Unit Based
-    ('org_id', ['unit_base', 'project_base',
-                'personnel', 'invest_asset',
-                'invest_construction']),  # All
-    ('sector_id', ['unit_base']),
-    ('subsector_id', ['unit_base']),
-    ('division_id', ['unit_base']),
-    ('section_id', ['unit_base']),
-    ('costcenter_id', ['unit_base']),
-    ('taxbranch_id', ['unit_base', 'project_base']),
+    ('org_id', ['unit_base',
+                'project_base',
+                'personnel',
+                'invest_asset',
+                'invest_construction',
+                ]),  # All
+    ('sector_id', ['unit_base',
+                   'personnel',
+                   ]),
+    ('subsector_id', ['unit_base',
+                      'personnel',
+                      ]),
+    ('division_id', ['unit_base',
+                     'personnel',
+                     ]),
+    ('section_id', ['unit_base',
+                    'personnel',
+                    ]),
+    ('costcenter_id', ['unit_base',
+                       'personnel',
+                       ]),
+    ('taxbranch_id', ['unit_base',
+                      'project_base',
+                      'personnel',
+                      ]),
     # Personnel
     ('personnel_costcenter_id', ['personnel']),
     # Investment
@@ -156,8 +187,14 @@ CHART_FIELDS = [
     ('invest_construction_id', ['invest_construction']),
     ('invest_construction_phase_id', ['invest_construction']),
     # Non Binding
-    ('cost_control_type_id', ['unit_base', 'project_base']),
-    ('cost_control_id', ['unit_base', 'project_base']),
+    ('cost_control_type_id', ['unit_base',
+                              'project_base',
+                              'personnel',
+                              ]),
+    ('cost_control_id', ['unit_base',
+                         'project_base',
+                         'personnel',
+                         ]),
     ]
 
 
@@ -322,7 +359,7 @@ class ChartField(object):
     # Personnel
     personnel_costcenter_id = fields.Many2one(
         'res.personnel.costcenter',
-        string='Personnel Costcenter',
+        string='Personnel Budget',
         default=lambda self: self.env['res.personnel.costcenter'].
         browse(self._context.get('personnel_costcenter_id')),
     )

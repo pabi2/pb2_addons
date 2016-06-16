@@ -2,9 +2,9 @@
 <openerp>
     <data>
 
-        <record model="ir.ui.view" id="view_budget_plan_unit_form">
-            <field name="name">view.budget.plan.unit.form</field>
-            <field name="model">budget.plan.unit</field>
+        <record model="ir.ui.view" id="view_budget_plan_personnel_form">
+            <field name="name">view.budget.plan.personnel.form</field>
+            <field name="model">budget.plan.personnel</field>
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
@@ -27,8 +27,8 @@
 	                    </div>
 	                    <group>
 	                        <group>
+	                        	<field name="personnel_costcenter_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
 	                        	<field name="section_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
-	                        	<field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
 	                            <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
 	                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
 	                        	<field name="chart_view" required="1" readonly="1"/>
@@ -49,15 +49,13 @@
 	                    <notebook>
 	                        <page string="Budget Control">
 	                            <field name="plan_line_ids" colspan="4" nolabel="1"
-	                            	context="{'section_id': section_id}">
+	                            	context="{'personnel_costcenter_id': personnel_costcenter_id}">
 	                                <tree string="Budget Lines" editable="bottom">
 										
-										<field name="section_id" />
+										<field name="personnel_costcenter_id" />
 										
 										<field name="activity_group_id" />
 										<field name="activity_id" />
-	
-										<field name="cost_control_id" />
 										
 										<field name="m0" />
 										<field name="m1" />
@@ -77,29 +75,15 @@
 	                                </tree>
 	                            </field>
 	                        </page>
-	                        <page string="Cost Control">
-	                            <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
-	                                <tree string="Cost Control" editable="bottom">
-				
-										<field name="cost_control_id" />
-	                					<button name="%(action_add_cost_control_breakdown)d"
-					                        type="action"
-					                        string="Add Detail"
-					                        icon="gtk-ok"/>		
-										<field name="amount_total" sum="Total Amount"/>
-																	
-	                                </tree>
-	                            </field>
-	                        </page>
 	                    </notebook>
                 	</sheet>
                 </form>
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_budget_plan_unit_tree">
-            <field name="name">view.budget.plan.unit.tree</field>
-            <field name="model">budget.plan.unit</field>
+        <record model="ir.ui.view" id="view_budget_plan_personnel_tree">
+            <field name="name">view.budget.plan.personnel.tree</field>
+            <field name="model">budget.plan.personnel</field>
             <field name="arch" type="xml">
                <tree string="Budget" >
                     <field name="name" />
@@ -111,9 +95,9 @@
             </field>
         </record>
 
-        <record id="view_budget_plan_unit_search" model="ir.ui.view">
-           <field name="name">view.budget.plan.unit.search</field>
-           <field name="model">budget.plan.unit</field>
+        <record id="view_budget_plan_personnel_search" model="ir.ui.view">
+           <field name="name">view.budget.plan.personnel.search</field>
+           <field name="model">budget.plan.personnel</field>
            <field name="arch" type="xml">
                <search string="Budget">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
@@ -124,30 +108,30 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_budget_plan_unit_view">
+        <record model="ir.actions.act_window" id="action_budget_plan_personnel_view">
             <field name="name">Budget Plan</field>
-            <field name="res_model">budget.plan.unit</field>
+            <field name="res_model">budget.plan.personnel</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_budget_plan_unit_tree"/>
-            <field name="search_view_id" ref="view_budget_plan_unit_search"/>
-            <field name="context">{'default_chart_view': 'unit_base'}</field>
+            <field name="view_id" ref="view_budget_plan_personnel_tree"/>
+            <field name="search_view_id" ref="view_budget_plan_personnel_search"/>
+            <field name="context">{'default_chart_view': 'personnel'}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Click to create a new budget preparation.
               </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_unit"
-            id="menu_budget_plan_unit_view"
-            action="action_budget_plan_unit_view" sequence="10" />
+        <menuitem parent="menu_action_budget_plan_personnel"
+            id="menu_budget_plan_personnel_view"
+            action="action_budget_plan_personnel_view" sequence="10" />
 
 
 		<!-- Budget Plan Line -->
 		
-        <record id="view_budget_plan_unit_line_filter" model="ir.ui.view">
-            <field name="name">budget.plan.unit.line.filter</field>
-            <field name="model">budget.plan.unit.line</field>
+        <record id="view_budget_plan_personnel_line_filter" model="ir.ui.view">
+            <field name="name">budget.plan.personnel.line.filter</field>
+            <field name="model">budget.plan.personnel.line</field>
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Line">
                     <group expand="0" string="Group By">
@@ -162,9 +146,9 @@
             </field>
         </record>
             	
-        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree">
-            <field name="name">budget.plan.unit.line.tree</field>
-            <field name="model">budget.plan.unit.line</field>
+        <record model="ir.ui.view" id="view_budget_plan_personnel_line_tree">
+            <field name="name">budget.plan.personnel.line.tree</field>
+            <field name="model">budget.plan.personnel.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Plan Lines">
 
@@ -195,9 +179,9 @@
                 </tree>
             </field>
         </record>
-	    <record id="view_budget_plan_unit_line_graph" model="ir.ui.view">
-	         <field name="name">view.budget.plan.unit.line.graph</field>
-	         <field name="model">budget.plan.unit.line</field>
+	    <record id="view_budget_plan_personnel_line_graph" model="ir.ui.view">
+	         <field name="name">view.budget.plan.personnel.line.graph</field>
+	         <field name="model">budget.plan.personnel.line</field>
 	         <field name="arch" type="xml">
 	             <graph string="Budget Plan Lines" type="pivot">
 	                <!-- field name="project_id" type="row"/-->
@@ -206,9 +190,9 @@
 	             </graph>
 	         </field>
 	    </record>
-        <record model="ir.ui.view" id="view_budget_plan_unit_line_form">
-            <field name="name">budget.plan.unit.line.form</field>
-            <field name="model">budget.plan.unit.line</field>
+        <record model="ir.ui.view" id="view_budget_plan_personnel_line_form">
+            <field name="name">budget.plan.personnel.line.form</field>
+            <field name="model">budget.plan.personnel.line</field>
             <field name="arch" type="xml">
                 <form string="Budget Lines">
                     <sheet>
@@ -220,17 +204,17 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="act_budget_plan_unit_line_view">
+        <record model="ir.actions.act_window" id="act_budget_plan_personnel_line_view">
             <field name="name">Budget Plan Lines</field>
-            <field name="res_model">budget.plan.unit.line</field>
+            <field name="res_model">budget.plan.personnel.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,graph</field>
-            <field name="view_id" ref="view_budget_plan_unit_line_tree"/>
+            <field name="view_id" ref="view_budget_plan_personnel_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_unit"
-            id="menu_act_budget_plan_unit_line_view"
-            action="act_budget_plan_unit_line_view"
+        <menuitem parent="menu_action_budget_plan_personnel"
+            id="menu_act_budget_plan_personnel_line_view"
+            action="act_budget_plan_personnel_line_view"
         	sequence="20"/>
 
     </data>

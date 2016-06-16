@@ -25,7 +25,7 @@ class ResPersonnelCostcenter(models.Model):
 
     monitor_ids = fields.One2many(
         'res.personnel.costcenter.monitor.view', 'personnel_costcenter_id',
-        string='Personnel Costcenter Monitor',
+        string='Personnel Budget Monitor',
     )
 
 
