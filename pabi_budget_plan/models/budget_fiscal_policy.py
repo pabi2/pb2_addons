@@ -162,6 +162,30 @@ class BudgetFiscalPolicy(models.Model):
         states={'draft': [('readonly', False)]},
         domain=[('chart_view', '=', 'unit_base')],
     )
+    personnel_costcenter_ids = fields.One2many(
+        'budget.fiscal.policy.line',
+        'budget_policy_id',
+        string='Personnel Budget Policy',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'personnel')],
+    )
+    invest_asset_ids = fields.One2many(
+        'budget.fiscal.policy.line',
+        'budget_policy_id',
+        string='Investment Asset Budget Policy',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'invest_asset')],
+    )
+    invest_construction_ids = fields.One2many(
+        'budget.fiscal.policy.line',
+        'budget_policy_id',
+        string='Investment Construction Budget Policy',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'invest_construction')],
+    )
 
     @api.multi
     @api.depends('line_ids',
@@ -175,17 +199,35 @@ class BudgetFiscalPolicy(models.Model):
                                            mapped('planned_amount'))
             rec.planned_unit_base = sum(rec.unit_base_ids.
                                         mapped('planned_amount'))
+            rec.planned_personnel = sum(rec.personnel_costcenter_ids.
+                                        mapped('planned_amount'))
+            rec.planned_invest_asset = sum(rec.invest_asset_ids.
+                                           mapped('planned_amount'))
+            rec.planned_invest_construction = sum(rec.invest_construction_ids.
+                                                  mapped('planned_amount'))
             # POLICY
             rec.policy_project_base = sum(rec.project_base_ids.
                                           mapped('policy_amount'))
             rec.policy_unit_base = sum(rec.unit_base_ids.
                                        mapped('policy_amount'))
+            rec.policy_personnel = sum(rec.personnel_costcenter_ids.
+                                       mapped('policy_amount'))
+            rec.policy_invest_asset = sum(rec.invest_asset_ids.
+                                          mapped('policy_amount'))
+            rec.policy_invest_construction = sum(rec.invest_construction_ids.
+                                                 mapped('policy_amount'))
 
             # Overall
             rec.planned_overall = sum([rec.planned_project_base,
-                                      rec.planned_unit_base])
+                                      rec.planned_unit_base,
+                                      rec.planned_personnel,
+                                      rec.planned_invest_asset,
+                                      rec.planned_invest_construction])
             rec.policy_overall = sum([rec.policy_project_base,
-                                      rec.policy_unit_base])
+                                      rec.policy_unit_base,
+                                      rec.policy_personnel,
+                                      rec.policy_invest_asset,
+                                      rec.policy_invest_construction])
 
     @api.one
     @api.depends('fiscalyear_id')

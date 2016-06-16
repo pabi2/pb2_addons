@@ -19,6 +19,8 @@
         'views/budget_plan_unit_view.xml',
         'views/budget_plan_project_view.xml',
         'views/budget_plan_personnel_view.xml',
+        'views/budget_plan_invest_asset_view.xml',
+        'views/budget_plan_invest_construction_view.xml',
         'views/budget_fiscal_policy_view.xml',
     ],
     'demo': [

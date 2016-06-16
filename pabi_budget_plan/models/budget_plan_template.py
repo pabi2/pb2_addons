@@ -174,8 +174,7 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
             rec.planned_amount = planned_amount + rec.m0  # from last year
 
 
-class BudgetPlanCommon(models.AbstractModel):
-    _name = 'budget.plan.common'
+class BudgetPlanCommon(object):
 
     @api.multi
     @api.depends('plan_line_ids')
