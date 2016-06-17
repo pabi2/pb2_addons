@@ -35,6 +35,7 @@ class HRConfigSettings(models.TransientModel):
         else:
             self.group_chartfields_expense = False
 
+
 class PurchaseConfigSettings(models.TransientModel):
     _inherit = 'purchase.config.settings'
 
