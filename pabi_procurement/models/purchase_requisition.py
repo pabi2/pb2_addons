@@ -306,6 +306,7 @@ class PurchaseRequisition(models.Model):
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
             'notes': requisition.delivery_address,
+            'payment_term_id': supplier.property_supplier_payment_term,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
@@ -396,6 +397,38 @@ class PurchaseRequisition(models.Model):
                 res = super(PurchaseRequisition, self).\
                     tender_done()
                 break
+        return res
+
+    @api.model
+    def _purchase_request_cancel_message_content(self, pr, request):
+        title = _('Cancel Call %s for your Request %s') % (
+            pr.name, request.name)
+        message = '<h3>%s</h3><ul>' % title
+        message += _('The following requested items from Purchase Request %s '
+                     'can be used to create new Call for Bids by cancelling '
+                     'Purchase Bid %s.</ul>') % (request.name, pr.name)
+        return message
+
+    @api.multi
+    def _purchase_request_cancel_message(self):
+        request_obj = self.env['purchase.request']
+        for pr in self:
+            requests = []
+            for line in pr.line_ids:
+                for request_line in line.purchase_request_lines:
+                    requests.append(request_line.request_id.id)
+            for request_id in requests:
+                request = request_obj.browse(request_id)
+                request.state = 'approved'
+                message = self._purchase_request_cancel_message_content(
+                    pr, request)
+                request.message_post(body=message)
+        return True
+
+    @api.multi
+    def tender_cancel(self):
+        res = super(PurchaseRequisition, self).tender_cancel()
+        self._purchase_request_cancel_message()
         return res
 
     @api.model
