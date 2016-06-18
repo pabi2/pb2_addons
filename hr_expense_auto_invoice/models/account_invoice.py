@@ -22,7 +22,7 @@ class AccountInvoice(models.Model):
         expenses = self.env['hr.expense.expense'].search([('invoice_id',
                                                            'in', self._ids)])
         if expenses:
-            expenses.signal_workflow('done_to_refuse')
+            expenses.signal_workflow('done_to_accept')
         return super(AccountInvoice, self).action_cancel()
 
     @api.model
