@@ -23,5 +23,12 @@
             <field name="signal">confirm</field>
         </record>
 
+        <record id="t20" model="workflow.transition">
+            <field name="act_from" ref="act_wait_accept"/>
+            <field name="act_to" ref="hr_expense.act_refused"/>
+            <field name="signal">refuse</field>
+            <field name="group_id" ref="base.group_hr_user"/>
+        </record>
+
     </data>
 </openerp>
