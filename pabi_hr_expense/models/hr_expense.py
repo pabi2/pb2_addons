@@ -52,6 +52,16 @@ class HRExpense(models.Model):
         string='Due History',
         readonly=True,
     )
+    attendee_employee_ids = fields.One2many(
+        'hr.expense.attendee.employee',
+        'expense_id',
+        string='Attendee / Employee',
+    )
+    attendee_external_ids = fields.One2many(
+        'hr.expense.attendee.external',
+        'expense_id',
+        string='Attendee / External',
+    )
 
     @api.multi
     def expense_wait_accept(self):
@@ -85,6 +95,61 @@ class HRExpenseAdvanceDueHistory(models.Model):
     write_date = fields.Datetime(
         string='Updated Date',
         readonly=True,
+    )
+
+
+class HRExpenseAttendeeEmployee(models.Model):
+    _name = 'hr.expense.attendee.employee'
+    _order = 'sequence, id'
+
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10,
+    )
+    expense_id = fields.Many2one(
+        'hr.expense',
+        string='Expense',
+        ondelete='cascade',
+        index=True,
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+    )
+    position_id = fields.Many2one(
+        'hr.position',
+        string='Position',
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+    )
+    # TODO: may display section_id and project_id in same column to save space
+
+
+class HRExpenseAttendeeExternal(models.Model):
+    _name = 'hr.expense.attendee.external'
+    _order = 'sequence, id'
+
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10,
+    )
+    expense_id = fields.Many2one(
+        'hr.expense',
+        string='Expense',
+        ondelete='cascade',
+        index=True,
+    )
+    attendee_name = fields.Char(
+        string='Attendee Name',
+    )
+    position = fields.Char(
+        string='Position',
     )
 
 
