@@ -54,6 +54,16 @@
 				</notebook>
             </field>
         </record>
+        <record id="view_expenses_form2" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_cancel_reason.view_expenses_form"/>
+            <field name="arch" type="xml">
+				<button name="%(hr_expense_cancel_reason.action_hr_expense_cancel)d" position="attributes">
+					<attribute name="states">confirm,accepted,wait_accept</attribute>
+				</button>
+            </field>
+        </record>
 
 		<!-- Expense Regulations -->
         <record id="view_hr_expense_rule_tree" model="ir.ui.view">
