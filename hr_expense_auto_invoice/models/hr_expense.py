@@ -171,8 +171,8 @@ class HRExpenseExpese(models.Model):
         action = self.env.ref('account.action_invoice_tree2')
         result = action.read()[0]
         result.update({'domain': [('id', '=', self.invoice_id.id)],
-                       'views': [(False, u'form'), (False, u'tree')]})
-        print result
+                       'views': [(False, u'form'), (False, u'tree')],
+                       'res_id': self.invoice_id.id})
         return result
 
 
