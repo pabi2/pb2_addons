@@ -4,7 +4,7 @@ import openerp.addons.decimal_precision as dp
 from openerp.exceptions import except_orm
 
 
-class account_invoice(models.Model):
+class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
 
@@ -23,7 +23,7 @@ class account_invoice(models.Model):
                  'tax_line.amount',
                  'amount_retention')
     def _compute_amount(self):
-        super(account_invoice, self)._compute_amount()
+        super(AccountInvoice, self)._compute_amount()
         self.amount_tax = sum(line.amount
                               for line in self.tax_line
                               if not line.is_wht)  # WHT
@@ -41,20 +41,20 @@ class account_invoice(models.Model):
 
     @api.multi
     def invoice_pay_customer(self):
-        res = super(account_invoice, self).invoice_pay_customer()
+        res = super(AccountInvoice, self).invoice_pay_customer()
         if res:
             res['context']['default_amount'] = 0.0
         return res
 
 
-class account_invoice_line(models.Model):
+class AccountInvoiceLine(models.Model):
 
     _inherit = "account.invoice.line"
 
     @api.model
     def move_line_get(self, invoice_id):
 
-        res = super(account_invoice_line, self).move_line_get(invoice_id)
+        res = super(AccountInvoiceLine, self).move_line_get(invoice_id)
         inv = self.env['account.invoice'].browse(invoice_id)
 
         if inv.amount_retention > 0.0 and not inv.retention_on_payment:
@@ -88,7 +88,7 @@ class account_invoice_line(models.Model):
         return res
 
 
-class account_invoice_tax(models.Model):
+class AccountInvoiceTax(models.Model):
 
     _inherit = 'account.invoice.tax'
 
@@ -97,5 +97,43 @@ class account_invoice_tax(models.Model):
         readonly=True,
         default=False,
         help="Tax will be withhold and will be used in Payment")
+
+    @api.model
+    def _prepare_tax_line_from_obj(self, line):
+        return {'name': line['name'],
+                'account_id': line['account_id'].id,
+                'base': line['base'],
+                'amount': line['amount'],
+                'account_analytic_id': line['account_analytic_id'].id,
+                'base_code_id': line['base_code_id'].id,
+                'tax_code_id': line['tax_code_id'].id,
+                'base_amount': line['base_amount'],
+                'tax_amount': line['tax_amount'], }
+
+    @api.model
+    def _prepare_tax_line_from_dict(self, line):
+        return {'name': line['name'],
+                'account_id': line['account_id'],
+                'base': line['base'],
+                'amount': line['amount'],
+                'account_analytic_id': line['account_analytic_id'],
+                'base_code_id': line['base_code_id'],
+                'tax_code_id': line['tax_code_id'],
+                'base_amount': line['base_amount'],
+                'tax_amount': line['tax_amount'], }
+
+    @api.model
+    def default_get(self, fields):
+        res = super(AccountInvoiceTax, self).default_get(fields)
+        tax_line = self._context.get('tax_line')
+        if tax_line:
+            last_tax_line = tax_line[-1]
+            if last_tax_line[0] == 4:  # 4 is existing db record
+                line = self.env['account.invoice.tax'].browse(last_tax_line[1])
+                res.update(self._prepare_tax_line_from_obj(line))
+            if last_tax_line[0] == 0:  # 4 is existing db record
+                line = last_tax_line[2]
+                res.update(self._prepare_tax_line_from_dict(line))
+        return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
