@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/div/field[@name='tax_line']" position="replace" />
+                <xpath expr="/form/sheet/notebook/page" position="after" >
+                	<page string="Taxes" >
+                		<group>
+				    		<group>
+				    			<button name="%(action_tax_split)d" string="⇒ Manual Tax Split"
+				         			type="action" class="oe_link"/>
+				        	</group>
+				        	<group>
+								<button name="button_reset_original_tax" string="(Reset to Default Tax)"
+									type="object" class="oe_link"/>
+				        	</group>
+				        </group>
+	                    <field name="tax_line" context="{'tax_line': tax_line}">
+	                        <tree editable="bottom" string="Taxes">
+	                        	<field name="manual" invisible="1" />
+	                            <field name="name"/>
+	                            <field name="account_id" groups="account.group_account_invoice"/>
+	                            <field name="account_analytic_id" domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
+	                            <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)"
+	                            	attrs="{'readonly': [('manual', '=', False)]}" />
+	                            <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
+								<field name="partner_id" />
+								<field name="invoice_number" />
+								<field name="invoice_date" />
+	                            <field name="base_amount" invisible="1" />
+	                            <field name="tax_amount" invisible="1" />
+	                            <field name="factor_base" invisible="1"/>
+	                            <field name="factor_tax" invisible="1"/>
+	                        </tree>
+	                    </field>
+                	</page>
+				</xpath>
+            </field>
+        </record>
+        
+    </data>
+</openerp>
