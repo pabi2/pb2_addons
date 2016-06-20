@@ -9,6 +9,9 @@ class AccountMoveReversal(models.TransientModel):
 
     is_voucher = fields.Boolean('Voucher?')
     is_invoice = fields.Boolean('Invoice?')
+    cancel_reason_txt = fields.Char(
+        string="Reason",
+        readonly=False)
 
     @api.model
     def reconcile_reverse_journals(self, move_ids):
@@ -33,7 +36,6 @@ class AccountMoveReversal(models.TransientModel):
                                         missing in context"
 
         form = self.read()[0]
-
         period_id = form['period_id'][0] if form.get('period_id') else False
         journal_id = form['journal_id'][0] if form.get('journal_id') else False
 
@@ -49,7 +51,8 @@ class AccountMoveReversal(models.TransientModel):
                 move_prefix=form['move_prefix'],
                 move_line_prefix=form['move_line_prefix'],
                 )
-            invoice.write({'cancel_move_id': reverse_move_id[0]})
+            invoice.write({'cancel_move_id': reverse_move_id[0],
+                           'cancel_reason_txt': form['cancel_reason_txt'],})
             # cancel invoice
             invoice.signal_workflow('invoice_cancel')
             reversed_move_ids.extend(reverse_move_id)

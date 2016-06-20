@@ -23,6 +23,12 @@
                 <xpath expr="//field[@name='move_id']" position="after">
                     <field name="cancel_move_id"/>
                 </xpath>
+                <xpath expr="/form/sheet/h1[1]" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                        <field name="cancel_reason_txt" class="oe_inline" />
+                    </h2>
+                </xpath>
             </field>
         </record>
         
@@ -44,6 +50,12 @@
                 </xpath>
                 <xpath expr="//field[@name='move_id']" position="after">
                     <field name="cancel_move_id"/>
+                </xpath>
+                <xpath expr="/form/sheet/div/h1" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                        <field name="cancel_reason_txt" class="oe_inline" />
+                    </h2>
                 </xpath>
             </field>
         </record>

@@ -19,6 +19,9 @@
                             type="object" class="oe_highlight" 
                             attrs="{'invisible': [('is_invoice' , '=', False)]}"/>
                 </xpath>
+                <xpath expr="//field[@name='move_line_prefix']" position="after">
+                    <field name="cancel_reason_txt" required="1"/>
+                </xpath>
             </field>
         </record>
 
