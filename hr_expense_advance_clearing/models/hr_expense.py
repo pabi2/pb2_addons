@@ -139,9 +139,9 @@ class HRExpenseExpense(models.Model):
     @api.multi
     def expense_confirm(self):
         for expense in self:
-            if expense.is_employee_advance and expense.amount < 0.0:
-                raise UserError(_('Negative amount not allowed.\
-                    Please insert positive amount.'))
+            if not expense.is_advance_clearing and expense.amount <= 0.0:
+                raise UserError(_('This expense have no lines,\
+                or all lines with zero amount.'))
         return super(HRExpenseExpense, self).expense_confirm()
 
     @api.multi

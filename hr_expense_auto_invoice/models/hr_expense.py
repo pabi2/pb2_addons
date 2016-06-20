@@ -149,6 +149,15 @@ class HRExpenseExpese(models.Model):
         return invoice
 
     @api.multi
+    def expense_confirm(self):
+        for expense in self:
+            if 'is_advance_clearing' not in expense:
+                if expense.amount <= 0.0:
+                    raise UserError(_('This expense have no lines,\
+                    or all lines with zero amount.'))
+        return super(HRExpenseExpese, self).expense_confirm()
+
+    @api.multi
     def action_move_create(self):
         '''
         Create Supplier Invoice (instead of the old style Journal Entries)
