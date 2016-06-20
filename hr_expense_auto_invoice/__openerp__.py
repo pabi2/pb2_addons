@@ -52,5 +52,6 @@ This Module Features
         "wizards/expense_create_supplier_invoice_wizard.xml",
         "views/hr_expense_view.xml",
         "workflow/hr_expense_workflow.xml",
+        'views/invoice_view.xml',
     ],
 }

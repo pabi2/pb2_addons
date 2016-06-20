@@ -104,6 +104,7 @@ class HRExpenseExpese(models.Model):
             'company_id': expense.company_id.id,
             'currency_id': expense.currency_id.id,
             'journal_id': journal_id,
+            'expense_id': self.id,
         }
 
     @api.model
@@ -163,9 +164,9 @@ class HRExpenseExpese(models.Model):
         Create Supplier Invoice (instead of the old style Journal Entries)
         '''
         for expense in self:
-            if not expense.invoice_id:
-                invoice = expense._create_supplier_invoice_from_expense()
-                expense.invoice_id = invoice
+#             if not expense.invoice_id:
+            invoice = expense._create_supplier_invoice_from_expense()
+            expense.invoice_id = invoice
                 # invoice.signal_workflow('invoice_open')
             expense.write({'account_move_id': expense.invoice_id.move_id.id,
                            'state': 'done'})
@@ -179,9 +180,15 @@ class HRExpenseExpese(models.Model):
         self.ensure_one()
         action = self.env.ref('account.action_invoice_tree2')
         result = action.read()[0]
-        result.update({'domain': [('id', '=', self.invoice_id.id)],
-                       'views': [(False, u'form'), (False, u'tree')],
+
+        invoice_ids = self.env['account.invoice'].\
+            search([('expense_id', '=', self.id)])
+        result.update({'domain': [('id', 'in', invoice_ids.ids)],
                        'res_id': self.invoice_id.id})
+        if len(invoice_ids.ids) > 1:
+            result.update({'views': [(False, u'tree'), (False, u'form')],})
+        else:
+            result.update({'views': [(False, u'form'), (False, u'tree')],})
         return result
 
 

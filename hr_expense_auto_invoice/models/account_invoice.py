@@ -2,12 +2,18 @@
 # © <YEAR(S)> <AUTHOR(S)>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import models, api, _
+from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string="Expense Ref",
+        readonly=True,
+    )
 
     @api.multi
     def confirm_paid(self):
