@@ -98,42 +98,4 @@ class AccountInvoiceTax(models.Model):
         default=False,
         help="Tax will be withhold and will be used in Payment")
 
-    @api.model
-    def _prepare_tax_line_from_obj(self, line):
-        return {'name': line['name'],
-                'account_id': line['account_id'].id,
-                'base': line['base'],
-                'amount': line['amount'],
-                'account_analytic_id': line['account_analytic_id'].id,
-                'base_code_id': line['base_code_id'].id,
-                'tax_code_id': line['tax_code_id'].id,
-                'base_amount': line['base_amount'],
-                'tax_amount': line['tax_amount'], }
-
-    @api.model
-    def _prepare_tax_line_from_dict(self, line):
-        return {'name': line['name'],
-                'account_id': line['account_id'],
-                'base': line['base'],
-                'amount': line['amount'],
-                'account_analytic_id': line['account_analytic_id'],
-                'base_code_id': line['base_code_id'],
-                'tax_code_id': line['tax_code_id'],
-                'base_amount': line['base_amount'],
-                'tax_amount': line['tax_amount'], }
-
-    @api.model
-    def default_get(self, fields):
-        res = super(AccountInvoiceTax, self).default_get(fields)
-        tax_line = self._context.get('tax_line')
-        if tax_line:
-            last_tax_line = tax_line[-1]
-            if last_tax_line[0] == 4:  # 4 is existing db record
-                line = self.env['account.invoice.tax'].browse(last_tax_line[1])
-                res.update(self._prepare_tax_line_from_obj(line))
-            if last_tax_line[0] == 0:  # 4 is existing db record
-                line = last_tax_line[2]
-                res.update(self._prepare_tax_line_from_dict(line))
-        return res
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
