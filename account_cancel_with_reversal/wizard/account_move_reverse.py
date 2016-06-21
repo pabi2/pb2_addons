@@ -84,7 +84,8 @@ class AccountMoveReversal(models.TransientModel):
                 move_prefix=form['move_prefix'],
                 move_line_prefix=form['move_line_prefix'],
                 )
-            voucher.write({'cancel_move_id': reverse_move_id[0]})
+            voucher.write({'cancel_move_id': reverse_move_id[0],
+                           'cancel_reason_txt': form['cancel_reason_txt'],})
             voucher.cancel_voucher()
             reversed_move_ids.extend(reverse_move_id)
 
