@@ -159,7 +159,8 @@ class HRExpenseLine(models.Model):
                 select temp_invoiced_qty
                 from hr_expense_line where id = %s
             """, (rec.id,))
-            temp_invoiced_qty = self._cr.fetchone()[0] or 0.0
+            result = self._cr.fetchone()
+            temp_invoiced_qty = result and result[0] or 0.0
             diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
             if rec.expense_state not in ('cancelled',):
                 rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
