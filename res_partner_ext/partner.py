@@ -256,6 +256,13 @@ class ResPartnerCategory(models.Model):
         help="Non-Government, checking this flag will ensure that Tax ID "
         "and Branch combination must be unique per company of this category")
 
+    @api.multi
+    def name_get(self):
+        res = []
+        for category in self:
+            res.append((category.id, category.name))
+            return res
+
 
 class ResPartnerTag(models.Model):
     _description = 'Partner Tags'
