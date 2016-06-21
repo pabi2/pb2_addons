@@ -20,6 +20,14 @@
                 <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
+                
+                <xpath expr="//header/button[2]" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//header/button[2]" position="before">
+                    <button name="%(action_voucher_cancel)d" type="action" states="draft,proforma" string="Cancel Receipt" />
+                </xpath>
+                
                 <xpath expr="//field[@name='audit']" position="after">
                     <field name="cancel_move_id"/>
                 </xpath>
@@ -54,6 +62,16 @@
                 <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
+                
+                <xpath expr="//header/button[2]" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//header/button[2]" position="before">
+                    <button name="%(action_voucher_cancel)d" 
+                            type="action" states="draft,proforma" string="Cancel Voucher"
+                            invisible="context.get('line_type', False)"/>
+                </xpath>
+                
                 <xpath expr="//field[@name='number']" position="after">
                     <field name="cancel_move_id"/>
                 </xpath>

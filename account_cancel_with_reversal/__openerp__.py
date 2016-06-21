@@ -19,6 +19,7 @@ when it cancelled.
     ],
     'demo': [],
     'data': [
+        'wizard/cancel_reason_view.xml',
         'wizard/account_move_reverse_view.xml',
         'views/account_invoice_view.xml',
         'views/account_voucher_view.xml'
