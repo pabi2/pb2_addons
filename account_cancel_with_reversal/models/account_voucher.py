@@ -11,6 +11,9 @@ class AccountVoucher(models.Model):
         'Cancelled Journal Entry',
         copy=False,
     )
+    cancel_reason_txt = fields.Char(
+        string="Description",
+        readonly=True)
 
     @api.model
     def voucher_move_cancel_hook(self, voucher):
