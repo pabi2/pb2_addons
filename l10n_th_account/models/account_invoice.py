@@ -4,7 +4,7 @@ import openerp.addons.decimal_precision as dp
 from openerp.exceptions import except_orm
 
 
-class account_invoice(models.Model):
+class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
 
@@ -23,7 +23,7 @@ class account_invoice(models.Model):
                  'tax_line.amount',
                  'amount_retention')
     def _compute_amount(self):
-        super(account_invoice, self)._compute_amount()
+        super(AccountInvoice, self)._compute_amount()
         self.amount_tax = sum(line.amount
                               for line in self.tax_line
                               if not line.is_wht)  # WHT
@@ -41,20 +41,20 @@ class account_invoice(models.Model):
 
     @api.multi
     def invoice_pay_customer(self):
-        res = super(account_invoice, self).invoice_pay_customer()
+        res = super(AccountInvoice, self).invoice_pay_customer()
         if res:
             res['context']['default_amount'] = 0.0
         return res
 
 
-class account_invoice_line(models.Model):
+class AccountInvoiceLine(models.Model):
 
     _inherit = "account.invoice.line"
 
     @api.model
     def move_line_get(self, invoice_id):
 
-        res = super(account_invoice_line, self).move_line_get(invoice_id)
+        res = super(AccountInvoiceLine, self).move_line_get(invoice_id)
         inv = self.env['account.invoice'].browse(invoice_id)
 
         if inv.amount_retention > 0.0 and not inv.retention_on_payment:
@@ -88,7 +88,7 @@ class account_invoice_line(models.Model):
         return res
 
 
-class account_invoice_tax(models.Model):
+class AccountInvoiceTax(models.Model):
 
     _inherit = 'account.invoice.tax'
 
