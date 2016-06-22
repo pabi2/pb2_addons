@@ -78,6 +78,13 @@ class VatReportParser(report_sxw.rml_parse):
         base_code = record.base_code_id
         tax_code = record.tax_code_id
 
+    #         CASE WHEN invoice.state = 'cancel'
+    #             THEN invoice.internal_number || ' (CANCELLED)'
+    #             ELSE invoice.internal_number END as number,
+    #             CASE WHEN invoice.state = 'cancel'
+    #                 THEN invoice.internal_number || ' (CANCELLED)'
+    #                 ELSE invoice.internal_number END as number,
+
         self.cr.execute("""
             SELECT
                 ait.id,
@@ -86,9 +93,7 @@ class VatReportParser(report_sxw.rml_parse):
                 CASE WHEN invoice.state = 'cancel' THEN 0.0
                     ELSE SUM(ait.tax_amount) END as tax_amount,
                 invoice.date_invoice as date,
-                CASE WHEN invoice.state = 'cancel'
-                    THEN invoice.internal_number || ' (CANCELLED)'
-                    ELSE invoice.internal_number END as number,
+                ait.invoice_number as number,
                 p.name as partner_name,
                 p.vat as tax_id
             FROM
