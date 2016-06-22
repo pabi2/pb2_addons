@@ -7,7 +7,7 @@ class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
 
     apweb_ref_url = fields.Char(
-        string='AP-Web Ref.',
+        string='PABI Web Ref.',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     create_uid = fields.Many2one(
