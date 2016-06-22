@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class AccountVoucher(models.Model):
@@ -9,6 +9,12 @@ class AccountVoucher(models.Model):
         required=True,
         domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
+
+    @api.one
+    @api.constrains('operating_unit_id', 'journal_id', 'type')
+    def _check_journal_account_operating_unit(self):
+        """ Overwrite, as we no longer need to check """
+        return True
 
 
 class AccountVoucherLine(models.Model):
