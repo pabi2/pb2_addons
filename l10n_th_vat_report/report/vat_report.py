@@ -92,7 +92,7 @@ class VatReportParser(report_sxw.rml_parse):
                     ELSE SUM(ait.base_amount) END as base_amount,
                 CASE WHEN invoice.state = 'cancel' THEN 0.0
                     ELSE SUM(ait.tax_amount) END as tax_amount,
-                invoice.date_invoice as date,
+                ait.invoice_date as date,
                 ait.invoice_number as number,
                 p.name as partner_name,
                 p.vat as tax_id
@@ -101,7 +101,7 @@ class VatReportParser(report_sxw.rml_parse):
             LEFT JOIN account_invoice invoice ON
                 (ait.invoice_id = invoice.id)
             LEFT JOIN res_partner p ON
-                (invoice.partner_id = p.id)
+                (ait.partner_id = p.id)
             WHERE
                 invoice.state in ('cancel', 'open', 'paid') AND
                 invoice.internal_number is not null AND
