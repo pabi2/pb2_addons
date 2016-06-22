@@ -146,6 +146,10 @@ class HRExpenseExpese(models.Model):
         invoice_vals.update({'invoice_line': [(6, 0, inv_lines)]})
         # Create Invoice
         invoice = Invoice.create(invoice_vals)
+        # Set due date
+        res = invoice.onchange_payment_term_date_invoice(
+            invoice.payment_term.id, invoice.date_invoice)
+        invoice.date_due = res['value']['date_due']
         invoice.button_compute(set_total=True)
         return invoice
 
