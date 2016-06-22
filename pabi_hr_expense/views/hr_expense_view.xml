@@ -21,6 +21,9 @@
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>
+            	<field name="user_valid" position="before">
+            		<field name="user_accept" attrs="{'invisible': [('state','=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_hr_user']}"/>
+            	</field>
 				<field name="date" position="after">
 					<field name="advance_type" attrs="{'invisible': [('is_employee_advance', '=', False)], 'required': [('is_employee_advance', '=', True)]}"/>
 					<field name="date_back" attrs="{'invisible': [('advance_type', '!=', 'attend_seminar')], 'required': [('advance_type', '=', 'attend_seminar')]}"/>
