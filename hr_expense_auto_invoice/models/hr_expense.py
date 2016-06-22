@@ -87,9 +87,8 @@ class HRExpenseExpese(models.Model):
                     _('The employee must have a payable account '
                       'set on referred user/partner.'))
         partner = (expense.pay_to == 'employee' and
-                   expense.user_id.partner_id or
+                   expense.employee_id.user_id.partner_id or
                    expense.partner_id)
-        print partner
         res = Invoice.onchange_partner_id(
             type, partner.id, expense.date_valid, payment_term=False,
             partner_bank_id=False, company_id=expense.company_id.id)['value']
