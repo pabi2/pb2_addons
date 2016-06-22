@@ -19,7 +19,7 @@ class HRExpenseExpense(models.Model):
 
     is_employee_advance = fields.Boolean(
         string='Employee Advance',
-        readonly=True,
+        readonly=False,
     )
     is_advance_clearing = fields.Boolean(
         string='Advance Clearing',

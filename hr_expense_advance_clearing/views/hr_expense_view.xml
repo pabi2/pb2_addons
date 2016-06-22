@@ -16,7 +16,7 @@
                     </div>
             	</group>
                 <xpath expr="//field[@name='currency_id']" position="after">
-                    <field name="is_employee_advance" attrs="{'invisible': [('is_employee_advance', '=', False)]}"/>
+                    <field name="is_employee_advance" invisible="1"/>
                     <field name="is_advance_clearing" invisible="1"/>
                     <field name="advance_expense_id" 
                            domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
