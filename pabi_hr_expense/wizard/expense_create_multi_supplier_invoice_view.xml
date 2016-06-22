@@ -7,13 +7,16 @@
             <field name="arch" type="xml">
                 <form string="Create Multi Supplier Invoice" >
                     <separator string="Supplier List"/>
+                    <h2 class="oe_right">
+                    	<label string="Expense Amount:" />
+                    	<field name="amount_untaxed" class="oe_inline"/>
+                    </h2>
                     <field name="multi_supplier_invoice_line" >
                         <tree string="Multi Supplier Lines" editable="bottom">
-                            <field name="employee_id"/> 
+                            <field name="employee_id" invisible="1"/> 
                             <field name="partner_id"/> 
-                            <field name="partner_name"/> 
-                            <field name="taxid"/>
-<!--                            <field name="amount" required="True"/-->
+                            <field name="partner_name"/>
+							<field name="amount" required="True" sum="Total Amount"/>
                         </tree>
                     </field>
                     <footer>

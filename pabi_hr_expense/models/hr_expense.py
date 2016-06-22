@@ -66,11 +66,13 @@ class HRExpense(models.Model):
         'hr.expense.attendee.employee',
         'expense_id',
         string='Attendee / Employee',
+        copy=True,
     )
     attendee_external_ids = fields.One2many(
         'hr.expense.attendee.external',
         'expense_id',
         string='Attendee / External',
+        copy=True,
     )
 
     @api.multi

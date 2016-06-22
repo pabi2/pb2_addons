@@ -11,42 +11,37 @@ class ExpenseCreateMultiSupplierInvoiceLine(models.TransientModel):
 
     employee_id = fields.Many2one(
         'hr.employee',
-        'Employee'
+        string='Employee',
     )
     partner_id = fields.Many2one(
         'res.partner',
-        'Supplier',
+        string='Supplier',
+        required=True,
     )
-    partner_name = fields.Char('Supplier Name', )
-    taxid = fields.Char('Tax ID', )
-#     amount = fields.Float('Amount', )
+    partner_name = fields.Char(
+        string='Supplier Name',
+    )
+    amount = fields.Float(
+        string='Amount',
+    )
     multi_supplier_invoice_id = fields.Many2one(
         'expense.create.multi.supplier.invoice',
-        'Multi Supplier Invoice',
+        string='Multi Supplier Invoice',
     )
 
 
 class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
     _name = "expense.create.multi.supplier.invoice"
 
+    amount_untaxed = fields.Float(
+        string='Amount Untaxed',
+        readonly=True,
+    )
     multi_supplier_invoice_line = fields.One2many(
         'expense.create.multi.supplier.invoice.line',
         'multi_supplier_invoice_id',
-        'Multi Supplier Invoice Lines'
+        string='Multi Supplier Invoice Lines',
     )
-#     total_amount = fields.Float(
-#         compute='_compute_total_amount',
-#         string="Total Amount",
-#         store=True,
-#         readonly=True,
-#     )
-# 
-#     @api.depends('multi_supplier_invoice_line',
-#                  'multi_supplier_invoice_line.amount')
-#     def _compute_total_amount(self):
-#         for record in self:
-#             for line in record.multi_supplier_invoice_line:
-#                 record.total_amount += line.amount
 
     @api.model
     def _prepare_inv(self, supplier_info_line, expense):
@@ -88,39 +83,35 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
     @api.multi
     def create_multi_supplier_invoices(self):
         self.ensure_one()
-        first_invoice = True
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         if self.multi_supplier_invoice_line:
             expense_id = self._context.get('expense_id', False)
             expense = self.env['hr.expense.expense'].browse(expense_id)
+            alloc = sum([x.amount for x in self.multi_supplier_invoice_line])
+            if self.amount_untaxed != alloc:
+                raise UserError(_('Allocation amount mismatched.'))
             for supplier_info_line in self.multi_supplier_invoice_line:
                 if not supplier_info_line.partner_id:
-                    raise UserError(_('Warning'),
-                                  _('Please define supplier.'))
-#                 if self.total_amount != expense.amount:
-#                     raise UserError(_('Warning'),
-#                                     _('Amount mismatched.'))
+                    raise UserError(_('Please define supplier.'))
                 invoice_vals = self._prepare_inv(supplier_info_line, expense)
                 inv_lines = []
-                for exp_line in expense.line_ids:
-                    account_id = expense._choose_account_from_exp_line(
-                        exp_line, invoice_vals['fiscal_position'])
-                    inv_line_data = expense._prepare_inv_line(account_id, exp_line)
-                    if not first_invoice:
-                        inv_line_data['quantity'] = 0.0
-
-                    inv_line = InvoiceLine.create(inv_line_data)
-                    inv_lines.append(inv_line.id)
-                    exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
+                exp_line = expense.line_ids[0]
+                account_id = expense._choose_account_from_exp_line(
+                    exp_line, invoice_vals['fiscal_position'])
+                inv_line_data = expense._prepare_inv_line(account_id,
+                                                          exp_line)
+                inv_line_data['quantity'] = 1.0  # Always set back to 1
+                inv_line_data['price_unit'] = supplier_info_line.amount
+                inv_line = InvoiceLine.create(inv_line_data)
+                inv_lines.append(inv_line.id)
+                exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
                 invoice_vals.update({'invoice_line': [(6, 0, inv_lines)]})
-#                 # Create Invoice
+                # Create Invoice
                 invoice = Invoice.create(invoice_vals)
-                first_invoice = False
                 invoice.button_compute(set_total=True)
                 if not expense.invoice_id:
                     expense.invoice_id = invoice
                     expense.account_move_id = expense.invoice_id.move_id.id
-                # invoice.signal_workflow('invoice_open')
             expense.write({'state': 'done'})
         return
