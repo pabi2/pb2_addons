@@ -35,15 +35,18 @@ class AccountInvoice(models.Model):
     def _get_invoice_total(self, invoice):
         return invoice.amount_total
 
-    @api.multi
-    def invoice_validate(self):
-        expenses = self.env['hr.expense.expense'].search([('invoice_id',
-                                                           'in', self._ids)])
-        for expense in expenses:
-            if expense.amount != self._get_invoice_total(expense.invoice_id):
-                raise except_orm(
-                    _('Amount Error!'),
-                    _("This invoice amount is not equal to amount in "
-                      "expense: %s" % (expense.number,)))
-            expense.signal_workflow('refuse_to_done')
-        return super(AccountInvoice, self).invoice_validate()
+#    TODO:
+#        - At first, we want to check for amount between Exp and Inv
+#        - But for case multi supplier, we can't. So we remove it for now.
+#     @api.multi
+#     def invoice_validate(self):
+#         expenses = self.env['hr.expense.expense'].search([('invoice_id',
+#                                                            'in', self._ids)])
+#         for expense in expenses:
+#             if expense.amount != self._get_invoice_total(expense.invoice_id):
+#                 raise except_orm(
+#                     _('Amount Error!'),
+#                     _("This invoice amount is not equal to amount in "
+#                       "expense: %s" % (expense.number,)))
+#             expense.signal_workflow('refuse_to_done')
+#         return super(AccountInvoice, self).invoice_validate()

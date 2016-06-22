@@ -18,9 +18,11 @@ HR Expense Advance Clearing
     "application": False,
     "installable": True,
     "depends": [
+        "hr_expense_sequence",
         "hr_expense_auto_invoice",
     ],
     "data": [
+        'data/hr_expense_data.xml',
         'data/product_data.xml',
         'views/hr_expense_view.xml',
         'views/account_invoice_view.xml',

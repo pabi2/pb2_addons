@@ -18,8 +18,8 @@
 	    	</button>
 			<field name="name" position="after">
 				<field name="pay_to" />
-				<field name="partner_id" attrs="{'invisible': [('pay_to', '!=', 'supplier')],
-												'required': [('pay_to', '=', 'supplier')]}"/> 
+				<field name="partner_id" attrs="{'invisible': ['|', ('pay_to', '!=', 'supplier'),
+																('partner_id', '=', False)]}"/> 
 	    	</field>
             <xpath expr='/form/sheet/notebook/page/field/tree/field[@name="total_amount"]' position="before">
                 <field name="tax_ids" widget="many2many_tags" />
