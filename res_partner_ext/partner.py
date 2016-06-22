@@ -50,7 +50,11 @@ class ResPartner(models.Model):
     )
     category_id = fields.Many2one(
         'res.partner.category',
-        string='Category',
+        string='Supplier Category',
+    )
+    customer_category_id = fields.Many2one(
+        'res.partner.category',
+        string='Customer Category',
     )
     tag_ids = fields.Many2many(
         'res.partner.tag',
@@ -261,7 +265,7 @@ class ResPartnerCategory(models.Model):
         res = []
         for category in self:
             res.append((category.id, category.name))
-            return res
+        return res
 
 
 class ResPartnerTag(models.Model):
