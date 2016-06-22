@@ -13,11 +13,11 @@
                 		<group>
 				    		<group>
 				    			<button name="%(action_tax_split)d" string="⇒ Manual Tax Split"
-				         			type="action" class="oe_link"/>
+				         			type="action" class="oe_link" states="draft"/>
 				        	</group>
 				        	<group>
 								<button name="button_reset_original_tax" string="(Reset to Default Tax)"
-									type="object" class="oe_link"/>
+									type="object" class="oe_link" states="draft"/>
 				        	</group>
 				        </group>
 	                    <field name="tax_line" context="{'tax_line': tax_line}">
