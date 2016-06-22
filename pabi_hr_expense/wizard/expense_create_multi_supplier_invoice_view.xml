@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_create_multi_invoice_wizard">
+            <field name="name">expense.create.multi.supplier.invoice.wizard</field>
+            <field name="model">expense.create.multi.supplier.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create Multi Supplier Invoice" >
+                    <separator string="Supplier List"/>
+                    <field name="multi_supplier_invoice_line" >
+                        <tree string="Multi Supplier Lines" editable="bottom">
+                            <field name="employee_id"/> 
+                            <field name="partner_id"/> 
+                            <field name="partner_name"/> 
+                            <field name="taxid"/>
+<!--                            <field name="amount" required="True"/-->
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="create_multi_supplier_invoices" string="Create" type="object"
+                            class="oe_highlight" />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_create_multi_supplier_invoice">
+            <field name="name">Create Multi Supplier Invoice</field>
+            <field name="res_model">expense.create.multi.supplier.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>
