@@ -25,6 +25,7 @@ class HRExpenseExpese(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         domain=[('supplier', '=', True)],
+        copy=False,
     )
     invoice_id = fields.Many2one(
         'account.invoice',
@@ -77,14 +78,14 @@ class HRExpenseExpese(models.Model):
             journal_id = journal[0].id
         # Partner, account_id, payment_term
         if expense.pay_to == 'employee':
-            if not expense.employee_id.address_home_id:
+            if not expense.employee_id.user_id.partner_id:
                 raise UserError(
-                    _('The employee must have a home address.'))
-            if not expense.employee_id.address_home_id.\
+                    _('The employee must have a valid user in system'))
+            if not expense.employee_id.user_id.partner_id.\
                     property_account_payable:
                 raise UserError(
                     _('The employee must have a payable account '
-                      'set on his home address.'))
+                      'set on referred user/partner.'))
         partner = (expense.pay_to == 'employee' and
                    expense.employee_id.address_home_id or
                    expense.partner_id)
@@ -168,10 +169,8 @@ class HRExpenseExpese(models.Model):
         Create Supplier Invoice (instead of the old style Journal Entries)
         '''
         for expense in self:
-#             if not expense.invoice_id:
             invoice = expense._create_supplier_invoice_from_expense()
             expense.invoice_id = invoice
-                # invoice.signal_workflow('invoice_open')
             expense.write({'account_move_id': expense.invoice_id.move_id.id,
                            'state': 'done'})
         return True

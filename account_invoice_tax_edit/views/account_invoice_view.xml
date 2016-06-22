@@ -29,9 +29,9 @@
 	                            <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)"
 	                            	attrs="{'readonly': [('manual', '=', False)]}" />
 	                            <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
-								<field name="partner_id" />
-								<field name="invoice_number" />
-								<field name="invoice_date" />
+								<field name="partner_id" attrs="{'readonly': [('manual', '=', False)]}" />
+								<field name="invoice_number" attrs="{'readonly': [('manual', '=', False)]}" />
+								<field name="invoice_date" attrs="{'readonly': [('manual', '=', False)]}" />
 	                            <field name="base_amount" invisible="1" />
 	                            <field name="tax_amount" invisible="1" />
 	                            <field name="factor_base" invisible="1"/>
