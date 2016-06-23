@@ -20,10 +20,12 @@ HR Expense Advance Clearing
     "depends": [
         "hr_expense_sequence",
         "hr_expense_auto_invoice",
+        'account_cancel_with_reversal',
     ],
     "data": [
         'data/hr_expense_data.xml',
         'data/product_data.xml',
+        'data/invoice_workflow.xml',
         'views/hr_expense_view.xml',
         'views/account_invoice_view.xml',
     ],
