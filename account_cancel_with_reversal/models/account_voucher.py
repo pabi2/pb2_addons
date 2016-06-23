@@ -13,7 +13,8 @@ class AccountVoucher(models.Model):
     )
     cancel_reason_txt = fields.Char(
         string="Description",
-        readonly=True)
+        readonly=True,
+        copy=False,)
 
     @api.model
     def voucher_move_cancel_hook(self, voucher):

@@ -14,7 +14,8 @@ class AccountInvoice(models.Model):
 
     cancel_reason_txt = fields.Char(
         string="Description",
-        readonly=True)
+        readonly=True,
+        copy=False)
 
     @api.model
     def action_cancel_hook(self, moves=False):

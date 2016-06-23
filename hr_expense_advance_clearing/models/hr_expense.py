@@ -19,7 +19,7 @@ class HRExpenseExpense(models.Model):
 
     is_employee_advance = fields.Boolean(
         string='Employee Advance',
-        readonly=True,
+        readonly=False,
     )
     is_advance_clearing = fields.Boolean(
         string='Advance Clearing',
@@ -172,3 +172,10 @@ class HRExpenseExpense(models.Model):
                                'sequence': 1, })
             invoice.write({'is_advance_clearing': True})
         return invoice
+
+    @api.model
+    def create(self, vals):
+        if vals.get('is_employee_advance', False) and \
+                vals.get('number', '/') == '/':
+            vals['number'] = self.env['ir.sequence'].get('hr.expense.advance')
+        return super(HRExpenseExpense, self).create(vals)

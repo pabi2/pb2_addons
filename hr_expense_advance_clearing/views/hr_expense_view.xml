@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <record id="view_expenses_form_sequence" model="ir.ui.view">
+            <field name="name">view.expenses.form.sequence</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_sequence.view_expenses_form_sequence"/>
+            <field name="arch" type="xml">
+                <xpath expr="//label[@string='Expense ']" position="replace">
+            		<label string="Expense " attrs="{'invisible': [('is_employee_advance', '=', True)]}" />
+            		<label string="Advance " attrs="{'invisible': [('is_employee_advance', '=', False)]}" />
+            	</xpath>
+            </field>
+        </record>
+
         <record id="view_expenses_form_advance" model="ir.ui.view">
             <field name="name">view.expenses.form</field>
             <field name="model">hr.expense.expense</field>
@@ -16,7 +28,7 @@
                     </div>
             	</group>
                 <xpath expr="//field[@name='currency_id']" position="after">
-                    <field name="is_employee_advance" attrs="{'invisible': [('is_employee_advance', '=', False)]}"/>
+                    <field name="is_employee_advance" invisible="1"/>
                     <field name="is_advance_clearing" invisible="1"/>
                     <field name="advance_expense_id" 
                            domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
