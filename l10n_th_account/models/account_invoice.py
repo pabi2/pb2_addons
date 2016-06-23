@@ -25,8 +25,7 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
         self.amount_tax = sum(line.amount
-                              for line in self.tax_line
-                              if not line.is_wht)  # WHT
+                              for line in self.tax_line)
         amount_total = self.amount_untaxed + self.amount_tax
         if not self.retention_on_payment:
             self.amount_total = amount_total - self.amount_retention  # RET
@@ -86,16 +85,5 @@ class AccountInvoiceLine(models.Model):
                 'taxes': False,
             })
         return res
-
-
-class AccountInvoiceTax(models.Model):
-
-    _inherit = 'account.invoice.tax'
-
-    is_wht = fields.Boolean(
-        string="Withholding Tax",
-        readonly=True,
-        default=False,
-        help="Tax will be withhold and will be used in Payment")
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

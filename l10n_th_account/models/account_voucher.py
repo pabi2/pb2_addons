@@ -624,7 +624,7 @@ class account_voucher_line(common_voucher, models.Model):
         return {'value': vals}
 
 
-class account_voucher_tax(common_voucher, models.Model):
+class AccountVoucherTax(common_voucher, models.Model):
 
     _name = "account.voucher.tax"
     _description = "Voucher Tax"

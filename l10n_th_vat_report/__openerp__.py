@@ -13,6 +13,7 @@ Thai Vat Report
     "depends": [
         'account',
         'l10n_th_account'
+        'l10n_th_account_tax_detail',
     ],
     "data": [
         'wizard/vat_report_wizard_view.xml',

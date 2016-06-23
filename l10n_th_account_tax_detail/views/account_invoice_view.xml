@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page//field[@name='tax_line']/tree/field[@name='factor_tax']" position="after" >
+	    			<field name="manual" />  
+	         	</xpath>
+                <xpath expr="/form/sheet/notebook/page//field[@name='tax_line']/tree/field[@name='factor_tax']" position="after" >
+	    			<button name="%(action_tax_detail)d" string="Tax Invoice Detail"
+	         			type="action" icon="gtk-justify-fill" />  
+	         	</xpath>
+	        </field>
+		</record>   
+		   
+    </data>
+</openerp>
