@@ -15,7 +15,10 @@
                     />
                 </xpath>
                 <xpath expr="//button[@name='invoice_cancel']" position="attributes">
-                    <attribute name="states">draft,proforma2</attribute>
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="before">
+                    <button name="%(action_account_invoice_cancel)d" type="action" states="draft,proforma2" string="Cancel Invoice" groups="account.group_account_invoice"/>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -44,6 +47,12 @@
                             class="oe_highlight" 
                             states="open"
                     />
+                </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="before">
+                    <button name="%(action_account_invoice_cancel)d" type="action" states="draft,proforma2" string="Cancel Invoice" groups="account.group_account_invoice"/>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
                     <attribute name="invisible">True</attribute>

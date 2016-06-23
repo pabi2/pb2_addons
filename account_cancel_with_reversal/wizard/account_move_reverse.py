@@ -52,7 +52,7 @@ class AccountMoveReversal(models.TransientModel):
                 move_line_prefix=form['move_line_prefix'],
                 )
             invoice.write({'cancel_move_id': reverse_move_id[0],
-                           'cancel_reason_txt': form['cancel_reason_txt'],})
+                           'cancel_reason_txt': form['cancel_reason_txt'], })
             # cancel invoice
             invoice.signal_workflow('invoice_cancel')
             reversed_move_ids.extend(reverse_move_id)
@@ -85,7 +85,7 @@ class AccountMoveReversal(models.TransientModel):
                 move_line_prefix=form['move_line_prefix'],
                 )
             voucher.write({'cancel_move_id': reverse_move_id[0],
-                           'cancel_reason_txt': form['cancel_reason_txt'],})
+                           'cancel_reason_txt': form['cancel_reason_txt'], })
             voucher.cancel_voucher()
             reversed_move_ids.extend(reverse_move_id)
 

@@ -9,6 +9,20 @@
                 <xpath expr="//field[@name='check_total']" position="after">
                     <field name="is_advance_clearing" readonly="1"/>
                 </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="after">
+                    <!--button name="clearing_invoice_cancel" 
+                            string="Cancel Invoice"
+                            type="workflow"
+                            attrs="{'invisible': ['|', ('state', '!=', 'paid'),('is_advance_clearing', '=', False)]}"
+                            groups="account.group_account_invoice"/-->
+                    <button name="%(account_cancel_with_reversal.act_account_move_reverse_invoice)d" 
+                            type="action" 
+                            string="Cancel Invoice"
+                            attrs="{'invisible': ['|', ('state', '!=', 'paid'),('is_advance_clearing', '=', False)]}"
+                            class="oe_highlight" 
+                            states="open" 
+                    />
+                </xpath>
             </field>
         </record>
     </data>
