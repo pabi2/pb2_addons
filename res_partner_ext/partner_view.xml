@@ -68,11 +68,11 @@
 				</field>
 	            <field name="category_id" position="attributes" >
 	            	<!--<attribute name="domain">[('parent_id','=',False)]</attribute>-->
-	            	<attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'required': ['|',('supplier','=',True),('customer','=',True)]}</attribute>
+	            	<attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'required': [('supplier','=',True)]}</attribute>
 	            </field>
 	            <field name="customer_category_id" position="attributes" >
 	            	<!--<attribute name="domain">[('parent_id','=',False)]</attribute>-->
-	            	<attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'required': ['|',('supplier','=',True),('customer','=',True)]}</attribute>
+	            	<attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'required': [('customer','=',True)]}</attribute>
 	            </field>
 				<xpath expr="/form/sheet/group//field[@name='title']" position="replace" />
 				<field name="name" position="attributes">
