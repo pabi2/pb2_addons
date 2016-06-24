@@ -7,11 +7,15 @@ from openerp import api, models, fields
 class ExpenseCreateSupplierInvoice(models.TransientModel):
     _inherit = "expense.create.supplier.invoice"
 
-    invoice_rule = fields.Selection(
-        [('single_supplier_invoice', 'Single Supplier Invoice'),
-         ('multi_supplier_invoice', 'Multi Supplier Invoice')],
-        string="Invoice Rule",
-        default='single_supplier_invoice',
+#     invoice_rule = fields.Selection(
+#         [('single_supplier_invoice', 'Single Supplier Invoice'),
+#          ('multi_supplier_invoice', 'Multi Supplier Invoice')],
+#         string="Invoice Rule",
+#         default='single_supplier_invoice',
+#     )
+    use_attendee_list = fields.Boolean(
+        string='Use Attendee List',
+        default=False,
     )
 
     @api.model
@@ -28,7 +32,7 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
                             toolbar=toolbar, submenu=submenu)
         if no_multi_supplier:
             doc = etree.XML(result['arch'])
-            nodes = doc.xpath("//field[@name='invoice_rule']")
+            nodes = doc.xpath("//field[@name='use_attendee_list']")
             for node in nodes:
                 node.set('invisible', '1')
                 setup_modifiers(
@@ -41,7 +45,7 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
         self.ensure_one()
         Expense = self.env['hr.expense.expense']
         expense = Expense.browse(self._context.get('active_id', False))
-        if self.invoice_rule == 'single_supplier_invoice' or \
+        if not self.use_attendee_list or \
                 ('is_employee_advance' in expense and
                  expense.is_employee_advance) or \
                 ('is_advance_clearing' in expense and

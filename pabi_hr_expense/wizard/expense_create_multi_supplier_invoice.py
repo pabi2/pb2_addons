@@ -85,7 +85,9 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
         self.ensure_one()
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
-        if self.multi_supplier_invoice_line:
+        if not self.multi_supplier_invoice_line:
+            raise UserError(_('No person in the Supplier List table!'))
+        else:
             expense_id = self._context.get('expense_id', False)
             expense = self.env['hr.expense.expense'].browse(expense_id)
             alloc = sum([x.amount for x in self.multi_supplier_invoice_line])
