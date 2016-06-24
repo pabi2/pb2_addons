@@ -16,25 +16,20 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
         'res.partner',
         string='Supplier',
     )
+    pay_to = fields.Selection(
+        [('employee', 'Employee'),
+         ('supplier', 'Supplier')],
+        string='Pay to',
+        readonly=True,
+    )
 
     @api.model
-    def fields_view_get(self, view_id=None, view_type=False,
-                        toolbar=False, submenu=False):
+    def default_get(self, fields):
+        res = super(ExpenseCreateSupplierInvoice, self).default_get(fields)
         Expense = self.env['hr.expense.expense']
         expense = Expense.browse(self._context.get('active_id'))
-        result = super(ExpenseCreateSupplierInvoice, self).\
-            fields_view_get(view_id=view_id, view_type=view_type,
-                            toolbar=toolbar, submenu=submenu)
-        if expense.pay_to != 'supplier':
-            doc = etree.XML(result['arch'])
-            nodes = doc.xpath("//field[@name='partner_id']")
-            for node in nodes:
-                node.set('invisible', '1')
-                node.set('required', '0')
-                setup_modifiers(node,
-                                result['fields'][node.attrib['name']])
-            result['arch'] = etree.tostring(doc)
-        return result
+        res['pay_to'] = expense.pay_to
+        return res
 
     @api.multi
     def action_create_supplier_invoice(self):

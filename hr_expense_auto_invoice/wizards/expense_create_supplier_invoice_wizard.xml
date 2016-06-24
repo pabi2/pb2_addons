@@ -15,8 +15,10 @@
 				<group>            
 	            	<field name="date_invoice" />
 	            </group>
-				<group>            
-	            	<field name="partner_id" required="1"/>
+				<group> 
+					<field name="pay_to" invisible="1" />           
+	            	<field name="partner_id" attrs="{'required': [('pay_to', '=', 'supplier')],
+	            									'invisible': [('pay_to', '!=', 'supplier')]}"/>
 	            </group>
             </group>
             <footer>
