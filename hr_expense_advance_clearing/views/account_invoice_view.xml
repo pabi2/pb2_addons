@@ -20,7 +20,6 @@
                             string="Cancel Invoice"
                             attrs="{'invisible': ['|', ('state', '!=', 'paid'),('is_advance_clearing', '=', False)]}"
                             class="oe_highlight" 
-                            states="open" 
                     />
                 </xpath>
             </field>

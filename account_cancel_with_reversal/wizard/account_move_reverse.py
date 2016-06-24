@@ -26,9 +26,21 @@ class AccountMoveReversal(models.TransientModel):
                         where aa.reconcile = true and aml.reconcile_id is null\
                         and aml.move_id in %s', (tuple(move_ids), ))
         move_line_ids = map(lambda x: x[0], self._cr.fetchall())
+        
         move_line_ids = account_move_line_obj.browse(move_line_ids)
-        move_line_ids.reconcile('manual', False,
-                                period_id, False)
+        line_dict = {}
+        for line in move_line_ids:
+            if line.account_id.id not in line_dict.keys():
+                line_dict[line.account_id.id] = [line.id]
+            else:
+                line_dict[line.account_id.id].append(line.id)
+
+        for account in line_dict.keys():
+            move_line_ids = account_move_line_obj.browse(line_dict[account])
+            move_line_ids.reconcile('manual', False,
+                                    period_id, False)
+#         move_line_ids.reconcile('manual', False,
+#                                     period_id, False)
 
     @api.multi
     def action_reverse_invoice(self):
