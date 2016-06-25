@@ -5,8 +5,10 @@
     'version': '8.0.1.0.0',
     'author': 'Ecosoft',
     'website': 'http://ecosoft.co.th',
-    'depends': ['jasper_reports',
-                ],
+    'depends': [
+        'jasper_reports',
+        'l10n_th_amount_text_ext',
+    ],
     'data': [
         "jasper_data.xml",
     ],

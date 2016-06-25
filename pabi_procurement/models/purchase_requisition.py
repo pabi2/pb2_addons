@@ -178,7 +178,6 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-
     doc_no = fields.Char(
         string='No.',
         readonly=True,
