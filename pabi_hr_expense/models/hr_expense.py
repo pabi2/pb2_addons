@@ -7,13 +7,23 @@ class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
 
     apweb_ref_url = fields.Char(
-        string='AP-Web Ref.',
+        string='PABI Web Ref.',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     create_uid = fields.Many2one(
         'res.users',
         string='Created By',
         readonly=True,
+    )
+    user_accept = fields.Many2one(
+        'res.users',
+        string='Accepted By',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+    )
+    user_valid = fields.Many2one(
+        string='Approved By',
     )
     date_back = fields.Date(
         string='Back from seminar',
@@ -56,11 +66,13 @@ class HRExpense(models.Model):
         'hr.expense.attendee.employee',
         'expense_id',
         string='Attendee / Employee',
+        copy=True,
     )
     attendee_external_ids = fields.One2many(
         'hr.expense.attendee.external',
         'expense_id',
         string='Attendee / External',
+        copy=True,
     )
 
     @api.multi
@@ -71,6 +83,12 @@ class HRExpense(models.Model):
                 line.analytic_account = \
                     Analytic.create_matched_analytic(line)
         return self.write({'state': 'wait_accept'})
+
+    @api.multi
+    def expense_confirm(self):
+        res = super(HRExpense, self).expense_confirm()
+        self.write({'user_accept': self._uid})
+        return res
 
 
 class HRExpenseAdvanceDueHistory(models.Model):
