@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bids_pr_detail" pageWidth="575" pageHeight="802" columnWidth="575" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bids_pr_detail" pageWidth="575" pageHeight="802" columnWidth="575" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="74548e42-13b7-4774-84e6-d13a9fd98c05">
 	<property name="ireport.zoom" value="1.100000000000001"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;purchase_ids&quot;,]"/>
-	<parameter name="requisition_id" class="java.lang.Number">
+	<parameter name="ids" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT product_name,
-price_unit,
-product_qty,
-price_subtotal
-FROM purchase_requisition_line
-WHERE requisition_id = $P{requisition_id}]]>
+		<![CDATA[SELECT pdl.product_name,
+pdl.price_unit,
+'Material Group' as material_group,
+pdl.product_qty,
+pdl.price_subtotal
+FROM purchase_requisition_line pdl
+WHERE pdl.requisition_id = $P!{ids}]]>
 	</queryString>
 	<field name="product_name" class="java.lang.String">
 		<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
@@ -21,6 +22,7 @@ WHERE requisition_id = $P{requisition_id}]]>
 	<field name="price_unit" class="java.lang.Double">
 		<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
 	</field>
+	<field name="material_group" class="java.lang.String"/>
 	<field name="product_qty" class="java.math.BigDecimal"/>
 	<field name="price_subtotal" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Amount]]></fieldDescription>
@@ -28,64 +30,70 @@ WHERE requisition_id = $P{requisition_id}]]>
 	<columnHeader>
 		<band height="36">
 			<rectangle>
-				<reportElement x="0" y="0" width="575" height="36"/>
+				<reportElement x="0" y="0" width="575" height="36" uuid="7aa1a34d-f2f6-450a-bdda-e1187d36d14c"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="427" y="0" width="48" height="36"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="427" y="0" width="48" height="36" uuid="637454e3-4229-49e8-ac3a-50b89ca7861a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[จำนวน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="312" y="0" width="115" height="36"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="312" y="0" width="115" height="36" uuid="ef8bf1dd-4602-4be5-a356-82ff84a45d16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[กลุ่มพัสดุ
 (Material Group/Asset)]]></text>
 			</staticText>
 			<line>
-				<reportElement x="311" y="0" width="1" height="36"/>
+				<reportElement x="311" y="0" width="1" height="36" uuid="589b9430-6047-4347-963f-f68ccaad3773"/>
 			</line>
 			<line>
-				<reportElement x="242" y="0" width="1" height="36"/>
+				<reportElement x="242" y="0" width="1" height="36" uuid="db6c6bd8-4e0d-4efc-8980-5b5bceb56b46"/>
 			</line>
 			<staticText>
-				<reportElement x="63" y="0" width="179" height="36"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="63" y="0" width="179" height="36" uuid="abb6ffd0-9af6-4627-a754-21ffd8ee2062"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[รายละเอียดพัสดุ/งานจ้าง/การเช่า]]></text>
 			</staticText>
 			<line>
-				<reportElement x="475" y="0" width="1" height="36"/>
+				<reportElement x="475" y="0" width="1" height="36" uuid="7b406014-db1f-4d86-94b0-9f4983ab85f6"/>
 			</line>
 			<staticText>
-				<reportElement x="0" y="0" width="62" height="36"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="0" y="0" width="62" height="36" uuid="de029f5e-d1fe-4d40-b4c8-f7096b4918af"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ลำดับที่]]></text>
 			</staticText>
 			<line>
-				<reportElement x="62" y="0" width="1" height="36"/>
+				<reportElement x="62" y="0" width="1" height="36" uuid="659f4d8f-b4a7-42d2-909d-b9615565563b"/>
 			</line>
 			<staticText>
-				<reportElement x="476" y="0" width="99" height="36"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="476" y="0" width="99" height="36" uuid="582130cf-ef3f-4803-9953-d66805589e2e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ราคารวมโดยประมาณ
 (บาท/รวม Vat ถ้ามี) ]]></text>
 			</staticText>
 			<line>
-				<reportElement x="427" y="0" width="1" height="36"/>
+				<reportElement x="427" y="0" width="1" height="36" uuid="bbfca7df-b1d6-487f-813c-cdf3feee3156"/>
 			</line>
 			<staticText>
-				<reportElement x="243" y="0" width="68" height="36"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="243" y="0" width="68" height="36" uuid="38ae7b4b-8f0d-448b-bfac-4f14cde16625"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ราคาประมาณ
 ต่อหน่วย]]></text>
@@ -95,57 +103,70 @@ WHERE requisition_id = $P{requisition_id}]]>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="572" height="20"/>
+				<reportElement x="0" y="0" width="575" height="20" uuid="608b3a66-fa3c-4db3-8364-02d8f8f751ce"/>
 			</rectangle>
 			<line>
-				<reportElement x="311" y="0" width="1" height="20"/>
+				<reportElement x="311" y="0" width="1" height="20" uuid="a55b994f-2bf8-4937-9766-ca81c8aca721"/>
 			</line>
 			<textField>
-				<reportElement x="69" y="0" width="173" height="20"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="69" y="0" width="173" height="20" uuid="f1de2524-5c7c-4ae4-b276-9134533a554d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="475" y="0" width="1" height="20"/>
+				<reportElement x="475" y="0" width="1" height="20" uuid="05c41b26-452b-4c32-8562-827ec9fc9dbf"/>
 			</line>
 			<line>
-				<reportElement x="62" y="0" width="1" height="20"/>
+				<reportElement x="62" y="0" width="1" height="20" uuid="659c6086-1be4-482e-b503-174593826c85"/>
 			</line>
 			<textField pattern="#,##0.00">
-				<reportElement x="476" y="0" width="90" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="476" y="0" width="90" height="20" uuid="dabb17d9-fadb-4a65-a6a9-78bba303a918"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{price_subtotal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{price_subtotal}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="427" y="0" width="1" height="20"/>
+				<reportElement x="427" y="0" width="1" height="20" uuid="17b492bc-61fe-41e1-9798-d025d5767fec"/>
 			</line>
 			<line>
-				<reportElement x="242" y="0" width="1" height="20"/>
+				<reportElement x="242" y="0" width="1" height="20" uuid="ce709521-8b58-4066-b9ae-81607f37ae50"/>
 			</line>
 			<textField pattern="#,##0.00">
-				<reportElement x="243" y="0" width="63" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="243" y="0" width="63" height="20" uuid="172792db-fc08-48fe-9e8b-60f755087dfb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{price_unit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{price_unit}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="428" y="0" width="47" height="20" uuid="f94a05b9-998f-43d1-8fdf-08050ed02829"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product_qty}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="428" y="0" width="47" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<reportElement x="0" y="0" width="62" height="20" uuid="9b60c00b-c474-4638-b5bf-1edef989542d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{product_qty}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="0" y="0" width="62" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="327" y="0" width="89" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="133d6a69-1485-401b-97a7-215e7e651405"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{material_group}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
