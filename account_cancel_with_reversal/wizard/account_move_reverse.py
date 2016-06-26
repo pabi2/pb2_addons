@@ -26,7 +26,7 @@ class AccountMoveReversal(models.TransientModel):
                         where aa.reconcile = true and aml.reconcile_id is null\
                         and aml.move_id in %s', (tuple(move_ids), ))
         move_line_ids = map(lambda x: x[0], self._cr.fetchall())
-        
+
         move_line_ids = account_move_line_obj.browse(move_line_ids)
         line_dict = {}
         for line in move_line_ids:

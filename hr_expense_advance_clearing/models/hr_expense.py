@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
-from datetime import date
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.osv.orm import setup_modifiers

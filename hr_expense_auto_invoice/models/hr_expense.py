@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# © <YEAR(S)> <AUTHOR(S)>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.addons import decimal_precision as dp
@@ -189,9 +186,9 @@ class HRExpenseExpese(models.Model):
         result.update({'domain': [('id', 'in', invoice_ids.ids)],
                        'res_id': self.invoice_id.id})
         if len(invoice_ids.ids) > 1:
-            result.update({'views': [(False, u'tree'), (False, u'form')],})
+            result.update({'views': [(False, u'tree'), (False, u'form')]})
         else:
-            result.update({'views': [(False, u'form'), (False, u'tree')],})
+            result.update({'views': [(False, u'form'), (False, u'tree')]})
         return result
 
 
