@@ -50,7 +50,11 @@ class ResPartner(models.Model):
     )
     category_id = fields.Many2one(
         'res.partner.category',
-        string='Category',
+        string='Supplier Category',
+    )
+    customer_category_id = fields.Many2one(
+        'res.partner.category',
+        string='Customer Category',
     )
     tag_ids = fields.Many2many(
         'res.partner.tag',
@@ -255,6 +259,13 @@ class ResPartnerCategory(models.Model):
         string='Validate Tax/Branch Unique',
         help="Non-Government, checking this flag will ensure that Tax ID "
         "and Branch combination must be unique per company of this category")
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for category in self:
+            res.append((category.id, category.name))
+        return res
 
 
 class ResPartnerTag(models.Model):
