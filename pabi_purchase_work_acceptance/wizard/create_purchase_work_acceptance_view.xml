@@ -7,10 +7,9 @@
             <field name="arch" type="xml">
              <form string="CreateWork Acceptance">
                 <p class="oe_grey">
-                    Please in put acceptance detail.
+                    Now, you are going to create the work acceptance.
                 </p>
                  <group>
-                    <field name="name"/>
                     <field name="invoice_plan_id"
                            attrs="{
                                 'invisible':[('is_invoice_plan','!=',True)]
