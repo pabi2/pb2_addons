@@ -13,6 +13,7 @@
         'account_invoice_check_tax_lines_hook',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'wizard/account_invoice_tax_detail_view.xml',
         'views/account_invoice_view.xml',
     ],
