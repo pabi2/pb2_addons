@@ -3,7 +3,6 @@
 from openerp import fields, models, api, _
 import datetime
 import openerp.addons.decimal_precision as dp
-# from openerp.exceptions import Warning as UserError
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
     import amount_to_text_th
 
