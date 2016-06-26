@@ -3,7 +3,9 @@
 from openerp import fields, models, api, _
 import datetime
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
+# from openerp.exceptions import Warning as UserError
+from openerp.addons.l10n_th_amount_text.amount_to_text_th \
+    import amount_to_text_th
 
 
 class PurchaseWorkAcceptance(models.Model):
@@ -15,6 +17,21 @@ class PurchaseWorkAcceptance(models.Model):
         ('evaluation', 'Evaluation'),
         ('done', 'Done'),
     ]
+
+    @api.one
+    @api.depends('date_receive', 'date_contract_end')
+    def _fine_amount_to_word_th(self):
+        res = {}
+        minus = False
+        order = self.order_id
+        amount_total = self.total_fine
+        if amount_total < 0:
+            minus = True
+            amount_total = -amount_total
+        amount_text = amount_to_text_th(amount_total, order.currency_id.name)
+        self.amount_total_fine_text_th = minus and\
+            'ลบ' + amount_text or amount_text
+        return res
 
     @api.onchange('manual_fine')
     def _onchange_manual_fine(self):
@@ -77,9 +94,10 @@ class PurchaseWorkAcceptance(models.Model):
             if not check_type:
                 check_type = line.product_id.type
                 continue
-            if check_type != line.product_id.type:
-                raise UserError(
-                    _("All products must have the same type."))
+            # if check_type != line.product_id.type:
+            #     raise UserError(
+            #         _("All products must have the same type. %s"
+            #           % (self.name,)))
         return check_type
 
     @api.model
@@ -181,6 +199,11 @@ class PurchaseWorkAcceptance(models.Model):
     total_fine = fields.Float(
         string="Total Fine",
         compute="_compute_total_fine",
+    )
+    amount_total_fine_text_th = fields.Char(
+        string='Total Fine TH Text',
+        compute='_fine_amount_to_word_th',
+        store=True,
     )
     supplier_invoice = fields.Char(
         string="Invoice No.",
