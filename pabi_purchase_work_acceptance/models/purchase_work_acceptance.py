@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models, api, _
+from openerp import fields, models, api
 import datetime
 import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
