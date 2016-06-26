@@ -12,7 +12,7 @@ Thai Vat Report
     'license': 'AGPL-3',
     "depends": [
         'account',
-        'l10n_th_account'
+        'l10n_th_account',
         'l10n_th_account_tax_detail',
     ],
     "data": [
