@@ -113,8 +113,6 @@ class BudgetPlanUnit(models.Model):
             budget = head_trg_model.create(vals)
             for line in plan.plan_line_ids:
                 for key in line_fields:
-                    print line_fields
-                    print line[key]
                     vals.update({key: (hasattr(line[key], '__iter__') and
                                        line[key].id or line[key])})
                 vals.update({'budget_id': budget.id})
