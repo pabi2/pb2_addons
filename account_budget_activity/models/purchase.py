@@ -73,6 +73,10 @@ class PurchaseOrderLine(models.Model):
         if self.product_id:
             account_id = self.product_id.property_account_expense.id or \
                 self.product_id.categ_id.property_account_expense_categ.id
+            if not account_id:
+                raise UserError(
+                    _('No Account Code assigned for product - %s') %
+                    (self.product_id.name,))
             activity_group = self.env['account.activity.group'].\
                 search([('account_id', '=', account_id)])
             self.activity_group_id = activity_group
