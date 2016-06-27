@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="view_purchase_requisition_form" model="ir.ui.view">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page/field[@name='line_ids']" position="before">
+                    <group>
+                        <group>
+                            <button name="%(action_line_split)d" string="⇒ Split Product Line"
+                                type="action" class="oe_link" states="draft"/>
+                        </group>
+                    </group>
+				</xpath>
+            </field>
+        </record>
+        
+    </data>
+</openerp>
