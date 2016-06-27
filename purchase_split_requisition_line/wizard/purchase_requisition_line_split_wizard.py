@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields
-import openerp.addons.decimal_precision as dp
 import itertools
 
 
@@ -32,7 +31,6 @@ class PurchaseRequisitionLineSplitWizard(models.TransientModel):
     @api.multi
     def split_requisition_line(self):
         self.ensure_one()
-        default = {}
         for line in self.requisition_line_ids:
             # If number_split > 1
             if line.number_split > 1:
