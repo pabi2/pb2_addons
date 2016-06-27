@@ -105,6 +105,88 @@
             </field>
         </record>
 
+        <record id="view_expenses_form_3" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_cancel_reason.view_expenses_form"/>
+            <field name="arch" type="xml">
+				<!-- Invisible Columns -->
+				<xpath expr="//button[@name='%(hr_expense_cancel_reason.action_hr_expense_cancel)d']" position="attributes" >
+					<attribute name="string">Reject</attribute>
+				</xpath>
+            </field>
+        </record>
+
+        <record id="view_expenses_tree" model="ir.ui.view">
+            <field name="name">hr.expense.expense.tree</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="arch" type="xml">
+                <field name="date" position="before">
+                	<field name="project_id" />
+                	<field name="section_id" />
+                </field>
+            </field>
+        </record>
+        
+
+        <record id="view_hr_expense_filter" model="ir.ui.view">
+            <field name="name">hr.expense.expense.filter</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
+            <field name="arch" type="xml">
+                <field name="date" position="attributes">
+                    <attribute name="string">Approved Date</attribute>
+                </field>
+                <filter icon="terp-document-new" position="replace" />
+                <filter icon="terp-camera_test" position="replace" />
+                <filter icon="terp-dolar" position="replace" />
+                <field name="date" position="after">
+                    <filter name="draft" domain="[('state','=','draft')]" string="Draft" />
+                    <filter name="confirm" domain="[('state','=','confirm')]" string="Wait for Accept" />
+                    <filter name="accepted" domain="[('state','=','accepted')]" string="Accepted" />
+                    <filter name="done" domain="[('state','=','done')]" string="Paid" />
+                    <filter name="cancelled" domain="[('state','=','cancelled')]" string="Rejected" />
+                </field>
+                <field name="department_id" position="replace" />
+                <group position="replace" >
+                    <group expand="0" string="Group By">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Operating Unit" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by':'date'}" help="Expenses by Month"/>
+                        <filter string="State" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </group>
+            </field>
+        </record>        
+        
+        <record id="hr_expense.expense_all" model="ir.actions.act_window">
+            <field name="context">{
+	          	'is_advance_clearing':False,
+	           	'is_employee_advance':False,
+	           	'default_is_advance_clearing':False,
+	           	'default_is_employee_advance':False,
+	           	'search_default_confirm': True,
+            }</field>
+        </record>
+        
+        <record id="hr_expense_advance_clearing.action_expense_clearing" model="ir.actions.act_window">
+            <field name="context">{
+           		'default_is_employee_advance':False,
+           		'default_is_advance_clearing': True,
+           		'is_advance_clearing': True,
+	           	'search_default_confirm': True,
+            }</field>
+        </record>
+        
+        <record id="hr_expense_advance_clearing.action_expense_advance" model="ir.actions.act_window">
+            <field name="context">{
+           		'default_is_employee_advance':True,
+           		'is_employee_advance':True,
+	           	'search_default_confirm': True,
+           	}</field>
+        </record>
+
 		<!-- Expense Regulations -->
         <record id="view_hr_expense_rule_tree" model="ir.ui.view">
             <field name="name">view.hr.expense.rule.tree</field>

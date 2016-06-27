@@ -38,7 +38,7 @@ class HRExpense(models.Model):
     )
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('cancelled', 'Refused'),
+         ('cancelled', 'Rejected'),
          ('confirm', 'Wait for Accept'),
          ('accepted', 'Accepted'),
          ('done', 'Waiting Payment'),
@@ -69,6 +69,31 @@ class HRExpense(models.Model):
         string='Attendee / External',
         copy=True,
     )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        compute='_compute_project_section',
+        store=True,
+        help="Show project, only if all lines use the same project",
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        compute='_compute_project_section',
+        store=True,
+        help="Show section, only if all lines use the same section",
+    )
+
+    @api.multi
+    @api.depends('line_ids.project_id', 'line_ids.section_id')
+    def _compute_project_section(self):
+        for rec in self:
+            projects = self.line_ids.\
+                filtered(lambda x: x.project_id).mapped('project_id')
+            sections = self.line_ids.\
+                filtered(lambda x: x.section_id).mapped('section_id')
+            rec.project_id = len(projects) == 1 and projects[0] or False
+            rec.section_id = len(sections) == 1 and sections[0] or False
 
 
 class HRExpenseAdvanceDueHistory(models.Model):
