@@ -10,16 +10,25 @@ class AccuontVoucherMultipleReconcile(models.Model):
     account_id = fields.Many2one(
         'account.account',
         string='Reconcile Account',
-        required=True)
+        required=True,
+    )
     amount = fields.Float(
         string='Amount',
         digits_compute=dp.get_precision('Account'),
-        required=True)
-    comment = fields.Char(string='Comment', required=True)
-    voucher_id = fields.Many2one('account.voucher', string='Related Voucher')
+        required=True,
+    )
+    comment = fields.Char(
+        string='Comment',
+        required=True,
+    )
+    voucher_id = fields.Many2one(
+        'account.voucher',
+        string='Related Voucher',
+    )
     analytic_id = fields.Many2one(
         'account.analytic.account',
-        string='Analytic Account')
+        string='Analytic Account',
+    )
 
 
 class AccountVoucher(models.Model):
@@ -61,18 +70,19 @@ class AccountVoucher(models.Model):
                 voucher.writeoff_amount = currency.round(
                     voucher.amount - sign * (credit - debit))
 
-    is_lazada_payment = fields.Boolean('Is Lazada Payment?', readonly=True)
     multiple_reconcile_ids = fields.One2many(
         'account.voucher.multiple.reconcile',
         'voucher_id',
-        string='Reconcile Liness')
+        string='Reconcile Liness',
+    )
     writeoff_amount = fields.Float(
         compute=_get_writeoff_amount,
         string='Difference Amount',
         readonly=True,
         help="Computed as the difference between \
         the amount stated in the voucher and the\
-         sum of allocation on the voucher lines.")
+         sum of allocation on the voucher lines.",
+    )
 
     @api.model
     def multiple_reconcile_get_hook(self, line_total,
