@@ -10,6 +10,9 @@
     <field name="model">expense.create.supplier.invoice</field>
     <field name="inherit_id" ref="hr_expense_auto_invoice.wizard_expense_create_supplier_invoice"/>
     <field name="arch" type="xml">
+        <xpath expr="//field[@name='date_invoice']" position="attributes">
+            <attribute name="readonly">True</attribute>
+        </xpath>
         <xpath expr="//field[@name='date_invoice']" position="after">
             <field name="use_attendee_list" />
         </xpath>

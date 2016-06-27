@@ -8,16 +8,6 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-                <field name="state" position="attributes" >
-					<attribute name="statusbar_visible">draft,wait_accept,confirm,accepted,done,paid</attribute>
-                </field>
-                <button name="confirm" position="before" >
-					<button name="to_wait_accept" string="To Wait Accept" type="workflow" states="draft" />            	
-            	</button>
-				<button name="confirm" position="attributes" >
-					<attribute name="string">Accept</attribute>
-					<attribute name="states">wait_accept</attribute>
-				</button>
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>
@@ -75,16 +65,6 @@
 						</field>
 					</page>
 				</notebook>
-            </field>
-        </record>
-        <record id="view_expenses_form2" model="ir.ui.view">
-            <field name="name">hr.expense.form</field>
-            <field name="model">hr.expense.expense</field>
-            <field name="inherit_id" ref="hr_expense_cancel_reason.view_expenses_form"/>
-            <field name="arch" type="xml">
-				<button name="%(hr_expense_cancel_reason.action_hr_expense_cancel)d" position="attributes">
-					<attribute name="states">confirm,accepted,wait_accept</attribute>
-				</button>
             </field>
         </record>
 

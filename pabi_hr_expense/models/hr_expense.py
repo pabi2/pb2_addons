@@ -12,8 +12,11 @@ class HRExpense(models.Model):
     )
     create_uid = fields.Many2one(
         'res.users',
-        string='Created By',
+        string='Prepared by',
         readonly=True,
+    )
+    date = fields.Date(
+        string='Approved Date',
     )
     user_accept = fields.Many2one(
         'res.users',
@@ -43,9 +46,8 @@ class HRExpense(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('cancelled', 'Refused'),
-         ('wait_accept', 'Wait for Accept'),
-         ('confirm', 'Accepted'),
-         ('accepted', 'Approved'),
+         ('confirm', 'Wait for Accept'),
+         ('accepted', 'Accepted'),
          ('done', 'Waiting Payment'),
          ('paid', 'Paid'),
          ]
@@ -75,20 +77,21 @@ class HRExpense(models.Model):
         copy=True,
     )
 
-    @api.multi
-    def expense_wait_accept(self):
-        for expense in self:
-            for line in expense.line_ids:
-                Analytic = self.env['account.analytic.account']
-                line.analytic_account = \
-                    Analytic.create_matched_analytic(line)
-        return self.write({'state': 'wait_accept'})
-
-    @api.multi
-    def expense_confirm(self):
-        res = super(HRExpense, self).expense_confirm()
-        self.write({'user_accept': self._uid})
-        return res
+#     @api.multi
+#     def expense_wait_accept(self):
+#         for expense in self:
+#             for line in expense.line_ids:
+#                 Analytic = self.env['account.analytic.account']
+#                 line.analytic_account = \
+#                     Analytic.create_matched_analytic(line)
+#         return self.write({'state': 'wait_accept'})
+#
+#     @api.multi
+#     def expense_confirm(self):
+#         res = super(HRExpense, self).expense_confirm()
+#         self.write({'user_accept': self._uid})
+#         self.signal_workflow('validate')
+#         return res
 
 
 class HRExpenseAdvanceDueHistory(models.Model):
