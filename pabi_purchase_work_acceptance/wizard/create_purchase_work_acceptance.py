@@ -11,7 +11,6 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
 
     name = fields.Char(
         string="Acceptance No.",
-        required=True,
     )
     acceptance_line_ids = fields.One2many(
         'create.purchase.work.acceptance.item',
@@ -46,12 +45,14 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _prepare_acceptance_plan_line(self, plan):
         items = []
+        if len(plan.ref_invoice_id) == 0:
+            raise UserError(_("You have to create invoices first."))
         for inv_line in plan.ref_invoice_id.invoice_line:
             vals = {
                 'line_id': inv_line.purchase_line_id.id,
                 'product_id': inv_line.product_id.id,
                 'name': inv_line.name or inv_line.product_id.name,
-                'balance_qty': 0,
+                'balance_qty': inv_line.purchase_line_id.product_qty,
                 'to_receive_qty': inv_line.quantity,
                 'product_uom': inv_line.uos_id.id,
                 'inv_line_id': inv_line.id,
@@ -112,7 +113,6 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     raise UserError(
                         _("Unit of Measure is missing in some PO line."))
                 items.append([0, 0, self._prepare_item(line)])
-        res['name'] = self.env['ir.sequence'].get('purchase.work.acceptance')
         res['order_id'] = order.id
         res['acceptance_line_ids'] = items
         date_scheduled_end, end_date = self._get_contract_end_date(order)
@@ -129,7 +129,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         vals = {}
         PWAcceptance = self.env['purchase.work.acceptance']
         vals.update({
-            'name': self.name,
+            'name': self.env['ir.sequence'].get('purchase.work.acceptance'),
             'date_scheduled_end': self.date_scheduled_end,
             'date_contract_start': self.date_contract_start,
             'date_contract_end': self.date_contract_end,
