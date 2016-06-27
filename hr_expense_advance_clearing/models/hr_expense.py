@@ -169,7 +169,10 @@ class HRExpenseExpense(models.Model):
             advance_line.copy({'invoice_id': invoice.id,
                                'price_unit': -employee_advance,
                                'sequence': 1, })
-            invoice.write({'is_advance_clearing': True})
+            invoice.write({'is_advance_clearing': True,
+                           'invoice_type': 'advance_clearing_invoice'})
+        elif expense.is_employee_advance:
+            invoice.write({'invoice_type': 'expense_advance_invoice'})
         return invoice
 
     @api.model
