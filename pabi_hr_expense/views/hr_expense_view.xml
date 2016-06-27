@@ -11,9 +11,6 @@
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>
-            	<field name="user_valid" position="before">
-            		<field name="user_accept" attrs="{'invisible': [('state','=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_hr_user']}"/>
-            	</field>
 				<field name="date" position="after">
 					<field name="advance_type" attrs="{'invisible': [('is_employee_advance', '=', False)], 'required': [('is_employee_advance', '=', True)]}"/>
 					<field name="date_back" attrs="{'invisible': [('advance_type', '!=', 'attend_seminar')], 'required': [('advance_type', '=', 'attend_seminar')]}"/>
@@ -25,6 +22,34 @@
 				<field name="department_id" position="attributes" >
 					<attribute name="invisible">True</attribute>
 				</field>
+				
+				<!-- Invisible Columns -->
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='date_value']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='ref']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='uom_id']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='unit_quantity']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='total_amount']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='unit_amount']" position="attributes" >
+					<attribute name="string">Total</attribute>
+				</xpath>
+				<!-- End Invisible Columns-->
+				
 				<notebook position="inside" >
 					<page string="Due History" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
 		                <group>
@@ -65,6 +90,18 @@
 						</field>
 					</page>
 				</notebook>
+            </field>
+        </record>
+
+        <record id="view_expenses_form_2" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+				<!-- Invisible Columns -->
+				<xpath expr="/form/sheet/notebook/page/field/tree//field[@name='tax_ids']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
             </field>
         </record>
 

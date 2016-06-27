@@ -18,15 +18,8 @@ class HRExpense(models.Model):
     date = fields.Date(
         string='Approved Date',
     )
-    user_accept = fields.Many2one(
-        'res.users',
-        string='Accepted By',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        copy=False,
-    )
     user_valid = fields.Many2one(
-        string='Approved By',
+        string='Accepted By',
     )
     date_back = fields.Date(
         string='Back from seminar',
