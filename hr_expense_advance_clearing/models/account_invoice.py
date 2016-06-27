@@ -11,6 +11,12 @@ class AccountInvoice(models.Model):
     is_advance_clearing = fields.Boolean(
         string='Advance Clearing?',
     )
+    invoice_type = fields.Selection(
+        selection_add=[
+            ('expense_advance_invoice', 'Employee Advance Invoice'),
+            ('advance_clearing_invoice', 'Advance Clearing Invoice'),
+        ],
+    )
 
     @api.model
     def _get_invoice_total(self, invoice):
@@ -31,7 +37,9 @@ class AccountInvoice(models.Model):
     def invoice_validate(self):
         result = super(AccountInvoice, self).invoice_validate()
         for invoice in self:
-            if invoice.is_advance_clearing and not invoice.amount_total:
+#             if invoice.is_advance_clearing and not invoice.amount_total:
+            if invoice.invoice_type == 'advance_clearing_invoice'\
+                    and not invoice.amount_total:
                 move_lines = \
                     self.env['account.move.line'].search(
                         [('state', '=', 'valid'),

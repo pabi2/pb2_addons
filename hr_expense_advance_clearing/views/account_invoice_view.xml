@@ -16,9 +16,10 @@
                             attrs="{'invisible': ['|', ('state', '!=', 'paid'),('is_advance_clearing', '=', False)]}"
                             groups="account.group_account_invoice"/-->
                     <button name="%(account_cancel_with_reversal.act_account_move_reverse_invoice)d" 
-                            type="action" 
+                            type="action"
                             string="Cancel Invoice"
-                            attrs="{'invisible': ['|', ('state', '!=', 'paid'),('is_advance_clearing', '=', False)]}"
+                            attrs="{'invisible': ['|', ('state', '!=', 'paid'),
+                                                       ('invoice_type', 'not in', ('expense_advance_invoice', 'advance_clearing_invoice'))]}"
                             class="oe_highlight" 
                     />
                 </xpath>
