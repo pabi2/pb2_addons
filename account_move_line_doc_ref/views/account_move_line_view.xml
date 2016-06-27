@@ -40,7 +40,7 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='line_id']/tree//field[@name='account_id']" position="after">
+                <xpath expr="//field[@name='line_id']/tree//field[@name='reconcile_partial_id']" position="after">
                     <field name="doc_ref"/>
                 </xpath>
             </field>
