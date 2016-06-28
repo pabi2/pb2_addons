@@ -94,7 +94,7 @@ class PurchaseWebInterface(models.Model):
         doc_name = pd_file.name
         doc = pd_file.datas
         request_usr = User.search([('id', '=', requisition.user_id.id)])
-        assign_usr = User.search([('id', '=', requisition.verified_id.id)])
+        assign_usr = User.search([('id', '=', requisition.verify_uid.id)])
         employee = Employee.search([('user_id', '=', request_usr.id)])
         attachment = []
         for pd_att in requisition.attachment_ids:
