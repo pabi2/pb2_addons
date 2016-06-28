@@ -40,9 +40,11 @@
                     <page string="Advance Clearing Expenses" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
                         <group>
                             <group>
+                                <field name="amount_approved"/>
+                            </group>
+                            <group>
                                 <field name="amount_to_clearing"/>
                             </group>
-                            <group/>
                         </group>
                         <field name="advance_clearing_ids">
                         	<tree>
