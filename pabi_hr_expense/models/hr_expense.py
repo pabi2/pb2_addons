@@ -5,6 +5,7 @@ from openerp import models, fields, api
 
 class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
+    _order = "id"
 
     apweb_ref_url = fields.Char(
         string='PABI Web Ref.',
