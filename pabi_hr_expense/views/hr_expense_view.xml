@@ -148,7 +148,8 @@
                     <filter name="draft" domain="[('state','=','draft')]" string="Draft" />
                     <filter name="confirm" domain="[('state','=','confirm')]" string="Wait for Accept" />
                     <filter name="accepted" domain="[('state','=','accepted')]" string="Accepted" />
-                    <filter name="done" domain="[('state','=','done')]" string="Paid" />
+                    <filter name="done" domain="[('state','=','done')]" string="Waiting Payment" />
+                    <filter name="paid" domain="[('state','=','paid')]" string="Paid" />
                     <filter name="cancelled" domain="[('state','=','cancelled')]" string="Rejected" />
                 </field>
                 <field name="department_id" position="replace" />
