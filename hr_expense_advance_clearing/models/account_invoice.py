@@ -37,7 +37,10 @@ class AccountInvoice(models.Model):
     def invoice_validate(self):
         result = super(AccountInvoice, self).invoice_validate()
         for invoice in self:
-#             if invoice.is_advance_clearing and not invoice.amount_total:
+            # Advance case, send back the final approved amount
+            if invoice.invoice_type == 'expense_advance_invoice':
+                invoice.expense_id.amount_approved = invoice.amount_total
+            # Clearing case, do reconcile
             if invoice.invoice_type == 'advance_clearing_invoice'\
                     and not invoice.amount_total:
                 move_lines = \
