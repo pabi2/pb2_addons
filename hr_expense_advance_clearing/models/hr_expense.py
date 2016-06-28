@@ -112,6 +112,15 @@ class HRExpenseExpense(models.Model):
         return result
 
     @api.model
+    def _module_installed(self, module_name):
+        if not module_name:
+            return False
+        self._cr.execute("SELECT count(*) FROM ir_module_module\
+                            WHERE name='%s' AND \
+                            state='installed'" % module_name)
+        return self._cr.fetchone()[0] == 1
+
+    @api.model
     def fields_view_get(self, view_id=None, view_type=False,
                         toolbar=False, submenu=False):
         res = super(HRExpenseExpense, self).\
@@ -128,14 +137,30 @@ class HRExpenseExpense(models.Model):
                     nodes = doc.xpath("/tree")
                     for node in nodes:
                         node.set('create', 'false')
-                for readonly_field in READONLY_FIELDS:
-                    field_nodes =\
-                        doc.xpath("//field[@name='%s']" % (readonly_field))
-                    for field_node in field_nodes:
-                        field_node.set('readonly', '1')
-                        line_fields = viewref['fields']
-                        setup_modifiers(field_node,
-                                        line_fields[field_node.attrib['name']])
+                if self._module_installed('pabi_hr_expense'):
+                    if line_view == 'form':
+                        for readonly_field in READONLY_FIELDS:
+                            field_nodes =\
+                                doc.xpath("//field[@name='%s']"
+                                          % (readonly_field))
+                            for field_node in field_nodes:
+                                field_node.set('readonly', '1')
+                                line_fields = viewref['fields']
+                                setup_modifiers(
+                                    field_node,
+                                    line_fields[field_node.attrib['name']]
+                                )
+                else:
+                    for readonly_field in READONLY_FIELDS:
+                        field_nodes =\
+                            doc.xpath("//field[@name='%s']" % (readonly_field))
+                        for field_node in field_nodes:
+                            field_node.set('readonly', '1')
+                            line_fields = viewref['fields']
+                            setup_modifiers(
+                                field_node,
+                                line_fields[field_node.attrib['name']]
+                            )
                 viewref['arch'] = etree.tostring(doc)
         return res
 
