@@ -70,6 +70,7 @@ class PurchaseWebInterface(models.Model):
     @api.model
     def send_pbweb_requisition(self, requisition):
         User = self.env['res.users']
+        Employee = self.env['hr.employee']
         users = User.search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
@@ -92,8 +93,9 @@ class PurchaseWebInterface(models.Model):
             )
         doc_name = pd_file.name
         doc = pd_file.datas
-        request_usr = User.search([('id', '=', requisition.request_uid.id)])
-        assign_usr = User.search([('id', '=',  requisition.assign_uid.id)])
+        request_usr = User.search([('id', '=', requisition.user_id.id)])
+        assign_usr = User.search([('id', '=', requisition.verify_uid.id)])
+        employee = Employee.search([('user_id', '=', request_usr.id)])
         attachment = []
         for pd_att in requisition.attachment_ids:
             pd_attach = {
@@ -109,7 +111,7 @@ class PurchaseWebInterface(models.Model):
         arg = {
             'action': '1',
             'pdNo': requisition.name,
-            'sectionId': str(requisition.line_ids[0].section_id.id),
+            'sectionId': str(employee.section_id.id),
             'prNo': pr_name,
             'docType': 'PD1',
             'objective': requisition.objective or '',
