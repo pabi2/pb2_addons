@@ -199,7 +199,6 @@ class PurchaseOrder(models.Model):
                     'partner_id': porder.partner_id.id,
                     'dest_address_id': porder.dest_address_id.id,
                     'picking_type_id': porder.picking_type_id.id,
-                    'location_id': porder.location_id.id,
                     'requesting_operating_unit_id': requesting_ou,
                     'operating_unit_id': ou,
                     'location_id': porder.location_id.id,
