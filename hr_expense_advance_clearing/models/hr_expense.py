@@ -38,8 +38,8 @@ class HRExpenseExpense(models.Model):
         store=True,
         copy=False,
     )
-    amount_approved = fields.Float(
-        string='Approved Amount',
+    amount_advanced = fields.Float(
+        string='Advanced Amount',
         readonly=False,
     )
     outstanding_advance_count = fields.Integer(
@@ -84,7 +84,7 @@ class HRExpenseExpense(models.Model):
         for expense in self:
             clearing_amount = 0.0
             if expense.state == 'paid':
-                clearing_amount = expense.amount_approved
+                clearing_amount = expense.amount_advanced
                 if expense.advance_clearing_ids:
                     for clearing_advance in expense.advance_clearing_ids:
                         if clearing_advance.invoice_id.state in ('open',
