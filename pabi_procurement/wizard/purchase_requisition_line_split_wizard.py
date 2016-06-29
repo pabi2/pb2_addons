@@ -18,6 +18,5 @@ class PurchaseRequisitionLineSplitWizard(models.TransientModel):
                         purchase_request_lines.ids[0]
                     new_line.write({
                         'purchase_request_lines': [(4, request_lines)],
-                        'section_id': line.requisition_line_id.section_id.id,
                     })
         return True
