@@ -10,8 +10,8 @@ class ConvertToBudgetControlWizard(models.TransientModel):
     def convert_to_budget_control(self):
         active_model = self._context.get('active_model', False)
         active_ids = self._context.get('active_ids', False)
-        if active_model not in ('budget.plan.unit'):
+        if active_model not in ('budget.plan.unit',
+                                'budget.plan.personnel'):
             raise ValidationError(
                 _('This budget model is not supported: %s') % (active_model,))
-        if active_model == 'budget.plan.unit':
-            self.env[active_model].convert_plan_to_budget_control(active_ids)
+        self.env[active_model].convert_plan_to_budget_control(active_ids)

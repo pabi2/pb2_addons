@@ -20,7 +20,8 @@
 	                        </h1>
 	                    </div>
 	                    <div class="oe_right oe_button_box" name="buttons">
-	                    	<button name="prepare_fiscal_budget_policy" type="object" string="Generate Budget Policy Lines" />
+	                    	<button name="prepare_fiscal_budget_policy" states="draft" type="object" string="Generate Budget Policy Lines" />
+	                    	<button name="create_fiscal_budget_policy_breakdown" states="confirm" type="object" string="Generate Budget Policy Breakdown" />
 	                    </div>
 	                    <group>
 	                    	<group>	
@@ -54,19 +55,46 @@
 	                        </group>
 	                    </group>
 	                    <notebook>
+	                        <page string="Unit Based">
+	                            <field name="unit_base_ids" colspan="4" nolabel="1" >
+	                                <tree editable="bottom" create="0" delete="0">
+										<field name="org_id" />
+										<field name="planned_amount" sum="Planned Amount" />
+										<field name="policy_amount" sum="Policy Amount" />
+	                                </tree>
+	                            </field>
+	                        </page>
 	                        <page string="Project Based">
 	                            <field name="project_base_ids" colspan="4" nolabel="1" >
-	                                <tree editable="bottom">
+	                                <tree editable="bottom" create="0" delete="0">
 										<field name="program_id" />
 										<field name="planned_amount" sum="Planned Amount" />
 										<field name="policy_amount" sum="Policy Amount" />
 	                                </tree>
 	                            </field>
 	                        </page>
-	                        <page string="Unit Based">
-	                            <field name="unit_base_ids" colspan="4" nolabel="1" >
-	                                <tree editable="bottom">
-										<field name="org_id" />
+	                        <page string="Personnel">
+	                            <field name="personnel_costcenter_ids" colspan="4" nolabel="1" >
+	                                <tree editable="bottom" create="0" delete="0">
+										<field name="personnel_costcenter_id" />
+										<field name="planned_amount" sum="Planned Amount" />
+										<field name="policy_amount" sum="Policy Amount" />
+	                                </tree>
+	                            </field>
+	                        </page>
+	                        <page string="Investment Asset">
+	                            <field name="invest_asset_ids" colspan="4" nolabel="1" >
+	                                <tree editable="bottom" create="0" delete="0">
+										<field name="invest_asset_id" />
+										<field name="planned_amount" sum="Planned Amount" />
+										<field name="policy_amount" sum="Policy Amount" />
+	                                </tree>
+	                            </field>
+	                        </page>
+	                        <page string="Investment Construction">
+	                            <field name="invest_construction_ids" colspan="4" nolabel="1" >
+	                                <tree editable="bottom" create="0" delete="0">
+										<field name="invest_construction_id" />
 										<field name="planned_amount" sum="Planned Amount" />
 										<field name="policy_amount" sum="Policy Amount" />
 	                                </tree>
@@ -120,6 +148,107 @@
             action="action_budget_fiscal_policy_view" sequence="5" />
 
 
+		<!-- Budget Policy Breakdown -->
+
+        <record model="ir.ui.view" id="view_budget_fiscal_policy_breakdown_form">
+            <field name="name">view.budget.fiscal.policy.breakdown.form</field>
+            <field name="model">budget.fiscal.policy.breakdown</field>
+            <field name="arch" type="xml">
+                <form string="Fiscal Budget Policy">
+                    <header>
+                        <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
+                        <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel"/>
+                    </header>
+                    <sheet>
+	                    <div class="oe_title">
+	                        <label for="name" class="oe_edit_only"/>
+	                        <h1>
+	                            <field name="name" />
+	                        </h1>
+	                    </div>
+	                    <div class="oe_right oe_button_box" name="buttons">
+	                    	<button name="prepare_budget_control" states="confirm" type="object" string="Generate Budget Control" />
+	                    </div>
+	                    <group>
+	                    	<group>	
+	                    		<field name="org_id" />
+								<field name="planned_overall" />
+		                        <field name="policy_overall" />
+		                        <field name="chart_view" />
+	                    	</group>
+	                        <group>
+	                        	<field name="date" />
+	                            <field name="fiscalyear_id" />
+	                            <label for="date_from" string="Duration" />
+	                            <div>
+	                                <field name="date_from" class="oe_inline" /> - 
+	                                <field name="date_to" class="oe_inline" nolabel="1"/>
+	                            </div>
+	                        </group>
+	                   </group>
+	                    <notebook>
+	                        <page string="Section Policy Amount">
+	                            <field name="line_ids" colspan="4" nolabel="1" >
+	                                <tree editable="bottom" create="0" delete="0">
+	                                	<field name="budget_plan_unit_id" />
+	                                	<field name="chart_view" />
+										<field name="section_id" />
+										<field name="planned_amount" sum="Planned Amount" />
+										<field name="policy_amount" sum="Policy Amount" />
+	                                </tree>
+	                            </field>
+	                        </page>
+	                    </notebook>
+	            	</sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_fiscal_policy_breakdown_tree">
+            <field name="name">view.budget.fiscal.policy.breakdown.tree</field>
+            <field name="model">budget.fiscal.policy.breakdown</field>
+            <field name="arch" type="xml">
+               <tree string="Fiscal Budget Policy">
+                    <field name="org_id" />
+                    <field name="name" />
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_overall"/>
+                    <field name="policy_overall"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_fiscal_policy_breakdown_search" model="ir.ui.view">
+           <field name="name">view.budget.fiscal.policy.breakdown_search</field>
+           <field name="model">budget.fiscal.policy.breakdown</field>
+           <field name="arch" type="xml">
+               <search string="Fiscal Budget Policy">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Fiscal Budget Policy Breakdown"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_budget_fiscal_policy_breakdown_view">
+            <field name="name">Policy Breakdown</field>
+            <field name="res_model">budget.fiscal.policy.breakdown</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_fiscal_policy_breakdown_tree"/>
+            <field name="search_view_id" ref="view_budget_fiscal_policy_breakdown_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new fiscal budget policy breakdown.
+              </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_policy"
+            id="menu_budget_fiscal_policy_breakdown_view"
+            action="action_budget_fiscal_policy_breakdown_view" sequence="10" />
+
+
 		<!-- Budget Plan Analysis -->
 		
         <record id="view_budget_plan_line_template_filter" model="ir.ui.view">
@@ -128,6 +257,36 @@
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Analysis">
                     <group expand="0" string="Group By">
+	                    
+	                    <filter string="SPA" context="{'group_by':'spa_id'}"/>
+	                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+	                    <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
+	                    <filter string="Tag" context="{'group_by':'tag_id'}"/>
+	
+	                    <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
+	                    <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
+	                    <filter string="Program" context="{'group_by':'program_id'}"/>
+	                    <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
+	                    <filter string="Project" context="{'group_by':'project_id'}"/>
+	                    
+	                    <filter string="Org" context="{'group_by':'org_id'}"/>
+	                    <filter string="Sector" context="{'group_by':'sector_id'}"/>
+	                    <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
+	                    <filter string="Division" context="{'group_by':'division_id'}"/>
+	                    <filter string="Section" context="{'group_by':'section_id'}"/>
+	                    <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+	                    <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
+	
+	                    <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
+	                		
+	                    <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
+	                    <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
+	
+	                    <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
+	
+	                    <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
+	                    <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
+	                                       
                		</group>
                </search>
             </field>

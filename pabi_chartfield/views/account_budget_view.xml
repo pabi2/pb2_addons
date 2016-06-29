@@ -340,7 +340,7 @@
         <!-- 1) Unit Base (reuse generic Budgets menu) -->
 
         <record model="ir.actions.act_window" id="account_budget_activity.act_account_budget_view">
-            <field name="name">Unit Base</field>
+            <field name="name">Unit Based</field>
             <field name="res_model">account.budget</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -362,7 +362,7 @@
         <!-- 2) Project Base -->
 
         <record model="ir.actions.act_window" id="act_account_budget_view_project_base">
-            <field name="name">Project Base</field>
+            <field name="name">Project Based</field>
             <field name="res_model">account.budget</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
