@@ -9,7 +9,7 @@
         <field name="inherit_id" ref="account.invoice_supplier_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='supplier_invoice_number']" position="after">
-                <field name="expense_id"/> <!--attrs="{'invisible': [('expense_id', '=', False)]}"-->
+                <field name="expense_id" readonly="1" /> <!--attrs="{'invisible': [('expense_id', '=', False)]}"-->
             </xpath>
         </field>
     </record>

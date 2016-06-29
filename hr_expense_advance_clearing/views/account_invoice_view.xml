@@ -25,5 +25,19 @@
                 </xpath>
             </field>
         </record>
+	
+	    <record id="invoice_form" model="ir.ui.view">
+	        <field name="name">invoice.form</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="account.invoice_form"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="//field[@name='fiscal_position']" position="after">
+	            	<field name="ref_employee_id" invisible="0" />
+	                <field name="expense_id"
+	               		domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
+                                 ('employee_id', '=', ref_employee_id), ('amount_to_clearing', '&gt;', 0.0)]" />
+	            </xpath>
+	        </field>
+	    </record>
     </data>
 </openerp>
