@@ -12,7 +12,7 @@
                 <xpath expr="//button[@name='action_cancel']" position="before">
                     <button name="%(action_create_purchase_work_acceptance)d"
                             type="action"
-                            groups="purchase.group_purchase_manager"
+                            groups="purchase.group_purchase_user"
                             string="Create Work Acceptance"
                             class="oe_highlight"
                             attrs="{'invisible':[('state', '!=', 'approved'),]}"/>

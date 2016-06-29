@@ -108,12 +108,13 @@ class PurchaseWebInterface(models.Model):
             for pd_pr_line in pd_line.purchase_request_lines:
                 pr_name += pd_pr_line.request_id.name + ','
             pr_name = pr_name[:-1]
+        doc_type = requisition.get_doc_type()
         arg = {
             'action': '1',
             'pdNo': requisition.name,
             'sectionId': str(employee.section_id.id),
             'prNo': pr_name,
-            'docType': 'PD1',
+            'docType': doc_type.name,
             'objective': requisition.objective or '',
             'total': str(requisition.amount_total),
             'reqBy': request_usr.login,
