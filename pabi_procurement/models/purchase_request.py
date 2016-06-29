@@ -445,6 +445,25 @@ class PurchaseRequestLine(models.Model):
         readonly=True,
     )
 
+    @api.one
+    @api.depends('requisition_lines.requisition_id.state')
+    def _get_requisition_state(self):
+        self.requisition_state = 'none'
+        if self.requisition_lines:
+            if any([pr_line.requisition_id.state == 'done' for
+                    pr_line in
+                    self.requisition_lines]):
+                self.requisition_state = 'done'
+            elif all([pr_line.requisition_id.state == 'cancel'
+                      for pr_line in self.requisition_lines]):
+                self.requisition_state = 'none'
+            elif any([pr_line.requisition_id.state == 'in_progress'
+                      for pr_line in self.requisition_lines]):
+                self.requisition_state = 'in_progress'
+            elif all([pr_line.requisition_id.state in ('draft', 'cancel')
+                      for pr_line in self.requisition_lines]):
+                self.requisition_state = 'draft'
+
     @api.multi
     @api.depends('product_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):

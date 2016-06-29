@@ -43,6 +43,11 @@
                        position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//button[@name='tender_reset']"
+                       position="attributes">
+                    <attribute name="states">rejected,cancel</attribute>
+                    <attribute name="string">Manually Correct</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
                     <field name="purchase_method_id"/>
