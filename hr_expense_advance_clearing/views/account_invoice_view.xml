@@ -33,7 +33,7 @@
 	        <field name="arch" type="xml">
 	            <xpath expr="//field[@name='fiscal_position']" position="after">
 	            	<field name="ref_employee_id" invisible="0" />
-	                <field name="expense_id"
+	                <field name="expense_id" string="Advance Expense"
 	               		domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
                                  ('employee_id', '=', ref_employee_id), ('amount_to_clearing', '&gt;', 0.0)]" />
 	            </xpath>
