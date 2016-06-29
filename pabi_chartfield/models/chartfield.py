@@ -430,49 +430,36 @@ class ChartFieldAction(ChartField):
             - invest_asset_id
             - invest_construction_id
     """
-# 
-#     require_chartfield = fields.Boolean(
-#         string='Require Chartfield',
-#         compute='_compute_require_chartfield',
-#     )
-# 
-#     @api.multi
-#     @api.depends('activity_id', 'product_id')
-#     def _compute_require_chartfield(self):
-#         for rec in self:
-#             if 'activity_group_id' in rec and rec.activity_group_id:
-#                 report_type = rec.activity_group_id.\
-#                     account_id.user_type.report_type
-#                 rec.require_chartfield = report_type not in ('asset',
-#                                                              'liability')
-#             else:
-#                 rec.require_chartfield = True
-#             if not rec.require_chartfield:
-#                 rec.section_id = False
-#                 rec.project_id = False
-#                 rec.personnel_costcenter_id = False
-#                 rec.invest_asset_id = False
-#                 rec.invest_construction_phase_id = False
-#         return
+
+    require_chartfield = fields.Boolean(
+        string='Require Chartfield',
+        compute='_compute_require_chartfield',
+    )
+
+    @api.multi
+    @api.depends('activity_id', 'product_id')
+    def _compute_require_chartfield(self):
+        for rec in self:
+            if 'activity_group_id' in rec and rec.activity_group_id:
+                report_type = rec.activity_group_id.\
+                    account_id.user_type.report_type
+                rec.require_chartfield = report_type not in ('asset',
+                                                             'liability')
+            else:
+                rec.require_chartfield = True
+            if not rec.require_chartfield:
+                rec.section_id = False
+                rec.project_id = False
+                rec.personnel_costcenter_id = False
+                rec.invest_asset_id = False
+                rec.invest_construction_phase_id = False
+        return
 
     @api.multi
     def write(self, vals):
         res = super(ChartFieldAction, self).write(vals)
         self.update_related_dimension(vals)
         return res
-
-#     @api.model
-#     def create(self, vals):
-#         res = super(ChartFieldAction, self).create(vals)
-#         res.update_related_dimension(vals)
-#         return res
-# 
-#     @api.v7
-#     def create(self, cr, uid, vals, context=None):
-#         new_id = super(ChartFieldAction, self).create(cr, uid, vals,
-#                                                       context=context)
-#         self.update_related_dimension(cr, uid, [new_id], vals)
-#         return new_id
 
     @api.model
     def _get_chart_view(self, selects_yes):
