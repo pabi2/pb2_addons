@@ -46,6 +46,7 @@
                                 <field name="amount_to_clearing"/>
                             </group>
                         </group>
+                        <separator string="Clearings" />
                         <field name="advance_clearing_ids">
                         	<tree>
 	                       		<field name="number" />
@@ -55,6 +56,17 @@
 	                       		<field name="amount" />
 	                       		<field name="residual" />
 	                       		<field name="state" />
+                        	</tree>
+                        </field>
+                        <separator string="Returns" />
+                        <field name="advance_return_ids">
+                        	<tree>
+                        		<field name="internal_number"/>
+                        		<field name="ref_employee_id"/>
+                        		<field name="date_invoice"/>
+                        		<field name="amount_total"/>
+                        		<field name="residual"/>
+                        		<field name="state"/>
                         	</tree>
                         </field>
                     </page>

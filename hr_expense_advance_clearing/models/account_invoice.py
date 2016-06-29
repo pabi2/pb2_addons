@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# © <YEAR(S)> <AUTHOR(S)>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 from openerp import models, api, fields
 
 
@@ -17,6 +16,34 @@ class AccountInvoice(models.Model):
             ('advance_clearing_invoice', 'Advance Clearing Invoice'),
         ],
     )
+    ref_employee_id = fields.Many2one(
+        'hr.employee',
+        string='Related Employee ID',
+        compute='_compute_ref_employee_id',
+    )
+
+    @api.one
+    @api.depends('partner_id')
+    def _compute_ref_employee_id(self):
+        self.ref_employee_id = (self.partner_id.user_ids and
+                                self.partner_id.user_ids[0] and
+                                self.partner_id.user_ids[0].employee_ids and
+                                self.partner_id.user_ids[0].employee_ids[0] or
+                                False)
+
+    @api.onchange('expense_id')
+    def _onchange_expense_id(self):
+        if self.expense_id:
+            self.invoice_line = []
+            advance_invoice = self.expense_id.invoice_id
+            if advance_invoice.invoice_line:
+                advance_line = advance_invoice.invoice_line[0]
+                return_line = self.env['account.invoice.line'].new()
+                # Prepare line
+                return_line.product_id = advance_line.product_id
+                return_line.name = advance_line.name
+                return_line.quantity = 1.0
+                self.invoice_line += return_line
 
     @api.model
     def _get_invoice_total(self, invoice):
