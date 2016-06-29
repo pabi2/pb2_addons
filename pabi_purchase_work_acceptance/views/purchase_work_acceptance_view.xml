@@ -10,6 +10,7 @@
                         <button name="action_evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
                         <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
                         <button name="action_set_draft" type="object" states="evaluation,done" string="Set to draft"/>
+                        <button name="open_order_line" type="object" string="Create Invoices" states="draft"/>
                         <field name="state" widget="statusbar" readonly="1"/>
                     </header>
                     <sheet>
@@ -25,6 +26,9 @@
                             <field name="date_contract_start" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_contract_end" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="fine_per_day" invisible="1"/>
+                            <field name="overdue_day" invisible="1"/>
+
                         </group>
                         <group>
                             <field name="is_manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>

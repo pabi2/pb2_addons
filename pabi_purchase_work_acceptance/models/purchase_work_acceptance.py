@@ -32,6 +32,21 @@ class PurchaseWorkAcceptance(models.Model):
             'ลบ' + amount_text or amount_text
         return res
 
+    @api.one
+    @api.depends('date_receive', 'date_contract_end')
+    def _fine_per_day_to_word_th(self):
+        res = {}
+        minus = False
+        order = self.order_id
+        fine_per_day = self.fine_per_day
+        if fine_per_day < 0:
+            minus = True
+            fine_per_day = -fine_per_day
+        amount_text = amount_to_text_th(fine_per_day, order.currency_id.name)
+        self.amount_fine_per_day_text_th = minus and\
+            'ลบ' + amount_text or amount_text
+        return res
+
     @api.onchange('manual_fine')
     def _onchange_manual_fine(self):
         self.total_fine = self.manual_fine
@@ -116,15 +131,20 @@ class PurchaseWorkAcceptance(models.Model):
         )
         delta = end_date - received
         overdue_day = delta.days
+        total_fine_per_day = 0.0
         if overdue_day < 0:
             for line in self.acceptance_line_ids:
                 fine_rate = self.order_id.fine_rate
                 unit_price = line.line_id.price_unit
                 to_receive_qty = 1
                 fine_per_day = (fine_rate*0.1) * (to_receive_qty * unit_price)
-                total_fine += -1 * fine_per_day * fine_per_day
+                total_fine_per_day += fine_per_day
+                total_fine += -1 * overdue_day * fine_per_day
                 total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.total_fine = total_fine
+            self.fine_per_day = total_fine_per_day
+            self.overdue_day = -1 * overdue_day
+
 
     @api.model
     def _calculate_incoming_fine(self):
@@ -143,15 +163,19 @@ class PurchaseWorkAcceptance(models.Model):
         )
         delta = end_date - received
         overdue_day = delta.days
+        total_fine_per_day = 0.0
         if overdue_day < 0:
             for line in self.acceptance_line_ids:
                 fine_rate = self.order_id.fine_rate
                 unit_price = line.line_id.price_unit
                 to_receive_qty = line.to_receive_qty
                 fine_per_day = (fine_rate*0.1) * (to_receive_qty * unit_price)
+                total_fine_per_day += fine_per_day
                 total_fine += -1 * overdue_day * fine_per_day
                 total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.total_fine = total_fine
+            self.fine_per_day = total_fine_per_day
+            self.overdue_day = -1 * overdue_day
 
     @api.one
     @api.depends('date_receive', 'date_contract_end')
@@ -196,6 +220,19 @@ class PurchaseWorkAcceptance(models.Model):
     manual_days = fields.Integer(
         string="No. of Days",
         default=1,
+    )
+    fine_per_day = fields.Float(
+        string="Fine per Day",
+        default=0.0,
+    )
+    amount_fine_per_day_text_th = fields.Char(
+        string='Fine per Day TH Text',
+        compute='_fine_per_day_to_word_th',
+        store=True,
+    )
+    overdue_day = fields.Integer(
+        string="Overdue Days",
+        default=0,
     )
     total_fine = fields.Float(
         string="Total Fine",
@@ -269,6 +306,27 @@ class PurchaseWorkAcceptance(models.Model):
     def action_set_draft(self):
         self.ensure_one()
         self.state = 'draft'
+
+    @api.model
+    def open_order_line(self, ids):
+        Model = self.env['ir.model.data']
+        view_id = Model.get_object_reference(
+            'purchase',
+            'view_purchase_line_invoice'
+        )
+        wa = self.browse(ids)
+        return {
+            'name': "Create Invoices",#Name You want to display on wizard
+            'view_mode': 'form',
+            'view_id': view_id[1],
+            'view_type': 'form',
+            'res_model': 'purchase.order.line_invoice',
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'context': {
+                'active_ids': [wa.order_id.id],
+            }
+        }
 
 
 class PurchaseWorkAcceptanceLine(models.Model):
