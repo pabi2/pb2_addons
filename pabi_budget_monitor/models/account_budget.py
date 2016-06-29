@@ -25,7 +25,7 @@ class AccountBudget(models.Model):
         'section_id': 'Section',
         'costcenter_id': 'Costcenter',
         # Personnel
-        'personnel_costcenter_id': 'Personnel Costcenter',
+        'personnel_costcenter_id': 'Personnel Budget',
         # Investment
         # - Asset
         # 'invest_asset_categ_id': 'Invest. Asset Category',  # (not dimension)
