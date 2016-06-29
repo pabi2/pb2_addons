@@ -95,12 +95,12 @@
             </field>
         </record>
         <!--Hide Merge PO action-->
-        <record id="make_invisible" model="res.groups">
-            <field name="name">Invisible</field>
-        </record>
-        <record model="ir.actions.act_window" id="purchase.action_view_purchase_order_group">
-            <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
-        </record>
+        <!--<record id="make_invisible" model="res.groups">-->
+            <!--<field name="name">Invisible</field>-->
+        <!--</record>-->
+        <!--<record model="ir.actions.act_window" id="purchase.action_view_purchase_order_group">-->
+            <!--<field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>-->
+        <!--</record>-->
         <!--Hide Acc Budget Activity-->
         <record model="ir.ui.view" id="acc_budget_purchase_order_form">
             <field name="name">purchase.order.form</field>

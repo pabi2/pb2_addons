@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_hr_expense_rule,access_hr_expense_rule,model_hr_expense_rule,,1,1,1,1
+access_hr_expense_advance_due_history,access_hr_expense_advance_due_history,model_hr_expense_advance_due_history,,1,0,0,0
+access_hr_expense_attendee_employee,access_hr_expense_attendee_employee,model_hr_expense_attendee_employee,,1,0,0,0
+access_hr_expense_attendee_external,access_hr_expense_attendee_external,model_hr_expense_attendee_external,,1,0,0,0

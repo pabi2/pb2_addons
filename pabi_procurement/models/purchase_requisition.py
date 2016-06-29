@@ -178,7 +178,6 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-
     doc_no = fields.Char(
         string='No.',
         readonly=True,
@@ -306,7 +305,7 @@ class PurchaseRequisition(models.Model):
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
             'notes': requisition.delivery_address,
-            'payment_term_id': supplier.property_supplier_payment_term,
+            'payment_term_id': supplier.property_supplier_payment_term.id,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
@@ -389,6 +388,13 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
+    def tender_in_progress(self):
+        for requisition in self:
+            requisition._check_product_type()
+        res = super(PurchaseRequisition, self).tender_in_progress()
+        return res
+
+    @api.multi
     def tender_done(self, context=None):
         # ensure the tender to be done in PABIWeb confirmation.
         res = False
@@ -424,6 +430,19 @@ class PurchaseRequisition(models.Model):
                     pr, request)
                 request.message_post(body=message)
         return True
+
+    @api.model
+    def get_doc_type(self):
+        res = False
+        WMethod = self.env['prweb.purchase.method']
+        web_method = WMethod.search([
+            ('type_id', '=', self.purchase_type_id.id),
+            ('method_id', '=', self.purchase_method_id.id),
+        ])
+        for method in web_method:
+            res = method.doctype_id
+            break
+        return res
 
     @api.multi
     def tender_cancel(self):

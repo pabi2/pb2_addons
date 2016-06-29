@@ -203,6 +203,9 @@
                 <xpath expr="//field[@name='supplier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='date_required']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
     </record>
     <record model="ir.ui.view" id="view_purchase_request_line_search">
@@ -210,23 +213,27 @@
         <field name="model">purchase.request.line</field>
         <field name="inherit_id" ref="purchase_request.purchase_request_line_search"/>
             <field name="arch" type="xml">
-                <xpath expr="//group/filter[@string='Assigned to']" position="replace">
+                <xpath expr="//filter[@string='Assigned to']" position="replace">
                         <filter string="Responsible"
                                 domain="[]"
                                 context="{'group_by':'responsible_uid'}"/>
                 </xpath>
-            </field>
-    </record>
-    <record model="ir.ui.view" id="purchase_request_line_tree">
-        <field name="name">purchase.request.line.tree</field>
-        <field name="model">purchase.request.line</field>
-        <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='date_required']" position="attributes">
-                        <attribute name="invisible">1</attribute>
+                <xpath expr="//filter[@name='request_state_rejected']" position="after">
+                        <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
                 </xpath>
             </field>
     </record>
+    <record id="purchase_request.purchase_request_line_form_action" model="ir.actions.act_window">
+        <field name="name">Purchase Request Lines</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.request.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{"search_default_my_responsible":uid}</field>
+        <field name="domain">[('request_state','!=','draft')]</field>
+        <field name="search_view_id" ref="view_purchase_request_line_search"/>
+    </record>
+
 
     <record model="ir.ui.view" id="acc_budget_view_purchase_request_form">
         <field name="name">purchase.request.form</field>

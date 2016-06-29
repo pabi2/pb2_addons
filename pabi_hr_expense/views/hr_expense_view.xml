@@ -8,16 +8,9 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-                <field name="state" position="attributes" >
-					<attribute name="statusbar_visible">draft,wait_accept,confirm,accepted,done,paid</attribute>
-                </field>
-                <button name="confirm" position="before" >
-					<button name="to_wait_accept" string="To Wait Accept" type="workflow" states="draft" />            	
+            	<button name="validate" position="attributes">
+            		<attribute name="string">Accept</attribute>
             	</button>
-				<button name="confirm" position="attributes" >
-					<attribute name="string">Accept</attribute>
-					<attribute name="states">wait_accept</attribute>
-				</button>
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>
@@ -32,6 +25,34 @@
 				<field name="department_id" position="attributes" >
 					<attribute name="invisible">True</attribute>
 				</field>
+				
+				<!-- Invisible Columns -->
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='date_value']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='ref']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='uom_id']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='unit_quantity']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='total_amount']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='unit_amount']" position="attributes" >
+					<attribute name="string">Total</attribute>
+				</xpath>
+				<!-- End Invisible Columns-->
+				
 				<notebook position="inside" >
 					<page string="Due History" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
 		                <group>
@@ -51,18 +72,123 @@
 							</tree>
 						</field>
 					</page>
+					<page string="Attendee">
+						<field name="attendee_employee_ids" >
+							<tree editable="bottom">
+								<field name="sequence" widget="handle"/>
+								<field name="expense_id" invisible="1"/>
+								<field name="employee_id" />
+								<field name="position_id" />
+								<field name="section_id" />
+								<field name="project_id" />
+							</tree>
+						</field>
+						<field name="attendee_external_ids" >
+							<tree editable="bottom">
+								<field name="sequence" widget="handle"/>
+								<field name="expense_id" invisible="1"/>
+								<field name="attendee_name" />
+								<field name="position" />
+							</tree>
+						</field>
+					</page>
 				</notebook>
             </field>
         </record>
-        <record id="view_expenses_form2" model="ir.ui.view">
+
+        <record id="view_expenses_form_2" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+				<!-- Invisible Columns -->
+				<xpath expr="/form/sheet/notebook/page/field/tree//field[@name='tax_ids']" position="attributes" >
+					<attribute name="invisible">True</attribute>
+				</xpath>
+            </field>
+        </record>
+
+        <record id="view_expenses_form_3" model="ir.ui.view">
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense_cancel_reason.view_expenses_form"/>
             <field name="arch" type="xml">
-				<button name="%(hr_expense_cancel_reason.action_hr_expense_cancel)d" position="attributes">
-					<attribute name="states">confirm,accepted,wait_accept</attribute>
-				</button>
+				<!-- Invisible Columns -->
+				<xpath expr="//button[@name='%(hr_expense_cancel_reason.action_hr_expense_cancel)d']" position="attributes" >
+					<attribute name="string">Reject</attribute>
+				</xpath>
             </field>
+        </record>
+
+        <record id="view_expenses_tree" model="ir.ui.view">
+            <field name="name">hr.expense.expense.tree</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="arch" type="xml">
+                <field name="date" position="before">
+                	<field name="project_id" />
+                	<field name="section_id" />
+                </field>
+            </field>
+        </record>
+        
+
+        <record id="view_hr_expense_filter" model="ir.ui.view">
+            <field name="name">hr.expense.expense.filter</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
+            <field name="arch" type="xml">
+                <field name="date" position="attributes">
+                    <attribute name="string">Approved Date</attribute>
+                </field>
+                <filter icon="terp-document-new" position="replace" />
+                <filter icon="terp-camera_test" position="replace" />
+                <filter icon="terp-dolar" position="replace" />
+                <field name="date" position="after">
+                    <filter name="draft" domain="[('state','=','draft')]" string="Draft" />
+                    <filter name="confirm" domain="[('state','=','confirm')]" string="Wait for Accept" />
+                    <filter name="accepted" domain="[('state','=','accepted')]" string="Accepted" />
+                    <filter name="done" domain="[('state','=','done')]" string="Waiting Payment" />
+                    <filter name="paid" domain="[('state','=','paid')]" string="Paid" />
+                    <filter name="cancelled" domain="[('state','=','cancelled')]" string="Rejected" />
+                </field>
+                <field name="department_id" position="replace" />
+                <group position="replace" >
+                    <group expand="0" string="Group By">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Operating Unit" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by':'date'}" help="Expenses by Month"/>
+                        <filter string="State" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </group>
+            </field>
+        </record>        
+        
+        <record id="hr_expense.expense_all" model="ir.actions.act_window">
+            <field name="context">{
+	          	'is_advance_clearing':False,
+	           	'is_employee_advance':False,
+	           	'default_is_advance_clearing':False,
+	           	'default_is_employee_advance':False,
+	           	'search_default_confirm': True,
+            }</field>
+        </record>
+        
+        <record id="hr_expense_advance_clearing.action_expense_clearing" model="ir.actions.act_window">
+            <field name="context">{
+           		'default_is_employee_advance':False,
+           		'default_is_advance_clearing': True,
+           		'is_advance_clearing': True,
+	           	'search_default_confirm': True,
+            }</field>
+        </record>
+        
+        <record id="hr_expense_advance_clearing.action_expense_advance" model="ir.actions.act_window">
+            <field name="context">{
+           		'default_is_employee_advance':True,
+           		'is_employee_advance':True,
+	           	'search_default_confirm': True,
+           	}</field>
         </record>
 
 		<!-- Expense Regulations -->

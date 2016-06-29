@@ -132,10 +132,10 @@
                     </page>
                     <page string="Attachment">
                         <field name="attachment_ids">
-                            <tree>
+                            <tree editable="bottom">
                                 <field name="name"/>
                                 <field name="file"/>
-                                <field name="file_url"/>
+                                <field name="file_url" widget="url"/>
                             </tree>
                             <form>
                             	<group>
