@@ -145,7 +145,6 @@ class PurchaseWorkAcceptance(models.Model):
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
 
-
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
@@ -316,7 +315,7 @@ class PurchaseWorkAcceptance(models.Model):
         )
         wa = self.browse(ids)
         return {
-            'name': "Create Invoices",#Name You want to display on wizard
+            'name': "Create Invoices",
             'view_mode': 'form',
             'view_id': view_id[1],
             'view_type': 'form',
