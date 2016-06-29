@@ -25,7 +25,7 @@
                     <field name="project_id" invisible="0" 
                         attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
                         ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
-                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                        ('require_chartfield', '=', True)]}"/>
                     
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
@@ -34,25 +34,25 @@
                     <field name="section_id" invisible="0" 
                         attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
                         ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
-                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                        ('require_chartfield', '=', True)]}"/>
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
                     
                     <field name="invest_asset_id" invisible="1"
                         attrs="{'required': [('section_id','=',False),('project_id','=',False),
                         ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
-                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                        ('require_chartfield', '=', True)]}"/>
                         
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1"
                         attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
                         ('project_id','=',False),('personnel_costcenter_id','=',False),
-                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                        ('require_chartfield', '=', True)]}"/>
             
                     <field name="personnel_costcenter_id" invisible="1"
                         attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
                         ('invest_construction_phase_id','=',False),('project_id','=',False),
-                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                        ('require_chartfield', '=', True)]}"/>
                     
                     <field name="cost_control_type_id" invisible="1"/>
                     <field name="cost_control_id" invisible="0"  />
