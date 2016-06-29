@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <act_window id="action_change_date_value"
+        name="Change Date Value"
+        src_model="account.voucher" 
+        res_model="change.date.value"
+        view_type="form"
+        view_mode="form"
+        key2="client_action_multi"
+        target="new"
+    />
+    
+    <record id="wizard_change_date_value" model="ir.ui.view">
+        <field name="name">change.date.value.wizard</field>
+        <field name="model">change.date.value</field>
+        <field name="arch" type="xml">
+            <form string="Select date value">
+                <p>Please select date for date value of payment</p>
+                <group>
+                    <group>
+                        <field name="date_value" />
+                    </group>
+                    <group/>
+                </group>
+                <footer>
+                    <button name="action_change_date_value"
+                            type="object"
+                            string="Ok"
+                            class="oe_highlight"/>
+                    or
+                    <button special="cancel" class="oe_link"
+                            string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</data>
+</openerp>
