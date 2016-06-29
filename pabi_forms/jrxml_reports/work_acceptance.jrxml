@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e74ebe96-35c7-4881-b65e-009da4e821d6">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;order_id&quot;,&quot;picking_id&quot;,&quot;invoice_id&quot;]"/>
 	<property name="ireport.zoom" value="1.4641000000000022"/>
 	<property name="ireport.x" value="22"/>
@@ -79,48 +79,58 @@
 	<pageHeader>
 		<band height="139" splitType="Stretch">
 			<textField>
-				<reportElement x="35" y="45" width="100" height="20" uuid="752974a5-085d-4c0a-a3fd-8fe32e18a5ba"/>
-				<textFieldExpression><![CDATA[$F{po_name}]]></textFieldExpression>
+				<reportElement x="35" y="45" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="167" y="45" width="100" height="20" uuid="8691b0dc-6cf7-46e9-be69-95bb37ef010f"/>
-				<textFieldExpression><![CDATA[$F{po_date}]]></textFieldExpression>
+				<reportElement x="167" y="45" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_date}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="35" y="65" width="100" height="20" uuid="ded4b736-a425-4cab-b26d-dbf5afc4c354"/>
-				<textFieldExpression><![CDATA[$F{mycontract}]]></textFieldExpression>
+				<reportElement x="35" y="65" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mycontract}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="167" y="85" width="100" height="20" uuid="7320b3c0-fc99-4297-9859-bff7d0aebd60"/>
-				<textFieldExpression><![CDATA[$F{acceptance_date_contract_end}]]></textFieldExpression>
+				<reportElement x="167" y="85" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_date_contract_end}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="35" y="85" width="100" height="20" uuid="40be1e33-9819-48e8-ab3e-a02be0fc086a"/>
-				<textFieldExpression><![CDATA[$F{date_contract_start}]]></textFieldExpression>
+				<reportElement x="35" y="85" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_contract_start}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="309" y="45" width="233" height="20" uuid="167e4d0a-e942-46ff-a2f2-9ab127f46c26"/>
-				<textFieldExpression><![CDATA[$F{supplier_name}]]></textFieldExpression>
+				<reportElement x="309" y="45" width="233" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="309" y="65" width="110" height="20" uuid="d636157d-1d5d-40bb-9624-9e2a7512b5cd"/>
-				<textFieldExpression><![CDATA[$F{supplier_tax_id}]]></textFieldExpression>
+				<reportElement x="309" y="65" width="110" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_tax_id}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="309" y="85" width="233" height="20" uuid="14254f28-4db3-4b60-9815-db93b7d38452"/>
-				<textFieldExpression><![CDATA[$F{supplier_taxbranch}]]></textFieldExpression>
+				<reportElement x="309" y="85" width="233" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxbranch}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="442" y="65" width="100" height="20" uuid="6851a8da-23d4-466c-9729-fbf569fe912c"/>
-				<textFieldExpression><![CDATA[$F{supplier_taxbranch}]]></textFieldExpression>
+				<reportElement x="442" y="65" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxbranch}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="309" y="112" width="133" height="20" uuid="f2076995-8607-4fd1-b21d-f1716c7f5237"/>
-				<textFieldExpression><![CDATA[$F{acceptance_received_date}]]></textFieldExpression>
+				<reportElement x="309" y="112" width="133" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_received_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="198" y="9" width="152" height="20" uuid="450445ad-6da4-4f5e-b6ca-5489bdad13d2"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="198" y="9" width="152" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ใบตรวจรับพัสดุ / งานจ้าง]]></text>
@@ -130,58 +140,58 @@
 	<columnHeader>
 		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement x="50" y="0" width="151" height="27" uuid="0b48e0a4-4a32-46f7-befd-236830a92cc5"/>
+				<reportElement x="50" y="0" width="151" height="27"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[รายการ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="201" y="0" width="89" height="27" uuid="3059a9b4-3740-403b-ab2c-32d184872d24"/>
+				<reportElement x="201" y="0" width="89" height="27"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[จำนวน/หน่วย]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="290" y="0" width="88" height="27" uuid="5c84de61-12fc-4911-9007-dc2ad9108a46"/>
+				<reportElement x="290" y="0" width="88" height="27"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[ราคา/หน่วย]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="0" width="177" height="27" uuid="b6589de1-f439-488e-8467-4267f9e692aa"/>
+				<reportElement x="378" y="0" width="177" height="27"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[จำนวนเงิน(บาท)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="50" height="27" uuid="3734ab9f-b5fe-4fb7-a92f-af3bf2b4c5bf"/>
+				<reportElement x="0" y="0" width="50" height="27"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[ลำดับ]]></text>
 			</staticText>
 		</band>
@@ -189,62 +199,58 @@
 	<detail>
 		<band height="25" splitType="Stretch">
 			<textField>
-				<reportElement x="50" y="0" width="151" height="25" uuid="dd1e8e2e-383f-4af1-b5e8-4528ea1613ab"/>
+				<reportElement x="50" y="0" width="151" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{acceptance_line_name}]]></textFieldExpression>
+				<textElement verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_line_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="201" y="0" width="89" height="25" uuid="e6c2618f-0fd2-4dd7-8a87-a9610898dc11"/>
+				<reportElement x="201" y="0" width="89" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{acceptance_line_qty}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_line_qty}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="290" y="0" width="88" height="25" uuid="0ab7138a-567f-4170-b967-71717ff5334f"/>
+				<reportElement x="290" y="0" width="88" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="0" width="177" height="25" uuid="fea4f9b4-6664-4b80-8207-c4163c650c0b"/>
+				<reportElement x="378" y="0" width="177" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="50" height="25" uuid="7bb55d6c-c23a-4060-9cf0-ba593382d65a"/>
+				<reportElement x="0" y="0" width="50" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
@@ -252,69 +258,69 @@
 	<columnFooter>
 		<band height="59" splitType="Stretch">
 			<staticText>
-				<reportElement x="290" y="0" width="88" height="21" uuid="e94907c0-0839-4a2a-984a-de58c412f2f6"/>
+				<reportElement x="290" y="0" width="88" height="21"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[จำนวนเงิน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="290" y="21" width="88" height="19" uuid="545f1743-c4db-4232-8f5d-9cc50e1befe6"/>
+				<reportElement x="290" y="21" width="88" height="19"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[ภาษีมูลค่าเพิ่ม]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="290" y="40" width="88" height="19" uuid="79a35d1f-14ed-4bba-9318-b8235ec03c77"/>
+				<reportElement x="290" y="40" width="88" height="19"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[จำนวนเงิน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="0" width="177" height="21" uuid="d3fd04fe-8b41-4d89-849c-d8b7f0085a01"/>
+				<reportElement x="378" y="0" width="177" height="21"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="21" width="177" height="19" uuid="29cc3fcb-36f8-4d09-ba6c-7f5033d6920a"/>
+				<reportElement x="378" y="21" width="177" height="19"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="40" width="177" height="19" uuid="504f4463-f3fd-46fa-8554-09c8beaf3b15"/>
+				<reportElement x="378" y="40" width="177" height="19"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>

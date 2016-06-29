@@ -288,6 +288,7 @@ class PurchaseRequisition(models.Model):
         Order = self.env['purchase.order']
         for order_id in res.itervalues():
             orders = Order.search([('id', '=', order_id)])
+
             for order in orders:
                 order.write({
                     'committee_ids': self._prepare_order_committees(order_id),
@@ -545,12 +546,13 @@ class PurchaseRequisition(models.Model):
     @api.multi
     def print_call_for_bid_form(self):
         self.ensure_one()
+        doc_type = self.get_doc_type()
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
-            ('report_type', '=', 'qweb-pdf'),
+            ('report_type', '=', 'pdf'),
             ('report_name', '=',
-             'purchase_requisition.report_purchaserequisitions')],)
+             'purchase.requisition_'+doc_type.name.lower())],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
