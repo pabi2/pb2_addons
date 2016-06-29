@@ -96,6 +96,18 @@
             </field>
         </record>
 
+        <record id="view_expenses_form_1" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="account_budget_activity.view_expenses_form"/>
+            <field name="arch" type="xml">
+				<!-- Invisible Columns -->
+				<xpath expr="/form/sheet/notebook/page/field/tree//field[@name='activity_id']" position="attributes" >
+					<attribute name="invisible">context.get('is_employee_advance', False)</attribute>
+				</xpath>
+            </field>
+        </record>
+
         <record id="view_expenses_form_2" model="ir.ui.view">
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense.expense</field>
