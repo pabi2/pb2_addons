@@ -309,11 +309,13 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def open_order_line(self, ids):
         Model = self.env['ir.model.data']
+        POLine = self.env['purchase.order.line']
         view_id = Model.get_object_reference(
             'purchase',
             'view_purchase_line_invoice'
         )
         wa = self.browse(ids)
+        lines = POLine.search([('order_id', '=', wa.order_id.id)])
         return {
             'name': "Create Invoices",
             'view_mode': 'form',
@@ -323,7 +325,7 @@ class PurchaseWorkAcceptance(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'new',
             'context': {
-                'active_ids': [wa.order_id.id],
+                'active_ids': lines.ids,
             }
         }
 
