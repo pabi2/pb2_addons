@@ -147,6 +147,7 @@ class HRExpenseExpense(models.Model):
             nodes = doc.xpath("/tree")
             for node in nodes:
                 node.set('create', 'false')
+                node.set('delete', 'false')
             viewref['arch'] = etree.tostring(doc)
         return res
 
