@@ -32,14 +32,20 @@ class HRExpenseExpense(models.Model):
         'advance_expense_id',
         string='Advance Clearing Expenses',
     )
+    advance_return_ids = fields.One2many(
+        'account.invoice',
+        'expense_id',
+        domain=[('type', '=', 'out_invoice')],
+        string='Advance Return Invoices',
+    )
     amount_to_clearing = fields.Float(
-        string='Amount Balance',
+        string='Advanced Balance',
         compute='_compute_amount_to_clearing',
         store=True,
         copy=False,
     )
-    amount_approved = fields.Float(
-        string='Approved Amount',
+    amount_advanced = fields.Float(
+        string='Advanced Amount',
         readonly=False,
     )
     outstanding_advance_count = fields.Integer(
@@ -79,19 +85,27 @@ class HRExpenseExpense(models.Model):
                  'advance_clearing_ids.state',
                  'advance_clearing_ids.amount',
                  'advance_clearing_ids.invoice_id.state',
+                 'advance_return_ids.state',
                  'state')
     def _compute_amount_to_clearing(self):
         for expense in self:
             clearing_amount = 0.0
             if expense.state == 'paid':
-                clearing_amount = expense.amount_approved
+                clearing_amount = expense.amount_advanced
                 if expense.advance_clearing_ids:
+                    # Clearing
                     for clearing_advance in expense.advance_clearing_ids:
                         if clearing_advance.invoice_id.state in ('open',
                                                                  'paid'):
                             clearing_amount = clearing_amount - \
                                 clearing_advance.amount + \
                                 clearing_advance.invoice_id.amount_total - \
+                                clearing_advance.residual
+                    # Return
+                    for return_advance in expense.advance_return_ids:
+                        if return_advance.state in ('open', 'paid'):
+                            clearing_amount = clearing_amount - \
+                                return_advance.amount_total + \
                                 clearing_advance.residual
             expense.amount_to_clearing = clearing_amount
 

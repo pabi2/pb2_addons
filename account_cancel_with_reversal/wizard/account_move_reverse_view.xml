@@ -22,6 +22,18 @@
                 <xpath expr="//field[@name='move_line_prefix']" position="after">
                     <field name="cancel_reason_txt" required="1"/>
                 </xpath>
+                <xpath expr="//field[@name='period_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_prefix']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_line_prefix']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
             </field>
         </record>
 

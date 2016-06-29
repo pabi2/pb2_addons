@@ -7,11 +7,31 @@ class AccountMoveReversal(models.TransientModel):
     _inherit = "account.move.reverse"
     _description = "Create reversal of account moves"
 
-    is_voucher = fields.Boolean('Voucher?')
-    is_invoice = fields.Boolean('Invoice?')
+    is_voucher = fields.Boolean(
+        string='Voucher?',
+    )
+    is_invoice = fields.Boolean(
+        string='Invoice?',
+    )
     cancel_reason_txt = fields.Char(
         string="Reason",
-        readonly=False)
+        readonly=False,
+    )
+
+    @api.model
+    def default_get(self, field_list):
+        res = super(AccountMoveReversal, self).default_get(field_list)
+        model = self._context.get('active_model')
+        active_id = self._context.get('active_id')
+        parent = self.env[model].browse(active_id)
+        res['date'] = fields.Date.today()
+        res['journal_id'] = parent.journal_id.id
+        res['move_prefix'] = '_CANCELLED'
+        return res
+
+    @api.onchange('date')
+    def _onchange_date(self):
+        self.period_id = self.env['account.period'].find(self.date)[:1]
 
     @api.model
     def reconcile_reverse_journals(self, move_ids):

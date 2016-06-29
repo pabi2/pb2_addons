@@ -9,7 +9,6 @@ class AccountInvoice(models.Model):
     expense_id = fields.Many2one(
         'hr.expense.expense',
         string="Expense Ref",
-        readonly=True,
     )
 
     @api.multi

@@ -22,7 +22,7 @@ class ResPartner(models.Model):
         )
     township_id = fields.Many2one(
         'res.country.township',
-        domain="[(' ','=',district_id)]",
+        domain="[('district_id','=',district_id)]",
         ondelete='restrict'
         )
     street = fields.Text(string='Street')
