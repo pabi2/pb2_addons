@@ -137,7 +137,7 @@
                     </page>
                     <page string="Attachment">
                         <field name="attachment_ids">
-                            <tree editable="bottom">
+                            <tree>
                                 <field name="name"/>
                                 <field name="file"/>
                                 <field name="file_url" widget="url"/>
