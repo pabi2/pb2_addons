@@ -21,22 +21,19 @@ class ChangeDateValue(models.TransientModel):
             if voucher.type == 'payment':
                 if voucher.state in ('draft', 'cancel'):
                     raise UserError(_('You can not change Value Date \
-                        for new or cancelled voucher.'))
-                history = self.env['date.value.history'].search(
-                    [('voucher_id', '=', voucher.id)])
-                if history:
-                    history.write({'date_value': self.date_value})
-                else:
-                    for line in voucher.line_ids:
-                        invoice = line.move_line_id.invoice
-                        if invoice and invoice.expense_id:
-                            self.env['date.value.history'].create({
-                                'voucher_id': voucher.id,
-                                'invoice_id': invoice.id,
-                                'expense_id': invoice.expense_id.id,
-                                'date_value': self.date_value,
-                                'amount': line.amount,
-                                'user_id': self.env.user.id,
-                                'date': fields.Date.context_today(voucher),
-                            })
+                        for new or cancelled payments.'))
+                voucher.date_value = self.date_value
+                for line in voucher.line_ids:
+                    invoice = line.move_line_id.invoice
+                    if invoice and invoice.expense_id:
+                        self.env['date.value.history'].create({
+                            'voucher_id': voucher.id,
+                            'invoice_id': invoice.id,
+                            'expense_id': invoice.expense_id.id,
+                            'date_value': self.date_value,
+                            'amount': line.amount,
+                            'user_id': self.env.user.id,
+                            'date': fields.Date.context_today(voucher),
+                        })
         return True
+
