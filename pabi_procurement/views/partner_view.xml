@@ -14,7 +14,7 @@
                         <field name="taxbranch" />
                     </group>
 				</xpath>
-                <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='is_government']" position="attributes">
+                <xpath expr="/form/sheet/group/group/field[@name='is_government']" position="attributes">
                     <attribute name="invisible">1</attribute>
 				</xpath>
                 <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='is_government']" position="attributes">
