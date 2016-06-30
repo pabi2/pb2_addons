@@ -36,4 +36,3 @@ class ChangeDateValue(models.TransientModel):
                             'date': fields.Date.context_today(voucher),
                         })
         return True
-
