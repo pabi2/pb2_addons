@@ -558,7 +558,7 @@ class PurchaseRequisition(models.Model):
         matching_reports = Report.search([
             ('model', '=', self._name),
             ('report_type', '=', 'pdf'),
-            ('report_name', '=', 'purchase.requisition_pd')],)
+            ('report_name', '=', 'purchase.requisition_pd1')],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
