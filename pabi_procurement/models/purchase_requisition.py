@@ -547,12 +547,18 @@ class PurchaseRequisition(models.Model):
     def print_call_for_bid_form(self):
         self.ensure_one()
         doc_type = self.get_doc_type()
+        # dummy
+        doc_type = 'pd1'
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
             ('report_type', '=', 'pdf'),
             ('report_name', '=',
              'purchase.requisition_'+doc_type.name.lower())],)
+        matching_reports = Report.search([
+            ('model', '=', self._name),
+            ('report_type', '=', 'pdf'),
+            ('report_name', '=', 'purchase.requisition_pd')],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
@@ -563,31 +569,16 @@ class PurchaseRequisition(models.Model):
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually
-                result, _ = openerp.report.render_report(self._cr, self._uid,
-                                                     [self.id],
-                                                     report.report_name,
-                                                     {'model': self._name})
-            else:
-                matching_reports = Report.search([
-                    ('model', '=', self._name),
-                    ('report_type', '=', 'pdf'),
-                    ('report_name', '=', 'purchase.requisition_pd1')
-                ],)
-                report = matching_reports[0]
-                result, _ = openerp.report.render_report(self._cr, self._uid,
-                                                     [self.id],
-                                                     report.report_name,
-                                                     {'model': self._name})
-            result = base64.b64encode(result)
-            file_name = self.name_get()[0][1]
-            file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
-            file_name += ".pdf"
-            self.env['ir.attachment'].create({'name': file_name,
-                                  'datas': result,
-                                  'datas_fname': file_name,
-                                  'res_model': self._name,
-                                  'res_id': self.id,
-                                  'type': 'binary'})
+                result = base64.b64encode(result)
+                file_name = self.name_get()[0][1]
+                file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
+                file_name += ".pdf"
+                self.env['ir.attachment'].create({'name': file_name,
+                                                  'datas': result,
+                                                  'datas_fname': file_name,
+                                                  'res_model': self._name,
+                                                  'res_id': self.id,
+                                                  'type': 'binary'})
 
 
 class PurchaseRequisitionLine(models.Model):
