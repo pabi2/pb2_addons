@@ -547,18 +547,12 @@ class PurchaseRequisition(models.Model):
     def print_call_for_bid_form(self):
         self.ensure_one()
         doc_type = self.get_doc_type()
-        # dummy
-        doc_type = 'pd1'
         Report = self.env['ir.actions.report.xml']
-        # matching_reports = Report.search([
-        #     ('model', '=', self._name),
-        #     ('report_type', '=', 'pdf'),
-        #     ('report_name', '=',
-        #      'purchase.requisition_'+doc_type.name.lower())],)
         matching_reports = Report.search([
             ('model', '=', self._name),
             ('report_type', '=', 'pdf'),
-            ('report_name', '=', 'purchase.requisition_pd1')],)
+            ('report_name', '=',
+             'purchase.requisition_'+doc_type.name.lower())],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
