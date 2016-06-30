@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_date_value_history_account,access.date.value.history.account,model_date_value_history,base.group_user,1,0,0,0
+access_date_value_history_employee,access.date.value.history.employee,model_date_value_history,account.group_account_invoice,1,1,1,1

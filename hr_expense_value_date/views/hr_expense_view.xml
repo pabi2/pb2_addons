@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page[2]/group" position="after">
+                    <separator string="Value Date History"/>
+                    <field name="date_value_history_ids">
+                        <tree string="Value Date History" editable="bottom"> 
+                            <field name="name"/>
+                            <field name="voucher_id"/> 
+                            <field name="invoice_id"/>
+                            <field name="date_value"/>
+                            <field name="amount"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
