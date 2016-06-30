@@ -550,11 +550,11 @@ class PurchaseRequisition(models.Model):
         # dummy
         doc_type = 'pd1'
         Report = self.env['ir.actions.report.xml']
-        matching_reports = Report.search([
-            ('model', '=', self._name),
-            ('report_type', '=', 'pdf'),
-            ('report_name', '=',
-             'purchase.requisition_'+doc_type.name.lower())],)
+        # matching_reports = Report.search([
+        #     ('model', '=', self._name),
+        #     ('report_type', '=', 'pdf'),
+        #     ('report_name', '=',
+        #      'purchase.requisition_'+doc_type.name.lower())],)
         matching_reports = Report.search([
             ('model', '=', self._name),
             ('report_type', '=', 'pdf'),
