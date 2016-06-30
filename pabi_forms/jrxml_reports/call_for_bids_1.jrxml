@@ -125,7 +125,7 @@ WHERE pr.id = $P{ids}]]>
 		<queryString>
 			<![CDATA[SELECT prc.sequence, prc.name, prc.position
 FROM purchase_requisition_committee prc
-WHERE requisition_id = $P{ids}
+WHERE requisition_id = $P{ids}  AND committee_type_id = 13
 ORDER BY prc.sequence]]>
 		</queryString>
 		<field name="sequence" class="java.lang.Integer">
