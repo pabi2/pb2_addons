@@ -7,9 +7,9 @@
             <field name="inherit_id" ref="hr_expense_sequence.view_expenses_form_sequence"/>
             <field name="arch" type="xml">
                 <xpath expr="//label[@string='Expense ']" position="replace">
-            		<label string="Expense " attrs="{'invisible': [('is_employee_advance', '=', True)]}" />
-            		<label string="Advance " attrs="{'invisible': [('is_employee_advance', '=', False)]}" />
-            	</xpath>
+                    <label string="Expense " attrs="{'invisible': [('is_employee_advance', '=', True)]}" />
+                    <label string="Advance " attrs="{'invisible': [('is_employee_advance', '=', False)]}" />
+                </xpath>
             </field>
         </record>
 
@@ -18,15 +18,15 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-            	<group position="before" >
-            		<div class="oe_right oe_button_box" name="buttons">
-            			<button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
-            					name="action_open_outstanding_advance" 
-            					attrs="{'invisible': [('is_employee_advance', '=', False)]}">
-                        	<field string="AV Outstanding" name="outstanding_advance_count" widget="statinfo" />
+                <group position="before" >
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+                                name="action_open_outstanding_advance" 
+                                attrs="{'invisible': [('is_employee_advance', '=', False)]}">
+                            <field string="AV Outstanding" name="outstanding_advance_count" widget="statinfo" />
                         </button>
                     </div>
-            	</group>
+                </group>
                 <xpath expr="//field[@name='currency_id']" position="after">
                     <field name="is_employee_advance" invisible="1"/>
                     <field name="is_advance_clearing" invisible="1"/>
@@ -35,6 +35,25 @@
                                     ('employee_id', '=', employee_id), ('amount_to_clearing', '&gt;', 0.0)]"
                            attrs="{'invisible': [('is_advance_clearing', '=', False)],
                                    'required': [('is_advance_clearing', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[1]/field/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[1]/field/tree/field[@name='uom_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[1]/field/tree/field[@name='unit_quantity']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
+                </xpath>
+                
+                <xpath expr="//form/sheet/notebook/page[1]/field/form/group/group[1]/field[@name='product_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[1]/field/form/group/group[2]/div/field[@name='uom_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[1]/field/form/group/group[2]/div/field[@name='unit_quantity']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page string="Advance Clearing Expenses" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
@@ -48,31 +67,48 @@
                         </group>
                         <separator string="Clearings" />
                         <field name="advance_clearing_ids">
-                        	<tree>
-	                       		<field name="number" />
-	                       		<field name="name" />
-	                       		<field name="employee_id" />
-	                       		<field name="date" />
-	                       		<field name="amount" />
-	                       		<field name="residual" />
-	                       		<field name="state" />
-                        	</tree>
+                            <tree>
+                                   <field name="number" />
+                                   <field name="name" />
+                                   <field name="employee_id" />
+                                   <field name="date" />
+                                   <field name="amount" />
+                                   <field name="residual" />
+                                   <field name="state" />
+                            </tree>
                         </field>
                         <separator string="Returns" />
                         <field name="advance_return_ids">
-                        	<tree>
-                        		<field name="internal_number"/>
-                        		<field name="ref_employee_id"/>
-                        		<field name="date_invoice"/>
-                        		<field name="amount_total"/>
-                        		<field name="residual"/>
-                        		<field name="state"/>
-                        	</tree>
+                            <tree>
+                                <field name="internal_number"/>
+                                <field name="ref_employee_id"/>
+                                <field name="date_invoice"/>
+                                <field name="amount_total"/>
+                                <field name="residual"/>
+                                <field name="state"/>
+                            </tree>
                         </field>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']" position="before">
                     <field name="is_advance_product_line" invisible="1"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[1]/field/form/group/group[1]/field[@name='product_id']" position="before">
+                    <field name="is_advance_product_line" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//form/sheet/notebook/page/field/tree/field[@name="tax_ids"]' position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr='/form/sheet/notebook/page/field/form/group//field[@name="tax_ids"]' position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
                 </xpath>
             </field>
         </record>
