@@ -34,7 +34,7 @@
 	            <xpath expr="//field[@name='fiscal_position']" position="after">
 	            	<field name="ref_employee_id" invisible="1" />
 	                <field name="advance_expense_id" string="Advance Expense"
-	               		domain="[('is_employee_advance', '=', True), ('state', '=', 'paid'),
+	               		domain="[('is_employee_advance', '=', True), ('state', 'in', ('open', 'paid')),
                                  ('employee_id', '=', ref_employee_id), ('amount_to_clearing', '&gt;', 0.0)]" />
 	            </xpath>
 	        </field>

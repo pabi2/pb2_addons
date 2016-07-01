@@ -4,6 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.osv.orm import setup_modifiers
 import openerp.addons.decimal_precision as dp
+from openerp import tools
 
 
 class HRExpenseLine(models.Model):
@@ -28,20 +29,13 @@ class HRExpenseExpense(models.Model):
         string='Clear Advance',
     )
     advance_clearing_ids = fields.One2many(
-        'hr.expense.expense',
+        'hr.expense.clearing',
         'advance_expense_id',
         string='Advance Clearing Expenses',
-    )
-    advance_return_ids = fields.One2many(
-        'account.invoice',
-        'expense_id',
-        domain=[('type', '=', 'out_invoice')],
-        string='Advance Return Invoices',
     )
     amount_to_clearing = fields.Float(
         string='Advanced Balance',
         compute='_compute_amount_to_clearing',
-        store=True,
         copy=False,
     )
     amount_advanced = fields.Float(
@@ -88,33 +82,16 @@ class HRExpenseExpense(models.Model):
         result.update({'domain': domain})
         return result
 
-    @api.depends('advance_clearing_ids',
-                 'advance_clearing_ids.state',
-                 'advance_clearing_ids.amount',
-                 'advance_clearing_ids.invoice_id.state',
-                 'advance_return_ids.state',
-                 'state')
+    @api.multi
+    @api.depends('advance_clearing_ids')
     def _compute_amount_to_clearing(self):
         for expense in self:
-            clearing_amount = 0.0
-            if expense.state == 'paid':
-                clearing_amount = expense.amount_advanced
-                if expense.advance_clearing_ids:
-                    # Clearing
-                    for clearing_advance in expense.advance_clearing_ids:
-                        if clearing_advance.invoice_id.state in ('open',
-                                                                 'paid'):
-                            clearing_amount = clearing_amount - \
-                                clearing_advance.amount + \
-                                clearing_advance.invoice_id.amount_total - \
-                                clearing_advance.residual
-                    # Return
-                    for return_advance in expense.advance_return_ids:
-                        if return_advance.state in ('open', 'paid'):
-                            clearing_amount = clearing_amount - \
-                                return_advance.amount_total + \
-                                clearing_advance.residual
-            expense.amount_to_clearing = clearing_amount
+            amount_advanced = (expense.invoice_id.state in ('open', 'paid') and
+                               expense.amount_advanced or 0.0)
+            clearing_amount = sum([x.clearing_amount
+                                   for x in expense.advance_clearing_ids])
+            expense.amount_to_clearing = (amount_advanced -
+                                          clearing_amount)
 
     @api.model
     def default_get(self, field_list):
@@ -204,3 +181,61 @@ class HRExpenseExpense(models.Model):
                 vals.get('number', '/') == '/':
             vals['number'] = self.env['ir.sequence'].get('hr.expense.advance')
         return super(HRExpenseExpense, self).create(vals)
+
+
+class HRExpenseClearing(models.Model):
+    _name = "hr.expense.clearing"
+    _auto = False
+
+    advance_expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Advance Expense',
+    )
+    expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Expense',
+    )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice',
+    )
+    expense_amount = fields.Float(
+        sting='Expense Amount',
+    )
+    clearing_amount = fields.Float(
+        sting='Clearing Amount',
+    )
+    invoiced_amount = fields.Float(
+        sting='Invoiced Amount',
+    )
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+
+        _sql = """
+            select id, advance_expense_id, expense_id, invoice_id,
+                expense_amount, clearing_amount,
+                case when type in ('in_invoice')
+                    then amount_total + clearing_amount
+                    else amount_total end as invoiced_amount
+            from (
+                select ail.id, ai.advance_expense_id, ai.type, expense_id,
+                    ail.invoice_id, amount as expense_amount,
+                    case when ai.type in ('in_invoice')
+                        and ail.price_subtotal < 0.0 then -ail.price_subtotal
+                        when ai.type in ('out_invoice') then ai.amount_total
+                        else 0.0 end as clearing_amount,
+                    ai.amount_total
+                from account_invoice ai join account_invoice_line ail
+                        on ai.id = ail.invoice_id
+                    left outer join hr_expense_expense exp
+                        on exp.id = ai.advance_expense_id
+                where ((ai.type in ('in_invoice') and ail.price_subtotal < 0.0)
+                    or ai.type in ('out_invoice'))
+                    and ai.state in ('open', 'paid')
+            ) a
+            where advance_expense_id is not null
+        """
+
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, _sql,))
