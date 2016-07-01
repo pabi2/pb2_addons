@@ -25,6 +25,7 @@
                     <group>
                     	<group>
                     		<field name="invest_asset_categ_id" />
+                    		<field name="name_common" />
                     	</group>
                     	<group>
                     		<field name="org_id" />
