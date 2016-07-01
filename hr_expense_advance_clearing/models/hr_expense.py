@@ -59,6 +59,13 @@ class HRExpenseExpense(models.Model):
     )
 
     @api.model
+    def _prepare_inv_header(self, partner_id, expense):
+        res = super(HRExpenseExpense, self)._prepare_inv_header(partner_id,
+                                                                expense)
+        res.update({'advance_expense_id': expense.advance_expense_id.id})
+        return res
+
+    @api.model
     def _get_outstanding_advance_domain(self):
         domain = [('employee_id', '=', self.employee_id.id),
                   ('is_employee_advance', '=', True),

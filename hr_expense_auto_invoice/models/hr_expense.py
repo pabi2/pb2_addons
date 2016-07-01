@@ -57,7 +57,7 @@ class HRExpenseExpese(models.Model):
         }
 
     @api.model
-    def _prepare_inv(self, expense):
+    def _prepare_inv_header(self, partner_id, expense):
         Invoice = self.env['account.invoice']
         Journal = self.env['account.journal']
         # Journal
@@ -73,6 +73,29 @@ class HRExpenseExpese(models.Model):
                     _("No expense journal found. Please make sure you "
                       "have a journal with type 'purchase' configured."))
             journal_id = journal[0].id
+
+        res = Invoice.onchange_partner_id(
+            type, partner_id, expense.date_valid, payment_term=False,
+            partner_bank_id=False, company_id=expense.company_id.id)['value']
+
+        return {
+            'origin': expense.number,
+            'comment': expense.name,
+            'date_invoice': expense.date_invoice,
+            'user_id': expense.user_id.id,
+            'partner_id': partner_id,
+            'account_id': res.get('account_id', False),
+            'payment_term': res.get('payment_term', False),
+            'type': 'in_invoice',
+            'fiscal_position': res.get('fiscal_position', False),
+            'company_id': expense.company_id.id,
+            'currency_id': expense.currency_id.id,
+            'journal_id': journal_id,
+            'expense_id': expense.id,
+        }
+
+    @api.model
+    def _prepare_inv(self, expense):
         # Partner, account_id, payment_term
         if expense.pay_to == 'employee':
             if not expense.employee_id.user_id.partner_id:
@@ -86,24 +109,7 @@ class HRExpenseExpese(models.Model):
         partner = (expense.pay_to == 'employee' and
                    expense.employee_id.user_id.partner_id or
                    expense.partner_id)
-        res = Invoice.onchange_partner_id(
-            type, partner.id, expense.date_valid, payment_term=False,
-            partner_bank_id=False, company_id=expense.company_id.id)['value']
-        return {
-            'origin': expense.number,
-            'comment': expense.name,
-            'date_invoice': expense.date_invoice,
-            'user_id': expense.user_id.id,
-            'partner_id': partner.id,
-            'account_id': res.get('account_id', False),
-            'payment_term': res.get('payment_term', False),
-            'type': 'in_invoice',
-            'fiscal_position': res.get('fiscal_position', False),
-            'company_id': expense.company_id.id,
-            'currency_id': expense.currency_id.id,
-            'journal_id': journal_id,
-            'expense_id': self.id,
-        }
+        return self._prepare_inv_header(partner.id, expense)
 
     @api.model
     def _choose_account_from_exp_line(self, exp_line, fpos=False):
@@ -133,7 +139,7 @@ class HRExpenseExpese(models.Model):
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         expense = self
-        invoice_vals = expense._prepare_inv(expense)
+        invoice_vals = self._prepare_inv(expense)
         for exp_line in expense.line_ids:
             account_id = self._choose_account_from_exp_line(
                 exp_line, invoice_vals['fiscal_position'])

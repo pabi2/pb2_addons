@@ -21,6 +21,11 @@ class AccountInvoice(models.Model):
         string='Related Employee ID',
         compute='_compute_ref_employee_id',
     )
+    advance_expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string="Employee Advance Ref",
+        help="Refer to Employee Advance this invoice is clearing/return",
+    )
 
     @api.one
     @api.depends('partner_id')
@@ -31,11 +36,12 @@ class AccountInvoice(models.Model):
                                 self.partner_id.user_ids[0].employee_ids[0] or
                                 False)
 
-    @api.onchange('expense_id')
-    def _onchange_expense_id(self):
-        if self.expense_id:
+    @api.onchange('advance_expense_id')
+    def _onchange_advance_expense_id(self):
+        # This method is called from Customer invoice to return money
+        if self.advance_expense_id:
             self.invoice_line = []
-            advance_invoice = self.expense_id.invoice_id
+            advance_invoice = self.advance_expense_id.invoice_id
             if advance_invoice.invoice_line:
                 advance_line = advance_invoice.invoice_line[0]
                 return_line = self.env['account.invoice.line'].new()
