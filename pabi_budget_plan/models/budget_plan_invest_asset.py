@@ -55,6 +55,7 @@ class BudgetPlanInvestAssetLine(models.Model):
         ondelete='cascade',
         index=True,
         required=True,
+        readonly=True,
     )
     template_id = fields.Many2one(
         'budget.plan.line.template',
@@ -69,15 +70,105 @@ class BudgetPlanInvestAssetLine(models.Model):
         'account.activity',
         string='Activity',
     )
+    info_id = fields.Many2one(
+        'budget.plan.invest.asset.line.info',
+        string="More Info",
+        ondelete='restrict',
+        readonly=True,
+    )
 
     @api.model
     def create(self, vals):
+        if not vals.get('info_id', False):
+            info = self.env['budget.plan.invest.asset.line.info'].\
+                create({'name': ('More...')})
+            vals.update({'info_id': info.id})
+
         res = super(BudgetPlanInvestAssetLine, self).create(vals)
         res.write({'chart_view': res.plan_id.chart_view,
                    'fiscalyear_id': res.plan_id.fiscalyear_id.id})
+
+        res.info_id.asset_line_id = res.id
         return res
 
     @api.multi
     def unlink(self):
         self.mapped('template_id').unlink()
         return super(BudgetPlanInvestAssetLine, self).unlink()
+
+
+class BudgetPlanInvestAssetLineInfo(models.Model):
+    _name = 'budget.plan.invest.asset.line.info'
+    _description = 'More Info about each investment asset plan line'
+
+    asset_line_id = fields.Many2one(
+        'budget.plan.invest.asset.line',
+        string='Investment Asset Line',
+        ondelete='cascade',
+        index=True,
+    )
+    name = fields.Char(
+        string='Name',
+    )
+    program_group_id = fields.Many2one(
+        'res.program.group',
+        string='Program Group',
+    )
+    location = fields.Char(
+        string='Asset Location',
+    )
+    quantity = fields.Float(
+        string='Quantity',
+    )
+    price_unit = fields.Float(
+        string='Unit Price',
+    )
+    price_subtotal = fields.Float(
+        string='Quantity',
+    )
+    price_other = fields.Float(
+        string='Other Expenses',
+    )
+    price_total = fields.Float(
+        string='Total Price',
+    )
+    amount_budget = fields.Float(
+        string='Budget Amount',
+    )
+    date_quotation = fields.Date(
+        string='Quotation Date',
+    )
+    days_valid = fields.Integer(
+        string='Validity Days'
+    )
+    date_quotation_valid = fields.Date(
+        string='Quotation Validity Date',
+    )
+    reason_purchase = fields.Selection(
+        [('new', 'New'),
+         ('replace', 'Replacement'),
+         ('extra', 'Extra')],
+        string='Reason to purchase',
+    )
+    reason_purchase_text = fields.Text(
+        string='Reason Description',
+    )
+    expected_result_text = fields.Text(
+        string='Expected Result',
+    )
+    priority = fields.Integer(
+        string='Priority',
+    )
+    request_user_id = fields.Many2one(
+        'hr.employee',
+        string='Requester',
+    )
+    planned_utilization = fields.Char(
+        string='Planned Utilization',
+    )
+    quotation_document = fields.Char(
+        string='Quotation Document',
+    )
+    specification_document = fields.Char(
+        string='Specification Document',
+    )
