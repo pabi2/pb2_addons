@@ -20,6 +20,9 @@ class ResInvestAsset(models.Model):
         string='Org',
         required=False,
     )
+    name_common = fields.Char(
+        string='Common Name',
+    )
 
 
 class ResInvestAssetCategory(models.Model):
