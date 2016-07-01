@@ -69,8 +69,8 @@
                         <field name="advance_clearing_ids">
                             <tree>
 	                            <field name="expense_id" />
-	                            <field name="invoice_id" />
 	                            <field name="expense_amount" />
+	                            <field name="invoice_id" />
 	                            <field name="clearing_amount" />
 	                            <field name="invoiced_amount" />
                             </tree>
