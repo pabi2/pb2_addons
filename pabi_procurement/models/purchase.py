@@ -115,7 +115,7 @@ class PurchaseOrder(models.Model):
                 not any([l.product_id and
                          l.product_id.type in ('product', 'consu') and
                          l.state != 'cancel' for l in po.order_line]):
-                po.invoice_method = 'order'
+                po.invoice_method = 'manual'
         return True
 
     @api.multi

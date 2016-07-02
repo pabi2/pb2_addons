@@ -145,7 +145,6 @@ class PurchaseWorkAcceptance(models.Model):
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
 
-
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
@@ -310,13 +309,15 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def open_order_line(self, ids):
         Model = self.env['ir.model.data']
+        POLine = self.env['purchase.order.line']
         view_id = Model.get_object_reference(
             'purchase',
             'view_purchase_line_invoice'
         )
         wa = self.browse(ids)
+        lines = POLine.search([('order_id', '=', wa.order_id.id)])
         return {
-            'name': "Create Invoices",#Name You want to display on wizard
+            'name': "Create Invoices",
             'view_mode': 'form',
             'view_id': view_id[1],
             'view_type': 'form',
@@ -324,7 +325,7 @@ class PurchaseWorkAcceptance(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'new',
             'context': {
-                'active_ids': [wa.order_id.id],
+                'active_ids': lines.ids,
             }
         }
 

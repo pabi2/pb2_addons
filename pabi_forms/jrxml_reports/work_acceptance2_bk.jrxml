@@ -1,122 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
-	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
-	<subDataset name="po_committee">
-		<parameter name="ids" class="java.lang.Integer">
-			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-		</parameter>
-		<queryString>
-			<![CDATA[SELECT
-poc.name,
-poc.position
-FROM purchase_order_committee poc
-LEFT JOIN purchase_committee_type pct
-ON pct.id = poc.committee_type_id
-WHERE poc.order_id = $P{ids}
-AND pct.id = 7
-ORDER BY sequence]]>
-		</queryString>
-		<field name="name" class="java.lang.String"/>
-		<field name="position" class="java.lang.String">
-			<fieldDescription><![CDATA[Position]]></fieldDescription>
-		</field>
-	</subDataset>
-	<parameter name="IDS" class="java.lang.Object"/>
-	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
-	</parameter>
-	<queryString>
-		<![CDATA[SELECT
-rt.name tax_branch_name,
-ou.name operation_unit_name,
-pwa.name gr_no,
-pwa.create_date create_date,
-po.name po_name,
-po.date_order po_date,
-pwa.supplier_invoice invoice_no,
-pwa.date_invoice invoice_date,
-pwa.date_contract_start contract_start_date,
-pwa.date_contract_end contract_end_date,
-supplier.name supplier_name,
-supplier.vat supplier_tax_id,
-supplier.taxbranch supplier_taxbranch,
-pwa.date_receive receive_date,
-pp.name_template acceptance_line_name,
-pwal.to_receive_qty acceptance_line_qty,
-pu.name acceptance_line_uom,
-pwa.eval_receiving deliver_score,
-pwa.eval_quality quality_score,
-pwa.eval_service service_score,
-pol.price_unit acceptance_line_unit_price,
-po.id po_id
-
-
-FROM purchase_work_acceptance pwa
-LEFT JOIN purchase_order po
-ON po.id = pwa.order_id
-LEFT JOIN res_taxbranch rt
-ON po.taxbranch_id = rt.id
-LEFT JOIN operating_unit ou
-ON ou.id = po.operating_unit_id
-LEFT JOIN res_partner rp
-ON rp.id = ou.partner_id
-LEFT JOIN res_partner supplier
-ON supplier.id = po.partner_id
-LEFT JOIN purchase_work_acceptance_line pwal
-ON pwal.acceptance_id = pwa.id
-LEFT JOIN product_product pp
-ON pp.id = pwal.product_id
-LEFT JOIN product_uom pu
-ON pu.id = pwal.product_uom
-LEFT JOIN purchase_order_line pol
-ON pol.id = pwal.line_id
-WHERE $X{IN, pwa.id, PIDS}
-
-]]>
+	<property name="ireport.y" value="0"/>
+	<queryString language="xPath">
+		<![CDATA[data/record]]>
 	</queryString>
-	<field name="tax_branch_name" class="java.lang.String"/>
-	<field name="operation_unit_name" class="java.lang.String"/>
-	<field name="gr_no" class="java.lang.String"/>
-	<field name="create_date" class="java.sql.Timestamp">
-		<fieldDescription><![CDATA[Created on]]></fieldDescription>
+	<field name="id" class="java.lang.String">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
 	</field>
-	<field name="po_name" class="java.lang.String"/>
-	<field name="po_date" class="java.sql.Timestamp"/>
-	<field name="invoice_no" class="java.lang.String"/>
-	<field name="invoice_date" class="java.sql.Date">
-		<fieldDescription><![CDATA[Invoice Date]]></fieldDescription>
+	<field name="operating unit" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/operating_unit_id/name]]></fieldDescription>
 	</field>
-	<field name="contract_start_date" class="java.sql.Date"/>
-	<field name="contract_end_date" class="java.sql.Date"/>
-	<field name="supplier_name" class="java.lang.String"/>
-	<field name="supplier_tax_id" class="java.lang.String"/>
-	<field name="supplier_taxbranch" class="java.lang.String"/>
-	<field name="receive_date" class="java.sql.Date"/>
-	<field name="acceptance_line_name" class="java.lang.String"/>
-	<field name="acceptance_line_qty" class="java.math.BigDecimal"/>
-	<field name="acceptance_line_uom" class="java.lang.String"/>
-	<field name="deliver_score" class="java.lang.String"/>
-	<field name="quality_score" class="java.lang.String"/>
-	<field name="service_score" class="java.lang.String"/>
-	<field name="acceptance_line_unit_price" class="java.math.BigDecimal"/>
-	<field name="po_id" class="java.lang.Integer"/>
+	<field name="acceptance_no" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="po_name" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/name]]></fieldDescription>
+	</field>
+	<field name="po_date" class="java.util.Date">
+		<fieldDescription><![CDATA[order_id/date_order]]></fieldDescription>
+	</field>
+	<field name="mycontract" class="java.lang.String">
+		<fieldDescription><![CDATA[mycontract_id]]></fieldDescription>
+	</field>
+	<field name="supplier_name" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/partner_id/name]]></fieldDescription>
+	</field>
+	<field name="supplier_tax_id" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/partner_id/vat]]></fieldDescription>
+	</field>
+	<field name="supplier_taxbranch" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/partner_id/taxbranch]]></fieldDescription>
+	</field>
+	<field name="supplier_invoice_no" class="java.lang.String">
+		<fieldDescription><![CDATA[invoice_id/supplier_invoice_number]]></fieldDescription>
+	</field>
+	<field name="supplier_invoice_date" class="java.util.Date">
+		<fieldDescription><![CDATA[invoice_id/date_invoice]]></fieldDescription>
+	</field>
+	<field name="date_contract_start" class="java.util.Date">
+		<fieldDescription><![CDATA[order_id/date_contract_start]]></fieldDescription>
+	</field>
+	<field name="acceptance_line_name" class="java.lang.String">
+		<fieldDescription><![CDATA[acceptance_line_ids/product_id/name]]></fieldDescription>
+	</field>
+	<field name="acceptance_line_qty" class="java.lang.Number">
+		<fieldDescription><![CDATA[acceptance_line_ids/to_receive_qty]]></fieldDescription>
+	</field>
+	<field name="acceptance_line_uom" class="java.lang.String">
+		<fieldDescription><![CDATA[acceptance_line/product_uom/name]]></fieldDescription>
+	</field>
+	<field name="acceptance_total_fine" class="java.lang.Number">
+		<fieldDescription><![CDATA[total_fine]]></fieldDescription>
+	</field>
+	<field name="acceptance_is_manual_fine" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[is_manual_fine]]></fieldDescription>
+	</field>
+	<field name="acceptance_date_contract_end" class="java.util.Date">
+		<fieldDescription><![CDATA[date_contract_end]]></fieldDescription>
+	</field>
+	<field name="acceptance_received_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_received]]></fieldDescription>
+	</field>
+	<field name="acceptance_manual_days" class="java.lang.Number">
+		<fieldDescription><![CDATA[manual_days]]></fieldDescription>
+	</field>
+	<field name="acceptance_manual_fine" class="java.lang.Number">
+		<fieldDescription><![CDATA[manual_fine]]></fieldDescription>
+	</field>
+	<field name="acceptance_date_scheduled_end" class="java.util.Date">
+		<fieldDescription><![CDATA[date_scheduled_end]]></fieldDescription>
+	</field>
+	<field name="operation_unit_name" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/operating_unit_id/partner_id/name]]></fieldDescription>
+	</field>
+	<field name="create_date" class="java.util.Date">
+		<fieldDescription><![CDATA[create_date]]></fieldDescription>
+	</field>
+	<field name="gr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="invoice_no" class="java.lang.String">
+		<fieldDescription><![CDATA[supplier_invoice]]></fieldDescription>
+	</field>
+	<field name="invoice_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_invoice]]></fieldDescription>
+	</field>
+	<field name="contract_end_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_contract_end]]></fieldDescription>
+	</field>
+	<field name="schedule_end_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_scheduled_end]]></fieldDescription>
+	</field>
+	<field name="receive_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_receive]]></fieldDescription>
+	</field>
+	<field name="delivery_address_street" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/operating_unit_id/partner_id/street]]></fieldDescription>
+	</field>
+	<field name="delivery_address_street2" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/operating_unit_id/partner_id/street2]]></fieldDescription>
+	</field>
+	<field name="delivery_address_zip" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/operating_unit_id/partner_id/zip]]></fieldDescription>
+	</field>
+	<field name="ou_logo" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/operating_unit_id/partner_id/image]]></fieldDescription>
+	</field>
+	<field name="tax_branch_name" class="java.lang.String">
+		<fieldDescription><![CDATA[order_id/taxbranch_id/name]]></fieldDescription>
+	</field>
+	<field name="contract_start_date" class="java.util.Date">
+		<fieldDescription><![CDATA[date_contract_start]]></fieldDescription>
+	</field>
+	<field name="acceptance_line_unit_price" class="java.lang.Number">
+		<fieldDescription><![CDATA[acceptance_line_ids/line_id/price_unit]]></fieldDescription>
+	</field>
+	<field name="deliver_score" class="java.lang.String">
+		<fieldDescription><![CDATA[eval_receiving]]></fieldDescription>
+	</field>
+	<field name="quality_score" class="java.lang.String">
+		<fieldDescription><![CDATA[eval_quality]]></fieldDescription>
+	</field>
+	<field name="service_score" class="java.lang.String">
+		<fieldDescription><![CDATA[eval_service]]></fieldDescription>
+	</field>
 	<variable name="subtotal" class="java.lang.Number">
 		<variableExpression><![CDATA[$F{acceptance_line_qty}*$F{acceptance_line_unit_price}]]></variableExpression>
 	</variable>
 	<variable name="total" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$V{subtotal}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="vat" class="java.lang.Number">
 		<variableExpression><![CDATA[$V{total}*0.07]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="grand_total" class="java.lang.Number">
 		<variableExpression><![CDATA[$V{total}+$V{vat}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="column_count" class="java.lang.Integer" incrementType="Column" calculation="Count">
 		<variableExpression><![CDATA[$F{acceptance_line_name}]]></variableExpression>
@@ -558,6 +579,78 @@ WHERE $X{IN, pwa.id, PIDS}
 				<text><![CDATA[วันที่ทำการตรวจรับพัสดุ/งานจ้าง ]]></text>
 			</staticText>
 			<staticText>
+				<reportElement x="143" y="204" width="34" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[(ลงชื่อ)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="177" y="215" width="127" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="177" y="224" width="11" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="224" width="11" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="157" y="264" width="11" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="244" width="34" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[(ลงชื่อ)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="34" y="255" width="127" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="32" y="264" width="11" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="427" y="264" width="11" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="244" width="34" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[(ลงชื่อ)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="304" y="255" width="127" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="302" y="264" width="11" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Serif"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<staticText>
 				<reportElement x="0" y="289" width="371" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="Serif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -917,53 +1010,6 @@ WHERE $X{IN, pwa.id, PIDS}
 			<line>
 				<reportElement x="60" y="123" width="13" height="1"/>
 			</line>
-			<componentElement>
-				<reportElement key="table" x="11" y="197" width="488" height="80"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="po_committee">
-						<datasetParameter name="ids">
-							<datasetParameterExpression><![CDATA[$F{po_id}]]></datasetParameterExpression>
-						</datasetParameter>
-						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					</datasetRun>
-					<jr:column width="180">
-						<jr:detailCell height="16" rowSpan="1">
-							<textField>
-								<reportElement x="40" y="0" width="140" height="16"/>
-								<textElement verticalAlignment="Middle" lineSpacing="Single">
-									<font size="10" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
-							</textField>
-							<textField>
-								<reportElement x="0" y="0" width="40" height="16"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font size="10" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="256">
-						<jr:detailCell height="16" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="90" height="16"/>
-								<textElement verticalAlignment="Middle" lineSpacing="Single">
-									<font size="10" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
-							</textField>
-							<staticText>
-								<reportElement x="90" y="0" width="166" height="16"/>
-								<textElement lineSpacing="Single">
-									<font size="10"/>
-								</textElement>
-								<text><![CDATA[_________________________________]]></text>
-							</staticText>
-						</jr:detailCell>
-					</jr:column>
-				</jr:table>
-			</componentElement>
 		</band>
 	</pageFooter>
 	<summary>
