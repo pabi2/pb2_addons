@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from openerp import models, fields, api, _
 
 """ This class is intended for Web Service call to/from Alfresco """
@@ -9,34 +8,45 @@ class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
 
     @api.model
-    def test_generate_hr_expense(self):
+    def test_generate_hr_expense_advance(self):
         data_dict = {
-            'name': u'ABCDE',
-            'employee_code': u'000039',
-            'line_ids': (
+            'is_employee_advance': u'True',
+            'number': u'/',  # av_id
+            'employee_code': u'002648',  # req_by
+            'date': u'2016-01-31',  # by_time
+            'write_date': u'2016-01-31 00:00:00',  # updated_time
+            'advance_type': u'attend_seminar',  # or by_product, objective_type
+            'date_back': u'2016-10-30',  # cost_control_to
+            'name': u'Object of this Advance',  # objective
+            'line_ids': (  # 1 line only, Advance
                 {
-                    'activity_id.id': u'4',
-                    'name': u'Descripiton 1',
-                    'unit_amount': u'1000',
-                 },
-                {
-                    'activity_id.id': u'4',
-                    'name': u'Descripiton 2',
-                    'unit_amount': u'2000',
+                    'name': u'Employee Advance',  # Expense Note (not in AF?)
+                    'unit_amount': u'2000',  # total
+                    'cost_control_id.id': u'',
                  },
             ),
             'attendee_employee_ids': (
                 {
-                    'employee_id.id': u'1',
+                    'employee_code': u'000143',
+                    'position_id.id': u'1',
                  },
                 {
-                    'employee_id.id': u'1',
+                    'employee_code': u'000165',
+                    'position_id.id': u'2',
                  },
                 {
-                    'employee_id.id': u'1',
+                    'employee_code': u'000166',
+                    'position_id.id': u'3',
                  },
                 {
-                    'employee_id.id': u'1',
+                    'employee_code': u'000177',
+                    'position_id.id': u'4',
+                 },
+            ),
+            'attendee_external_ids': (
+                {
+                    'attendee_name': u'Walai Charoenchaimongkol',
+                    'position': u'Manager',
                  },
             )
         }
@@ -45,14 +55,31 @@ class HRExpense(models.Model):
     @api.model
     def _pre_process_hr_expense(self, data_dict):
         Expense = self.env['hr.employee']
-        # Change employee code to employee_id.id
+        # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
         data_dict['employee_id.id'] = Expense.search(domain).id
         del data_dict['employee_code']
+        # Advance product
+        if 'line_ids' in data_dict:
+            advance_product = self.env.ref('hr_expense_advance_clearing.'
+                                           'product_product_employee_advance')
+            data = data_dict['line_ids'][0]
+            data['product_id.id'] = advance_product.id
+            data['uom_id.id'] = advance_product.uom_id.id
+            data['is_advance_product_line'] = u'True'
+        # attendee's employee_code
+        if 'attendee_employee_ids' in data_dict:
+            for data in data_dict['attendee_employee_ids']:
+                domain = [('employee_code', '=', data.get('employee_code'))]
+                data['employee_id.id'] = Expense.search(domain).id
+                del data['employee_code']
         return data_dict
 
     @api.model
     def _post_process_hr_expense(self, res):
+        # Submit to manager
+        expense = self.env['hr.expense.expense'].browse(res['result']['id'])
+        expense.signal_workflow('confirm')
         return res
 
     @api.model
@@ -63,10 +90,27 @@ class HRExpense(models.Model):
         return res
 
     @api.model
-    def _finalize_data_to_load(self, fields, data):
+    def _finalize_data_to_load(self, data_dict):
+        """
+        This method will convert user friendly data_dict
+        to load() compatible fields/data
+        Currently it is working with multiple line table but with 1 level only
+        data_dict = {
+            'name': 'ABC',
+            'line_ids': ({'desc': 'DESC',}),
+            'line2_ids': ({'desc': 'DESC',}),
+        }
+        to
+        fields = ['name', 'line_ids/desc', 'line2_ids/desc']
+        data = [('ABC', 'DESC', 'DESC')]
+        """
+        fields = data_dict.keys()
+        data = data_dict.values()
         line_count = 1
-        # Tables
-        _table_fields = ['line_ids', 'attendee_employee_ids']
+        _table_fields = []  # Tuple fields
+        for key in fields:
+            if isinstance(data_dict[key], tuple):
+                _table_fields.append(key)
         data_array = {}
         for table in _table_fields:
             data_array[table] = False
@@ -101,11 +145,9 @@ class HRExpense(models.Model):
     @api.model
     def _create_hr_expense_expense(self, data_dict):
         ret = {}
-        fields = data_dict.keys()
-        data = data_dict.values()
         # Final Preparation of fields and data
         try:
-            fields, data = self._finalize_data_to_load(fields, data)
+            fields, data = self._finalize_data_to_load(data_dict)
             load_res = self.load(fields, data)
             res_id = load_res['ids'] and load_res['ids'][0] or False
             if not res_id:
