@@ -14,6 +14,7 @@
     "installable": True,
     "depends": [
         "hr_expense_auto_invoice",
+        "hr_expense_advance_clearing",
         "hr_expense_cancel_reason",
         "account_budget_activity",
         "pabi_bank",

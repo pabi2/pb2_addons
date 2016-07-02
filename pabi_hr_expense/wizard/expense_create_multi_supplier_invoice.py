@@ -45,40 +45,9 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
 
     @api.model
     def _prepare_inv(self, supplier_info_line, expense):
-        Invoice = self.env['account.invoice']
-        Journal = self.env['account.journal']
-        # Journal
-        journal_id = False
-        if expense.journal_id:
-            journal_id = expense.journal_id.id
-        else:
-            journal = Journal.search([('type', '=', 'purchase'),
-                                      ('company_id', '=',
-                                       expense.company_id.id)])
-            if not journal:
-                raise UserError(
-                    _("No expense journal found. Please make sure you "
-                      "have a journal with type 'purchase' configured."))
-            journal_id = journal[0].id
         partner = (supplier_info_line.partner_id)
-        res = Invoice.onchange_partner_id(
-            type, partner.id, expense.date_valid, payment_term=False,
-            partner_bank_id=False, company_id=expense.company_id.id)['value']
-        return {
-            'origin': expense.number,
-            'comment': expense.name,
-            'date_invoice': expense.date_invoice,
-            'user_id': expense.user_id.id,
-            'partner_id': partner.id,
-            'account_id': res.get('account_id', False),
-            'payment_term': res.get('payment_term', False),
-            'type': 'in_invoice',
-            'fiscal_position': res.get('fiscal_position', False),
-            'company_id': expense.company_id.id,
-            'currency_id': expense.currency_id.id,
-            'journal_id': journal_id,
-            'expense_id': expense.id,
-        }
+        return self.env['hr.expense.expense']._prepare_inv_header(partner.id,
+                                                                  expense)
 
     @api.multi
     def create_multi_supplier_invoices(self):
