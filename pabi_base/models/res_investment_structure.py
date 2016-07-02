@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
+from openerp.addons.pabi_base.models.res_common import ResCommon
 
 
 # Investment - Asset
-class ResInvestAsset(models.Model):
+class ResInvestAsset(ResCommon, models.Model):
     _name = 'res.invest.asset'
     _description = 'Investment Asset'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
     invest_asset_categ_id = fields.Many2one(
         'res.invest.asset.category',
         string='Investment Asset Category'
@@ -25,25 +22,16 @@ class ResInvestAsset(models.Model):
     )
 
 
-class ResInvestAssetCategory(models.Model):
+class ResInvestAssetCategory(ResCommon, models.Model):
     _name = 'res.invest.asset.category'
     _description = 'Investment Asset Category'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-
 
 # Investment - Construction
-class ResInvestConstruction(models.Model):
+class ResInvestConstruction(ResCommon, models.Model):
     _name = 'res.invest.construction'
     _description = 'Investment Construction'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
     phase_ids = fields.One2many(
         'res.invest.construction.phase',
         'invest_construction_id',
@@ -91,6 +79,6 @@ class ResInvestConstructionPhase(models.Model):
         result = []
         for rec in self:
             result.append((rec.id, "%s - %s" %
-                           (rec.invest_construction_id.name,
+                           (rec.invest_construction_id.name_get(),
                             self.PHASE[rec.phase])))
         return result

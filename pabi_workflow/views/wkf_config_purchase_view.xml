@@ -49,7 +49,7 @@
                     		<field name="section_ids">
 								<tree string="Sections" editable="bottom">
 									<field name="name"/>
-									<field name="description"/>
+									<field name="code"/>
 								</tree>
 							</field>
 						</page>

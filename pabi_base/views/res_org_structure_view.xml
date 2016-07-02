@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Org">
                     <field name="name"/>
-                    <field name="description" />
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -25,7 +25,7 @@
                     </h1>
                     <group>
                         <group>
-	                        <field name="description" />
+                        	<field name="code" />
                         </group>
                         <group>
 	                        <field name="operating_unit_id" />
@@ -67,7 +67,7 @@
             <field name="arch" type="xml">
                 <tree string="Sector">
                     <field name="name"/>
-                    <field name="description" />
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -86,7 +86,7 @@
                     		<field name="org_id"/>
                         </group>
                         <group>
-	                		<field name="description" />
+                    		<field name="code"/>
                         </group>
                         <group>
                         </group>
@@ -129,7 +129,7 @@
             <field name="arch" type="xml">
                 <tree string="Subsector">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -148,7 +148,7 @@
                    	 		<field name="sector_id"/>
                         </group>
                         <group>
-                    		<field name="description"/>
+                    		<field name="code"/>
                         </group>
                         <group string="Based On">
                         	<field name="org_id"/>
@@ -192,7 +192,7 @@
             <field name="arch" type="xml">
                 <tree string="Division">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -211,7 +211,7 @@
                     		<field name="subsector_id"/>
                         </group>
                         <group>
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
                         <group string="Based On">
 	                        <field name="org_id" />
@@ -257,7 +257,7 @@
             <field name="arch" type="xml">
                 <tree string="Section">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -276,7 +276,7 @@
 		                    <field name="division_id"/>
                         </group>
                         <group>
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
                         <group string="Based On">
 		                    <field name="org_id"/>
@@ -328,7 +328,7 @@
             <field name="arch" type="xml">
                 <tree string="Cost Center">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                     <field name="section_ids"/>
                 </tree>
             </field>
@@ -349,7 +349,7 @@
 		                    <field name="taxbranch_id"/>
                         </group>
                         <group>
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
                     </group>
                 </form>

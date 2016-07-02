@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models
+from openerp.addons.pabi_base.models.res_common import ResCommon
 
 # ORG Structure:
 #                                           (mission)
@@ -13,34 +14,20 @@ from openerp import fields, models
 # * In future, if section:costcenter = 2:1, user will have to choose section
 
 
-class ResOrg(models.Model):
+class ResOrg(ResCommon, models.Model):
     _name = 'res.org'
     _description = 'Org'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
     )
 
 
-class ResSector(models.Model):
+class ResSector(ResCommon, models.Model):
     _name = 'res.sector'
     _description = 'Sector'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     org_id = fields.Many2one(
         'res.org',
         string='Org',
@@ -48,17 +35,10 @@ class ResSector(models.Model):
     )
 
 
-class ResSubsector(models.Model):
+class ResSubsector(ResCommon, models.Model):
     _name = 'res.subsector'
     _description = 'Subsector'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     sector_id = fields.Many2one(
         'res.sector',
         string='Sector',
@@ -73,17 +53,10 @@ class ResSubsector(models.Model):
     )
 
 
-class ResDivision(models.Model):
+class ResDivision(ResCommon, models.Model):
     _name = 'res.division'
     _description = 'Division'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     subsector_id = fields.Many2one(
         'res.subsector',
         string='Subsector',
@@ -105,17 +78,10 @@ class ResDivision(models.Model):
     )
 
 
-class ResSection(models.Model):
+class ResSection(ResCommon, models.Model):
     _name = 'res.section'
     _description = 'Section'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
@@ -154,17 +120,10 @@ class ResSection(models.Model):
     )
 
 
-class ResCostcenter(models.Model):
+class ResCostcenter(ResCommon, models.Model):
     _name = 'res.costcenter'
     _description = 'Cost Center'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     section_ids = fields.One2many(
         'res.section',
         'costcenter_id',
@@ -178,23 +137,10 @@ class ResCostcenter(models.Model):
     )
 
 
-class ResTaxbranch(models.Model):
+class ResTaxbranch(ResCommon, models.Model):
     _name = 'res.taxbranch'
     _description = 'Tax Branch'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-        translate=True,
-    )
-    code = fields.Char(
-        string='Code',
-        required=True,
-        translate=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     street = fields.Char(
         string='Street',
         translate=True,

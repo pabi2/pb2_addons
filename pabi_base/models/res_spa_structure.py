@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api, _
 from openerp.exceptions import Warning as UserError
+from openerp.addons.pabi_base.models.res_common import ResCommon
 
 # SPA Structure:
 # --------------
@@ -126,30 +127,15 @@ class ResTag(models.Model):
         return result
 
 
-class ResFunctionalArea(SpaStructureTag, models.Model):
+class ResFunctionalArea(SpaStructureTag, ResCommon, models.Model):
     _name = 'res.functional.area'
     _description = 'Functional Area'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
 
-
-class ResProgramGroup(SpaStructureTag, models.Model):
+class ResProgramGroup(SpaStructureTag, ResCommon, models.Model):
     _name = 'res.program.group'
     _description = 'Program Group'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     functional_area_id = fields.Many2one(
         'res.functional.area',
         string='Functional Area',
@@ -157,17 +143,10 @@ class ResProgramGroup(SpaStructureTag, models.Model):
     )
 
 
-class ResProgram(SpaStructureTag, models.Model):
+class ResProgram(SpaStructureTag, ResCommon, models.Model):
     _name = 'res.program'
     _description = 'Program'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     program_group_id = fields.Many2one(
         'res.program.group',
         string='Program Group',
@@ -204,17 +183,10 @@ class ResProgram(SpaStructureTag, models.Model):
         self.current_spa_id = spas and spas[0] or False
 
 
-class ResProjectGroup(SpaStructureTag, models.Model):
+class ResProjectGroup(SpaStructureTag, ResCommon, models.Model):
     _name = 'res.project.group'
     _description = 'Project Group'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     program_id = fields.Many2one(
         'res.program',
         string='Program',
@@ -236,17 +208,10 @@ class ResProjectGroup(SpaStructureTag, models.Model):
     )
 
 
-class ResProject(SpaStructureTag, models.Model):
+class ResProject(SpaStructureTag, ResCommon, models.Model):
     _name = 'res.project'
     _description = 'Project'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
     date_start = fields.Date(
         string='Project Start Date',
     )

@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Personnel Budget">
                     <field name="name"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -27,6 +28,7 @@
                     		<field name="section_id" />
                     	</group>
                     	<group>
+                    		<field name="code"/>
                     	</group>
                     </group>
                 </form>

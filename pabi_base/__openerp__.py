@@ -43,6 +43,8 @@ org -> sector -> subsector -> division -> section -> costcenter
         'views/res_personnel_structure_view.xml',
         'views/res_investment_structure_view.xml',
         'views/res_dimension_view.xml',
+        # name_search
+        'name_search/ir.model.csv',
     ],
     "demo": [
     ]

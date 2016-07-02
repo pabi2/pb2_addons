@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Investment Asset">
                     <field name="name"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -28,6 +29,7 @@
                     		<field name="name_common" />
                     	</group>
                     	<group>
+                    		<field name="code"/>
                     		<field name="org_id" />
                     	</group>
                     </group>
@@ -66,6 +68,7 @@
             <field name="arch" type="xml">
                 <tree string="Investment Asset Category">
                     <field name="name"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -80,6 +83,7 @@
                         <field name="name" class="oe_inline" placeholder="Name"/>
                     </h1>
                     <group>
+                    	<field name="code"/>
                     </group>
                 </form>
             </field>
@@ -116,6 +120,7 @@
             <field name="arch" type="xml">
                 <tree string="Investment Construction">
                     <field name="name"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -134,13 +139,14 @@
                     		<field name="org_id" />
                     	</group>
                     	<group>
-	                    	<field name="phase_ids" nolabel="1">
-	                    		<tree editable="bottom">
-	                    			<field name="sequence" widget="handle"/>
-	                    			<field name="phase"/>
-	                    		</tree>
-	                    	</field>
+                    		<field name="code"/>
                     	</group>
+                    	<field name="phase_ids" nolabel="1">
+                    		<tree editable="bottom">
+                    			<field name="sequence" widget="handle"/>
+                    			<field name="phase"/>
+                    		</tree>
+                    	</field>
                    	</group>
                 </form>
             </field>

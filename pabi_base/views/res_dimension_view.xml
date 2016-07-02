@@ -103,7 +103,7 @@
             <field name="arch" type="xml">
                 <tree string="Tax Branch">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -132,7 +132,6 @@
 						    <field name="phone" />    
 						    <field name="fax" />    
 						    <field name="taxid" />
-	                        <field name="description" />
                         </group>
                     </group>
                 </form>

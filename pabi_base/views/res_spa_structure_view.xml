@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Functional Area">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -25,12 +25,8 @@
                     </h1>
                     <group>
                         <group>
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
-                        <group>	
-                        </group>
-                        <group>
-		                </group>
                         <group string="Tag">
 		            		<field name="org_id"/>
 		                    <field name="tag_id"/>
@@ -71,7 +67,7 @@
             <field name="arch" type="xml">
                 <tree string="Program Group">
                     <field name="name"/>
-                    <field name="description"/>
+                    <field name="code"/>
                 </tree>
             </field>
         </record>
@@ -90,7 +86,7 @@
 	                        <field name="functional_area_id" />
                         </group>
                         <group>	
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
                         <group>
 		                </group>
@@ -159,7 +155,7 @@
                         	<field name="current_spa_id" />
                         </group>
                         <group>	
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
                         <group string="Based On">
 		            		<field name="functional_area_id"/>
@@ -227,7 +223,7 @@
                     		<field name="program_id"/>
                         </group>
                         <group>
-	                        <field name="description" />
+                    		<field name="code"/>
                         </group>
                         <group string="Based On">
 		            		<field name="functional_area_id"/>
@@ -303,8 +299,8 @@
 		                    <field name="project_group_id"/>
                         </group>
                         <group>
+                    		<field name="code"/>
                     		<field name="costcenter_id"/>  
-	                        <field name="description" />
 	                        <field name="date_start" />
                         </group>
                         <group string="Based On">
