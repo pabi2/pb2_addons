@@ -64,49 +64,38 @@ class HRExpense(models.Model):
 
     @api.model
     def _finalize_data_to_load(self, fields, data):
-        line_ids = False
-        attendee_employee_ids = False
         line_count = 1
         # Tables
-        if 'line_ids' in fields:
-            i = fields.index('line_ids')
-            line_ids = data[i] or ()  # ({'x': 1, 'y': 2}, {})
-            del fields[i]
-            del data[i]
-            line_count = max(line_count, len(line_ids))
-        if 'attendee_employee_ids' in fields:
-            i = fields.index('attendee_employee_ids')
-            attendee_employee_ids = data[i] or ()  # ({'x': 1, 'y': 2}, {})
-            del fields[i]
-            del data[i]
-            line_count = max(line_count, len(attendee_employee_ids))
-        # Fields
-        line_ids_fields = []
-        attendee_employee_ids_fields = []
-        if line_ids:
-            line_ids_fields = ['line_ids/'+key
-                               for key in line_ids[0].keys()]
-        if attendee_employee_ids:
-            attendee_employee_ids_fields = \
-                ['attendee_employee_ids/'+key
-                 for key in attendee_employee_ids[0].keys()]
-        fields = fields + line_ids_fields + attendee_employee_ids_fields
-        print fields
+        _table_fields = ['line_ids', 'attendee_employee_ids']
+        data_array = {}
+        for table in _table_fields:
+            data_array[table] = False
+            data_array[table+'_fields'] = False
+            if table in fields:
+                i = fields.index(table)
+                data_array[table] = data[i] or ()  # ({'x': 1, 'y': 2}, {})
+                del fields[i]
+                del data[i]
+                line_count = max(line_count, len(data_array[table]))
+            if data_array[table]:
+                data_array[table+'_fields'] = \
+                    [table+'/'+key for key in data_array[table][0].keys()]
+            fields += data_array[table+'_fields']
         # Data
         datas = []
         for i in range(0, line_count, 1):
-            line = {}
-            attendee = {}
-            if line_ids_fields:
-                line = len(line_ids) > i and line_ids[i] or \
-                    {key: False for key in line_ids_fields}
-            if attendee_employee_ids_fields:
-                attendee = len(attendee_employee_ids) > i and attendee_employee_ids[i] or \
-                    {key: False for key in attendee_employee_ids_fields}
+            record = []
+            for table in _table_fields:
+                data_array[table+'_data'] = False
+                if data_array[table+'_fields']:
+                    data_array[table+'_data'] = \
+                        (len(data_array[table]) > i and data_array[table][i] or
+                         {key: False for key in data_array[table+'_fields']})
+                record += data_array[table+'_data'].values()
             if i == 0:
-                datas += [tuple(data + line.values() + attendee.values())]
+                datas += [tuple(data + record)]
             else:
-                datas += [tuple([False for _x in data] + line.values() + attendee.values())]
+                datas += [tuple([False for _x in data] + record)]
         return fields, datas
 
     @api.model
