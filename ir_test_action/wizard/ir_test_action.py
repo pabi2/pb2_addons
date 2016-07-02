@@ -64,7 +64,7 @@ class ir_test_action(models.TransientModel):
                     raise Warning("Method with more than 9 arguments "
                                   "is not allowed!")
                 if len(args) == 0:
-                    res = getattr(model, method_name)(self._cr)
+                    res = getattr(model, method_name)(self._cr, self._uid)
                 if len(args) == 1:
                     res = getattr(model, method_name)(
                         self._cr, self._uid, args[0])
@@ -129,6 +129,7 @@ class ir_test_action(models.TransientModel):
     @api.multi
     def execute(self):
         res = self._callback(self.model, self.function, self.args)
+        print res
         if res:
             self.write({'state': 'ok',
                         'message': _('Last execution was successful!')})
