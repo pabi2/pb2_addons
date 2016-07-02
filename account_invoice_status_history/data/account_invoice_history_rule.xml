@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="account_invoice_history_rule" model="auditlog.rule">
+            <field name="name">Account Invoice Rule</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="log_read"></field>
+            <field name="log_write">True</field>
+            <field name="log_unlink">True</field>
+            <field name="log_create">True</field>
+            <field name="log_type">full</field>
+            <field name="state">draft</field>
+        </record>
+
+    </data>
+</openerp>
