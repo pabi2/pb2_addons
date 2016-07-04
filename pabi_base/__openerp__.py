@@ -32,6 +32,7 @@ org -> sector -> subsector -> division -> section -> costcenter
         "base",
         "account",
         "operating_unit"
+        "base_name_search_improved",
     ],
     "data": [
         # security

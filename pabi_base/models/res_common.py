@@ -7,6 +7,7 @@ class ResCommon(object):
     name = fields.Char(
         string='Name',
         required=True,
+        translate=True,
     )
     code = fields.Char(
         string='Code',
