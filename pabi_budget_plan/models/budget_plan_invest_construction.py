@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.addons.pabi_chartfield.models.chartfield import CHART_VIEW_FIELD
 from .budget_plan_template import BudgetPlanCommon
 
 
