@@ -2,7 +2,7 @@
 from openerp import fields, models
 
 
-class hr_position(models.Model):
+class HRPosition(models.Model):
     _name = 'hr.position'
     _description = "Master employee's Position"
 

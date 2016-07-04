@@ -2,12 +2,19 @@
 from openerp import fields, models, api
 
 
-class hr_employee(models.Model):
+class ResourceResource(models.Model):
+    _inherit = 'resource.resource'
+
+    name = fields.Char(
+        required=False,
+    )
+
+
+class HREmployee(models.Model):
     _inherit = 'hr.employee'
 
     name = fields.Char(
         compute='_compute_name',
-        required=False,
         store=False,  # Do not store as it will be difficult to manage
     )
     title_id = fields.Many2one(
