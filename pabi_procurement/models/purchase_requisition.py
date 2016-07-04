@@ -451,7 +451,6 @@ class PurchaseRequisition(models.Model):
         self._purchase_request_cancel_message()
         return res
 
-
     @api.multi
     def wkf_validate_vs_quotation(self):
         """ Case Central Purchase, quotation amount should not exceed """

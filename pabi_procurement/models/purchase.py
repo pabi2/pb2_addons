@@ -319,6 +319,7 @@ class PRWebPurchaseMethod(models.Model):
         string='Confidential',
     )
 
+
 class PurchaseType(models.Model):
     _name = 'purchase.type'
     _description = 'PABI2 Purchase Type'
