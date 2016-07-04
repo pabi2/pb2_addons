@@ -7,6 +7,7 @@ class hr_employee(models.Model):
 
     name = fields.Char(
         compute='_compute_name',
+        required=False,
         store=False,  # Do not store as it will be difficult to manage
     )
     title_id = fields.Many2one(
