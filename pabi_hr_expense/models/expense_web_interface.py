@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
+from openerp import models, api, _
 
 """ This class is intended for Web Service call to/from Alfresco """
 
@@ -20,33 +20,33 @@ class HRExpense(models.Model):
             'name': u'Object of this Advance',  # objective
             'line_ids': (  # 1 line only, Advance
                 {
-                    'name': u'Employee Advance',  # Expense Note (not in AF?)
-                    'unit_amount': u'2000',  # total
-                    'cost_control_id.id': u'',
+                 'name': u'Employee Advance',  # Expense Note (not in AF?)
+                 'unit_amount': u'2000',  # total
+                 'cost_control_id.id': u'',
                  },
             ),
             'attendee_employee_ids': (
                 {
-                    'employee_code': u'000143',
-                    'position_id.id': u'1',
+                 'employee_code': u'000143',
+                 'position_id.id': u'1',
                  },
                 {
-                    'employee_code': u'000165',
-                    'position_id.id': u'2',
+                 'employee_code': u'000165',
+                 'position_id.id': u'2',
                  },
                 {
-                    'employee_code': u'000166',
-                    'position_id.id': u'3',
+                 'employee_code': u'000166',
+                 'position_id.id': u'3',
                  },
                 {
-                    'employee_code': u'000177',
-                    'position_id.id': u'4',
+                 'employee_code': u'000177',
+                 'position_id.id': u'4',
                  },
             ),
             'attendee_external_ids': (
                 {
-                    'attendee_name': u'Walai Charoenchaimongkol',
-                    'position': u'Manager',
+                 'attendee_name': u'Walai Charoenchaimongkol',
+                 'position': u'Manager',
                  },
             )
         }

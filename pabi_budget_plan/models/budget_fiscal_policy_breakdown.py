@@ -2,7 +2,7 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError, Warning as UserError
 from openerp.addons.pabi_chartfield.models.chartfield import \
-    CHART_VIEW_LIST, CHART_VIEW_FIELD, ChartField
+    CHART_VIEW_LIST, ChartField
 
 
 class BudgetFiscalPolicyBreakdown(models.Model):

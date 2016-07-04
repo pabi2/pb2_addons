@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.addons.pabi_chartfield.models.chartfield import \
-    CHART_VIEW_LIST, CHART_VIEW_FIELD, ChartField
+    CHART_VIEW_LIST, ChartField
 
 
 class BudgetFiscalPolicy(models.Model):
