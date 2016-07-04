@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class hr_employee(models.Model):
     _inherit = 'hr.employee'
 
+    name = fields.Char(
+        compute='_compute_name',
+        store=False,  # Do not store as it will be difficult to manage
+    )
     title_id = fields.Many2one(
         'res.partner.title',
         string='Title',
@@ -13,13 +17,16 @@ class hr_employee(models.Model):
     first_name = fields.Char(
         string='First Name',
         required=True,
+        translate=True,
     )
     mid_name = fields.Char(
         string='Middle Name',
+        translate=True,
     )
     last_name = fields.Char(
         string='Last Name',
         required=True,
+        translate=True,
     )
     employee_code = fields.Char(
         string='Employee ID.',
@@ -61,11 +68,25 @@ class hr_employee(models.Model):
     is_management = fields.Boolean(
         string='Is Management',
     )
+
+    @api.multi
+    @api.depends('employee_code', 'title_id',
+                 'first_name', 'mid_name', 'last_name',)
+    def _compute_name(self):
+        for rec in self:
+            code = rec.employee_code and ('[%s] ' % rec.employee_code) or ''
+            title = rec.title_id and ('%s ' % rec.title_id.name) or ''
+            first_name = rec.first_name and ('%s ' % rec.first_name) or ''
+            mid_name = rec.mid_name and ('%s ' % rec.mid_name) or ''
+            last_name = rec.last_name and ('%s ' % rec.last_name) or ''
+            rec.name = ("%s%s%s%s%s" % (code, title, first_name,
+                                        mid_name, last_name)).strip()
+
     # Kitti U. Remove this otherwise, can't update Related user on Employee
     # @Poon, will you have any other problem?
-#     user_id = fields.Many2one(
-#         'res.users',
-#         related='resource_id.user_id',
-#         string='User',
-#         store=True,
-#     )
+    #     user_id = fields.Many2one(
+    #         'res.users',
+    #         related='resource_id.user_id',
+    #         string='User',
+    #         store=True,
+    #     )

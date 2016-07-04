@@ -33,5 +33,7 @@ Add more user's profile
         # views
         'views/hr_position_view.xml',
         'views/hr_employee_view.xml',
+        # name_search
+        'name_search/ir.model.csv',
     ],
 }
