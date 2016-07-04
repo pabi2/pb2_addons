@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
+from openerp.addons.pabi_base.models.res_common import ResCommon
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                           (mission)
@@ -199,27 +200,19 @@ CHART_FIELDS = [
 
 
 # Extra non-binding chartfield (similar to activity)
-class CostControlType(models.Model):
+class CostControlType(ResCommon, models.Model):
     _name = 'cost.control.type'
     _description = 'Cost Control Type'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
     description = fields.Text(
         string='Description',
     )
 
 
-class CostControl(models.Model):
+class CostControl(ResCommon, models.Model):
     _name = 'cost.control'
     _description = 'Cost Control'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
     description = fields.Text(
         string='Description',
     )
