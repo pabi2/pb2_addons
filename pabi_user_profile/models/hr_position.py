@@ -9,6 +9,10 @@ class hr_position(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        translate=True,
+    )
+    code = fields.Char(
+        string='Code',
     )
     description = fields.Text(
         string='Description',
