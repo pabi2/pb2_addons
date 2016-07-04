@@ -310,11 +310,14 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.condition',
         string='Condition',
     )
+    condition_detail_id = fields.Many2one(
+        'purchase.condition.detail',
+        string='Condition Detail',
+    )
     confidential_id = fields.Many2one(
         'purchase.confidential',
         string='Confidential',
     )
-
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'
@@ -366,6 +369,14 @@ class PurchasePriceRange(models.Model):
     name = fields.Char(
         string='Purchase Price Range',
     )
+    price_from = fields.Float(
+        string='Price From',
+        default=0.0,
+    )
+    price_to = fields.Float(
+        string='Price To',
+        default=0.0,
+    )
 
 
 class PurchaseCondition(models.Model):
@@ -374,6 +385,15 @@ class PurchaseCondition(models.Model):
 
     name = fields.Char(
         string='Purchase Condition',
+    )
+
+
+class PurchaseConditionDetail(models.Model):
+    _name = 'purchase.condition.detail'
+    _description = 'PABI2 Purchase Condition Detail'
+
+    name = fields.Char(
+        string='Purchase Condition Detail',
     )
 
 

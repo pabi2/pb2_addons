@@ -147,6 +147,8 @@
                 <form string="Purchase Price Range">
                     <group>
                         <field name="name"/>
+                        <field name="price_from"/>
+                        <field name="price_to"/>
                     </group>
                 </form>
             </field>
@@ -157,6 +159,8 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Price Range">
                     <field name="name"/>
+                    <field name="price_from"/>
+                    <field name="price_to"/>
                 </tree>
             </field>
        </record>
@@ -227,6 +231,51 @@
        </record>
        <menuitem action="action_purchase_condition_tree"
                  id="menu_action_purchase_condition_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_condition_detail_form" model="ir.ui.view">
+            <field name="name">purchase.condition.detail</field>
+            <field name="model">purchase.condition.detail</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Condition Detail">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_condition_detail_tree" model="ir.ui.view">
+            <field name="name">purchase.condition.detail.tree</field>
+            <field name="model">purchase.condition.detail</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Condition Detail">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_condition_detail_search" model="ir.ui.view">
+            <field name="name">purchase.condition.detail.search</field>
+            <field name="model">purchase.condition.detail</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Condition Detail">
+                    <field name="name" string="Purchase Condition Detail"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_condition_detail_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Condition Detail</field>
+            <field name="res_model">purchase.condition.detail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Condition Detail.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_condition_detail_tree"
+                 id="menu_action_purchase_condition_detail_tree"
                  parent="menu_purchase_config_pabi_master"
                  groups="purchase.group_purchase_manager"/>
 

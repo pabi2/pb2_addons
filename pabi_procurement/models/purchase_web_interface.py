@@ -1,11 +1,135 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, _
+from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 import xmlrpclib
 import base64
 import os
 import inspect
+
+
+class PurchaseRequest(models.Model):
+    _inherit = "purchase.request"
+
+    @api.model
+    def generate_purchase_request(self, data_dict):
+        ret = {}
+        data_dict = self._get_request_info(data_dict)
+        fields = data_dict.keys()
+        data = data_dict.values()
+        # Final Preparation of fields and data
+        try:
+            fields, data = self._finalize_data_to_load(fields, data)
+            load_res = self.load(fields, data)
+            res_id = load_res['ids'] and load_res['ids'][0] or False
+            if not res_id:
+                ret = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': [m['message'] for m in load_res['messages']],
+                }
+            else:
+                res = self.browse(res_id)
+                self.create_purchase_request_attachment(data_dict, res_id)
+                self.create_purchase_request_committee(data_dict, res_id)
+                ret = {
+                    'is_success': True,
+                    'result': {
+                        'request_id': res.id,
+                        'name': res.name,
+                    },
+                    'messages': _('PR has been created.'),
+                }
+                res.state = 'to_approve'
+            self._cr.commit()
+        except Exception, e:
+            ret = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+            self._cr.rollback()
+        return ret
+
+
+class PurchaseRequisition(models.Model):
+    _inherit = "purchase.requisition"
+
+    @api.model
+    def done_order(self, af_info):
+        # {
+        #     'name': 'TE00017',
+        #     'approve_uid': '002241',
+        #     'action' : 'C1' or 'W2'
+        #     'file_name': 'TE00017.pdf',
+        #     'file_url': 'aaaaas.pdf',
+        # }
+        user = self.env['res.users']
+        Order = self.env['purchase.order']
+        res = {}
+        requisition = self.search([('name', '=', af_info['name'])])
+        uid = user.search([('login', '=', af_info['approve_uid'])])
+        if len(requisition) == 1:
+            if af_info['action'] == 'C1':
+                att_file = []
+                try:
+                    attachments = {
+                        'requisition_id': requisition.id,
+                        'name': af_info['file_name'],
+                        'file_url': af_info['file_url'],
+                    }
+                    att_file.append([0, False, attachments])
+                    for order in requisition.purchase_ids:
+                        if order.order_type == 'quotation' \
+                                and order.state not in ('draft', 'cancel'):
+                            requisition.write({
+                                'doc_approve_uid': uid.id,
+                                'date_doc_approve': fields.date.today(),
+                                'attachment_ids': att_file,
+                            })
+                            today = fields.date.today()
+                            order.action_button_convert_to_order()
+                            if order.state2 != 'done' or order.state != 'done':
+                                order.write({
+                                    'state': 'done',
+                                    'state2': 'done',
+                                    'doc_approve_uid': uid.id,
+                                    'date_doc_approve': today,
+                                })
+                                purchase_order = Order.search([
+                                    ('id', '=', order.order_id.id)
+                                ])
+
+                                for purchase in purchase_order:
+                                    po_id = purchase.id
+                                    committees = requisition.\
+                                        _prepare_order_committees(po_id)
+                                    purchase.write({
+                                        'committee_ids': committees,
+                                        'verify_uid': order.verify_uid.id,
+                                        'date_verify': order.date_verify,
+                                        'doc_approve_uid': uid.id,
+                                        'date_doc_approve': today,
+                                    })
+                    if requisition.state != 'done':
+                        requisition.tender_done()
+                    res.update({
+                        'is_success': True,
+                        'result': True,
+                    })
+                except Exception, e:
+                    res.update({
+                        'is_success': False,
+                        'result': False,
+                        'messages': _(str(e)),
+                    })
+        else:
+            res.update({
+                'is_success': False,
+                'result': False,
+                'messages': 'Cannot assign done state to Call for Bids.',
+            })
+        return res
 
 
 class PurchaseWebInterface(models.Model):

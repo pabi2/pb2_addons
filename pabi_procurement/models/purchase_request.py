@@ -354,46 +354,6 @@ class PurchaseRequest(models.Model):
                 break
         return data_dict
 
-    @api.model
-    def generate_purchase_request(self, data_dict):
-        ret = {}
-        data_dict = self._get_request_info(data_dict)
-        fields = data_dict.keys()
-        data = data_dict.values()
-        # Final Preparation of fields and data
-        try:
-            fields, data = self._finalize_data_to_load(fields, data)
-            load_res = self.load(fields, data)
-            res_id = load_res['ids'] and load_res['ids'][0] or False
-            if not res_id:
-                ret = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': [m['message'] for m in load_res['messages']],
-                }
-            else:
-                res = self.browse(res_id)
-                self.create_purchase_request_attachment(data_dict, res_id)
-                self.create_purchase_request_committee(data_dict, res_id)
-                ret = {
-                    'is_success': True,
-                    'result': {
-                        'request_id': res.id,
-                        'name': res.name,
-                    },
-                    'messages': _('PR has been created.'),
-                }
-                res.state = 'to_approve'
-            self._cr.commit()
-        except Exception, e:
-            ret = {
-                'is_success': False,
-                'result': False,
-                'messages': _(str(e)),
-            }
-            self._cr.rollback()
-        return ret
-
     @api.multi
     def button_approved(self):
         res = super(PurchaseRequest, self).button_approved()
