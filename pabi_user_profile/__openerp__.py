@@ -26,6 +26,7 @@ Add more user's profile
     "depends": [
         "hr_expense",
         "pabi_base",
+        "base_name_search_improved",
     ],
     "data": [
         # security
