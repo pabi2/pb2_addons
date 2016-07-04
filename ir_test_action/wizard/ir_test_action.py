@@ -129,7 +129,6 @@ class ir_test_action(models.TransientModel):
     @api.multi
     def execute(self):
         res = self._callback(self.model, self.function, self.args)
-        print res
         if res:
             self.write({'state': 'ok',
                         'message': _('Last execution was successful!')})
