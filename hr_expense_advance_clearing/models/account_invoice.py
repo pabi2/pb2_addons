@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from lxml import etree
-from openerp.osv.orm import setup_modifiers
 from openerp import models, api, fields
 
 

@@ -2,7 +2,6 @@
 from lxml import etree
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
-from openerp.osv.orm import setup_modifiers
 import openerp.addons.decimal_precision as dp
 from openerp import tools
 
