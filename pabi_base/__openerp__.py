@@ -31,7 +31,7 @@ org -> sector -> subsector -> division -> section -> costcenter
     "depends": [
         "base",
         "account",
-        "operating_unit"
+        "operating_unit",
         "base_name_search_improved",
     ],
     "data": [
