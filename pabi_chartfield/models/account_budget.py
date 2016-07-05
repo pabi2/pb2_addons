@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, fields, models
 from .chartfield import CHART_VIEW_FIELD, ChartField
+from lxml import etree
 
 
 class AccountBudget(ChartField, models.Model):
@@ -74,6 +75,46 @@ class AccountBudget(ChartField, models.Model):
         return super(AccountBudget, self).budget_confirm()
 
     # TODO: When confirm budget, validate all fields has relationship
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type=False,
+                        toolbar=False, submenu=False):
+        res = super(AccountBudget, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        FIELD_RELATION = {
+            'unit_base': ['section_id',
+                          'budget_line_unit_base'],
+            'project_base': ['program_id',
+                             'budget_line_project_base'],
+            'personnel': ['personnel_costcenter_id',
+                          'budget_line_personnel'],
+            'invest_asset': ['org_id',
+                             'budget_line_invest_asset'],
+            'invest_construction': ['org_id',
+                                    'budget_line_invest_construction'],
+        }
+        if self._context.get('default_chart_view', '') and view_type == 'form':
+            budget_type = self._context['default_chart_view']
+            del FIELD_RELATION[budget_type]
+            doc = etree.XML(res['arch'])
+            for key in FIELD_RELATION.keys():
+
+                field_name = FIELD_RELATION[key][0]
+                for node in doc.xpath("//field[@name='%s']" % field_name):
+                    if budget_type in ('invest_asset',
+                                       'invest_construction') and \
+                                       field_name == 'org_id':
+                        continue
+                    node.getparent().remove(node)
+
+                line_field_name = FIELD_RELATION[key][1]
+                node_lines = doc.xpath("//field[@name='%s']" % line_field_name)
+                for node_line in node_lines:
+                    node_line.getparent().remove(node_line)
+
+            res['arch'] = etree.tostring(doc)
+        return res
 
 
 class AccountBudgetLine(ChartField, models.Model):
