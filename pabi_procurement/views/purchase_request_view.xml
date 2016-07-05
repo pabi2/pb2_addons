@@ -221,6 +221,7 @@
                 </xpath>
                 <xpath expr="//filter[@name='request_state_rejected']" position="after">
                     <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
+                    <filter name="my_responsible_no_bid" domain="[('responsible_uid','=',uid), ('requisition_state','=','none')]" string="My Responsible, No Bid"/>
                     <filter name="no_bid" domain="[('requisition_state','=','none')]" string="No Bid"/>
                 </xpath>
             </field>
@@ -233,8 +234,7 @@
         <field name="view_mode">tree,form</field>
         <field name="context">
             {
-                "search_default_my_responsible":uid,
-                "search_default_no_bid":True,
+                "search_default_my_responsible_no_bid":uid,
             }
         </field>
         <field name="domain">[('request_state','!=','draft')]</field>
