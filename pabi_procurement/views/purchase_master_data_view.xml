@@ -412,6 +412,7 @@
                     <field name="doctype_id" string="Doc Type"/>
                     <field name="price_range_id" string="Price Range"/>
                     <field name="condition_id" string="Condition"/>
+                    <field name="condition_detail_id" string="Condition Detail"/>
                     <field name="confidential_id" string="Confidential"/>
                 </search>
             </field>
