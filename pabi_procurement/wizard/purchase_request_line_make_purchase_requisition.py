@@ -39,6 +39,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         pr_line_obj = self.env['purchase.request.line']
         active_id = self._context['active_ids'][0]
         req_id = pr_line_obj.browse(active_id).request_id
+        condition = req_id.purchase_condition_id.id
+        condition_detail = req_id.purchase_condition_detail_id.id
         vals = {
             'user_id': req_id.responsible_uid.id,
             'description': req_id.description,
@@ -48,7 +50,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'purchase_type_id': req_id.purchase_type_id.id,
             'purchase_method_id': req_id.purchase_method_id.id,
             'purchase_price_range_id': req_id.purchase_price_range_id.id,
-            'purchase_condition_id': req_id.purchase_condition_id.id,
+            'purchase_condition_id': condition,
+            'purchase_condition_detail_id': condition_detail,
             'purchase_confidential_id': req_id.purchase_confidential_id.id,
             'confidential_detail': req_id.confidential_detail,
             'total_budget_value': req_id.total_budget_value,

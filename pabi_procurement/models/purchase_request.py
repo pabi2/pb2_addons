@@ -91,6 +91,12 @@ class PurchaseRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    purchase_condition_detail_id = fields.Many2one(
+        'purchase.condition.detail',
+        string='Condition Detail',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     purchase_confidential_id = fields.Many2one(
         'purchase.confidential',
         string='Confidential',
