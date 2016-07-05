@@ -26,7 +26,7 @@ class PurchaseOrder(models.Model):
     )
     date_fine = fields.Date(
         string='Fine Date',
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

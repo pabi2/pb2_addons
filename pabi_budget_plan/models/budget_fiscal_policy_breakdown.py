@@ -49,7 +49,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     date = fields.Date(
         string='Date',
         copy=False,
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -124,7 +124,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         self.write({
             'state': 'confirm',
             'validating_user_id': self._uid,
-            'date_confirm': fields.Date.today(),
+            'date_confirm': fields.Date.context_today(self),
         })
         return True
 

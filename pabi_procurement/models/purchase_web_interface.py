@@ -113,12 +113,12 @@ class PurchaseRequisition(models.Model):
                     for order in requisition.purchase_ids:
                         if order.order_type == 'quotation' \
                                 and order.state not in ('draft', 'cancel'):
+                            today = fields.Date.context_today(self)
                             requisition.write({
                                 'doc_approve_uid': uid.id,
-                                'date_doc_approve': fields.date.today(),
+                                'date_doc_approve': today,
                                 'attachment_ids': att_file,
                             })
-                            today = fields.date.today()
                             order.action_button_convert_to_order()
                             if order.state2 != 'done' or order.state != 'done':
                                 order.write({

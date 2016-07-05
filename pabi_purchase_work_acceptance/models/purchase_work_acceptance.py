@@ -117,14 +117,15 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_service_fine(self):
         total_fine = 0.0
+        today = fields.Date.context_today(self)
         if not self.date_receive:
-            self.date_receive = fields.date.today().strftime('%Y-%m-%d')
+            self.date_receive = today.strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
             self.date_receive,
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
-            self.date_contract_end = fields.date.today().strftime('%Y-%m-%d')
+            self.date_contract_end = today.strftime('%Y-%m-%d')
         end_date = datetime.datetime.strptime(
             self.date_contract_end,
             "%Y-%m-%d",
@@ -148,14 +149,15 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
+        today = fields.Date.context_today(self)
         if not self.date_receive:
-            self.date_receive = fields.date.today().strftime('%Y-%m-%d')
+            self.date_receive = today.strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
             self.date_receive or '',
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
-            self.date_contract_end = fields.date.today().strftime('%Y-%m-%d')
+            self.date_contract_end = today.strftime('%Y-%m-%d')
         end_date = datetime.datetime.strptime(
             self.date_contract_end,
             "%Y-%m-%d",
@@ -195,19 +197,19 @@ class PurchaseWorkAcceptance(models.Model):
     )
     date_contract_start = fields.Date(
         string="Contract Start Date",
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
     )
     date_scheduled_end = fields.Date(
         string="Scheduled End Date",
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
     )
     date_contract_end = fields.Date(
         string="Contract End Date",
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
     )
     date_receive = fields.Date(
         string="Receive Date",
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
     )
     is_manual_fine = fields.Boolean(
         string="Use Manual Fine",

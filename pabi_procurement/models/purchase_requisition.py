@@ -384,13 +384,13 @@ class PurchaseRequisition(models.Model):
         self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,
-            'date_verify': fields.date.today(),
+            'date_verify': fields.Date.context_today(self),
         })
         for order in self.purchase_ids:
             if order.state != 'cancel':
                 order.write({
                     'verify_uid': self._uid,
-                    'date_verify': fields.date.today(),
+                    'date_verify': fields.Date.context_today(self),
                 })
         return True
 

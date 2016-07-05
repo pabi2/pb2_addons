@@ -16,7 +16,7 @@ class PurchaseOrder(models.Model):
     )
     date_reference = fields.Date(
         string='Reference Date',
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
         readonly=True,
         track_visibility='onchange',
     )
@@ -32,7 +32,7 @@ class PurchaseOrder(models.Model):
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
     )
     committee_ids = fields.One2many(

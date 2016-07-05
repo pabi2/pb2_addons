@@ -26,7 +26,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
     date = fields.Date(
         string='Date',
         copy=False,
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
     )
     date_submit = fields.Date(
         string='Submitted Date',
@@ -233,7 +233,7 @@ class BudgetPlanCommon(object):
                 line.write(res)
         self.write({
             'state': 'submit',
-            'date_submit': fields.Date.today(),
+            'date_submit': fields.Date.context_today(self),
         })
         return True
 
@@ -257,6 +257,6 @@ class BudgetPlanCommon(object):
         self.write({
             'state': 'approve',
             'validating_user_id': self._uid,
-            'date_approve': fields.Date.today(),
+            'date_approve': fields.Date.context_today(self),
         })
         return True
