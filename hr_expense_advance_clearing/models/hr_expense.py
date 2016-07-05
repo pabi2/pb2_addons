@@ -4,6 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 from openerp import tools
+import ast
 
 
 class HRExpenseLine(models.Model):
@@ -59,17 +60,19 @@ class HRExpenseExpense(models.Model):
         return res
 
     @api.model
-    def _get_outstanding_advance_domain(self):
+    def _get_advance_of_employee_domain(self):
         domain = [('employee_id', '=', self.employee_id.id),
                   ('is_employee_advance', '=', True),
-                  ('amount_to_clearing', '>', 0.0)]
+                  ('state', '=', 'paid')]
         return domain
 
     @api.multi
     def _compute_outstanding_advance_count(self):
         for rec in self:
-            domain = rec._get_outstanding_advance_domain()
-            rec.outstanding_advance_count = self.search_count(domain)
+            domain = rec._get_advance_of_employee_domain()
+            advances = self.search(domain).filtered(lambda x:
+                                                    x.amount_to_clearing > 0.0)
+            rec.outstanding_advance_count = len(advances)
 
     @api.multi
     def action_open_outstanding_advance(self):
@@ -77,8 +80,13 @@ class HRExpenseExpense(models.Model):
         action = self.env.ref('hr_expense_advance_clearing.'
                               'action_expense_advance')
         result = action.read()[0]
-        domain = self._get_outstanding_advance_domain()
-        result.update({'domain': domain})
+        domain = self._get_advance_of_employee_domain()
+        advances = self.search(domain).filtered(lambda x:
+                                                x.amount_to_clearing > 0.0)
+        result.update({'domain': [('id', 'in', advances.ids)]})
+        context = ast.literal_eval(result['context'])
+        context.update({'search_default_confirm': False})
+        result['context'] = context
         return result
 
     @api.multi
@@ -100,7 +108,7 @@ class HRExpenseExpense(models.Model):
                 'hr_expense_advance_clearing.product_product_employee_advance')
         if result.get('is_employee_advance', False):
             line = [(0, 0, {'product_id': advance_product.id,
-                            'date_value': fields.Date.today(),
+                            'date_value': fields.Date.context_today(self),
                             'name': advance_product.name,
                             'uom_id': advance_product.uom_id.id,
                             'unit_quantity': 1.0,

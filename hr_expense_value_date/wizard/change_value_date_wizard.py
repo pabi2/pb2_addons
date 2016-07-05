@@ -9,7 +9,7 @@ class ChangeDateValue(models.TransientModel):
 
     date_value = fields.Date(
         string='Value Date',
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
         required=True,
     )
 

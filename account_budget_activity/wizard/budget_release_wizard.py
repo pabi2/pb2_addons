@@ -83,8 +83,9 @@ class BudgetReleaseWizard(models.TransientModel):
             to_date = fields.Date.to_string(
                 fiscal_date_start +
                 relativedelta(months=r['to_period']) - relativedelta(days=1))
-            ready = fields.Date.today() >= from_date
-            past = fields.Date.today() >= to_date
+            today = fields.Date.context_today(self)
+            ready = today >= from_date
+            past = today >= to_date
             r.update({'from_date': from_date,
                       'to_date': to_date,
                       'ready': ready,

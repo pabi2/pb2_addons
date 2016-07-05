@@ -8,7 +8,7 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
     date_invoice = fields.Date(
         string='Invoice Date',
         required=True,
-        default=fields.Date.today(),
+        default=lambda self: fields.Date.context_today(self),
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -22,8 +22,8 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
     )
 
     @api.model
-    def default_get(self, fields):
-        res = super(ExpenseCreateSupplierInvoice, self).default_get(fields)
+    def default_get(self, field_list):
+        res = super(ExpenseCreateSupplierInvoice, self).default_get(field_list)
         Expense = self.env['hr.expense.expense']
         expense = Expense.browse(self._context.get('active_id'))
         res['pay_to'] = expense.pay_to

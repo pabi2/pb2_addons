@@ -24,6 +24,7 @@ HR Expense Advance Clearing
         'account_cancel_with_reversal',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'data/hr_expense_data.xml',
         'data/product_data.xml',
         'data/invoice_workflow.xml',

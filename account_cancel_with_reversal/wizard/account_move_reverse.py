@@ -24,7 +24,7 @@ class AccountMoveReversal(models.TransientModel):
         model = self._context.get('active_model')
         active_id = self._context.get('active_id')
         parent = self.env[model].browse(active_id)
-        res['date'] = fields.Date.today()
+        res['date'] = fields.Date.context_today(self)
         res['journal_id'] = parent.journal_id.id
         res['move_prefix'] = '_CANCELLED'
         return res

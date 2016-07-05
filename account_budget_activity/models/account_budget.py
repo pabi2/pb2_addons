@@ -179,7 +179,7 @@ class AccountBudget(models.Model):
     @api.model
     def get_fiscal_and_budget_level(self, budget_date=False):
         if not budget_date:
-            budget_date = fields.Date.today()
+            budget_date = fields.Date.context_today(self)
         Fiscal = self.env['account.fiscalyear']
         fiscal_id = Fiscal.find(budget_date)
         res = {'fiscal_id': fiscal_id}
@@ -298,7 +298,8 @@ class AccountBudget(models.Model):
         # How can we prevent this?
         # - how about write an release date, and do not repeat in a day
         _logger.info("Auto Release Budget - Start")
-        fiscal_id = self.env['account.fiscalyear'].find(fields.Date.today())
+        today = fields.Date.context_today(self)
+        fiscal_id = self.env['account.fiscalyear'].find(today)
         budgets = self.search([('fiscalyear_id', '=', fiscal_id)])
         _logger.info("=> Budget IDs = %s" % (budgets._ids,))
         budgets.do_release_budget()

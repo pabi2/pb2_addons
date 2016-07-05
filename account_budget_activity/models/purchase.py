@@ -95,7 +95,7 @@ class PurchaseOrderLine(models.Model):
             date_planned=date_planned, name=name,
             price_unit=price_unit, state=state)
         if not res['value'].get('date_planned', False):
-            date_planned = date_planned or fields.Date.today()
+            date_planned = date_planned or fields.Date.context_today(self)
             res['value'].update({'date_planned': date_planned})
         return res
 
