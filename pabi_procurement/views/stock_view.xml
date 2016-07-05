@@ -64,5 +64,30 @@
                 </xpath>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="stock_ou_view_move_picking_tree" >
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock_operating_unit.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='operating_unit_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='operating_unit_dest_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_move_tree_inherit" >
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock_asset.view_move_tree_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='generate_asset']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>
