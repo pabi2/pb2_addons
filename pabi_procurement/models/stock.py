@@ -22,6 +22,9 @@ class StockPicking(models.Model):
         readonly=True,
         copy=False,
     )
+    description = fields.Text(
+        string='Internal Note',
+    )
 
     _defaults = {
         'move_type': 'one',
