@@ -177,8 +177,8 @@ class ResProgram(SpaStructureTag, ResCommon, models.Model):
     def _compute_current_spa_id(self):
         spas = self.env['res.spa'].search(
             [('id', 'in', self.spa_ids._ids),
-             ('begin_date', '<=', fields.Date.today()),
-             ('end_date', '>=', fields.Date.today()),
+             ('begin_date', '<=', fields.Date.context_today(self)),
+             ('end_date', '>=', fields.Date.context_today(self)),
              ])
         self.current_spa_id = spas and spas[0] or False
 

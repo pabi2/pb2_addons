@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Position">
                     <field name="name"/>
+                    <field name="code"/>
                     <field name="description" />
                 </tree>
             </field>
@@ -28,6 +29,7 @@
 	                        <field name="description" />
                         </group>
                         <group>
+                      		<field name="code" />
                         </group>
                     </group>
                 </form>
