@@ -16,7 +16,7 @@ class AuditlogLogLine(models.Model):
                     dict(self.env[field.model_id.model].
                          fields_get(['state'])['state']['selection'])
                 vals['new_value'] = state_labels[vals['new_value']]
-        res = super(auditlog_log_line, self).create(vals)
+        res = super(AuditlogLogLine, self).create(vals)
         return res
 
 
