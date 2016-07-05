@@ -196,6 +196,7 @@
                 <form string="Purchase Condition">
                     <group>
                         <field name="name"/>
+                        <field name="condition_detail_ids" string="Condition Detail"/>
                     </group>
                 </form>
             </field>
@@ -206,6 +207,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Condition">
                     <field name="name"/>
+                    <field name="condition_detail_ids" string="Condition Detail"/>
                 </tree>
             </field>
        </record>

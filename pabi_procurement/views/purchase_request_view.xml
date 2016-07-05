@@ -41,6 +41,7 @@
                     <field name="purchase_method_id"/>
                     <field name="purchase_price_range_id"/>
                     <field name="purchase_condition_id"/>
+                    <field name="purchase_condition_detail_id"/>
                     <field name="purchase_confidential_id"/>
                     <field name="confidential_detail"/>
                     <field name="request_ref_id"/>
@@ -219,7 +220,9 @@
                                 context="{'group_by':'responsible_uid'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='request_state_rejected']" position="after">
-                        <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
+                    <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
+                    <filter name="my_responsible_no_bid" domain="[('responsible_uid','=',uid), ('requisition_state','=','none')]" string="My Responsible, No Bid"/>
+                    <filter name="no_bid" domain="[('requisition_state','=','none')]" string="No Bid"/>
                 </xpath>
             </field>
     </record>
@@ -229,7 +232,11 @@
         <field name="res_model">purchase.request.line</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="context">{"search_default_my_responsible":uid}</field>
+        <field name="context">
+            {
+                "search_default_my_responsible_no_bid":uid,
+            }
+        </field>
         <field name="domain">[('request_state','!=','draft')]</field>
         <field name="search_view_id" ref="view_purchase_request_line_search"/>
     </record>
