@@ -323,37 +323,6 @@ class PurchaseRequest(models.Model):
                 commitee_ids.append(commitee.id)
         return commitee_ids
 
-    @api.model
-    def _get_request_info(self, data_dict):
-        if 'org_id' in data_dict:
-            Org = self.env['res.org']
-            organization = Org.search([
-                ('id', '=', data_dict['org_id']),
-            ])
-            for org in organization:
-                type_id = False
-                Warehouse = self.env['stock.warehouse']
-                PType = self.env['stock.picking.type']
-                warehouse = Warehouse.search([
-                    ('operating_unit_id', '=', org.operating_unit_id.id),
-                ])
-                for wh in warehouse:
-                    picking_type = PType.search([
-                        ('warehouse_id', '=', wh.id),
-                        ('code', '=', 'incoming'),
-                    ])
-                    for picking in picking_type:
-                        type_id = picking.id
-                        break
-                    break
-                data_dict.update({
-                    'picking_type_id.id': type_id,
-                    'operating_unit_id.id': org.operating_unit_id.id,
-                })
-                del data_dict['org_id']
-                break
-        return data_dict
-
     @api.multi
     def button_approved(self):
         res = super(PurchaseRequest, self).button_approved()

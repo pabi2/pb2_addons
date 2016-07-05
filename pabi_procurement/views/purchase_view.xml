@@ -86,6 +86,16 @@
                             </tree>
                         </field>
                     </page>
+                    <page string="Billing">
+                        <group>
+                            <group>
+                                <field name="bill_number"/>
+                                <field name="date_bill"/>
+                                <field name="bill_uid"/>
+                                <field name="bill_note"/>
+                            </group>
+                        </group>
+                    </page>
                 </xpath>
                 <xpath expr="//field[@name='shipped']" position="after">
                     <field name="verify_uid"/>

@@ -84,6 +84,23 @@ class PurchaseOrder(models.Model):
         related='order_id.state',
         readonly=True,
     )
+    bill_uid = fields.Many2one(
+        'res.users',
+        string='Received by',
+        states={'draft': [('readonly', False)]},
+    )
+    date_bill = fields.Date(
+        string='Billing Date',
+        states={'draft': [('readonly', False)]},
+    )
+    bill_note = fields.Text(
+        string='Additional Info',
+        states={'draft': [('readonly', False)]},
+    )
+    bill_number = fields.Char(
+        string='Billing No.',
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.multi
     @api.depends('doc_approve_uid')
@@ -310,10 +327,6 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.condition',
         string='Condition',
     )
-    condition_detail_id = fields.Many2one(
-        'purchase.condition.detail',
-        string='Condition Detail',
-    )
     confidential_id = fields.Many2one(
         'purchase.confidential',
         string='Confidential',
@@ -386,6 +399,13 @@ class PurchaseCondition(models.Model):
 
     name = fields.Char(
         string='Purchase Condition',
+    )
+    condition_detail_ids = fields.Many2many(
+        string='Purchase Condition Detail',
+        comodel_name='purchase.condition.detail',
+        relation='purchase_condition_rel',
+        column1='condition_id',
+        column2='condition_detail_id',
     )
 
 
