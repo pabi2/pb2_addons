@@ -383,6 +383,7 @@
                         <field name="doctype_id"/>
                         <field name="price_range_id"/>
                         <field name="condition_id"/>
+                        <field name="condition_detail_id" string="Condition Detail"/>
                         <field name="confidential_id"/>
                     </group>
                 </form>
@@ -398,6 +399,7 @@
                     <field name="doctype_id"/>
                     <field name="price_range_id"/>
                     <field name="condition_id"/>
+                    <field name="condition_detail_id" string="Condition Detail"/>
                     <field name="confidential_id"/>
                 </tree>
             </field>
