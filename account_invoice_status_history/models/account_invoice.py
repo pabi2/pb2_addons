@@ -14,15 +14,16 @@ class AccountInvoice(models.Model):
     @api.depends()
     def _compute_log_lines(self):
         for record in self:
-            self._cr.execute("""
-                SELECT logline.id
-                FROM
-                    document_auditlog_log_line logline
-                JOIN ir_model as model
-                    ON (model.id = logline.model_id)
-                WHERE model.model = '%s' AND
-                    logline.res_id = %d
-            """ % (self._model, record.id))
-            result = self._cr.fetchall()
-            line_ids = [r[0] for r in result]
-            record.invoice_auditlog_line_ids = [(6, 0, line_ids)]
+            if isinstance(record.id, int):
+                self._cr.execute("""
+                    SELECT logline.id
+                    FROM
+                        document_auditlog_log_line logline
+                    JOIN ir_model as model
+                        ON (model.id = logline.model_id)
+                    WHERE model.model = '%s' AND
+                        logline.res_id = %d
+                """ % (self._model, record.id))
+                result = self._cr.fetchall()
+                line_ids = [r[0] for r in result]
+                record.invoice_auditlog_line_ids = [(6, 0, line_ids)]

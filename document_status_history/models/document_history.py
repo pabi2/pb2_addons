@@ -1,7 +1,23 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields
+from openerp import models, fields, api
 from openerp import tools
+
+
+class AuditlogLogLine(models.Model):
+    _inherit = 'auditlog.log.line'
+
+    @api.model
+    def create(self, vals):
+        if vals.get('field_id', False):
+            field = self.env['ir.model.fields'].browse(vals['field_id'])
+            if field.ttype == 'selection' and field.name == 'state':
+                state_labels =\
+                    dict(self.env[field.model_id.model].
+                         fields_get(['state'])['state']['selection'])
+                vals['new_value'] = state_labels[vals['new_value']]
+        res = super(auditlog_log_line, self).create(vals)
+        return res
 
 
 class DocumentAuditlogLogLine(models.Model):

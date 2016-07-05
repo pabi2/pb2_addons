@@ -9,7 +9,7 @@
             <field name="log_unlink">True</field>
             <field name="log_create">True</field>
             <field name="log_type">full</field>
-            <field name="state">subscribed</field>
+            <field name="state">draft</field>
         </record>
 
     </data>
