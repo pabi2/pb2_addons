@@ -21,5 +21,9 @@
             <field name="key">pabiweb_file_prefix</field>
             <field name="value">http://10.226.202.134/share/proxy/alfresco/api/node/content/workspace/SpacesStore/</field>
         </record>
+        <record id="base.ir_config_parameter_5" model="ir.config_parameter">
+            <field name="key">default_purchase_tax_id</field>
+            <field name="value">2</field>
+        </record>
     </data>
 </openerp>
