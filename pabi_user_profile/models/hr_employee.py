@@ -12,6 +12,7 @@ class ResourceResource(models.Model):
 
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
+    _rec_name = 'first_name'
 
     name = fields.Char(
         compute='_compute_name',
