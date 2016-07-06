@@ -103,10 +103,9 @@ class HREmployee(models.Model):
     def name_search(self, name, args=None, operator='ilike', limit=100):
         args = args or []
         if name:
-            args = ['|', '|', '|',
-                    ('first_name', operator, name),
-                    ('mid_name', operator, name),
-                    ('last_name', operator, name),
+            args = ['|', ('first_name', operator, name),
+                    '|', ('mid_name', operator, name),
+                    '|', ('last_name', operator, name),
                     ('employee_code', operator, name)]
         return super(HREmployee, self).name_search(name, args=args,
                                                    operator=operator,
