@@ -36,6 +36,7 @@ class HRExpenseExpense(models.Model):
     amount_to_clearing = fields.Float(
         string='Advanced Balance',
         compute='_compute_amount_to_clearing',
+        search='_search_amount_to_clearing',
         copy=False,
     )
     amount_advanced = fields.Float(
@@ -88,6 +89,17 @@ class HRExpenseExpense(models.Model):
         context.update({'search_default_confirm': False})
         result['context'] = context
         return result
+
+    @api.model
+    def _search_amount_to_clearing(self, operator, value):
+        # This method is valid only for Advance
+        recs = self.search([('invoice_id.state', 'in', ('open', 'paid')),
+                            ('is_employee_advance', '=', True)])
+        if operator == '=' and value:
+            recs = recs.filtered(lambda x: x.amount_to_clearing == value)
+        if operator == '>':
+            recs = recs.filtered(lambda x: x.amount_to_clearing > value)
+        return [('id', 'in', recs.ids)]
 
     @api.multi
     @api.depends('advance_clearing_ids')
