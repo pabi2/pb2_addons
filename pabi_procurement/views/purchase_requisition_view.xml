@@ -45,7 +45,7 @@
                 </xpath>
                 <xpath expr="//button[@name='tender_reset']"
                        position="attributes">
-                    <attribute name="states">rejected,cancel</attribute>
+                    <attribute name="states">rejected</attribute>
                     <attribute name="string">Manually Correct</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
@@ -54,8 +54,7 @@
                     <field name="purchase_price_range_id"/>
                     <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>
-                    <field name="purchase_confidential_id"/>
-                    <field name="confidential_detail"/>
+                    <field name="condition_detail"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>

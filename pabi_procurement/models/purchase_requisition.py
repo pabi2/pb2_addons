@@ -81,14 +81,8 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    purchase_confidential_id = fields.Many2one(
-        'purchase.confidential',
-        string='Confidential',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    confidential_detail = fields.Text(
-        string='Confidential Detail',
+    condition_detail = fields.Text(
+        string='Condition Info',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

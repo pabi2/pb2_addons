@@ -97,6 +97,7 @@ class PurchaseWorkAcceptance(models.Model):
                     for inv in invoice:
                         inv.write({
                             'date_invoice': self.date_invoice,
+                            'date_due': self.date_invoice + datetime.timedelta(days=15),
                             'supplier_invoice_number': sup_inv,
                             'reference': self.order_id.name,
                         })

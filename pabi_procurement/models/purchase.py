@@ -327,10 +327,6 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.condition',
         string='Condition',
     )
-    confidential_id = fields.Many2one(
-        'purchase.confidential',
-        string='Confidential',
-    )
 
 
 class PurchaseType(models.Model):
@@ -415,15 +411,6 @@ class PurchaseConditionDetail(models.Model):
 
     name = fields.Char(
         string='Purchase Condition Detail',
-    )
-
-
-class PurchaseConfidential(models.Model):
-    _name = 'purchase.confidential'
-    _description = 'PABI2 Purchase Confidential'
-
-    name = fields.Char(
-        string='Purchase Confidential',
     )
 
 
