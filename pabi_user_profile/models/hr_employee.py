@@ -12,7 +12,6 @@ class ResourceResource(models.Model):
 
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
-    _rec_name = 'first_name'
 
     name = fields.Char(
         compute='_compute_name',
@@ -99,3 +98,15 @@ class HREmployee(models.Model):
     #         string='User',
     #         store=True,
     #     )
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        recs = self.browse()
+        if name:
+            recs = self.search(['|', '|', '|', ('first_name', operator, name),
+                                ('mid_name', operator, name),
+                                ('last_name', operator, name),
+                                ('employee_code', operator, name)] + args,
+                               limit=limit)
+        return recs.name_get()
