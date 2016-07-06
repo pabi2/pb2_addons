@@ -24,25 +24,20 @@
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='budget_line_ids']" position="replace">
                     <field name="budget_line_unit_base" colspan="4" nolabel="1"
-                            attrs="{'invisible':[('chart_view','!=','unit_base')]}"
                             context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
                                 'section_id': section_id}" />
                     <field name="budget_line_project_base" colspan="4" nolabel="1"
-                            attrs="{'invisible':[('chart_view','!=','project_base')]}"
                             context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
                                 'program_id': program_id}" />
                     <field name="budget_line_personnel" colspan="4" nolabel="1"
-                            attrs="{'invisible':[('chart_view','!=','personnel')]}"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
                                 'personnel_costcenter_id': personnel_costcenter_id}" />
                     <field name="budget_line_invest_asset" colspan="4" nolabel="1"
-                            attrs="{'invisible':[('chart_view','!=','invest_asset')]}"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
-                                'org_id': org_id}" />    
+                                'org_id': org_id}" />
                     <field name="budget_line_invest_construction" colspan="4" nolabel="1"
-                            attrs="{'invisible':[('chart_view','!=','invest_construction')]}"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
-                                'org_id': org_id}" />                
+                                'org_id': org_id}" />
                 </xpath>
             </field>
         </record>
