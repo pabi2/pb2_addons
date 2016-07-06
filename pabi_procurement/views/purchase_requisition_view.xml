@@ -54,7 +54,7 @@
                     <field name="purchase_price_range_id"/>
                     <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>
-                    <field name="condition_detail"/>
+                    <field name="purchase_condition_detail"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
