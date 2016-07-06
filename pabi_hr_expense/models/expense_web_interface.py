@@ -86,7 +86,8 @@ class HRExpense(models.Model):
     def generate_hr_expense(self, data_dict):
         self._pre_process_hr_expense(data_dict)
         res = self._create_hr_expense_expense(data_dict)
-        self._post_process_hr_expense(res)
+        if res['is_success'] is True:
+            self._post_process_hr_expense(res)
         return res
 
     @api.model
