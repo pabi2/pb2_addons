@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 
 
+
 class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
     _order = "id"
@@ -84,14 +85,24 @@ class HRExpense(models.Model):
         store=True,
         help="Show section, only if all lines use the same section",
     )
+    project_code = fields.Char(
+        string='Project',
+        related='project_id.code',
+        store=True,
+    )
+    section_code = fields.Char(
+        string='Section',
+        related='section_id.code',
+        store=True,
+    )
 
     @api.multi
-    @api.depends('line_ids.project_id', 'line_ids.section_id')
+    @api.depends('line_ids', 'line_ids.project_id', 'line_ids.section_id')
     def _compute_project_section(self):
         for rec in self:
-            projects = self.line_ids.\
+            projects = rec.line_ids.\
                 filtered(lambda x: x.project_id).mapped('project_id')
-            sections = self.line_ids.\
+            sections = rec.line_ids.\
                 filtered(lambda x: x.section_id).mapped('section_id')
             rec.project_id = len(projects) == 1 and projects[0] or False
             rec.section_id = len(sections) == 1 and sections[0] or False

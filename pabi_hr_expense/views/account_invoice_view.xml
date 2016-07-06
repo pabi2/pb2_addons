@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field[@name='invoice_line']" position="after">
+                    <field name="is_diff_expense_amount" invisible="1"/>
+                    <field name="diff_expense_amount_reason" placeholder="Reason for amount difference"
+                    	attrs="{'invisible': [('is_diff_expense_amount', '=', False)],
+                    			'required': [('is_diff_expense_amount', '=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+	</data>
+</openerp>

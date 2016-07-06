@@ -138,8 +138,11 @@
             <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
             <field name="arch" type="xml">
                 <field name="date" position="before">
-                	<field name="project_id" />
-                	<field name="section_id" />
+                	<field name="project_code" />
+                	<field name="section_code" />
+                </field>
+                <field name="date" position="after">
+                	<field name="date_due" />
                 </field>
             </field>
         </record>

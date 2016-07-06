@@ -2,12 +2,48 @@
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from openerp import models, api, _
+from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    is_diff_expense_amount = fields.Boolean(
+        string='Amount different from expense',
+        compute='_compute_is_diff_expense_amount',
+    )
+    diff_expense_amount_reason = fields.Char(
+        string='Amount Diff Reason',
+        help="Reason when amount is different from Expense",
+    )
+
+    @api.multi
+    @api.depends('amount_total')
+    def _compute_is_diff_expense_amount(self):
+        for rec in self:
+            rec.is_diff_expense_amount = False
+            if self.expense_id:
+                clear_amount = sum([x.price_subtotal < 0.0 and
+                                    x.price_subtotal or 0.0
+                                    for x in self.invoice_line])
+                amount = self.amount_total - clear_amount
+                if amount != self.expense_id.amount:
+                    rec.is_diff_expense_amount = True
+
+    @api.one
+    @api.constrains('amount_total')
+    def _check_amount_not_over_expense(self):
+        # For expense related invoice
+        # Positive line amount must not over total expense
+        if self.expense_id:
+            # Negative amount is advance clearing
+            clear_amount = sum([x.price_subtotal < 0.0 and
+                                x.price_subtotal or 0.0
+                                for x in self.invoice_line])
+            amount = self.amount_total - clear_amount
+            if amount > self.expense_id.amount:
+                raise UserError(_('New amount over expense is not allowed!'))
 
     @api.multi
     def confirm_paid(self):
