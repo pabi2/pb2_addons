@@ -102,11 +102,12 @@ class HREmployee(models.Model):
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):
         args = args or []
-        recs = self.browse()
         if name:
-            recs = self.search(['|', '|', '|', ('first_name', operator, name),
-                                ('mid_name', operator, name),
-                                ('last_name', operator, name),
-                                ('employee_code', operator, name)] + args,
-                               limit=limit)
-        return recs.name_get()
+            args += ['|', '|', '|',
+                     ('first_name', operator, name),
+                     ('mid_name', operator, name),
+                     ('last_name', operator, name),
+                     ('employee_code', operator, name)]
+        return super(HREmployee, self).name_search(name, args=args,
+                                                   operator=operator,
+                                                   limit=limit)
