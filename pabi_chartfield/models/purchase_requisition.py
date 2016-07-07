@@ -20,3 +20,9 @@ class PurchaseRequisition(HeaderTaxBranch, models.Model):
 
 class PurchaseRequisitionLine(ChartFieldAction, models.Model):
     _inherit = 'purchase.requisition.line'
+
+    @api.model
+    def create(self, vals):
+        res = super(PurchaseRequisitionLine, self).create(vals)
+        res.update_related_dimension(vals)
+        return res
