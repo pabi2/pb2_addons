@@ -61,19 +61,17 @@ class HRExpenseExpense(models.Model):
         return res
 
     @api.model
-    def _get_advance_of_employee_domain(self):
+    def _get_outstanding_advance_domain(self):
         domain = [('employee_id', '=', self.employee_id.id),
                   ('is_employee_advance', '=', True),
-                  ('state', '=', 'paid')]
+                  ('amount_to_clearing', '>', 0.0)]
         return domain
 
     @api.multi
     def _compute_outstanding_advance_count(self):
         for rec in self:
-            domain = rec._get_advance_of_employee_domain()
-            advances = self.search(domain).filtered(lambda x:
-                                                    x.amount_to_clearing > 0.0)
-            rec.outstanding_advance_count = len(advances)
+            domain = rec._get_outstanding_advance_domain()
+            rec.outstanding_advance_count = self.search_count(domain)
 
     @api.multi
     def action_open_outstanding_advance(self):
@@ -81,10 +79,8 @@ class HRExpenseExpense(models.Model):
         action = self.env.ref('hr_expense_advance_clearing.'
                               'action_expense_advance')
         result = action.read()[0]
-        domain = self._get_advance_of_employee_domain()
-        advances = self.search(domain).filtered(lambda x:
-                                                x.amount_to_clearing > 0.0)
-        result.update({'domain': [('id', 'in', advances.ids)]})
+        domain = self._get_outstanding_advance_domain()
+        result.update({'domain': domain})
         context = ast.literal_eval(result['context'])
         context.update({'search_default_confirm': False})
         result['context'] = context
@@ -95,10 +91,12 @@ class HRExpenseExpense(models.Model):
         # This method is valid only for Advance
         recs = self.search([('invoice_id.state', 'in', ('open', 'paid')),
                             ('is_employee_advance', '=', True)])
-        if operator == '=' and value:
+        if operator == '=':
             recs = recs.filtered(lambda x: x.amount_to_clearing == value)
         if operator == '>':
             recs = recs.filtered(lambda x: x.amount_to_clearing > value)
+        if operator == '<':
+            recs = recs.filtered(lambda x: x.amount_to_clearing < value)
         return [('id', 'in', recs.ids)]
 
     @api.multi
