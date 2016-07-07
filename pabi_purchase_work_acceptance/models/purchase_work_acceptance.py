@@ -103,12 +103,16 @@ class PurchaseWorkAcceptance(models.Model):
                     ])
                     for line in term_line:
                         days = line.days
+                inv_date = datetime.datetime.strptime(
+                    self.date_invoice,
+                    "%Y-%m-%d",
+                )
+                due_date = inv_date + datetime.timedelta(days=days)
                 if len(invoice) > 0:
                     for inv in invoice:
-                        due = self.date_invoice.timedelta(days=days)
                         inv.write({
                             'date_invoice': self.date_invoice,
-                            'date_due': due,
+                            'date_due': due_date,
                             'supplier_invoice_number': sup_inv,
                             'reference': self.order_id.name,
                         })
