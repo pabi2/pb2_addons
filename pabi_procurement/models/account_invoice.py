@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class AccountInvoice(models.Model):
@@ -23,3 +23,8 @@ class AccountInvoice(models.Model):
         string='Billing No.',
         states={'draft': [('readonly', False)]},
     )
+
+    @api.multi
+    def create_bill_no(self):
+        bill_no = self.env['ir.sequence'].get('bill.number'),
+        self.bill_number = bill_no[0]

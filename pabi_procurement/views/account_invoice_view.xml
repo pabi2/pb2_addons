@@ -8,9 +8,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//notebook/page[@string='Payments']" position="after">
                     <page string="Billing">
+                        <button name="create_bill_no" attrs="{'invisible':[('bill_number','!=',False)]}" string="Create Billing No." type="object"/>
                         <group col="4">
                             <group>
-                                <field name="bill_number"/>
+                                <field name="bill_number" readonly="1"/>
                                 <field name="date_bill"/>
                                 <field name="bill_uid"/>
                                 <field name="bill_note"/>
