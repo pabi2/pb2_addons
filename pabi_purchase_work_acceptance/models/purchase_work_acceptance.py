@@ -93,11 +93,23 @@ class PurchaseWorkAcceptance(models.Model):
                     invoice = Invoice.search([
                         ('origin', 'like', self.order_id.name),
                     ])
+                days = 0
+                term = self.order_id.partner_id.\
+                    property_supplier_payment_term.id or False
+                if term:
+                    PTLine = self.env['payment_term_line']
+                    term_line = PTLine.search([
+                        ('payment_term_id', '=', term.id),
+                    ])
+                    for line in term_line:
+                        days = line.days
                 if len(invoice) > 0:
                     for inv in invoice:
+                        due = self.date_invoice + datetime.timedelta(days=days)
+                        print days
                         inv.write({
                             'date_invoice': self.date_invoice,
-                            'date_due': self.date_invoice + datetime.timedelta(days=15),
+                            'date_due': due,
                             'supplier_invoice_number': sup_inv,
                             'reference': self.order_id.name,
                         })

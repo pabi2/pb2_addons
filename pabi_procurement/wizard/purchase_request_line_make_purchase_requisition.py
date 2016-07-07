@@ -52,7 +52,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'purchase_price_range_id': req_id.purchase_price_range_id.id,
             'purchase_condition_id': condition,
             'purchase_condition_detail_id': condition_detail_id,
-            'condition_detail': req_id.condition_detail,
+            'purchase_condition_detail': req_id.purchase_condition_detail,
             'total_budget_value': req_id.total_budget_value,
             'purchase_prototype_id': req_id.purchase_prototype_id.id,
             'request_uid': req_id.requested_by.id,

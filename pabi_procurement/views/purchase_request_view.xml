@@ -42,7 +42,7 @@
                     <field name="purchase_price_range_id"/>
                     <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>
-                    <field name="condition_detail"/>
+                    <field name="purchase_condition_detail"/>
                     <field name="request_ref_id"/>
                 </xpath>
                 <xpath expr="//button[@name='button_rejected']" position="attributes">

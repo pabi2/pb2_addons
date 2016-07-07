@@ -84,23 +84,6 @@ class PurchaseOrder(models.Model):
         related='order_id.state',
         readonly=True,
     )
-    bill_uid = fields.Many2one(
-        'res.users',
-        string='Received by',
-        states={'draft': [('readonly', False)]},
-    )
-    date_bill = fields.Date(
-        string='Billing Date',
-        states={'draft': [('readonly', False)]},
-    )
-    bill_note = fields.Text(
-        string='Additional Info',
-        states={'draft': [('readonly', False)]},
-    )
-    bill_number = fields.Char(
-        string='Billing No.',
-        states={'draft': [('readonly', False)]},
-    )
 
     @api.multi
     @api.depends('doc_approve_uid')

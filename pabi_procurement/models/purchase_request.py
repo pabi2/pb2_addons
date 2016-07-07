@@ -97,7 +97,7 @@ class PurchaseRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    condition_detail = fields.Text(
+    purchase_condition_detail = fields.Text(
         string='Condition Info',
         readonly=True,
         states={'draft': [('readonly', False)]},
