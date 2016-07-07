@@ -84,10 +84,21 @@ class HRExpense(models.Model):
 
     @api.model
     def generate_hr_expense(self, data_dict):
-        self._pre_process_hr_expense(data_dict)
-        res = self._create_hr_expense_expense(data_dict)
-        if res['is_success'] is True:
-            self._post_process_hr_expense(res)
+        try:
+            # Start
+            self._pre_process_hr_expense(data_dict)
+            res = self._create_hr_expense_expense(data_dict)
+#             if res['is_success'] is True:
+#                 self._post_process_hr_expense(res)
+            # End
+            self._cr.commit()
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': e,
+            }
+            self._cr.rollback()
         return res
 
     @api.model
@@ -145,32 +156,23 @@ class HRExpense(models.Model):
 
     @api.model
     def _create_hr_expense_expense(self, data_dict):
-        ret = {}
+        res = {}
         # Final Preparation of fields and data
-        try:
-            fields, data = self._finalize_data_to_load(data_dict)
-            load_res = self.load(fields, data)
-            res_id = load_res['ids'] and load_res['ids'][0] or False
-            if not res_id:
-                ret = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': [m['message'] for m in load_res['messages']],
-                }
-            else:
-                ret = {
-                    'is_success': True,
-                    'result': {
-                        'id': res_id,
-                    },
-                    'messages': _('Document created successfully'),
-                }
-            self._cr.commit()
-        except Exception, e:
-            ret = {
+        fields, data = self._finalize_data_to_load(data_dict)
+        load_res = self.load(fields, data)
+        res_id = load_res['ids'] and load_res['ids'][0] or False
+        if not res_id:
+            res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': [m['message'] for m in load_res['messages']],
             }
-            self._cr.rollback()
-        return ret
+        else:
+            res = {
+                'is_success': True,
+                'result': {
+                    'id': res_id,
+                },
+                'messages': _('Document created successfully'),
+            }
+        return res
