@@ -62,9 +62,12 @@
                 </xpath>
                 <xpath expr="//button[@name='button_approved']" position="attributes">
                     <attribute name="string">Accept</attribute>
+                    <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
+
                 </xpath>
                 <xpath expr="//button[@name='button_rejected']" position="attributes">
                     <attribute name="string">Cancel</attribute>
+                    <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
                     <!--<field name="price_unit"/>-->
@@ -199,6 +202,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='%(purchase_request_reject_reason.action_order_reject)d']" position="attributes">
                     <attribute name="string">Cancel</attribute>
+                    <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
                 </xpath>
             </field>
     </record>
