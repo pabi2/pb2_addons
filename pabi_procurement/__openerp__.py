@@ -28,6 +28,7 @@ PABI2 - Procurement Module
         "purchase_split_quote2order",
         "purchase_invoice_plan",
         "purchase_split_requisition_line",
+        "purchase_request_reject_reason",
         "l10n_th_thai_holidays",
         "l10n_th_amount_text_ext",
         "res_partner_ext",
