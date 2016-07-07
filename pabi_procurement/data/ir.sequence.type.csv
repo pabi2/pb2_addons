@@ -1,2 +1,3 @@
 id,name,code
 base.ir_sequence_type_cfb_1,Purchase Requisition,"purchase.requisition"
+base.ir_sequence_type_bill_1,Bill Number,"bill.number"
