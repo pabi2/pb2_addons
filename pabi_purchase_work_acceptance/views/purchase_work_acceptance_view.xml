@@ -70,7 +70,7 @@
                     <field name="is_manual_fine"/>
                     <field name="manual_fine"/>
                     <field name="manual_days"/>
-                    <field name="total_fine"/>
+                    <!--<field name="total_fine"/>-->
                 </tree>
             </field>
         </record>
