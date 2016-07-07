@@ -20,3 +20,9 @@ class AccountInvoice(HeaderTaxBranch, models.Model):
 
 class AccountInvoiceLine(ChartFieldAction, models.Model):
     _inherit = 'account.invoice.line'
+
+    @api.model
+    def create(self, vals):
+        res = super(AccountInvoiceLine, self).create(vals)
+        res.update_related_dimension(vals)
+        return res

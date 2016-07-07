@@ -20,3 +20,9 @@ class HRExpenseExpense(HeaderTaxBranch, models.Model):
 
 class HRExpenseLine(ChartFieldAction, models.Model):
     _inherit = 'hr.expense.line'
+
+    @api.model
+    def create(self, vals):
+        res = super(HRExpenseLine, self).create(vals)
+        res.update_related_dimension(vals)
+        return res

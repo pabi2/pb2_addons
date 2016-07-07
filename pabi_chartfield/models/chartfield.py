@@ -458,12 +458,13 @@ class ChartFieldAction(ChartField):
     def _get_chart_view(self, selects_yes):
         # update chart_view
         chart_view = False
-        assert len(selects_yes.keys()) <= 1, 'Only 1 chart_view allowed!'
+        keys = list(set(selects_yes.keys()) & set(CHART_VIEW_FIELD.values()))
+        assert len(keys) <= 1, 'Only 1 chart_view allowed!'
         if selects_yes.keys():
             selected_field = selects_yes.keys()[0]
-            for key, value in CHART_VIEW_FIELD.items():
-                if value == selected_field:
-                    chart_view = key
+            for k, v in CHART_VIEW_FIELD.items():
+                if v == selected_field:
+                    chart_view = k
         return chart_view
 
     @api.multi
@@ -475,14 +476,21 @@ class ChartFieldAction(ChartField):
             selects_no = {k: v for k, v in selects.items() if not v}
             selects_yes = {k: v for k, v in selects.items() if v}
             # update value = false first, the sequence is important
+            res = {}
             for field, _dummy in selects_no.items():
-                res = self._get_chained_dimension(field, clear=True)
-                res.update({'chart_view': False})
-                self.write(res)
+                print field
+                print self._get_chained_dimension(field, clear=True)
+                res.update(self._get_chained_dimension(field, clear=True))
+            print res
+            res.update({'chart_view': self._get_chart_view(selects_yes)})
             for field, _dummy in selects_yes.items():
-                res = self._get_chained_dimension(field)
-                res.update({'chart_view': self._get_chart_view(selects_yes)})
-                self.write(res)
+                if field in res:
+                    res.pop(field)
+                print field
+                print self._get_chained_dimension(field)
+                res.update(self._get_chained_dimension(field))
+            print res
+            self.write(res)
 
     @api.onchange('section_id')
     def _onchange_section_id(self):
