@@ -98,18 +98,3 @@ class HREmployee(models.Model):
     #         string='User',
     #         store=True,
     #     )
-
-    @api.model
-    def name_search(self, name, args=None, operator='ilike', limit=100):
-        args = args or []
-        recs = self.browse()
-        if name:
-            recs = self.search(['|', ('first_name', operator, name),
-                                '|', ('mid_name', operator, name),
-                                '|', ('last_name', operator, name),
-                                ('employee_code', operator, name)],
-                               limit=limit)
-        if not recs:
-            recs = self.search([], limit=limit)
-        print recs
-        return recs.name_get()
