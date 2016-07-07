@@ -97,7 +97,7 @@ class PurchaseWorkAcceptance(models.Model):
                 term = self.order_id.partner_id.\
                     property_supplier_payment_term.id or False
                 if term:
-                    PTLine = self.env['payment.term.line']
+                    PTLine = self.env['account.payment.term.line']
                     term_line = PTLine.search([
                         ('payment_term_id', '=', term.id),
                     ])
