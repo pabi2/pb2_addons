@@ -99,7 +99,7 @@ class PurchaseWorkAcceptance(models.Model):
                 if term:
                     PTLine = self.env['account.payment.term.line']
                     term_line = PTLine.search([
-                        ('payment_term_id', '=', term.id),
+                        ('payment_term_id', '=', term),
                     ])
                     for line in term_line:
                         days = line.days
