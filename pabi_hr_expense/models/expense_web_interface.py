@@ -20,7 +20,18 @@ class HRExpense(models.Model):
             'name': u'Object of this Advance',  # objective
             'line_ids': (  # 1 line only, Advance
                 {
+                 'is_advance_product_line': u'True',
+                 'product_id.id': u'',
+                 'uom_id.id': u'',
                  'name': u'Employee Advance',  # Expense Note (not in AF?)
+                 'unit_amount': u'2000',  # total
+                 'cost_control_id.id': u'',
+                 },
+                {
+                 'is_advance_product_line': u'True',
+                 'product_id.id': u'',
+                 'uom_id.id': u'',
+                 'name': u'AXXAS',  # Expense Note (not in AF?)
                  'unit_amount': u'2000',  # total
                  'cost_control_id.id': u'',
                  },
@@ -63,10 +74,9 @@ class HRExpense(models.Model):
         if 'line_ids' in data_dict:
             advance_product = self.env.ref('hr_expense_advance_clearing.'
                                            'product_product_employee_advance')
-            data = data_dict['line_ids'][0]
-            data['product_id.id'] = advance_product.id
-            data['uom_id.id'] = advance_product.uom_id.id
-            data['is_advance_product_line'] = u'True'
+            for data in data_dict['line_ids']:
+                data['product_id.id'] = advance_product.id
+                data['uom_id.id'] = advance_product.uom_id.id
         # attendee's employee_code
         if 'attendee_employee_ids' in data_dict:
             for data in data_dict['attendee_employee_ids']:
@@ -88,8 +98,8 @@ class HRExpense(models.Model):
             # Start
             self._pre_process_hr_expense(data_dict)
             res = self._create_hr_expense_expense(data_dict)
-#             if res['is_success'] is True:
-#                 self._post_process_hr_expense(res)
+            if res['is_success'] is True:
+                self._post_process_hr_expense(res)
             # End
             self._cr.commit()
         except Exception, e:
@@ -109,8 +119,8 @@ class HRExpense(models.Model):
         Currently it is working with multiple line table but with 1 level only
         data_dict = {
             'name': 'ABC',
-            'line_ids': ({'desc': 'DESC',}),
-            'line2_ids': ({'desc': 'DESC',}),
+            'line_ids': ({'desc': 'DESC'},),
+            'line2_ids': ({'desc': 'DESC'},),
         }
         to
         fields = ['name', 'line_ids/desc', 'line2_ids/desc']
