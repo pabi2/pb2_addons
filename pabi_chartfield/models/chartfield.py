@@ -478,18 +478,12 @@ class ChartFieldAction(ChartField):
             # update value = false first, the sequence is important
             res = {}
             for field, _dummy in selects_no.items():
-                print field
-                print self._get_chained_dimension(field, clear=True)
                 res.update(self._get_chained_dimension(field, clear=True))
-            print res
             res.update({'chart_view': self._get_chart_view(selects_yes)})
             for field, _dummy in selects_yes.items():
                 if field in res:
                     res.pop(field)
-                print field
-                print self._get_chained_dimension(field)
                 res.update(self._get_chained_dimension(field))
-            print res
             self.write(res)
 
     @api.onchange('section_id')
