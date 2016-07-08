@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from itertools import groupby
+from operator import itemgetter
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.addons import decimal_precision as dp
@@ -53,7 +55,6 @@ class HRExpenseExpese(models.Model):
             'price_unit': exp_line.unit_amount or 0.0,
             'quantity': exp_line.unit_quantity,
             'product_id': exp_line.product_id.id or False,
-            'invoice_line_tax_id': [(6, 0, [x.id for x in exp_line.tax_ids])],
         }
 
     @api.model
@@ -132,21 +133,51 @@ class HRExpenseExpese(models.Model):
             account_id = fiscal_pos.map_account(account_id)
         return account_id
 
+    @api.model
+    def merge_invoice_line(self, input_data, group_keys, sum_keys, str_keys):
+        grouper = itemgetter(*group_keys)
+        result = []
+        for key, grp in groupby(sorted(input_data, key=grouper), grouper):
+            temp_dict = dict(zip(group_keys, key))
+            for value in sum_keys:
+                temp_dict[value] = 0.0
+            for value in str_keys:
+                temp_dict[value] = ''
+            for item in grp:
+                for value in sum_keys:
+                    temp_dict[value] += item.get(value, 0.0)
+                for value in str_keys:
+                    word = item.get(value, '')
+                    if len(word) > 0:
+                        temp_dict[value] += \
+                            len(temp_dict[value]) and ',\n' + word or word
+            result.append(temp_dict)
+        return result
+
     @api.multi
-    def _create_supplier_invoice_from_expense(self):
+    def _create_supplier_invoice_from_expense(self, merge_line=False):
         self.ensure_one()
         inv_lines = []
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         expense = self
         invoice_vals = self._prepare_inv(expense)
+        inv_line_datas = []
         for exp_line in expense.line_ids:
             account_id = self._choose_account_from_exp_line(
                 exp_line, invoice_vals['fiscal_position'])
-            inv_line_data = self._prepare_inv_line(account_id, exp_line)
+            inv_line_datas.append(self._prepare_inv_line(account_id, exp_line))
+        if merge_line and inv_line_datas:
+            keys = inv_line_datas[0].keys()
+            sum_keys = ['quantity']  # This field will be summed
+            str_keys = ['name']  # This field will be concatenate
+            group_keys = list(set(keys) - set(sum_keys) - set(str_keys))
+            inv_line_datas = \
+                self.merge_invoice_line(inv_line_datas, group_keys,
+                                        sum_keys, str_keys)
+        for inv_line_data in inv_line_datas:
             inv_line = InvoiceLine.create(inv_line_data)
             inv_lines.append(inv_line.id)
-            exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
         invoice_vals.update({'invoice_line': [(6, 0, inv_lines)]})
         # Create Invoice
         invoice = Invoice.create(invoice_vals)

@@ -46,3 +46,16 @@ class AccountInvoice(models.Model):
 #                       "expense: %s" % (expense.number,)))
 #             expense.signal_workflow('refuse_to_done')
 #         return super(AccountInvoice, self).invoice_validate()
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    expense_line_ids = fields.Many2many(
+        'hr.expense.line',
+        'expense_line_invoice_line_rel',
+        'invoice_line_id',
+        'expense_line_id',
+        readonly=True,
+        copy=False,
+    )

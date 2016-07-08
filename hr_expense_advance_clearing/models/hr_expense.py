@@ -160,36 +160,45 @@ class HRExpenseExpense(models.Model):
                 or all lines with zero amount.'))
         return super(HRExpenseExpense, self).expense_confirm()
 
+    @api.model
+    def _create_negative_clearing_line(self, expense, invoice):
+        advance_product = self.env.ref(
+            'hr_expense_advance_clearing.product_product_employee_advance'
+        )
+        product_categ = advance_product.categ_id
+        if (not advance_product.property_account_expense and
+                not product_categ.property_account_expense_categ):
+            raise UserError(
+                _('Please define expense account '
+                  'on Employee Advance Product.'))
+        employee_advance = expense.amount
+        if expense.amount > expense.advance_expense_id.amount_to_clearing:
+            employee_advance = \
+                expense.advance_expense_id.amount_to_clearing
+        invoice_line = expense.advance_expense_id.invoice_id.invoice_line
+        if not invoice_line:
+            raise UserError(_('No advance product line to reference'))
+        advance_line = invoice_line[0]
+        advance_line.copy({'invoice_id': invoice.id,
+                           'price_unit': -employee_advance,
+                           'sequence': 1, })
+
     @api.multi
     def _create_supplier_invoice_from_expense(self):
-        invoice = super(HRExpenseExpense, self).\
-            _create_supplier_invoice_from_expense()
         expense = self
         if expense.is_advance_clearing:
-            advance_product = self.env.ref(
-                'hr_expense_advance_clearing.product_product_employee_advance'
-            )
-            product_categ = advance_product.categ_id
-            if (not advance_product.property_account_expense and
-                    not product_categ.property_account_expense_categ):
-                raise UserError(
-                    _('Please define expense account '
-                      'on Employee Advance Product.'))
-            employee_advance = expense.amount
-            if expense.amount > expense.advance_expense_id.amount_to_clearing:
-                employee_advance = \
-                    expense.advance_expense_id.amount_to_clearing
-            invoice_line = expense.advance_expense_id.invoice_id.invoice_line
-            if not invoice_line:
-                raise UserError(_('No advance product line to reference'))
-            advance_line = invoice_line[0]
-            advance_line.copy({'invoice_id': invoice.id,
-                               'price_unit': -employee_advance,
-                               'sequence': 1, })
+            invoice = super(HRExpenseExpense, self).\
+                _create_supplier_invoice_from_expense(merge_line=False)
+            self._create_negative_clearing_line(expense, invoice)
             invoice.write({'is_advance_clearing': True,
                            'invoice_type': 'advance_clearing_invoice'})
         elif expense.is_employee_advance:
+            invoice = super(HRExpenseExpense, self).\
+                _create_supplier_invoice_from_expense(merge_line=True)
             invoice.write({'invoice_type': 'expense_advance_invoice'})
+        else:
+            invoice = super(HRExpenseExpense, self).\
+                _create_supplier_invoice_from_expense(merge_line=False)
         return invoice
 
     @api.model
