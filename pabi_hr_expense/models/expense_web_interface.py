@@ -12,7 +12,7 @@ class HRExpense(models.Model):
         data_dict = {
             'is_employee_advance': u'True',
             'number': u'/',  # av_id
-            'employee_code': u'002648',  # req_by
+            'employee_code': u'004012',  # request for employee
             'date': u'2016-01-31',  # by_time
             'write_date': u'2016-01-31 00:00:00',  # updated_time
             'advance_type': u'attend_seminar',  # or by_product, objective_type
@@ -21,18 +21,14 @@ class HRExpense(models.Model):
             'line_ids': (  # 1 line only, Advance
                 {
                  'is_advance_product_line': u'True',
-                 'product_id.id': u'',
-                 'uom_id.id': u'',
                  'name': u'Employee Advance',  # Expense Note (not in AF?)
                  'unit_amount': u'2000',  # total
                  'cost_control_id.id': u'',
                  },
                 {
                  'is_advance_product_line': u'True',
-                 'product_id.id': u'',
-                 'uom_id.id': u'',
-                 'name': u'AXXAS',  # Expense Note (not in AF?)
-                 'unit_amount': u'2000',  # total
+                 'name': u'Employee Advance 2',  # Expense Note (not in AF?)
+                 'unit_amount': u'3000',  # total
                  'cost_control_id.id': u'',
                  },
             ),
@@ -65,11 +61,15 @@ class HRExpense(models.Model):
 
     @api.model
     def _pre_process_hr_expense(self, data_dict):
-        Expense = self.env['hr.employee']
+        Employee = self.env['hr.employee']
         # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
-        data_dict['employee_id.id'] = Expense.search(domain).id
+        employee = Employee.search(domain)
+        data_dict['employee_id.id'] = employee.id
         del data_dict['employee_code']
+        # OU based on employee
+        data_dict['operating_unit_id.id'] = \
+            employee.org_id.operating_unit_id.id
         # Advance product
         if 'line_ids' in data_dict:
             advance_product = self.env.ref('hr_expense_advance_clearing.'
@@ -81,7 +81,7 @@ class HRExpense(models.Model):
         if 'attendee_employee_ids' in data_dict:
             for data in data_dict['attendee_employee_ids']:
                 domain = [('employee_code', '=', data.get('employee_code'))]
-                data['employee_id.id'] = Expense.search(domain).id
+                data['employee_id.id'] = Employee.search(domain).id
                 del data['employee_code']
         return data_dict
 
@@ -96,7 +96,7 @@ class HRExpense(models.Model):
     def generate_hr_expense(self, data_dict):
         try:
             # Start
-            self._pre_process_hr_expense(data_dict)
+            data_dict = self._pre_process_hr_expense(data_dict)
             res = self._create_hr_expense_expense(data_dict)
             if res['is_success'] is True:
                 self._post_process_hr_expense(res)
