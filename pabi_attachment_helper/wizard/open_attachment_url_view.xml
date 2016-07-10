@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_open_attachment_url">
+            <field name="name">view.open.attachment.url</field>
+            <field name="model">open.attachment.url</field>
+            <field name="arch" type="xml">
+                <form>
+                	<p class="oe_gray">
+                		Click open to redirect to the document. 
+                	</p>
+                    <footer>
+                        <button name="open" string="View Attachment" type="object"
+                            class="oe_highlight" />
+                        or
+                        <button string="Close" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_url">
+            <field name="name">Open Attachment URL</field>
+            <field name="res_model">open.attachment.url</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>
