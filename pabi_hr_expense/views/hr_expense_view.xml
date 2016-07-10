@@ -2,6 +2,7 @@
 
 <openerp>
 	<data>
+	
 		<!-- Expenses -->
         <record id="view_expenses_form" model="ir.ui.view">
             <field name="name">hr.expense.form</field>

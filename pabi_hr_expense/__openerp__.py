@@ -18,6 +18,7 @@
         "hr_expense_cancel_reason",
         "account_budget_activity",
         "pabi_bank",
+        "pabi_attachment_helper",
     ],
     "data": [
         "security/ir.model.access.csv",

@@ -18,6 +18,7 @@ class HRExpense(models.Model):
             'advance_type': u'attend_seminar',  # or by_product, objective_type
             'date_back': u'2016-10-30',  # cost_control_to
             'name': u'Object of this Advance',  # objective
+            'apweb_ref_url': u'',
             'line_ids': (  # 1 line only, Advance
                 {
                  'is_advance_product_line': u'True',
@@ -35,25 +36,37 @@ class HRExpense(models.Model):
             'attendee_employee_ids': (
                 {
                  'employee_code': u'000143',
-                 'position_id.id': u'1',
+                 'position_id.id': u'',
                  },
                 {
                  'employee_code': u'000165',
-                 'position_id.id': u'2',
+                 'position_id.id': u'',
                  },
                 {
                  'employee_code': u'000166',
-                 'position_id.id': u'3',
+                 'position_id.id': u'',
                  },
                 {
                  'employee_code': u'000177',
-                 'position_id.id': u'4',
+                 'position_id.id': u'',
                  },
             ),
             'attendee_external_ids': (
                 {
                  'attendee_name': u'Walai Charoenchaimongkol',
                  'position': u'Manager',
+                 },
+            ),
+            'attachment_ids': (
+                {
+                 'name': u'Expense1.pdf',
+                 'description': u'My Expense 1 Document Description',
+                 'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
+                 },
+                {
+                 'name': u'Expense2.pdf',
+                 'description': u'My Expense 2 Document Description',
+                 'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
                  },
             )
         }
@@ -83,6 +96,14 @@ class HRExpense(models.Model):
                 domain = [('employee_code', '=', data.get('employee_code'))]
                 data['employee_id.id'] = Employee.search(domain).id
                 del data['employee_code']
+        # attachment
+        if 'attachment_ids' in data_dict:
+            for data in data_dict['attachment_ids']:
+                ConfParam = self.env['ir.config_parameter']
+                file_prefix = ConfParam.get_param('pabiweb_file_prefix')
+                data['url'] = file_prefix + data['url']
+                data['res_model'] = self._name
+                data['type'] = 'url'
         return data_dict
 
     @api.model
@@ -97,6 +118,7 @@ class HRExpense(models.Model):
         try:
             # Start
             data_dict = self._pre_process_hr_expense(data_dict)
+            print data_dict
             res = self._create_hr_expense_expense(data_dict)
             if res['is_success'] is True:
                 self._post_process_hr_expense(res)
