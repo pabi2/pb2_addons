@@ -338,7 +338,7 @@ class PurchaseWebInterface(models.Model):
             send_act = "C2"
         else:
             send_act = "X2"
-        comment = request.reject_reason_txt
+        comment = request.reject_reason_txt or ''
         result = alfresco.req.action(request.name, send_act, comment, username)
         if not result['success']:
             raise UserError(
