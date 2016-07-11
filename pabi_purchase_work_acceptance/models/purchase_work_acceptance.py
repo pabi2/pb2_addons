@@ -14,6 +14,7 @@ class PurchaseWorkAcceptance(models.Model):
     _STATES = [
         ('draft', 'Draft'),
         ('evaluation', 'Evaluation'),
+        ('cancel', 'Cancelled'),
         ('done', 'Done'),
     ]
 
@@ -325,6 +326,11 @@ class PurchaseWorkAcceptance(models.Model):
     def action_set_draft(self):
         self.ensure_one()
         self.state = 'draft'
+
+    @api.multi
+    def action_cancel(self):
+        self.ensure_one()
+        self.state = 'cancel'
 
     @api.model
     def open_order_line(self, ids):
