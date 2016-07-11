@@ -108,9 +108,7 @@ class PurchaseWorkAcceptance(models.Model):
                     self.date_invoice,
                     "%Y-%m-%d",
                 )
-                print inv_date
-                print self.date_invoice
-                due_date = inv_date.date.timedelta(days=days)
+                due_date = inv_date + datetime.timedelta(days=days)
                 if len(invoice) > 0:
                     for inv in invoice:
                         inv.write({
