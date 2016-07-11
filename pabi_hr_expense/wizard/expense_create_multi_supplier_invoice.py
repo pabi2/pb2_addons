@@ -46,8 +46,9 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
     @api.model
     def _prepare_inv(self, supplier_info_line, expense):
         partner = (supplier_info_line.partner_id)
-        return self.env['hr.expense.expense']._prepare_inv_header(partner.id,
-                                                                  expense)
+        return self.env['hr.expense.expense'].\
+            with_context(amount_expense_request=supplier_info_line.amount).\
+            _prepare_inv_header(partner.id, expense)
 
     @api.multi
     def create_multi_supplier_invoices(self):

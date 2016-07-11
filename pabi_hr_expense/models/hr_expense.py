@@ -106,6 +106,18 @@ class HRExpense(models.Model):
             rec.project_id = len(projects) == 1 and projects[0] or False
             rec.section_id = len(sections) == 1 and sections[0] or False
 
+    @api.model
+    def _prepare_inv_header(self, partner_id, expense):
+        res = super(HRExpense, self)._prepare_inv_header(partner_id,
+                                                         expense)
+        if self._context.get('amount_expense_request', False):
+            res.update({'amount_expense_request':
+                        self._context.get('amount_expense_request')})
+        else:
+            res.update({'amount_expense_request':
+                        expense.amount})
+        return res
+
 
 class HRExpenseAdvanceDueHistory(models.Model):
     _name = 'hr.expense.advance.due.history'

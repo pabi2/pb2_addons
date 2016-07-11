@@ -7,11 +7,12 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/notebook/page/field[@name='invoice_line']" position="after">
+                <xpath expr="/form/sheet/group/group" position="inside">
                     <field name="is_diff_expense_amount" invisible="1"/>
+                    <field name="amount_expense_request"
+                    	attrs="{'invisible': [('is_diff_expense_amount', '=', False)]}"/>
                     <field name="diff_expense_amount_reason" placeholder="Reason for amount difference"
-                    	attrs="{'invisible': [('is_diff_expense_amount', '=', False)],
-                    			'required': [('is_diff_expense_amount', '=', True)]}"/>
+                    	attrs="{'invisible': [('is_diff_expense_amount', '=', False)]}"/>
                 </xpath>
             </field>
         </record>
