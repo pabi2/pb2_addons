@@ -9,12 +9,20 @@ from openerp.exceptions import Warning as UserError
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
+    amount_expense_request = fields.Float(
+        string='Expense Request Amount',
+        copy=False,
+        readonly=True,
+    )
     is_diff_expense_amount = fields.Boolean(
         string='Amount different from expense',
         compute='_compute_is_diff_expense_amount',
+        readonly=True,
     )
     diff_expense_amount_reason = fields.Char(
         string='Amount Diff Reason',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Reason when amount is different from Expense",
     )
 
@@ -28,7 +36,7 @@ class AccountInvoice(models.Model):
                                     x.price_subtotal or 0.0
                                     for x in rec.invoice_line])
                 amount = rec.amount_total - clear_amount
-                if amount != rec.expense_id.amount:
+                if amount != rec.amount_expense_request:
                     rec.is_diff_expense_amount = True
 
     @api.one
@@ -73,3 +81,14 @@ class AccountInvoice(models.Model):
                     'date_due': date_due.strftime('%Y-%m-%d'),
                 })
         return super(AccountInvoice, self).confirm_paid()
+
+    @api.multi
+    def action_move_create(self):
+        result = super(AccountInvoice, self).action_move_create()
+        for invoice in self:
+            if invoice.is_diff_expense_amount and \
+                    not invoice.diff_expense_amount_reason:
+                raise UserError(
+                    _('Total amount is changed from Expense Request Amount.\n'
+                      'Please provide Amount Diff Reason'))
+        return result

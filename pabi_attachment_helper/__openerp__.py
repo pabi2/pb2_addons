@@ -18,7 +18,7 @@ This module add Attachment tab for
     "application": False,
     "installable": True,
     "depends": [
-        "document_url",
+        # "document_url",
         "hr_expense",
     ],
     "data": [
