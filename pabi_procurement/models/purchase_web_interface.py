@@ -101,7 +101,7 @@ class PurchaseRequisition(models.Model):
         requisition = self.search([('name', '=', af_info['name'])])
         uid = user.search([('login', '=', af_info['approve_uid'])])
         if len(requisition) == 1:
-            if af_info['action'] == 'C1':
+            if af_info['action'] == 'C1':  # approve
                 att_file = []
                 try:
                     attachments = {
@@ -148,6 +148,18 @@ class PurchaseRequisition(models.Model):
                         'is_success': True,
                         'result': True,
                     })
+                except Exception, e:
+                    res.update({
+                        'is_success': False,
+                        'result': False,
+                        'messages': _(str(e)),
+                    })
+            else:  # reject
+                try:
+                    requisition.write({
+                        'cancel_reason_txt': af_info['comment'],
+                    })
+                    requisition.rejected()
                 except Exception, e:
                     res.update({
                         'is_success': False,
