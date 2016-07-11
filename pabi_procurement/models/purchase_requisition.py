@@ -295,7 +295,6 @@ class PurchaseRequisition(models.Model):
                     'verify_uid': self.verify_uid.id,
                     'date_verify': self.date_verify,
                     'doc_no': self.doc_no,
-                    'fine_rate': 0.1,
                 })
         return res
 

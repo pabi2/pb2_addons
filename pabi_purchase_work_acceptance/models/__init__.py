@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import purchase_requisition
 from . import purchase
 from . import purchase_work_acceptance
 from . import stock
