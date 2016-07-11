@@ -117,14 +117,8 @@ class HRExpense(models.Model):
     def generate_hr_expense(self, data_dict):
         try:
             # Start
-            print '------> generate_hr_expense(): first data_dict'
-            print data_dict
             data_dict = self._pre_process_hr_expense(data_dict)
-            print '------> generate_hr_expense(): data_dict after self._pre_process_hr_expense'
-            print data_dict
             res = self._create_hr_expense_expense(data_dict)
-            print '------> generate_hr_expense(): result from self._create_hr_expense_expense'
-            print res
             if res['is_success'] is True:
                 self._post_process_hr_expense(res)
             # End
@@ -197,12 +191,7 @@ class HRExpense(models.Model):
         res = {}
         # Final Preparation of fields and data
         fields, data = self._finalize_data_to_load(data_dict)
-        print '------> _create_hr_expense_expense(): fields and data after _finalize_data_to_load'
-        print fields
-        print data
         load_res = self.load(fields, data)
-        print '------> _create_hr_expense_expense(): load result'
-        print load_res
         res_id = load_res['ids'] and load_res['ids'][0] or False
         if not res_id:
             res = {
