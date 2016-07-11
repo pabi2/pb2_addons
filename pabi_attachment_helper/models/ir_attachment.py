@@ -15,7 +15,7 @@ class IrAttachment(models.Model):
 
     # Add module and fk field
     _models_check = {
-        'hr.expense.expense': 'expese_id',
+        'hr.expense.expense': 'expense_id',
     }
 
     @api.model
