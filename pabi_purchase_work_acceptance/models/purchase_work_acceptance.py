@@ -14,6 +14,7 @@ class PurchaseWorkAcceptance(models.Model):
     _STATES = [
         ('draft', 'Draft'),
         ('evaluation', 'Evaluation'),
+        ('cancel', 'Cancelled'),
         ('done', 'Done'),
     ]
 
@@ -107,9 +108,7 @@ class PurchaseWorkAcceptance(models.Model):
                     self.date_invoice,
                     "%Y-%m-%d",
                 )
-                print inv_date
-                print self.date_invoice
-                due_date = inv_date.date.timedelta(days=days)
+                due_date = inv_date + datetime.timedelta(days=days)
                 if len(invoice) > 0:
                     for inv in invoice:
                         inv.write({
@@ -171,7 +170,7 @@ class PurchaseWorkAcceptance(models.Model):
         if not self.date_receive:
             self.date_receive = today.strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
-            self.date_receive or '',
+            self.date_receive,
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
@@ -197,7 +196,7 @@ class PurchaseWorkAcceptance(models.Model):
             self.overdue_day = -1 * overdue_day
 
     @api.one
-    @api.depends('date_receive', 'date_contract_end')
+    @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         product_type = self._check_product_type()
         if product_type == 'service':
@@ -325,6 +324,11 @@ class PurchaseWorkAcceptance(models.Model):
     def action_set_draft(self):
         self.ensure_one()
         self.state = 'draft'
+
+    @api.multi
+    def action_cancel(self):
+        self.ensure_one()
+        self.state = 'cancel'
 
     @api.model
     def open_order_line(self, ids):
