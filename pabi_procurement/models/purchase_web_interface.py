@@ -159,7 +159,12 @@ class PurchaseRequisition(models.Model):
                     requisition.write({
                         'cancel_reason_txt': af_info['comment'],
                     })
-                    requisition.rejected()
+                    requisition.signal_workflow('cancel_requisition')
+                    requisition.state = 'cancel'
+                    res.update({
+                        'is_success': True,
+                        'result': True,
+                    })
                 except Exception, e:
                     res.update({
                         'is_success': False,
