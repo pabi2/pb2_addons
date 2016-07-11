@@ -19,7 +19,7 @@ class HRExpense(models.Model):
             'date_back': u'2016-10-30',  # cost_control_to
             'name': u'Object of this Advance',  # objective
             'apweb_ref_url': u'',
-            'line_ids': (  # 1 line only, Advance
+            'line_ids': [  # 1 line only, Advance
                 {
                  'is_advance_product_line': u'True',
                  'name': u'Employee Advance',  # Expense Note (not in AF?)
@@ -32,8 +32,8 @@ class HRExpense(models.Model):
                  'unit_amount': u'3000',  # total
                  'cost_control_id.id': u'',
                  },
-            ),
-            'attendee_employee_ids': (
+            ],
+            'attendee_employee_ids': [
                 {
                  'employee_code': u'000143',
                  'position_id.id': u'',
@@ -50,14 +50,14 @@ class HRExpense(models.Model):
                  'employee_code': u'000177',
                  'position_id.id': u'',
                  },
-            ),
-            'attendee_external_ids': (
+            ],
+            'attendee_external_ids': [
                 {
                  'attendee_name': u'Walai Charoenchaimongkol',
                  'position': u'Manager',
                  },
-            ),
-            'attachment_ids': (
+            ],
+            'attachment_ids': [
                 {
                  'name': u'Expense1.pdf',
                  'description': u'My Expense 1 Document Description',
@@ -68,7 +68,7 @@ class HRExpense(models.Model):
                  'description': u'My Expense 2 Document Description',
                  'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
                  },
-            )
+            ]
         }
         return self.generate_hr_expense(data_dict)
 
@@ -158,7 +158,8 @@ class HRExpense(models.Model):
         line_count = 1
         _table_fields = []  # Tuple fields
         for key in fields:
-            if isinstance(data_dict[key], tuple):
+            if isinstance(data_dict[key], list) or \
+                    isinstance(data_dict[key], tuple):
                 _table_fields.append(key)
         data_array = {}
         for table in _table_fields:
