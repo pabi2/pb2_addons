@@ -159,13 +159,10 @@ class PurchaseRequisition(models.Model):
                     })
             else:  # reject
                 try:
-                    print af_info['comment']
                     requisition.write({
                         'reject_reason_txt': af_info['comment'],
                     })
-                    print requisition.reject_reason_txt
                     requisition.signal_workflow('open_rejected')
-                    print requisition.state
                     res.update({
                         'is_success': True,
                         'result': True,
