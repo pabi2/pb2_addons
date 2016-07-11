@@ -170,7 +170,7 @@ class PurchaseWorkAcceptance(models.Model):
         if not self.date_receive:
             self.date_receive = today.strftime('%Y-%m-%d')
         received = datetime.datetime.strptime(
-            self.date_receive or '',
+            self.date_receive,
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
@@ -196,7 +196,7 @@ class PurchaseWorkAcceptance(models.Model):
             self.overdue_day = -1 * overdue_day
 
     @api.one
-    @api.depends('date_receive', 'date_contract_end')
+    @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         product_type = self._check_product_type()
         if product_type == 'service':
