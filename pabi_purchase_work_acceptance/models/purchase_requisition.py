@@ -32,6 +32,7 @@ class PurchaseRequisition(models.Model):
         string='Fine Rate',
         required=True,
         readonly=True,
+        default=0.0,
         states={'draft': [('readonly', False)]},
     )
 
