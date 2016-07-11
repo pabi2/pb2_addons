@@ -23,12 +23,12 @@ class AccountInvoice(models.Model):
     def _compute_is_diff_expense_amount(self):
         for rec in self:
             rec.is_diff_expense_amount = False
-            if self.expense_id:
+            if rec.expense_id:
                 clear_amount = sum([x.price_subtotal < 0.0 and
                                     x.price_subtotal or 0.0
-                                    for x in self.invoice_line])
-                amount = self.amount_total - clear_amount
-                if amount != self.expense_id.amount:
+                                    for x in rec.invoice_line])
+                amount = rec.amount_total - clear_amount
+                if amount != rec.expense_id.amount:
                     rec.is_diff_expense_amount = True
 
     @api.one
