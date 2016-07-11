@@ -28,6 +28,11 @@
             <field name="act_to" ref="act_rejected"/>
             <field name="signal">rejected</field>
         </record>
+        <record id="trans_open_to_rejected" model="workflow.transition">
+            <field name="act_from" ref="purchase_requisition.act_open"/>
+            <field name="act_to" ref="act_rejected"/>
+            <field name="signal">open_rejected</field>
+        </record>
         <!-- Validate CFB Amount VS Quotation Amount -->
         <record id="purchase_requisition.act_open" model="workflow.activity">
             <field name="action">

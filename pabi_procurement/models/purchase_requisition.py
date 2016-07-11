@@ -361,7 +361,7 @@ class PurchaseRequisition(models.Model):
     def rejected(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
-        self.signal_workflow('rejected')
+        # self.signal_workflow('rejected')
         self.state = 'rejected'
 
     @api.multi

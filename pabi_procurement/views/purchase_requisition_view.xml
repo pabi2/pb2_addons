@@ -28,7 +28,6 @@
                     <field name="purchase_prototype_id"/>
                     <field name="request_uid"/>
                     <field name="assign_uid"/>
-                    <field name="date_approve"/>
                     <field name="request_ref_id"/>
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
@@ -45,7 +44,7 @@
                 </xpath>
                 <xpath expr="//button[@name='tender_reset']"
                        position="attributes">
-                    <attribute name="states">rejected</attribute>
+                    <attribute name="states">rejected,in_progress</attribute>
                     <attribute name="string">Manually Correct</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
