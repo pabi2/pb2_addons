@@ -94,6 +94,7 @@ class PurchaseRequisition(models.Model):
         #     'action' : 'C1' or 'W2'
         #     'file_name': 'TE00017.pdf',
         #     'file_url': 'aaaaas.pdf',
+        #     'comment': 'reject reason',
         # }
         user = self.env['res.users']
         Order = self.env['purchase.order']
@@ -110,13 +111,15 @@ class PurchaseRequisition(models.Model):
                         'file_url': af_info['file_url'],
                     }
                     att_file.append([0, False, attachments])
+                    today = fields.Date.context_today(self)
+                    requisition.write({
+                        'doc_approve_uid': uid.id,
+                        'date_doc_approve': today,
+                    })
                     for order in requisition.purchase_ids:
                         if order.order_type == 'quotation' \
                                 and order.state not in ('draft', 'cancel'):
-                            today = fields.Date.context_today(self)
                             requisition.write({
-                                'doc_approve_uid': uid.id,
-                                'date_doc_approve': today,
                                 'attachment_ids': att_file,
                             })
                             order.action_button_convert_to_order()
@@ -157,10 +160,9 @@ class PurchaseRequisition(models.Model):
             else:  # reject
                 try:
                     requisition.write({
-                        'cancel_reason_txt': af_info['comment'],
+                        'reject_reason_txt': af_info['comment'],
                     })
-                    requisition.signal_workflow('cancel_requisition')
-                    requisition.state = 'cancel'
+                    requisition.signal_workflow('rejected')
                     res.update({
                         'is_success': True,
                         'result': True,
