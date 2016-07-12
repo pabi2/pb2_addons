@@ -48,7 +48,7 @@
 		</box>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["W:\\pabi2_FIT\\pb2_pabi\\pabi_forms\\jrxml_reports\\"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -301,7 +301,6 @@ $F{amount_total_text_th}]]></variableExpression>
 	</detail>
 	<lastPageFooter>
 		<band height="310">
-			<printWhenExpression><![CDATA["W:\\pabi2_FIT\\pb2_pabi\\pabi_forms\\jrxml_reports\\"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement mode="Transparent" x="390" y="106" width="92" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
