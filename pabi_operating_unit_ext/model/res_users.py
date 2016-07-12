@@ -9,7 +9,9 @@ class ResUsers(models.Model):
         string="Access All Operating Unit",
         compute='_compuate_access_all_operating_unit',
         store=True,
-        help="This user belong to a group that can access of Operating Units")
+        default=False,
+        help="This user belong to a group that can access of Operating Units",
+    )
 
     @api.multi
     @api.depends('default_operating_unit_id.access_all_operating_unit',
