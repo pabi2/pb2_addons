@@ -48,7 +48,7 @@
                 	<field name="plan_invoice_created" invisible="1"/>
                     <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
                             type="action" class="oe_highlight"
-                            attrs="{'invisible':['|',('state', 'not in', ('confirmed', 'approved')),
+                            attrs="{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
                     <button name="action_force_done" string="Force Done"
