@@ -17,29 +17,7 @@
 	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_10'))]" />
 	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_11'))]" />
 	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_12'))]" />
-	<!-- 
-	<record id="nstda_msd_invoice" model="ir.actions.report.xml">
-		<field name="string">Invoice</field>
-		<field name="auto">True</field>
-		<field name="model">account.invoice</field>
-		<field name="jasper_model_id" ref="account.model_account_invoice"/>
-		<field name="name">Invoice</field>
-		<field name="report_name">nstda.msd.invoice</field>
-		<field name="report_rml">pabi_forms/jrxml_reports/nstda_msd_invoice.jrxml</field>
-		<field name="menu">True</field>
-		<field name="header">False</field>
-		<field name="jasper_report">True</field>
-		<field name="jasper_output">pdf</field>
-		<field name="copies">3</field>
-	</record>
-	
-	<record id="nstda_msd_invoice_values" model="ir.values">
-		<field name="name">Invoice</field>
-		<field name="model">account.invoice</field>
-		<field name="key2" eval="'client_print_multi'" />
-		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(nstda_msd_invoice)" />
-	</record>
-	-->
+
 
 	<record id="purchase_work_acceptance" model="ir.actions.report.xml">
 		<field name="string">Work Acceptance</field>
@@ -480,6 +458,28 @@
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(billing_receipt)" />
 	</record>
+	
+	
+	<!-- Tax Receipt on Customer Invoice (กรณีคืนเงิน AV) -->
+	<record id="customer_invoice_receipt_full" model="ir.actions.report.xml">
+		<field name="string">Receipt/Tax Invoice (full)</field>
+		<field name="auto">True</field>
+		<field name="model">account.invoice</field>
+		<field name="jasper_model_id" ref="account.model_account_invoice"/>
+		<field name="name">Receipt (full)</field>
+		<field name="report_name">customer.invoice.tax.receipt.full</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/customer_invoice_receipt_full.jrxml</field>
+		<field name="menu">True</field>
+		<field name="header">False</field>
+		<field name="jasper_report">True</field>
+		<field name="jasper_output">pdf</field>
+	</record>
+	<record id="customer_invoice_receipt_full_values" model="ir.values">
+		<field name="name">Receipt/Tax Invoice (full)</field>
+		<field name="model">account.invoice</field>
+		<field name="key2" eval="'client_print_multi'" />
+		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_invoice_receipt_full)" />
+	</record>	
 
 </data>
 </openerp>
