@@ -75,7 +75,7 @@
                     <button name="print_requisition_with_condition" type="object" string="View PD"/>
                 </xpath>
                 <xpath expr="//button[@name='%(purchase_requisition.action_purchase_requisition_partner)d']" position="attributes">
-                    <attribute name="attrs">{'invisible': [('state', 'not in', ('open', 'done'))]}</attribute>
+                    <attribute name="attrs">{'invisible': [('state', 'not in', ('in_progress', 'open', 'done'))]}</attribute>
                 </xpath>
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
