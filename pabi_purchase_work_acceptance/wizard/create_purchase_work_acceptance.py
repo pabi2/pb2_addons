@@ -221,5 +221,9 @@ class PurchaseInvoicePlan(models.Model):
         for invoice_plan in self:
             result.append(
                 (invoice_plan.id,
-                 "Installment #%s" % (invoice_plan.installment)))
+                 "%s %s/ Installment #%s" % (
+                     invoice_plan.order_id.name,
+                     invoice_plan.order_line_id.name,
+                     invoice_plan.installment,
+                 )))
         return result

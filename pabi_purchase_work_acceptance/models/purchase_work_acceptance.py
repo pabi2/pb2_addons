@@ -279,6 +279,11 @@ class PurchaseWorkAcceptance(models.Model):
         'purchase.order',
         string='Purchase Order',
     )
+    order_method = fields.Selection(
+        string='Order Method',
+        store=True,
+        related='order_id.invoice_method',
+    )
     eval_receiving = fields.Selection(
         selection=[
             ('3', 'On time'),
