@@ -3,20 +3,12 @@
 from openerp import models, fields
 
 
-class ResCountry(models.Model):
-
-    _inherit = 'res.country'
-
-    name_en = fields.Char(string='Country (en)', required=False)
-
-
 class ResCountryProvince(models.Model):
 
     _name = 'res.country.province'
     _description = 'Provinces'
 
     name = fields.Char(string='Province', required=True)
-    name_en = fields.Char(string='Province (en)', required=False)
     country_id = fields.Many2one(
         'res.country',
         string='Country',
@@ -30,7 +22,6 @@ class ResCountryDistrict(models.Model):
     _description = 'Districts'
 
     name = fields.Char(string='District', required=True)
-    name_en = fields.Char(string='District (en)', required=False)
     province_id = fields.Many2one(
         'res.country.province',
         string='Province',
@@ -44,7 +35,6 @@ class ResCountryTownship(models.Model):
     _description = 'Township'
 
     name = fields.Char(string='Township', required=True)
-    name_en = fields.Char(string='Township (en)', required=False)
     district_id = fields.Many2one(
         'res.country.district',
         string='District',
