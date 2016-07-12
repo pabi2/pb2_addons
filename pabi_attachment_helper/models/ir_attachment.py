@@ -27,6 +27,7 @@ class IrAttachment(models.Model):
                     vals[field] = vals.get('res_id')
                 if vals.get(field, False):
                     vals['res_id'] = vals.get(field)
+        print vals
         return super(IrAttachment, self).create(vals)
 
     @api.multi
