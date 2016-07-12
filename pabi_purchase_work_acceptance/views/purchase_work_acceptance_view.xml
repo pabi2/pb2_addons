@@ -71,6 +71,7 @@
                     <field name="is_manual_fine"/>
                     <field name="manual_fine"/>
                     <field name="manual_days"/>
+                    <field name="state"/>
                     <!--<field name="total_fine"/>-->
                 </tree>
             </field>

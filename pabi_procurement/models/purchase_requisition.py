@@ -521,20 +521,10 @@ class PurchaseRequisition(models.Model):
         result = False
         self.ensure_one()
         doc_type = self.get_doc_type()
-        Report = self.env['ir.actions.report.xml']
-        matching_reports = Report.search([
-            ('model', '=', self._name),
-            ('report_type', '=', 'pdf'),
-            ('report_name', '=',
-             'purchase.requisition_'+doc_type.name.lower())],)
-        if matching_reports:
-            report = matching_reports[0]
-            result, _ = openerp.report.render_report(self._cr, self._uid,
-                                                     [self.id],
-                                                     report.report_name,
-                                                     {'model': self._name})
-            eval_context = {'time': time, 'object': self}
-        return result
+        if not doc_type:
+            raise UserError("Cant' get PD Document Type.")
+        report_name = 'purchase.requisition_'+doc_type.name.lower()
+        return self.env['report'].get_action(self, report_name)
 
 
 class PurchaseRequisitionLine(models.Model):
