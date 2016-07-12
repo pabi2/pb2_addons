@@ -488,9 +488,7 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise UserError(
-                "Cant' get PD Document Type."
-            )
+            raise UserError("Cant' get PD Document Type.")
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
