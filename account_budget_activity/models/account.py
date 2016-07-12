@@ -60,10 +60,10 @@ class AccountFiscalyearBudgetLevel(models.Model):
 #         string='Control on PO',
 #         default=False,
 #     )
-#     exp_budget_control = fields.Boolean(
-#         string='Control on Expense',
-#         default=False,
-#     )
+    exp_budget_control = fields.Boolean(
+        string='Control on Expense',
+        default=False,
+    )
     release_interval = fields.Selection(
         [('1', '1 Month'),
          ('3', '3 Months'),
@@ -76,6 +76,11 @@ class AccountFiscalyearBudgetLevel(models.Model):
         string='Auto Release',
         default=False,
     )
+
+    @api.onchange('is_budget_control')
+    def onchange_is_budget_control(self):
+        for record in self:
+            record.exp_budget_control = record.is_budget_control
 
 
 class AccountJournal(models.Model):
