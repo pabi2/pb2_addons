@@ -2,6 +2,19 @@
 
 <openerp>
     <data>        
+    
+		<record id="view_employee_filter" model="ir.ui.view">
+            <field name="name">view.employee.filter</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+	            <xpath expr='/search/field[@name="name"]' position="replace">
+                    <field name="name" string="Employees"
+                    	filter_domain="['|','|','|','|','|','|',('last_name','ilike',self),('mid_name','ilike',self),('first_name','ilike',self),('employee_code','ilike',self),('first_name','ilike',self),('work_email','ilike',self),('name','ilike',self)]"/>
+	            </xpath>
+	        </field>
+	    </record>
+    
 		<record id="view_hr_employee_form_pabi" model="ir.ui.view">
             <field name="name">hr.employee.form.pabi</field>
             <field name="model">hr.employee</field>
