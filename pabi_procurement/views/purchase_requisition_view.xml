@@ -72,9 +72,10 @@
                     <button name="to_verify" states="in_progress" string="Send to Verify" class="oe_highlight"/>
                     <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_manager" class="oe_highlight"/>
                     <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
+                    <button name="print_requisition_with_condition" type="object" string="View PD"/>
                 </xpath>
                 <xpath expr="//button[@name='%(purchase_requisition.action_purchase_requisition_partner)d']" position="attributes">
-                    <attribute name="attrs">{'invisible': [('state', 'not in', ('in_progress', 'open', 'done'))]}</attribute>
+                    <attribute name="attrs">{'invisible': [('state', 'not in', ('open', 'done'))]}</attribute>
                 </xpath>
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
@@ -163,15 +164,20 @@
                     	</field>
                     </page>
                     <page string="Approval Report">
-                        <group>
-                            <field name="verify_uid"/>
-                            <field name="date_verify"/>
-                            <field name="doc_no"/>
-                            <field name="doc_approve_uid"/>
-                            <field name="date_doc_approve"/>
-                            <field name="doc_header"/>
-                            <field name="doc_footer"/>
-                            <field name="reject_reason_txt"/>
+                        <button name="create_approval_no" attrs="{'invisible':[('doc_no','!=',False)]}" string="Create Approval No." type="object"/>
+                        <group col="4">
+                            <group>
+                                <field name="verify_uid"/>
+                                <field name="date_verify"/>
+                                <field name="doc_approve_uid"/>
+                                <field name="date_doc_approve"/>
+                                <field name="reject_reason_txt"/>
+                            </group>
+                            <group>
+                                <field name="doc_no"/>
+                                <field name="doc_header"/>
+                                <field name="doc_footer"/>
+                            </group>
                         </group>
                     </page>
                 </xpath>

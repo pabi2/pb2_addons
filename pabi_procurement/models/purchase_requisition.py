@@ -179,19 +179,25 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
     )
     doc_no = fields.Char(
-        string='No.',
+        string='Approval No.',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     doc_header = fields.Text(
         string='Header',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'done': [('readonly', False)],
+            },
     )
     doc_footer = fields.Text(
         string='Footer',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'done': [('readonly', False)],
+            },
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
@@ -261,6 +267,11 @@ class PurchaseRequisition(models.Model):
         po_obj = self.env["purchase.order"]
         po_obj.action_button_convert_to_order()
         return True
+
+    @api.multi
+    def create_approval_no(self):
+        doc_no = self.env['ir.sequence'].get('approval.report'),
+        self.doc_no = doc_no[0]
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -371,6 +382,12 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
+    def send_pbweb_requisition_cancel(self):
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_requisition_cancel(self)
+        return True
+
+    @api.multi
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
@@ -470,6 +487,10 @@ class PurchaseRequisition(models.Model):
     def print_call_for_bid_form(self):
         self.ensure_one()
         doc_type = self.get_doc_type()
+        if not doc_type:
+            raise UserError(
+                "Cant' get PD Document Type."
+            )
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
@@ -496,6 +517,26 @@ class PurchaseRequisition(models.Model):
                                                   'res_model': self._name,
                                                   'res_id': self.id,
                                                   'type': 'binary'})
+
+    @api.multi
+    def print_requisition_with_condition(self):
+        result = False
+        self.ensure_one()
+        doc_type = self.get_doc_type()
+        Report = self.env['ir.actions.report.xml']
+        matching_reports = Report.search([
+            ('model', '=', self._name),
+            ('report_type', '=', 'pdf'),
+            ('report_name', '=',
+             'purchase.requisition_'+doc_type.name.lower())],)
+        if matching_reports:
+            report = matching_reports[0]
+            result, _ = openerp.report.render_report(self._cr, self._uid,
+                                                     [self.id],
+                                                     report.report_name,
+                                                     {'model': self._name})
+            eval_context = {'time': time, 'object': self}
+        return result
 
 
 class PurchaseRequisitionLine(models.Model):
