@@ -12,11 +12,18 @@ class ResUsers(models.Model):
         help="This user belong to a group that can access of Operating Units")
 
     @api.multi
-    @api.depends('groups_id.access_all_operating_unit')
+    @api.depends('default_operating_unit_id.access_all_operating_unit',
+                 'operating_unit_ids.access_all_operating_unit',
+                 'groups_id.access_all_operating_unit')
     def _compuate_access_all_operating_unit(self):
         for user in self:
-            if user.groups_id.filtered('access_all_operating_unit'):
+            if (user.default_operating_unit_id.access_all_operating_unit or
+                    user.operating_unit_ids.
+                    filtered('access_all_operating_unit') or
+                    user.groups_id.filtered('access_all_operating_unit')):
                 user.access_all_operating_unit = True
+            else:
+                user.access_all_operating_unit = False
 
 
 class ResGroups(models.Model):
@@ -25,5 +32,5 @@ class ResGroups(models.Model):
     access_all_operating_unit = fields.Boolean(
         string="Access All Operating Unit",
         copy=False,
-        help="With this checkbox checked, users in this Operating Unit "
-        "will have access to all other Operating Unit too")
+        help="With this checkbox checked, users in this Group "
+        "will have access to all Operating Units")
