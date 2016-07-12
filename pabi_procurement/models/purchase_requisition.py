@@ -179,19 +179,25 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
     )
     doc_no = fields.Char(
-        string='No.',
+        string='Approval No.',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     doc_header = fields.Text(
         string='Header',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'done': [('readonly', False)],
+            },
     )
     doc_footer = fields.Text(
         string='Footer',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'done': [('readonly', False)],
+            },
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
@@ -261,6 +267,11 @@ class PurchaseRequisition(models.Model):
         po_obj = self.env["purchase.order"]
         po_obj.action_button_convert_to_order()
         return True
+
+    @api.multi
+    def create_approval_no(self):
+        doc_no = self.env['ir.sequence'].get('approval.report'),
+        self.doc_no = doc_no[0]
 
     @api.model
     def _prepare_committee_line(self, line, order_id):

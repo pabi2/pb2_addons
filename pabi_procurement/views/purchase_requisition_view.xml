@@ -163,15 +163,20 @@
                     	</field>
                     </page>
                     <page string="Approval Report">
-                        <group>
-                            <field name="verify_uid"/>
-                            <field name="date_verify"/>
-                            <field name="doc_no"/>
-                            <field name="doc_approve_uid"/>
-                            <field name="date_doc_approve"/>
-                            <field name="doc_header"/>
-                            <field name="doc_footer"/>
-                            <field name="reject_reason_txt"/>
+                        <button name="create_approval_no" attrs="{'invisible':[('doc_no','!=',False)]}" string="Create Approval No." type="object"/>
+                        <group col="4">
+                            <group>
+                                <field name="verify_uid"/>
+                                <field name="date_verify"/>
+                                <field name="doc_approve_uid"/>
+                                <field name="date_doc_approve"/>
+                                <field name="reject_reason_txt"/>
+                            </group>
+                            <group>
+                                <field name="doc_no"/>
+                                <field name="doc_header"/>
+                                <field name="doc_footer"/>
+                            </group>
                         </group>
                     </page>
                 </xpath>

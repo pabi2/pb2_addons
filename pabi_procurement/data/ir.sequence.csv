@@ -2,3 +2,4 @@ id,name,prefix,padding,code
 base.ir_sequence_cfb_1,Purchase Requisition Sequence,"PD%(y)s",6,purchase.requisition
 purchase.seq_purchase_order,Purchase Order,"PO%(y)s",6,purchase.order
 base.ir_sequence_bill_1,Billing Sequence,"BL%(y)s",6,bill.number
+base.ir_sequence_approval_1,Approval Report,"PD-APP%(y)s",6,approval.report
