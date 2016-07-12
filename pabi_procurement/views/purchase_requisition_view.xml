@@ -74,7 +74,7 @@
                     <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
                 </xpath>
                 <xpath expr="//button[@name='%(purchase_requisition.action_purchase_requisition_partner)d']" position="attributes">
-                    <attribute name="attrs">{'invisible': ['|', ('line_ids','=',[]),('state', 'in', ('draft', 'done'))]}</attribute>
+                    <attribute name="attrs">{'invisible': [('state', 'in', ('draft', 'done'))]}</attribute>
                 </xpath>
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
