@@ -7,4 +7,7 @@ class OperatingUnit(models.Model):
 
     @api.model
     def _ou_domain(self):
-        return [('id', 'in', [g.id for g in self.env.user.operating_unit_ids])]
+        if self.env.user.access_all_operating_unit:
+            return []
+        else:
+            return [('id', 'in', self.env.user.operating_unit_ids._ids)]

@@ -29,6 +29,8 @@
         "hr_expense_auto_invoice",  # passing OU from Expense to Invoice
     ],
     "data": [
+        "security/operating_unit_security.xml",
+        "views/res_users_view.xml",
     ],
     "demo": [
     ],
