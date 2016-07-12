@@ -340,7 +340,7 @@ class PurchaseWebInterface(models.Model):
         send_act = "3"
         comment = requisition.cancel_reason_txt or ''
         req_name = requisition.name
-        result = alfresco.req.action(req_name, send_act, comment, username)
+        result = alfresco.ord.action(req_name, send_act, comment, username)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

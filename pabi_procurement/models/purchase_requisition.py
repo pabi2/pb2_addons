@@ -487,6 +487,10 @@ class PurchaseRequisition(models.Model):
     def print_call_for_bid_form(self):
         self.ensure_one()
         doc_type = self.get_doc_type()
+        if not doc_type:
+            raise UserError(
+                "Cant' get PD Document Type."
+            )
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
@@ -513,6 +517,26 @@ class PurchaseRequisition(models.Model):
                                                   'res_model': self._name,
                                                   'res_id': self.id,
                                                   'type': 'binary'})
+
+    @api.multi
+    def print_requisition_with_condition(self):
+        result = False
+        self.ensure_one()
+        doc_type = self.get_doc_type()
+        Report = self.env['ir.actions.report.xml']
+        matching_reports = Report.search([
+            ('model', '=', self._name),
+            ('report_type', '=', 'pdf'),
+            ('report_name', '=',
+             'purchase.requisition_'+doc_type.name.lower())],)
+        if matching_reports:
+            report = matching_reports[0]
+            result, _ = openerp.report.render_report(self._cr, self._uid,
+                                                     [self.id],
+                                                     report.report_name,
+                                                     {'model': self._name})
+            eval_context = {'time': time, 'object': self}
+        return result
 
 
 class PurchaseRequisitionLine(models.Model):
