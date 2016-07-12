@@ -134,6 +134,10 @@
 						    <field name="taxid" />
                         </group>
                     </group>
+                    <group>
+                    	<field name="address_print_text" />
+                    	<field name="address_print_text_receipt" />
+                    </group>
                 </form>
             </field>
         </record>

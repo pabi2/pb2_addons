@@ -175,3 +175,11 @@ class ResTaxbranch(ResCommon, models.Model):
     taxid = fields.Char(
         string='Tax ID',
     )
+    address_print_text = fields.Text(
+        string='Print Address',
+        translate=True,
+    )
+    address_print_text_receipt = fields.Text(
+        string='Print Address (Receipt)',
+        translate=True,
+    )
