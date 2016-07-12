@@ -1,7 +1,14 @@
 <?xml version="1.0"?>
 <openerp>
 <data>
-	
+        <report 
+            id="account_supplier_invoices"
+            model="account.invoice"
+            string="Supplier Invoices"
+            report_type="qweb-pdf"
+            name="pabi_forms.account_supplier_invoices_lang"
+            file="pabi_forms.account_supplier_invoices_lang"
+        />
 
 </data>
 </openerp>

@@ -11,6 +11,10 @@
     ],
     'data': [
         "jasper_data.xml",
+        'template.xml',
+        'qweb_reports/report_layout.xml',
+        'qweb_reports/report_invoice.xml',
+        'qweb_data.xml',
     ],
     'installable': True,
     'auto_install': False,
