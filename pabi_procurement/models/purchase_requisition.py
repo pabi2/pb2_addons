@@ -382,6 +382,12 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
+    def send_pbweb_requisition_cancel(self):
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_requisition_cancel(self)
+        return True
+
+    @api.multi
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'

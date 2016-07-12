@@ -238,7 +238,7 @@ class PurchaseWebInterface(models.Model):
                 }
             ]
         }
-        result = alfresco.ord.create(arg)
+        result = alfresco.ord.action(arg)
         return result
 
     @api.model
@@ -299,7 +299,7 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
-        result = alfresco.ord.create(arg)
+        result = alfresco.ord.action(arg)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
@@ -320,6 +320,27 @@ class PurchaseWebInterface(models.Model):
         else:
             send_act = "X2"
         result = alfresco.req.action(request_name, send_act, user_name)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
+        return result
+
+    @api.model
+    def send_pbweb_requisition_cancel(self, requisition):
+        ConfParam = self.env['ir.config_parameter']
+        if ConfParam.get_param('pabiweb_active') != 'TRUE' or \
+                not requisition.reject_reason_txt:
+            return False
+        url = ConfParam.get_param('pabiweb_url')
+        username = self.env.user.login
+        password = ConfParam.get_param('pabiweb_password')
+        connect_string = "http://%s:%s@%s" % (username, password, url)
+        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
+        send_act = "3"
+        comment = requisition.cancel_reason_txt or ''
+        req_name = requisition.name
+        result = alfresco.req.action(req_name, send_act, comment, username)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

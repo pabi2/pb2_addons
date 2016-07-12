@@ -40,5 +40,11 @@
                 send_pbweb_requisition()
 	           	tender_open()</field>
         </record>
+        <record id="purchase_requisition.act_cancel" model="workflow.activity">
+            <field name="action">
+                send_pbweb_requisition_cancel()
+                tender_cancel()
+            </field>
+        </record>
     </data>
 </openerp>
