@@ -222,8 +222,8 @@ class PurchaseInvoicePlan(models.Model):
             result.append(
                 (invoice_plan.id,
                  "%s %s/ Installment #%s" % (
-                     invoice_plan.order_line_id.name,
                      invoice_plan.order_id.name,
+                     invoice_plan.order_line_id.name,
                      invoice_plan.installment,
                  )))
         return result
