@@ -11,6 +11,9 @@ class ResPartner(models.Model):
         string='ID',
         readonly=True,
     )
+    name = fields.Char(
+        translate=True,
+    )
     create_date = fields.Datetime(
         readonly=True,
     )
