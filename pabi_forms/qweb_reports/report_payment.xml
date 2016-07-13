@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="report_supplier_payment">
+            <t t-call="pabi_forms.report_layout_header">
+                <div class="page" style="font-size:16px;font-family: TH SarabunPSK !important;">
+                    <div class="row text-center mb16">
+                         <h3><strong>PAYMENT VOUCHER</strong></h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <p>
+                                <strong>Doc. Date : </strong><span t-field="o.date"/><br/>
+                                <strong>Currency : </strong><span t-field="o.currency_id.name"/><br/>
+                                <strong>Reference Doc : </strong><span t-esc="get_invoices(o.line_dr_ids)" />INVOICES<br/>
+                                <strong>Doc.HeaderText : </strong><span></span><br/>
+                                <strong>Paid To : </strong><span><span t-field="o.partner_id.name"/></span>
+                            </p>
+                        </div>
+                        <div class="col-xs-3">
+                            <p>
+                                <strong>Posting Date : </strong><span t-field="o.date"/><br/>
+                                <strong>Rate : </strong><span t-esc="get_currency_rate(o.currency_id, o.date)"/>
+                            </p>
+                        </div>
+                        <div class="col-xs-5">
+                            <strong>Doc. Type : </strong><strong style="font-size:25px;">PM</strong><br/>
+                            <strong>Fiscal Year/Doc. No.: </strong><span t-field="o.period_id.fiscalyear_id.code"/>/<span t-field="o.move_id.name"/><br/>
+                            <strong>Reversed Doc. No. : </strong><span t-field="o.cancel_move_id.name"/>
+                        </div>
+                    </div>
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr style="border-top: 1px solid;">
+                                    <th>Clearing Doc</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_dr_ids" t-as="line">
+                                    <td><span t-field="line.move_line_id.invoice.number"/></td>
+                                    <td><span t-field="line.move_line_id.invoice.amount_total"
+                                                t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table  class="table table-condensed">
+                            <tr class="border-black">
+                                <td><strong>Text:</strong></td>
+                                <td><p t-field="o.narration"/></td>
+                            </tr>
+                        </table>
+                        <table class="table table-condensed">
+                            <tr class="border-black">
+                                <td>
+                                    <p><strong>Cheque No.</strong><span></span><br/>
+                                        <strong>Amount</strong><span></span></p>
+                                </td>
+                                <td>
+                                    <p><strong>Bank/Branch</strong><span></span><br/>
+                                    <strong>Date</strong><span></span></p>
+                                </td>
+                            </tr>
+                        </table>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr style="border-top: 1px solid;">
+                                <th rowspan="2">Pst Key</th>
+                                <th rowspan="2">Account</th>
+                                <th rowspan="2">Name</th>
+                                <th colspan="2" class="text-center" >Amount(THB)</th>
+                                <th rowspan="2">W/T Cd.</th>
+                                <th rowspan="2">BA</th>
+                                <th rowspan="2">PrCtr/CCtr</th>
+                                <th rowspan="2">Int. Order</th>
+                                <th rowspan="2">WBS</th>
+                            </tr>
+                            <tr style="border-top:hidden;">
+                                <th>Dr.</th>
+                                <th>Cr.</th>
+                            </tr>
+                        </thead>
+                        <tbody class="invoice_tbody">
+                            <t t-if="o.move_ids">
+                                <t t-foreach="o.move_ids" t-as="move_line">
+                                    <tr>
+                                        <td><span></span></td>
+                                        <td><span t-field="move_line.account_id.code"/></td>
+                                        <td><span t-field="move_line.account_id.name"/></td>
+                                        <td><span t-field="move_line.debit" 
+                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                                        <td><span t-field="move_line.credit"
+                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                                        <td><span></span></td>
+                                        <td></td>
+                                        <td><span t-esc="move_line.section_id and move_line.section_id.code or move_line.project_id and move_line.project_id.code or ''"></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            
+                        </tbody>
+                        <tr style="border-bottom: 1px solid black;">
+                            <td colspan="2"></td>
+                            <td style="padding-top:100px;"><strong>Total</strong></td>
+                            <td style="padding-top:100px;"><strong t-field="o.amount"
+                                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                            <td style="padding-top:100px;"><strong t-field="o.amount"
+                                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                            <td colspan="5"></td>
+                        </tr>
+                    </table>
+                    
+                    <table class="table table-condensed" >
+                        <tr style="border-top:hidden;">
+                            <td><strong>Accounted by</strong></td>
+                            <td>______________________</td>
+                            <td><strong>Accounting Reviewed by</strong></td>
+                            <td>______________________</td>
+                            <td><strong>Approved by</strong></td>
+                            <td>______________________</td>
+                        </tr>
+                        <tr style="border-top:hidden;">
+                            <td></td>
+                            <td>__/__/____</td>
+                            <td></td>
+                            <td>__/__/____</td>
+                            <td></td>
+                            <td>__/__/____</td>
+                        </tr>
+                        <tr style="border-top:hidden;">
+                            <td colspan="6"><strong>Receipt Information</strong></td>
+                        </tr>
+                        <tr style="border-top:hidden;">
+                            <td><strong>Recipient</strong></td>
+                            <td>______________________</td>
+                            <td><strong> Receipt No.</strong></td>
+                            <td>______________________</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr style="border-top:hidden;">
+                            <td></td>
+                            <td>(_______________)</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr style="border-top:hidden;">
+                            <td></td>
+                            <td>__/__/____</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <div class="row">
+                        <div class="text-center">
+                            <strong>2223027885/ธ. กรุงเทพ จํากัด (มหาชน)สาขาคลองหลวง ปทุมธานี</strong>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="account_supplier_payment_lang">
+            <t t-call="report.html_container">
+                <t t-foreach="doc_ids" t-as="doc_id">
+                    <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', 'pabi_forms.report_supplier_payment')"/>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</openerp>

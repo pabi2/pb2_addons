@@ -8,7 +8,7 @@
             <t t-if="not o or not 'company_id' in o">
                 <t t-set="company" t-value="res_company"></t>
             </t>
-            <div class="header" style="font-size:12px;">
+            <div class="header" style="font-size:16px;font-family: TH SarabunPSK !important;">
                 <div class="row">
                     <div class="col-xs-3">
                         <p><strong>PrintDate : </strong><span><span t-esc="time.strftime('%d/%m/%Y')"/></span><br/>
@@ -26,7 +26,7 @@
                 </div>
             </div>
             <t t-raw="0" />
-            <div class="footer" style="font-size:12px;">
+            <div class="footer" style="font-size:16px;font-family: TH SarabunPSK !important;">
                 <div class="text-right">
                     <ul class="list-inline">
                         <li><strong>Page</strong> </li>

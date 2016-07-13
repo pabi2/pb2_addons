@@ -3,30 +3,30 @@
     <data>
         <template id="report_supplier_invoice_doc">
             <t t-call="pabi_forms.report_layout_header">
-                <div class="page" style="font-size:12px;font-family: THSarabunPSK !important;">
+                <div class="page" style="font-size:16px;font-family: TH SarabunPSK !important;">
                     <div class="row text-center mb16">
-                         <h5><strong>AP VOUCHER</strong></h5>
+                         <h3><strong>AP VOUCHER</strong></h3>
                     </div>
                     <div class="row">
                         <div class="col-xs-4">
                             <p>
-                                <strong>Doc. Date : </strong><span t-esc="o.date_invoice"/><br/>
-                                <strong>Currency : </strong><span t-esc="o.currency_id.name"/><br/>
-                                <strong>Reference Doc : </strong><span t-esc="o.number"/><br/>
-                                <strong>Doc.HeaderText : </strong><span>10000021</span>
+                                <strong>Doc. Date : </strong><span t-field="o.date_invoice"/><br/>
+                                <strong>Currency : </strong><span t-field="o.currency_id.name"/><br/>
+                                <strong>Reference Doc : </strong><span t-field="o.number"/><br/>
+                                <strong>Doc.HeaderText : </strong><span></span>
                             </p>
                         </div>
                         <div class="col-xs-3">
                             <p>
-                                <strong>Posting Date : </strong><span t-esc="o.move_id and o.move_id.date or ''"/><br/>
-                                <strong>Rate : </strong><span>1.00000</span>
+                                <strong>Posting Date : </strong><span t-field="o.move_id.date"/><br/>
+                                <strong>Rate : </strong><span t-esc="get_currency_rate(o.currency_id, o.date_invoice)"/>
                             </p>
                         </div>
                         <div class="col-xs-5">
                             <strong>Doc. Type : </strong><strong style="font-size:25px;">KV</strong><br/>
-                            <strong>Fiscal Year/Doc. No.: </strong><span t-esc="o.period_id.name"/>/<span t-esc="o.move_id and o.move_id.name or ''"/><br/>
+                            <strong>Fiscal Year/Doc. No.: </strong><span t-field="o.period_id.name"/>/<span t-esc="o.move_id and o.move_id.name or ''"/><br/>
                             <strong>Reversed Doc. No. : </strong>
-                            <span t-esc="o.cancel_move_id and o.cancel_move_id.name or ''"/>
+                            <span t-field="o.cancel_move_id.name"/>
                         </div>
                     </div>
                     
@@ -42,8 +42,9 @@
                                 </thead>
                                 <tbody>
                                     <tr t-foreach="o.tax_line" t-as="taxline">
-                                        <td><span t-esc="taxline.name"/></td>
-                                        <td><span t-esc="taxline.amount"/></td>
+                                        <td><span t-field="taxline.name"/></td>
+                                        <td><span t-field="taxline.amount" 
+                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -60,8 +61,9 @@
                                 </thead>
                                 <tbody>
                                     <tr t-foreach="o.payment_ids" t-as="payment">
-                                        <td><span t-esc="payment.name"/></td>
-                                        <td><span t-esc="payment.debit"/></td>
+                                        <td><span t-field="payment.name"/></td>
+                                        <td><span t-field="payment.debit"
+                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -89,11 +91,11 @@
                             <strong>Text</strong>
                         </div>
                         <div class="col-xs-9">
-                            <p><t t-esc="o.comment"/></p>
+                            <p t-field="o.comment"/>
                         </div>
                     </div>
                     
-                    <table class="table table-condensed mt64" style="font-size:11px;">
+                    <table class="table table-condensed mt64">
                         <thead>
                             <tr style="border-top: 1px solid;">
                                 <th rowspan="2">Pst Key</th>
@@ -115,14 +117,14 @@
                             <t t-if="o.move_id">
                                 <t t-foreach="o.move_id.line_id" t-as="move_line">
                                     <tr>
-                                        <td><span>31</span></td>
-                                        <td><span t-esc="move_line.account_id.code"/></td>
-                                        <td><span t-esc="move_line.account_id.name"/></td>
-                                        <td><span t-esc="move_line.debit"/></td>
-                                        <td><span t-esc="move_line.credit"/></td>
-                                        <td>
-                                            <span></span>
-                                        </td>
+                                        <td><span></span></td>
+                                        <td><span t-field="move_line.account_id.code"/></td>
+                                        <td><span t-field="move_line.account_id.name"/></td>
+                                        <td><span t-field="move_line.debit"
+                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                                        <td><span t-field="move_line.credit"
+                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                                        <td><span></span></td>
                                         <td></td>
                                         <td><span t-esc="move_line.section_id and move_line.section_id.code or move_line.project_id and move_line.project_id.code or ''"></span></td>
                                         <td><span></span></td>
@@ -135,29 +137,32 @@
                         <tr style="border-bottom: 1px solid black;">
                             <td colspan="2"></td>
                             <td style="padding-top:150px;"><strong>Total</strong></td>
-                            <td style="padding-top:150px;"><strong t-esc="o.amount_total"/></td>
-                            <td style="padding-top:150px;"><strong t-esc="o.amount_total"/></td>
+                            <td style="padding-top:150px;"><strong t-field="o.amount_total"
+                                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
+                            <td style="padding-top:150px;"><strong t-field="o.amount_total" 
+                                                                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/></td>
                             <td colspan="5"></td>
                         </tr>
                     </table>
                     
-                    <div class="row">
-                        <div class="col-xs-4">
-                            <p>
-                                <strong>Accounted by</strong>_________________
-                            </p>
-                        </div>
-                        <div class="col-xs-4">
-                            <p>
-                                <strong>Accounting Reviewed by</strong>_______
-                            </p>
-                        </div>
-                        <div class="col-xs-4">
-                            <p>
-                                <strong>Approved by</strong>___________________
-                            </p>
-                        </div>
-                    </div>
+                    <table class="table table-condensed" >
+                        <tr style="border-top:hidden;">
+                            <td><strong>Accounted by</strong></td>
+                            <td>______________________</td>
+                            <td><strong>Accounting Reviewed by</strong></td>
+                            <td>______________________</td>
+                            <td><strong>Approved by</strong></td>
+                            <td>______________________</td>
+                        </tr>
+                        <tr style="border-top:hidden;">
+                            <td></td>
+                            <td>__/__/____</td>
+                            <td></td>
+                            <td>__/__/____</td>
+                            <td></td>
+                            <td>__/__/____</td>
+                        </tr>
+                    </table>
                 </div>
             </t>
         </template>
