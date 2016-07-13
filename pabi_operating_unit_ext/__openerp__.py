@@ -10,6 +10,7 @@
 
 * Make OU required field.
 * Enhance security, by only list OU user have access
+* Access All Operating Unit option in Group and Operating Unit
 
     """,
     "depends": [
@@ -24,11 +25,15 @@
         "purchase_request_procurement_operating_unit",
         "purchase_request_to_requisition_operating_unit",
         "purchase_requisition_operating_unit",
+        "purchase_work_acceptance_operating_unit",
         "stock_account_operating_unit",
         "stock_operating_unit",
         "hr_expense_auto_invoice",  # passing OU from Expense to Invoice
     ],
     "data": [
+        "security/operating_unit_security.xml",
+        "views/res_users_view.xml",
+        "views/operating_unit_view.xml",
     ],
     "demo": [
     ],

@@ -15,7 +15,7 @@ class HRExpense(models.Model):
             'employee_code': u'004012',  # request for employee
             'date': u'2016-01-31',  # by_time
             'write_date': u'2016-01-31 00:00:00',  # updated_time
-            'advance_type': u'attend_seminar',  # or by_product, objective_type
+            'advance_type': u'attend_seminar',  # attend_seminar, buy_product
             'date_back': u'2016-10-30',  # cost_control_to
             'name': u'Object of this Advance',  # objective
             'apweb_ref_url': u'',

@@ -485,6 +485,7 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def print_call_for_bid_form(self):
+        Attachment = self.env['ir.attachment']
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
@@ -505,20 +506,28 @@ class PurchaseRequisition(models.Model):
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):
                 # no auto-saving of report as attachment, need to do manually
+                exist_pd_file = Attachment.search([
+                    ('res_id', '=', self.id),
+                    ('res_model', '=', 'purchase.requisition'),
+                    ('name', 'ilike', '_main_form.pdf'),
+                ])
+                if len(exist_pd_file) > 0:
+                    exist_pd_file._ids.unlink()
                 result = base64.b64encode(result)
                 file_name = self.name_get()[0][1]
                 file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
-                file_name += ".pdf"
-                self.env['ir.attachment'].create({'name': file_name,
-                                                  'datas': result,
-                                                  'datas_fname': file_name,
-                                                  'res_model': self._name,
-                                                  'res_id': self.id,
-                                                  'type': 'binary'})
+                file_name += "_main_form.pdf"
+                Attachment.create({
+                    'name': file_name,
+                    'datas': result,
+                    'datas_fname': file_name,
+                    'res_model': self._name,
+                    'res_id': self.id,
+                    'type': 'binary'
+                })
 
     @api.multi
     def print_requisition_with_condition(self):
-        result = False
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
