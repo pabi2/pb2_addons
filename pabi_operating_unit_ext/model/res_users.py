@@ -36,3 +36,11 @@ class ResGroups(models.Model):
         copy=False,
         help="With this checkbox checked, users in this Group "
         "will have access to all Operating Units")
+
+    @api.multi
+    def write(self, vals):
+        res = super(ResGroups, self).write(vals)
+        if 'access_all_operating_unit' in vals:
+            for group in self:
+                group.users.write({})  # Write to clear cache
+        return res
