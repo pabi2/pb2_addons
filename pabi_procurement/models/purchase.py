@@ -158,7 +158,13 @@ class PurchaseOrder(models.Model):
     @api.multi
     def action_button_convert_to_order(self):
         # self.wkf_validate_vs_requisition()
-        return super(PurchaseOrder, self).action_button_convert_to_order()
+        res = super(PurchaseOrder, self).action_button_convert_to_order()
+        orders = self.browse(res['res_id'])
+        for order in orders:
+            order.write({
+                'origin': order.quote_id.origin,
+            })
+        return res
 
     @api.multi
     def action_picking_create(self):
