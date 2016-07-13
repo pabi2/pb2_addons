@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
 	<property name="ireport.zoom" value="1.1269722013523698"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<subDataset name="po_line">
 		<parameter name="ids" class="java.lang.Integer"/>
@@ -78,7 +78,8 @@ taxbranch.code taxbranch_code,
 po.amount_untaxed sub_total,
 po.amount_tax vat,
 po.amount_total grand_total,
-po.amount_total_text_TH amount_total_TH
+po.amount_total_text_TH amount_total_TH,
+po.delivery_address
 
 FROM purchase_order po
 LEFT JOIN operating_unit ou
@@ -183,6 +184,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	</field>
 	<field name="grand_total" class="java.math.BigDecimal"/>
 	<field name="amount_total_th" class="java.lang.String"/>
+	<field name="delivery_address" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -412,13 +414,6 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_phone}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="270" y="222" width="246" height="17" isRemoveLineWhenBlank="true"/>
-				<textElement lineSpacing="Single">
-					<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{notes}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="2" y="106" width="320" height="34" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$F{tax_branch_name}!=null]]></printWhenExpression>
@@ -483,16 +478,11 @@ $F{tax_branch_zip} : ""]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{phone} != null ? "โทรศัพท์: " + $F{phone} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="270" y="191" width="246" height="34" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="270" y="191" width="246" height="45" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_street} != null ?
-$F{partner_street} + ' ' : "" +
-$F{partner_township} != null ?
-$F{partner_township} + ' ' : "" +
-$F{partner_zip} != null ?
-$F{partner_zip} : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{delivery_address}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="370" y="236" width="146" height="17" isPrintWhenDetailOverflows="true"/>
