@@ -299,7 +299,6 @@ class PurchaseRequisition(models.Model):
         Order = self.env['purchase.order']
         for order_id in res.itervalues():
             orders = Order.search([('id', '=', order_id)])
-
             for order in orders:
                 order.write({
                     'committee_ids': self._prepare_order_committees(order_id),
@@ -512,7 +511,7 @@ class PurchaseRequisition(models.Model):
                     ('name', 'ilike', '_main_form.pdf'),
                 ])
                 if len(exist_pd_file) > 0:
-                    exist_pd_file._ids.unlink()
+                    exist_pd_file.unlink()
                 result = base64.b64encode(result)
                 file_name = self.name_get()[0][1]
                 file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
