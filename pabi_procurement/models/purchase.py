@@ -9,6 +9,21 @@ from openerp.osv.orm import browse_record_list, browse_record, browse_null
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    STATE_SELECTION = [
+        ('draft', 'Draft'),
+        ('sent', 'RFQ'),
+        ('bid', 'Bid Received'),
+        ('confirmed', 'Waiting Approval'),
+        ('approved', 'Purchase Confirmed'),
+        ('except_picking', 'Shipping Exception'),
+        ('except_invoice', 'Invoice Exception'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled')
+    ]
+
+    state = fields.Selection(
+        STATE_SELECTION,
+    )
     dummy_quote_id = fields.Many2one(
         'purchase.order',
         string='Quotation Reference',
@@ -84,6 +99,11 @@ class PurchaseOrder(models.Model):
         related='order_id.state',
         readonly=True,
     )
+    delivery_address = fields.Text(
+        string='Delivery Address',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.multi
     @api.depends('doc_approve_uid')
@@ -138,7 +158,13 @@ class PurchaseOrder(models.Model):
     @api.multi
     def action_button_convert_to_order(self):
         # self.wkf_validate_vs_requisition()
-        return super(PurchaseOrder, self).action_button_convert_to_order()
+        res = super(PurchaseOrder, self).action_button_convert_to_order()
+        orders = self.browse(res['res_id'])
+        for order in orders:
+            order.write({
+                'origin': order.quote_id.origin,
+            })
+        return res
 
     @api.multi
     def action_picking_create(self):
