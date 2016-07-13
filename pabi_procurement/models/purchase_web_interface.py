@@ -260,6 +260,7 @@ class PurchaseWebInterface(models.Model):
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
             ('res_model', '=', 'purchase.requisition'),
+            ('name', 'ilike', '_main_form.pdf'),
         ])
         if len(pd_file) != 1:
             raise UserError(

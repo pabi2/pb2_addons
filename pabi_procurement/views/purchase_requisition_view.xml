@@ -103,9 +103,6 @@
                         options="{'currency_field': 'currency_id'}"/>
                         <div class="oe_subtotal_footer_separator oe_inline">
                         <label for="amount_total"/>
-                        <!--<button name="button_dummy"-->
-                        <!--states="draft" string="(update)" type="object"-->
-                        <!--class="oe_edit_only oe_link"/>-->
                         </div>
                         <field name="amount_total" nolabel="1"
                                class="oe_subtotal_footer_separator" widget="monetary"
@@ -126,6 +123,9 @@
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']" position="after">
                 	<field name="order_id" widget="many2one_clickable"/>
                     <field name="order_state"/>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']" position="after">
+                	<button name="purchase_approve" states="confirmed" string="Approved by Supplier" icon="gtk-ok"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
