@@ -9,6 +9,21 @@ from openerp.osv.orm import browse_record_list, browse_record, browse_null
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    STATE_SELECTION = [
+        ('draft', 'Draft'),
+        ('sent', 'RFQ'),
+        ('bid', 'Bid Received'),
+        ('confirmed', 'Waiting Approval'),
+        ('approved', 'Purchase Confirmed'),
+        ('except_picking', 'Shipping Exception'),
+        ('except_invoice', 'Invoice Exception'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled')
+    ]
+
+    state = fields.Selection(
+        STATE_SELECTION,
+    )
     dummy_quote_id = fields.Many2one(
         'purchase.order',
         string='Quotation Reference',
@@ -83,6 +98,11 @@ class PurchaseOrder(models.Model):
         string='PO Status',
         related='order_id.state',
         readonly=True,
+    )
+    delivery_address = fields.Text(
+        string='Delivery Address',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi

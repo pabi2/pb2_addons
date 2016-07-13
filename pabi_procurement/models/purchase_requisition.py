@@ -528,7 +528,6 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def print_requisition_with_condition(self):
-        result = False
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
