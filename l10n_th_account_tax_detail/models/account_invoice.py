@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -9,6 +10,19 @@ class AccountInvoice(models.Model):
     def check_missing_tax(self):
         res = False  # Force not check missing tax
         return res
+
+    @api.multi
+    def action_move_create(self):
+        for invoice in self:
+            for tax in invoice.tax_line:
+                for detail in tax.detail_ids:
+                    if (not detail.partner_id or
+                            not detail.invoice_number or
+                            not detail.invoice_date):
+                        raise UserError(
+                            _('Some data in Tax Detail is not filled!'))
+        result = super(AccountInvoice, self).action_move_create()
+        return result
 
 
 class AccountInvoiceTax(models.Model):
