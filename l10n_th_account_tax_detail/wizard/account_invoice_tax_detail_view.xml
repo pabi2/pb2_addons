@@ -20,6 +20,8 @@
 		            	<tree editable="bottom" delete="0">
 		            		<field name="tax_detail_id" invisible="1"/>
 		            		<field name="partner_id" />
+		            		<field name="vat" />
+		            		<field name="taxbranch" />
 		            		<field name="invoice_number" />
 		            		<field name="invoice_date" />
 		            		<field name="base" sum="Base"/>

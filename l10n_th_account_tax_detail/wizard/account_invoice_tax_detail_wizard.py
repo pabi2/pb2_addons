@@ -40,9 +40,12 @@ class AccountInvoiceTaxWizard(models.TransientModel):
         res['is_readonly'] = invoice.state != 'draft'
         res['detail_ids'] = []
         for line in invoice_tax.detail_ids:
+            partner = line.partner_id or invoice.partner_id
             vals = {
                 'tax_detail_id': line.id,
-                'partner_id': line.partner_id.id or invoice.partner_id.id,
+                'partner_id': partner.id,
+                'vat': partner.vat,
+                'taxbranch': partner.taxbranch,
                 'invoice_date': (line.invoice_date or
                                  invoice.date_invoice or
                                  False),
@@ -117,6 +120,14 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         string='Partner',
         required=True,
     )
+    vat = fields.Char(
+        string='Tax ID',
+        readonly=True,
+    )
+    taxbranch = fields.Char(
+        string='Tax Branch ID',
+        readonly=True,
+    )
     invoice_number = fields.Char(
         string='Tax Invoice Number',
         required=True,
@@ -133,3 +144,8 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         string='Tax',
         required=True,
     )
+
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        self.vat = self.partner_id.vat
+        self.taxbranch = self.partner_id.taxbranch
