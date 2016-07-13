@@ -124,9 +124,6 @@
                 	<field name="order_id" widget="many2one_clickable"/>
                     <field name="order_state"/>
                 </xpath>
-                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']" position="after">
-                	<button name="purchase_approve" states="confirmed" string="Approved by Supplier" icon="gtk-ok"/>
-                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
                         <field name="committee_ids">
