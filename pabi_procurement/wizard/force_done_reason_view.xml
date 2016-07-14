@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record model="ir.ui.view" id="view_order_force_done">
+            <field name="name">purchase.order.force.done.form</field>
+            <field name="model">purchase.order.force.done</field>
+            <field name="inherit_id" ref="purchase_force_done.view_order_force_done"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//field[@name='force_done_reason']" position="after">
+                        <field name="force_done_file"/>
+                    </xpath>
+                </field>
+        </record>
+    </data>
+</openerp>

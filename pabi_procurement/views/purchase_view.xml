@@ -51,9 +51,6 @@
                             attrs="{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
-                    <button name="action_force_done" string="Force Done"
-                            type="object" confirm="Are you sure you force done this order?"
-                            attrs="{'invisible':[('state', '!=', 'approved')]}"/>
                 </xpath>
                 <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->

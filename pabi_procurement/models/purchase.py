@@ -176,21 +176,6 @@ class PurchaseOrder(models.Model):
         picking.verified = True
         return res
 
-    @api.multi
-    def action_force_done(self):
-        Picking = self.env['stock.picking']
-        for order in self:
-            picking = Picking.search([
-                ('state', 'not in', ('done', 'cancel')),
-                '|',
-                ('origin', '=', order.name),
-                ('group_id', '=', order.name),
-            ])
-            if len(picking) > 0:
-                picking.action_cancel()
-        self.wkf_po_done()
-        return True
-
     @api.v7
     def do_merge(self, cr, uid, ids, context=None):
         def make_key(br, fields):
