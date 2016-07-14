@@ -43,6 +43,8 @@ class AccountInvoiceTaxWizard(models.TransientModel):
             partner = line.partner_id or invoice.partner_id
             vals = {
                 'tax_detail_id': line.id,
+                'tax_sequence': line.tax_sequence,
+                'period_id': line.period_id.id,
                 'partner_id': partner.id,
                 'vat': partner.vat,
                 'taxbranch': partner.taxbranch,
@@ -114,6 +116,16 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
     tax_detail_id = fields.Many2one(
         'account.invoice.tax.detail',
         string='Tax Detail',
+    )
+    tax_sequence = fields.Integer(
+        string='Sequence',
+        readonly=True,
+        help="Running sequence for the same period. Reset every period",
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+        readonly=True,
     )
     partner_id = fields.Many2one(
         'res.partner',

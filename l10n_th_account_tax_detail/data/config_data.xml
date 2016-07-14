@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+		<!-- Number of periods to be in same period -->	    
+		<record id="number_month_tax_addition" model="ir.config_parameter">
+			<field name="key">number_month_tax_addition</field>
+			<field name="value">6</field>
+		</record>
+    </data>
+</openerp>
