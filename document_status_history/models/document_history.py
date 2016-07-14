@@ -69,3 +69,31 @@ class DocumentAuditlogLogLine(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
                    (self._table, self._get_sql_view(), ))
+
+
+class LogCommon(object):
+
+    auditlog_line_ids = fields.Many2many(
+        'document.auditlog.log.line',
+        compute='_compute_log_lines',
+        string="Status History",
+    )
+
+    @api.depends()
+    def _compute_log_lines(self):
+        for record in self:
+            if isinstance(record.id, int):
+                self._cr.execute("""
+                    SELECT
+                        logline.id
+                    FROM
+                        document_auditlog_log_line logline
+                    JOIN ir_model as model
+                        ON (model.id = logline.model_id)
+                    WHERE
+                        model.model = '%s' AND
+                        logline.res_id = %d
+                """ % (self._model, record.id))
+                result = self._cr.fetchall()
+                line_ids = [r[0] for r in result]
+                record.auditlog_line_ids = [(6, 0, line_ids)]
