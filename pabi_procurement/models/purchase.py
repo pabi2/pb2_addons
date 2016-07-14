@@ -159,6 +159,9 @@ class PurchaseOrder(models.Model):
     def action_button_convert_to_order(self):
         # self.wkf_validate_vs_requisition()
         res = super(PurchaseOrder, self).action_button_convert_to_order()
+        print "procurement convert_to_order"
+        print self.order_id
+        print self.quote_id
         orders = self.browse(res['res_id'])
         for order in orders:
             order.write({

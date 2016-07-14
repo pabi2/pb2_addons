@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="0.9090909090909196"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="51"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -193,7 +193,8 @@ WHERE rp.id = po.partner_id) as rfq_supplier,
 WHERE rp.id = po.partner_id) as rfq_taxbranch,
 po.amount_total as rfq_amount_total,
 po.minimum_planned_date-DATE(now()) as minimum_planned_date,
-po.amount_total_text_th,
+(SELECT p.amount_total_text_th FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'done'),
 (SELECT rp.name
 FROM res_users ru
 LEFT JOIN res_partner rp
@@ -222,7 +223,7 @@ LEFT JOIN purchase_price_range ppr
 ON ppr.id = pd.purchase_price_range_id
 LEFT JOIN purchase_order po
 ON po.requisition_id = pd.id AND po.state = 'done'
-WHERE $X{IN,pd.id,PIDS}]]>
+WHERE $X{IN,pd.id ,PIDS}]]>
 	</queryString>
 	<field name="pd_id" class="java.lang.Integer"/>
 	<field name="ou_name" class="java.lang.String"/>
@@ -918,7 +919,9 @@ WHERE $X{IN,pd.id,PIDS}]]>
 				<text><![CDATA[บาท]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="127" y="33" width="429" height="21" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="127" y="33" width="429" height="21" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{amount_total_text_th}]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
