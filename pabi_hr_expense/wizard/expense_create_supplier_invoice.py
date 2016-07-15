@@ -56,6 +56,9 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
             lines = []
             amount_untaxed = sum([x.unit_amount * x.unit_quantity
                                   for x in expense.line_ids])
+            expense_state = self._context.get('state', '')
+            if expense_state == 'done':
+                amount_untaxed = expense.to_invoice_amount
             if expense.attendee_employee_ids:
                 for attendee in expense.attendee_employee_ids:
                     partner_id = attendee.employee_id.user_id.partner_id.id
