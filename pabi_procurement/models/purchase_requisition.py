@@ -189,7 +189,7 @@ class PurchaseRequisition(models.Model):
         states={
             'draft': [('readonly', False)],
             'done': [('readonly', False)],
-            },
+        },
     )
     doc_footer = fields.Text(
         string='Footer',
@@ -197,7 +197,7 @@ class PurchaseRequisition(models.Model):
         states={
             'draft': [('readonly', False)],
             'done': [('readonly', False)],
-            },
+        },
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
