@@ -9,10 +9,8 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page//field[@name='tax_line']/tree/field[@name='factor_tax']" position="after" >
 	    			<field name="manual" />  
-	         	</xpath>
-                <xpath expr="/form/sheet/notebook/page//field[@name='tax_line']/tree/field[@name='factor_tax']" position="after" >
 	    			<button name="%(action_tax_detail)d" string="Tax Invoice Detail"
-	         			type="action" icon="gtk-justify-fill" />  
+	         			type="action" icon="gtk-justify-fill" />
 	         	</xpath>
 	        </field>
 		</record>   

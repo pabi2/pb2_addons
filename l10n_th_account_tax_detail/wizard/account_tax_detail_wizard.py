@@ -2,12 +2,17 @@
 from openerp import api, models, fields
 
 
-class AccountInvoiceTaxWizard(models.TransientModel):
-    _name = "account.invoice.tax.wizard"
+class AccountTaxWizard(models.TransientModel):
+    _name = "account.tax.wizard"
 
     invoice_tax_id = fields.Many2one(
         'account.invoice.tax',
         string='Invoice Tax',
+        readonly=True,
+    )
+    voucher_tax_id = fields.Many2one(
+        'account.voucher.tax',
+        string='Voucher Tax',
         readonly=True,
     )
     base = fields.Float(
@@ -19,7 +24,7 @@ class AccountInvoiceTaxWizard(models.TransientModel):
         readonly=True,
     )
     detail_ids = fields.One2many(
-        'account.invoice.tax.detail.wizard',
+        'account.tax.detail.wizard',
         'wizard_id',
         string='Tax Details',
     )
@@ -29,36 +34,48 @@ class AccountInvoiceTaxWizard(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-        res = super(AccountInvoiceTaxWizard, self).default_get(fields)
+        res = super(AccountTaxWizard, self).default_get(fields)
         active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
-        invoice_tax = self.env[active_model].browse(active_id)
-        invoice = invoice_tax.invoice_id
-        res['invoice_tax_id'] = invoice_tax.id
-        res['base'] = invoice_tax.base
-        res['amount'] = invoice_tax.amount
-        res['is_readonly'] = invoice.state != 'draft'
+        tax = self.env[active_model].browse(active_id)
+        doc = False
+        date_doc = False
+        if active_model == 'account.invoice.tax':
+            res['invoice_tax_id'] = tax.id
+            doc = tax.invoice_id
+            date_doc = doc.date_invoice
+        else:
+            res['voucher_tax_id'] = tax.id
+            doc = tax.voucher_id
+        res['base'] = tax.base
+        res['amount'] = tax.amount
+        res['is_readonly'] = doc.state != 'draft'
         res['detail_ids'] = []
-        for line in invoice_tax.detail_ids:
-            partner = line.partner_id or invoice.partner_id
+        for line in tax.detail_ids:
+            partner = line.partner_id or doc.partner_id
             vals = {
                 'tax_detail_id': line.id,
-                'tax_sequence': line.tax_sequence,
                 'period_id': line.period_id.id,
                 'partner_id': partner.id,
                 'vat': partner.vat,
                 'taxbranch': partner.taxbranch,
                 'invoice_date': (line.invoice_date or
-                                 invoice.date_invoice or
+                                 date_doc or
                                  False),
-                'base': line.base or invoice_tax.base or False,
-                'amount': line.amount or invoice_tax.amount or False,
+                'base': line.base or tax.base or False,
+                'amount': line.amount or tax.amount or False,
+                'tax_sequence': line.tax_sequence,
+                'addition': line.addition,
             }
             # Supplier Invoice only, invoice number is manually keyed
-            if invoice.type in ('in_invoice', 'in_refund'):
-                vals['invoice_number'] = (line.invoice_number or
-                                          invoice.supplier_invoice_number or
-                                          False)
+            if active_model == 'account.invoice.tax':
+                if doc.type in ('in_invoice', 'in_refund'):
+                    vals['invoice_number'] = (line.invoice_number or
+                                              doc.supplier_invoice_number or
+                                              False)
+            else:
+                if doc.type in ('payment'):
+                    vals['invoice_number'] = (line.invoice_number or False)
             res['detail_ids'].append((0, 0, vals))
         return res
 
@@ -68,7 +85,7 @@ class AccountInvoiceTaxWizard(models.TransientModel):
         self.invoice_tax_id.detail_ids.unlink()
         invoice = self.invoice_tax_id.invoice_id
         InvoiceTax = self.env['account.invoice.tax']
-        TaxDetail = self.env['account.invoice.tax.detail']
+        TaxDetail = self.env['account.tax.detail']
         for line in self.detail_ids:
             vals = {
                 'invoice_tax_id': self.invoice_tax_id.id,
@@ -104,23 +121,18 @@ class AccountInvoiceTaxWizard(models.TransientModel):
 
 
 class AccountInvoiceTaxDetailWizard(models.TransientModel):
-    _name = "account.invoice.tax.detail.wizard"
+    _name = "account.tax.detail.wizard"
 
     wizard_id = fields.Many2one(
-        'account.invoice.tax.wizard',
+        'account.tax.wizard',
         string='Wizard',
         ondelete='cascade',
         index=True,
         required=True,
     )
     tax_detail_id = fields.Many2one(
-        'account.invoice.tax.detail',
+        'account.tax.detail',
         string='Tax Detail',
-    )
-    tax_sequence = fields.Integer(
-        string='Sequence',
-        readonly=True,
-        help="Running sequence for the same period. Reset every period",
     )
     period_id = fields.Many2one(
         'account.period',
@@ -155,6 +167,15 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
     amount = fields.Float(
         string='Tax',
         required=True,
+    )
+    tax_sequence = fields.Integer(
+        string='Sequence',
+        readonly=True,
+        help="Running sequence for the same period. Reset every period",
+    )
+    addition = fields.Boolean(
+        strin='Past Period Tax',
+        default=False,
     )
 
     @api.onchange('partner_id')

@@ -15,8 +15,9 @@
     'data': [
         'data/config_data.xml',
         'security/ir.model.access.csv',
-        'wizard/account_invoice_tax_detail_view.xml',
+        'wizard/account_tax_detail_view.xml',
         'views/account_invoice_view.xml',
+        'views/account_voucher_view.xml',
     ],
     'demo': [
     ],
