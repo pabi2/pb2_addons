@@ -10,9 +10,15 @@
 	    <field name="arch" type="xml">
 	    	<button name="draft" position="replace" />
 	    	<button name="done" position="replace" >
-	    		<button name="%(action_expense_create_supplier_invoice)d" states="accepted" string="Create Supplier Invoice" type="action"
-	    			groups="account.group_account_invoice" class="oe_highlight"/>
-	    	</button>
+                <button name="%(action_expense_create_supplier_invoice)d"
+                         string="Create Supplier Invoice"
+                         type="action"
+                         groups="account.group_account_invoice"
+                         attrs="{'invisible': ['|', ('state', 'not in', ('accepted', 'done')), ('is_invoiced', '=', True)]}"
+                         class="oe_highlight"
+                         context = "{'state': state}"
+                />
+            </button>
 	    	<button name="action_view_move" position="attributes">
 	    		<attribute name="string">View Invoice</attribute>
 	    	</button>
@@ -20,6 +26,8 @@
 				<field name="pay_to" />
 				<field name="partner_id" attrs="{'invisible': ['|', ('pay_to', '!=', 'supplier'),
 																('partner_id', '=', False)]}"/> 
+				<field name="is_invoiced" invisible="1"/>
+                <field name="to_invoice_amount" invisible="1"/>
 	    	</field>
             <xpath expr='/form/sheet/notebook/page/field/tree/field[@name="total_amount"]' position="before">
                 <field name="tax_ids" widget="many2many_tags" />
