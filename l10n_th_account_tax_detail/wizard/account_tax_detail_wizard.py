@@ -82,13 +82,28 @@ class AccountTaxWizard(models.TransientModel):
     @api.multi
     def save_tax_detail(self):
         self.ensure_one()
-        self.invoice_tax_id.detail_ids.unlink()
-        invoice = self.invoice_tax_id.invoice_id
+        active_model = self._context.get('active_model')
+        if active_model == 'account.invoice.tax':
+            self.invoice_tax_id.detail_ids.unlink()
+        elif active_model == 'account.voucher.tax':
+            self.voucher_tax_id.detail_ids.unlink()
+        doc = False
+        date_doc = False
+        line_tax = False
+        if active_model == 'account.invoice.tax':
+            doc = self.invoice_tax_id.invoice_id
+            date_doc = doc.date_invoice
+            line_tax = self.invoice_tax_id
+        elif active_model == 'account.voucher.tax':
+            doc = self.voucher_tax_id.voucher_id
+            date_doc = doc.date
+            line_tax = self.voucher_tax_id
         InvoiceTax = self.env['account.invoice.tax']
         TaxDetail = self.env['account.tax.detail']
         for line in self.detail_ids:
             vals = {
                 'invoice_tax_id': self.invoice_tax_id.id,
+                'voucher_tax_id': self.voucher_tax_id.id,
                 'partner_id': line.partner_id.id,
                 'invoice_number': line.invoice_number,
                 'invoice_date': line.invoice_date,
@@ -103,20 +118,20 @@ class AccountTaxWizard(models.TransientModel):
         sum_base = sum([x.base for x in self.detail_ids])
         sum_amount = sum([x.amount for x in self.detail_ids])
         base_amount = InvoiceTax.base_change(sum_base,
-                                             invoice.currency_id.id,
-                                             invoice.company_id.id,
-                                             invoice.date_invoice,
+                                             doc.currency_id.id,
+                                             doc.company_id.id,
+                                             date_doc,
                                              )['value']['base_amount']
         tax_amount = InvoiceTax.amount_change(sum_amount,
-                                              invoice.currency_id.id,
-                                              invoice.company_id.id,
-                                              invoice.date_invoice,
+                                              doc.currency_id.id,
+                                              doc.company_id.id,
+                                              date_doc,
                                               )['value']['tax_amount']
-        self.invoice_tax_id.write({'base': sum_base,
-                                   'amount': sum_amount,
-                                   'base_amount': base_amount,
-                                   'tax_amount': tax_amount,
-                                   })
+        line_tax.write({'base': sum_base,
+                        'amount': sum_amount,
+                        'base_amount': base_amount,
+                        'tax_amount': tax_amount,
+                        })
         return True
 
 

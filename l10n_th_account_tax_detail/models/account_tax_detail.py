@@ -7,32 +7,13 @@ from openerp.exceptions import ValidationError, Warning as UserError
 
 class InvoiceVoucherTaxDetail(object):
 
-    @api.model
-    def _is_undue_tax_line(self, tax_line, doc_type):
-        search_key = False
-        if doc_type in ('in_invoice', 'payment'):
-            search_key = 'tax_code_id'
-        elif doc_type == 'in_refund':
-            search_key = 'ref_tax_code_id'
-        else:
-            raise ValidationError(_('Invalid Document Type!'))
-        taxes = self.env['account.tax'].search([
-            (search_key, '=', tax_line.tax_code_id.id)])
-        is_undue = list(set([x.is_undue_tax for x in taxes]))
-        if len(is_undue) != 1:
-            raise ValidationError(
-                _('Tax Code of this Tax Type is mixed '
-                  'between Normal and Undue Tax!'))
-        print is_undue[0]
-        return is_undue[0]
-
     @api.multi
     def _check_tax_detail_info(self):
         for doc in self:
             if doc.type not in ('in_refund', 'in_invoice', 'payment'):
                 continue
             for tax in doc.tax_line:
-                if self._is_undue_tax_line(tax, doc.type):
+                if tax.tax_code_type != 'normal':
                     continue
                 for detail in tax.detail_ids:
                     if (not detail.partner_id or
@@ -78,7 +59,7 @@ class InvoiceVoucherTaxDetail(object):
             period_id = Period.find(date_doc)[:1].id
             for tax in doc.tax_line:
                 # Skip if Undue Tax
-                if self._is_undue_tax_line(tax, doc.type):
+                if tax.tax_code_type != 'normal':
                     continue
                 for detail in tax.detail_ids:
                     invoice_date = datetime.strptime(detail.invoice_date,

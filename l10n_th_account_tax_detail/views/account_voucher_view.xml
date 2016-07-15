@@ -8,9 +8,11 @@
             <field name="inherit_id" ref="l10n_th_account.voucher_tax_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='factor_tax']" position="after" >
-	    			<field name="manual" />  
+	    			<field name="tax_code_type" invisible="1" />
+	    			<field name="manual" />
 	    			<button name="%(action_tax_detail)d" string="Tax Invoice Detail"
-	         			type="action" icon="gtk-justify-fill" />  
+	         			type="action" icon="gtk-justify-fill" 
+	         			attrs="{'invisible': [('tax_code_type', '!=', 'normal')]}"/>
 	         	</xpath>
 	        </field>
 		</record>   
