@@ -11,12 +11,20 @@ class AccountInvoice(models.Model):
     amount_retention = fields.Float(
         string='Retention',
         digits=dp.get_precision('Account'),
-        readonly=False)
+        readonly=False,
+    )
     retention_on_payment = fields.Boolean(
         string='Retention on Payment',
         compute='_retention_on_payment',
         store=True,
-        help="If checked, retention will done during payment")
+        help="If checked, retention will done during payment",
+    )
+    move_ids = fields.One2many(
+        'account.move.line',
+        related='move_id.line_id',
+        string='Journal Items',
+        readonly=True,
+    )
 
     @api.one
     @api.depends('invoice_line.price_subtotal',
@@ -85,5 +93,19 @@ class AccountInvoiceLine(models.Model):
                 'taxes': False,
             })
         return res
+
+
+class AccountInvoiceTax(models.Model):
+    _inherit = 'account.invoice.tax'
+
+    tax_code_type = fields.Selection(
+        [('normal', 'Normal'),
+         ('undue', 'Undue'),
+         ('wht', 'Withholding')],
+        string='Tax Code Type',
+        related='tax_code_id.tax_code_type',
+        store=True,
+        help="Type based on Tax using this Tax Code",
+    )
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

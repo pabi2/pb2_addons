@@ -30,6 +30,7 @@ class account_voucher(models.Model):
         string='Value Date',  # bank transfer date
         readonly=True,
         states={'draft': [('readonly', False)]},
+        required=True,
     )
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

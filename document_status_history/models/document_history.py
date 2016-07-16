@@ -23,6 +23,7 @@ class AuditlogLogLine(models.Model):
 class DocumentAuditlogLogLine(models.Model):
     _name = 'document.auditlog.log.line'
     _auto = False
+    _order = 'date'
 
     status = fields.Char(
         string=u'Status',

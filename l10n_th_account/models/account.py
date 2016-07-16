@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
-class account_tax_template(models.Model):
+class AccountTaxTemplate(models.Model):
 
     _inherit = 'account.tax.template'
 
@@ -29,10 +30,16 @@ class account_tax_template(models.Model):
     )
 
 
-class account_tax(models.Model):
+class AccountTax(models.Model):
 
     _inherit = 'account.tax'
 
+    account_collected_id = fields.Many2one(required=True)
+    base_code_id = fields.Many2one(required=True)
+    tax_code_id = fields.Many2one(required=True)
+    account_paid_id = fields.Many2one(required=True)
+    ref_base_code_id = fields.Many2one(required=True)
+    ref_tax_code_id = fields.Many2one(required=True)
     is_undue_tax = fields.Boolean(
         string='Undue Tax',
         default=False,
@@ -63,7 +70,7 @@ class account_tax(models.Model):
         payment_type = context.get('type', False)
         if payment_type not in ('receipt', 'payment'):  # Invoice
             taxes = taxes.filtered(lambda r: not r.is_wht)  # Remove all WHT
-        res = super(account_tax, self).compute_all(
+        res = super(AccountTax, self).compute_all(
             cr, uid, taxes, price_unit, quantity, product=None,
             partner=None, force_excluded=False)
         return res
@@ -76,14 +83,63 @@ class account_tax(models.Model):
             product=product, partner=partner, force_excluded=force_excluded,
             context=self._context)
 
-    @api.one
-    @api.depends('is_wht')
+    @api.onchange('is_wht')
     def onchange_is_wht(self):
         self.is_undue_tax = False
 
-    @api.one
-    @api.depends('is_undue_tax')
-    def onchange_is_undue_tax(self, is_undue_tax):
+    @api.onchange('is_undue_tax')
+    def onchange_is_undue_tax(self):
         self.is_wht = False
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+
+class AccountTaxCode(models.Model):
+    _inherit = 'account.tax.code'
+
+    tax_code_type = fields.Selection(
+        [('normal', 'Normal'),
+         ('undue', 'Undue'),
+         ('wht', 'Withholding')],
+        string='Tax Code Type',
+        compute='_compute_tax_code_type',
+        store=True,
+        help="Type based on Tax using this Tax Code",
+    )
+    tax_ids = fields.One2many(
+        'account.tax',
+        'tax_code_id',
+        help="For compute field"
+    )
+    tax2_ids = fields.One2many(
+        'account.tax',
+        'ref_tax_code_id',
+        help="For compute field"
+    )
+
+    @api.one
+    @api.depends('tax_ids', 'tax2_ids',
+                 'tax_ids.is_wht', 'tax2_ids.is_wht',
+                 'tax_ids.is_undue_tax', 'tax2_ids.is_undue_tax',)
+    def _compute_tax_code_type(self):
+        res_undue = list(set([tax.is_undue_tax for tax in self.tax_ids] +
+                             [tax.is_undue_tax for tax in self.tax2_ids]))
+        is_undue_tax = False
+        if len(res_undue) == 1:
+            is_undue_tax = res_undue[0]
+        elif len(res_undue) > 1:
+            raise ValidationError(
+                _('Some tax using the same Tax Code '
+                  'is not of the same Due/Undue type!'))
+        res_wht = list(set([tax.is_wht for tax in self.tax_ids] +
+                           [tax.is_wht for tax in self.tax2_ids]))
+        is_wht = False
+        if len(res_wht) == 1:
+            is_wht = res_wht[0]
+        elif len(res_wht) > 1:
+            raise ValidationError(
+                _('Some tax using the same Tax Code '
+                  'is not of the same Withholding type!'))
+        self.tax_code_type = 'normal'
+        if is_wht:
+            self.tax_code_type = 'wht'
+        elif is_undue_tax:
+            self.tax_code_type = 'undue'

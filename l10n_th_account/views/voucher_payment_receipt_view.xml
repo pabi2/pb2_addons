@@ -80,23 +80,21 @@
 						<attribute name="attrs">{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}</attribute>
 					</xpath>						
 					<page string="Payment Information" position="after">
-			            <page string="Other Info">
-			                <field name="tax_line">
-			                    <tree editable="bottom" string="Taxes">
-			                    	<field name="invoice_id"/>
-			                        <field name="name"/>
-			                        <field name="account_id" groups="account.group_account_user"/>
-			                        <field name="base" readonly="1"/>
-			                        <field name="amount" readonly="1"/>
-			                        <field name="tax_currency_gain" readonly="1"/>
-			                        <field invisible="True" name="base_amount"/>
-			                        <field invisible="True" name="tax_amount"/>
-			                        <field name="factor_base" invisible="True"/>
-			                        <field name="factor_tax" invisible="True"/>
-			                    </tree>
-			                </field>
+			            <page string="Tax">
+			            
+			            	<separator string="Tax" attrs="{'invisible': [('tax_line_normal', '=', False)]}"/>
+			                <field name="tax_line_normal" attrs="{'invisible': [('tax_line_normal', '=', False)]}"
+			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
+			                	
+			            	<separator string="Undue Tax" attrs="{'invisible': [('tax_line_undue', '=', False)]}"/>
+			                <field name="tax_line_undue" attrs="{'invisible': [('tax_line_undue', '=', False)]}"
+			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
+			                	
+			            	<separator string="Withholding Tax" attrs="{'invisible': [('tax_line_wht', '=', False)]}"/>
+			                <field name="tax_line_wht" attrs="{'invisible': [('tax_line_wht', '=', False)]}"
+			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
+			                	
 			                <div>
-		                        <label for="amount_tax"/>
 		                        <button name="button_reset_taxes" states="draft,proforma2"
 		                            string="(update)" class="oe_link oe_edit_only"
 		                            type="object" help="Recompute taxes and total"/>
@@ -141,21 +139,20 @@
 						<attribute name="attrs">{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}</attribute>
 					</xpath>	
 					<page string="Payment Information" position="after">
-			            <page string="Other Info">
-			                <field name="tax_line">
-			                    <tree editable="bottom" string="Taxes">
-			                    	<field name="invoice_id"/>
-			                        <field name="name"/>
-			                        <field name="account_id" groups="account.group_account_user"/>
-			                        <field name="base" readonly="1"/>
-			                        <field name="amount" />
-			                        <field name="tax_currency_gain" readonly="1"/>
-			                        <field invisible="True" name="base_amount"/>
-			                        <field invisible="True" name="tax_amount"/>
-			                        <field name="factor_base" invisible="True"/>
-			                        <field name="factor_tax" invisible="True"/>
-			                    </tree>
-			                </field>
+			            <page string="Tax">
+			            
+			            	<separator string="Tax" attrs="{'invisible': [('tax_line_normal', '=', False)]}"/>
+			                <field name="tax_line_normal" attrs="{'invisible': [('tax_line_normal', '=', False)]}"
+			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
+			                	
+			            	<separator string="Undue Tax" attrs="{'invisible': [('tax_line_undue', '=', False)]}"/>
+			                <field name="tax_line_undue" attrs="{'invisible': [('tax_line_undue', '=', False)]}"
+			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
+			                	
+			            	<separator string="Withholding Tax" attrs="{'invisible': [('tax_line_wht', '=', False)]}"/>
+			                <field name="tax_line_wht" attrs="{'invisible': [('tax_line_wht', '=', False)]}"
+			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
+			                	
 			                <div>
 		                        <label for="amount_tax"/>
 		                        <button name="button_reset_taxes" states="draft,proforma2"
@@ -167,5 +164,25 @@
 				</data>
 			</field>
 		</record>
+		
+        <record id="voucher_tax_tree_view" model="ir.ui.view">
+            <field name="name">voucher.tax.tree.view</field>
+            <field name="model">account.voucher.tax</field>
+            <field name="arch" type="xml">
+				<tree editable="bottom" string="Taxes">
+					<field name="invoice_id"/>
+				    <field name="name"/>
+				    <field name="account_id" groups="account.group_account_user"/>
+				    <field name="base" readonly="1"/>
+				    <field name="amount" />
+				    <field name="tax_currency_gain" readonly="1"/>
+				    <field invisible="True" name="base_amount"/>
+				    <field invisible="True" name="tax_amount"/>
+				    <field name="factor_base" invisible="True"/>
+				    <field name="factor_tax" invisible="True"/>
+				</tree>
+			</field>
+		</record>
+		
 	</data>
 </openerp>
