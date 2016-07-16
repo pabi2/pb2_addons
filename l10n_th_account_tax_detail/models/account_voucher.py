@@ -38,10 +38,11 @@ class AccountVoucherTax(models.Model):
         res = super(AccountVoucherTax, self).move_line_get(voucher_id)
         # Add Tax Difference
         self._cr.execute("""
-            select -coalesce((select sum(amount) amount from account_voucher_tax
-            where tax_code_type = 'normal' and voucher_id = %s) +
-            (select sum(amount) amount from account_voucher_tax
-            where tax_code_type = 'undue' and voucher_id = %s), 0.0)
+            select -coalesce(
+                (select sum(amount) amount from account_voucher_tax
+                where tax_code_type = 'normal' and voucher_id = %s) +
+                (select sum(amount) amount from account_voucher_tax
+                where tax_code_type = 'undue' and voucher_id = %s), 0.0)
         """, (voucher_id, voucher_id))
         vat_diff = self._cr.fetchone()[0] or 0.0
         if vat_diff:
