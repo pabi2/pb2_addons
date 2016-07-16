@@ -46,6 +46,41 @@ class HRExpenseExpese(models.Model):
         copy=False,
         ondelete='set null',
     )
+    invoice_ids = fields.One2many(
+        'account.invoice',
+        'expense_id',
+        string='Invoices',
+        copy=False,
+    )
+    is_invoiced = fields.Boolean(
+        compute='_compute_invoiced',
+        string='Invoiced',
+    )
+    to_invoice_amount = fields.Float(
+        compute='_compute_invoiced',
+        string='Amount To Invoice ',
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends('invoice_ids', 'invoice_ids.state')
+    def _compute_invoiced(self):
+        for expense in self:
+            invoice_amount = 0.0
+            for invoice in expense.invoice_ids:
+                if invoice.state != 'cancel':
+                    invoice_amount += invoice.amount_total
+            if invoice_amount != expense.amount:
+                expense.is_invoiced = False
+                expense.to_invoice_amount = expense.amount - invoice_amount
+            else:
+                expense.is_invoiced = True
+                expense.to_invoice_amount = 0.0
+            if expense.is_advance_clearing or\
+            expense.is_employee_advance:
+                expense.is_invoiced = True
+                expense.to_invoice_amount = 0.0
+
 
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
