@@ -221,6 +221,11 @@ class AccountBudget(models.Model):
                                     limit=1)
         if not blevel.is_budget_control:
             return res
+
+        if self._context.get('call_from', '') == 'hr_expense_expense':
+            if not blevel.exp_budget_control:
+                return res
+
         resource = self._get_budget_resource(fiscal, budget_type,
                                              budget_level,
                                              budget_level_res_id)
