@@ -32,7 +32,7 @@ class common_voucher(object):
         return amount
 
 
-class account_voucher(common_voucher, models.Model):
+class AccountVoucher(common_voucher, models.Model):
 
     _inherit = 'account.voucher'
 
@@ -41,14 +41,36 @@ class account_voucher(common_voucher, models.Model):
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines',
-        readonly=False)
+        readonly=False,
+    )
+    tax_line_normal = fields.One2many(
+        'account.voucher.tax',
+        'voucher_id',
+        string='Tax Lines (Normal)',
+        readonly=False,
+        domain=[('tax_code_type', '=', 'normal')],
+    )
+    tax_line_undue = fields.One2many(
+        'account.voucher.tax',
+        'voucher_id',
+        string='Tax Lines (Undue)',
+        readonly=False,
+        domain=[('tax_code_type', '=', 'undue')],
+    )
+    tax_line_wht = fields.One2many(
+        'account.voucher.tax',
+        'voucher_id',
+        string='Tax Lines (Withholding)',
+        readonly=False,
+        domain=[('tax_code_type', '=', 'wht')],
+    )
 
     @api.model
     def _compute_writeoff_amount(self,
                                  line_dr_ids,
                                  line_cr_ids,
                                  amount, _type):
-        res = super(account_voucher, self)._compute_writeoff_amount(
+        res = super(AccountVoucher, self)._compute_writeoff_amount(
             line_dr_ids,
             line_cr_ids,
             amount, _type)
@@ -138,7 +160,7 @@ class account_voucher(common_voucher, models.Model):
     @api.multi
     def recompute_voucher_lines(self, partner_id, journal_id,
                                 price, currency_id, ttype, date):
-        res = super(account_voucher, self).recompute_voucher_lines(
+        res = super(AccountVoucher, self).recompute_voucher_lines(
             partner_id, journal_id,
             price, currency_id, ttype, date)
         line_cr_ids = res['value']['line_cr_ids']
@@ -262,7 +284,7 @@ class account_voucher(common_voucher, models.Model):
     @api.multi
     def write(self, vals):
         """ automatic compute tax then save """
-        res = super(account_voucher, self).write(vals)
+        res = super(AccountVoucher, self).write(vals)
         # When editing only tax amount, do not reset tax
         to_update = True
         if vals.get('tax_line', False):
@@ -277,7 +299,7 @@ class account_voucher(common_voucher, models.Model):
     def _finalize_line_total(self, voucher, line_total,
                              move_id, company_currency,
                              current_currency):
-        line_total = super(account_voucher, self)._finalize_line_total(
+        line_total = super(AccountVoucher, self)._finalize_line_total(
             voucher, line_total, move_id, company_currency, current_currency)
         net_tax = 0.0
         net_retention = 0.0
@@ -332,7 +354,7 @@ class account_voucher(common_voucher, models.Model):
             SELECT * FROM account_voucher_line
             WHERE voucher_id=%s and amount_retention != 0""", (voucher.id,))
         for t in self._cr.dictfetchall():
-            prop = voucher.type in ('sale', 'purchase') \
+            prop = voucher.type in ('sale', 'receipt') \
                 and self.env['ir.property'].get(
                 'property_account_retention_customer', 'res.partner') \
                 or self.env['ir.property'].get(
@@ -485,7 +507,7 @@ class account_voucher(common_voucher, models.Model):
     @api.multi
     def onchange_journal(self, journal_id, line_ids, tax_id, partner_id,
                          date, amount, ttype, company_id):
-        res = super(account_voucher, self).onchange_journal(
+        res = super(AccountVoucher, self).onchange_journal(
             journal_id, line_ids, tax_id, partner_id,
             date, amount, ttype, company_id)
         if 'default_amount' in self._context and res:
@@ -642,68 +664,95 @@ class AccountVoucherTax(common_voucher, models.Model):
         'account.voucher',
         string='Voucher',
         ondelete='cascade',
-        index=True)
+        index=True,
+    )
     invoice_id = fields.Many2one(
         'account.invoice',
-        string='Invoice')
+        string='Invoice',
+    )
     tax_id = fields.Many2one(
         'account.tax',
-        string='Tax')
+        string='Tax',
+    )
     name = fields.Char(
         string='Tax Description',
         size=64,
-        required=True)
+        required=True,
+    )
     account_id = fields.Many2one(
         'account.account',
         string='Tax Account',
         required=True,
-        domain=[('type', 'not in', ('view', 'income', 'closed'))])
+        domain=[('type', 'not in', ('view', 'income', 'closed'))],
+    )
     account_analytic_id = fields.Many2one(
         'account.analytic.account',
-        string='Analytic account')
+        string='Analytic account',
+    )
     base = fields.Float(
         string='Base',
-        digits_compute=dp.get_precision('Account'))
+        digits_compute=dp.get_precision('Account'),
+    )
     amount = fields.Float(
         string='Amount',
-        digits_compute=dp.get_precision('Account'))
+        digits_compute=dp.get_precision('Account'),
+    )
     tax_currency_gain = fields.Float(
         string='Currency Gain',
-        digits_compute=dp.get_precision('Account'))
+        digits_compute=dp.get_precision('Account'),
+    )
     manual = fields.Boolean(
         string='Manual',
-        default=True)
+        default=True,
+    )
     sequence = fields.Integer(
         string='Sequence',
-        help="Sequence order when displaying a list of voucher tax.")
+        help="Sequence order when displaying a list of voucher tax.",
+    )
     base_code_id = fields.Many2one(
         'account.tax.code',
         string='Base Code',
-        help="The account basis of the tax declaration.")
+        help="The account basis of the tax declaration.",
+    )
     base_amount = fields.Float(
         string='Base Code Amount',
         digits_compute=dp.get_precision('Account'),
-        default=0.0)
+        default=0.0,
+    )
     tax_code_id = fields.Many2one(
         'account.tax.code',
         string='Tax Code',
-        help="The tax basis of the tax declaration.")
+        help="The tax basis of the tax declaration.",
+    )
+    tax_code_type = fields.Selection(
+        [('normal', 'Normal'),
+         ('undue', 'Undue'),
+         ('wht', 'Withholding')],
+        string='Tax Code Type',
+        related='tax_code_id.tax_code_type',
+        store=True,
+        help="Type based on Tax using this Tax Code",
+    )
     tax_amount = fields.Float(
         string='Tax Code Amount',
         digits_compute=dp.get_precision('Account'),
-        default=0.0)
+        default=0.0,
+    )
     company_id = fields.Many2one(
         'res.company',
         related='account_id.company_id',
         string='Company',
         store=True,
-        readonly=True)
+        readonly=True,
+    )
     factor_base = fields.Float(
         string='Multipication factor for Base code',
-        compute='_count_factor')
+        compute='_count_factor',
+    )
     factor_tax = fields.Float(
         string='Multipication factor Tax code',
-        compute='_count_factor')
+        compute='_count_factor',
+    )
 
     @api.model
     def _compute_one_tax_grouped(self, taxes, voucher, voucher_cur,
