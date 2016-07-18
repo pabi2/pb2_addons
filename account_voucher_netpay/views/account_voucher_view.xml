@@ -91,8 +91,8 @@
                                     <field name="date_due" readonly="1"/>
                                     <field name="amount_original" readonly="1"/>
                                     <field name="amount_unreconciled" readonly="1" groups="account.group_account_user"/>
-                                    <field name="reconcile" on_change="onchange_reconcile(reconcile, amount, amount_unreconciled, context)" groups="account.group_account_user"/>
-                                    <field name="amount" sum="Total Allocation" on_change="onchange_amount(amount, amount_unreconciled, context)" string="Allocation"/>
+                                    <field name="reconcile" on_change="onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)" groups="account.group_account_user"/>
+                                    <field name="amount" sum="Total Allocation" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)" string="Allocation"/>
                                 </tree>
                             </field>
                             <label for="line_dr_ids" attrs="{'invisible': [('pre_line','=',False)]}"/>
@@ -107,8 +107,8 @@
                                     <field name="date_due" readonly="1"/>
                                     <field name="amount_original" readonly="1"/>
                                     <field name="amount_unreconciled" readonly="1"/>
-                                    <field name="reconcile" on_change="onchange_reconcile(reconcile, amount, amount_unreconciled, context)"/>
-                                    <field name="amount" sum="Total Allocation" on_change="onchange_amount(amount, amount_unreconciled, context)" string="Allocation"/>
+                                    <field name="reconcile" on_change="onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)"/>
+                                    <field name="amount" sum="Total Allocation" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)" string="Allocation"/>
                                 </tree>
                             </field>
                             <group col="3">
