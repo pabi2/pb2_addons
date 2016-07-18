@@ -235,18 +235,45 @@ class CostControl(ResCommon, models.Model):
 
 class HeaderTaxBranch(object):
 
+    taxbranch_ids = fields.Many2many(
+        'res.taxbranch',
+        string='Tax Branches',
+        help="This field store available taxbranch of this document",
+    )
+    len_taxbranch = fields.Integer(
+        string='Len Tax Branches',
+        help="Special field, used just to set field as Tax Branch required",
+    )
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
+        domain="[('id', 'in', taxbranch_ids and "
+        "taxbranch_ids[0] and taxbranch_ids[0][2] or False)]",
     )
 
-    def _check_taxbranch_id(self, lines):
-        taxbranch_ids = list(set([x.taxbranch_id.id for x in lines]))
-        if len(taxbranch_ids) > 1:
-            raise UserError(_('Selected Section or Project will '
-                              'result in multiple Tax Branches'))
-        else:
-            return taxbranch_ids and taxbranch_ids[0] or False
+    def _set_taxbranch_ids(self, lines):
+        taxbranch_ids = list(set([x.taxbranch_id.id
+                                  for x in lines if x.taxbranch_id]))
+        self.taxbranch_ids = taxbranch_ids
+        self.len_taxbranch = len(taxbranch_ids)
+
+    def _set_header_taxbranch_id(self):
+        if len(self.taxbranch_ids) == 1:
+            self.taxbranch_id = self.taxbranch_ids[0]
+        if len(self.taxbranch_ids) > 1 and not self.taxbranch_id:
+            self.taxbranch_id = False
+        if len(self.taxbranch_ids) == 0:
+            self.taxbranch_id = False
+
+    @api.multi
+    def write(self, vals):
+        res = super(HeaderTaxBranch, self).write(vals)
+        if self.env.context.get('MyModelLoopBreaker'):
+            return res
+        self = self.with_context(MyModelLoopBreaker=True)
+        for rec in self:
+            rec._set_header_taxbranch_id()
+        return res
 
 
 class ChartField(object):
