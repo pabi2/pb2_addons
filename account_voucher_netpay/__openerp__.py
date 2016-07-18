@@ -15,6 +15,7 @@ Can be used instead of Customer Payment and Supplier Payment in order to Net AR/
     ],
     'depends': [
         'account_voucher',
+        'l10n_th_account',
         'account_voucher_action_move_line_create_hooks',
     ],
     'installable': True,
