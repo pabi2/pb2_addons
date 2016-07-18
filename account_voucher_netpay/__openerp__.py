@@ -7,8 +7,12 @@
     'category': 'Ecosoft Custom',
     'summary': "Voucher Payment that merge customer and supplier",
     'description': """
+
+*THIS MODULE IS STILL NOT COMPATIBLE WITH WHT/UNDUE VAT*
+
 Voucher Payment that merge customer and supplier.
-Can be used instead of Customer Payment and Supplier Payment in order to Net AR/AP
+Can be used instead of Customer Payment and
+Supplier Payment in order to Net AR/AP
     """,
     'data': [
         'views/account_voucher_view.xml',
