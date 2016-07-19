@@ -1,29 +1,29 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <!-- purchase split quote2order replaced the header so generic invoice plan buttons is not going to show-->
-        <!--<record id="view_purchase_create_invoice_form" model="ir.ui.view">-->
-            <!--<field name="name">Create Invoice</field>-->
-            <!--<field name="model">purchase.create.invoice</field>-->
-            <!--<field name="arch" type="xml">-->
-                <!--<form string="Create Invoice">-->
-                    <!--<label string="This wizard will create the invoices based on configured invoice plan. Tick if-->
-                                    <!--you want to proceed ahead."/>-->
-                    <!--<group>-->
-                        <!--<group>-->
-                            <!--<field name="create_invoice" />-->
-                        <!--</group>-->
-                        <!--<group>-->
-                        <!--</group>-->
-                    <!--</group>-->
-                    <!--<footer>-->
-                        <!--<button name="create_purchase_invoices" string="_Create" type="object" class="oe_highlight"/>-->
-                        <!--or-->
-                        <!--<button string="_Cancel" class="oe_link" special="cancel" />-->
-                    <!--</footer>-->
-                <!--</form>-->
-            <!--</field>-->
-        <!--</record>-->
+        <!--purchase split quote2order replaced the header so generic invoice plan buttons is not going to show-->
+        <record id="view_purchase_create_invoice_form" model="ir.ui.view">
+            <field name="name">Create Invoice</field>
+            <field name="model">purchase.create.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create Invoice">
+                    <label string="This wizard will create the invoices based on configured invoice plan. Tick if
+                                    you want to proceed ahead."/>
+                    <group>
+                        <group>
+                            <field name="create_invoice" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="create_purchase_invoices" string="_Create" type="object" class="oe_highlight"/>
+                        or
+                        <button string="_Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
 
         <record id="action_purchase_create_invoices" model="ir.actions.act_window">
             <field name="name">Create Invoices</field>
@@ -33,6 +33,31 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_purchase_create_invoice_form"/>
             <field name="target">new</field>
+        </record>
+
+        <record id="view_order_force_done" model="ir.ui.view">
+            <field name="name">Force Done Reason</field>
+            <field name="model">purchase.order.force.done</field>
+            <field name="arch" type="xml">
+             <form string="Force Done Reason">
+                <p class="oe_grey">
+                    Type in the reason why you need to force this PO to be done.
+                </p>
+                <group col="4">
+                    <group>
+                        <field name="force_done_reason" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="confirm_force_done"
+                        string="Force Done" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
         </record>
 
         <record id="action_force_done" model="ir.actions.act_window">
