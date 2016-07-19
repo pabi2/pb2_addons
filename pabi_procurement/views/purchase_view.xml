@@ -2,28 +2,28 @@
 <openerp>
     <data>
         <!-- purchase split quote2order replaced the header so generic invoice plan buttons is not going to show-->
-        <record id="view_purchase_create_invoice_form" model="ir.ui.view">
-            <field name="name">Create Invoice</field>
-            <field name="model">purchase.create.invoice</field>
-            <field name="arch" type="xml">
-                <form string="Create Invoice">
-                    <label string="This wizard will create the invoices based on configured invoice plan. Tick if
-                                    you want to proceed ahead."/>
-                    <group>
-                        <group>
-                            <field name="create_invoice" />
-                        </group>
-                        <group>
-                        </group>
-                    </group>
-                    <footer>
-                        <button name="create_purchase_invoices" string="_Create" type="object" class="oe_highlight"/>
-                        or
-                        <button string="_Cancel" class="oe_link" special="cancel" />
-                    </footer>
-                </form>
-            </field>
-        </record>
+        <!--<record id="view_purchase_create_invoice_form" model="ir.ui.view">-->
+            <!--<field name="name">Create Invoice</field>-->
+            <!--<field name="model">purchase.create.invoice</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form string="Create Invoice">-->
+                    <!--<label string="This wizard will create the invoices based on configured invoice plan. Tick if-->
+                                    <!--you want to proceed ahead."/>-->
+                    <!--<group>-->
+                        <!--<group>-->
+                            <!--<field name="create_invoice" />-->
+                        <!--</group>-->
+                        <!--<group>-->
+                        <!--</group>-->
+                    <!--</group>-->
+                    <!--<footer>-->
+                        <!--<button name="create_purchase_invoices" string="_Create" type="object" class="oe_highlight"/>-->
+                        <!--or-->
+                        <!--<button string="_Cancel" class="oe_link" special="cancel" />-->
+                    <!--</footer>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
 
         <record id="action_purchase_create_invoices" model="ir.actions.act_window">
             <field name="name">Create Invoices</field>
@@ -32,6 +32,16 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_purchase_create_invoice_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_force_done" model="ir.actions.act_window">
+            <field name="name">Force Done Reason</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order.force.done</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_order_force_done"/>
             <field name="target">new</field>
         </record>
 
@@ -51,6 +61,17 @@
                             attrs="{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
+                </xpath>
+                <xpath expr="/form/sheet//h1[1]" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'done')]}">
+                        <label for="force_done_reason" string="Force Done Reason:"/>
+                        <field name="force_done_reason" class="oe_inline" />
+                    </h2>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']" position="after">
+                    <button name="%(action_force_done)d" string="Force Done"
+                            type="action"
+                            attrs="{'invisible':[('state', '!=', 'approved')]}"/>
                 </xpath>
                 <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->
