@@ -99,10 +99,16 @@ CHART_STRUCTURE = \
             },
         },
         'invest_asset_id': {
+            'costcenter_id': {
+                'taxbranch_id': {}
+            },
             'org_id': {},
         },
         'invest_construction_phase_id': {
             'invest_construction_id': {
+                'costcenter_id': {
+                    'taxbranch_id': {}
+                },
                 'org_id': {},
             },
         },
