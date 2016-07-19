@@ -16,8 +16,8 @@ class AccountInvoice(InvoiceVoucherTaxDetail, models.Model):
 
     @api.multi
     def action_move_create(self):
-        self._check_tax_detail_info()
         result = super(AccountInvoice, self).action_move_create()
+        self._check_tax_detail_info()
         self._assign_detail_tax_sequence()
         return result
 

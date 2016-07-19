@@ -132,6 +132,12 @@ class AccountTaxWizard(models.TransientModel):
                         'base_amount': base_amount,
                         'tax_amount': tax_amount,
                         })
+        # Update Supplier Invoice Number
+        if active_model == 'account.invoice.tax':
+            numbers = list(set([x.invoice_number
+                                for x in self.detail_ids if x.invoice_number]))
+            if numbers:
+                doc.write({'supplier_invoice_number': ', '.join(numbers)})
         return True
 
 

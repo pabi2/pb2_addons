@@ -1087,6 +1087,7 @@ class AccountVoucherTax(common_voucher, models.Model):
                 'tax_code_id': t['tax_code_id'],
                 'tax_amount': t['tax_amount'],
                 'account_analytic_id': t['account_analytic_id'],
+                'tax_code_type': t['tax_code_type'],
             })
         return res
 

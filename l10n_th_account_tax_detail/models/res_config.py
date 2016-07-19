@@ -14,7 +14,7 @@ class account_config_settings(osv.osv_memory):
             domain="[('type', '!=', 'view')]",),
     }
 
-    def set_default_account_tax_differencee(self, cr, uid, ids, context=None):
+    def set_default_account_tax_difference(self, cr, uid, ids, context=None):
         """ set property advance account for supplier """
         wizard = self.browse(cr, uid, ids)[0]
         property_obj = self.pool.get('ir.property')
@@ -49,7 +49,7 @@ class account_config_settings(osv.osv_memory):
                     property_obj.create(cr, uid, vals, context=context)
         return True
 
-    def get_default_account_tax_differencee(self, cr, uid,
+    def get_default_account_tax_difference(self, cr, uid,
                                             fields, context=None):
         ir_property_obj = self.pool.get('ir.property')
         fiscal_obj = self.pool.get('account.fiscal.position')

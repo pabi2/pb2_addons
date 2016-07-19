@@ -11,8 +11,8 @@ class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
 
     @api.multi
     def proforma_voucher(self):
-        self._check_tax_detail_info()
         result = super(AccountVoucher, self).proforma_voucher()
+        self._check_tax_detail_info()
         self._assign_detail_tax_sequence()
         return result
 
