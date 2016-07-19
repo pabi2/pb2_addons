@@ -35,30 +35,30 @@
             <field name="target">new</field>
         </record>
 
-        <record id="view_order_force_done" model="ir.ui.view">
-            <field name="name">Force Done Reason</field>
-            <field name="model">purchase.order.force.done</field>
-            <field name="arch" type="xml">
-             <form string="Force Done Reason">
-                <p class="oe_grey">
-                    Type in the reason why you need to force this PO to be done.
-                </p>
-                <group col="4">
-                    <group>
-                        <field name="force_done_reason" required="1"/>
-                    </group>
-                </group>
-                <footer>
-                    <button name="confirm_force_done"
-                        string="Force Done" type="object"
-                        class="oe_highlight"/>
-                    or
-                    <button string="Cancel" class="oe_link"
-                        special="cancel" />
-                </footer>
-            </form>
-            </field>
-        </record>
+        <!--<record id="view_order_force_done" model="ir.ui.view">-->
+            <!--<field name="name">Force Done Reason</field>-->
+            <!--<field name="model">purchase.order.force.done</field>-->
+            <!--<field name="arch" type="xml">-->
+             <!--<form string="Force Done Reason">-->
+                <!--<p class="oe_grey">-->
+                    <!--Type in the reason why you need to force this PO to be done.-->
+                <!--</p>-->
+                <!--<group col="4">-->
+                    <!--<group>-->
+                        <!--<field name="force_done_reason" required="1"/>-->
+                    <!--</group>-->
+                <!--</group>-->
+                <!--<footer>-->
+                    <!--<button name="confirm_force_done"-->
+                        <!--string="Force Done" type="object"-->
+                        <!--class="oe_highlight"/>-->
+                    <!--or-->
+                    <!--<button string="Cancel" class="oe_link"-->
+                        <!--special="cancel" />-->
+                <!--</footer>-->
+            <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
 
         <record id="action_force_done" model="ir.actions.act_window">
             <field name="name">Force Done Reason</field>
