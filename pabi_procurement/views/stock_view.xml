@@ -7,7 +7,10 @@
             <field name="inherit_id" ref="stock.view_move_picking_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree/field[@name='product_uom_qty']" position="after">
-                    <field name="request_qty" />
+                    <field name="picking_type_code" invisible="1"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='product_uom_qty']" position="after">
+                    <field name="request_qty" attrs="{'invisible': [('picking_type_code', '!=', 'internal')]}"/>
                 </xpath>
                 <xpath expr="//tree/field[@name='location_dest_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -25,7 +28,7 @@
                 <xpath expr="//group/group/label[@for='product_uos_qty']" position="before">
                     <label for="request_qty"/>
                         <div>
-                            <field name="request_qty" />
+                            <field name="request_qty"/>
                         </div>
                 </xpath>
             </field>

@@ -17,7 +17,7 @@
                             class="oe_highlight"
                             attrs="{'invisible':[('state', '!=', 'approved'),]}"/>
                 </xpath>
-                <xpath expr="//button[@name='invoice_open']" position="before">
+                <xpath expr="//div[@name='buttons']/button[@name='view_picking']" position="before">
                     <button type="object"  name="acceptance_open"
                         class="oe_stat_button"
                         icon="fa-pencil-square-o"

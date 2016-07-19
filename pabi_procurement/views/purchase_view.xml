@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <!-- purchase split quote2order replaced the header so generic invoice plan buttons is not going to show-->
+        <!--purchase split quote2order replaced the header so generic invoice plan buttons is not going to show-->
         <record id="view_purchase_create_invoice_form" model="ir.ui.view">
             <field name="name">Create Invoice</field>
             <field name="model">purchase.create.invoice</field>
@@ -35,6 +35,41 @@
             <field name="target">new</field>
         </record>
 
+        <!--<record id="view_order_force_done" model="ir.ui.view">-->
+            <!--<field name="name">Force Done Reason</field>-->
+            <!--<field name="model">purchase.order.force.done</field>-->
+            <!--<field name="arch" type="xml">-->
+             <!--<form string="Force Done Reason">-->
+                <!--<p class="oe_grey">-->
+                    <!--Type in the reason why you need to force this PO to be done.-->
+                <!--</p>-->
+                <!--<group col="4">-->
+                    <!--<group>-->
+                        <!--<field name="force_done_reason" required="1"/>-->
+                    <!--</group>-->
+                <!--</group>-->
+                <!--<footer>-->
+                    <!--<button name="confirm_force_done"-->
+                        <!--string="Force Done" type="object"-->
+                        <!--class="oe_highlight"/>-->
+                    <!--or-->
+                    <!--<button string="Cancel" class="oe_link"-->
+                        <!--special="cancel" />-->
+                <!--</footer>-->
+            <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <record id="action_force_done" model="ir.actions.act_window">
+            <field name="name">Force Done Reason</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order.force.done</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_order_force_done"/>
+            <field name="target">new</field>
+        </record>
+
         <record model="ir.ui.view" id="view_purchase_order_form" >
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>
@@ -51,6 +86,17 @@
                             attrs="{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
+                </xpath>
+                <xpath expr="/form/sheet//h1[1]" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'done')]}">
+                        <label for="force_done_reason" string="Force Done Reason:"/>
+                        <field name="force_done_reason" class="oe_inline" />
+                    </h2>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']" position="after">
+                    <button name="%(action_force_done)d" string="Force Done"
+                            type="action"
+                            attrs="{'invisible':[('state', '!=', 'approved')]}"/>
                 </xpath>
                 <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->

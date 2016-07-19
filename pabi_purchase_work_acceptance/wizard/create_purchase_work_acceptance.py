@@ -39,7 +39,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     invoice_plan_id = fields.Many2one(
         'purchase.invoice.plan',
         string='Invoice Plan',
-        domain="[('order_id', '=',order_id)]",
+        domain="[('order_id', '=',order_id),"
+               "('ref_invoice_id.state', '=','draft')]",
     )
 
     @api.model

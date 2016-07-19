@@ -54,10 +54,15 @@ class StockPicking(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
+    picking_type_code = fields.Selection(
+        string='Picking Type Code',
+        related='picking_type_id.code',
+        store=True,
+        readonly=True,
+    )
     request_qty = fields.Float(
         string='Request Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
-        required=True,
         default=0.0,
     )
 
