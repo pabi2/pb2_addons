@@ -6,16 +6,24 @@ from .chartfield import ChartFieldAction, HeaderTaxBranch
 class PurchaseOrder(HeaderTaxBranch, models.Model):
     _inherit = 'purchase.order'
 
-    taxbranch_id = fields.Many2one(
-        compute='_compute_taxbranch_id',
-        store=True,
+    taxbranch_ids = fields.Many2many(
+        compute='_compute_taxbranch_ids',
+    )
+    len_taxbranch = fields.Integer(
+        compute='_compute_taxbranch_ids',
     )
 
     @api.one
     @api.depends('order_line')
-    def _compute_taxbranch_id(self):
+    def _compute_taxbranch_ids(self):
         lines = self.order_line
-        self.taxbranch_id = self._check_taxbranch_id(lines)
+        self._set_taxbranch_ids(lines)
+
+    @api.model
+    def create(self, vals):
+        res = super(PurchaseOrder, self).create(vals)
+        res._set_header_taxbranch_id()
+        return res
 
 
 class PurchaseOrderLine(ChartFieldAction, models.Model):
