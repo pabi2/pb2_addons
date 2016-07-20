@@ -637,7 +637,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="#,##0">
-								<reportElement x="3" y="0" width="51" height="21"/>
+								<reportElement x="11" y="0" width="51" height="21"/>
 								<textElement textAlignment="Left" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
