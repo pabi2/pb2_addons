@@ -87,12 +87,12 @@
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
                 </xpath>
-                <xpath expr="/form/sheet//h1[1]" position="after">
-                    <h2 attrs="{'invisible': [('state', '!=', 'done')]}">
-                        <label for="force_done_reason" string="Force Done Reason:"/>
-                        <field name="force_done_reason" class="oe_inline" />
-                    </h2>
-                </xpath>
+                <!--<xpath expr="/form/sheet//h1[1]" position="after">-->
+                    <!--<h2 attrs="{'invisible': [('state', '!=', 'done')]}">-->
+                        <!--<label for="force_done_reason" string="Force Done Reason:"/>-->
+                        <!--<field name="force_done_reason" class="oe_inline" />-->
+                    <!--</h2>-->
+                <!--</xpath>-->
                 <xpath expr="//button[@name='action_cancel']" position="after">
                     <button name="%(action_force_done)d" string="Force Done"
                             type="action"

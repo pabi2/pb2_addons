@@ -120,25 +120,28 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.model
     def _check_product_type(self):
-        check_type = False
+        type = False
+        is_consumable = False
         for line in self.acceptance_line_ids:
-            if not check_type:
-                check_type = line.product_id.type
-                continue
+            type = line.product_id.type
+            is_consumable = line.product_id.categ_id.is_consumable
+            break
             # if check_type != line.product_id.type:
             #     raise UserError(
             #         _("All products must have the same type. %s"
             #           % (self.name,)))
-        return check_type
+        return type, is_consumable
 
     @api.model
-    def _calculate_service_fine(self):
+    def _calculate_last_invoice_plan_fine(self, invoice):
         total_fine = 0.0
         today = fields.Date.context_today(self)
+        THHoliday = self.env['thai.holiday']
         if not self.date_receive:
             self.date_receive = today.strftime('%Y-%m-%d')
+        received = THHoliday.find_next_working_day(self.date_receive)
         received = datetime.datetime.strptime(
-            self.date_receive,
+            received,
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
@@ -151,26 +154,50 @@ class PurchaseWorkAcceptance(models.Model):
         overdue_day = delta.days
         total_fine_per_day = 0.0
         if overdue_day < 0:
-            for line in self.acceptance_line_ids:
+            for line in invoice.invoice_line:
+                line_tax = 0.0
                 fine_rate = self.order_id.fine_rate
-                unit_price = line.line_id.price_unit
-                to_receive_qty = 1
-                fine_per_day = (fine_rate*0.01) * (to_receive_qty * unit_price)
+                unit_price = line.price_unit
+                to_receive_qty = line.quantity
+                taxes = line.invoice_line_tax_id.compute_all(
+                    unit_price,
+                    to_receive_qty,
+                    product=line.product_id,
+                )
+                line_tax += sum([tax['amount'] for tax in taxes['taxes']])
+                fine_per_day = (fine_rate*0.01) * \
+                               ((to_receive_qty * unit_price) + line_tax)
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * overdue_day * fine_per_day
-                total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.total_fine = total_fine
+            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
+
+    @api.model
+    def _calculate_service_fine(self):
+        if self.order_id.use_invoice_plan:  # invoice plan
+            order_plan = self.order_id.invoice_plan_ids
+            last_installment = 0
+            select_line = False
+            for plan_line in order_plan:
+                if plan_line.installment >= last_installment:
+                    select_line = plan_line
+            if select_line:
+                invoice = select_line.ref_invoice_id
+                self._calculate_last_invoice_plan_fine(invoice)
+        else:  # normal service
+            self._calculate_incoming_fine()
 
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
         today = fields.Date.context_today(self)
+        THHoliday = self.env['thai.holiday']
         if not self.date_receive:
             self.date_receive = today.strftime('%Y-%m-%d')
+        received = THHoliday.find_next_working_day(self.date_receive)
         received = datetime.datetime.strptime(
-            self.date_receive,
+            received,
             "%Y-%m-%d",
         )
         if not self.date_contract_end:
@@ -184,22 +211,29 @@ class PurchaseWorkAcceptance(models.Model):
         total_fine_per_day = 0.0
         if overdue_day < 0:
             for line in self.acceptance_line_ids:
+                line_tax = 0.0
                 fine_rate = self.order_id.fine_rate
                 unit_price = line.line_id.price_unit
                 to_receive_qty = line.to_receive_qty
-                fine_per_day = (fine_rate*0.01) * (to_receive_qty * unit_price)
+                taxes = line.line_id.taxes_id.compute_all(
+                    unit_price,
+                    to_receive_qty,
+                    product=line.product_id,
+                )
+                line_tax += sum([tax['amount'] for tax in taxes['taxes']])
+                fine_per_day = (fine_rate*0.01) * \
+                               ((to_receive_qty * unit_price) + line_tax)
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * overdue_day * fine_per_day
-                total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.total_fine = total_fine
+            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
 
     @api.one
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
-        product_type = self._check_product_type()
-        if product_type == 'service':
+        product_type, is_consumable = self._check_product_type()
+        if product_type == 'service' and not is_consumable:
             self._calculate_service_fine()
         else:
             self._calculate_incoming_fine()
@@ -286,26 +320,26 @@ class PurchaseWorkAcceptance(models.Model):
     )
     eval_receiving = fields.Selection(
         selection=[
-            ('3', 'On time'),
-            ('2', 'Late for 1-7 days'),
-            ('1', 'Late for 8-14 days'),
-            ('0', 'Late more than 15 days'),
+            ('3', 'On time [3]'),
+            ('2', 'Late for 1-7 days [2]'),
+            ('1', 'Late for 8-14 days [1]'),
+            ('0', 'Late more than 15 days [0]'),
         ],
         string='Rate - Receiving',
     )
     eval_quality = fields.Selection(
         selection=[
-            ('2', 'Better than expectation'),
-            ('1', 'As expectation'),
+            ('2', 'Better than expectation [2]'),
+            ('1', 'As expectation [1]'),
         ],
         string='Rate - Quality',
     )
     eval_service = fields.Selection(
         selection=[
-            ('3', 'Excellent'),
-            ('2', 'Good'),
-            ('1', 'Satisfactory'),
-            ('0', 'Needs Improvement'),
+            ('3', 'Excellent [3]'),
+            ('2', 'Good [2]'),
+            ('1', 'Satisfactory [1]'),
+            ('0', 'Needs Improvement [0]'),
         ],
         string='Rate - Service',
     )
