@@ -105,6 +105,24 @@ class PurchaseOrder(models.Model):
         states={'draft': [('readonly', False)]},
     )
 
+    @api.model
+    def _prepare_committee_line(self, line, order_id):
+        return {
+            'order_id': order_id,
+            'name': line.name,
+            'sequence': line.sequence,
+            'position': line.position,
+            'committee_type_id': line.committee_type_id.id,
+        }
+
+    @api.model
+    def _prepare_order_committees(self, order_id):
+        committees = []
+        for line in self.committee_ids:
+            committee_line = self._prepare_committee_line(line, order_id)
+            committees.append([0, False, committee_line])
+        return committees
+
     @api.multi
     @api.depends('doc_approve_uid')
     def _compute_doc_approve_position_id(self):
@@ -163,6 +181,7 @@ class PurchaseOrder(models.Model):
         for order in orders:
             order.write({
                 'origin': order.quote_id.origin,
+                'committee_ids': self._prepare_order_committees(order.id),
             })
         return res
 

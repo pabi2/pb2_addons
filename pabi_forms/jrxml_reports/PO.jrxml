@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="28" bottomMargin="141">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.3310000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="192"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -30,7 +30,8 @@ rp2.fax faxvali,
 rp2.name namevali,
 convert_from(rp_partner.image, 'UTF8') ou_image,
 rt.name branch,concat(rt.street,' ',rt.street2,' ',rt.city,' ',rt.zip) address,
-(select name validated from res_partner where id = ru.partner_id)
+(select name validated from res_partner where id = ru.partner_id),
+po.delivery_address
 
 from purchase_order po
 
@@ -86,6 +87,9 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 	<field name="branch" class="java.lang.String"/>
 	<field name="address" class="java.lang.String"/>
 	<field name="validated" class="java.lang.String"/>
+	<field name="delivery_address" class="java.lang.String">
+		<fieldDescription><![CDATA[Delivery Address]]></fieldDescription>
+	</field>
 	<pageHeader>
 		<band height="211">
 			<staticText>
@@ -165,12 +169,12 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[โทรสาร :]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="63" y="168" width="100" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="120" width="62" height="16"/>
@@ -180,7 +184,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[โทรศัพท์ :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="62" y="120" width="79" height="16"/>
+				<reportElement x="62" y="120" width="147" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -194,7 +198,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="63" y="136" width="79" height="16"/>
+				<reportElement x="63" y="136" width="146" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -274,7 +278,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[1. สำนักงานฯศูนย์ฯ ขอนำส่งใบสั่งซื้อ/จ้าง เลขที่]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="142" y="0" width="47" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -288,12 +292,12 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[ลงวันที่]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="216" y="0" width="65" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_order}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="30">
@@ -305,11 +309,13 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[3. สถานที่ส่งมอบ :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="11" y="15" width="243" height="15"/>
+				<reportElement x="11" y="15" width="243" height="15">
+					<printWhenExpression><![CDATA[$F{delivery_address}]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ส่งที่  "+$F{notes}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ส่งที่  "+$F{delivery_address}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="30">
@@ -318,7 +324,11 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{ouname} + $F{branch} + $F{address}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{ouname} == null ? "" : $F{ouname})
++
+($F{branch} == null ? "" : $F{branch})
++
+($F{address} == null ? "" : $F{address})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="0" width="180" height="15"/>
