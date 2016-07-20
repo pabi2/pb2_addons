@@ -120,19 +120,20 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.model
     def _check_product_type(self):
-        check_type = False
+        type = False
+        is_consumable = False
         for line in self.acceptance_line_ids:
-            if not check_type:
-                check_type = line.product_id.type
-                continue
+            type = line.product_id.type
+            is_consumable = line.product_id.categ_id.is_consumable
+            break
             # if check_type != line.product_id.type:
             #     raise UserError(
             #         _("All products must have the same type. %s"
             #           % (self.name,)))
-        return check_type
+        return type, is_consumable
 
     @api.model
-    def _calculate_service_fine(self):
+    def _calculate_last_invoice_plan_fine(self, invoice):
         total_fine = 0.0
         today = fields.Date.context_today(self)
         THHoliday = self.env['thai.holiday']
@@ -153,12 +154,12 @@ class PurchaseWorkAcceptance(models.Model):
         overdue_day = delta.days
         total_fine_per_day = 0.0
         if overdue_day < 0:
-            for line in self.acceptance_line_ids:
+            for line in invoice.invoice_line:
                 line_tax = 0.0
                 fine_rate = self.order_id.fine_rate
-                unit_price = line.line_id.price_unit
-                to_receive_qty = line.to_receive_qty
-                taxes = line.line_id.taxes_id.compute_all(
+                unit_price = line.price_unit
+                to_receive_qty = line.quantity
+                taxes = line.invoice_line_tax_id.compute_all(
                     unit_price,
                     to_receive_qty,
                     product=line.product_id,
@@ -171,6 +172,21 @@ class PurchaseWorkAcceptance(models.Model):
             self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
+
+    @api.model
+    def _calculate_service_fine(self):
+        if self.order_id.use_invoice_plan:  # invoice plan
+            order_plan = self.order_id.invoice_plan_ids
+            last_installment = 0
+            select_line = False
+            for plan_line in order_plan:
+                if plan_line.installment >= last_installment:
+                    select_line = plan_line
+            if select_line:
+                invoice = select_line.ref_invoice_id
+                self._calculate_last_invoice_plan_fine(invoice)
+        else:  # normal service
+            self._calculate_incoming_fine()
 
     @api.model
     def _calculate_incoming_fine(self):
@@ -216,8 +232,8 @@ class PurchaseWorkAcceptance(models.Model):
     @api.one
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
-        product_type = self._check_product_type()
-        if product_type == 'service':
+        product_type, is_consumable = self._check_product_type()
+        if product_type == 'service' and not is_consumable:
             self._calculate_service_fine()
         else:
             self._calculate_incoming_fine()
