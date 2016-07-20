@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
 	<property name="ireport.zoom" value="1.8150000000000062"/>
-	<property name="ireport.x" value="304"/>
-	<property name="ireport.y" value="289"/>
+	<property name="ireport.x" value="302"/>
+	<property name="ireport.y" value="528"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -264,7 +264,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[เลขที่ (No) :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="106" width="108" height="30"/>
+				<reportElement x="330" y="106" width="94" height="30"/>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -285,11 +285,11 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[สถานที่ส่งมอบ (Ship to):]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="394" y="107" width="198" height="40"/>
+				<reportElement x="394" y="106" width="198" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new Date($F{order_date}.year+543, $F{order_date}.month, $F{order_date}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{order_date}.year+543, $F{order_date}.month, $F{order_date}.date)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="13" width="312" height="34"/>
@@ -401,7 +401,7 @@ $F{vendor_fax} != null ? "โทรสาร: " + $F{vendor_fax} : ""]]></textFi
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new Date($F{rfq_date}.year+543, $F{rfq_date}.month, $F{rfq_date}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{rfq_date}.year+543, $F{rfq_date}.month, $F{rfq_date}.date)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="87" y="292" width="17" height="21"/>
@@ -420,14 +420,14 @@ $F{payment_term} == "15 Days" ? "15 วัน" :
 $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="338" y="289" width="178" height="30"/>
+				<reportElement x="326" y="289" width="196" height="21"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="338" y="301" width="178" height="25"/>
+				<reportElement x="326" y="301" width="196" height="21"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -611,7 +611,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<textElement textAlignment="Center" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$V{row_count}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{row_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -641,7 +641,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{product_qty}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{product_qty}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="">
 								<reportElement x="4" y="0" width="58" height="21"/>
@@ -663,7 +663,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{price_unit}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{price_unit}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -678,7 +678,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$V{price_subtotal}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$V{price_subtotal}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -921,7 +921,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement lineSpacing="Single">
 					<font size="9" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{stamp_vat}.setScale(0, java.math.RoundingMode.CEILING)]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{stamp_vat}.setScale(0, java.math.RoundingMode.CEILING)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="70" y="116" width="409" height="14">
@@ -1001,7 +1001,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{grand_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="340" y="22" width="122" height="21"/>
@@ -1015,7 +1015,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{vat}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{vat}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="340" y="2" width="84" height="21"/>
@@ -1029,7 +1029,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{sub_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="32" width="293" height="1"/>
