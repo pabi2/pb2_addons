@@ -165,11 +165,10 @@ class PurchaseWorkAcceptance(models.Model):
                 )
                 line_tax += sum([tax['amount'] for tax in taxes['taxes']])
                 fine_per_day = (fine_rate*0.01) * \
-                               (to_receive_qty * unit_price) + line_tax
+                               ((to_receive_qty * unit_price) + line_tax)
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * overdue_day * fine_per_day
-                total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.total_fine = total_fine
+            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
 
@@ -207,11 +206,10 @@ class PurchaseWorkAcceptance(models.Model):
                 )
                 line_tax += sum([tax['amount'] for tax in taxes['taxes']])
                 fine_per_day = (fine_rate*0.01) * \
-                               (to_receive_qty * unit_price) + line_tax
+                               ((to_receive_qty * unit_price) + line_tax)
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * overdue_day * fine_per_day
-                total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.total_fine = total_fine
+            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
 
