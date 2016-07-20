@@ -152,12 +152,12 @@ class PurchaseWorkAcceptance(models.Model):
         delta = end_date - received
         overdue_day = delta.days
         total_fine_per_day = 0.0
-        line_tax = 0.0
         if overdue_day < 0:
             for line in self.acceptance_line_ids:
+                line_tax = 0.0
                 fine_rate = self.order_id.fine_rate
                 unit_price = line.line_id.price_unit
-                to_receive_qty = 1
+                to_receive_qty = line.to_receive_qty
                 taxes = line.line_id.taxes_id.compute_all(
                     unit_price,
                     to_receive_qty,
@@ -194,9 +194,9 @@ class PurchaseWorkAcceptance(models.Model):
         delta = end_date - received
         overdue_day = delta.days
         total_fine_per_day = 0.0
-        line_tax = 0.0
         if overdue_day < 0:
             for line in self.acceptance_line_ids:
+                line_tax = 0.0
                 fine_rate = self.order_id.fine_rate
                 unit_price = line.line_id.price_unit
                 to_receive_qty = line.to_receive_qty
