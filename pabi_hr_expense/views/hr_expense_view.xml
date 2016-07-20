@@ -144,6 +144,7 @@
                 </field>
                 <field name="date" position="after">
                 	<field name="date_due" />
+                	<field name="user_valid" />
                 </field>
             </field>
         </record>
@@ -171,6 +172,7 @@
                 <field name="department_id" position="replace" />
                 <group position="replace" >
                     <group expand="0" string="Group By">
+                        <filter string="Accepted By" domain="[]" context="{'group_by':'user_valid'}"/>
                         <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
                         <filter string="Operating Unit" domain="[]" context="{'group_by':'department_id'}"/>
                         <filter string="Expenses Month" domain="[]" context="{'group_by':'date'}" help="Expenses by Month"/>
