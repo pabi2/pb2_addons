@@ -77,10 +77,9 @@ class HRExpenseExpese(models.Model):
                 expense.is_invoiced = True
                 expense.to_invoice_amount = 0.0
             if expense.is_advance_clearing or\
-            expense.is_employee_advance:
+                    expense.is_employee_advance:
                 expense.is_invoiced = True
                 expense.to_invoice_amount = 0.0
-
 
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
@@ -238,8 +237,9 @@ class HRExpenseExpese(models.Model):
         Create Supplier Invoice (instead of the old style Journal Entries)
         '''
         for expense in self:
-            invoice = expense._create_supplier_invoice_from_expense()
-            expense.invoice_id = invoice
+            if not expense.invoice_id:
+                invoice = expense._create_supplier_invoice_from_expense()
+                expense.invoice_id = invoice
             expense.write({'account_move_id': expense.invoice_id.move_id.id,
                            'state': 'done'})
         return True
@@ -262,6 +262,12 @@ class HRExpenseExpese(models.Model):
         else:
             result.update({'views': [(False, u'form'), (False, u'tree')]})
         return result
+
+    @api.multi
+    def action_paid(self):
+        for expense in self:
+            expense.write({'state': 'paid'})
+        return True
 
 
 class HRExpenseLine(models.Model):
