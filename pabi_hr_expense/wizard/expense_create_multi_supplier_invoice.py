@@ -86,5 +86,6 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
                 if not expense.invoice_id:
                     expense.invoice_id = invoice
                     expense.account_move_id = expense.invoice_id.move_id.id
-            expense.write({'state': 'done'})
+#             expense.write({'state': 'done'})
+            expense.signal_workflow('done')
         return

@@ -13,6 +13,7 @@
                     	attrs="{'invisible': [('is_diff_expense_amount', '=', False)]}"/>
                     <field name="diff_expense_amount_reason" placeholder="Reason for amount difference"
                     	attrs="{'invisible': [('is_diff_expense_amount', '=', False)]}"/>
+                    <field name="invoice_ref_id"/>
                 </xpath>
             </field>
         </record>
