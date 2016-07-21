@@ -12,21 +12,51 @@ class AccountInvoice(models.Model):
         copy=False,
     )
 
+#     @api.multi
+#     def confirm_paid(self):
+#         expenses = self.env['hr.expense.expense'].search([('invoice_id',
+#                                                            'in', self._ids)])
+# #         if expenses:
+# #             expenses.write({'state': 'paid'})
+#         return super(AccountInvoice, self).confirm_paid()
+
     @api.multi
     def confirm_paid(self):
-        expenses = self.env['hr.expense.expense'].search([('invoice_id',
-                                                           'in', self._ids)])
-        if expenses:
-            expenses.write({'state': 'paid'})
-        return super(AccountInvoice, self).confirm_paid()
+        result = super(AccountInvoice, self).confirm_paid()
+        for invoice in self:
+            if invoice.expense_id:
+                expense = invoice.expense_id
+                if expense.invoice_ids:
+                    total_amount = sum([x.amount_total
+                                        for x in expense.invoice_ids
+                                        if x.state == 'paid'])
+                    if total_amount == expense.amount:
+                        invoice.expense_id.signal_workflow('paid')
+                    else:
+                        if expense.is_advance_clearing\
+                                and invoice.state == 'paid':
+                            invoice.expense_id.signal_workflow('paid')
+        return result
+
+
+#     @api.multi
+#     def action_cancel(self):
+#         expenses = self.env['hr.expense.expense'].search([('invoice_id',
+#                                                            'in', self._ids)])
+#         if expenses:
+#             expenses.signal_workflow('done_to_accept')
+#         return super(AccountInvoice, self).action_cancel()
 
     @api.multi
     def action_cancel(self):
-        expenses = self.env['hr.expense.expense'].search([('invoice_id',
-                                                           'in', self._ids)])
-        if expenses:
-            expenses.signal_workflow('done_to_accept')
-        return super(AccountInvoice, self).action_cancel()
+        result = super(AccountInvoice, self).action_cancel()
+        for invoice in self:
+            if invoice.expense_id:
+                expense = invoice.expense_id
+                if expense.state == 'done':
+                    expense.signal_workflow('done_to_accept')
+                expense.write({'invoice_id': False})
+        return result
 
     @api.model
     def _get_invoice_total(self, invoice):
