@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="2.19615000000002"/>
 	<property name="ireport.x" value="84"/>
-	<property name="ireport.y" value="990"/>
+	<property name="ireport.y" value="185"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -513,14 +513,14 @@ WHERE $X{IN,pb.id,PIDS}]]>
 					<jr:column width="116">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField pattern="dd/MM/yyyy">
-								<reportElement x="48" y="0" width="68" height="21"/>
+								<reportElement x="45" y="0" width="68" height="21"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="0" y="0" width="76" height="21"/>
+								<reportElement x="5" y="0" width="76" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
@@ -898,14 +898,14 @@ WHERE $X{IN,pb.id,PIDS}]]>
 					<jr:column width="116">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField pattern="dd/MM/yyyy">
-								<reportElement x="48" y="0" width="68" height="21"/>
+								<reportElement x="45" y="0" width="68" height="21"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="0" y="0" width="76" height="21"/>
+								<reportElement x="5" y="0" width="76" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
