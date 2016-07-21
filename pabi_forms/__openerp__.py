@@ -8,6 +8,7 @@
     'depends': [
         'jasper_reports',
         'l10n_th_amount_text_ext',
+        'account_voucher_forms',
     ],
     'data': [
         "jasper_data.xml",

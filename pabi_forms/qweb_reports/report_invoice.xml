@@ -12,8 +12,8 @@
                             <p>
                                 <strong>Doc. Date : </strong><span t-field="o.date_invoice"/><br/>
                                 <strong>Currency : </strong><span t-field="o.currency_id.name"/><br/>
-                                <strong>Reference Doc : </strong><span t-field="o.number"/><br/>
-                                <strong>Doc.HeaderText : </strong><span></span>
+                                <strong>Reference Doc : </strong><t t-esc="get_doc_ref(o)"/><br/>
+                                <strong>Doc.HeaderText : </strong><span t-field="o.origin"/>
                             </p>
                         </div>
                         <div class="col-xs-3">
@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-xs-5">
                             <strong>Doc. Type : </strong><strong style="font-size:25px;">KV</strong><br/>
-                            <strong>Fiscal Year/Doc. No.: </strong><span t-field="o.period_id.name"/>/<span t-esc="o.move_id and o.move_id.name or ''"/><br/>
+                            <strong>Fiscal Year/Doc. No.: </strong><span t-field="o.period_id.name"/>/<span t-field="o.number"/><br/>
                             <strong>Reversed Doc. No. : </strong>
                             <span t-field="o.cancel_move_id.name"/>
                         </div>
@@ -148,7 +148,7 @@
                     <table class="table table-condensed" >
                         <tr style="border-top:hidden;">
                             <td><strong>Accounted by</strong></td>
-                            <td>______________________</td>
+                            <td><u><span t-field="o.user_id.name"/></u></td>
                             <td><strong>Accounting Reviewed by</strong></td>
                             <td>______________________</td>
                             <td><strong>Approved by</strong></td>

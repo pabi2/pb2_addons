@@ -7,8 +7,19 @@ class InvoiceReportParser(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
         super(InvoiceReportParser, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
-            'get_currency_rate': self.get_currency_rate
+            'get_currency_rate': self.get_currency_rate,
+            'get_doc_ref': self.get_doc_ref,
         })
+
+    def get_doc_ref(self, invoice):
+        header_text = ''
+        for tax in invoice.tax_line:
+            for detail in tax.detail_ids:
+                if not header_text:
+                    header_text = detail.invoice_number
+                else:
+                    header_text = header_text + ',' + detail.invoice_number 
+        return header_text
 
     def get_currency_rate(self, currency, date):
         context = self.localcontext.copy()
