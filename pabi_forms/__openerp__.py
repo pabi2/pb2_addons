@@ -8,9 +8,15 @@
     'depends': [
         'jasper_reports',
         'l10n_th_amount_text_ext',
+        'account_voucher_forms',
     ],
     'data': [
         "jasper_data.xml",
+#         'template.xml',
+        'qweb_reports/report_layout.xml',
+        'qweb_reports/report_invoice.xml',
+        'qweb_reports/report_payment.xml',
+        'qweb_data.xml',
     ],
     'installable': True,
     'auto_install': False,

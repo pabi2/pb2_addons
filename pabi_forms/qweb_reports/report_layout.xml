@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_layout_header">
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"></t>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"></t>
+            </t>
+            <div class="header" style="font-size:16px;font-family: TH SarabunPSK !important;">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <p><strong>PrintDate : </strong><span><span t-esc="time.strftime('%d/%m/%Y')"/></span><br/>
+                        <strong>PrintTime : </strong><span><span t-esc="datetime.datetime.now().strftime('%H:%M:%S')"/></span><br/>
+                        <strong>PrintUser : </strong><span t-esc="user.name"/></p>
+                    </div>
+                    <div class="col-xs-6">
+                        <h3 class="text-center">
+                           <strong>- ลับ -</strong>
+                        </h3>
+                    </div>
+                    <div class="col-xs-3">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+                    </div>
+                </div>
+            </div>
+            <t t-raw="0" />
+            <div class="footer" style="font-size:16px;font-family: TH SarabunPSK !important;">
+                <div class="text-right">
+                    <ul class="list-inline">
+                        <li><strong>Page</strong> </li>
+                        <li><strong class="page"/>/<strong class="topage"/></li>
+                    </ul>
+                </div>
+            </div>
+        </template>
+    </data>
+</openerp>
