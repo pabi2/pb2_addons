@@ -25,6 +25,12 @@ class AccountInvoice(models.Model):
         states={'draft': [('readonly', False)]},
         help="Reason when amount is different from Expense",
     )
+    invoice_ref_id = fields.Many2one(
+        'account.invoice',
+        string="New Invoice Ref",
+        copy=False,
+        readonly=True,
+    )
 
     @api.multi
     @api.depends('amount_total')
@@ -81,6 +87,17 @@ class AccountInvoice(models.Model):
                     'date_due': date_due.strftime('%Y-%m-%d'),
                 })
         return super(AccountInvoice, self).confirm_paid()
+
+    @api.multi
+    def action_cancel(self):
+        for invoice in self:
+            if invoice.expense_id:
+                expense = invoice.expense_id
+                if expense.state == 'paid':
+                    expense.signal_workflow('invoice_except')
+                elif expense.state == 'done':
+                    expense.signal_workflow('done_to_except')
+        return super(AccountInvoice, self).action_cancel()
 
     @api.multi
     def action_move_create(self):

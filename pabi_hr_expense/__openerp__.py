@@ -22,6 +22,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        'workflow/hr_expense_workflow.xml',
         'wizard/expense_create_multi_supplier_invoice_view.xml',
         "wizard/hr_expense_change_advance_date_due_view.xml",
         "views/account_activity_view.xml",

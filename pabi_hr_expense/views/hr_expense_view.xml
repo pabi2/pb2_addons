@@ -12,6 +12,18 @@
             	<button name="validate" position="attributes">
             		<attribute name="string">Accept</attribute>
             	</button>
+                <button name="validate" position="after">
+                    <button type="object"
+                            name="action_recreate_invoice"
+                            string="Recreate Invoice"
+                            class="oe_highlight"
+                            states="invoice_except"/>
+                    <button type="object"
+                            name="action_ignore_exception"
+                            string="Ignore Exception"
+                            class="oe_highlight"
+                            states="invoice_except"/>
+                </button>
             	<field name="employee_id" position="after">
             		<field name="create_uid" />
             	</field>
