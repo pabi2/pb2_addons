@@ -17,6 +17,11 @@ class ResInvestAsset(ResCommon, models.Model):
         string='Org',
         required=False,
     )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        required=True,
+    )
     name_common = fields.Char(
         string='Common Name',
     )
@@ -41,6 +46,11 @@ class ResInvestConstruction(ResCommon, models.Model):
         'res.org',
         string='Org',
         required=False,
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        required=True,
     )
 
 
