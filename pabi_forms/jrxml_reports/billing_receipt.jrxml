@@ -520,7 +520,7 @@ WHERE $X{IN,pb.id,PIDS}]]>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="5" y="0" width="76" height="21"/>
+								<reportElement x="5" y="0" width="85" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
@@ -905,7 +905,7 @@ WHERE $X{IN,pb.id,PIDS}]]>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="5" y="0" width="76" height="21"/>
+								<reportElement x="5" y="0" width="85" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
