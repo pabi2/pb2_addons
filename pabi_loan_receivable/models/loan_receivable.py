@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from ast import literal_eval
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError, Warning as UserError
 
@@ -64,6 +65,7 @@ class LoanCustomerAgreement(models.Model):
     partner_id = fields.Many2one(
         'res.partner',
         string='Customer',
+        domain=[('customer', '=', True)],
         required=True,
     )
     amount_loan_total = fields.Float(
@@ -81,6 +83,8 @@ class LoanCustomerAgreement(models.Model):
     date_begin = fields.Date(
         string='Begin Date',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date_end = fields.Date(
         string='End Date',
@@ -138,6 +142,25 @@ class LoanCustomerAgreement(models.Model):
         string='Cancelled',
         default=False,
     )
+    bank_invoice_count = fields.Integer(
+        string='Bank Invoice Count',
+        compute='_compute_invoice_count',
+    )
+    installment_invoice_count = fields.Integer(
+        string='Installment Invoice Count',
+        compute='_compute_invoice_count',
+    )
+
+    @api.multi
+    def _compute_invoice_count(self):
+        Invoice = self.env['account.invoice']
+        for rec in self:
+            bank_dom = [('type', 'in', ('in_invoice', 'in_refund')),
+                        ('loan_agreement_id', '=', rec.id)]
+            install_dom = [('type', 'in', ('out_invoice', 'out_refund')),
+                           ('loan_agreement_id', '=', rec.id)]
+            rec.bank_invoice_count = Invoice.search_count(bank_dom)
+            rec.installment_invoice_count = Invoice.search_count(install_dom)
 
     @api.multi
     @api.depends('signed',
@@ -173,6 +196,26 @@ class LoanCustomerAgreement(models.Model):
         if self.monthly_due_type == 'specific' and \
                 (self.date_specified < 1 or self.date_specified > 28):
             raise Warning(_('Specified date must be between 1 - 28'))
+
+    @api.multi
+    def open_bank_invoices(self):
+        self.ensure_one()
+        action = self.env.ref('account.action_invoice_tree2')
+        result = action.read()[0]
+        bank_dom = [('type', 'in', ('in_invoice', 'in_refund')),
+                    ('loan_agreement_id', '=', self.id)]
+        result.update({'domain': bank_dom})
+        return result
+
+    @api.multi
+    def open_installment_invoices(self):
+        self.ensure_one()
+        action = self.env.ref('account.action_invoice_tree1')
+        result = action.read()[0]
+        install_dom = [('type', 'in', ('out_invoice', 'out_refund')),
+                       ('loan_agreement_id', '=', self.id)]
+        result.update({'domain': install_dom})
+        return result
 
     @api.multi
     def action_sign(self):
@@ -320,6 +363,7 @@ class LoanCustomerAgreement(models.Model):
         OrderLine = self.env['sale.order.line']
         loan = self
         order_vals = self._prepare_order_header(loan, date_order)
+        order_vals.update({'loan_agreement_id': self.id})
         order = Order.create(order_vals)
         order_line_data = self._prepare_order_line(loan, order.id)
         OrderLine.create(order_line_data)

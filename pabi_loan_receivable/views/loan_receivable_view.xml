@@ -115,7 +115,8 @@
             <field name="name">view.loan.customer.agreement.form</field>
             <field name="model">loan.customer.agreement</field>
             <field name="arch" type="xml">
-                <form string="Customer Loan Agreement" >                <header>
+                <form string="Customer Loan Agreement" >
+                <header>
                     <button name="action_sign" string="Sign Document" states="draft" type="object" class="oe_highlight"/>
 	                <button name="%(action_create_bank_invoice)d"
 	                         string="Create Bank Invoice"
@@ -140,6 +141,18 @@
                             <field name="name" class="oe_inline" />
                         </h1>
                     </div>
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+                                name="open_bank_invoices" 
+                                attrs="{'invisible': [('bank_invoice_count', '=', 0)]}">
+                            <field string="Bank Invoices" name="bank_invoice_count" widget="statinfo" />
+                        </button>
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text-o"
+                                name="open_installment_invoices" 
+                                attrs="{'invisible': [('installment_invoice_count', '=', 0)]}">
+                            <field string="Installments" name="installment_invoice_count" widget="statinfo" />
+                        </button>
+                    </div>
                     <group>
                         <group>
                             <field name="partner_id" />
@@ -157,7 +170,7 @@
                                 <field name="date_begin" class="oe_inline" nolabel="1"/> -
                                 <field name="date_end" nolabel="1" class="oe_inline"/>
                             </div>
-                            <field name="supplier_invoice_id" context="{'default_type': 'in_invoice'}"/>
+                            <field name="supplier_invoice_id" context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
                         </group>
                     </group>
                     <notebook>
@@ -173,13 +186,13 @@
 		                   		<tree string="Installment Plan">
 							      	<field name="sequence" widget="handle" />
 						            <field name="order_id" invisible="1" />
-						            <field name="order_line_id" domain="[('order_id','=',parent.id)]" />
+						            <field name="order_line_id" domain="[('order_id','=',parent.id)]" invisible="1" />
 						            <field name="installment" />
 						            <field name="date_invoice" />
 						            <field name="invoice_amount" sum="Amount" />
 						            <field name="invoice_percent"/>
 						            <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
-						     		<field name="ref_invoice_id" invisible="1"  />
+						     		<field name="ref_invoice_id" invisible="0"  />
 						            <field name="state" invisible="0"/>
 					            </tree>
 		                   	</field>
