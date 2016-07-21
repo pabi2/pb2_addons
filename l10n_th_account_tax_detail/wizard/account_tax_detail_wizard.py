@@ -198,6 +198,10 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         strin='Past Period Tax',
         default=False,
     )
+    is_readonly = fields.Boolean(
+        related='wizard_id.is_readonly',
+        string='Readonly',
+    )
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
