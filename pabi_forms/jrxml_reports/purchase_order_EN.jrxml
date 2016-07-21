@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
-	<property name="ireport.zoom" value="1.2100000000000013"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.zoom" value="0.8264462809917363"/>
+	<property name="ireport.x" value="9"/>
+	<property name="ireport.y" value="96"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -34,6 +34,10 @@ WHERE pol.order_id = $P{ids}]]>
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>
 	</subDataset>
+	<parameter name="IDS" class="java.lang.Object"/>
+	<parameter name="PIDS" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
 po.id po_id,
@@ -133,7 +137,7 @@ LEFT JOIN res_taxbranch taxbranch
 ON taxbranch.id = po.taxbranch_id
 LEFT JOIN stock_incoterms si
 ON si.id = po.incoterm_id
-WHERE po.id = 626]]>
+WHERE $X{IN,po.id,PIDS}]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
 	<field name="partner_image" class="java.lang.Object"/>
@@ -663,8 +667,8 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 			</componentElement>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="261" splitType="Stretch">
+	<lastPageFooter>
+		<band height="261">
 			<rectangle>
 				<reportElement x="442" y="1" width="83" height="31"/>
 			</rectangle>
@@ -701,7 +705,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font size="13" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Buyer]]></text>
+				<text><![CDATA[Verified by]]></text>
 			</staticText>
 			<line>
 				<reportElement x="33" y="198" width="127" height="1"/>
@@ -733,7 +737,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[For Vendor :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="301" y="172" width="64" height="21"/>
+				<reportElement x="301" y="172" width="80" height="21"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -962,5 +966,5 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_en}]]></textFieldExpression>
 			</textField>
 		</band>
-	</pageFooter>
+	</lastPageFooter>
 </jasperReport>
