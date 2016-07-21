@@ -16,18 +16,19 @@
                     	<label string="Tax:" />
                     	<field name="amount" class="oe_inline"/>
                     </h2>
-		            <field name="detail_ids" attrs="{'readonly': [('is_readonly', '=', True)]}">
+		            <field name="detail_ids">
 		            	<tree editable="bottom" delete="0">
+		            	    <field name="is_readonly" invisible="1"/>
 		            		<field name="tax_detail_id" invisible="1"/>
-		            		<field name="partner_id" />
-		            		<field name="vat" />
-		            		<field name="taxbranch" />
+		            		<field name="partner_id" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+		            		<field name="vat" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+		            		<field name="taxbranch" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
 		            		<field name="invoice_number" />
-		            		<field name="invoice_date" />
-		            		<field name="base" sum="Base"/>
-		            		<field name="amount" sum="Tax"/>
-			         		<field name="tax_sequence" />
-			         		<field name="addition" />
+		            		<field name="invoice_date" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+		            		<field name="base" sum="Base" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+		            		<field name="amount" sum="Tax" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+			         		<field name="tax_sequence" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+			         		<field name="addition" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
 		            	</tree>
 		            </field>
 		            <footer attrs="{'invisible': [('is_readonly', '=', True)]}">
