@@ -41,7 +41,7 @@ class LoanBankMOU(models.Model):
 class LoanCustomerAgreement(models.Model):
     _name = "loan.customer.agreement"
     _inherit = ['mail.thread']
-    _description = "Loan Agreement between Bank and Customer, CC NSTDA"
+    _description = "Loan Agreement between Bank and Customer CC NSTDA"
 
     name = fields.Char(
         string='Loan Agreement Number',
@@ -160,6 +160,8 @@ class LoanCustomerAgreement(models.Model):
                 state = 'bank_paid'
             if rec.sale_id:
                 state = 'open'
+            if rec.sale_id.state == 'cancel':
+                state = 'bank_paid'
             if rec.sale_id and \
                     rec.sale_id.state == 'done':
                 state = 'done'
@@ -204,27 +206,14 @@ class LoanCustomerAgreement(models.Model):
         return True
 
     @api.multi
-    def _create_bank_supplier_invoice_for_loan(self, date_invoice=False):
+    def create_installment_order(self, date_order):
         self.ensure_one()
-        inv_lines = []
-        Invoice = self.env['account.invoice']
-        InvoiceLine = self.env['account.invoice.line']
-        loan = self
-        invoice_vals = self._prepare_inv_header(loan,
-                                                date_invoice)
-        inv_line_data = self._prepare_inv_line(loan,
-                                               invoice_vals['fiscal_position'])
-        inv_line = InvoiceLine.create(inv_line_data)
-        inv_lines.append(inv_line.id)
-        invoice_vals.update({'invoice_line': [(6, 0, inv_lines)]})
-        # Create Invoice
-        invoice = Invoice.create(invoice_vals)
-        # Set due date
-        res = invoice.onchange_payment_term_date_invoice(
-            invoice.payment_term.id, invoice.date_invoice)
-        invoice.date_due = res['value']['date_due']
-        invoice.button_compute(set_total=True)
-        return invoice
+        order = self._create_installment_order_for_loan(date_order)
+        self.write({'sale_id': order.id,
+                    'state': 'open'})
+        return order
+
+    # Create Bank Invoice
 
     @api.model
     def _prepare_inv_header(self, loan, date_invoice):
@@ -265,13 +254,14 @@ class LoanCustomerAgreement(models.Model):
         }
 
     @api.model
-    def _prepare_inv_line(self, loan, fposition_id):
+    def _prepare_inv_line(self, loan, invoice_id, fposition_id):
         InvoiceLine = self.env['account.invoice.line']
         res = InvoiceLine.product_id_change(loan.mou_id.product_id.id, False,
                                             qty=1, name='', type='in_invoice',
                                             partner_id=loan.partner_id.id,
                                             fposition_id=fposition_id)['value']
         return {
+            'invoice_id': invoice_id,
             'product_id': loan.mou_id.product_id.id,
             'name': res.get('name', False),
             'account_id': res.get('account_id', False),
@@ -279,3 +269,58 @@ class LoanCustomerAgreement(models.Model):
             'quantity': 1.0,
             'uos_id': res.get('uos_id', False),
         }
+
+    @api.multi
+    def _create_bank_supplier_invoice_for_loan(self, date_invoice=False):
+        self.ensure_one()
+        Invoice = self.env['account.invoice']
+        InvoiceLine = self.env['account.invoice.line']
+        loan = self
+        invoice_vals = self._prepare_inv_header(loan,
+                                                date_invoice)
+        invoice = Invoice.create(invoice_vals)
+        inv_line_data = self._prepare_inv_line(loan, invoice.id,
+                                               invoice_vals['fiscal_position'])
+        InvoiceLine.create(inv_line_data)
+        # Set due date
+        res = invoice.onchange_payment_term_date_invoice(
+            invoice.payment_term.id, invoice.date_invoice)
+        invoice.date_due = res['value']['date_due']
+        invoice.button_compute(set_total=True)
+        return invoice
+
+    # Create Installment Order
+
+    @api.model
+    def _prepare_order_header(self, loan, date_order):
+        return {
+            'partner_id': loan.partner_id.id,
+            'date_order': date_order,
+            'client_order_ref': loan.name,
+            'use_invoice_plan': True,
+            'user_id': self.env.user.id,
+        }
+
+    @api.model
+    def _prepare_order_line(self, loan, order_id):
+        product = loan.mou_id.product_id
+        return {
+            'order_id': order_id,
+            'product_id': product.id,
+            'name': product.name,
+            'price_unit': loan.amount_receivable,
+            'product_uom': product.uom_id.id,
+            'product_uom_qty': 1.0,
+        }
+
+    @api.multi
+    def _create_installment_order_for_loan(self, date_order=False):
+        self.ensure_one()
+        Order = self.env['sale.order']
+        OrderLine = self.env['sale.order.line']
+        loan = self
+        order_vals = self._prepare_order_header(loan, date_order)
+        order = Order.create(order_vals)
+        order_line_data = self._prepare_order_line(loan, order.id)
+        OrderLine.create(order_line_data)
+        return order

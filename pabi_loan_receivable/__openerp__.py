@@ -20,6 +20,7 @@
     "data": [
         "security/ir.model.access.csv",
         "wizards/loan_create_bank_invoice_wizard.xml",
+        "wizards/loan_create_installment_order_wizard.xml",
         "views/loan_receivable_view.xml",
     ],
 }

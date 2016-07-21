@@ -115,17 +115,20 @@
             <field name="name">view.loan.customer.agreement.form</field>
             <field name="model">loan.customer.agreement</field>
             <field name="arch" type="xml">
-                <form string="Customer Loan Agreement" >
-                <header>
+                <form string="Customer Loan Agreement" >                <header>
                     <button name="action_sign" string="Sign Document" states="draft" type="object" class="oe_highlight"/>
 	                <button name="%(action_create_bank_invoice)d"
 	                         string="Create Bank Invoice"
 	                         type="action"
 	                         groups="account.group_account_invoice"
 	                         states="sign"
-	                         class="oe_highlight"
-	                />              
-                    <button name="action_installment" string="Create Installment" type="object" states="bank_paid"/>
+	                         class="oe_highlight" />
+	                <button name="%(action_create_installment_order)d"
+	                         string="Create Installment"
+	                         type="action"
+	                         groups="account.group_account_invoice"
+	                         states="bank_paid"
+	                         class="oe_highlight" />
                     <button name="action_cancel" string="Cancel" type="object" states="sign"/>
                     <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,sign,bank_invoice,bank_paid,open,done" />
@@ -166,7 +169,20 @@
 			                    <group>
 			                    </group>
 		                    </group>
-		                   	<field name="invoice_plan_ids" nolabel="1"/>
+		                   	<field name="invoice_plan_ids" >
+		                   		<tree string="Installment Plan">
+							      	<field name="sequence" widget="handle" />
+						            <field name="order_id" invisible="1" />
+						            <field name="order_line_id" domain="[('order_id','=',parent.id)]" />
+						            <field name="installment" />
+						            <field name="date_invoice" />
+						            <field name="invoice_amount" sum="Amount" />
+						            <field name="invoice_percent"/>
+						            <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
+						     		<field name="ref_invoice_id" invisible="1"  />
+						            <field name="state" invisible="0"/>
+					            </tree>
+		                   	</field>
 	                   	</page>
 	           		</notebook>
                	</sheet>
@@ -177,7 +193,7 @@
                 </div>
             </field>
         </record>
-    
+        
 		<record id="action_loan_customer_agreement" model="ir.actions.act_window">
             <field name="name">Loan Agreement</field>
             <field name="res_model">loan.customer.agreement</field>
@@ -190,13 +206,14 @@
               </p>
             </field>
         </record>
+        
         <record id="action_loan_customer_agreement_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_loan_customer_agreement_tree"/>
             <field name="act_window_id" ref="action_loan_customer_agreement"/>
         </record>
-        <record id="action_loan_bank_form" model="ir.actions.act_window.view">
+        <record id="action_loan_customer_agreement_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_loan_customer_agreement_form"/>
