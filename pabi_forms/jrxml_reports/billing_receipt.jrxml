@@ -513,14 +513,14 @@ WHERE $X{IN,pb.id,PIDS}]]>
 					<jr:column width="116">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField pattern="dd/MM/yyyy">
-								<reportElement x="45" y="0" width="68" height="21"/>
+								<reportElement x="48" y="0" width="68" height="21"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="5" y="0" width="85" height="21"/>
+								<reportElement x="0" y="0" width="85" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
@@ -898,14 +898,14 @@ WHERE $X{IN,pb.id,PIDS}]]>
 					<jr:column width="116">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField pattern="dd/MM/yyyy">
-								<reportElement x="45" y="0" width="68" height="21"/>
+								<reportElement x="48" y="0" width="68" height="21"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="5" y="0" width="85" height="21"/>
+								<reportElement x="0" y="0" width="85" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="9"/>
 								</textElement>
