@@ -130,6 +130,7 @@ class sale_create_invoice_plan(models.TransientModel):
             i += 1
         self.installment_ids = False
         self.installment_ids = lines
+        return self.installment_ids
 
 
 class sale_create_invoice_plan_installment(models.TransientModel):
