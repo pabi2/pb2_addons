@@ -128,6 +128,12 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                     _("Each Request bid status should be 'No Bid' : %s"
                       % (item.request_id.name,))
                 )
+            elif item.line_id.request_id.request_ref_id:
+                if not item.product_id:
+                    raise UserError(
+                        _("You have to select the product if the request has a"
+                          " PR reference : %s" % (item.request_id.name,))
+                    )
         return True
 
     @api.multi

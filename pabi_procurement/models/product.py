@@ -12,3 +12,12 @@ class ProductTemplate(models.Model):
     cost_method = fields.Selection(
         default='average',
     )
+
+
+class ProductCategory(models.Model):
+    _inherit = 'product.category'
+
+    is_consumable = fields.Boolean(
+        string="Is Consumable",
+        default=False,
+    )

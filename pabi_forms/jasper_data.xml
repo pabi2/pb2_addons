@@ -107,6 +107,28 @@
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_order)" />
 	</record>
 
+	<record id="purchase_order_en" model="ir.actions.report.xml">
+		<field name="string">Purchase Order ENG</field>
+		<field name="auto">True</field>
+		<field name="model">purchase.order</field>
+		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
+		<field name="name">Purchase Order ENG</field>
+		<field name="report_name">purchase.order.en</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/purchase_order_EN.jrxml</field>
+		<field name="menu">True</field>
+		<field name="header">False</field>
+		<field name="jasper_report">True</field>
+		<field name="jasper_output">pdf</field>
+		<field name="copies">1</field>
+	</record>
+
+	<record id="purchase_order_en_values" model="ir.values">
+		<field name="name">Purchase Order ENG</field>
+		<field name="model">purchase.order</field>
+		<field name="key2" eval="'client_print_multi'" />
+		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_order_en)" />
+	</record>
+
 	<record id="request_for_quotation" model="ir.actions.report.xml">
 		<field name="string">Request For Quotation</field>
 		<field name="auto">True</field>
@@ -440,7 +462,7 @@
 	<record id="billing_receipt" model="ir.actions.report.xml">
 		<field name="string">ใบรับวางบิล</field>
 		<field name="auto">True</field>
-		<field name="model">account.invoice</field>
+		<field name="model">purchase.billing</field>
 		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 		<field name="name">ใบรับวางบิล</field>
 		<field name="report_name">invoice.billing_receipt</field>
@@ -454,7 +476,7 @@
 
 	<record id="billing_receipt_values" model="ir.values">
 		<field name="name">ใบรับวางบิล</field>
-		<field name="model">account.invoice</field>
+		<field name="model">purchase.billing</field>
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(billing_receipt)" />
 	</record>

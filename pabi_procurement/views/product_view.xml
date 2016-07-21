@@ -61,5 +61,19 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="view_category_property_form" model="ir.ui.view">
+            <field name="name">product.category.property.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='type']" position="after">
+                        <field name="is_consumable" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
     </data>
 </openerp>
