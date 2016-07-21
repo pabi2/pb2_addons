@@ -211,8 +211,8 @@ class purchase_order(AmountToWord, osv.osv):
         'amount_total_text_th': fields.function(
             _amount_total_text_th, string='Amount Total (TH)', type='char',
             store={
-                'sale.order': (lambda self, cr, uid, ids, c={}:
-                               ids, ['order_line'], 10),
+                'purchase.order': (lambda self, cr, uid, ids, c={}:
+                                   ids, ['order_line'], 10),
                 'purchase.order.line': (_get_order,
                                         ['price_unit', 'taxes_id',
                                          'product_qty'], 10),
