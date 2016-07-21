@@ -26,6 +26,9 @@
     						'ir_rule_stock_picking_type_allowed_operating_units',
     						'ir_rule_stock_move_allowed_operating_units',
     						'ir_rule_stock_picking_allowed_operating_units',
+    						'ir_rule_sale_order_allowed_operating_units',
+    						'ir_rule_sale_order_line_allowed_operating_units',
+    						
     			))
     	]]" />
         <value eval="{'noupdate': False}" />
@@ -132,6 +135,16 @@
                 '|',('location_dest_id.operating_unit_id','=',False),('location_dest_id.operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
     <record id="stock_operating_unit.ir_rule_stock_picking_allowed_operating_units"
+            model="ir.rule">
+        <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
+    </record>
+    
+	<!-- sale_operating_unit -->
+    <record id="sale_operating_unit.ir_rule_sale_order_allowed_operating_units"
+            model="ir.rule">
+        <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
+    </record>
+    <record id="sale_operating_unit.ir_rule_sale_order_line_allowed_operating_units"
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
