@@ -9,24 +9,6 @@ from .account_tax_detail import InvoiceVoucherTaxDetail
 class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
     _inherit = 'account.voucher'
 
-    invoices = fields.Many2many(
-        'account.invoice',
-        compute='_compute_invoices_ref',
-        string='Invoices',
-    )
-
-    @api.depends('line_ids')
-    def _compute_invoices_ref(self):
-        for voucher in self:
-            invoices = []
-            limit = 3
-            for line in voucher.line_ids:
-                if line.move_line_id and\
-                        line.move_line_id.invoice and limit > 0:
-                    invoices.append(line.move_line_id.invoice.id)
-                    limit -= 1
-            voucher.invoices = [(6, 0, invoices)]
-
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()

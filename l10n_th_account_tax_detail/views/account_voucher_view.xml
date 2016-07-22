@@ -16,17 +16,6 @@
                  </xpath>
             </field>
         </record>
-
-        <record id="view_voucher_tree" model="ir.ui.view">
-            <field name="name">account.voucher.tree</field>
-            <field name="model">account.voucher</field>
-            <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='partner_id']" position="before" >
-                    <field name="invoices" widget="many2many_tags"/>
-                 </xpath>
-            </field>
-        </record>
         
         <record id="view_vendor_receipt_dialog_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.receipt.dialog.form.ext</field>
