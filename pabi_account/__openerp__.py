@@ -19,6 +19,7 @@
         "l10n_th_account",
         "pabi_base",
         "pabi_chartfield",
+        "account_move_line_doc_ref",
     ],
     "data": [
         "views/res_config_view.xml",

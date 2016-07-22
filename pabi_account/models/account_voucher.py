@@ -7,6 +7,26 @@ from openerp.exceptions import Warning as UserError
 class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
 
+    invoices_text = fields.Char(
+        size=1000,
+        compute='_compute_invoices_ref',
+        string='Invoices',
+    )
+
+    @api.depends('line_ids')
+    def _compute_invoices_ref(self):
+        for voucher in self:
+            invoices_text = []
+            limit = 3
+            i = 0
+            for line in voucher.line_ids:
+                if line.move_line_id and i < limit:
+                    invoices_text.append(line.move_line_id.doc_ref)
+                    i += 1
+            voucher.invoices_text = ", ".join(invoices_text)
+            if len(voucher.line_ids) > limit:
+                voucher.invoices_text += ', ...'
+
     @api.multi
     def proforma_voucher(self):
         for voucher in self:
