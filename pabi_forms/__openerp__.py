@@ -9,6 +9,7 @@
         'jasper_reports',
         'l10n_th_amount_text_ext',
         'l10n_th_fields',
+        'pabi_account',
     ],
     'data': [
         "jasper_data.xml",
