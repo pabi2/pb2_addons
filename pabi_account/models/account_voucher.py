@@ -24,14 +24,6 @@ class AccountVoucher(models.Model):
         copy=False,
     )
 
-    @api.multi
-    def action_move_line_create(self):
-        res = super(AccountVoucher, self).action_move_line_create()
-        for voucher in self:
-            voucher.write({'validate_user_id': self.env.user.id,
-                           'validate_date': fields.Date.context_today(self)})
-        return res
-
     @api.depends('line_ids')
     def _compute_invoices_ref(self):
         for voucher in self:
@@ -40,7 +32,8 @@ class AccountVoucher(models.Model):
             i = 0
             for line in voucher.line_ids:
                 if line.move_line_id and i < limit:
-                    invoices_text.append(line.move_line_id.doc_ref)
+                    if line.move_line_id.doc_ref:
+                        invoices_text.append(line.move_line_id.doc_ref)
                     i += 1
             voucher.invoices_text = ", ".join(invoices_text)
             if len(voucher.line_ids) > limit:
@@ -57,6 +50,10 @@ class AccountVoucher(models.Model):
                 raise UserError(_('Mixing invoices of different '
                                   'tax branch is not allowed!'))
         result = super(AccountVoucher, self).proforma_voucher()
+        for voucher in self:
+            voucher.write({'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.today()})
+
         return result
 
 
