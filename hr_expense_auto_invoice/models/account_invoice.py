@@ -31,11 +31,20 @@ class AccountInvoice(models.Model):
                                         for x in expense.invoice_ids
                                         if x.state == 'paid'])
                     if total_amount == expense.amount:
-                        invoice.expense_id.signal_workflow('paid')
+                        expense.signal_workflow('paid')
                     else:
                         if expense.is_advance_clearing\
                                 and invoice.state == 'paid':
-                            invoice.expense_id.signal_workflow('paid')
+                            expense.signal_workflow('paid')
+                        else:
+                            root_invoices = [x.id
+                                        for x in expense.invoice_ids
+                                        if not x.invoice_ref_id]
+                            paid_invoices = [x.id
+                                        for x in expense.invoice_ids
+                                        if x.state == 'paid']
+                            if len(paid_invoices) == len(root_invoices):
+                                expense.signal_workflow('paid')
         return result
 
 
