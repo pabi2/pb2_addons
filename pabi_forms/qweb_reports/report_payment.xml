@@ -54,11 +54,11 @@
                         <table class="table table-condensed">
                             <tr class="border-black">
                                 <td>
-                                    <p><strong>Cheque No. :</strong> <span t-field="o.cheque_no"/><br/>
+                                    <p><strong>Cheque No. :</strong> <span t-field="o.number_cheque"/><br/>
                                         <strong>Amount :</strong> <span t-field="o.amount"/></p>
                                 </td>
                                 <td>
-                                    <p><strong>Bank/Branch :</strong> <span t-field="o.bank_branch"/><br/>
+                                    <p><strong>Bank/Branch :</strong> <span t-field="o.branch_cheque"/><br/>
                                     <strong>Date :</strong> <span t-field="o.date_value"/></p>
                                 </td>
                             </tr>
