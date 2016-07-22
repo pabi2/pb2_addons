@@ -12,6 +12,25 @@ class AccountVoucher(models.Model):
         compute='_compute_invoices_ref',
         string='Invoices',
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
+        copy=False,
+    )
+    validate_date = fields.Date(
+        'Validate On',
+        readonly=True,
+        copy=False,
+    )
+
+    @api.multi
+    def action_move_line_create(self):
+        res = super(AccountVoucher, self).action_move_line_create()
+        for voucher in self:
+            voucher.write({'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.today()})
+        return res
 
     @api.depends('line_ids')
     def _compute_invoices_ref(self):
