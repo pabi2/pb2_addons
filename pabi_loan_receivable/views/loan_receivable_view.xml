@@ -100,13 +100,15 @@
             <field name="name">view.loan.customer.agreement.tree</field>
             <field name="model">loan.customer.agreement</field>
             <field name="arch" type="xml">
-                <tree string="Customer Loan Agreement">
-                    <field name="name"/>
-                    <field name="mou_id"/>
-                    <field name="bank_id"/>
-                    <field name="partner_id"/>
-                    <field name="amount_loan_total"/>
-                    <field name="amount_receivable"/>
+                <tree string="Customer Loan Agreement"
+                	colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                    <field name="name" />
+                    <field name="mou_id" />
+                    <field name="bank_id" />
+                    <field name="partner_id" />
+                    <field name="amount_loan_total" />
+                    <field name="amount_receivable" />
+                    <field name="state" />
                 </tree>
             </field>
         </record>

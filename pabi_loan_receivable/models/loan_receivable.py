@@ -48,12 +48,16 @@ class LoanCustomerAgreement(models.Model):
         string='Loan Agreement Number',
         required=True,
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     mou_id = fields.Many2one(
         'loan.bank.mou',
         string='MOU',
         required=True,
         ondelete='restrict',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     bank_id = fields.Many2one(
         'res.partner.bank',
@@ -67,14 +71,20 @@ class LoanCustomerAgreement(models.Model):
         string='Customer',
         domain=[('customer', '=', True)],
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     amount_loan_total = fields.Float(
         string='Total Loan Amount from Bank',
         default=0.0,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     amount_receivable = fields.Float(
         string='Loan Amount from NSTDA',
         default=0.0,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     installment = fields.Integer(
         string='Number of Installment',
@@ -89,6 +99,8 @@ class LoanCustomerAgreement(models.Model):
     date_end = fields.Date(
         string='End Date',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     monthly_due_type = fields.Selection(
         [('first', 'First day of month'),
@@ -97,6 +109,8 @@ class LoanCustomerAgreement(models.Model):
         string='Payment Due Type',
         default='last',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date_specified = fields.Integer(
         string='Specify Date',
@@ -137,10 +151,12 @@ class LoanCustomerAgreement(models.Model):
     signed = fields.Boolean(
         string='Signed',
         default=False,
+        readonly=True,
     )
     cancelled = fields.Boolean(
         string='Cancelled',
         default=False,
+        readonly=True,
     )
     bank_invoice_count = fields.Integer(
         string='Bank Invoice Count',
@@ -197,6 +213,16 @@ class LoanCustomerAgreement(models.Model):
                 (self.date_specified < 1 or self.date_specified > 28):
             raise Warning(_('Specified date must be between 1 - 28'))
 
+    @api.one
+    @api.constrains('state', 'amount_receivable', 'amount_loan_total',
+                    'installment')
+    def _check_amount(self):
+        if self.state not in ('draft', 'cancel'):
+            if not self.amount_receivable or not self.amount_loan_total:
+                raise Warning(_('Loan amount can not be zero!'))
+            if self.installment <= 0:
+                raise Warning(_('Installment must be a positive number!'))
+
     @api.multi
     def open_bank_invoices(self):
         self.ensure_one()
@@ -229,7 +255,8 @@ class LoanCustomerAgreement(models.Model):
 
     @api.multi
     def action_cancel_draft(self):
-        self.write({'cancelled': False})
+        self.write({'signed': False,
+                    'cancelled': False})
 
     @api.multi
     def unlink(self):
