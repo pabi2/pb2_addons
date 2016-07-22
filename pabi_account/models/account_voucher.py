@@ -29,7 +29,7 @@ class AccountVoucher(models.Model):
         res = super(AccountVoucher, self).action_move_line_create()
         for voucher in self:
             voucher.write({'validate_user_id': self.env.user.id,
-                           'validate_date': fields.Date.today()})
+                           'validate_date': fields.Date.context_today(self)})
         return res
 
     @api.depends('line_ids')
