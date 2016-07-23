@@ -8,6 +8,7 @@ class AccountInvoice(models.Model):
 
     is_advance_clearing = fields.Boolean(
         string='Advance Clearing?',
+        copy=False,
     )
     invoice_type = fields.Selection(
         selection_add=[
@@ -15,25 +16,46 @@ class AccountInvoice(models.Model):
             ('advance_clearing_invoice', 'Advance Clearing Invoice'),
         ],
     )
-    ref_employee_id = fields.Many2one(
-        'hr.employee',
-        string='Related Employee ID',
-        compute='_compute_ref_employee_id',
-    )
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
-        string="Employee Advance Ref",
+        string="Advance Expense",
+        copy=False,
         help="Refer to Employee Advance this invoice is clearing/return",
     )
 
-    @api.one
-    @api.depends('partner_id')
-    def _compute_ref_employee_id(self):
-        self.ref_employee_id = (self.partner_id.user_ids and
-                                self.partner_id.user_ids[0] and
-                                self.partner_id.user_ids[0].employee_ids and
-                                self.partner_id.user_ids[0].employee_ids[0] or
-                                False)
+    @api.multi
+    def onchange_partner_id(self, ttype, partner_id, date_invoice=False,
+                            payment_term=False, partner_bank_id=False,
+                            company_id=False):
+        res = super(AccountInvoice, self).onchange_partner_id(
+            ttype, partner_id, date_invoice=date_invoice,
+            payment_term=payment_term, partner_bank_id=partner_bank_id,
+            company_id=company_id)
+        if not res:
+            res = {}
+        if 'value' not in res:
+            res['value'] = {}
+        if 'domain' not in res:
+            res['domain'] = {}
+
+        res['value'].update({'advance_expense_id': False})
+        if not partner_id:
+            domain = [('id', 'in', [])]
+            res['domain'].update({'advance_expense_id': domain})
+        else:
+            partner = self.env['res.partner'].browse(partner_id)
+            ref_employee_id = (partner.user_ids and
+                               partner.user_ids[0] and
+                               partner.user_ids[0].employee_ids and
+                               partner.user_ids[0].employee_ids[0].id or
+                               False)
+            domain = [('is_employee_advance', '=', True),
+                      ('state', 'in', ('open', 'paid')),
+                      ('employee_id', '=', ref_employee_id),
+                      ('amount_to_clearing', '>', 0.0)]
+            print domain
+            res['domain'].update({'advance_expense_id': domain})
+        return res
 
     @api.onchange('advance_expense_id')
     def _onchange_advance_expense_id(self):
