@@ -28,6 +28,7 @@ HR Expense Advance Clearing
         'data/hr_expense_data.xml',
         'data/product_data.xml',
         'data/invoice_workflow.xml',
+        'views/res_config_view.xml',
         'views/hr_expense_view.xml',
         'views/account_invoice_view.xml',
     ],

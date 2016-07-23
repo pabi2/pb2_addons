@@ -10,11 +10,6 @@
                     <field name="is_advance_clearing" readonly="1"/>
                 </xpath>
                 <xpath expr="//button[@name='invoice_cancel']" position="after">
-                    <!--button name="clearing_invoice_cancel" 
-                            string="Cancel Invoice"
-                            type="workflow"
-                            attrs="{'invisible': ['|', ('state', '!=', 'paid'),('is_advance_clearing', '=', False)]}"
-                            groups="account.group_account_invoice"/-->
                     <button name="%(account_cancel_with_reversal.act_account_move_reverse_invoice)d" 
                             type="action"
                             string="Cancel Invoice"
@@ -32,10 +27,7 @@
 	        <field name="inherit_id" ref="account.invoice_form"/>
 	        <field name="arch" type="xml">
 	            <xpath expr="//field[@name='fiscal_position']" position="after">
-	            	<field name="ref_employee_id" invisible="1" />
-	                <field name="advance_expense_id" string="Advance Expense"
-	               		domain="[('is_employee_advance', '=', True), ('state', 'in', ('open', 'paid')),
-                                 ('employee_id', '=', ref_employee_id), ('amount_to_clearing', '&gt;', 0.0)]" />
+	                <field name="advance_expense_id" />
 	            </xpath>
 	        </field>
 	    </record>

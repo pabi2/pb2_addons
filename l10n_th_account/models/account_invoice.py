@@ -25,6 +25,20 @@ class AccountInvoice(models.Model):
         string='Journal Items',
         readonly=True,
     )
+    date_paid = fields.Date(
+        string='Paid Date',
+        compute='_compute_date_paid',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('state')
+    def _compute_date_paid(self):
+        for rec in self:
+            if rec.state == 'paid':
+                rec.date_paid = max(rec.payment_ids.mapped('date'))
+            elif rec.state == 'open':
+                rec.date_paid = False
 
     @api.one
     @api.depends('invoice_line.price_subtotal',

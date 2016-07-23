@@ -28,6 +28,9 @@ class DocumentAuditlogLogLine(models.Model):
     status = fields.Char(
         string=u'Status',
     )
+    status_text = fields.Char(
+        string=u'Status Text',
+    )
     user_id = fields.Many2one(
         'res.users',
         string=u"Changed By",
@@ -51,6 +54,7 @@ class DocumentAuditlogLogLine(models.Model):
             SELECT
                 logline.id as id,
                 logline.new_value as status,
+                logline.new_value_text as status_text,
                 log.user_id as user_id,
                 log.model_id as model_id,
                 log.res_id as res_id,
