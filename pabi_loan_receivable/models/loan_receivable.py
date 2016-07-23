@@ -166,6 +166,10 @@ class LoanCustomerAgreement(models.Model):
         string='Installment Invoice Count',
         compute='_compute_invoice_count',
     )
+    fy_penalty_rate = fields.Float(
+        string='Penalty Rate / Year',
+        default=0.0,
+    )
 
     @api.multi
     def _compute_invoice_count(self):
