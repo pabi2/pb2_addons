@@ -9,7 +9,7 @@
 
         <record id="base.action_partner_form" model="ir.actions.act_window">
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('supplier','=',True)]</field>
+            <field name="domain">[('customer','=',True)]</field>
             <field name="context">{}</field>
         </record>
 
