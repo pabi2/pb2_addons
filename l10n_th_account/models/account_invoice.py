@@ -35,7 +35,7 @@ class AccountInvoice(models.Model):
     @api.depends('state')
     def _compute_date_paid(self):
         for rec in self:
-            if rec.state == 'paid':
+            if rec.state == 'paid' and rec.payment_ids:
                 rec.date_paid = max(rec.payment_ids.mapped('date'))
             elif rec.state == 'open':
                 rec.date_paid = False
