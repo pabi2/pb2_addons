@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError, Warning as UserError
 import openerp.addons.decimal_precision as dp
 from openerp import tools
 import ast
@@ -113,9 +113,11 @@ class HRExpenseExpense(models.Model):
     @api.model
     def default_get(self, field_list):
         result = super(HRExpenseExpense, self).default_get(field_list)
-        advance_product =\
-            self.env.ref(
-                'hr_expense_advance_clearing.product_product_employee_advance')
+        advance_product = self.env['ir.property'].get(
+            'property_employee_advance_product_id', 'res.partner')
+        if not advance_product:
+            raise ValidationError(_('No Employee Advance Product has been '
+                                    'set in HR Settings!'))
         if result.get('is_employee_advance', False):
             line = [(0, 0, {'product_id': advance_product.id,
                             'date_value': fields.Date.context_today(self),
@@ -162,9 +164,8 @@ class HRExpenseExpense(models.Model):
 
     @api.model
     def _create_negative_clearing_line(self, expense, invoice):
-        advance_product = self.env.ref(
-            'hr_expense_advance_clearing.product_product_employee_advance'
-        )
+        advance_product = self.env['ir.property'].get(
+            'property_employee_advance_product_id', 'res.partner')
         product_categ = advance_product.categ_id
         if (not advance_product.property_account_expense and
                 not product_categ.property_account_expense_categ):

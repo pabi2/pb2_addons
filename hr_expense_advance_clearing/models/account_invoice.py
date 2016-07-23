@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -56,8 +57,11 @@ class AccountInvoice(models.Model):
 
     @api.model
     def _prev_advance_amount(self, invoice):
-        advance_product = self.env.ref('hr_expense_advance_clearing.'
-                                       'product_product_employee_advance')
+        advance_product = self.env['ir.property'].get(
+            'property_employee_advance_product_id', 'res.partner')
+        if not advance_product:
+            raise ValidationError(_('No Employee Advance Product has been '
+                                    'set in HR Settings!'))
         lines = invoice.invoice_line
         # Advance with Negative Amount
         advance_lines = lines.filtered(lambda x: x.price_subtotal < 0 and
