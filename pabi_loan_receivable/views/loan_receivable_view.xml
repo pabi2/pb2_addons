@@ -167,6 +167,7 @@
                             <field name="amount_loan_total"/>
                             <field name="amount_receivable"/>
                             <field name="installment"/>
+                            <field name="fy_penalty_rate"/>
                             <label for="date_begin" string="Duration"/>
                             <div>
                                 <field name="date_begin" class="oe_inline" nolabel="1"/> -

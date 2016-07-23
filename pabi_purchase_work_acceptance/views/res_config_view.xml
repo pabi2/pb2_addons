@@ -8,10 +8,9 @@
             <field name="inherit_id" ref="account.view_account_config_settings"/>
             <field name="arch" type="xml">
                 <field name="purchase_refund_journal_id" position="after">
-                    <separator string="Journal Tax Move"/>
-                    <group name="journal_tax_move">
-		            	<field name="property_tax_move_by_taxbranch" class="oe_inline"/>
-		            	<field name="property_wht_taxbranch_id" class="oe_inline"/>
+                    <separator string="Delivery Penalty Product"/>
+                    <group name="delivery_penalty_product">
+		            	<field name="property_delivery_penalty_product_id" class="oe_inline"/>
                     </group>    
                 </field>
             </field>

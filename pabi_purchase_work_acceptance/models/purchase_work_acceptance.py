@@ -289,6 +289,7 @@ class PurchaseWorkAcceptance(models.Model):
     total_fine = fields.Float(
         string="Total Fine",
         compute="_compute_total_fine",
+        store=True,
     )
     amount_total_fine_text_th = fields.Char(
         string='Total Fine TH Text',
@@ -312,6 +313,12 @@ class PurchaseWorkAcceptance(models.Model):
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        related='order_id.partner_id',
+        store=True,
     )
     order_method = fields.Selection(
         string='Order Method',
