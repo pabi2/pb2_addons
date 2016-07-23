@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+	    <record id="invoice_form_remove1" model="ir.ui.view">
+	        <field name="name">invoice.form</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="hr_expense_advance_clearing.invoice_form"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="//field[@name='advance_expense_id']" position="replace" />           
+	        </field>
+	    </record>
+    
+	    <record id="invoice_form_remove2" model="ir.ui.view">
+	        <field name="name">invoice.form</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="pabi_purchase_work_acceptance.invoice_form"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="//field[@name='late_delivery_work_acceptance_id']" position="replace" />           
+	        </field>
+	    </record>
+    
+	    <record id="invoice_form_remove3" model="ir.ui.view">
+	        <field name="name">invoice.form</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="pabi_loan_receivable.invoice_form"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="//field[@name='loan_late_payment_invoice_id']" position="replace" />           
+	        </field>
+	    </record>
+	    
+	    <record id="invoice_form" model="ir.ui.view">
+	        <field name="name">invoice.form</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="account.invoice_form"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="//field[@name='fiscal_position']" position="after">
+	            	<label for="receivable_type" />
+	            	<div>
+		                <field name="receivable_type" style="width: 50%%" />
+		                <field name="advance_expense_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'advance_return')], 'required': [('receivable_type', '=', 'advance_return')]}"/>
+		                <field name="late_delivery_work_acceptance_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'late_work_acceptance')], 'required': [('receivable_type', '=', 'late_work_acceptance')]}"/>
+		                <field name="loan_late_payment_invoice_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'loan_late_repayment')], 'required': [('receivable_type', '=', 'loan_late_repayment')]}"/>
+	            	</div>
+	            </xpath>
+	        </field>
+	    </record>
+    </data>
+</openerp>
