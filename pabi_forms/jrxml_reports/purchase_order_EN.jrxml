@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
-	<property name="ireport.zoom" value="0.8264462809917363"/>
-	<property name="ireport.x" value="9"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.zoom" value="1.3310000000000033"/>
+	<property name="ireport.x" value="270"/>
+	<property name="ireport.y" value="480"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -61,6 +61,7 @@ vendor.street vendor_street,
 vendor_country.name vendor_country,
 vendor.zip vendor_zip,
 vendor.phone vendor_phone,
+vendor.email vendor_mail,
 vendor.fax vendor_fax,
 apt.name payment_term,
 approver.name approve_by,
@@ -75,7 +76,7 @@ po.notes notes,
 approve_position.name approve_position,
 po.partner_ref supplier_ref,
 validater.name buyer,
-validater.phone buyer_phone,
+validater.email buyer_mail,
 taxbranch.name tax_branch_name,
 taxbranch.street tax_branch_street,
 taxbranch.street2 tax_branch_street2,
@@ -92,7 +93,7 @@ po.amount_tax vat,
 po.amount_total grand_total,
 po.amount_total_text_en amount_total_EN,
 po.delivery_address,
-si.name incoterm
+si.code incoterm
 
 FROM purchase_order po
 LEFT JOIN operating_unit ou
@@ -167,7 +168,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<field name="vendor_street" class="java.lang.String"/>
 	<field name="vendor_country" class="java.lang.String"/>
 	<field name="vendor_zip" class="java.lang.String"/>
-	<field name="vendor_phone" class="java.lang.String"/>
+	<field name="vendor_mail" class="java.lang.String"/>
 	<field name="vendor_fax" class="java.lang.String"/>
 	<field name="payment_term" class="java.lang.String">
 		<fieldDescription><![CDATA[Payment Terms]]></fieldDescription>
@@ -190,7 +191,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<field name="approve_position" class="java.lang.String"/>
 	<field name="supplier_ref" class="java.lang.String"/>
 	<field name="buyer" class="java.lang.String"/>
-	<field name="buyer_phone" class="java.lang.String"/>
+	<field name="buyer_mail" class="java.lang.String"/>
 	<field name="tax_branch_name" class="java.lang.String"/>
 	<field name="tax_branch_street" class="java.lang.String"/>
 	<field name="tax_branch_street2" class="java.lang.String"/>
@@ -214,6 +215,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<field name="incoterm" class="java.lang.String">
 		<fieldDescription><![CDATA[Incoterm]]></fieldDescription>
 	</field>
+	<field name="vendor_phone" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -332,7 +334,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{vendor_phone} != null ? "Tel : " + $F{vendor_phone} : "")
 + ' ' +
-$F{vendor_fax} != null ? "Fax : " + $F{vendor_fax} : ""]]></textFieldExpression>
+($F{vendor_fax} != null ? "Fax : " + $F{vendor_fax} : "")]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="0" y="206" width="525" height="60"/>
@@ -409,7 +411,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_phone}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_mail}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="40" width="290" height="64" isPrintWhenDetailOverflows="true">
@@ -668,53 +670,53 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="261">
+		<band height="300">
 			<rectangle>
-				<reportElement x="442" y="1" width="83" height="31"/>
+				<reportElement x="442" y="1" width="83" height="65"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="1" width="322" height="32"/>
+				<reportElement x="0" y="1" width="322" height="66"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="32" width="525" height="229"/>
+				<reportElement x="0" y="66" width="525" height="229"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="2" y="35" width="66" height="34"/>
+				<reportElement x="2" y="69" width="66" height="34"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Remark]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="104" width="292" height="157"/>
+				<reportElement x="0" y="138" width="292" height="157"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="292" y="104" width="233" height="157"/>
+				<reportElement x="292" y="138" width="233" height="157"/>
 			</rectangle>
 			<line>
-				<reportElement x="0" y="170" width="292" height="1"/>
+				<reportElement x="0" y="204" width="292" height="1"/>
 			</line>
 			<line>
-				<reportElement x="33" y="131" width="127" height="1"/>
+				<reportElement x="33" y="165" width="127" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="167" y="120" width="140" height="40"/>
+				<reportElement x="167" y="154" width="140" height="28"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font size="13" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font size="13" isBold="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Verified by]]></text>
 			</staticText>
 			<line>
-				<reportElement x="33" y="198" width="127" height="1"/>
+				<reportElement x="33" y="232" width="127" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="33" y="219" width="111" height="21">
+				<reportElement x="33" y="253" width="111" height="21">
 					<printWhenExpression><![CDATA[$F{approve_position}!='']]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
@@ -723,141 +725,143 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[Position]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="166" y="187" width="119" height="14"/>
+				<reportElement x="166" y="221" width="119" height="30"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font size="13" isBold="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Approved by]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="298" y="118" width="117" height="21"/>
+				<reportElement x="298" y="152" width="117" height="21"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[For Vendor :]]></text>
+				<text><![CDATA[For Supplier :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="301" y="172" width="80" height="21"/>
+				<reportElement x="301" y="206" width="64" height="21"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="301" y="219" width="78" height="21"/>
+				<reportElement x="301" y="253" width="78" height="21"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Position]]></text>
 			</staticText>
 			<line>
-				<reportElement x="351" y="184" width="100" height="1"/>
+				<reportElement x="351" y="218" width="100" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="361" y="196" width="81" height="1"/>
+				<reportElement x="361" y="230" width="81" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="356" y="189" width="10" height="20"/>
+				<reportElement x="356" y="223" width="10" height="20"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[(]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="443" y="189" width="10" height="20"/>
+				<reportElement x="443" y="223" width="10" height="20"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="386" y="201" width="7" height="16"/>
+				<reportElement x="386" y="235" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="414" y="201" width="7" height="16"/>
+				<reportElement x="414" y="235" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<line>
-				<reportElement x="366" y="208" width="18" height="1"/>
+				<reportElement x="366" y="242" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="393" y="208" width="18" height="1"/>
+				<reportElement x="393" y="242" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="420" y="208" width="18" height="1"/>
+				<reportElement x="420" y="242" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="351" y="231" width="100" height="1"/>
+				<reportElement x="351" y="265" width="100" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="33" y="202" width="126" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="33" y="236" width="126" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{approve_by} != '' ? "( " + $F{approve_by} + " )" : '']]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="33" y="134" width="127" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="33" y="168" width="127" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{verify_by} != '' ? "( " + $F{verify_by} + " )" : '']]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="44" y="35" width="1450" height="18"/>
-				<textElement lineSpacing="Single">
+			<textField>
+				<reportElement x="44" y="69" width="1450" height="18"/>
+				<textElement lineSpacing="Single" markup="none">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[1  For your acceptance of this Purchase Order, please let authorized person affix his signature and fax to us via No.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="44" y="50" width="923" height="18"/>
-				<textElement lineSpacing="Single">
+				<textFieldExpression class="java.lang.String"><![CDATA["1  For your acceptance of this Purchase Order, please let authorized person affix his signature and fax to us via No."
++ ($F{tax_branch_fax} == null ? "" : $F{tax_branch_fax})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="84" width="923" height="18"/>
+				<textElement lineSpacing="Single" markup="none">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[2  A copy of your invoice shall be sent to us via fax No.]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA["2  A copy of your invoice shall be sent to us via fax No."
++ ($F{tax_branch_fax} == null ? "" : $F{tax_branch_fax})]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="293" y="50" width="450" height="18"/>
+				<reportElement x="293" y="84" width="450" height="18"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[and the original invoice shall be sent by air mail afterwards.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="44" y="64" width="1335" height="20"/>
+				<reportElement x="44" y="98" width="1335" height="20"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[3  Failure to deliver the goods/services provided in this Purchase Order, the Seller shall be fined at 0.2% / 0.1% of the total ]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="76" y="219" width="222" height="21"/>
+				<reportElement x="76" y="253" width="222" height="21"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -871,92 +875,92 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[Total Amount]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="442" y="11" width="81" height="21"/>
+				<reportElement x="442" y="44" width="81" height="21"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="59" y="155" width="18" height="1"/>
+				<reportElement x="59" y="189" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="79" y="148" width="7" height="16"/>
+				<reportElement x="79" y="182" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<line>
-				<reportElement x="113" y="155" width="18" height="1"/>
+				<reportElement x="113" y="189" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="107" y="148" width="7" height="16"/>
+				<reportElement x="107" y="182" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<line>
-				<reportElement x="86" y="155" width="18" height="1"/>
+				<reportElement x="86" y="189" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="59" y="243" width="18" height="1"/>
+				<reportElement x="59" y="277" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="79" y="236" width="7" height="16"/>
+				<reportElement x="79" y="270" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<line>
-				<reportElement x="86" y="243" width="18" height="1"/>
+				<reportElement x="86" y="277" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="113" y="243" width="18" height="1"/>
+				<reportElement x="113" y="277" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="107" y="236" width="7" height="16"/>
+				<reportElement x="107" y="270" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="44" y="79" width="312" height="28"/>
+				<reportElement x="44" y="113" width="312" height="28"/>
 				<textElement lineSpacing="Single">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[value of undelivered goods/services per day.]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="322" y="1" width="120" height="31"/>
+				<reportElement x="322" y="1" width="120" height="65"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="330" y="11" width="84" height="21"/>
+				<reportElement x="326" y="44" width="146" height="21"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Total (USD)]]></text>
+				<text><![CDATA[Grand Total (USD)]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="4" y="16" width="339" height="21"/>
@@ -965,6 +969,41 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_en}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="326" y="23" width="146" height="21"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[VAT (7%)]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="442" y="23" width="81" height="21"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{vat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="442" y="2" width="81" height="21"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="326" y="2" width="146" height="21"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Total (USD)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="453" y="206" width="119" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
+					<font size="13" isBold="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Approved]]></text>
+			</staticText>
 		</band>
 	</lastPageFooter>
 </jasperReport>
