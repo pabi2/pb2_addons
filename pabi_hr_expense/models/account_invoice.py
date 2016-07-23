@@ -70,7 +70,7 @@ class AccountInvoice(models.Model):
             date_due = False
             # Case 1) buy_product, date_due = paid_date + 30 days
             if expense.advance_type == 'buy_product':
-                date_paid = expense.invoice_id.payment_ids[0].date
+                date_paid = expense.invoice_id.date_paid
                 date_due = (datetime.strptime(date_paid, '%Y-%m-%d') +
                             relativedelta(days=30))
             # Case 2) attend_seminar, date_due = arrive date + 30 days

@@ -42,7 +42,9 @@ class AccountInvoice(models.Model):
         else:
             self._cr.execute("""
                 select id from account_invoice
-                where partner_id = %s and date_paid < date_due
+                where partner_id = %s and date_paid > date_due
+                and loan_agreement_id is not null
+                and state = 'paid'
                 and id not in (select distinct loan_late_payment_invoice_id
                                 from account_invoice where partner_id = %s
                                 and loan_late_payment_invoice_id is not null
@@ -65,7 +67,7 @@ class AccountInvoice(models.Model):
             penalty_rate = loan.fy_penalty_rate / 365
             date_paid = datetime.strptime(late_invoice.date_paid, '%Y-%m-%d')
             date_due = datetime.strptime(late_invoice.date_due, '%Y-%m-%d')
-            days = (date_due - date_paid).days
+            days = (date_paid - date_due).days
             amount_penalty = days * penalty_rate * late_invoice.amount_total
             # Prepare header
             self.currency_id = late_invoice.currency_id

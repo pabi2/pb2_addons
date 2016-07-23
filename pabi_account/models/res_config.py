@@ -102,9 +102,7 @@ class account_config_settings(osv.osv_memory):
         for record in todo_list:
             prop = ir_property_obj.get(cr, uid,
                                        record[0], record[1], context=context)
-            print prop
-            prop_id = prop and prop.id or False
-            res.update({record[0]: prop.id})
+            res.update({record[0]: prop and prop.id or False})
         return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
