@@ -85,8 +85,8 @@ class HRExpense(models.Model):
             employee.org_id.operating_unit_id.id
         # Advance product
         if 'line_ids' in data_dict:
-            advance_product = self.env.ref('hr_expense_advance_clearing.'
-                                           'product_product_employee_advance')
+            advance_product = self.env['ir.property'].get(
+                'property_employee_advance_product_id', 'res.partner')
             for data in data_dict['line_ids']:
                 data['product_id.id'] = advance_product.id
                 data['uom_id.id'] = advance_product.uom_id.id
