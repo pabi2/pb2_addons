@@ -14,7 +14,7 @@
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="after">
                     <field name="supplier_invoice_taxbranch_id" />
                 </xpath>
-                <xpath expr="field[@name='date']" position="after">
+                <xpath expr="//field[@name='date']" position="after">
                     <field name="validate_user_id" />
                     <field name="validate_date"/>
                 </xpath>
