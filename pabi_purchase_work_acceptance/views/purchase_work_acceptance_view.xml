@@ -65,7 +65,6 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Work Acceptance">
                     <field name="name"/>
-                    <field name="name"/>
                     <field name="date_receive"/>
                     <field name="date_contract_start"/>
                     <field name="date_contract_end"/>
