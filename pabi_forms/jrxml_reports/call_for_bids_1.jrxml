@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3310000000000162"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="446"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -985,9 +985,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="570">
-						<jr:columnHeader height="18" rowSpan="1">
+						<jr:columnHeader height="21" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="570" height="18"/>
+								<reportElement x="0" y="0" width="570" height="21"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -1011,9 +1011,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[]]></text>
 							</staticText>
 						</jr:columnFooter>
-						<jr:detailCell height="16" rowSpan="1">
+						<jr:detailCell height="21" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="570" height="16"/>
+								<reportElement x="0" y="0" width="570" height="21"/>
 								<box>
 									<leftPen lineWidth="1.0"/>
 									<rightPen lineWidth="1.0"/>
@@ -1024,21 +1024,21 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[]]></text>
 							</staticText>
 							<textField>
-								<reportElement x="31" y="0" width="106" height="16"/>
+								<reportElement x="31" y="0" width="106" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="175" y="0" width="338" height="16"/>
+								<reportElement x="175" y="0" width="338" height="21"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="389" y="0" width="135" height="16"/>
+								<reportElement x="389" y="0" width="135" height="21"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
