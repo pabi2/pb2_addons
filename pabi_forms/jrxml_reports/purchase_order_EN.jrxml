@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
-	<property name="ireport.zoom" value="1.3310000000000033"/>
-	<property name="ireport.x" value="270"/>
-	<property name="ireport.y" value="480"/>
+	<property name="ireport.zoom" value="0.7513148009015795"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="36"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -296,7 +296,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{order_date}.year+543, $F{order_date}.month, $F{order_date}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{order_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="19" width="312" height="21"/>
@@ -835,24 +835,18 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textElement lineSpacing="Single" markup="none">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["1  For your acceptance of this Purchase Order, please let authorized person affix his signature and fax to us via No."
+				<textFieldExpression class="java.lang.String"><![CDATA["1  For your acceptance of this Purchase Order, please let authorized person affix his signature and email or fax to us via No."
 + ($F{tax_branch_fax} == null ? "" : $F{tax_branch_fax})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="44" y="84" width="923" height="18"/>
+				<reportElement x="44" y="84" width="1313" height="18"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["2  A copy of your invoice shall be sent to us via fax No."
-+ ($F{tax_branch_fax} == null ? "" : $F{tax_branch_fax})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["2  A copy of your invoice shall be sent to us via email or fax No."
++ ($F{tax_branch_fax} == null ? "" : $F{tax_branch_fax})
++ " and the original invoice shall be sent by air mail afterwards."]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="293" y="84" width="450" height="18"/>
-				<textElement lineSpacing="Single">
-					<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[and the original invoice shall be sent by air mail afterwards.]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="44" y="98" width="1335" height="20"/>
 				<textElement lineSpacing="Single">
@@ -998,11 +992,11 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[Total (USD)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="453" y="206" width="119" height="21"/>
+				<reportElement x="453" y="206" width="167" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font size="13" isBold="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Approved]]></text>
+				<text><![CDATA[Approved by]]></text>
 			</staticText>
 		</band>
 	</lastPageFooter>
