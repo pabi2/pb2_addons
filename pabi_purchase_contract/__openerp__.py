@@ -13,8 +13,6 @@
                 ],
     'data': [
             'security/ir.model.access.csv',
-#             'security/module_data.xml',
-#             'security/pabi_purchase_contract_security.xml',
             'data/purchase.contract.collateral.csv',
             'data/purchase.contract.type.csv',
             'data/nstdamas.org.csv',
@@ -22,8 +20,7 @@
             'views/purchase_contract.xml',
             'views/purchase_contract_type.xml',
             'views/purchase_contract_menu_item.xml',
-            'views/purchase_contract_view.xml'
-             ],
+            'views/purchase_contract_view.xml'],
     'qweb': [],
     'css': [],
     'js': [],

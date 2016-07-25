@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
-import purchase_contract
-import purchase_contract_type
-import purchase_contract_collateral
+
+from . import purchase_contract
+from . import purchase_contract_type
+from . import purchase_contract_collateral
