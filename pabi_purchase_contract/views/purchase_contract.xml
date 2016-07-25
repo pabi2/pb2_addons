@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="purchase_contract_form_view">
+			<field name="name">purchase.contract.form</field>
+			<field name="model">purchase.contract</field>
+			<field name="arch" type="xml">
+				<form string="Purchase Contract">
+					<header>
+						<button name="action_button_delete_reversion" type="object"
+							attrs="{'invisible': ['|',('state','not in', ['G']),('poc_rev','=', 0)]}"
+							string="Delete Reversion" confirm="Would you like to Delete Purchase Contract Reversion?" />
+
+						<button name="%(action_view_purchase_contract_termination)d"
+							string="Termination" type="action" states="S,C"
+							context="{'poc_id': id, 'state':'Y', 'res_model': 'purchase.contract'}" />
+
+						<button name="%(action_view_purchase_contract_reason_cancel)d"
+							string="Cancel Code"
+							attrs="{'invisible': ['|',('state','not in', ['G']),('poc_rev','>', 0)]}"
+							type="action" context="{'poc_id': id, 'state':'X'}" />
+
+						<button name="action_button_send_doc" type="object" states="G"
+							string="Send Documents"
+							confirm="Would you like to confirm send documents?" />
+
+						<button name="action_button_reversion" type="object"
+							states="S" string="Add Reversion"
+							confirm="Would you like to create Purchase Contract Reversion?" />
+
+						<button name="action_button_reflow" string="Reflow"
+							confirm="Would you like to Reflow Purchase Contract?" type="object"
+							states="S,C"/>
+						
+						<button name="action_button_close" string="Close"
+							confirm="Would you like to Close Contract?" type="object"
+							states="S"/>
+							
+						<button name="action_button_verify_doc_v7" string="Verify"
+							confirm="Would you like to Verify Contract?" type="object"
+							attrs="{'invisible': ['|',('state','not in', ['C']),('is_verify','=',True)]}" />
+
+						<field name="state" widget="statusbar" statusbar_visible="G,C,S,V" />
+					</header>
+					<sheet>
+						<group invisible="1" string="Debug">
+							<field name="id" />
+							<field name="year" />
+							<field name="poc_org" />
+							<field name="poc_code" />
+							<field name="poc_rev" />
+							<field name="running" />
+							<field name="admin_org_groups_id" />
+							<field name="operating_unit_id" />
+							<field name="pd_id" />
+							<field name="verify_date" />
+							<field name="send_date" />
+							<field name="is_verify" />
+						</group>
+
+						<br />
+						<h1>
+							<label string="Contract No." for="display_code" />
+							<field name="display_code" class="oe_inline" readonly="1" />
+						</h1>
+						<div style='float:right; height:1px; margin:10px'>
+							<img src='/pabi_purchase_contract/static/src/img/verified.png'
+								attrs="{'invisible': [('verify_date','=', False)]}" style='margin: -60px 15px 0px 0px;width:200px'>
+							</img>
+						</div>
+						<notebook>
+							<page string="Tracking"
+								attrs="{'invisible': [('state','not in', ['C','S','X','Y'])]}">
+								<group string="Info" col="4" colspan="2">
+									<group colspan="4" col="6">
+										<field name="collateral_performance_amt" string="จำนวนเงินประกันผลงาน (สัญญาจ้าง)"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" widget="monetary"
+											options="{'currency_field': 'currency_id'}" colspan="6" />
+										<field name="collateral_agreement_amt" string="จำนวนเงินหลักประกันสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" widget="monetary"
+											options="{'currency_field': 'currency_id'}" colspan="6" />
+										<field name="advance_amt" string="เงินค่าจ้างล่วงหน้า"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" widget="monetary"
+											options="{'currency_field': 'currency_id'}" colspan="6" />
+										<field name="check_final_date" string="วันที่ตรวจรับงานงวดสุดท้าย"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+										<field name="fine_rate"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+										<field name="contractual_fines" string="ค่าปรับตามสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" widget="monetary"
+											options="{'currency_field': 'currency_id'}" colspan="6" />
+										<field name="warranty" class="oe_inline" string="ระยะเวลารับประกัน"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="2" />
+										<field name="warranty_type" nolabel="1" class="oe_inline"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="4" />
+									</group>
+								</group>
+
+								<group string="Collateral Agreement" col="4" colspan="2">
+									<group colspan="4" col="6">
+										<field name="collateral_no" string="หลักประกันสัญญาเลขที่"
+											colspan="6" attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" />
+										<field name="collateral_type_id" string="ประเภทหลักประกันสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}"
+											options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"
+											colspan="6" />
+										<field name="postdating" string="ลงวันที่" colspan="3"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" />
+										<field name="account" string="เลขบัญชี" colspan="3"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" />
+										<field name="bank" string="ธนาคาร" colspan="3"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" />
+										<field name="branch" string="สาขา" colspan="3"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" />
+										<field name="contractual_amt" string="จำนวนเงิน"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+										<field name="collateral_remand_real_date" string="วันที่ส่งหลักประกันให้การเงิน"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+										<field name="collateral_received_date"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+										<field name="collateral_due_date" string="วันที่ครบกำหนดคืนหลักประกันสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+										<field name="collateral_remand_date"
+											attrs="{'readonly':[('state','in',['C','X','Y','Z'])]}" colspan="6" />
+									</group>
+								</group>
+							</page>
+							<page string="Contract Info">
+								<group string="Info" col="4" colspan="2">
+									<group colspan="4" col="6">
+										<field name="is_central_purchase"
+											readonly="1" colspan="6" />
+										<field name="contract_type_id"
+											required="1"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}"
+											options="{'create': true, 'create_edit': true, 'm2o_dialog': false,'no_open': true}"
+											colspan="6" />
+										<field name="purchase_type_id"
+											readonly="1"
+											options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"
+											colspan="6" />
+										<field name="name" string="ชื่อสัญญา" colspan="6"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
+										<field name="supplier_id" string="Supplier" colspan="6"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
+										<field name="currency_id" string="Currency"
+											readonly="1"
+											domain="[('name','in',['THB','EUR','USD','JPY'])]"
+											options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"
+											colspan="6" />
+										<field name="purchase_method_id" string="Purchase Method"
+											colspan="6"
+											options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"
+											readonly="1" />
+										<field name="num_of_period" string="จำนวนงวดงาน (งวด)"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}"
+											colspan="6" />
+										<field name="contract_amt" string="จำนวนเงินตามสัญญา"
+											readonly="1"
+											widget="monetary" options="{'currency_field': 'currency_id'}"
+											colspan="6" />
+									</group>
+								</group>
+								<hr />
+								<group>
+									<group>
+										<field name="action_date" string="วันที่ทำสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
+										<field name="start_date" string="วันที่เริ่มต้นสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
+										<field name="end_date" string="วันที่สิ้นสุดสัญญา"
+											attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
+										<field name="duration_start2end" string="ระยะสัญญา"
+											readonly="1" />
+									</group>
+								</group>
+								<hr />
+								<label string="หมายเหตุ" for='description' />
+								<field name="description" nolable="1"
+									attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
+							</page>
+						</notebook>
+						<hr />
+						<group>
+							<group>
+								<field name="admin_id" string="Creator"
+									attrs="{'invisible':[('admin_id','=',False)],'readonly':[('state','in',['C','X','Y','G','S','Z'])]}"
+									options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}" />
+								<field name="write_emp_id" string="Last user updated"
+									readonly='1' attrs="{'invisible':[('write_emp_id','=',False)]}"
+									options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}" />
+							</group>
+							<group>
+								<field name="create_date" string="Created Date" readonly='1'
+									attrs="{'invisible':[('admin_id','=',False)]}" />
+								<field name="write_date" string="Last Updated" readonly='1'
+									attrs="{'invisible':[('write_emp_id','=',False)]}" />
+							</group>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" />
+						<field name="message_ids" widget="mail_thread" />
+					</div>
+				</form>
+			</field>
+		</record>
+
+		<!-- override the automatically generated list view for purchase_contracts -->
+		<record model="ir.ui.view" id="purchase_contract_search_view">
+			<field name="name">purchase.contract.seach</field>
+			<field name="model">purchase.contract</field>
+			<field name="arch" type="xml">
+				<search string="Purchase Contract">
+					<field name="id" string="ทั้งหมด"
+						filter_domain="['|',
+		                ('poc_code','like',self),
+		                ('name','ilike',self)
+						]" />
+					<field name="poc_code" string="เลขที่สัญญา" />
+					<field name="name" string="ชื่อสัญญา" />
+					<field name="contract_type_id" string="ประเภทสัญญา" />
+				</search>
+			</field>
+		</record>
+
+		<!-- override the automatically generated list view for purchase_contracts -->
+		<record model="ir.ui.view" id="purchase_contract_tree_view">
+			<field name="name">purchase.contract.tree</field>
+			<field name="model">purchase.contract</field>
+			<field name="arch" type="xml">
+				<tree string="Purchase Contract" colors="red:state == 'X' ;red:state == 'Y' ">
+					<field name="display_code" />
+					<field name="contract_type_id" />
+					<field name="name" />
+					<field name="admin_id" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- window action -->
+		<!-- The following tag is an action definition for a "window action", that 
+			is an action opening a view or a set of views -->
+		<record model="ir.actions.act_window" id="purchase_contract_action">
+			<field name="name">Purchase Contract</field>
+			<field name="res_model">purchase.contract</field>
+			<field name="domain"></field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context" eval="{}" />
+		</record>
+
+		<record model="ir.actions.act_window" id="purchase_contract_accept_action">
+			<field name="name">Waiting for Accept</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract</field>
+			<field name="domain">[('state','in', ['S','Y']), ('verify_date','=',
+				False)]
+			</field>
+			<field name="context">{'verified_view': '1'}</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="purchase_contract_tree_view" />
+		</record>
+
+		<!-- <record id="action_go_to_mycontract" model="ir.actions.act_url"> -->
+		<!-- <field name="name">Go to myContract</field> -->
+		<!-- <field name="type">ir.actions.act_url</field> -->
+		<!-- <field name="target">self</field> -->
+		<!-- <field name="url">http://localhost:8069/web?#page=0&amp;limit=80&amp;view_type=list&amp;model=nstda.gnc&amp;menu_id=796&amp;action=818 -->
+		<!-- </field> -->
+		<!-- </record> -->
+
+		<!-- ############################## Group Roles ############################## -->
+		<record model="ir.actions.act_window" id="action_purchase_contract_group_roles">
+			<field name="name">Access Rights</field>
+			<field name="res_model">res.groups</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('category_id.description','=','purchase_contract')]
+			</field>
+			<field name="context" eval="{'mode_view': 't'}" />
+		</record>
+
+	</data>
+</openerp>
