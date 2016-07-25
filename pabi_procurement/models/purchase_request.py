@@ -232,7 +232,7 @@ class PurchaseRequest(models.Model):
             file_prefix = ConfParam.get_param('pabiweb_file_prefix')
             attachment_tup = data_dict['attachment_ids']
             for att_rec in attachment_tup:
-                attach_data['name'] = att_rec['file_url']
+                attach_data['name'] = att_rec['name']
                 attach_data['res_id'] = pr_id
                 attach_data['res_model'] = 'purchase.request'
                 attach_data['type'] = 'url'
