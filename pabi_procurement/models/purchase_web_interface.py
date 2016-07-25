@@ -284,7 +284,7 @@ class PurchaseWebInterface(models.Model):
                 pr_name += pd_pr_line.request_id.name + ','
             pr_name = pr_name[:-1]
         doc_type = requisition.get_doc_type()
-        action = 1 if not requisition.reject_reason_txt else 2
+        action = '1' if not requisition.reject_reason_txt else '2'
         arg = {
             'action': action,
             'pdNo': requisition.name,
