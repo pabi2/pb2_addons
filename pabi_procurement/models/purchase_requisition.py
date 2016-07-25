@@ -239,16 +239,16 @@ class PurchaseRequisition(models.Model):
 
     @api.onchange('is_central_purchase')
     def _onchange_is_central_purchase(self):
-        domain = []
+        # domain = []
         if self.is_central_purchase:
             self.exclusive = 'multiple'
             self.multiple_rfq_per_supplier = True
-            domain = []
+            # domain = []
         else:
             self.exclusive = 'exclusive'
             self.multiple_rfq_per_supplier = False
-            domain = self.env['operating.unit']._ou_domain()
-        return {'domain': {'operating_unit_id': domain}}
+            # domain = self.env['operating.unit']._ou_domain()
+        # return {'domain': {'operating_unit_id': domain}}
 
     @api.model
     def open_price_comparison(self, ids):
