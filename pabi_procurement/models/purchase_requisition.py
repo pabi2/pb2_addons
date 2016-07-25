@@ -387,9 +387,20 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
+    def check_rfq_no(self):
+        Order = self.env['purchase.order']
+        rfq = Order.search([('requisition_id', '=', self.id)])
+        if len(rfq) == 0 and self.purchase_method_id.require_rfq:
+            raise UserError(
+                _("You haven't create the Request to Quotation yet.")
+            )
+        return True
+
+    @api.multi
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
+        self.check_rfq_no()
         self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,

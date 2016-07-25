@@ -367,7 +367,10 @@ class PurchaseMethod(models.Model):
     name = fields.Char(
         string='Purchase Method',
     )
-
+    require_rfq = fields.Boolean(
+        string='Require for RfQ',
+        help='At least 1 RfQ must be created before verifying CfBs',
+    )
 
 class PurchaseCommitteeType(models.Model):
     _name = 'purchase.committee.type'
