@@ -104,8 +104,8 @@ class PurchaseRequisition(models.Model):
         readonly=False,
     )
     attachment_ids = fields.One2many(
-        'purchase.requisition.attachment',
-        'requisition_id',
+        'ir.attachment',
+        'res_id',
         string='Attach Files',
     )
     amount_untaxed = fields.Float(
@@ -602,28 +602,6 @@ class PurchaseRequisitionLine(models.Model):
                     )
             cur = line.requisition_id.currency_id
             line.price_subtotal = cur.round(amount_untaxed + tax_amount)
-
-
-class PurchaseRequisitionAttachment(models.Model):
-    _name = 'purchase.requisition.attachment'
-    _description = 'Purchase Requisition Attachment'
-
-    requisition_id = fields.Many2one(
-        'purchase.requisition',
-        string='Purchase Requisition',
-    )
-    name = fields.Char(
-        string='File Name',
-    )
-    description = fields.Char(
-        string='File Description',
-    )
-    file_url = fields.Char(
-        string='File Url',
-    )
-    file = fields.Binary(
-        string='File',
-    )
 
 
 class PurchaseRequisitionCommittee(models.Model):

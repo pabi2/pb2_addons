@@ -114,25 +114,21 @@
                         <field name="attachment_ids">
                             <tree>
                                 <field name="name"/>
-                                <field name="description"/>
-                                <field name="file"/>
-                                <field name="file_url"/>
+                                <field name="type"/>
+                                <field name="url"/>
                             </tree>
                             <form>
-                            	<group>
+                            	<group colspan="4">
 	                            	<group>
 	                            		<field name="name"/>
+                                        <field name="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
+                                        <field name="db_datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
 	                        		</group>
                                     <group>
                                 		<field name="description"/>
-	                        		</group>
-	                            	<group>
-                                		<field name="file"/>
+                                        <field name="type"/>
 	                        		</group>
                         		</group>
-                        		<group>
-                        			<field name="file_url" widget="url"/>
-                       			</group>
                         	</form>
                     	</field>
                     </page>

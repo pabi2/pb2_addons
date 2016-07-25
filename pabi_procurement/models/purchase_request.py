@@ -29,8 +29,8 @@ class PurchaseRequest(models.Model):
         readonly=False,
     )
     attachment_ids = fields.One2many(
-        'purchase.request.attachment',
-        'request_id',
+        'ir.attachment',
+        'res_id',
         string='Attach Files',
         readonly=False,
     )
@@ -174,80 +174,6 @@ class PurchaseRequest(models.Model):
         self.amount_total = amount_untaxed + amount_tax
 
     @api.model
-    def call_gen_pr(self):
-        # for testing generate pr
-        gen_dict = {
-            'name': u'PR0000001',
-            'requested_by.id': u'1',
-            'responsible_uid.id': u'1',
-            'assigned_to.id': u'1',
-            'date_approve': u'2016-01-31',
-            'total_budget_value': u'240000',
-            # 'purchase_prototype_id.id': u'1',
-            # 'purchase_type_id.id': u'1',
-            # 'purchase_method_id.id': u'1',
-            'description': u'Put your PR description here.',
-            'objective': u'Put your PR objective here',
-            'currency_id.id': u'140',
-            'currency_rate': u'1',
-            'delivery_address': u'Put your PR delivery address here',
-            'date_start': u'2016-01-31',
-            'operating_unit_id.id': u'1',
-            'line_ids': (
-                {
-                    'product_id.id': u'',
-                    'name': u'Computer',
-                    'product_qty': u'20',
-                    'price_unit': u'10000',
-                    'product_uom_id.id': u'1',
-                    'section_id.id': u'1',
-                    'project_id.id': u'1',
-                    'nstda_course_id.id': u'',
-                    'fixed_asset': u'False',
-                    'tax_ids': u'Tax 7.00%',
-                },
-                {
-                    'product_id.id': u'',
-                    'name': u'HDD',
-                    'product_qty': u'20',
-                    'price_unit': u'1030',
-                    'product_uom_id.id': u'1',
-                    'activity_id.id': u'1',
-                    'date_required': u'2016-01-31',
-                    'section_id.id': u'1',
-                    'project_id.id': u'1',
-                    'nstda_course_id.id': u'',
-                    'fixed_asset': u'False',
-                    'tax_ids': u'Tax 7.00%',
-                }
-            ),
-            'attachment_ids': (
-                {
-                    'name': u'PD Form',
-                    'file_url': u'google.com',
-                },
-                {
-                    'name': u'PD Form2',
-                    'file_url': u'google.com',
-                },
-                {
-                    'name': u'PD Form2',
-                    'file_url': u'google.com',
-                },
-            ),
-            'committee_ids': (
-                {
-                    'name': u'Mr. Steve Roger',
-                    'position': u'Manager',
-                    'committee_type_id': u'คณะกรรมการเปิดซองสอบราคา',
-                    'sequence': u'1',
-                },
-            ),
-        }
-        self.generate_purchase_request(gen_dict)
-        return True
-
-    @api.model
     def _finalize_data_to_load(self, fields, data):
         # clear up attachment and committee data. will and them after create pr
         clear_up_fields = [
@@ -299,15 +225,19 @@ class PurchaseRequest(models.Model):
     @api.model
     def create_purchase_request_attachment(self, data_dict, pr_id):
         attachment_ids = []
+        attach_data = {}
         if 'attachment_ids' in data_dict:
-            PRAttachment = self.env['purchase.request.attachment']
+            PRAttachment = self.env['ir.attachment']
             ConfParam = self.env['ir.config_parameter']
             file_prefix = ConfParam.get_param('pabiweb_file_prefix')
             attachment_tup = data_dict['attachment_ids']
             for att_rec in attachment_tup:
-                att_rec['request_id'] = pr_id
-                att_rec['file_url'] = file_prefix + att_rec['file_url']
-                attachment = PRAttachment.create(att_rec)
+                attach_data['name'] = att_rec['file_url']
+                attach_data['res_id'] = pr_id
+                attach_data['res_model'] = 'purchase.request'
+                attach_data['type'] = 'url'
+                attach_data['url'] = file_prefix + att_rec['file_url']
+                attachment = PRAttachment.create(attach_data)
                 attachment_ids.append(attachment.id)
         return attachment_ids
 
@@ -403,28 +333,6 @@ class PurchaseRequestLine(models.Model):
             if rec.request_id:
                 rec.price_subtotal = \
                     rec.request_id.currency_id.round(rec.price_subtotal)
-
-
-class PurchaseRequestAttachment(models.Model):
-    _name = 'purchase.request.attachment'
-    _description = 'Purchase Request Attachment'
-
-    request_id = fields.Many2one(
-        'purchase.request',
-        string='Purchase Request',
-    )
-    name = fields.Char(
-        string='File Name',
-    )
-    description = fields.Char(
-        string='File Description',
-    )
-    file_url = fields.Char(
-        string='File Url',
-    )
-    file = fields.Binary(
-        string='File',
-    )
 
 
 class PurchaseRequestCommittee(models.Model):
