@@ -90,6 +90,9 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 	<field name="delivery_address" class="java.lang.String">
 		<fieldDescription><![CDATA[Delivery Address]]></fieldDescription>
 	</field>
+	<variable name="current_date" class="java.util.Date" resetType="None">
+		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
+	</variable>
 	<pageHeader>
 		<band height="211">
 			<staticText>
@@ -169,12 +172,12 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[โทรสาร :]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd MMM yy" isBlankWhenNull="true">
 				<reportElement x="63" y="168" width="100" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($V{current_date}.year+543, $V{current_date}.month, $V{current_date}.date)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="120" width="62" height="16"/>
@@ -292,12 +295,13 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[ลงวันที่]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd MMM yy" isBlankWhenNull="true">
 				<reportElement x="216" y="0" width="65" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{date_order}.year+543, $F{date_order}.month, $F{date_order}.date)
+]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="30">
@@ -338,7 +342,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[4. ชื่อ-ที่อยู่สำหรับออกใบแจ้งหนี้/ใบกำกับภาษี :]]></text>
 			</staticText>
 		</band>
-		<band height="268">
+		<band height="281">
 			<staticText>
 				<reportElement x="0" y="0" width="140" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
@@ -364,50 +368,51 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[6. เอกสารประกอบการวางบิล :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="71" width="305" height="28"/>
+				<reportElement x="11" y="71" width="305" height="42"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[6.1  ใบส่งของ ( ที่มีลายมือชื่อผู้รับสินค้า/งานจ้าง ) , ต้นฉบับใบแจ้งหนี้/ใบกำกับภาษี
-6.2  ใบสั่งซื้อ/ จ้างที่ลงนามแล้ว]]></text>
+6.2  ใบสั่งซื้อ/ จ้างที่ลงนามแล้ว
+6.3  ใบเสร็จ กรณีโอนเงิน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="99" width="15" height="15"/>
+				<reportElement x="11" y="112" width="15" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[6.3]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="26" y="99" width="142" height="15"/>
+				<reportElement x="26" y="112" width="142" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[กรณีส่งสินค้าไม่ครบตามจำนวนในใบสั่งซื้อ/จ้าง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="168" y="99" width="107" height="15"/>
+				<reportElement x="168" y="112" width="107" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[งานจัดหาพัสดุไม่รับวางบิล]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="114" width="131" height="15"/>
+				<reportElement x="0" y="127" width="131" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[7. วัน เวลา และสถานที่รับวางบิล :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="129" width="297" height="15"/>
+				<reportElement x="11" y="142" width="297" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[** วางบิลทุกวันทำการ เวลา 8.30 - 16.30 น.     - งานพัสดุ สำนักงานกลาง **]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="12" y="144" width="222" height="41"/>
+				<reportElement mode="Transparent" x="12" y="157" width="222" height="41"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -416,7 +421,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 จังหวัดปทุมธานี 12120]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="200" width="297" height="41"/>
+				<reportElement x="11" y="213" width="297" height="41"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -425,14 +430,14 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 ( ส่งเอกสารมายังเจ้าหน้าที่พัสดุ โทรสารหมายเลข 02-564-7060 )]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="185" width="42" height="15"/>
+				<reportElement x="0" y="198" width="42" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หมายเหตุ :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="120" y="253" width="229" height="15"/>
+				<reportElement x="120" y="266" width="229" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

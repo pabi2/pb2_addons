@@ -275,6 +275,8 @@ class PurchaseWebInterface(models.Model):
         employee = Employee.search([('user_id', '=', request_usr.id)])
         attachment = []
         for pd_att in requisition.attachment_ids:
+            if '_main_form.pdf' in pd_att.name:
+                continue
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
                 'content': pd_att.datas
