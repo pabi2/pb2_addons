@@ -79,10 +79,12 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     @api.model
     def _prepare_attachment_line(self, line, requisition_id):
         return {
-            'requisition_id': requisition_id,
+            'res_id': requisition_id,
+            'res_model': 'purchase.requisition',
             'name': line.name,
-            'file_url': line.file_url,
-            'file': line.file,
+            'type': line.type,
+            'url': line.file_url,
+            'db_datas': line.db_datas or False,
         }
 
     @api.model
