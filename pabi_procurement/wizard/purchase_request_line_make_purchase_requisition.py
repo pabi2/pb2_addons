@@ -84,7 +84,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'name': line.name,
             'type': line.type,
             'url': line.file_url,
-            'db_datas': line.db_datas or False,
+            'datas': line.datas or False,
         }
 
     @api.model
