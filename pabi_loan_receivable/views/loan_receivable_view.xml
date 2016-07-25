@@ -193,10 +193,12 @@
 						            <field name="installment" />
 						            <field name="date_invoice" />
 						            <field name="invoice_amount" sum="Amount" />
-						            <field name="invoice_percent"/>
+						            <field name="invoice_percent" invisible="1"/>
 						            <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
-						     		<field name="ref_invoice_id" invisible="0"  />
+						     		<field name="ref_invoice_id" widget="many2one_clickable" />
 						            <field name="state" invisible="0"/>
+						            <field name="date_paid" />
+						            <field name="payment_ids" />
 					            </tree>
 		                   	</field>
 	                   	</page>

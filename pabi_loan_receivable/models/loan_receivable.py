@@ -166,7 +166,7 @@ class LoanCustomerAgreement(models.Model):
         compute='_compute_invoice_count',
     )
     fy_penalty_rate = fields.Float(
-        string='Penalty Rate / Year',
+        string='Penalty (%) / Year',
         default=0.0,
     )
 

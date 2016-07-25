@@ -17,7 +17,9 @@ class SaleOrder(models.Model):
     @api.model
     def _prepare_invoice(self, order, lines):
         res = super(SaleOrder, self)._prepare_invoice(order, lines)
-        res.update({
-            'loan_agreement_id': order.loan_agreement_id.id
-        })
+        if order.loan_agreement_id:
+            res.update({
+                'origin': order.loan_agreement_id.name,
+                'loan_agreement_id': order.loan_agreement_id.id,
+            })
         return res
