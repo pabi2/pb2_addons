@@ -122,7 +122,7 @@
 	                            	<group>
 	                            		<field name="name"/>
                                         <field name="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
-                                        <field name="db_datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
+                                        <field name="datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
 	                        		</group>
                                     <group>
                                 		<field name="description"/>

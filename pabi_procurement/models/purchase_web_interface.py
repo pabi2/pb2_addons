@@ -106,9 +106,10 @@ class PurchaseRequisition(models.Model):
                 att_file = []
                 try:
                     attachments = {
-                        'requisition_id': requisition.id,
+                        'res_id': requisition.id,
                         'name': af_info['file_name'],
-                        'file_url': af_info['file_url'],
+                        'url': af_info['file_url'],
+                        'type': 'type',
                     }
                     att_file.append([0, False, attachments])
                     today = fields.Date.context_today(self)
@@ -275,7 +276,7 @@ class PurchaseWebInterface(models.Model):
         for pd_att in requisition.attachment_ids:
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
-                'content': pd_att.file
+                'content': pd_att.datas
             }
             attachment.append(pd_attach)
         pr_name = ''
