@@ -400,7 +400,6 @@ class PurchaseRequisition(models.Model):
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
-        self.check_rfq_no()
         self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,

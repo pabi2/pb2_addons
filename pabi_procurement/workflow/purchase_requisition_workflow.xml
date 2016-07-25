@@ -5,7 +5,10 @@
             <field name="wkf_id" ref="purchase_requisition.purchase_requisition_workflow"/>
             <field name="name">verify</field>
             <field name="kind">function</field>
-            <field name="action">to_verify()</field>
+            <field name="action">
+                check_rfq_no()
+                to_verify()
+            </field>
         </record>
         <record id="act_rejected" model="workflow.activity">
             <field name="wkf_id" ref="purchase_requisition.purchase_requisition_workflow"/>
