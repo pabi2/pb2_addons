@@ -6,6 +6,11 @@
         <field name="model">purchase.request</field>
         <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
             <field name="arch" type="xml">
+            
+                <xpath expr="//field[@name='requested_by']" position="after">
+                    <field name="is_central_purchase" />
+                </xpath>
+                
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">
                     <field name="purchase_unit_id"/>
                     <field name="responsible_uid"/>

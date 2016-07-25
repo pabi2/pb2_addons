@@ -158,6 +158,12 @@ class PurchaseRequest(models.Model):
         readonly=True,
         default=0.0,
     )
+    is_central_purchase = fields.Boolean(
+        string='Central Purchase',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default=False,
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
