@@ -190,5 +190,16 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="invoice_plan_purchase_order_form">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_invoice_plan.purchase_order_form"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//field[@name='invoice_plan_ids']/tree/field[@name='installment']" position="before">
+                        <field name="description"/>
+                    </xpath>
+                </field>
+        </record>
+
     </data>
 </openerp>
