@@ -38,19 +38,15 @@ class purchase_contract_reason(models.TransientModel):
                                        ['poc_rev', '=', before_new_poc_rev]],
                                       limit=1)
             if self.datas_fname:
-                data = {
-                        'datas': self.datas,
+                data = {'datas': self.datas,
                         'datas_fname': self.datas_fname,
                         'name': self.datas_fname,
-                        'res_model': self._context['res_model'],
-                }
+                        'res_model': self._context['res_model']}
                 data_file.append([0, False, data])
             Employees = self.env['nstdamas.employee']
-            Emp = Employees.search([
-                                    ['emp_rusers_id',
-                                     '=',
-                                     self._uid]
-                                    ], limit=1)
+            Emp = Employees.search(
+                [['emp_rusers_id', '=', self._uid]],
+                limit=1)
             if Emp:
                 newline += str(Emp.name_get()[0][1]) + "\n "
                 newline += _("Reason") + ": "
@@ -59,9 +55,10 @@ class purchase_contract_reason(models.TransientModel):
                 description += str(self.description)
                 poc_last.write({'termination_uid': Emp.id})
             termination_date = datetime.datetime.now(timezone('UTC'))
-            poc_last.write({'state': 'Y',
-                       'termination_date': termination_date,
-                       'description': description})
+            poc_last.write(
+                {'state': 'Y',
+                 'termination_date': termination_date,
+                 'description': description})
             poc = poc_obj.search([['poc_code', '=', poc.poc_code]])
             NextRev = len(poc)
             tempname = self.datas_fname.replace(
