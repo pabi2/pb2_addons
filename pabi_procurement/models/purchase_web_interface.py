@@ -107,9 +107,10 @@ class PurchaseRequisition(models.Model):
                 try:
                     attachments = {
                         'res_id': requisition.id,
+                        'res_model': 'purchase.requisition',
                         'name': af_info['file_name'],
                         'url': af_info['file_url'],
-                        'type': 'type',
+                        'type': 'url',
                     }
                     att_file.append([0, False, attachments])
                     today = fields.Date.context_today(self)
