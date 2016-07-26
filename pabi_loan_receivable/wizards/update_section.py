@@ -19,10 +19,7 @@ class UpdateSectionInvoice(models.TransientModel):
         InvoiceLineObj = self.env['account.invoice.line']
         loan_ids = self._context.get('active_ids', [])
         for loan in LoanObj.browse(loan_ids):
-            invoice_ids = InvoiceObj.search([('loan_agreement_id', '=', loan.id),
-                                             ('state', '=', 'draft')]).ids
-            invoice_lines =\
-                InvoiceLineObj.search([('invoice_id', 'in', invoice_ids)])
-            for line in invoice_lines:
-                line.write({'section_id': self.section_id.id})
-            loan.write({'section_id': self.section_id.id})
+            loan.update_invoice_lines({'section_id': self.section_id.id})
+            self._cr.execute('update loan_customer_agreement\
+                                set section_id=%d where\
+                                id=%d' %(self.section_id.id, loan.id))
