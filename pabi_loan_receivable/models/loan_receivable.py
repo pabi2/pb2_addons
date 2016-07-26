@@ -18,6 +18,7 @@ class LoanBankMOU(models.Model):
         'res.partner.bank',
         string='Bank',
         required=True,
+        domain=[('partner_id', '!=', False)]
     )
     max_installment = fields.Integer(
         string='Max Installment',
@@ -25,9 +26,11 @@ class LoanBankMOU(models.Model):
         default=1,
     )
     loan_ratio = fields.Float(
-        string='Loan Ratio (NSTDA/Bank)',
-        help="Ratio of loan between NSTDA and Bank. For example, 2:1 = 2 "
-        "means NSTDA will load 2 part and Bank will load 1 part",
+        string='Loan Ratio',
+        digits=(16, 12),
+        help="Ratio of loan that NSTDA will submit to bank when compare to "
+        "full amount. i.e., from 3,000,000 if NSTDA to submit 2,000,000. "
+        "Ratio = 2/3 = 0.6666666667",
     )
     product_id = fields.Many2one(
         'product.product',
@@ -57,7 +60,7 @@ class LoanCustomerAgreement(models.Model):
     _name = "loan.customer.agreement"
     _inherit = ['mail.thread']
     _description = "Loan Agreement between Bank and Customer CC NSTDA"
-    _order="date_begin"
+    _order = "date_begin"
 
     name = fields.Char(
         string='Loan Agreement Number',
@@ -73,12 +76,20 @@ class LoanCustomerAgreement(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    mou_bank = fields.Many2one(
+        'res.bank',
+        string="MOU's Bank",
+        related='mou_id.bank_id.bank',
+        store=True,
+    )
     bank_id = fields.Many2one(
         'res.partner.bank',
-        related="mou_id.bank_id",
         string='Bank',
         readonly=True,
-        store=True,
+        domain="[('partner_id', '!=', False),"
+        "('bank', '=', mou_bank)]",
+        states={'draft': [('readonly', False)]},
+        required=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -236,6 +247,11 @@ class LoanCustomerAgreement(models.Model):
                     rec.sale_id.state == 'done':
                 state = 'done'
             rec.state = state
+
+    @api.onchange('amount_loan_total')
+    def _onchange_amount_loan_total(self):
+        amount = self.amount_loan_total * self.mou_id.loan_ratio
+        self.amount_receivable = amount
 
     @api.one
     @api.constrains('monthly_due_type', 'date_specified')
