@@ -21,6 +21,7 @@
         "security/ir.model.access.csv",
         "wizards/loan_create_bank_invoice_wizard.xml",
         "wizards/loan_create_installment_order_wizard.xml",
+        'wizards/update_section_view.xml',
         "views/res_config_view.xml",
         "views/loan_receivable_view.xml",
         "views/account_invoice_view.xml",

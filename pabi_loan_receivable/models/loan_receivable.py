@@ -35,17 +35,17 @@ class LoanBankMOU(models.Model):
         required=True,
     )
     date_begin = fields.Date(
-        'Begin Date',
+        string='Begin Date',
         required=True,
     )
     date_end = fields.Date(
-        'Date End',
+        string='Date End',
         required=True,
     )
     loan_agreement_ids = fields.One2many(
         'loan.customer.agreement',
         'mou_id',
-        'Loan Agreements',
+        string='Loan Agreements',
     )
 
     _sql_constraints = [
@@ -191,11 +191,15 @@ class LoanCustomerAgreement(models.Model):
     )
     section_id = fields.Many2one(
         'res.section',
-        'Section',
+        string='Section',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     account_receivable_id = fields.Many2one(
         'account.account',
-        'Account Receivable',
+        string='Account Receivable',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi
