@@ -26,9 +26,11 @@ class LoanBankMOU(models.Model):
         default=1,
     )
     loan_ratio = fields.Float(
-        string='Loan Ratio (NSTDA/Bank)',
-        help="Ratio of loan between NSTDA and Bank. For example, 2:1 = 2 "
-        "means NSTDA will load 2 part and Bank will load 1 part",
+        string='Loan Ratio',
+        digits=(16, 12),
+        help="Ratio of loan that NSTDA will submit to bank when compare to "
+        "full amount. i.e., from 3,000,000 if NSTDA to submit 2,000,000. "
+        "Ratio = 2/3 = 0.6666666667",
     )
     product_id = fields.Many2one(
         'product.product',
@@ -245,6 +247,11 @@ class LoanCustomerAgreement(models.Model):
                     rec.sale_id.state == 'done':
                 state = 'done'
             rec.state = state
+
+    @api.onchange('amount_loan_total')
+    def _onchange_amount_loan_total(self):
+        amount = self.amount_loan_total * self.mou_id.loan_ratio
+        self.amount_receivable = amount
 
     @api.one
     @api.constrains('monthly_due_type', 'date_specified')
