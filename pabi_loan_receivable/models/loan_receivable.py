@@ -34,6 +34,20 @@ class LoanBankMOU(models.Model):
         string='Loan Product',
         required=True,
     )
+    date_begin = fields.Date(
+        'Begin Date',
+        required=True,
+    )
+    date_end = fields.Date(
+        'Date End',
+        required=True,
+    )
+    loan_agreement_ids = fields.One2many(
+        'loan.customer.agreement',
+        'mou_id',
+        'Loan Agreements',
+    )
+
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
     ]
@@ -43,6 +57,7 @@ class LoanCustomerAgreement(models.Model):
     _name = "loan.customer.agreement"
     _inherit = ['mail.thread']
     _description = "Loan Agreement between Bank and Customer CC NSTDA"
+    _order="date_begin"
 
     name = fields.Char(
         string='Loan Agreement Number',
