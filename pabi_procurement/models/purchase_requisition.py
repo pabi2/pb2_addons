@@ -133,18 +133,15 @@ class PurchaseRequisition(models.Model):
         'res.users',
         string='PR. Requested by',
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     assign_uid = fields.Many2one(
         'res.users',
         string='PR. Approver',
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     date_approve = fields.Date(
         string='PR. Approved Date',
         readonly=True,
-        states={'draft': [('readonly', False)]},
         help="Date when the request has been approved",
     )
     request_ref_id = fields.Many2one(
@@ -152,7 +149,6 @@ class PurchaseRequisition(models.Model):
         string='PR Reference',
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     verify_uid = fields.Many2one(
         'res.users',
@@ -314,7 +310,7 @@ class PurchaseRequisition(models.Model):
             _prepare_purchase_order(requisition, supplier)
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
-            'notes': requisition.delivery_address,
+            'delivery_address': requisition.delivery_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
         })
         # Case central purchase, use selected OU
@@ -340,6 +336,7 @@ class PurchaseRequisition(models.Model):
             'name': requisition_line.product_name,
             'price_unit': requisition_line.price_unit,
             'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
+            'product_uom': requisition_line.product_uom_id.id,
         })
         return res
 
