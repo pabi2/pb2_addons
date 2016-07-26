@@ -25,3 +25,4 @@ class UpdateSectionInvoice(models.TransientModel):
                 InvoiceLineObj.search([('invoice_id', 'in', invoice_ids)])
             for line in invoice_lines:
                 line.write({'section_id': self.section_id.id})
+            loan.write({'section_id': self.section_id.id})
