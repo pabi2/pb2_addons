@@ -189,6 +189,14 @@ class LoanCustomerAgreement(models.Model):
         default=15,
         help="Payment can be late without penalty if within the grace period",
     )
+    section_id = fields.Many2one(
+        'res.section',
+        'Section',
+    )
+    account_receivable_id = fields.Many2one(
+        'account.account',
+        'Account Receivable',
+    )
 
     @api.multi
     def _compute_invoice_count(self):
@@ -361,6 +369,7 @@ class LoanCustomerAgreement(models.Model):
             'price_unit': loan.amount_receivable,
             'quantity': 1.0,
             'uos_id': res.get('uos_id', False),
+            'section_id': loan.section_id.id,
         }
 
     @api.multi
@@ -404,6 +413,7 @@ class LoanCustomerAgreement(models.Model):
             'price_unit': loan.amount_receivable,
             'product_uom': product.uom_id.id,
             'product_uom_qty': 1.0,
+            'section_id': loan.section_id.id,
         }
 
     @api.multi

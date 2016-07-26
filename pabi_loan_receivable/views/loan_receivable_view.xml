@@ -180,6 +180,9 @@
                             <field name="bank_id" />
                             <field name="monthly_due_type" />
                             <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
+                            <field name="section_id"/> 
+                            <field name="account_receivable_id"
+                                    domain="[('type','=', 'receivable')]" />
                         </group>
                         <group>
                             <field name="amount_loan_total"/>
