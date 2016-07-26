@@ -124,13 +124,13 @@
 	                         string="Create Bank Invoice"
 	                         type="action"
 	                         groups="account.group_account_invoice"
-	                         states="sign"
+	                         states="open"
 	                         class="oe_highlight" />
 	                <button name="%(action_create_installment_order)d"
 	                         string="Create Installment"
 	                         type="action"
 	                         groups="account.group_account_invoice"
-	                         states="bank_paid"
+	                         states="sign"
 	                         class="oe_highlight" />
                     <button name="action_cancel" string="Cancel" type="object" states="sign"/>
                     <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
