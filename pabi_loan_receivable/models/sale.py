@@ -5,7 +5,7 @@ from openerp.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
-    _inherit = "sale.order"
+    _inherit = 'sale.order'
 
     loan_agreement_id = fields.Many2one(
         'loan.customer.agreement',
@@ -22,4 +22,19 @@ class SaleOrder(models.Model):
                 'origin': order.loan_agreement_id.name,
                 'loan_agreement_id': order.loan_agreement_id.id,
             })
+        return res
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    @api.model
+    def _prepare_order_line_invoice_line(self, line, account_id=False):
+        res = super(SaleOrderLine, self).\
+            _prepare_order_line_invoice_line(line, account_id)
+        # For loan agreement invoice plan, add installment #
+        if line.order_id.loan_agreement_id:
+            if res.get('name', False):
+                res['name'] += (_(' / Installment %s') %
+                                (self._context.get('installment'),))
         return res
