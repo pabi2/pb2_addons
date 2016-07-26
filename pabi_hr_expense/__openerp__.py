@@ -26,6 +26,7 @@
         'workflow/hr_expense_workflow.xml',
         'wizard/expense_create_multi_supplier_invoice_view.xml',
         "wizard/hr_expense_change_advance_date_due_view.xml",
+        'wizard/employee_message_view.xml',
         "views/account_activity_view.xml",
         "views/hr_expense_view.xml",
         "views/account_invoice_view.xml",
