@@ -7,11 +7,11 @@ class PurchaseOrder(models.Model):
 
     operating_unit_id = fields.Many2one(
         required=True,
-        domain=lambda self: self.env['operating.unit']._ou_domain(),
+        # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
     requesting_operating_unit_id = fields.Many2one(
         required=True,
-        domain=lambda self: self.env['operating.unit']._ou_domain(),
+        # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 
 
