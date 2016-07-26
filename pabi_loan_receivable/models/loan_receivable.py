@@ -212,6 +212,7 @@ class LoanCustomerAgreement(models.Model):
     account_receivable_id = fields.Many2one(
         'account.account',
         string='Account Receivable',
+        domain="[('type', '=', 'receivable')]",
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
