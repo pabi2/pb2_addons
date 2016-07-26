@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="mass_editing_loan_section" model="mass.object">
+            <field name="name">Loan Agreement - Edit Section</field>
+            <field name="model_id" eval="ref('pabi_loan_receivable.model_loan_customer_agreement')"/>
+            <field name="field_ids" eval="[(6,0,[ref('pabi_loan_receivable.field_loan_customer_agreement_section_id')])]"/>
+        </record>
+    </data>
+</openerp>

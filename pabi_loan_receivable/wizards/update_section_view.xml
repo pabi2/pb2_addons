@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2016 Kitti U.
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+
+<openerp>
+<data>
+
+<record id="wizard_update_section_invoice" model="ir.ui.view">
+    <field name="name">Update Section - Invoice</field>
+    <field name="model">update.section.invoice</field>
+    <field name="arch" type="xml">
+        <form string="Select invoice date">
+            <p>This wizard will update section in all draft invoices.</p>
+            <group>
+                <group>
+                    <field name="section_id" />
+                </group>
+                <group/>
+            </group>
+            <footer>
+                <button name="action_update_section"
+                        type="object" string="Update"
+                        class="oe_highlight"/>
+                or
+                <button special="cancel"
+                        string="Cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="action_update_section_invoice" model="ir.actions.act_window">
+    <field name="name">Update Section - Invoice</field>
+    <field name="res_model">update.section.invoice</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+</data>
+</openerp>
