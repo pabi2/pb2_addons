@@ -198,15 +198,23 @@ class LoanCustomerAgreement(models.Model):
     days_grace_period = fields.Integer(
         string='Grace Period (days)',
         default=15,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Payment can be late without penalty if within the grace period",
     )
     section_id = fields.Many2one(
         'res.section',
-        'Section',
+        string='Section',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     account_receivable_id = fields.Many2one(
         'account.account',
-        'Account Receivable',
+        string='Account Receivable',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi
