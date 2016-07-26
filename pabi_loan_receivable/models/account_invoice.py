@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from openerp import models, api, fields, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -18,6 +18,12 @@ class AccountInvoice(models.Model):
         string="CD Loan Late Payment",
         help="List CD Loan customer invoice which is paid after its due date "
         "which has not been paying for its penalty"
+    )
+    discard_installment_order_check = fields.Boolean(
+        string='Discard Installment Order Check',
+        help="If checked, user can validate this loan "
+        "invoice regardless of the installment order. "
+        "This flag is only valid in Loan Agreement context.",
     )
 
     @api.multi
@@ -84,3 +90,29 @@ class AccountInvoice(models.Model):
             penalty_line.quantity = 1.0
             penalty_line.price_unit = amount_penalty
             self.invoice_line += penalty_line
+
+    @api.model
+    def _check_loan_invoice_in_advance(self, loan_agreement_id, date_due):
+        if loan_agreement_id:
+            dom = [
+                ('type', 'in', ('out_invoice', 'out_refund')),
+                ('state', '=', 'draft'),
+                ('date_due', '<', date_due),
+                ('loan_agreement_id', '=', loan_agreement_id),
+            ]
+            if self.search_count(dom) > 0:
+                raise UserError(
+                    _('You are not allowed to validate '
+                      'invoice plan in advance!'))
+        return
+
+    @api.multi
+    def action_move_create(self):
+        result = super(AccountInvoice, self).action_move_create()
+        # For loan case, not allow validate invoice plan in advance
+        for invoice in self:
+            if invoice.discard_installment_order_check:
+                continue
+            self._check_loan_invoice_in_advance(invoice.loan_agreement_id.id,
+                                                invoice.date_due)
+        return result
