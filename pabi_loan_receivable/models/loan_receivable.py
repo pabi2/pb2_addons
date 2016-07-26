@@ -135,10 +135,10 @@ class LoanCustomerAgreement(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('sign', 'Document Signed'),
+         ('open', 'Installment Open'),
          ('bank_invoice', 'Bank Invoiced'),
          ('bank_paid', 'Bank Paid'),
-         ('open', 'Installment Open'),
-         ('done', 'Done'),
+         ('done', 'Installment Paid'),
          ('cancel', 'Cancelled')],
         string='Status',
         readonly=True,
@@ -199,14 +199,14 @@ class LoanCustomerAgreement(models.Model):
                 state = 'cancel'
             if rec.signed:
                 state = 'sign'
+            if rec.sale_id:
+                state = 'open'
             if rec.supplier_invoice_id and \
                     rec.supplier_invoice_id.state not in ('cancel', 'paid',):
                 state = 'bank_invoice'
             if rec.supplier_invoice_id and \
                     rec.supplier_invoice_id.state == 'paid':
                 state = 'bank_paid'
-            if rec.sale_id:
-                state = 'open'
             if rec.sale_id.state == 'cancel':
                 state = 'bank_paid'
             if rec.sale_id and \
