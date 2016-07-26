@@ -18,6 +18,7 @@ class LoanBankMOU(models.Model):
         'res.partner.bank',
         string='Bank',
         required=True,
+        domain=[('partner_id', '!=', False)]
     )
     max_installment = fields.Integer(
         string='Max Installment',
@@ -57,7 +58,7 @@ class LoanCustomerAgreement(models.Model):
     _name = "loan.customer.agreement"
     _inherit = ['mail.thread']
     _description = "Loan Agreement between Bank and Customer CC NSTDA"
-    _order="date_begin"
+    _order = "date_begin"
 
     name = fields.Char(
         string='Loan Agreement Number',
@@ -73,12 +74,20 @@ class LoanCustomerAgreement(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    mou_bank = fields.Many2one(
+        'res.bank',
+        string="MOU's Bank",
+        related='mou_id.bank_id.bank',
+        store=True,
+    )
     bank_id = fields.Many2one(
         'res.partner.bank',
-        related="mou_id.bank_id",
         string='Bank',
         readonly=True,
-        store=True,
+        domain="[('partner_id', '!=', False),"
+        "('bank', '=', mou_bank)]",
+        states={'draft': [('readonly', False)]},
+        required=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
