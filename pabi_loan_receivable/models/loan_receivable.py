@@ -169,6 +169,11 @@ class LoanCustomerAgreement(models.Model):
         string='Penalty (%) / Year',
         default=0.0,
     )
+    days_grace_period = fields.Integer(
+        string='Grace Period (days)',
+        default=15,
+        help="Payment can be late without penalty if within the grace period",
+    )
 
     @api.multi
     def _compute_invoice_count(self):

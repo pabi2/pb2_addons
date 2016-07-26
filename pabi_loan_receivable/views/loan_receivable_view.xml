@@ -168,6 +168,7 @@
                             <field name="amount_receivable"/>
                             <field name="installment"/>
                             <field name="fy_penalty_rate"/>
+                            <field name="days_grace_period"/>
                             <label for="date_begin" string="Duration"/>
                             <div>
                                 <field name="date_begin" class="oe_inline" nolabel="1"/> -

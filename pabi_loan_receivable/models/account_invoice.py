@@ -41,15 +41,17 @@ class AccountInvoice(models.Model):
             res['domain'].update({'loan_late_payment_invoice_id': domain})
         else:
             self._cr.execute("""
-                select id from account_invoice
-                where partner_id = %s and date_paid > date_due
-                and loan_agreement_id is not null
-                and state = 'paid'
-                and id not in (select distinct loan_late_payment_invoice_id
+                select ai.id from account_invoice ai
+                join loan_customer_agreement lca on
+                    lca.id = ai.loan_agreement_id
+                where ai.partner_id = %s
+                and ai.date_paid > (ai.date_due + lca.days_grace_period)
+                and ai.state = 'paid'
+                and ai.id not in (select distinct loan_late_payment_invoice_id
                                 from account_invoice where partner_id = %s
                                 and loan_late_payment_invoice_id is not null
                                 and state in ('open', 'paid'))
-                order by id
+                order by ai.id
             """, (partner_id, partner_id,))
             invoice_ids = [x[0] for x in self._cr.fetchall()]
             domain = [('id', 'in', invoice_ids)]
