@@ -34,6 +34,20 @@ class LoanBankMOU(models.Model):
         string='Loan Product',
         required=True,
     )
+    date_begin = fields.Date(
+        'Begin Date',
+        required=True,
+    )
+    date_end = fields.Date(
+        'Date End',
+        required=True,
+    )
+    loan_agreement_ids = fields.One2many(
+        'loan.customer.agreement',
+        'mou_id',
+        'Loan Agreements',
+    )
+
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
     ]
@@ -43,6 +57,7 @@ class LoanCustomerAgreement(models.Model):
     _name = "loan.customer.agreement"
     _inherit = ['mail.thread']
     _description = "Loan Agreement between Bank and Customer CC NSTDA"
+    _order="date_begin"
 
     name = fields.Char(
         string='Loan Agreement Number',
@@ -173,6 +188,14 @@ class LoanCustomerAgreement(models.Model):
         string='Grace Period (days)',
         default=15,
         help="Payment can be late without penalty if within the grace period",
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        'Section',
+    )
+    account_receivable_id = fields.Many2one(
+        'account.account',
+        'Account Receivable',
     )
 
     @api.multi
@@ -346,6 +369,7 @@ class LoanCustomerAgreement(models.Model):
             'price_unit': loan.amount_receivable,
             'quantity': 1.0,
             'uos_id': res.get('uos_id', False),
+            'section_id': loan.section_id.id,
         }
 
     @api.multi
@@ -389,6 +413,7 @@ class LoanCustomerAgreement(models.Model):
             'price_unit': loan.amount_receivable,
             'product_uom': product.uom_id.id,
             'product_uom_qty': 1.0,
+            'section_id': loan.section_id.id,
         }
 
     @api.multi
