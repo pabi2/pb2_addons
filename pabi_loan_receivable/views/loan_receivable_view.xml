@@ -179,11 +179,11 @@
                             <field name="mou_id" />
                             <field name="mou_bank" invisible="1"/>
                             <field name="bank_id" />
-                            <field name="monthly_due_type" />
-                            <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
                             <field name="section_id"/> 
                             <field name="account_receivable_id"
                                     domain="[('type','=', 'receivable')]" />
+                            <field name="supplier_invoice_id" invisible="1"
+                            	context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
                         </group>
                         <group>
                             <field name="amount_loan_total"/>
@@ -196,7 +196,8 @@
                                 <field name="date_begin" class="oe_inline" nolabel="1"/> -
                                 <field name="date_end" nolabel="1" class="oe_inline"/>
                             </div>
-                            <field name="supplier_invoice_id" context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
+                        	<field name="monthly_due_type" />
+                            <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
                         </group>
                     </group>
                     <notebook>
