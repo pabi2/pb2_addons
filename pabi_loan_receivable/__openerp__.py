@@ -15,6 +15,7 @@
     "depends": [
         "l10n_th_account",
         "sale_invoice_plan",
+        'pabi_base',
     ],
     "data": [
         "security/ir.model.access.csv",
