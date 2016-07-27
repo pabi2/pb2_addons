@@ -35,6 +35,7 @@
 		<record model="res.groups" id="nstdaperm.group_nstda_dep3064">
 			<field name="implied_ids" eval="[(4, ref('base.group_pabi_purchase_contract_user_mtec'))]" />
 		</record>
+		
 		<!-- NECTEC -->
 		<record id="base.group_pabi_purchase_contract_user_nectec" model="res.groups">
 			<field name="name">NECTEC</field>
