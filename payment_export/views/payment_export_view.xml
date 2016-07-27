@@ -43,7 +43,9 @@
             	<form string="Payment Export Control" >
                 <header>
                     <button name="action_done" string="Done" states="draft" type="object" class="oe_highlight"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,open,done" />
+                    <button name="action_cancel" string="Cancel" states="done" type="object" />
+                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" />
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -78,19 +80,13 @@
                     </group>
                     <notebook>
 	                    <page string="Supplier Payment &amp; Cheque Number" >
-		                    <group>
-			                    <group>
-			                    </group>
-			                    <group>
-			                    </group>
-		                    </group>
 		                   	<field name="line_ids" >
 		                   		<tree create="0" delete="0">
 						            <field name="control_id" invisible="1" />
 						            <field name="voucher_id" />
 						            <field name="amount" />
-						            <field name="cheque_number" />
-						            <field name="state" />
+						            <field name="cheque_register_id" />
+						            <field name="void" />
 					            </tree>
 		                   	</field>
 	                   	</page>

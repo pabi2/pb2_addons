@@ -89,6 +89,7 @@ class PaymentExportControl(models.Model):
 
     @api.onchange('journal_id', 'cheque_lot_id', 'date_value')
     def _onchange_compute_payment_export_line(self):
+        self.line_ids = False
         self.line_ids = []
         if not self.journal_id or not self.date_value:  # At least
             return
@@ -110,13 +111,43 @@ class PaymentExportControl(models.Model):
 
     @api.multi
     def action_assign_cheque_number(self):
+        ChequeLot = self.env['cheque.lot.control']
         for rec in self:
-            
-            first_number = rec.next_number
-            if not first_number:
-                raise UserError(_('No draft Cheque available on this lot'))
+            limit = len(rec.line_ids)
+            cheque_lot_id = rec.cheque_lot_id.id
+            res = ChequeLot.get_draft_cheque_register_range(cheque_lot_id,
+                                                            limit)
+            for i in range(limit):
+                rec.line_ids[i].cheque_register_id = res[i]
+
+    @api.multi
+    def action_done(self):
+        self.write({'state': 'done'})
+        for rec in self:
+            rec.line_ids.write({'exported': True})
             for line in rec.line_ids:
-                
+                if line.cheque_register_id.voucher_id:
+                    raise UserError(
+                        _('Cheque Number %s is occupied, please reassign '
+                          'again!') % (line.cheque_register_id.number))
+                if line.cheque_register_id.void:
+                    raise UserError(
+                        _('Cheque Number %s is voided, please reassign '
+                          'again!') % (line.cheque_register_id.number))
+                line.cheque_register_id.voucher_id = line.voucher_id
+
+    @api.multi
+    def action_cancel(self):
+        self.write({'state': 'cancel'})
+        for rec in self:
+            rec.line_ids.write({'exported': False})
+            for line in rec.line_ids:
+                line.cheque_register_id.voucher_id = False
+
+    @api.multi
+    def action_draft(self):
+        self.write({'state': 'draft'})
+
 
 class PaymentExportControlLine(models.Model):
     _name = 'payment.export.control.line'
@@ -128,7 +159,8 @@ class PaymentExportControlLine(models.Model):
         ondelete='cascade',
         index=True,
     )
-    cheque_number = fields.Char(
+    cheque_register_id = fields.Many2one(
+        'cheque.register',
         string='Cheque Number',
         readonly=True,
     )
@@ -141,11 +173,12 @@ class PaymentExportControlLine(models.Model):
         string='Amount',
         readonly=True,
     )
-    state = fields.Selection(
-        [('draft', 'Draft'),
-         ('export', 'Exported'),
-         ('cancel', 'Cancelled')],
-        string='Status',
-        required=True,
-        default='draft',
+    void = fields.Boolean(
+        string='Void',
+        related='cheque_register_id.void',
+        readonly=True,
+    )
+    exported = fields.Boolean(
+        string='Exported',
+        default=False,
     )

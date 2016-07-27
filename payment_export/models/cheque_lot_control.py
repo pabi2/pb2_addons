@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, Warning as UserError
 
 
 class ChequeLotControl(models.Model):
@@ -9,7 +9,7 @@ class ChequeLotControl(models.Model):
     _order = 'id desc'
 
     name = fields.Char(
-        string='Number',
+        string='Lot',
         required=True,
         copy=False,
     )
@@ -30,7 +30,7 @@ class ChequeLotControl(models.Model):
     user_id = fields.Many2one(
         'res.users',
         string='Responsible',
-        required=True,
+        required=False,
     )
     next_number = fields.Char(
         string='Next Cheque Number',
@@ -68,7 +68,8 @@ class ChequeLotControl(models.Model):
             self._cr.execute("""
                 select min(number) from cheque_register
                 where cheque_lot_id = %s
-                and state = 'draft'
+                and voucher_id is null
+                and void = false
             """, (rec.id,))
             rec.next_number = self._cr.fetchone()[0] or False
 
@@ -100,13 +101,25 @@ class ChequeLotControl(models.Model):
         return result
 
     @api.model
-    def get_draft_cheque_register_range(self, cheque_lot_id, number):
-        # TODO:
+    def get_draft_cheque_register_range(self, cheque_lot_id, limit):
+        self._cr.execute("""
+            select id from cheque_register
+            where cheque_lot_id = %s
+            and voucher_id is null
+            and void = false
+            order by number
+            limit %s
+        """, (cheque_lot_id, limit,))
+        res = [x[0] for x in self._cr.fetchall()]
+        if len(res) < limit:
+            raise UserError(_('Not enough draft Cheque on this lot'))
+        return res
+
 
 class ChequeRegister(models.Model):
     _name = 'cheque.register'
     _description = 'Cheque Register'
-    _rec = 'number'
+    _rec_name = 'number'
     _order = 'number'
 
     number = fields.Char(
@@ -138,14 +151,9 @@ class ChequeRegister(models.Model):
         related='voucher_id.amount',
         readonly=True,
     )
-    state = fields.Selection(
-        [('draft', 'Draft'),
-         ('used', 'Used'),
-         ('void', 'Void'),
-         ],
-        string='Status',
-        required=True,
-        default='draft',
+    void = fields.Boolean(
+        string='Void',
+        default=False,
     )
     note = fields.Text(
         string='Cancellation Reasons',

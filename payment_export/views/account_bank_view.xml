@@ -11,10 +11,11 @@
 	                <field name="lot_control_ids" >
 	                	<tree editable="top">
 	                		<!-- field name="display_name" / -->
-	                		<field name="bank_id" invisible="1" />
+	                		<field name="bank_id" invisible="0" />
 	                		<field name="name" />
 	                		<field name="cheque_number_from" />
 	                		<field name="cheque_number_to" />
+	                		<field name="next_number" />
 	                		<button name="open_cheque_register" type="object"
 	                			string="Cheque Registers" />
 	                		<field name="user_id" />

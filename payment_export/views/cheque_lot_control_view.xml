@@ -19,14 +19,13 @@
             <field name="name">view.cheque.register.tree</field>
             <field name="model">cheque.register</field>
             <field name="arch" type="xml">
-                <tree string="Cheque Register" editable="top"
-                	colors="blue:state == 'void';black:state not in ('draft','void');gray:state == 'void'">
+                <tree string="Cheque Register" editable="top" >
                     <field name="cheque_lot_id" invisible="1" />
                     <field name="bank_id" invisible="1" />
                     <field name="number" />
                     <field name="voucher_id" />
                     <field name="amount" />
-                    <field name="state" />
+                    <field name="void" />
 	               	<field name="note" />
                 </tree>
             </field>
