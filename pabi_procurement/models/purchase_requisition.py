@@ -308,9 +308,17 @@ class PurchaseRequisition(models.Model):
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
+        address = "%s\n%s\n%s\n%s\n%s\n%s" % (
+            requisition.operating_unit_id.partner_id.street.strip(),
+            requisition.operating_unit_id.partner_id.township_id.name.strip(),
+            requisition.operating_unit_id.partner_id.district_id.name.strip(),
+            requisition.operating_unit_id.partner_id.province_id.name.strip(),
+            requisition.operating_unit_id.partner_id.zip.strip(),
+            requisition.delivery_address.strip(),
+        )
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
-            'delivery_address': requisition.delivery_address,
+            'delivery_address': address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
         })
         # Case central purchase, use selected OU

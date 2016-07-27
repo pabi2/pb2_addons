@@ -29,6 +29,7 @@
                     <field name="request_uid"/>
                     <field name="assign_uid"/>
                     <field name="request_ref_id"/>
+                    <field name="delivery_address"/>
                 </xpath>
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="attributes">
