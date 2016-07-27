@@ -18,6 +18,35 @@
                     <field name="validate_user_id" />
                     <field name="validate_date"/>
                 </xpath>
+                <xpath expr="//sheet/field[@name='account_id']" position="before">
+                    <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
+                        <button class="oe_inline oe_stat_button"
+                                name="action_open_invoices"
+                                type="object"
+                                icon="fa-file-text">
+                            <field string="AR" name="total_ar_amount" widget="statinfo" />
+                        </button>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        #Customer Payment
+        <record model="ir.ui.view" id="view_vendor_receipt_form">
+            <field name="name">account.voucher.receipt.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/h1" position="before">
+                    <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
+                        <button class="oe_inline oe_stat_button"
+                                name="action_open_invoices"
+                                type="object"
+                                icon="fa-file-text">
+                            <field string="AP" name="total_ap_amount" widget="statinfo" />
+                        </button>
+                    </div>
+                </xpath>
             </field>
         </record>
         
