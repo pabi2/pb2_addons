@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
 	<property name="ireport.zoom" value="1.6105100000000014"/>
-	<property name="ireport.x" value="518"/>
+	<property name="ireport.x" value="225"/>
 	<property name="ireport.y" value="184"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
@@ -105,6 +105,9 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<field name="code" class="java.lang.String">
 		<fieldDescription><![CDATA[Code]]></fieldDescription>
 	</field>
+	<variable name="logo_nstda" class="java.lang.String">
+		<variableExpression><![CDATA[FacesContext.getCurrentInstance().getExternalContext().getRealPath("/logo_nstda.gif")]]></variableExpression>
+	</variable>
 	<background>
 		<band height="665" splitType="Stretch">
 			<staticText>
@@ -186,7 +189,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 			</textField>
 			<image scaleImage="RetainShape">
 				<reportElement x="318" y="6" width="97" height="50"/>
-				<imageExpression class="java.lang.String"><![CDATA["pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$V{logo_nstda}]]></imageExpression>
 			</image>
 		</band>
 	</columnHeader>
