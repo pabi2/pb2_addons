@@ -439,8 +439,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
         compute='_get_balance_qty',
-        readonly=True,
-        required=True,
+        store=True,
     )
     to_receive_qty = fields.Float(
         string='To Receive Quantity',
