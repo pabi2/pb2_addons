@@ -309,7 +309,7 @@ class PurchaseRequisition(models.Model):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
         ou_address = requisition.operating_unit_id.partner_id
-        combined_address = "%s\n%s\n%s\n%s\n%s\n%s" % (
+        combined_address = "%s\n%s %s %s %s\n%s" % (
             ou_address.street.strip()
             if ou_address.street else '',
             ou_address.township_id.name.strip()
