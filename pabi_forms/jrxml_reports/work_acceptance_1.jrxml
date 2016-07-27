@@ -1,33 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
-	<property name="ireport.zoom" value="1.4641000000000017"/>
-	<property name="ireport.x" value="56"/>
-	<property name="ireport.y" value="179"/>
-	<parameter name="IDS" class="java.lang.Object"/>
-	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
-	</parameter>
+	<property name="ireport.zoom" value="1.3310000000000035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="99"/>
 	<queryString>
 		<![CDATA[select
-po.id,
+(SELECT name FROM res_partner_title WHERE id = rp.title),
 rp.name supplier,
 rp_ou.name operating_unit,
 po.name PO_NO,
-po.date_contract_start contract_start_date,
+CONCAT(
+to_char(pwa.date_contract_end,'DD'),' ',
+CASE to_char(pwa.date_contract_end,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM pwa.date_contract_end + interval '543 years')) date_contract_end,
+CONCAT(
+to_char(po.date_contract_start,'DD'),' ',
+CASE to_char(po.date_contract_start,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM po.date_contract_start + interval '543 years')) contract_start_date,
 po.amount_total_text_th,
-po.amount_total amount,
-pwa.date_receive date_receive,
-po.fine_rate fine_rate,
+LTRIM(po.amount_total::money::varchar,'฿ ') amount,
+CONCAT(
+to_char(pwa.date_receive,'DD'),' ',
+CASE to_char(pwa.date_receive,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM pwa.date_receive + interval '543 years')) date_receive,
+po.fine_rate::numeric::varchar fine_rate,
+CONCAT(
+to_char(current_date,'DD'),' ',
+CASE to_char(current_date,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM current_date + interval '543 years')) now_date,
 po.doc_approve_uid,
 hp.name hr_position,
 ro.description,
-date_part('day',(po.date_contract_start-po.date_order))::integer in_time,
-rpa.name name_approve,
-convert_from(rp_ou.image, 'UTF8') image ,
-po.date_order date_order,
-pwa.fine_per_day,
+CONCAT((SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,last_name')) name_approve,
+CONCAT(
+to_char(po.date_order,'DD'),' ',
+CASE to_char(po.date_order,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM po.date_order + interval '543 years')) date_order,
+date_part('day',(pwa.date_receive - po.date_order))::integer::varchar over_date,
+LTRIM((pwa.overdue_day*pwa.fine_per_day)::numeric::money::varchar, '฿ ')::varchar total_fine,
+pwa.amount_total_fine_text_th,
+LTRIM(pwa.fine_per_day::numeric::money::varchar,'฿ ') fine_per_day,
 pwa.amount_fine_per_day_text_th,
-pwa.overdue_day,
+pwa.overdue_day::varchar,
 ou.code
 
 from purchase_order po
@@ -43,7 +126,7 @@ LEFT JOIN hr_employee he ON he.employee_code = ru.login
 LEFT JOIN hr_position hp ON hp.id = he.position_id
 LEFT JOIN res_org ro ON ro.id = he.org_id
 
-where $X{IN,pwa.id, PIDS} and po.name not like '-']]>
+WHERE pwa.id = 3]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="supplier" class="java.lang.String">
@@ -132,25 +215,25 @@ where $X{IN,pwa.id, PIDS} and po.name not like '-']]>
 				<text><![CDATA[ที่ วท]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="40" width="178" height="14"/>
+				<reportElement x="40" y="40" width="178" height="14"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[เรื่อง          ติดตามงานส่งมอบสินค้า/งานจ้าง]]></text>
+				<text><![CDATA[ติดตามงานส่งมอบสินค้า/งานจ้าง]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="66" width="138" height="15"/>
+				<reportElement x="40" y="65" width="138" height="15"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["เรียน         "   +($F{supplier}==null? ' ':$F{supplier})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{supplier}==null? ' ':$F{supplier})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="91" width="374" height="14"/>
+				<reportElement x="40" y="91" width="374" height="14"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["อ้างถึง       ใบสั่งซื้อ/จ้าง หรือสัญญา เลขที่ "
+				<textFieldExpression class="java.lang.String"><![CDATA["ใบสั่งซื้อ/จ้าง หรือสัญญา เลขที่ "
 +($F{po_no} == null ? ' ' : $F{po_no})+
 " ลงวันที่ "]]></textFieldExpression>
 			</textField>
@@ -168,6 +251,27 @@ where $X{IN,pwa.id, PIDS} and po.name not like '-']]>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="1" y="65" width="39" height="15"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เรียน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="40" width="39" height="14"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เรื่อง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="91" width="39" height="14"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[อ้างถึง]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>

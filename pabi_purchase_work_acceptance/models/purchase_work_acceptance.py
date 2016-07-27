@@ -305,6 +305,9 @@ class PurchaseWorkAcceptance(models.Model):
     write_to_invoice = fields.Boolean(
         string="Write to invoice date",
     )
+    invoice_created = fields.Boolean(
+        string="Invoice created",
+    )
     acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
         'acceptance_id',
@@ -404,6 +407,10 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _name = 'purchase.work.acceptance.line'
     _description = 'Purchase Work Acceptance Line'
 
+    @api.one
+    def _get_balance_qty(self):
+        self.balance_qty = self.line_id.product_qty - self.line_id.invoiced_qty
+
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
         string='Acceptance Reference',
@@ -431,6 +438,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     balance_qty = fields.Float(
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
+        compute='_get_balance_qty',
         readonly=True,
         required=True,
     )
