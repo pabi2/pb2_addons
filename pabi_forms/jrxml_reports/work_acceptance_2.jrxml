@@ -173,18 +173,18 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract_start_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_start_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="215" y="20" width="79" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape">
 				<reportElement x="318" y="6" width="97" height="50"/>
-				<imageExpression class="java.lang.String"><![CDATA["W:\pabi2\pb2_pabi\pabi_forms\jrxml_reports\logo_nstda.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
 			</image>
 		</band>
 	</columnHeader>
@@ -202,7 +202,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_contract_end}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_contract_end}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="66" y="15" width="390" height="14"/>
@@ -236,7 +236,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="77">
@@ -267,14 +267,14 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_per_day}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fine_per_day}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="389" y="0" width="95" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_receive}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_receive}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="62" width="435" height="15"/>
@@ -288,7 +288,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{manual_fine}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{manual_fine}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement x="318" y="47" width="181" height="15"/>
