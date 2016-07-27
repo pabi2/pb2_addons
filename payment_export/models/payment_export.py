@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, Warning as UserError
 
 
 class PaymentExportControl(models.Model):
@@ -35,6 +35,7 @@ class PaymentExportControl(models.Model):
         'cheque.lot.control',
         string='Cheque Lot',
         domain="[('bank_id', '=', bank_id), ('state', '=', 'active')]",
+        ondelete='restrict',
     )
     cheque_number_from = fields.Char(
         string='Cheque Number From',
@@ -107,6 +108,15 @@ class PaymentExportControl(models.Model):
             control_line.amount = voucher.amount
             self.line_ids += control_line
 
+    @api.multi
+    def action_assign_cheque_number(self):
+        for rec in self:
+            
+            first_number = rec.next_number
+            if not first_number:
+                raise UserError(_('No draft Cheque available on this lot'))
+            for line in rec.line_ids:
+                
 
 class PaymentExportControlLine(models.Model):
     _name = 'payment.export.control.line'

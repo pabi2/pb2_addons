@@ -14,6 +14,7 @@
     "data": [
         "views/account_bank_view.xml",
         "views/payment_export_view.xml",
+        "views/cheque_lot_control_view.xml",
         "views/voucher_payment_receipt_view.xml",
     ],
     'installable': True,

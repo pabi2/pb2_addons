@@ -18,6 +18,7 @@ class AccountVoucher(models.Model):
         'cheque.lot.control',
         string='Cheque Lot',
         domain="[('bank_id', '=', bank_id), ('state', '=', 'active')]",
+        ondelete="restrict",
     )
 
     @api.one

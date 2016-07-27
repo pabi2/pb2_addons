@@ -42,6 +42,8 @@ class ChequeLotControl(models.Model):
          ('inactive', 'Inactive'),
          ],
         string='Status',
+        help="Active means this lot is in used. "
+        "Inactive means this lot has been used up",
     )
 
     @api.multi
@@ -63,19 +65,60 @@ class ChequeLotControl(models.Model):
     @api.depends()
     def _compute_next_number(self):
         for rec in self:
-            rec.next_number = '10000001'
+            self._cr.execute("""
+                select min(number) from cheque_register
+                where cheque_lot_id = %s
+                and state = 'draft'
+            """, (rec.id,))
+            rec.next_number = self._cr.fetchone()[0] or False
 
+    @api.multi
+    def _generate_cheque_register(self):
+        ChequeRegister = self.env['cheque.register']
+        for rec in self:
+            a = int(rec.cheque_number_from)
+            b = int(rec.cheque_number_to) + 1
+            padding = len(rec.cheque_number_from)
+            for i in range(a, b):
+                cheque_number = str(i).zfill(padding)
+                ChequeRegister.create({'cheque_lot_id': rec.id,
+                                       'number': cheque_number})
 
-class ChequeRegistration(models.Model):
-    _name = 'cheque.registration'
-    _description = 'Cheque Registration'
+    @api.model
+    def create(self, vals):
+        lot_control = super(ChequeLotControl, self).create(vals)
+        lot_control._generate_cheque_register()
+        return lot_control
+
+    @api.multi
+    def open_cheque_register(self):
+        self.ensure_one()
+        action = self.env.ref('payment_export.action_cheque_register')
+        result = action.read()[0]
+        dom = [('cheque_lot_id', '=', self.id)]
+        result.update({'domain': dom})
+        return result
+
+    @api.model
+    def get_draft_cheque_register_range(self, cheque_lot_id, number):
+        # TODO:
+
+class ChequeRegister(models.Model):
+    _name = 'cheque.register'
+    _description = 'Cheque Register'
     _rec = 'number'
     _order = 'number'
 
+    number = fields.Char(
+        string='Cheque Number',
+        size=10,
+        readonly=True,
+    )
     cheque_lot_id = fields.Many2one(
         'cheque.lot.control',
         string='Cheque Lot Control',
         ondelete='cascade',
+        readonly=True,
         index=True,
     )
     bank_id = fields.Many2one(
@@ -83,10 +126,6 @@ class ChequeRegistration(models.Model):
         string='Bank Account',
         related='cheque_lot_id.bank_id',
         store=True,
-    )
-    number = fields.Char(
-        string='Cheque Number',
-        size=10,
         readonly=True,
     )
     voucher_id = fields.Many2one(
@@ -98,4 +137,16 @@ class ChequeRegistration(models.Model):
         string='Amount',
         related='voucher_id.amount',
         readonly=True,
+    )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('used', 'Used'),
+         ('void', 'Void'),
+         ],
+        string='Status',
+        required=True,
+        default='draft',
+    )
+    note = fields.Text(
+        string='Cancellation Reasons',
     )
