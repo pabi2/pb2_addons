@@ -305,7 +305,12 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
-        result = alfresco.ord.action(arg)
+        try:
+            result = alfresco.ord.action(arg)
+        except Exception, e:
+            raise UserError(
+                _("Can't send data to PabiWeb : PRWeb Authentication Failed")
+            )
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

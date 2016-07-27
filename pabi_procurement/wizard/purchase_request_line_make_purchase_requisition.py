@@ -82,6 +82,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'res_id': requisition_id,
             'res_model': 'purchase.requisition',
             'name': line.name,
+            'description': line.description,
             'type': line.type,
             'url': line.url,
             'datas': line.datas or False,

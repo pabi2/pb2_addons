@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.2100000000000146"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.3310000000000166"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="219"/>
+	<property name="ireport.y" value="300"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -305,7 +305,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 		<groupHeader>
 			<band height="55">
 				<staticText>
-					<reportElement x="0" y="0" width="572" height="50"/>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<textElement textAlignment="Center" lineSpacing="Single">
 						<font fontName="SansSerif" size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
@@ -313,20 +313,20 @@ WHERE $X{IN, pd.id, PIDS}]]>
 สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
 				</staticText>
 				<line>
-					<reportElement x="0" y="48" width="572" height="1"/>
+					<reportElement x="0" y="48" width="556" height="1"/>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement x="446" y="14" width="49" height="35"/>
+					<reportElement x="436" y="14" width="49" height="35"/>
 					<textElement verticalAlignment="Middle" lineSpacing="Single">
 						<font size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[เลขที่]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="476" y="14" width="225" height="35"/>
+					<reportElement x="466" y="14" width="225" height="35"/>
 					<textElement verticalAlignment="Middle" lineSpacing="Single">
 						<font size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
@@ -467,7 +467,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ou_name}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement key="table 3" x="2" y="111" width="566" height="21"/>
+				<reportElement key="table 3" x="2" y="111" width="553" height="21"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="pr_detail">
 						<datasetParameter name="ids">
@@ -475,7 +475,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="566">
+					<jr:column width="553">
 						<jr:tableHeader height="33" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -500,7 +500,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="216" y="0" width="98" height="33"/>
+								<reportElement x="212" y="0" width="98" height="33"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -508,7 +508,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 ต่อหน่วย]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="298" y="0" width="96" height="33"/>
+								<reportElement x="291" y="0" width="96" height="33"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -516,7 +516,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="405" y="0" width="48" height="33"/>
+								<reportElement x="401" y="0" width="48" height="33"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -524,7 +524,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="405" y="0" width="153" height="33"/>
+								<reportElement x="395" y="0" width="153" height="33"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" isBold="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -538,13 +538,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<reportElement x="224" y="0" width="1" height="33"/>
 							</line>
 							<line>
-								<reportElement x="307" y="0" width="1" height="33"/>
+								<reportElement x="297" y="0" width="1" height="33"/>
 							</line>
 							<line>
 								<reportElement x="380" y="0" width="1" height="33"/>
 							</line>
 							<line>
-								<reportElement x="477" y="0" width="1" height="33"/>
+								<reportElement x="466" y="0" width="1" height="33"/>
 							</line>
 						</jr:tableHeader>
 						<jr:tableFooter height="4" rowSpan="1">
@@ -560,13 +560,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<reportElement x="224" y="0" width="1" height="4"/>
 							</line>
 							<line>
-								<reportElement x="307" y="0" width="1" height="4"/>
+								<reportElement x="297" y="0" width="1" height="4"/>
 							</line>
 							<line>
 								<reportElement x="380" y="0" width="1" height="4"/>
 							</line>
 							<line>
-								<reportElement x="477" y="0" width="1" height="4"/>
+								<reportElement x="466" y="0" width="1" height="4"/>
 							</line>
 						</jr:tableFooter>
 						<jr:detailCell height="21" rowSpan="1">
@@ -590,7 +590,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement x="197" y="0" width="103" height="21"/>
+								<reportElement x="187" y="0" width="103" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -604,14 +604,14 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{pr_no}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0" isBlankWhenNull="true">
-								<reportElement x="306" y="0" width="124" height="21"/>
+								<reportElement x="296" y="0" width="124" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Number"><![CDATA[$F{product_qty}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement x="421" y="0" width="137" height="21"/>
+								<reportElement x="407" y="0" width="137" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -624,16 +624,16 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<reportElement stretchType="RelativeToTallestObject" x="224" y="0" width="1" height="21"/>
 							</line>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="307" y="0" width="1" height="21"/>
+								<reportElement stretchType="RelativeToTallestObject" x="297" y="0" width="1" height="21"/>
 							</line>
 							<line>
 								<reportElement stretchType="RelativeToTallestObject" x="380" y="0" width="1" height="21"/>
 							</line>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="477" y="0" width="1" height="21"/>
+								<reportElement stretchType="RelativeToTallestObject" x="466" y="0" width="1" height="21"/>
 							</line>
 							<textField isBlankWhenNull="true">
-								<reportElement x="435" y="0" width="108" height="21"/>
+								<reportElement x="425" y="0" width="108" height="21"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -662,7 +662,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 		</band>
 		<band height="22">
 			<componentElement>
-				<reportElement key="table 3" x="1" y="0" width="571" height="21"/>
+				<reportElement key="table 3" x="1" y="0" width="554" height="21"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="request_approval">
 						<datasetParameter name="ids">
@@ -670,10 +670,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="287">
+					<jr:column width="277">
 						<jr:columnHeader height="22" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="287" height="22"/>
+								<reportElement x="0" y="0" width="277" height="22"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -688,28 +688,28 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:columnHeader>
 						<jr:detailCell height="43" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="3" width="287" height="21"/>
+								<reportElement x="0" y="3" width="277" height="21"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by}]]></textFieldExpression>
 							</textField>
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement x="136" y="22" width="151" height="21"/>
+								<reportElement x="129" y="22" width="148" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{create_date}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="0" y="22" width="131" height="21"/>
+								<reportElement x="0" y="22" width="120" height="21"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[วันที่]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="0" y="0" width="287" height="43"/>
+								<reportElement x="0" y="0" width="277" height="43"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -723,10 +723,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							</staticText>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="283">
+					<jr:column width="277">
 						<jr:columnHeader height="22" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="283" height="22"/>
+								<reportElement x="0" y="0" width="277" height="22"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -748,21 +748,21 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[วันที่]]></text>
 							</staticText>
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement x="128" y="22" width="155" height="21"/>
+								<reportElement x="128" y="22" width="149" height="21"/>
 								<textElement lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_approve}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="3" width="283" height="21"/>
+								<reportElement x="0" y="3" width="277" height="21"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{approver}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="0" y="0" width="283" height="43"/>
+								<reportElement x="0" y="0" width="277" height="43"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -827,7 +827,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 		</band>
 		<band height="72">
 			<rectangle>
-				<reportElement x="0" y="18" width="572" height="54"/>
+				<reportElement x="0" y="18" width="553" height="54"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="0" y="0" width="294" height="21"/>
@@ -837,7 +837,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[และมีผู้เสนอราคาดังนี้]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="18" width="572" height="33"/>
+				<reportElement x="0" y="18" width="553" height="33"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="0" y="18" width="78" height="33"/>
@@ -871,7 +871,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[เสนอราคารวม]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="447" y="18" width="125" height="22"/>
+				<reportElement x="447" y="18" width="105" height="22"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
 					<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -899,7 +899,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{rfq_amount_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="448" y="51" width="125" height="21" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement mode="Transparent" x="448" y="51" width="99" height="21" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
@@ -915,7 +915,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[(รวม VAT ถ้ามี)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="447" y="35" width="125" height="22"/>
+				<reportElement x="447" y="35" width="105" height="22"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
 					<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -980,7 +980,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 		</band>
 		<band height="37">
 			<componentElement>
-				<reportElement key="table 3" x="1" y="0" width="572" height="34"/>
+				<reportElement key="table 3" x="1" y="0" width="552" height="34"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="committee">
 						<datasetParameter name="ids">
@@ -988,10 +988,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="570">
+					<jr:column width="551">
 						<jr:columnHeader height="21" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="570" height="21"/>
+								<reportElement x="0" y="0" width="551" height="21"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -1005,7 +1005,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:columnHeader>
 						<jr:columnFooter height="5" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="570" height="5"/>
+								<reportElement x="0" y="0" width="551" height="5"/>
 								<box>
 									<leftPen lineWidth="1.0"/>
 									<bottomPen lineWidth="1.0"/>
@@ -1017,7 +1017,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:columnFooter>
 						<jr:detailCell height="21" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="570" height="21"/>
+								<reportElement x="0" y="0" width="551" height="21"/>
 								<box>
 									<leftPen lineWidth="1.0"/>
 									<rightPen lineWidth="1.0"/>
@@ -1028,21 +1028,21 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[]]></text>
 							</staticText>
 							<textField isBlankWhenNull="true">
-								<reportElement x="31" y="0" width="106" height="21"/>
+								<reportElement x="31" y="0" width="87" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="175" y="0" width="338" height="21"/>
+								<reportElement x="151" y="0" width="319" height="21"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="389" y="0" width="135" height="21"/>
+								<reportElement x="389" y="0" width="162" height="21"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -1055,17 +1055,17 @@ WHERE $X{IN, pd.id, PIDS}]]>
 		</band>
 		<band height="91">
 			<rectangle>
-				<reportElement x="1" y="7" width="571" height="84"/>
+				<reportElement x="1" y="7" width="552" height="84"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="17" y="32" width="228" height="21"/>
+				<reportElement x="27" y="32" width="255" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ลงชื่อ _________________________]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="1" y="7" width="571" height="20"/>
+				<reportElement x="1" y="7" width="552" height="20"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="30" y="7" width="278" height="21"/>
@@ -1088,14 +1088,14 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[เสนอหัวหน้าเจ้าหน้าที่พัสดุหรือผู้ที่ได้รับมอบหมาย]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="216" y="32" width="223" height="21"/>
+				<reportElement x="216" y="32" width="255" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ลงชื่อ _________________________]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="406" y="32" width="229" height="21"/>
+				<reportElement x="397" y="32" width="229" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1111,7 +1111,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{responsible} + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="256" y="49" width="192" height="21">
+				<reportElement x="250" y="49" width="253" height="21">
 					<printWhenExpression><![CDATA[$F{verified_by}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
@@ -1120,7 +1120,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{verified_by} + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="446" y="49" width="190" height="21">
+				<reportElement x="430" y="49" width="190" height="21">
 					<printWhenExpression><![CDATA[$F{approver}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
@@ -1129,7 +1129,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA["("+ $F{approver} +")"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="62" y="66" width="60" height="21"/>
+				<reportElement x="69" y="66" width="60" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1143,21 +1143,21 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="446" y="66" width="70" height="21"/>
+				<reportElement x="439" y="66" width="70" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="387" y="7" width="185" height="21"/>
+				<reportElement x="352" y="7" width="236" height="21"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เสนอผู้มีอำนาจอนุมัติ]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="83" y="66" width="114" height="21"/>
+				<reportElement x="90" y="66" width="114" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1171,7 +1171,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{verified_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="468" y="66" width="131" height="21"/>
+				<reportElement x="461" y="66" width="131" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
