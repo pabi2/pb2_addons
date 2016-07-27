@@ -140,6 +140,7 @@ class LoanCustomerAgreement(models.Model):
     date_specified = fields.Integer(
         string='Specify Date',
         default=1,
+        copy=False,
     )
     supplier_invoice_id = fields.Many2one(
         'account.invoice',
@@ -151,6 +152,7 @@ class LoanCustomerAgreement(models.Model):
         'sale.order',
         string='Sales Order',
         readonly=True,
+        copy=False,
     )
     invoice_plan_ids = fields.One2many(
         'sale.invoice.plan',
@@ -177,11 +179,13 @@ class LoanCustomerAgreement(models.Model):
         string='Signed',
         default=False,
         readonly=True,
+        copy=False,
     )
     cancelled = fields.Boolean(
         string='Cancelled',
         default=False,
         readonly=True,
+        copy=False,
     )
     bank_invoice_count = fields.Integer(
         string='Bank Invoice Count',
