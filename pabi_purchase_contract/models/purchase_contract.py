@@ -274,9 +274,9 @@ class purchase_contract(models.Model):
                    'ORG04',
                    'ORG05',
                    'ORG06']],
-                ['comment',
-                 'like',
-                 'ORG' + str(Emp.emp_org_id.org_shortid)]],
+                 ['comment',
+                  'like',
+                  'ORG' + str(Emp.emp_org_id.org_shortid)]],
                 limit=1)
             return Group
         else:
@@ -299,8 +299,6 @@ class purchase_contract(models.Model):
             ActionDate = datetime.datetime.strptime(
                 vals.get('action_date'), '%Y-%m-%d') + three_mon_rel
         RevNo = vals.get('poc_rev', 0)
-        Org.org_shortname_en
-
         # New Contract (CENTRAL-2016-322-R1)
         if RevNo == 0:
             self.env.cr.execute(""" SELECT Count(id) AS c
@@ -345,10 +343,8 @@ class purchase_contract(models.Model):
                 result.append((po.id, "%s" % (po.poc_code or '')))
             elif po.poc_code and po.poc_rev > 0:
                 result.append(
-                    (po.id,
-                    "%s-R%s" %
-                    (po.poc_code or '',
-                     str(po.poc_rev) or '')))
+                    (po.id, "%s-R%s" % (po.poc_code or '',
+                                        str(po.poc_rev) or '')))
         return result
 
     id = fields.Integer(
