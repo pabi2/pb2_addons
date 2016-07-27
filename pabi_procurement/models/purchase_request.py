@@ -239,6 +239,7 @@ class PurchaseRequest(models.Model):
             attachment_tup = data_dict['attachment_ids']
             for att_rec in attachment_tup:
                 attach_data['name'] = att_rec['name']
+                attach_data['description'] = att_rec['description']
                 attach_data['res_id'] = pr_id
                 attach_data['res_model'] = 'purchase.request'
                 attach_data['type'] = 'url'

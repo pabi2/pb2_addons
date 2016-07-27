@@ -137,11 +137,7 @@ class PurchaseRequisition(models.Model):
                                 ])
 
                                 for purchase in purchase_order:
-                                    po_id = purchase.id
-                                    committees = requisition.\
-                                        _prepare_order_committees(po_id)
                                     purchase.write({
-                                        'committee_ids': committees,
                                         'verify_uid': order.verify_uid.id,
                                         'date_verify': order.date_verify,
                                         'doc_approve_uid': uid.id,
@@ -305,7 +301,12 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
-        result = alfresco.ord.action(arg)
+        try:
+            result = alfresco.ord.action(arg)
+        except Exception, e:
+            raise UserError(
+                _("Can't send data to PabiWeb : PRWeb Authentication Failed")
+            )
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

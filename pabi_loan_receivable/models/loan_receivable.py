@@ -38,17 +38,17 @@ class LoanBankMOU(models.Model):
         required=True,
     )
     date_begin = fields.Date(
-        'Begin Date',
+        string='Begin Date',
         required=True,
     )
     date_end = fields.Date(
-        'Date End',
+        string='Date End',
         required=True,
     )
     loan_agreement_ids = fields.One2many(
         'loan.customer.agreement',
         'mou_id',
-        'Loan Agreements',
+        string='Loan Agreements',
     )
 
     _sql_constraints = [
@@ -298,6 +298,27 @@ class LoanCustomerAgreement(models.Model):
                        ('loan_agreement_id', '=', self.id)]
         result.update({'domain': install_dom})
         return result
+
+    @api.multi
+    def update_invoice_lines(self, vals):
+        InvoiceObj = self.env['account.invoice']
+        InvoiceLineObj = self.env['account.invoice.line']
+        for loan in self:
+            invoice_ids =\
+                InvoiceObj.search([('loan_agreement_id', '=', loan.id),
+                                   ('state', '=', 'draft')]).ids
+            invoice_lines =\
+                InvoiceLineObj.search([('invoice_id', 'in', invoice_ids)])
+            for line in invoice_lines:
+                line.write(vals)
+
+    @api.multi
+    def write(self, vals):
+        for loan in self:
+            if vals.get('section_id', False):
+                section_id = vals['section_id']
+                loan.update_invoice_lines({'section_id': section_id})
+        return super(LoanCustomerAgreement, self).write(vals)
 
     @api.multi
     def action_sign(self):
