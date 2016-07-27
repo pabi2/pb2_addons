@@ -186,7 +186,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 			</textField>
 			<image scaleImage="RetainShape">
 				<reportElement x="318" y="6" width="97" height="50"/>
-				<imageExpression class="java.lang.String"><![CDATA["logo_nstda.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA["pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
 			</image>
 		</band>
 	</columnHeader>
