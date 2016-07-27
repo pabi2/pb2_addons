@@ -10,7 +10,8 @@
                 <field name="journal_id" position="after">
                 	<field name="bank_id" invisible="1" />
                 	<field name="is_cheque_lot" invisible="1" />
-                	<field name="cheque_lot_id" attrs="{'invisible': ['|', ('type', '!=', 'payment'), ('bank_id', '=', False), ('is_cheque_lot', '=', False)]}"/>
+                	<field name="cheque_lot_id" attrs="{'invisible': ['|', ('type', '!=', 'payment'), ('bank_id', '=', False), ('is_cheque_lot', '=', False)],
+                										'required': [('is_cheque_lot', '=', True)]}"/>
                 </field>
             </field>
         </record>
@@ -23,7 +24,8 @@
                 <field name="journal_id" position="after">
                 	<field name="bank_id" invisible="1" />
                 	<field name="is_cheque_lot" invisible="1" />
-                	<field name="cheque_lot_id" attrs="{'invisible': ['|', ('type', '!=', 'payment'), ('bank_id', '=', False), ('is_cheque_lot', '=', False)]}"/>
+                	<field name="cheque_lot_id" attrs="{'invisible': ['|', ('type', '!=', 'payment'), ('bank_id', '=', False), ('is_cheque_lot', '=', False)],
+                										'required': [('is_cheque_lot', '=', True)]}"/>
                 </field>
             </field>
         </record>
