@@ -402,19 +402,20 @@ class PurchaseRequisition(models.Model):
     def check_rfq_no(self):
         Order = self.env['purchase.order']
         rfqs = Order.search([('requisition_id', '=', self.id)])
-        if len(rfqs) == 0 and self.purchase_method_id.require_rfq:
-            raise UserError(
-                _("You haven't create the Request to Quotation yet.")
-            )
-        else:
-            state_confirmed = 0
-            for rfq in rfqs:
-                if rfq.state == 'confirmed':
-                    state_confirmed += 1
-            if state_confirmed == 0:
+        if self.purchase_method_id.require_rfq:
+            if len(rfqs) == 0:
                 raise UserError(
-                    _("")
+                    _("You haven't create the Request to Quotation yet.")
                 )
+            else:
+                state_confirmed = 0
+                for rfq in rfqs:
+                    if rfq.state == 'confirmed':
+                        state_confirmed += 1
+                if state_confirmed == 0:
+                    raise UserError(
+                        _("At least one RfQ must be confirmed.")
+                    )
         return True
 
     @api.multi
