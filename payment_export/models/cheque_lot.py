@@ -3,9 +3,9 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError, Warning as UserError
 
 
-class ChequeLotControl(models.Model):
-    _name = 'cheque.lot.control'
-    _description = 'Cheque Lot Control'
+class ChequeLot(models.Model):
+    _name = 'cheque.lot'
+    _description = 'Cheque Lot'
     _order = 'id desc'
 
     name = fields.Char(
@@ -87,9 +87,9 @@ class ChequeLotControl(models.Model):
 
     @api.model
     def create(self, vals):
-        lot_control = super(ChequeLotControl, self).create(vals)
-        lot_control._generate_cheque_register()
-        return lot_control
+        cheque_lot = super(ChequeLot, self).create(vals)
+        cheque_lot._generate_cheque_register()
+        return cheque_lot
 
     @api.multi
     def open_cheque_register(self):
@@ -128,8 +128,8 @@ class ChequeRegister(models.Model):
         readonly=True,
     )
     cheque_lot_id = fields.Many2one(
-        'cheque.lot.control',
-        string='Cheque Lot Control',
+        'cheque.lot',
+        string='Cheque Lot',
         ondelete='cascade',
         readonly=True,
         index=True,

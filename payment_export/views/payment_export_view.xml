@@ -5,12 +5,12 @@
         <menuitem id="menu_payment_export" name="Payment Exports" parent="account.menu_finance" sequence="4"
             groups="account.group_account_user,account.group_account_manager"/>
     
-   		# Payment Export Control
-        <record id="view_payment_export_control_filter" model="ir.ui.view">
-            <field name="name">view.payment_export_control_filter</field>
-            <field name="model">payment.export.control</field>
+   		# Payment Export
+        <record id="view_payment_export_filter" model="ir.ui.view">
+            <field name="name">view.payment_export_filter</field>
+            <field name="model">payment.export</field>
             <field name="arch" type="xml">
-                <search string="Search Payment Export Control">
+                <search string="Search Payment Export">
                     <field name="name"/>
                     <group expand="0" string="Group By...">
                         <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
@@ -19,11 +19,11 @@
             </field>
         </record>
     
-       	<record model="ir.ui.view" id="view_payment_export_control_tree">
-            <field name="name">view.payment.export.control.tree</field>
-            <field name="model">payment.export.control</field>
+       	<record model="ir.ui.view" id="view_payment_export_tree">
+            <field name="name">view.payment.export.tree</field>
+            <field name="model">payment.export</field>
             <field name="arch" type="xml">
-                <tree string="Customer Payment Export Control"
+                <tree string="Customer Payment Export"
                 	colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
                     <field name="bank_id" />
                     <field name="journal_id" />
@@ -36,11 +36,11 @@
             </field>
         </record>
    		
-        <record model="ir.ui.view" id="view_payment_export_control_form">
-            <field name="name">view.payment.export.control.form</field>
-            <field name="model">payment.export.control</field>
+        <record model="ir.ui.view" id="view_payment_export_form">
+            <field name="name">view.payment.export.form</field>
+            <field name="model">payment.export</field>
             <field name="arch" type="xml">
-            	<form string="Payment Export Control" >
+            	<form string="Payment Export" >
                 <header>
                     <button name="action_done" string="Done" states="draft" type="object" class="oe_highlight"/>
                     <button name="action_cancel" string="Cancel" states="done" type="object" />
@@ -50,7 +50,7 @@
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <label string="Payment Export Control" />
+                            <label string="Payment Export" />
                             <field name="name" class="oe_inline" />
                         </h1>
                     </div>
@@ -82,7 +82,7 @@
 	                    <page string="Supplier Payment &amp; Cheque Number" >
 		                   	<field name="line_ids" >
 		                   		<tree create="0" delete="0">
-						            <field name="control_id" invisible="1" />
+						            <field name="export_id" invisible="1" />
 						            <field name="voucher_id" />
 						            <field name="amount" />
 						            <field name="cheque_register_id" />
@@ -96,33 +96,33 @@
             </field>
         </record>
         
-		<record id="action_payment_export_control" model="ir.actions.act_window">
-            <field name="name">Payment Export Control</field>
-            <field name="res_model">payment.export.control</field>
+		<record id="action_payment_export" model="ir.actions.act_window">
+            <field name="name">Payment Export</field>
+            <field name="res_model">payment.export</field>
             <field name="view_type">form</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
-                Click to register a new Payment Export Control.
+                Click to register a new Payment Export.
               </p>
             </field>
         </record>
         
-        <record id="action_payment_export_control_tree" model="ir.actions.act_window.view">
+        <record id="action_payment_export_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_payment_export_control_tree"/>
-            <field name="act_window_id" ref="action_payment_export_control"/>
+            <field name="view_id" ref="view_payment_export_tree"/>
+            <field name="act_window_id" ref="action_payment_export"/>
         </record>
-        <record id="action_payment_export_control_form" model="ir.actions.act_window.view">
+        <record id="action_payment_export_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_payment_export_control_form"/>
-            <field name="act_window_id" ref="action_payment_export_control"/>
+            <field name="view_id" ref="view_payment_export_form"/>
+            <field name="act_window_id" ref="action_payment_export"/>
         </record>
         
-	    <menuitem action="action_payment_export_control" sequence="1"
-	    	id="menu_action_payment_export_control"  parent="menu_payment_export"/>
+	    <menuitem action="action_payment_export" sequence="1"
+	    	id="menu_action_payment_export"  parent="menu_payment_export"/>
     </data>
 </openerp>

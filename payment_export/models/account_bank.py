@@ -6,10 +6,10 @@ from openerp.exceptions import ValidationError
 class ResPartnerBank(models.Model):
     _inherit = 'res.partner.bank'
 
-    lot_control_ids = fields.One2many(
-        'cheque.lot.control',
+    lot_ids = fields.One2many(
+        'cheque.lot',
         'bank_id',
-        string='Cheque Lot Controls',
+        string='Cheque Lot',
         copy=False,
     )
 

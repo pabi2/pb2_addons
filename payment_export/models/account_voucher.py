@@ -15,7 +15,7 @@ class AccountVoucher(models.Model):
         compute='_compute_bank_cheque_lot',
     )
     cheque_lot_id = fields.Many2one(
-        'cheque.lot.control',
+        'cheque.lot',
         string='Cheque Lot',
         domain="[('bank_id', '=', bank_id), ('state', '=', 'active')]",
         ondelete="restrict",
@@ -32,7 +32,7 @@ class AccountVoucher(models.Model):
         bank = Bank.search([('journal_id', '=', self.journal_id.id)])
         if bank:
             self.bank_id = bank
-            if bank.lot_control_ids:
+            if bank.lot_ids:
                 self.is_cheque_lot = True
         else:
             self.bank_id = False
