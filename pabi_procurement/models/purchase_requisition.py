@@ -413,7 +413,7 @@ class PurchaseRequisition(models.Model):
                     state_confirmed += 1
             if state_confirmed == 0:
                 raise UserError(
-                    _("You haven't create the Request to Quotation yet.")
+                    _("")
                 )
         return True
 
