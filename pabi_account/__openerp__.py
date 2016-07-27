@@ -24,5 +24,6 @@
     "data": [
         "views/res_config_view.xml",
         "views/account_voucher_view.xml",
+        "views/voucher_payment_receipt_view.xml",
     ],
 }
