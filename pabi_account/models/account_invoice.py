@@ -1,10 +1,30 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api
+from openerp import models, api, fields
 
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
+        copy=False,
+    )
+    validate_date = fields.Date(
+        'Validate On',
+        readonly=True,
+        copy=False,
+    )
+
+    @api.multi
+    def invoice_validate(self):
+        result = super(AccountInvoice, self).invoice_validate()
+        for invoice in self:
+            invoice.write({'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.today()})
+        return result
 
     @api.model
     def line_get_convert(self, line, part, date):
