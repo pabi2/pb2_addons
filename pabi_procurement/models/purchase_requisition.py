@@ -310,12 +310,18 @@ class PurchaseRequisition(models.Model):
             _prepare_purchase_order(requisition, supplier)
         ou_address = requisition.operating_unit_id.partner_id
         combined_address = "%s\n%s\n%s\n%s\n%s\n%s" % (
-            ou_address.street.strip() or '',
-            ou_address.township_id.name.strip() or '',
-            ou_address.district_id.name.strip() or '',
-            ou_address.province_id.name.strip() or '',
-            ou_address.zip.strip() or '',
-            requisition.delivery_address.strip() or '',
+            ou_address.street.strip()
+            if ou_address.street else '',
+            ou_address.township_id.name.strip()
+            if ou_address.township_id else '',
+            ou_address.district_id.name.strip()
+            if ou_address.district_id else '',
+            ou_address.province_id.name.strip() 
+            if ou_address.province_id else '',
+            ou_address.zip.strip()
+            if ou_address.zip else '',
+            requisition.delivery_address.strip()
+            if requisition.delivery_address else '',
         )
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
