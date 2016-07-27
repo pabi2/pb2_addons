@@ -104,8 +104,8 @@ class PurchaseRequisition(models.Model):
         readonly=False,
     )
     attachment_ids = fields.One2many(
-        'purchase.requisition.attachment',
-        'requisition_id',
+        'ir.attachment',
+        'res_id',
         string='Attach Files',
     )
     amount_untaxed = fields.Float(
@@ -133,18 +133,15 @@ class PurchaseRequisition(models.Model):
         'res.users',
         string='PR. Requested by',
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     assign_uid = fields.Many2one(
         'res.users',
         string='PR. Approver',
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     date_approve = fields.Date(
         string='PR. Approved Date',
         readonly=True,
-        states={'draft': [('readonly', False)]},
         help="Date when the request has been approved",
     )
     request_ref_id = fields.Many2one(
@@ -152,7 +149,6 @@ class PurchaseRequisition(models.Model):
         string='PR Reference',
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     verify_uid = fields.Many2one(
         'res.users',
@@ -239,16 +235,16 @@ class PurchaseRequisition(models.Model):
 
     @api.onchange('is_central_purchase')
     def _onchange_is_central_purchase(self):
-        domain = []
+        # domain = []
         if self.is_central_purchase:
             self.exclusive = 'multiple'
             self.multiple_rfq_per_supplier = True
-            domain = []
+            # domain = []
         else:
             self.exclusive = 'exclusive'
             self.multiple_rfq_per_supplier = False
-            domain = self.env['operating.unit']._ou_domain()
-        return {'domain': {'operating_unit_id': domain}}
+            # domain = self.env['operating.unit']._ou_domain()
+        # return {'domain': {'operating_unit_id': domain}}
 
     @api.model
     def open_price_comparison(self, ids):
@@ -314,7 +310,7 @@ class PurchaseRequisition(models.Model):
             _prepare_purchase_order(requisition, supplier)
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
-            'notes': requisition.delivery_address,
+            'delivery_address': requisition.delivery_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
         })
         # Case central purchase, use selected OU
@@ -340,6 +336,7 @@ class PurchaseRequisition(models.Model):
             'name': requisition_line.product_name,
             'price_unit': requisition_line.price_unit,
             'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
+            'product_uom': requisition_line.product_uom_id.id,
         })
         return res
 
@@ -384,6 +381,16 @@ class PurchaseRequisition(models.Model):
     def send_pbweb_requisition_cancel(self):
         PWInterface = self.env['purchase.web.interface']
         PWInterface.send_pbweb_requisition_cancel(self)
+        return True
+
+    @api.multi
+    def check_rfq_no(self):
+        Order = self.env['purchase.order']
+        rfq = Order.search([('requisition_id', '=', self.id)])
+        if len(rfq) == 0 and self.purchase_method_id.require_rfq:
+            raise UserError(
+                _("You haven't create the Request to Quotation yet.")
+            )
         return True
 
     @api.multi
@@ -602,28 +609,6 @@ class PurchaseRequisitionLine(models.Model):
                     )
             cur = line.requisition_id.currency_id
             line.price_subtotal = cur.round(amount_untaxed + tax_amount)
-
-
-class PurchaseRequisitionAttachment(models.Model):
-    _name = 'purchase.requisition.attachment'
-    _description = 'Purchase Requisition Attachment'
-
-    requisition_id = fields.Many2one(
-        'purchase.requisition',
-        string='Purchase Requisition',
-    )
-    name = fields.Char(
-        string='File Name',
-    )
-    description = fields.Char(
-        string='File Description',
-    )
-    file_url = fields.Char(
-        string='File Url',
-    )
-    file = fields.Binary(
-        string='File',
-    )
 
 
 class PurchaseRequisitionCommittee(models.Model):

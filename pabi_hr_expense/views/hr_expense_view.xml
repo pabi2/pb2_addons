@@ -23,6 +23,11 @@
                             string="Ignore Exception"
                             class="oe_highlight"
                             states="invoice_except"/>
+                    <button type="action"
+                            name="%(action_message_to_employee)d"
+                            string="Message to Employee"
+                            class="oe_highlight"
+                            states="accepted"/>
                 </button>
             	<field name="employee_id" position="after">
             		<field name="create_uid" />

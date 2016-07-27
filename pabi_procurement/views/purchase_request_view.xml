@@ -6,6 +6,11 @@
         <field name="model">purchase.request</field>
         <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
             <field name="arch" type="xml">
+            
+                <xpath expr="//field[@name='requested_by']" position="after">
+                    <field name="is_central_purchase" />
+                </xpath>
+                
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">
                     <field name="purchase_unit_id"/>
                     <field name="responsible_uid"/>
@@ -114,28 +119,35 @@
                         <field name="attachment_ids">
                             <tree>
                                 <field name="name"/>
-                                <field name="description"/>
-                                <field name="file"/>
-                                <field name="file_url"/>
+                                <field name="type"/>
+                                <field name="url"/>
                             </tree>
                             <form>
-                            	<group>
+                            	<group colspan="4">
 	                            	<group>
 	                            		<field name="name"/>
+                                        <field name="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
+                                        <field name="datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
 	                        		</group>
                                     <group>
                                 		<field name="description"/>
-	                        		</group>
-	                            	<group>
-                                		<field name="file"/>
+                                        <field name="type"/>
 	                        		</group>
                         		</group>
-                        		<group>
-                        			<field name="file_url" widget="url"/>
-                       			</group>
                         	</form>
                     	</field>
                     </page>
+                </xpath>
+            </field>
+    </record>
+    <record model="ir.ui.view" id="budget_acc_view_purchase_request_form">
+        <field name="name">purchase.request.form</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='price_unit']" position="replace" />
+                <xpath expr="//field[@name='product_uom_id']" position="after">
+                    <field name="price_unit"/>
                 </xpath>
             </field>
     </record>

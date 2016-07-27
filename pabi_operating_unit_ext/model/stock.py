@@ -7,7 +7,7 @@ class StockWarehouse(models.Model):
 
     operating_unit_id = fields.Many2one(
         required=True,
-        domain=lambda self: self.env['operating.unit']._ou_domain(),
+        # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 
 
@@ -16,7 +16,7 @@ class StockLocation(models.Model):
 
     operating_unit_id = fields.Many2one(
         required=True,
-        domain=lambda self: self.env['operating.unit']._ou_domain(),
+        # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 
 
@@ -25,7 +25,7 @@ class StockPicking(models.Model):
 
     operating_unit_id = fields.Many2one(
         required=False,  # Set to false temp, due to error on PO approve.
-        domain=lambda self: self.env['operating.unit']._ou_domain(),
+        # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 
 

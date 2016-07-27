@@ -41,6 +41,11 @@
                         <group>
                         	<field name="name"/>
                             <field name="bank_id" />
+                            <label for="date_begin" string="Duration"/>
+                            <div>
+                                <field name="date_begin" class="oe_inline"/> - 
+                                <field name="date_end" class="oe_inline"/>
+                            </div>
                         </group>
                         <group>
                             <field name="product_id" />
@@ -48,6 +53,19 @@
                             <field name="loan_ratio" />
                         </group>
                     </group>
+                    <separator string="Loan Agreements"/>
+                    <field name="loan_agreement_ids" nolabel="1">
+                        <tree string="Customer Loan Agreement"
+                    colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                            <field name="name" />
+                            <field name="bank_id" />
+                            <field name="partner_id" />
+                            <field name="amount_loan_total" />
+                            <field name="amount_receivable" />
+                            <field name="state" />
+                            <field name="date_begin"/>
+                        </tree>
+                    </field>
                 </form>
             </field>
         </record>
@@ -124,13 +142,13 @@
 	                         string="Create Bank Invoice"
 	                         type="action"
 	                         groups="account.group_account_invoice"
-	                         states="sign"
+	                         states="open"
 	                         class="oe_highlight" />
 	                <button name="%(action_create_installment_order)d"
 	                         string="Create Installment"
 	                         type="action"
 	                         groups="account.group_account_invoice"
-	                         states="bank_paid"
+	                         states="sign"
 	                         class="oe_highlight" />
                     <button name="action_cancel" string="Cancel" type="object" states="sign"/>
                     <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
@@ -159,21 +177,38 @@
                         <group>
                             <field name="partner_id" />
                             <field name="mou_id" />
+                            <field name="mou_bank" invisible="1"/>
                             <field name="bank_id" />
                             <field name="monthly_due_type" />
                             <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
+                            <label for="section_id"/>
+                            <div>
+                                <field name="section_id" class="oe_inline"/> 
+                                <button name="%(action_update_section_invoice)d"
+                                         string="⇒ Update Section"
+                                         type="action"
+                                         states="bank_invoice,bank_paid,done"
+                                         groups="account.group_account_invoice"
+                                         class="oe_link oe_inline" />
+                            </div>
+                            <field name="account_receivable_id"
+                                    domain="[('type','=', 'receivable')]" />
+                            <field name="supplier_invoice_id" invisible="1"
+                            	context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
                         </group>
                         <group>
                             <field name="amount_loan_total"/>
                             <field name="amount_receivable"/>
                             <field name="installment"/>
                             <field name="fy_penalty_rate"/>
+                            <field name="days_grace_period"/>
                             <label for="date_begin" string="Duration"/>
                             <div>
                                 <field name="date_begin" class="oe_inline" nolabel="1"/> -
                                 <field name="date_end" nolabel="1" class="oe_inline"/>
                             </div>
-                            <field name="supplier_invoice_id" context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
+                        	<field name="monthly_due_type" />
+                            <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
                         </group>
                     </group>
                     <notebook>
@@ -193,10 +228,12 @@
 						            <field name="installment" />
 						            <field name="date_invoice" />
 						            <field name="invoice_amount" sum="Amount" />
-						            <field name="invoice_percent"/>
+						            <field name="invoice_percent" invisible="1"/>
 						            <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
-						     		<field name="ref_invoice_id" invisible="0"  />
+						     		<field name="ref_invoice_id" widget="many2one_clickable" />
 						            <field name="state" invisible="0"/>
+						            <field name="date_paid" />
+						            <field name="payment_ids" />
 					            </tree>
 		                   	</field>
 	                   	</page>

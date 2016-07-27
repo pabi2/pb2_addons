@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
-	<property name="ireport.zoom" value="1.2100000000000013"/>
-	<property name="ireport.x" value="11"/>
-	<property name="ireport.y" value="240"/>
+	<property name="ireport.zoom" value="1.4641000000000017"/>
+	<property name="ireport.x" value="56"/>
+	<property name="ireport.y" value="179"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -27,7 +27,8 @@ convert_from(rp_ou.image, 'UTF8') image ,
 po.date_order date_order,
 pwa.fine_per_day,
 pwa.amount_fine_per_day_text_th,
-pwa.overdue_day
+pwa.overdue_day,
+ou.code
 
 from purchase_order po
 left join res_partner rp on po.partner_id = rp.id
@@ -85,6 +86,7 @@ where $X{IN,pwa.id, PIDS} and po.name not like '-']]>
 	<field name="overdue_day" class="java.lang.Integer">
 		<fieldDescription><![CDATA[Overdue Days]]></fieldDescription>
 	</field>
+	<field name="code" class="java.lang.String"/>
 	<background>
 		<band height="665" splitType="Stretch">
 			<textField isBlankWhenNull="true">
@@ -175,7 +177,7 @@ where $X{IN,pwa.id, PIDS} and po.name not like '-']]>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง " + ($F{operating_unit}== null? ' ':$F{operating_unit}) + "  ได้ตกลงซื้อ/จ้าง กับ "+($F{supplier}==null? ' ': $F{supplier}) +" เป็นจำนวนเงิน"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง " + ($F{operating_unit}== null? ' ':$F{operating_unit}) +"โดยศูนย์" +($F{code} == null? ' ' : $F{code})+ "  ได้ตกลงซื้อ/จ้าง กับ "+($F{supplier}==null? ' ': $F{supplier}) +" เป็นจำนวนเงิน"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="77" y="15" width="540" height="15"/>

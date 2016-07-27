@@ -17,12 +17,12 @@ class OperatingUnit(models.Model):
         string='Users',
     )
 
-    @api.model
-    def _ou_domain(self):
-        if self.env.user.access_all_operating_unit:
-            return []
-        else:
-            return [('id', 'in', self.env.user.operating_unit_ids._ids)]
+#     @api.model
+#     def _ou_domain(self):
+#         if self.env.user.access_all_operating_unit:
+#             return []
+#         else:
+#             return [('id', 'in', self.env.user.operating_unit_ids._ids)]
 
     @api.multi
     def write(self, vals):

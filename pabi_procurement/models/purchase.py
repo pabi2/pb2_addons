@@ -32,7 +32,6 @@ class PurchaseOrder(models.Model):
     date_reference = fields.Date(
         string='Reference Date',
         default=lambda self: fields.Date.context_today(self),
-        readonly=True,
         track_visibility='onchange',
     )
     mycontract_id = fields.Selection(
@@ -101,8 +100,6 @@ class PurchaseOrder(models.Model):
     )
     delivery_address = fields.Text(
         string='Delivery Address',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
     )
 
     @api.model
@@ -367,7 +364,10 @@ class PurchaseMethod(models.Model):
     name = fields.Char(
         string='Purchase Method',
     )
-
+    require_rfq = fields.Boolean(
+        string='Require for RfQ',
+        help='At least 1 RfQ must be created before verifying CfBs',
+    )
 
 class PurchaseCommitteeType(models.Model):
     _name = 'purchase.committee.type'

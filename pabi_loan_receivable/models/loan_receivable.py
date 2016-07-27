@@ -18,6 +18,7 @@ class LoanBankMOU(models.Model):
         'res.partner.bank',
         string='Bank',
         required=True,
+        domain=[('partner_id', '!=', False)]
     )
     max_installment = fields.Integer(
         string='Max Installment',
@@ -25,15 +26,31 @@ class LoanBankMOU(models.Model):
         default=1,
     )
     loan_ratio = fields.Float(
-        string='Loan Ratio (NSTDA/Bank)',
-        help="Ratio of loan between NSTDA and Bank. For example, 2:1 = 2 "
-        "means NSTDA will load 2 part and Bank will load 1 part",
+        string='Loan Ratio',
+        digits=(16, 12),
+        help="Ratio of loan that NSTDA will submit to bank when compare to "
+        "full amount. i.e., from 3,000,000 if NSTDA to submit 2,000,000. "
+        "Ratio = 2/3 = 0.6666666667",
     )
     product_id = fields.Many2one(
         'product.product',
         string='Loan Product',
         required=True,
     )
+    date_begin = fields.Date(
+        string='Begin Date',
+        required=True,
+    )
+    date_end = fields.Date(
+        string='Date End',
+        required=True,
+    )
+    loan_agreement_ids = fields.One2many(
+        'loan.customer.agreement',
+        'mou_id',
+        string='Loan Agreements',
+    )
+
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
     ]
@@ -43,6 +60,7 @@ class LoanCustomerAgreement(models.Model):
     _name = "loan.customer.agreement"
     _inherit = ['mail.thread']
     _description = "Loan Agreement between Bank and Customer CC NSTDA"
+    _order = "date_begin"
 
     name = fields.Char(
         string='Loan Agreement Number',
@@ -58,12 +76,20 @@ class LoanCustomerAgreement(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    mou_bank = fields.Many2one(
+        'res.bank',
+        string="MOU's Bank",
+        related='mou_id.bank_id.bank',
+        store=True,
+    )
     bank_id = fields.Many2one(
         'res.partner.bank',
-        related="mou_id.bank_id",
         string='Bank',
         readonly=True,
-        store=True,
+        domain="[('partner_id', '!=', False),"
+        "('bank', '=', mou_bank)]",
+        states={'draft': [('readonly', False)]},
+        required=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -135,10 +161,10 @@ class LoanCustomerAgreement(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('sign', 'Document Signed'),
+         ('open', 'Installment Open'),
          ('bank_invoice', 'Bank Invoiced'),
          ('bank_paid', 'Bank Paid'),
-         ('open', 'Installment Open'),
-         ('done', 'Done'),
+         ('done', 'Installment Paid'),
          ('cancel', 'Cancelled')],
         string='Status',
         readonly=True,
@@ -166,8 +192,30 @@ class LoanCustomerAgreement(models.Model):
         compute='_compute_invoice_count',
     )
     fy_penalty_rate = fields.Float(
-        string='Penalty Rate / Year',
+        string='Penalty (%) / Year',
         default=0.0,
+    )
+    days_grace_period = fields.Integer(
+        string='Grace Period (days)',
+        default=15,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Payment can be late without penalty if within the grace period",
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    account_receivable_id = fields.Many2one(
+        'account.account',
+        string='Account Receivable',
+        domain="[('type', '=', 'receivable')]",
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi
@@ -194,20 +242,25 @@ class LoanCustomerAgreement(models.Model):
                 state = 'cancel'
             if rec.signed:
                 state = 'sign'
+            if rec.sale_id:
+                state = 'open'
             if rec.supplier_invoice_id and \
                     rec.supplier_invoice_id.state not in ('cancel', 'paid',):
                 state = 'bank_invoice'
             if rec.supplier_invoice_id and \
                     rec.supplier_invoice_id.state == 'paid':
                 state = 'bank_paid'
-            if rec.sale_id:
-                state = 'open'
             if rec.sale_id.state == 'cancel':
                 state = 'bank_paid'
             if rec.sale_id and \
                     rec.sale_id.state == 'done':
                 state = 'done'
             rec.state = state
+
+    @api.onchange('amount_loan_total')
+    def _onchange_amount_loan_total(self):
+        amount = self.amount_loan_total * self.mou_id.loan_ratio
+        self.amount_receivable = amount
 
     @api.one
     @api.constrains('monthly_due_type', 'date_specified')
@@ -245,6 +298,27 @@ class LoanCustomerAgreement(models.Model):
                        ('loan_agreement_id', '=', self.id)]
         result.update({'domain': install_dom})
         return result
+
+    @api.multi
+    def update_invoice_lines(self, vals):
+        InvoiceObj = self.env['account.invoice']
+        InvoiceLineObj = self.env['account.invoice.line']
+        for loan in self:
+            invoice_ids =\
+                InvoiceObj.search([('loan_agreement_id', '=', loan.id),
+                                   ('state', '=', 'draft')]).ids
+            invoice_lines =\
+                InvoiceLineObj.search([('invoice_id', 'in', invoice_ids)])
+            for line in invoice_lines:
+                line.write(vals)
+
+    @api.multi
+    def write(self, vals):
+        for loan in self:
+            if vals.get('section_id', False):
+                section_id = vals['section_id']
+                loan.update_invoice_lines({'section_id': section_id})
+        return super(LoanCustomerAgreement, self).write(vals)
 
     @api.multi
     def action_sign(self):
@@ -341,6 +415,7 @@ class LoanCustomerAgreement(models.Model):
             'price_unit': loan.amount_receivable,
             'quantity': 1.0,
             'uos_id': res.get('uos_id', False),
+            'section_id': loan.section_id.id,
         }
 
     @api.multi
@@ -384,6 +459,7 @@ class LoanCustomerAgreement(models.Model):
             'price_unit': loan.amount_receivable,
             'product_uom': product.uom_id.id,
             'product_uom_qty': 1.0,
+            'section_id': loan.section_id.id,
         }
 
     @api.multi

@@ -42,11 +42,11 @@
 	</record>
 
 	<record id="purchase_work_acceptance_1" model="ir.actions.report.xml">
-		<field name="string">ติดตามงานส่งมอบสินค้า/งานจ้าง</field>
+		<field name="string">แจ้งค่าปรับและเร่งรัดการส่งมอบ</field>
 		<field name="auto">True</field>
 		<field name="model">purchase.work.acceptance</field>
 		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
-		<field name="name">ติดตามงานส่งมอบสินค้า/งานจ้าง</field>
+		<field name="name">แจ้งค่าปรับและเร่งรัดการส่งมอบ</field>
 		<field name="report_name">purchase.work.acceptance_wa1</field>
 		<field name="report_rml">pabi_forms/jrxml_reports/work_acceptance_1.jrxml</field>
 		<field name="menu">True</field>
@@ -57,18 +57,18 @@
 	</record>
 
 	<record id="purchase_work_acceptance_values_1" model="ir.values">
-		<field name="name">ติดตามงานส่งมอบสินค้า/งานจ้าง</field>
+		<field name="name">แจ้งค่าปรับและเร่งรัดการส่งมอบ</field>
 		<field name="model">purchase.work.acceptance</field>
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_work_acceptance_1)" />
 	</record>
 
 	<record id="purchase_work_acceptance_2" model="ir.actions.report.xml">
-		<field name="string">แจ้งค่าปรับเนื่องจากส่งสินค้า/งานจ้าง เกินกำหนด</field>
+		<field name="string">สงวนสิทธิ์ค่าปรับ</field>
 		<field name="auto">True</field>
 		<field name="model">purchase.work.acceptance</field>
 		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
-		<field name="name">แจ้งค่าปรับเนื่องจากส่งสินค้า/งานจ้าง เกินกำหนด</field>
+		<field name="name">สงวนสิทธิ์ค่าปรับ</field>
 		<field name="report_name">purchase.work.acceptance_wa2</field>
 		<field name="report_rml">pabi_forms/jrxml_reports/work_acceptance_2.jrxml</field>
 		<field name="menu">True</field>
@@ -79,7 +79,7 @@
 	</record>
 
 	<record id="purchase_work_acceptance_values_2" model="ir.values">
-		<field name="name">แจ้งค่าปรับเนื่องจากส่งสินค้า/งานจ้าง เกินกำหนด</field>
+		<field name="name">สงวนสิทธิ์ค่าปรับ</field>
 		<field name="model">purchase.work.acceptance</field>
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_work_acceptance_2)" />

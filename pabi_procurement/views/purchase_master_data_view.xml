@@ -102,6 +102,7 @@
                 <form string="Purchase Method">
                     <group>
                         <field name="name"/>
+                        <field name="require_rfq"/>
                     </group>
                 </form>
             </field>
@@ -112,6 +113,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Method">
                     <field name="name"/>
+                    <field name="require_rfq"/>
                 </tree>
             </field>
        </record>
