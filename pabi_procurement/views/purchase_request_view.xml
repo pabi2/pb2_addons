@@ -126,7 +126,7 @@
                             	<group colspan="4">
 	                            	<group>
 	                            		<field name="name"/>
-                                        <field name="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
+                                        <field name="url" widget="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
                                         <field name="datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
 	                        		</group>
                                     <group>
