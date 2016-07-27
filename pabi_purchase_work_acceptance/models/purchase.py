@@ -31,7 +31,7 @@ class PurchaseOrder(models.Model):
         states={'draft': [('readonly', False)]},
     )
     fine_num_days = fields.Integer(
-        string='No. of Days',
+        string='Delivery Within (Days)',
         default=15,
         readonly=True,
         states={'draft': [('readonly', False)]},

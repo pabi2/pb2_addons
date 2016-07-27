@@ -82,7 +82,13 @@
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
                 </xpath>
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
-                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok"/>
+                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok" confirm="Approve this RfQ?"/>
+                </xpath>
+                <xpath expr="//button[@name='purchase_cancel']" position="attributes">
+                    <attribute name="confirm">Cancel this RfQ?</attribute>
+                </xpath>
+                <xpath expr="//button[@name='purchase_confirm']" position="attributes">
+                    <attribute name="confirm">Confirm this RfQ?</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
@@ -120,6 +126,7 @@
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='name']" position="replace">
                 	<field name="operating_unit_id" />
                 	<field name="dummy_quote_id" widget="many2one_clickable"/>
+                    <field name="amount_total"/>
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']" position="after">
                 	<field name="order_id" widget="many2one_clickable"/>
@@ -198,6 +205,9 @@
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="default_order">create_date desc</attribute>
+                </xpath>
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="create_date" widget="date" string="Create Date"/>
                     <field name="request_uid" string="Requested by"/>

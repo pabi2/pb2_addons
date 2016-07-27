@@ -157,6 +157,7 @@
         <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='requested_by']" position="after">
+                    <field name="responsible_uid"/>
                     <field name="purchase_type_id"/>
                     <field name="description" string="Reason"/>
                     <field name="objective"/>
