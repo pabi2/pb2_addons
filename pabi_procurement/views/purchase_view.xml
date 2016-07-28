@@ -201,5 +201,37 @@
                 </field>
         </record>
 
+        <record id="view_purchase_order_filter" model="ir.ui.view">
+            <field name="name">view_purchase_order_filter</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[@expand='0']" position="after">
+                    <filter name="my_responsible" domain="[('create_uid','=',uid)]" string="My Responsible"/>"
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+            <field name="name">Quotation</field>
+            <field name="context">
+                {
+                    'order_type': 'quotation',
+                    'search_default_my_responsible': uid,
+                }
+            </field>
+            <field name="domain">[('order_type', '=', 'quotation')]</field>
+        </record>
+
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="context">
+                {
+                    'order_type': 'purchase_order',
+                    'search_default_my_responsible': uid,
+                }
+            </field>
+            <field name="domain">[('order_type', '=', 'purchase_order')]</field>
+        </record>
+
     </data>
 </openerp>
