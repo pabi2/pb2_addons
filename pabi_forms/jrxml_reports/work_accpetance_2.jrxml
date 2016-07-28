@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="511" leftMargin="42" rightMargin="42" topMargin="70" bottomMargin="107">
 	<property name="ireport.zoom" value="1.3310000000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="239"/>
+	<property name="ireport.y" value="144"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -26,7 +26,7 @@ convert_from(rp_ou.image, 'UTF8') image ,
 po.date_order date_order,
 date_part('day',(pwa.date_receive - po.date_order))::integer over_date,
 pwa.amount_total_fine_text_th,
-pwa.manual_fine,
+pwa.total_fine manual_fine,
 pwa.amount_fine_per_day_text_th,
 pwa.overdue_day,
 pwa.fine_per_day
@@ -93,6 +93,9 @@ where $X{IN,pwa.id,PIDS} and po.name not like '-']]>
 	<field name="fine_per_day" class="java.lang.Double">
 		<fieldDescription><![CDATA[Fine per Day]]></fieldDescription>
 	</field>
+	<variable name="current_date" class="java.util.Date" resetType="None">
+		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
+	</variable>
 	<background>
 		<band height="665" splitType="Stretch">
 			<staticText>
@@ -158,19 +161,20 @@ where $X{IN,pwa.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["อ้างถึง        ใบสั่งซื้อ/จ้าง หรือสัญญา เลขที่ "+$F{po_no}+" ลงวันที่ "]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
 				<reportElement x="215" y="90" width="100" height="14"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract_start_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{contract_start_date}.year+543, $F{contract_start_date}.month, $F{contract_start_date}.date)
+]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="215" y="20" width="79" height="20"/>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="215" y="20" width="127" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($V{current_date}.year+543, $V{current_date}.month, $V{current_date}.date)]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

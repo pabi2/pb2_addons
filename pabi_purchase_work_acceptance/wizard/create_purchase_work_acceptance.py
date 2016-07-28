@@ -195,7 +195,6 @@ class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
     balance_qty = fields.Float(
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
-        required=True,
         readonly=True,
     )
     to_receive_qty = fields.Float(

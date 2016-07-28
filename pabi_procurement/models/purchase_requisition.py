@@ -308,17 +308,24 @@ class PurchaseRequisition(models.Model):
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
-        address = "%s\n%s\n%s\n%s\n%s\n%s" % (
-            requisition.operating_unit_id.partner_id.street.strip(),
-            requisition.operating_unit_id.partner_id.township_id.name.strip(),
-            requisition.operating_unit_id.partner_id.district_id.name.strip(),
-            requisition.operating_unit_id.partner_id.province_id.name.strip(),
-            requisition.operating_unit_id.partner_id.zip.strip(),
-            requisition.delivery_address.strip(),
+        ou_address = requisition.operating_unit_id.partner_id
+        combined_address = "%s\n%s %s %s %s\n%s" % (
+            ou_address.street.strip()
+            if ou_address.street else '',
+            ou_address.township_id.name.strip()
+            if ou_address.township_id else '',
+            ou_address.district_id.name.strip()
+            if ou_address.district_id else '',
+            ou_address.province_id.name.strip() 
+            if ou_address.province_id else '',
+            ou_address.zip.strip()
+            if ou_address.zip else '',
+            requisition.delivery_address.strip()
+            if requisition.delivery_address else '',
         )
         res.update({
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
-            'delivery_address': address,
+            'delivery_address': combined_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
         })
         # Case central purchase, use selected OU
@@ -394,11 +401,21 @@ class PurchaseRequisition(models.Model):
     @api.multi
     def check_rfq_no(self):
         Order = self.env['purchase.order']
-        rfq = Order.search([('requisition_id', '=', self.id)])
-        if len(rfq) == 0 and self.purchase_method_id.require_rfq:
-            raise UserError(
-                _("You haven't create the Request to Quotation yet.")
-            )
+        rfqs = Order.search([('requisition_id', '=', self.id)])
+        if self.purchase_method_id.require_rfq:
+            if len(rfqs) == 0:
+                raise UserError(
+                    _("You haven't create the Request to Quotation yet.")
+                )
+            else:
+                state_confirmed = 0
+                for rfq in rfqs:
+                    if rfq.state == 'confirmed':
+                        state_confirmed += 1
+                if state_confirmed == 0:
+                    raise UserError(
+                        _("At least one RfQ must be confirmed.")
+                    )
         return True
 
     @api.multi

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, api, fields, _
+import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError
 
 
@@ -23,6 +24,41 @@ class AccountVoucher(models.Model):
         readonly=True,
         copy=False,
     )
+    total_ar_amount = fields.Float(
+        compute="_compute_total_ar_ap_amount",
+        string='Total AR',
+        digits_compute=dp.get_precision('Account'),
+    )
+    total_ap_amount = fields.Float(
+        compute="_compute_total_ar_ap_amount",
+        string='Total AR',
+        digits_compute=dp.get_precision('Account'),
+    )
+
+    @api.model
+    def _get_related_invoices(self):
+        doc_types = ('in_invoice', 'in_refund',)
+        if self.type == 'receipt':
+            doc_types = ('out_invoice', 'out_refund',)
+        AccountInvoice = self.env['account.invoice']
+        partner = self.partner_id.id
+        invoice_ids =\
+            AccountInvoice.search([('state', '=', 'open'),
+                                   ('type', 'in', doc_types),
+                                   ('partner_id', 'child_of', partner)]).ids
+        return invoice_ids
+
+    @api.depends()
+    def _compute_total_ar_ap_amount(self):
+        for record in self:
+            invoice_ids = record._get_related_invoices()
+            if invoice_ids:
+                invoices = self.env['account.invoice'].browse(invoice_ids)
+                amount = sum([i.amount_total for i in invoices])
+            if record.type == 'receipt':
+                record.total_ap_amount = amount
+            elif record.type == 'payment':
+                record.total_ar_amount = amount
 
     @api.depends('line_ids')
     def _compute_invoices_ref(self):
@@ -40,6 +76,22 @@ class AccountVoucher(models.Model):
                 voucher.invoices_text += ', ...'
 
     @api.multi
+    def action_open_invoices(self):
+        self.ensure_one()
+        invoice_ids = self._get_related_invoices()
+        action_id = False
+        if self.type == 'receipt':
+            action_id = self.env.ref('account.action_invoice_tree1')
+        else:
+            action_id = self.env.ref('account.action_invoice_tree2')
+        if action_id:
+            action = action_id.read([])[0]
+            action['domain'] =\
+                "[('id','in', ["+','.join(map(str, invoice_ids))+"])]"
+            return action
+        return True
+
+    @api.multi
     def proforma_voucher(self):
         for voucher in self:
             taxbranchs = []
@@ -53,7 +105,6 @@ class AccountVoucher(models.Model):
         for voucher in self:
             voucher.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
-
         return result
 
 
