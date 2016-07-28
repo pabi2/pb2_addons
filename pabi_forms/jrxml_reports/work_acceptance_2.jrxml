@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="70" bottomMargin="107">
-	<property name="ireport.zoom" value="2.3579476910000032"/>
+	<property name="ireport.zoom" value="0.8264462809917363"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="376"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -115,7 +115,8 @@ pwa.amount_total_fine_text_th,
 LTRIM(pwa.fine_per_day::numeric::money::varchar,'฿ ') fine_per_day,
 pwa.amount_fine_per_day_text_th,
 pwa.overdue_day::varchar,
-ou.code
+ou.code,
+ou.id ou_id
 
 from purchase_order po
 left join res_partner rp on po.partner_id = rp.id
@@ -181,6 +182,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<field name="code" class="java.lang.String">
 		<fieldDescription><![CDATA[Code]]></fieldDescription>
 	</field>
+	<field name="ou_id" class="java.lang.Integer"/>
 	<variable name="current_date" class="java.util.Date" resetType="None">
 		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
 	</variable>
@@ -217,7 +219,44 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 		</band>
 	</background>
 	<pageHeader>
-		<band height="81" splitType="Stretch"/>
+		<band height="81" splitType="Stretch">
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nectec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_tmc.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_biotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nanotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_mtec.gif"]]></imageExpression>
+			</image>
+		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="119" splitType="Stretch">
