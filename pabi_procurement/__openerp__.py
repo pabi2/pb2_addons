@@ -37,7 +37,6 @@ PABI2 - Procurement Module
         "purchase_requisition_operating_unit",
         "purchase_request_to_requisition_operating_unit",
         "purchase_operating_unit",
-        "stock_operating_unit",
         "account_budget_activity",
     ],
     "data": [
@@ -50,7 +49,6 @@ PABI2 - Procurement Module
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
-        "views/stock_view.xml",
         "views/product_view.xml",
         "views/partner_view.xml",
         "views/purchase_master_data_view.xml",
