@@ -22,6 +22,7 @@ PABI2 - Purchase Work Acceptance
     "application": False,
     "installable": True,
     "depends": [
+        "stock",
         "pabi_procurement",
     ],
     "data": [
