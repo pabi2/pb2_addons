@@ -37,16 +37,15 @@ class AccountInvoice(models.Model):
                                 and invoice.state == 'paid':
                             expense.signal_workflow('paid')
                         else:
-                            root_invoices = [x.id
-                                        for x in expense.invoice_ids
-                                        if not x.invoice_ref_id]
-                            paid_invoices = [x.id
-                                        for x in expense.invoice_ids
-                                        if x.state == 'paid']
+                            root_invoices = \
+                                [x.id for x in expense.invoice_ids
+                                 if not x.invoice_ref_id]
+                            paid_invoices = \
+                                [x.id for x in expense.invoice_ids
+                                 if x.state == 'paid']
                             if len(paid_invoices) == len(root_invoices):
                                 expense.signal_workflow('paid')
         return result
-
 
 #     @api.multi
 #     def action_cancel(self):

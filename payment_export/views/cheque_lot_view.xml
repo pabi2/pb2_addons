@@ -101,8 +101,8 @@
                 <search string="Search Cheque Register">
                     <field name="number"/>
                     <group expand="0" string="Group By...">
-                        <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
-                        <filter string="Cheque Lot" domain="[]" context="{'group_by':'cheque_lot_id'}"/>
+                        <filter string="Bank" name="bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                        <filter string="Cheque Lot" name="cheque_lot" domain="[]" context="{'group_by':'cheque_lot_id'}"/>
                     </group>
                 </search>
             </field>
@@ -117,7 +117,7 @@
                     <field name="bank_id" invisible="1" />
                     <field name="number" />
                     <field name="voucher_id" />
-                    <field name="amount" />
+                    <field name="amount" sum="Amount Total"/>
                     <field name="void" />
 	               	<field name="note" />
 				    <field name="payment_export_id" />
@@ -132,6 +132,7 @@
             <field name="view_mode">tree</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
+            <field name="context">{'search_default_bank': True, 'search_default_cheque_lot': True}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Click to register a new Cheque Register.

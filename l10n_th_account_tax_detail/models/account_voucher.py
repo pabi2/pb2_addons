@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from dateutil import relativedelta
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
 from .account_tax_detail import InvoiceVoucherTaxDetail
 
 

@@ -12,6 +12,7 @@
 
     """,
     "data": [
+        "security/ir.model.access.csv",
         "views/account_bank_view.xml",
         "views/payment_export_view.xml",
         "views/cheque_lot_view.xml",

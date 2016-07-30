@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields
+from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 
 
@@ -53,7 +53,6 @@ class AccountInvoice(models.Model):
                       ('state', 'in', ('open', 'paid')),
                       ('employee_id', '=', ref_employee_id),
                       ('amount_to_clearing', '>', 0.0)]
-            print domain
             res['domain'].update({'advance_expense_id': domain})
         return res
 

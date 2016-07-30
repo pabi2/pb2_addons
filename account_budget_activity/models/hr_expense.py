@@ -40,14 +40,16 @@ class HRExpenseExpense(models.Model):
                    'expense_id': expense.id}
             )
             context = self._context.copy()
-            context.update(call_from = 'hr_expense_expense')
+            context.update(call_from='hr_expense_expense')
             # Check budget at this budgeting level
             for r in self._cr.dictfetchall():
-                res = AccountBudget.with_context(context).check_budget(fiscal_id,
-                                                 budget_type,
-                                                 budget_level,
-                                                 r[budget_level],
-                                                 r['amount'])
+                res = AccountBudget.\
+                    with_context(context).\
+                    check_budget(fiscal_id,
+                                 budget_type,
+                                 budget_level,
+                                 r[budget_level],
+                                 r['amount'])
                 if not res['budget_ok']:
                     raise UserError(res['message'])
         return True
