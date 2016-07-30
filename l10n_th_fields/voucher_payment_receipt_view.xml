@@ -18,6 +18,8 @@
 			</field>
         </record>       
 
+		<!-- Customer / Supplier -->
+
         <record id="view_vendor_receipt_dialog_form" model="ir.ui.view">
             <field name="name">view.vendor.receipt.dialog.form.ext</field>
             <field name="model">account.voucher</field>
@@ -29,6 +31,9 @@
                 	<field name="bank_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>
                 	<field name="branch_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>	
                 </xpath>
+                <field name="date" position="after">
+                	<field name="date_value" attrs="{'invisible': [('type', '!=', 'payment')], 'required': [('type', '=', 'payment')]}"/>
+                </field>
             </field>
         </record>
         
@@ -42,18 +47,14 @@
                 <field name="date" position="after">
                 	<field name="date_value" attrs="{'invisible': [('type', '!=', 'payment')], 'required': [('type', '=', 'payment')]}"/>
                 </field>
+				<field name="journal_id" position="after">
+                	<field name="number_cheque" />
+                	<field name="date_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>	
+                	<field name="bank_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>	
+                	<field name="branch_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>	
+                </field>     
             </field>
         </record>
         
-        <record model="ir.ui.view" id="view_vendor_receipt_dialog_form">
-            <field name="name">view.vendor.payment.form</field>
-            <field name="model">account.voucher</field>
-            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_dialog_form" />
-            <field name="arch" type="xml">
-                <field name="date" position="after">
-                	<field name="date_value" attrs="{'invisible': [('type', '!=', 'payment')], 'required': [('type', '=', 'payment')]}"/>
-                </field>
-            </field>
-        </record>
     </data>
 </openerp>

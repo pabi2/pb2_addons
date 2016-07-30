@@ -34,12 +34,13 @@ class AccountTax(models.Model):
 
     _inherit = 'account.tax'
 
-    account_collected_id = fields.Many2one(required=True)
-    base_code_id = fields.Many2one(required=True)
-    tax_code_id = fields.Many2one(required=True)
-    account_paid_id = fields.Many2one(required=True)
-    ref_base_code_id = fields.Many2one(required=True)
-    ref_tax_code_id = fields.Many2one(required=True)
+    # Can't make it required, as it will gen error on first CoA import
+    # account_collected_id = fields.Many2one(required=True)
+    # base_code_id = fields.Many2one(required=True)
+    # tax_code_id = fields.Many2one(required=True)
+    # account_paid_id = fields.Many2one(required=True)
+    # ref_base_code_id = fields.Many2one(required=True)
+    # ref_tax_code_id = fields.Many2one(required=True)
     is_undue_tax = fields.Boolean(
         string='Undue Tax',
         default=False,
