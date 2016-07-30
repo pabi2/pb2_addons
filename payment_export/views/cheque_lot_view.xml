@@ -68,6 +68,7 @@
 				            <field name="amount" />
 				            <field name="void" />
 				            <field name="note" />
+				            <field name="payment_export_id" />
 			            </tree>
                    	</field>
                 </form>
@@ -119,6 +120,7 @@
                     <field name="amount" />
                     <field name="void" />
 	               	<field name="note" />
+				    <field name="payment_export_id" />
                 </tree>
             </field>
         </record>

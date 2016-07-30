@@ -190,3 +190,8 @@ class ChequeRegister(models.Model):
     note = fields.Text(
         string='Cancellation Reasons',
     )
+    payment_export_id = fields.Many2one(
+        'payment.export',
+        string='Payment Export',
+        readonly=True,
+    )
