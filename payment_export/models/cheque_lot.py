@@ -37,18 +37,47 @@ class ChequeLot(models.Model):
         size=10,
         compute='_compute_next_number',
     )
+    remaining = fields.Integer(
+        string='Next Cheque Number',
+        compute='_compute_state',
+        store=True,
+        readonly=True,
+        help="This field show the remaining valid cheque to use",
+    )
     state = fields.Selection(
         [('active', 'Active'),
          ('inactive', 'Inactive'),
          ],
         string='Status',
+        compute='_compute_state',
+        store=True,
+        readonly=True,
         help="Active means this lot is in used. "
         "Inactive means this lot has been used up",
     )
+    line_ids = fields.One2many(
+        'cheque.register',
+        'cheque_lot_id',
+        string='Cheque Registers',
+    )
+
+    @api.multi
+    @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
+    def _compute_state(self):
+        Cheque = self.env['cheque.register']
+        for lot in self:
+            num = Cheque.search_count([('cheque_lot_id', '=', lot.id),
+                                       ('voucher_id', '=', False),
+                                       ('void', '=', False)])
+            lot.remaining = num
+            if num > 0:
+                lot.state = 'active'
+            else:
+                lot.state = 'inactive'
 
     @api.multi
     @api.constrains('cheque_number_from', 'cheque_number_to')
-    def _compute_cheque_number(self):
+    def _check_cheque_number(self):
         for rec in self:
             if not rec.cheque_number_from.isdigit() or \
                     not rec.cheque_number_to.isdigit():
@@ -79,6 +108,9 @@ class ChequeLot(models.Model):
         for rec in self:
             a = int(rec.cheque_number_from)
             b = int(rec.cheque_number_to) + 1
+            if (b - a) > 1000:  # Not allow > 1000 cheques
+                raise ValidationError(
+                    _('Creating more than 1,000 number is not allowed!'))
             padding = len(rec.cheque_number_from)
             for i in range(a, b):
                 cheque_number = str(i).zfill(padding)

@@ -1,6 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+
+    	# Cheque Lot
+        <record id="view_cheque_lot_filter" model="ir.ui.view">
+            <field name="name">view.cheque.lot.filter</field>
+            <field name="model">cheque.lot</field>
+            <field name="arch" type="xml">
+                <search string="Search Cheque Lot">
+                    <field name="name"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    
+       	<record model="ir.ui.view" id="view_cheque_lot_tree">
+            <field name="name">view.cheque.lot.tree</field>
+            <field name="model">cheque.lot</field>
+            <field name="arch" type="xml">
+                <tree string="Cheque Lot" >
+                    <field name="bank_id" invisible="1" />
+                    <field name="name" />
+                    <field name="cheque_number_from" />
+                    <field name="cheque_number_to" />
+                    <field name="next_number" />
+                    <field name="user_id" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="view_cheque_lot_form">
+            <field name="name">view.cheque.lot.form</field>
+            <field name="model">cheque.lot</field>
+            <field name="arch" type="xml">
+            	<form string="Cheque Lot" >
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Cheque Lot" />
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="bank_id" required="1"/>
+                            <field name="user_id" />
+                            
+			            	<label string="Cheque Number" />
+			            	<div>
+	                            <field name="cheque_number_from" style="width: 40%%" attrs="{'readonly': [('line_ids', '!=', [])]}"/> - 
+			                	<field name="cheque_number_to" style="width: 40%%" attrs="{'readonly': [('line_ids', '!=', [])]}"/>
+			               	</div>
+                        </group>
+                        <group>
+                            <field name="state" />
+                            <field name="next_number"/>
+                        </group>
+                    </group>
+                   	<field name="line_ids" >
+                   		<tree create="0" delete="0" editable="bottom">
+                   			<field name="cheque_lot_id" invisible="1" />
+				            <field name="number" />
+				            <field name="voucher_id" />
+				            <field name="amount" />
+				            <field name="void" />
+				            <field name="note" />
+			            </tree>
+                   	</field>
+                </form>
+            </field>
+        </record>
+        
+        
+		<record id="action_cheque_lot" model="ir.actions.act_window">
+            <field name="name">Cheque Lot</field>
+            <field name="res_model">cheque.lot</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Cheque Lot.
+              </p>
+            </field>
+        </record>
+        
+	    <menuitem action="action_cheque_lot" sequence="2"
+	    	id="menu_action_cheque_lot"  parent="menu_payment_export"/>
+
+    	# Cheque Register
         <record id="view_cheque_register_filter" model="ir.ui.view">
             <field name="name">view.cheque.register.filter</field>
             <field name="model">cheque.register</field>
@@ -45,7 +137,7 @@
             </field>
         </record>
         
-	    <menuitem action="action_cheque_register" sequence="2"
+	    <menuitem action="action_cheque_register" sequence="3"
 	    	id="menu_action_cheque_register"  parent="menu_payment_export"/>
     </data>
 </openerp>

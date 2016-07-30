@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError, Warning as UserError
 
 
@@ -101,8 +101,13 @@ class PaymentExport(models.Model):
                ('date_value', '=', self.date_value),
                ('state', '=', 'posted')]
         if self.is_cheque_lot:
+            printed_voucher_ids = [x.voucher_id.id
+                                   for x in self.cheque_lot_id.line_ids
+                                   if x.voucher_id and not x.void]
             dom.append(('cheque_lot_id', '=', self.cheque_lot_id.id))
-        vouchers = Voucher.search(dom)
+            dom.append(('id', 'not in', printed_voucher_ids))
+        vouchers = Voucher.search(dom, order='date desc',
+                                  limit=self.cheque_lot_id.remaining)
         for voucher in vouchers:
             export_line = ExportLine.new()
             export_line.voucher_id = voucher
@@ -122,10 +127,13 @@ class PaymentExport(models.Model):
 
     @api.multi
     def action_done(self):
-        self.write({'state': 'done'})
         for rec in self:
             rec.line_ids.write({'exported': True})
             for line in rec.line_ids:
+                if not line.cheque_register_id:
+                    raise UserError(
+                        _('Some Payments is not assigned with Cheque Number!\n'
+                          'Please click Assign Cheque Number.'))
                 if line.cheque_register_id.voucher_id:
                     raise UserError(
                         _('Cheque Number %s is occupied, please reassign '
@@ -135,6 +143,7 @@ class PaymentExport(models.Model):
                         _('Cheque Number %s is voided, please reassign '
                           'again!') % (line.cheque_register_id.number))
                 line.cheque_register_id.voucher_id = line.voucher_id
+        self.write({'state': 'done'})
 
     @api.multi
     def action_cancel(self):

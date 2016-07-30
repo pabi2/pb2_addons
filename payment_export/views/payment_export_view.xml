@@ -55,7 +55,8 @@
                         </h1>
                     </div>
                     <div class="oe_right oe_button_box" name="buttons">
-                    	<button name="action_assign_cheque_number" type="object" string="Assign Cheque Number" />
+                    	<button name="action_assign_cheque_number" string="Assign Cheque Number" 
+                    		type="object" states="draft"/>
                         <!-- button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
                                 name="open_bank_invoices" 
                                 attrs="{'invisible': [('bank_invoice_count', '=', 0)]}">
