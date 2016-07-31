@@ -15,11 +15,11 @@ class UpdateSectionInvoice(models.TransientModel):
     def action_update_section(self):
         self.ensure_one()
         LoanObj = self.env['loan.customer.agreement']
-        InvoiceObj = self.env['account.invoice']
-        InvoiceLineObj = self.env['account.invoice.line']
         loan_ids = self._context.get('active_ids', [])
         for loan in LoanObj.browse(loan_ids):
             loan.update_invoice_lines({'section_id': self.section_id.id})
-            self._cr.execute('update loan_customer_agreement\
-                                set section_id=%d where\
-                                id=%d' %(self.section_id.id, loan.id))
+            self._cr.execute("""
+                update loan_customer_agreement
+                set section_id=%d where
+                id=%d
+            """ % (self.section_id.id, loan.id))

@@ -14,10 +14,8 @@ class HRExpenseExpense(models.Model):
             r = Budget.get_fiscal_and_budget_level(expense.date)
             fiscal_id = r['fiscal_id']
             # Check for all budget types
-            
             if 'invest_construction' in r:
                 r['invest_construction'] = 'invest_construction_id'
-            
             for budget_type in dict(Budget.BUDGET_LEVEL_TYPE).keys():
                 if budget_type not in r:
                     raise UserError(_('Budget level is not set!'))

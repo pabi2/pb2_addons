@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, fields, _
-from openerp.exceptions import ValidationError
+from openerp import models, fields
 
 
 class AccountInvoice(models.Model):

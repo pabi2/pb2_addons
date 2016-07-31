@@ -102,9 +102,9 @@ class AccountBudget(ChartField, models.Model):
 
                 field_name = FIELD_RELATION[key][0]
                 for node in doc.xpath("//field[@name='%s']" % field_name):
-                    if budget_type in ('invest_asset',
-                                       'invest_construction') and \
-                                       field_name == 'org_id':
+                    if (budget_type in ('invest_asset',
+                                        'invest_construction') and
+                            field_name == 'org_id'):
                         continue
                     node.getparent().remove(node)
 

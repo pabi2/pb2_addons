@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from openerp import api, models, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp import api, models, fields
 from openerp.addons.pabi_base.models.res_common import ResCommon
 
 # org -> sector -> subsector -> division -> *section* -> costcenter

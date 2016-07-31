@@ -5,7 +5,8 @@ from openerp.osv import osv
 
 class PaymentReportParser(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
-        super(PaymentReportParser, self).__init__(cr, uid, name, context=context)
+        super(PaymentReportParser, self).__init__(cr, uid, name,
+                                                  context=context)
         self.localcontext.update({
             'get_currency_rate': self.get_currency_rate,
             'get_invoices': self.get_invoices,
@@ -21,7 +22,9 @@ class PaymentReportParser(report_sxw.rml_parse):
     def get_currency_rate(self, currency, date):
         context = self.localcontext.copy()
         context.update({'date': date})
-        rate = self.pool['res.currency']._get_current_rate(self.cr, self.uid, [currency.id], raise_on_no_rate=True, context=context)
+        rate = self.pool['res.currency'].\
+            _get_current_rate(self.cr, self.uid, [currency.id],
+                              raise_on_no_rate=True, context=context)
         rate = rate[currency.id]
         return rate
 

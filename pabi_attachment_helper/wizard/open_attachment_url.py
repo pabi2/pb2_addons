@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, api
 
 
 class OpenAttachmentURL(models.TransientModel):
@@ -12,7 +12,7 @@ class OpenAttachmentURL(models.TransientModel):
         active_model = self._context.get('active_model')
         attachment = self.env[active_model].browse(active_id)
         return {
-          'type': 'ir.actions.act_url',
-          'target': 'new',
-          'url': attachment.url,
+            'type': 'ir.actions.act_url',
+            'target': 'new',
+            'url': attachment.url,
         }
