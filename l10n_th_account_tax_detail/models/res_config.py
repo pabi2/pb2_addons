@@ -50,7 +50,7 @@ class account_config_settings(osv.osv_memory):
         return True
 
     def get_default_account_tax_difference(self, cr, uid,
-                                            fields, context=None):
+                                           fields, context=None):
         ir_property_obj = self.pool.get('ir.property')
         fiscal_obj = self.pool.get('account.fiscal.position')
         todo_list = [
