@@ -23,49 +23,49 @@ class HRExpense(models.Model):
                     'name': u'Employee Advance',  # Expense Note (not in AF?)
                     'unit_amount': u'2000',  # total
                     'cost_control_id.id': u'',
-                 },
+                },
                 {
                     'is_advance_product_line': u'True',
                     'name': u'Employee Advance 2',  # Expense Note (not in AF?)
                     'unit_amount': u'3000',  # total
                     'cost_control_id.id': u'',
-                 },
+                },
             ],
             'attendee_employee_ids': [
                 {
                     'employee_code': u'000143',
                     'position_id.id': u'',
-                 },
+                },
                 {
                     'employee_code': u'000165',
                     'position_id.id': u'',
-                 },
+                },
                 {
                     'employee_code': u'000166',
                     'position_id.id': u'',
-                 },
+                },
                 {
                     'employee_code': u'000177',
                     'position_id.id': u'',
-                 },
+                },
             ],
             'attendee_external_ids': [
                 {
                     'attendee_name': u'Walai Charoenchaimongkol',
                     'position': u'Manager',
-                 },
+                },
             ],
             'attachment_ids': [
                 {
                     'name': u'Expense1.pdf',
                     'description': u'My Expense 1 Document Description',
                     'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
-                 },
+                },
                 {
                     'name': u'Expense2.pdf',
                     'description': u'My Expense 2 Document Description',
                     'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
-                 },
+                },
             ]
         }
         return self.generate_hr_expense(data_dict)
