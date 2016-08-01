@@ -1,9 +1,9 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 from openerp import models, fields
 
 
-class purchase_contract_collateral(models.Model):
+class PurchaseContractCollateral(models.Model):
     _name = 'purchase.contract.collateral'
     name = fields.Char(string="Name")
 
-purchase_contract_collateral()
+PurchaseContractCollateral()

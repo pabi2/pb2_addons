@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <openerp>
 	<data>
-
 		<record model="ir.ui.view" id="view_purchase_contract_type_form">
 			<field name="name">purchase.contract.type.form</field>
 			<field name="model">purchase.contract.type</field>
@@ -24,6 +23,5 @@
 				</tree>
 			</field>
 		</record>
-
 	</data>
 </openerp>

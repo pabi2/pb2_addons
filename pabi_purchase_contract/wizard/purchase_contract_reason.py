@@ -6,7 +6,7 @@ import datetime
 from pytz import timezone
 
 
-class purchase_contract_reason(models.TransientModel):
+class PurchaseContractReason(models.TransientModel):
     _name = "purchase.contract.reason"
     _description = "Contract Note"
 
@@ -43,9 +43,9 @@ class purchase_contract_reason(models.TransientModel):
                         'name': self.datas_fname,
                         'res_model': self._context['res_model']}
                 data_file.append([0, False, data])
-            Employees = self.env['nstdamas.employee']
+            Employees = self.env['hr.employee']
             Emp = Employees.search(
-                [['emp_rusers_id', '=', self._uid]],
+                [['user_id', '=', self._uid]],
                 limit=1)
             if Emp:
                 newline += str(Emp.name_get()[0][1]) + "\n "
@@ -100,8 +100,8 @@ class purchase_contract_reason(models.TransientModel):
         if 'poc_id' in self._context:
             poc_obj = self.env['purchase.contract']
             poc = poc_obj.browse(self._context['poc_id'])[0]
-            Employees = self.env['nstdamas.employee']
-            Emp = Employees.search([['emp_rusers_id',
+            Employees = self.env['hr.employee']
+            Emp = Employees.search([['user_id',
                                      '=',
                                      self._uid]
                                     ], limit=1)

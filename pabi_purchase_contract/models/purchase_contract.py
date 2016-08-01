@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 from pytz import timezone
 from openerp import models, fields, api, _
+from openerp.osv import osv
 from openerp import SUPERUSER_ID
 import datetime
 from dateutil.relativedelta import relativedelta as rdelta
-from openerp.osv import osv
 
 DRAFT = 'D'
 GENERATE = 'G'
@@ -28,15 +30,15 @@ WARRANTY_TYPE = [('D', "Day"),
 REPORT_NO = 0
 
 
-class purchase_contract(models.Model):
+class PurchaseContract(models.Model):
     _name = 'purchase.contract'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
     @api.multi
     def get_admin_id(self):
-        Employees = self.env['nstdamas.employee']
+        Employees = self.env['hr.employee']
         Emp = Employees.search(
-            [['emp_rusers_id', '=', self._uid]],
+            [['user_id', '=', self._uid]],
             limit=1)
         if Emp:
             return Emp.id
@@ -82,7 +84,7 @@ class purchase_contract(models.Model):
                         str(purchase.order_id.fine_condition) + " / " + \
                         str(datetime.datetime.strptime(
                             purchase.order_id.date_fine,
-                            '%Y-%m-%d').strftime('%m/%d/%y'))
+                            '%Y-%m-%d').strftime('%d/%m/%Y'))
                 else:
                     return False
             else:
@@ -91,7 +93,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.multi
-    def set_fine_rate(self):
+    def _compute_fine_rate(self):
         if 'active_model' in self._context and 'active_id' in self._context:
             res_model = self._context['active_model']
             res_id = self._context['active_id']
@@ -153,16 +155,6 @@ class purchase_contract(models.Model):
             return False
 
     @api.multi
-    def get_operating_unit_id(self):
-        if 'active_model' in self._context and 'active_id' in self._context:
-            res_model = self._context['active_model']
-            res_id = self._context['active_id']
-            PD = self.env[res_model].browse(res_id)
-            return PD.operating_unit_id
-        else:
-            return False
-
-    @api.multi
     def get_currency_id(self):
         if 'active_model' in self._context and 'active_id' in self._context:
             res_model = self._context['active_model']
@@ -175,7 +167,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_currency_id(self):
+    def _compute_currency_id(self):
         if self.pd_id:
             self.currency_id = self.pd_id.currency_id
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -199,7 +191,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_purchase_type_id(self):
+    def _compute_purchase_type_id(self):
         if self.pd_id:
             self.purchase_type_id = self.pd_id.purchase_type_id.id
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -223,7 +215,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_purchase_method_id(self):
+    def _compute_purchase_method_id(self):
         if self.pd_id:
             self.purchase_method_id = self.pd_id.purchase_method_id.id
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -247,7 +239,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_is_central_purchase(self):
+    def _compute_is_central_purchase(self):
         if self.pd_id:
             self.is_central_purchase = self.pd_id.is_central_purchase
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -260,37 +252,39 @@ class purchase_contract(models.Model):
 
     @api.multi
     def get_org_groups_id(self):
+        Ext_group = 'base.group_pabi_purchase_contract_user_'
         if self._uid:
-            Employees = self.env['nstdamas.employee']
-            Groups = self.env['res.groups']
+            Employees = self.env['hr.employee']
             Emp = Employees.search(
-                [['emp_rusers_id', '=', self._uid]], limit=1)
-            Group = Groups.search(
-                [['comment',
-                  'in',
-                  ['ORG01',
-                   'ORG02',
-                   'ORG03',
-                   'ORG04',
-                   'ORG05',
-                   'ORG06']],
-                 ['comment',
-                  'like',
-                  'ORG' + str(Emp.emp_org_id.org_shortid)]],
-                limit=1)
-            return Group
+                [['user_id', '=', self._uid]], limit=1)
+            gid = False
+            if Emp and self.env.ref(
+                'base.group_pabi_purchase_contract_user').id in \
+                self.env.user.groups_id.mapped('id'):
+                if Emp.org_id.code == 'CT':
+                    gid = self.env.ref(Ext_group + 'central')
+                else:
+                    gid = self.env.ref(Ext_group + Emp.org_id.code.lower())
+                return gid
+            else:
+                raise osv.except_osv(
+                    _(u'Error!!'),
+                    _("""You do not have permission to create.
+                        Please contact your system administrator."""))
         else:
-            return False
+            raise osv.except_osv(
+                _(u'Error!!'),
+                _("""You do not have permission to create."""))
 
     @api.model
     def create(self, vals):
         # Get 2 Digits Org
         formatCode = ""
-        Employees = self.env['nstdamas.employee']
-        Orgs = self.env['nstdamas.org']
+        Employees = self.env['hr.employee']
+        Orgs = self.env['res.org']
         Emp = Employees.search([['id', '=', vals.get('admin_id', False)]],
                                limit=1)
-        Org = Orgs.search([['id', '=', Emp.emp_org_id.id]], limit=1)
+        Org = Orgs.search([['id', '=', Emp.org_id.id]], limit=1)
         if not Org:
             msg = _('You cannot create PO contract without Org')
             raise osv.except_osv(_(u'Error!'), msg)
@@ -301,38 +295,38 @@ class purchase_contract(models.Model):
         RevNo = vals.get('poc_rev', 0)
         # New Contract (CENTRAL-2016-322-R1)
         if RevNo == 0:
-            self.env.cr.execute(""" SELECT Count(id) AS c
-                                    FROM purchase_contract
-                                    WHERE poc_org = '%s'
-                                    AND year = '%s'
-                                    AND poc_rev = 0 """ %
-                                (str(Org.org_shortname_en),
+            self.env.cr.execute("SELECT Count(id) AS c"\
+                                " FROM purchase_contract"\
+                                " WHERE poc_org = %s"\
+                                " AND year = %s"\
+                                " AND poc_rev = 0",
+                                (str(Org.code),
                                  str(ActionDate.year)))
             datas = self.env.cr.fetchone()
             CountPO = datas and datas[0] or 0
             running = str(CountPO + 1)
-            formatCode = str(Org.org_shortname_en)
+            formatCode = str(Org.code)
             formatCode += '-' + str(ActionDate.year)
             formatCode += '-' + str(running)
         # Reversion (CO-51-2016-322-R1)
         else:
             running = vals.get('running', 0)
-            formatCode = str(Org.org_shortname_en)
+            formatCode = str(Org.code)
             formatCode += '-' + str(ActionDate.year)
             formatCode += '-' + str(running)
             vals.update({'poc_rev': RevNo})
 
-        vals.update({'poc_org': str(Org.org_shortname_en)})
+        vals.update({'poc_org': str(Org.code)})
         vals.update({'poc_code': formatCode})
         vals.update({'year': str(ActionDate.year)})
         vals.update({'running': running})
         vals.update({'state': GENERATE})
-        po_contract = super(purchase_contract, self).create(vals)
+        po_contract = super(PurchaseContract, self).create(vals)
         return po_contract
 
     @api.multi
     def write(self, vals):
-        po_contract = super(purchase_contract, self).write(vals)
+        po_contract = super(PurchaseContract, self).write(vals)
         return po_contract
 
     @api.multi
@@ -352,7 +346,7 @@ class purchase_contract(models.Model):
     )
     display_code = fields.Char(
         string="PO No.",
-        compute='get_display_code'
+        compute='_compute_display_code'
     )
     pd_id = fields.Many2one(
         'purchase.requisition',
@@ -366,7 +360,7 @@ class purchase_contract(models.Model):
     )
     is_central_purchase = fields.Boolean(
         string="Central Purchase",
-        compute='set_is_central_purchase',
+        compute='_compute_is_central_purchase',
         track_visibility='onchange',
         default=get_is_central_purchase
     )
@@ -389,29 +383,16 @@ class purchase_contract(models.Model):
         readonly=True
     )
     admin_id = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         ondelete='set null',
         string="Creator",
         default=get_admin_id
-    )
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        ondelete='set null',
-        string="Operating Unit",
-        default=get_operating_unit_id
     )
     admin_org_groups_id = fields.Many2one(
         'res.groups',
         ondelete='set null',
         string="Org Group",
-        domain=[('comment',
-                 'in',
-                 ['ORG01',
-                  'ORG02',
-                  'ORG03',
-                  'ORG04',
-                  'ORG05',
-                  'ORG06'])],
+        domain=[],
         default=get_org_groups_id
     )
     contract_type_id = fields.Many2one(
@@ -453,13 +434,13 @@ class purchase_contract(models.Model):
     )
     duration_start2end = fields.Char(
         string="Duration",
-        compute='get_duration_start2end'
+        compute='_compute_duration_start2end'
     )
     currency_id = fields.Many2one(
         'res.currency',
         ondelete='set null',
         string="Currency",
-        compute='set_currency_id',
+        compute='_compute_currency_id',
         track_visibility='onchange',
         default=get_currency_id,
         domain=[('name', 'in', ['THB', 'EUR', 'USD', 'JPY'])]
@@ -475,7 +456,7 @@ class purchase_contract(models.Model):
         'purchase.type',
         string="Type",
         track_visibility='onchange',
-        compute='set_purchase_type_id',
+        compute='_compute_purchase_type_id',
         method=True,
         store=False,
         default=get_purchase_type_id
@@ -485,7 +466,7 @@ class purchase_contract(models.Model):
         ondelete='set null',
         string="Purchase Method",
         track_visibility='onchange',
-        compute='set_purchase_method_id',
+        compute='_compute_purchase_method_id',
         method=True,
         store=False,
         default=get_purchase_method_id
@@ -516,17 +497,17 @@ class purchase_contract(models.Model):
     )
     fine_rate = fields.Char(
         string="Fine Rate",
-        compute='set_fine_rate',
+        compute='_compute_fine_rate',
         default='get_fine_rate'
     )
     collateral_no = fields.Char(string="Collateral No.")
     contractual_amt = fields.Float(
         "Contractual Amount",
         digits=(10, 2))
-    collateral_due_date = fields.Date(string='Collateral due date')
-    collateral_remand_date = fields.Date('Collateral remand date')
-    collateral_remand_real_date = fields.Date('Collateral remand date(Real)')
-    collateral_received_date = fields.Date(string='Collateral received date')
+    collateral_due_date = fields.Date(string='Collateral Due date')
+    collateral_remand_date = fields.Date('Collateral Remand date')
+    collateral_remand_real_date = fields.Date('Collateral Remand date(Real)')
+    collateral_received_date = fields.Date(string='Collateral Received date')
     bank = fields.Char(string="Bank")
     branch = fields.Char(string="Branch")
     account = fields.Char(string="Account")
@@ -542,44 +523,44 @@ class purchase_contract(models.Model):
     write_uid = fields.Many2one('res.users',
                                 ondelete='set null',
                                 string="Write User")
-    write_emp_id = fields.Many2one('nstdamas.employee',
-                                   compute='get_write_emp')
+    write_emp_id = fields.Many2one('hr.employee',
+                                   compute='_compute_write_emp_id')
     active = fields.Boolean(
         string="Active",
         default=True
     )
     send_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Send By'
     )
     send_date = fields.Date('Send Date')
     close_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Send By'
     )
     close_date = fields.Date(string='Send Date')
     verify_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Verify By'
     )
     verify_date = fields.Date(string='Verify Date')
     cancel_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Cancel By'
     )
     cancel_date = fields.Date(string='Cancel Date')
     termination_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Termination By'
     )
     termination_date = fields.Date(string='Termination Date')
     reflow_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Reflow By'
     )
     reflow_date = fields.Date(string='Reflow Date')
     reversion_uid = fields.Many2one(
-        'nstdamas.employee',
+        'hr.employee',
         string='Reversion By'
     )
     reversion_date = fields.Date(string='Reversion Date')
@@ -588,15 +569,16 @@ class purchase_contract(models.Model):
 
     @api.v7
     def action_button_verify_doc_v7(self, cr, uid, ids, context=None):
-        Employees = self.pool.get('nstdamas.employee')
-        emp_id = Employees.get_rusers_idByUid(cr, uid, uid)
+        Employees = self.pool.get('hr.employee')
+        Emp = Employees.search([['user_id', '=', self._uid]],
+                                limit=1)
         verify_date = datetime.datetime.now(timezone('UTC'))
-        if emp_id:
+        if Emp:
             return self.write(cr,
                               uid,
                               ids,
                               {'is_verify': True,
-                               'verify_uid': emp_id,
+                               'verify_uid': Emp.id,
                                'verify_date': verify_date}
                               )
         return self.write(cr,
@@ -613,8 +595,8 @@ class purchase_contract(models.Model):
             [('res_model', '=', 'purchase.contract'),
              ('res_id', '=', self.id)])
         if doc_ids:
-            Employees = self.env['nstdamas.employee']
-            Emp = Employees.search([['emp_rusers_id', '=', self._uid]],
+            Employees = self.env['hr.employee']
+            Emp = Employees.search([['user_id', '=', self._uid]],
                                    limit=1)
             if Emp:
                 self.send_doc_uid = Emp.id
@@ -633,8 +615,8 @@ class purchase_contract(models.Model):
     @api.multi
     def action_button_close(self):
         if self.collateral_remand_date and self.collateral_remand_date:
-            Employees = self.env['nstdamas.employee']
-            Emp = Employees.search([['emp_rusers_id', '=', self._uid]],
+            Employees = self.env['hr.employee']
+            Emp = Employees.search([['user_id', '=', self._uid]],
                                    limit=1)
             if Emp:
                 self.close_uid = Emp.id
@@ -645,14 +627,16 @@ class purchase_contract(models.Model):
         else:
             raise osv.except_osv(
                 _(u'Error!!'),
-                _("""Please enter \"Collateral Received Date\"
-                    and \"CollateralRemand Date\"."""))
+                _("""Please enter
+                    \"Collateral Received Date\" and
+                    \"Collateral Remand Date\"."""))
         return True
 
     @api.multi
     def action_button_reflow(self):
-        Employees = self.env['nstdamas.employee']
-        Emp = Employees.search([['emp_rusers_id', '=', self._uid]], limit=1)
+        Employees = self.env['hr.employee']
+        Emp = Employees.search([['user_id', '=', self._uid]],
+                               limit=1)
         if Emp:
             self.reflow_uid = Emp.id
         else:
@@ -663,8 +647,9 @@ class purchase_contract(models.Model):
 
     @api.multi
     def action_button_verify_doc(self):
-        Employees = self.env['nstdamas.employee']
-        Emp = Employees.search([['emp_rusers_id', '=', self._uid]], limit=1)
+        Employees = self.env['hr.employee']
+        Emp = Employees.search([['user_id', '=', self._uid]],
+                               limit=1)
         if Emp:
             self.verify_uid = Emp.id
         else:
@@ -675,18 +660,18 @@ class purchase_contract(models.Model):
 
     @api.multi
     def action_button_reversion(self):
-        self.env.cr.execute("""SELECT Count(id) as c
-                                FROM purchase_contract
-                                WHERE poc_code = '%s'
-                                AND state = '%s'""" %
+        self.env.cr.execute("SELECT Count(id) AS c"\
+                            " FROM purchase_contract"\
+                            " WHERE poc_code = '%s'"\
+                            " AND state = '%s'",
                             (str(self.poc_code), GENERATE))
         ctnGenerate = self.env.cr.fetchone()
         CountPOGenerate = ctnGenerate and ctnGenerate[0] or 0
         if CountPOGenerate == 0:
-            self.env.cr.execute("""SELECT Count(id) as c
-                                    FROM purchase_contract
-                                    WHERE poc_code = '%s'""" %
-                                str(self.poc_code))
+            self.env.cr.execute("SELECT Count(id) AS c"\
+                                " FROM purchase_contract"\
+                                " WHERE poc_code = '%s'",
+                                (str(self.poc_code)))
             datas = self.env.cr.fetchone()
             CountPORev = datas and datas[0] or 0
             NextRev = CountPORev
@@ -703,18 +688,16 @@ class purchase_contract(models.Model):
                 name = filename + '_R' + str(NextRev) + file_extension
                 doc_id.copy(
                     {'res_id': po.id, 'name': name})
-            Employees = self.env['nstdamas.employee']
-            Emp = Employees.search([['emp_rusers_id',
-                                     '=',
-                                     self._uid
-                                     ]], limit=1)
+            Employees = self.env['hr.employee']
+            Emp = Employees.search([['user_id', '=', self._uid]],
+                                   limit=1)
             if Emp:
                 self.reflow_uid = Emp.id
             else:
                 self.reflow_uid = SUPERUSER_ID
             self.send_doc_date = datetime.datetime.now(timezone('UTC'))
             form = self.env.ref(
-                'pabi_purchase_contract.purchase_contract_form_view',
+                'pabi_PurchaseContract.PurchaseContract_form_view',
                 False
             )
             return {
@@ -730,8 +713,8 @@ class purchase_contract(models.Model):
             }
         else:
             raise osv.except_osv(
-                _(u'Can not to be Reversion'), _('The contract no. ') +
-                self.poc_code + _(' has not send documents'))
+                _(u'Can not to be Reversion'), _('The contract no. ')
+                + self.poc_code + _(' has not send documents'))
 
     @api.multi
     def action_button_delete_reversion(self):
@@ -741,7 +724,7 @@ class purchase_contract(models.Model):
                          order="poc_rev desc",
                          limit=1)
         form = self.env.ref(
-            'pabi_purchase_contract.purchase_contract_form_view',
+            'pabi_PurchaseContract.PurchaseContract_form_view',
             False
         )
         return {'name': 'PO Contract',
@@ -754,50 +737,50 @@ class purchase_contract(models.Model):
                 'target': 'current',
                 'res_id': po.id}
 
-    @api.one
+    @api.multi
     @api.onchange('admin_id')
     def get_admin_org_groups_id(self):
+        Ext_group = 'base.group_pabi_purchase_contract_user_'
         if self.admin_id:
-            Employees = self.env['nstdamas.employee']
-            Groups = self.env['res.groups']
-            Emp = Employees.search([['emp_rusers_id',
-                                     '=',
-                                     self._uid
-                                     ]
-                                    ], limit=1)
-            Groups = self.env['res.groups']
-            Group = Groups.search([['comment',
-                                    'in',
-                                    ['ORG01',
-                                     'ORG02',
-                                     'ORG03',
-                                     'ORG04',
-                                     'ORG05',
-                                     'ORG06']],
-                                   ['comment',
-                                    'like',
-                                    'ORG' + str(Emp.emp_org_id.org_shortid)]],
-                                  limit=1)
-            self.admin_org_groups_id = Group.id
+            Employees = self.env['hr.employee']
+            Emp = Employees.search(
+                [['user_id', '=', self._uid]], limit=1)
+            gid = False
+            if Emp and self.env.ref(
+                'base.group_pabi_purchase_contract_user').id in \
+                self.env.user.groups_id.mapped('id'):
+                if Emp.org_id.code == 'CT':
+                    gid = self.env.ref(Ext_group + 'central')
+                else:
+                    gid = self.env.ref(Ext_group + Emp.org_id.code.lower())
+                self.admin_org_groups_id = gid
+            else:
+                self.admin_org_groups_id = False
+                self.admin_id = False
+                raise osv.except_osv(
+                    _(u'Error!!'),
+                    _("""You do not have permission to access."""))
         else:
             self.admin_org_groups_id = False
+            self.admin_id = False
+            raise osv.except_osv(
+                _(u'Error!!'),
+                _("""You do not have permission to access."""))
 
-    @api.one
+    @api.multi
     @api.depends('write_uid')
-    def get_write_emp(self):
+    def _compute_write_emp_id(self):
         if self.write_uid:
-            Employees = self.env['nstdamas.employee']
-            Emp = Employees.search([['emp_rusers_id',
-                                     '=',
-                                     self.write_uid.id]],
+            Employees = self.env['hr.employee']
+            Emp = Employees.search([['user_id', '=', self.write_uid.id]],
                                    limit=1)
             self.write_emp_id = Emp.id
         else:
             self.write_emp_id = False
 
-    @api.one
+    @api.multi
     @api.depends('poc_code', 'poc_rev')
-    def get_display_code(self):
+    def _compute_display_code(self):
         name = ""
         if self.poc_code and self.poc_rev == 0:
             name = ("%s" % (self.poc_code or ''))
@@ -805,7 +788,7 @@ class purchase_contract(models.Model):
             name = ("%s-R%s" % (self.poc_code or '', str(self.poc_rev) or ''))
         self.display_code = name
 
-    @api.one
+    @api.multi
     @api.onchange('num_of_period')
     def get_num_of_period(self):
         if not self.num_of_period.isdigit():
@@ -813,10 +796,10 @@ class purchase_contract(models.Model):
         else:
             self.num_of_period = str(int(self.num_of_period))
 
-    @api.one
+    @api.multi
     @api.onchange('start_date', 'end_date')
     @api.depends('start_date', 'end_date')
-    def get_duration_start2end(self):
+    def _compute_duration_start2end(self):
         start2end = '0 Day'
         if self.start_date and self.end_date:
             if self.start_date <= self.end_date:
