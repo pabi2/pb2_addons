@@ -2,10 +2,10 @@
 import os
 from pytz import timezone
 from openerp import models, fields, api, _
+from openerp.osv import osv
 from openerp import SUPERUSER_ID
 import datetime
 from dateutil.relativedelta import relativedelta as rdelta
-from openerp.osv import osv
 
 DRAFT = 'D'
 GENERATE = 'G'
@@ -28,7 +28,7 @@ WARRANTY_TYPE = [('D', "Day"),
 REPORT_NO = 0
 
 
-class purchase_contract(models.Model):
+class PurchaseContract(models.Model):
     _name = 'purchase.contract'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
@@ -91,7 +91,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.multi
-    def set_fine_rate(self):
+    def _compute_fine_rate(self):
         if 'active_model' in self._context and 'active_id' in self._context:
             res_model = self._context['active_model']
             res_id = self._context['active_id']
@@ -175,7 +175,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_currency_id(self):
+    def _compute_currency_id(self):
         if self.pd_id:
             self.currency_id = self.pd_id.currency_id
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -199,7 +199,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_purchase_type_id(self):
+    def _compute_purchase_type_id(self):
         if self.pd_id:
             self.purchase_type_id = self.pd_id.purchase_type_id.id
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -223,7 +223,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_purchase_method_id(self):
+    def _compute_purchase_method_id(self):
         if self.pd_id:
             self.purchase_method_id = self.pd_id.purchase_method_id.id
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -247,7 +247,7 @@ class purchase_contract(models.Model):
             return False
 
     @api.one
-    def set_is_central_purchase(self):
+    def _compute_is_central_purchase(self):
         if self.pd_id:
             self.is_central_purchase = self.pd_id.is_central_purchase
         elif 'active_model' in self._context and 'active_id' in self._context:
@@ -301,11 +301,11 @@ class purchase_contract(models.Model):
         RevNo = vals.get('poc_rev', 0)
         # New Contract (CENTRAL-2016-322-R1)
         if RevNo == 0:
-            self.env.cr.execute(""" SELECT Count(id) AS c
-                                    FROM purchase_contract
-                                    WHERE poc_org = '%s'
-                                    AND year = '%s'
-                                    AND poc_rev = 0 """ %
+            self.env.cr.execute("SELECT Count(id) AS c"\
+                                "FROM PurchaseContract"\
+                                "WHERE poc_org = '%s'"\
+                                "AND year = '%s'"\
+                                "AND poc_rev = 0",
                                 (str(Org.org_shortname_en),
                                  str(ActionDate.year)))
             datas = self.env.cr.fetchone()
@@ -327,12 +327,12 @@ class purchase_contract(models.Model):
         vals.update({'year': str(ActionDate.year)})
         vals.update({'running': running})
         vals.update({'state': GENERATE})
-        po_contract = super(purchase_contract, self).create(vals)
+        po_contract = super(PurchaseContract, self).create(vals)
         return po_contract
 
     @api.multi
     def write(self, vals):
-        po_contract = super(purchase_contract, self).write(vals)
+        po_contract = super(PurchaseContract, self).write(vals)
         return po_contract
 
     @api.multi
@@ -352,7 +352,7 @@ class purchase_contract(models.Model):
     )
     display_code = fields.Char(
         string="PO No.",
-        compute='get_display_code'
+        compute='_compute_display_code'
     )
     pd_id = fields.Many2one(
         'purchase.requisition',
@@ -366,7 +366,7 @@ class purchase_contract(models.Model):
     )
     is_central_purchase = fields.Boolean(
         string="Central Purchase",
-        compute='set_is_central_purchase',
+        compute='_compute_is_central_purchase',
         track_visibility='onchange',
         default=get_is_central_purchase
     )
@@ -453,13 +453,13 @@ class purchase_contract(models.Model):
     )
     duration_start2end = fields.Char(
         string="Duration",
-        compute='get_duration_start2end'
+        compute='_compute_duration_start2end'
     )
     currency_id = fields.Many2one(
         'res.currency',
         ondelete='set null',
         string="Currency",
-        compute='set_currency_id',
+        compute='_compute_currency_id',
         track_visibility='onchange',
         default=get_currency_id,
         domain=[('name', 'in', ['THB', 'EUR', 'USD', 'JPY'])]
@@ -475,7 +475,7 @@ class purchase_contract(models.Model):
         'purchase.type',
         string="Type",
         track_visibility='onchange',
-        compute='set_purchase_type_id',
+        compute='_compute_purchase_type_id',
         method=True,
         store=False,
         default=get_purchase_type_id
@@ -485,7 +485,7 @@ class purchase_contract(models.Model):
         ondelete='set null',
         string="Purchase Method",
         track_visibility='onchange',
-        compute='set_purchase_method_id',
+        compute='_compute_purchase_method_id',
         method=True,
         store=False,
         default=get_purchase_method_id
@@ -516,7 +516,7 @@ class purchase_contract(models.Model):
     )
     fine_rate = fields.Char(
         string="Fine Rate",
-        compute='set_fine_rate',
+        compute='_compute_fine_rate',
         default='get_fine_rate'
     )
     collateral_no = fields.Char(string="Collateral No.")
@@ -543,7 +543,7 @@ class purchase_contract(models.Model):
                                 ondelete='set null',
                                 string="Write User")
     write_emp_id = fields.Many2one('nstdamas.employee',
-                                   compute='get_write_emp')
+                                   compute='_compute_write_emp_id')
     active = fields.Boolean(
         string="Active",
         default=True
@@ -675,18 +675,18 @@ class purchase_contract(models.Model):
 
     @api.multi
     def action_button_reversion(self):
-        self.env.cr.execute("""SELECT Count(id) as c
-                                FROM purchase_contract
-                                WHERE poc_code = '%s'
-                                AND state = '%s'""" %
+        self.env.cr.execute("SELECT Count(id) AS c"\
+                            "FROM PurchaseContract"\
+                            "WHERE poc_code = '%s'"\
+                            "AND state = '%s'",
                             (str(self.poc_code), GENERATE))
         ctnGenerate = self.env.cr.fetchone()
         CountPOGenerate = ctnGenerate and ctnGenerate[0] or 0
         if CountPOGenerate == 0:
-            self.env.cr.execute("""SELECT Count(id) as c
-                                    FROM purchase_contract
-                                    WHERE poc_code = '%s'""" %
-                                str(self.poc_code))
+            self.env.cr.execute("SELECT Count(id) AS c"\
+                                "FROM PurchaseContract"\
+                                "WHERE poc_code = '%s'",
+                                (str(self.poc_code)))
             datas = self.env.cr.fetchone()
             CountPORev = datas and datas[0] or 0
             NextRev = CountPORev
@@ -714,7 +714,7 @@ class purchase_contract(models.Model):
                 self.reflow_uid = SUPERUSER_ID
             self.send_doc_date = datetime.datetime.now(timezone('UTC'))
             form = self.env.ref(
-                'pabi_purchase_contract.purchase_contract_form_view',
+                'pabi_PurchaseContract.PurchaseContract_form_view',
                 False
             )
             return {
@@ -730,7 +730,7 @@ class purchase_contract(models.Model):
             }
         else:
             raise osv.except_osv(
-                _(u'Can not to be Reversion'), _('The contract no. ') +
+                _(u'Can not to be Reversion'), _('The contract no. ') + 
                 self.poc_code + _(' has not send documents'))
 
     @api.multi
@@ -741,7 +741,7 @@ class purchase_contract(models.Model):
                          order="poc_rev desc",
                          limit=1)
         form = self.env.ref(
-            'pabi_purchase_contract.purchase_contract_form_view',
+            'pabi_PurchaseContract.PurchaseContract_form_view',
             False
         )
         return {'name': 'PO Contract',
@@ -784,7 +784,7 @@ class purchase_contract(models.Model):
 
     @api.one
     @api.depends('write_uid')
-    def get_write_emp(self):
+    def _compute_write_emp_id(self):
         if self.write_uid:
             Employees = self.env['nstdamas.employee']
             Emp = Employees.search([['emp_rusers_id',
@@ -797,7 +797,7 @@ class purchase_contract(models.Model):
 
     @api.one
     @api.depends('poc_code', 'poc_rev')
-    def get_display_code(self):
+    def _compute_display_code(self):
         name = ""
         if self.poc_code and self.poc_rev == 0:
             name = ("%s" % (self.poc_code or ''))
@@ -816,7 +816,7 @@ class purchase_contract(models.Model):
     @api.one
     @api.onchange('start_date', 'end_date')
     @api.depends('start_date', 'end_date')
-    def get_duration_start2end(self):
+    def _compute_duration_start2end(self):
         start2end = '0 Day'
         if self.start_date and self.end_date:
             if self.start_date <= self.end_date:

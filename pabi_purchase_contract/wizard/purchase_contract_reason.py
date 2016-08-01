@@ -6,7 +6,7 @@ import datetime
 from pytz import timezone
 
 
-class purchase_contract_reason(models.TransientModel):
+class PurchaseContractReason(models.TransientModel):
     _name = "purchase.contract.reason"
     _description = "Contract Note"
 
