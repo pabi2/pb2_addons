@@ -36,6 +36,27 @@ def _extend_name_results_translation(self, domain, field_name,
     return results
 
 
+def _extend_search_results_translation(self, results, name, limit):
+    result_count = 0
+    if results:
+        result_count = len(results)
+    if result_count < limit:
+        print "\n"
+        print "name==================",name
+        field_name = 'name'
+        trans_name = '%s,%s' % (self._model, field_name)
+        print "trans_name....................",trans_name
+        self._cr.execute("""
+            SELECT res_id
+            FROM ir_translation
+            WHERE value ilike '%s' AND
+                name = '%s'
+        """ % (name, trans_name))
+        res = self._cr.fetchall()
+        result = [r[0] for r in res]
+        print "result=====================================",result
+        return result
+
 class ModelExtended(models.Model):
     _inherit = 'ir.model'
 
@@ -53,6 +74,9 @@ class ModelExtended(models.Model):
                 # Perform standard name search
                 res = name_search.origin(
                     self, name=name, args=args, operator=operator, limit=limit)
+#                 print "\n"
+#                 print "res________________",res
+#                 print "\n"
                 enabled = self.env.context.get('name_search_extended', True)
                 # Perform extended name search
                 # Note: Empty name causes error on
@@ -72,12 +96,37 @@ class ModelExtended(models.Model):
                 return res
             return name_search
 
+        def make_search():
+            @api.model
+            def _search(self, args, offset=0, limit=None, order=None, 
+                        count=False, access_rights_uid=None):
+                # Perform standard _search
+                result = _search.origin(
+                    self, args=args, offset=offset, limit=limit, order=order, 
+                        count=count, access_rights_uid=access_rights_uid)
+                enabled = self.env.context.get('name_search_extended', True)
+                if args:
+                     # Perform extended search
+                    name = False
+                    for a in args:
+                        if isinstance(a, list) and len(a) == 3:
+                            name = a[2]
+                            break
+                    if name:
+                        result_translation = _extend_search_results_translation(
+                            self, result, name, limit)
+                        if result_translation:
+                            result = result + result_translation
+                return result
+            return _search
+
         if ids is None:
             ids = self.search(cr, SUPERUSER_ID, [])
         for model in self.browse(cr, SUPERUSER_ID, ids):
             Model = self.pool.get(model.model)
             if Model:
                 Model._patch_method('name_search', make_name_search())
+                Model._patch_method('_search', make_search())
         return super(ModelExtended, self)._register_hook(cr)
 
 # @api.model
