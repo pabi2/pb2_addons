@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+	    
+   		# Stock Request
+        <record id="view_stock_request_filter" model="ir.ui.view">
+            <field name="name">view.stock.request.filter</field>
+            <field name="model">stock.request</field>
+            <field name="arch" type="xml">
+                <search string="Search Stock Request">
+                    <field name="name"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    
+       	<record model="ir.ui.view" id="view_stock_request_tree">
+            <field name="name">view.stock.request.tree</field>
+            <field name="model">stock.request</field>
+            <field name="arch" type="xml">
+                <tree string="Stock Request"
+                	colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                    <field name="name" />
+                    <field name="employee_id" />
+                    <field name="date_request" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+   		
+        <record model="ir.ui.view" id="view_stock_request_form">
+            <field name="name">view.stock.request.form</field>
+            <field name="model">stock.request</field>
+            <field name="arch" type="xml">
+            	<form string="Stock Request" >
+                <header>
+                    <button name="action_to_approve1" string="To Approve 1" states="draft" type="object" class="oe_highlight"/>
+                    <button name="action_to_approve2" string="To Approve 2" states="approve1" type="object" class="oe_highlight"/>
+                    <button name="action_approve" string="Approve" states="approve2" type="object" class="oe_highlight"/>
+                    <button name="action_done" string="Transfer" states="approved" type="object" class="oe_highlight"/>
+                    <button name="action_return" string="Return" type="object" class="oe_highlight"
+                    	attrs="{'invisible': ['|', ('state', '!=', 'done'), ('type', '!=', 'borrow')]}" />
+                    <button name="action_cancel" string="Cancel" states="approve1,approve2,approved" type="object" />
+                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approve1,approve2,approved,done" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Stock Rquest " attrs="{'invisible': [('type', '!=', 'request')]}"/>
+                            <label string="Stock Transfer " attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
+                            <label string="Stock Borrow " attrs="{'invisible': [('type', '!=', 'borrow')]}"/>
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons">
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" />
+                            <field name="type" invisible="1"/>
+                            <field name="picking_type_id"/>
+                            <field name="location_src_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+                            <field name="location_dest_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+                        </group>
+                        <group>
+                       		<field name="company_id" invisible="1" />
+                    		<field name="date_request" />
+                    		<field name="date_approve1" attrs="{'invisible': [('date_approve1', '=', False)]}"/>
+                    		<field name="date_approve2" attrs="{'invisible': [('date_approve2', '=', False)]}"/>
+                    		<field name="date_transfer" attrs="{'invisible': [('date_transfer', '=', False)]}"/>
+                    		<field name="date_return" attrs="{'invisible': [('date_return', '=', False)]}"/>
+                            <field name="transfer_picking_id" attrs="{'invisible': [('transfer_picking_id', '=', False)]}"/>
+                            <field name="return_picking_id" attrs="{'invisible': [('return_picking_id', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+	                    <page string="Requesting Materials" >
+		                   	<field name="line_ids" >
+		                   		<tree string="Products" editable="bottom"
+		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
+						            <field name="request_id" invisible="1" />
+						            <field name="product_id" />
+				                    <field name="onhand_qty" />
+				                    <field name="future_qty" />
+						            <field name="request_uom_qty" />
+						            <field name="product_uom_qty" />
+						            <field name="product_uom" />
+					            </tree>
+		                   	</field>
+	                   	</page>
+	           		</notebook>
+	           		<field name="note" />
+               	</sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+        
+        
+        
+		<record id="action_stock_request" model="ir.actions.act_window">
+            <field name="name">Stock Request</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'request')]</field>
+            <field name="context">{'default_type': 'request'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Request.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="action_stock_request" sequence="11"
+	    	id="menu_action_stock_request"  parent="stock.menu_stock_warehouse_mgmt"/> 
+	    	
+	    	
+		<record id="action_stock_transfer" model="ir.actions.act_window">
+            <field name="name">Stock Transfer</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'transfer')]</field>
+            <field name="context">{'default_type': 'transfer'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Transfer.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="action_stock_transfer" sequence="12"
+	    	id="menu_action_stock_transfer"  parent="stock.menu_stock_warehouse_mgmt"/> 
+	    	
+	    	
+		<record id="action_stock_borrow" model="ir.actions.act_window">
+            <field name="name">Stock Borrow</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'borrow')]</field>
+            <field name="context">{'default_type': 'borrow'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Borrow.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="action_stock_borrow" sequence="13"
+	    	id="menu_action_stock_borrow"  parent="stock.menu_stock_warehouse_mgmt"/> 
+	    	       
+    </data>
+</openerp>
