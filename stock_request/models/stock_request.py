@@ -178,6 +178,8 @@ class StockRequest(models.Model):
     @api.multi
     def action_to_approve1(self):
         self.ensure_one()
+        if not self.line_ids:
+            raise UserError('No lines!')
         self.write({'date_request': fields.Datetime.now(),
                     'state': 'approve1'})
 
