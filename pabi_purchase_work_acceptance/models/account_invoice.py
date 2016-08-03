@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 

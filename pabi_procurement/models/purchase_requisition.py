@@ -316,7 +316,7 @@ class PurchaseRequisition(models.Model):
             if ou_address.township_id else '',
             ou_address.district_id.name.strip()
             if ou_address.district_id else '',
-            ou_address.province_id.name.strip() 
+            ou_address.province_id.name.strip()
             if ou_address.province_id else '',
             ou_address.zip.strip()
             if ou_address.zip else '',

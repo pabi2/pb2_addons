@@ -369,6 +369,7 @@ class PurchaseMethod(models.Model):
         help='At least 1 RfQ must be created before verifying CfBs',
     )
 
+
 class PurchaseCommitteeType(models.Model):
     _name = 'purchase.committee.type'
     _description = 'PABI2 Purchase Committee Type'
