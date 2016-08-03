@@ -81,11 +81,19 @@ class StockRequest(models.Model):
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
     )
-    ref_picking_id = fields.Many2one(
+    transfer_picking_id = fields.Many2one(
         'stock.picking',
-        string='Ref Picking',
+        string='Transfer Picking',
         readonly=True,
         ondelete='restrict',
+        copy=False,
+    )
+    return_picking_id = fields.Many2one(
+        'stock.picking',
+        string='Return Picking',
+        readonly=True,
+        ondelete='restrict',
+        copy=False,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -107,6 +115,7 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'approve1': [('readonly', False)]},
+        copy=True,
     )
     note = fields.Text(
         string='Notes',
@@ -132,19 +141,27 @@ class StockRequest(models.Model):
     def action_approve(self):
         # Check for availability, if not available, show error
         # Create stock.picking
+        picking_id = self.create_picking_and_reserve()
+        if picking_id:
+            picking = self.env['stock.picking'].browse(picking_id)
+            if picking.state != 'assigned':
+                raise UserError('Requested material(s) not fully available!')
+        else:
+            raise UserError('Requested material(s) not of type stockable!')
         self.write({'date_approve2': fields.Datetime.now(),
                     'state': 'approved'})
 
     @api.multi
     def action_done(self):
-        # Check for availability, if not available, show error
-        # Create stock.picking
-        self.create_picking()
+        if self.transfer_picking_id:
+            self.transfer_picking_id.action_done()
         self.write({'date_transfer': fields.Datetime.now(),
                     'state': 'done'})
 
     @api.multi
     def action_cancel(self):
+        if self.transfer_picking_id:
+            self.transfer_picking_id.action_cancel()
         self.write({'state': 'cancel'})
 
     @api.multi
@@ -152,50 +169,54 @@ class StockRequest(models.Model):
         self.write({'state': 'draft'})
 
     @api.multi
-    def create_picking(self):
+    def create_picking_and_reserve(self):
+        self.ensure_one()
         picking_obj = self.env['stock.picking']
         move_obj = self.env['stock.move']
-        for request in self:
-            if all(t == 'service'
-                   for t in request.line_ids.mapped('product_id.type')):
+        if all(t == 'service'
+               for t in self.line_ids.mapped('product_id.type')):
+            return False
+        partner = self.employee_id.user_id.partner_id
+        if not partner:
+            raise ValidationError(_('Invalid Employee (no ref partner)'))
+        picking_type = self.picking_type_id
+        picking = picking_obj.create({
+            'origin': self.name,
+            'partner_id': partner.id,
+            'date_done': self.date_transfer,
+            'picking_type_id': picking_type.id,
+            'company_id': self.company_id.id,
+            'move_type': 'direct',
+            'note': self.note or "",
+            'invoice_state': 'none',
+        })
+        self.write({'transfer_picking_id': picking.id})
+        location_src_id = self.location_src_id.id
+        location_dest_id = self.location_dest_id.id
+        for line in self.line_ids:
+            if line.product_id and line.product_id.type == 'service':
                 continue
-            partner = request.employee_id.user_id.partner_id
-            if not partner:
-                raise ValidationError(_('Invalid Employee (no partner)'))
-            picking_type = request.picking_type_id
-            picking = picking_obj.create({
-                'origin': request.name,
-                'partner_id': partner.id,
-                'date_done': request.date_transfer,
+            move_obj.create({
+                'name': line.product_id.name,
+                'product_uom': line.product_uom.id,
+                'product_uos': line.product_uom.id,
+                'picking_id': picking.id,
                 'picking_type_id': picking_type.id,
-                'company_id': request.company_id.id,
-                'move_type': 'direct',
-                'note': request.note or "",
-                'invoice_state': 'none',
+                'product_id': line.product_id.id,
+                'product_uos_qty': abs(line.product_uom_qty),
+                'product_uom_qty': abs(line.product_uom_qty),
+                'state': 'draft',
+                'location_id': location_src_id,
+                'location_dest_id': location_dest_id,
             })
-            request.write({'ref_picking_id': picking.id})
-            location_src_id = request.location_src_id.id
-            location_dest_id = request.location_dest_id.id
-            for line in request.line_ids:
-                if line.product_id and line.product_id.type == 'service':
-                    continue
-                move_obj.create({
-                    'name': line.product_id.name,
-                    'product_uom': line.product_uom.id,
-                    'product_uos': line.product_uom.id,
-                    'picking_id': picking.id,
-                    'picking_type_id': picking_type.id,
-                    'product_id': line.product_id.id,
-                    'product_uos_qty': abs(line.product_uom_qty),
-                    'product_uom_qty': abs(line.product_uom_qty),
-                    'state': 'draft',
-                    'location_id': location_src_id,
-                    'location_dest_id': location_dest_id,
-                })
-            picking.action_confirm()
-            picking.force_assign()
-            picking.action_done()
-        return True
+            # # If we transfer in picking, this is not necessary
+            # # (we have option not to use picking at all.
+            # move.action_confirm()
+            # move.force_assign()
+            # move.action_done()
+        picking.action_confirm()
+        picking.action_assign()
+        return picking.id
 
 
 class StockRequestLine(models.Model):
@@ -232,6 +253,37 @@ class StockRequestLine(models.Model):
         string='Unit of Measure',
         required=True,
     )
+    location_src_id = fields.Many2one(
+        'stock.location',
+        related='request_id.location_src_id',
+        string='Src',
+        readonly=True,
+    )
+    onhand_qty = fields.Float(
+        string='Onhand Quantity',
+        compute='_compute_product_available',
+    )
+    future_qty = fields.Float(
+        string='Future Quantity',
+        compute='_compute_product_available',
+    )
+
+    @api.multi
+    @api.depends('product_id', 'product_uom', 'location_src_id')
+    def _compute_product_available(self):
+        for rec in self:
+            UOM = self.env['product.uom']
+            if rec.product_id:
+                qty = rec.product_id.with_context(
+                    location=rec.location_src_id.id)._product_available()
+                onhand_qty = qty[rec.product_id.id]['qty_available']
+                future_qty = qty[rec.product_id.id]['virtual_available']
+                rec.onhand_qty = UOM._compute_qty(rec.product_id.uom_id.id,
+                                                  onhand_qty,
+                                                  rec.product_uom.id)
+                rec.future_qty = UOM._compute_qty(rec.product_id.uom_id.id,
+                                                  future_qty,
+                                                  rec.product_uom.id)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
@@ -240,5 +292,3 @@ class StockRequestLine(models.Model):
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):
         self.product_uom_qty = self.request_uom_qty
-
-    # def create_picking(self, cr, uid, ids, context=None):
