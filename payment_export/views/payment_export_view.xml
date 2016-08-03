@@ -75,6 +75,7 @@
                         </group>
                         <group>
                             <field name="date_value"/>
+                            <field name="company_id"/>
                         </group>
                     </group>
                     <notebook>

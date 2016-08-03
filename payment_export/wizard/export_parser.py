@@ -2,6 +2,7 @@
 import os
 import base64
 import tempfile
+from operator import itemgetter
 from openerp import api, fields, models, _
 from openerp.exceptions import except_orm, Warning, RedirectWarning
 
@@ -25,11 +26,10 @@ class PaymentExportParser(models.TransientModel):
     def _validate_data(self, data_list):
         if not data_list:
             raise Warning(_('There is nothing to validate'))
-        invalid_data_list = [d['field_name'] for d in data_list
+        invalid_data_list = [d['id'] for d in data_list
                              if d['mandatory'] and not d['value']]
         if invalid_data_list:
-            raise Warning(_('Please enter valid data for : %s')
-                          % (",\n".join(invalid_data_list)))
+            raise Warning(_('Please enter valid data for '))
         return True
 
     @api.model
@@ -52,20 +52,19 @@ class PaymentExportParser(models.TransientModel):
         attachment_id = False
         raise Warning(_('Method not implemented!'))
 
-    @api.model
-    def _prepare_data(self):
-        raise Warning(_('Method not implemented!'))
 
     @api.multi
     def export_file(self):
         self.ensure_one()
         payment_id = self.env.context.get('active_id', False)
         payment_model = self.env.context.get('active_model', '')
+        payment = self.env[payment_model].browse(payment_id)
         final_line_text = False
-        datas = self._prepare_data()
+        datas = payment._prepare_data()
 
         for data_list in datas:
             self._validate_data(data_list)
+            data_list = sorted(data_list, key=itemgetter('sequence'))
             line_text = self._generate_text_line(data_list)
             if not final_line_text:
                 final_line_text = line_text

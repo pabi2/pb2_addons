@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        # Payment Export Configuration Line
+        <record model="ir.ui.view" id="view_payment_export_config_lines_tree">
+            <field name="name">view.payment.export.config.lines.tree</field>
+            <field name="model">payment.export.config.lines</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Export Configuration Lines" editable="bottom">
+                    <field name="sequence" />
+                    <field name="field_code" />
+                    <field name="notes"/>
+                    <field name="length" /> 
+                    <field name="mandatory" />
+                </tree>
+            </field>
+        </record>
+        
+        # Payment Export Configuration
+        <record model="ir.ui.view" id="view_payment_export_config_tree">
+            <field name="name">view.payment.export.config.tree</field>
+            <field name="model">payment.export.config</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Export Configuration" >
+                    <field name="date" />
+                    <field name="user_id" />
+                    <field name="company_id" />
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="view_payment_export_config_form">
+            <field name="name">view.payment.export.config.form</field>
+            <field name="model">payment.export.config</field>
+            <field name="arch" type="xml">
+                <form string="Payment Export Configuration" >
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="user_id" />
+                                <field name="company_id" />
+                            </group>
+                            <group>
+                                <field name="date" />
+                            </group>
+                        </group>
+                        <separator string="Header Configurations"/>
+                        <field name="header_config_line_ids" /> 
+                        <separator string="Invoice Details Configurations"/>
+                        <field name="invoice_config_line_ids"/>
+                        <separator string="Footer Configurations"/>
+                        <field name="footer_config_line_ids"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record id="action_payment_export_config" model="ir.actions.act_window">
+            <field name="name">Payment Export Configuration</field>
+            <field name="res_model">payment.export.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new payment export configuration.
+              </p>
+            </field>
+        </record>
+        <menuitem id="menu_payment_export_config" name="Payment Export Configurations"  parent="base.menu_administration"/>
+        
+        <menuitem action="action_payment_export_config"
+            id="menu_action_payment_export_config"  parent="menu_payment_export_config"/>
+
+    </data>
+</openerp>
