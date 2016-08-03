@@ -72,8 +72,6 @@
                     		<field name="date_approve2" attrs="{'invisible': [('date_approve2', '=', False)]}"/>
                     		<field name="date_transfer" attrs="{'invisible': [('date_transfer', '=', False)]}"/>
                     		<field name="date_return" attrs="{'invisible': [('date_return', '=', False)]}"/>
-                            <field name="transfer_picking_id" attrs="{'invisible': [('transfer_picking_id', '=', False)]}"/>
-                            <field name="return_picking_id" attrs="{'invisible': [('return_picking_id', '=', False)]}"/>
                         </group>
                     </group>
                     <notebook>
@@ -90,6 +88,16 @@
 						            <field name="product_uom" />
 					            </tree>
 		                   	</field>
+	                   	</page>
+	                    <page string="Other Info" >
+	                    	<group>
+	                    		<group>
+	                    			<field name="transfer_picking_id" />
+	                    		</group>
+	                    		<group>
+                            		<field name="return_picking_id" attrs="{'invisible': [('type', '!=', 'borrow')]}"/>
+	                    		</group>
+	                    	</group>
 	                   	</page>
 	           		</notebook>
 	           		<field name="note" />

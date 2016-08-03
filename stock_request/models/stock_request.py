@@ -21,7 +21,7 @@ class StockRequest(models.Model):
                ]
 
     name = fields.Char(
-        string='Reference',
+        string='Number',
         index=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -57,22 +57,27 @@ class StockRequest(models.Model):
     date_request = fields.Datetime(
         string='Request Date',
         readonly=True,
+        copy=False,
     )
     date_approve1 = fields.Datetime(
         string='Date Approve 1',
         readonly=True,
+        copy=False,
     )
     date_approve2 = fields.Datetime(
         string='Date Approve 2',
         readonly=True,
+        copy=False,
     )
     date_transfer = fields.Datetime(
         string='Transfer Date',
         readonly=True,
+        copy=False,
     )
     date_return = fields.Datetime(
         string='Return Date',
         readonly=True,
+        copy=False,
     )
     picking_type_id = fields.Many2one(
         'stock.picking.type',
@@ -228,6 +233,42 @@ class StockRequest(models.Model):
         self.ensure_one()
         self.write({'state': 'draft'})
 
+    @api.model
+    def _prepare_picking(self, request):
+        partner = request.employee_id.user_id.partner_id
+        if not partner:
+            raise ValidationError(_('Invalid Employee (no ref partner)'))
+        data = {
+            'origin': request.name,
+            'partner_id': partner.id,
+            'date_done': request.date_transfer,
+            'picking_type_id': request.picking_type_id.id,
+            'company_id': request.company_id.id,
+            'move_type': 'direct',
+            'note': request.note or "",
+            'invoice_state': 'none',
+        }
+        return data
+
+    @api.model
+    def _prepare_picking_line(self, line, picking,
+                              location_src_id,
+                              location_dest_id):
+        data = {
+            'name': line.product_id.name,
+            'product_uom': line.product_uom.id,
+            'product_uos': line.product_uom.id,
+            'picking_id': picking.id,
+            'picking_type_id': picking.picking_type_id.id,
+            'product_id': line.product_id.id,
+            'product_uos_qty': abs(line.product_uom_qty),
+            'product_uom_qty': abs(line.product_uom_qty),
+            'state': 'draft',
+            'location_id': location_src_id,
+            'location_dest_id': location_dest_id,
+        }
+        return data
+
     @api.multi
     def create_picking(self, ttype):
         self.ensure_one()
@@ -238,20 +279,7 @@ class StockRequest(models.Model):
         if all(t == 'service'
                for t in self.line_ids.mapped('product_id.type')):
             raise UserError('Requested material(s) not of type stockable!')
-        partner = self.employee_id.user_id.partner_id
-        if not partner:
-            raise ValidationError(_('Invalid Employee (no ref partner)'))
-        picking_type = self.picking_type_id
-        picking = picking_obj.create({
-            'origin': self.name,
-            'partner_id': partner.id,
-            'date_done': self.date_transfer,
-            'picking_type_id': picking_type.id,
-            'company_id': self.company_id.id,
-            'move_type': 'direct',
-            'note': self.note or "",
-            'invoice_state': 'none',
-        })
+        picking = picking_obj.create(self._prepare_picking(self))
         location_src_id = False
         location_dest_id = False
         if ttype == 'transfer':
@@ -265,19 +293,9 @@ class StockRequest(models.Model):
         for line in self.line_ids:
             if line.product_id and line.product_id.type == 'service':
                 continue
-            move_obj.create({
-                'name': line.product_id.name,
-                'product_uom': line.product_uom.id,
-                'product_uos': line.product_uom.id,
-                'picking_id': picking.id,
-                'picking_type_id': picking_type.id,
-                'product_id': line.product_id.id,
-                'product_uos_qty': abs(line.product_uom_qty),
-                'product_uom_qty': abs(line.product_uom_qty),
-                'state': 'draft',
-                'location_id': location_src_id,
-                'location_dest_id': location_dest_id,
-            })
+            move_obj.create(self._prepare_picking_line(line, picking,
+                                                       location_src_id,
+                                                       location_dest_id))
         return picking.id
 
 
