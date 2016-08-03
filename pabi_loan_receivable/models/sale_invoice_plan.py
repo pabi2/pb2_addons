@@ -15,4 +15,3 @@ class SaleInvoicePlan(models.Model):
         string='Payments',
         related='ref_invoice_id.payment_ids'
     )
-
