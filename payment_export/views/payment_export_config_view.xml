@@ -8,7 +8,9 @@
             <field name="arch" type="xml">
                 <tree string="Payment Export Configuration Lines" editable="bottom">
                     <field name="sequence" />
-                    <field name="field_code" />
+                    <field name="model_id"/>
+                    <field name="field_code" /> 
+                    <field name="default_value"/>
                     <field name="notes"/>
                     <field name="length" /> 
                     <field name="mandatory" />
@@ -47,8 +49,8 @@
                         </group>
                         <separator string="Header Configurations"/>
                         <field name="header_config_line_ids" /> 
-                        <separator string="Invoice Details Configurations"/>
-                        <field name="invoice_config_line_ids"/>
+                        <separator string="Details Configurations"/>
+                        <field name="detail_config_line_ids"/>
                         <separator string="Footer Configurations"/>
                         <field name="footer_config_line_ids"/>
                     </sheet>

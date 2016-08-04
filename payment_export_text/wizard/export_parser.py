@@ -24,6 +24,7 @@ class PaymentExportParser(models.TransientModel):
         payment_model = self.env.context.get('active_model', '')
         path = tempfile.mktemp('.' + self.file_type)
         temp = file(path, 'wb')
+        line_text = line_text.encode('utf-8').strip()
         temp.write(line_text)
         result = base64.b64encode(line_text)
         (dirName, fileName) = os.path.split(path)

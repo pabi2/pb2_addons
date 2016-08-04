@@ -26,10 +26,11 @@ class PaymentExportParser(models.TransientModel):
     def _validate_data(self, data_list):
         if not data_list:
             raise Warning(_('There is nothing to validate'))
-        invalid_data_list = [d['id'] for d in data_list
+        invalid_data_list = [d['notes'] for d in data_list
                              if d['mandatory'] and not d['value']]
         if invalid_data_list:
-            raise Warning(_('Please enter valid data for '))
+            raise Warning(_('Please enter valid data for: %s'
+                            %(',\n'.join(invalid_data_list))))
         return True
 
     @api.model

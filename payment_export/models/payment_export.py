@@ -175,16 +175,17 @@ class PaymentExport(models.Model):
             self.line_ids += export_line
 
     @api.model
-    def _get_eval_context(self):
+    def _get_eval_context(self, active_model_id, active_id):
         """ Prepare the context used when evaluating python code, like the
         condition or code server actions.
 
         :returns: dict -- evaluation context given to (safe_)eval """
+        active_model = str(self._model)
+        if active_model_id:
+            active_model = self.env['ir.model'].browse(active_model_id).model
         env = openerp.api.Environment(self._cr, self._uid, self._context)
-        model = env[str(self._model)]
-        obj = self
-        if self._context.get('active_model') == self._model and self._context.get('active_id'):
-            obj = model.browse(self._context['active_id'])
+        model = env[active_model]
+        obj = model.browse(active_id)
         return {
             # python libs
             'time': time,
@@ -201,7 +202,7 @@ class PaymentExport(models.Model):
             'object': obj,
             'obj': obj,
             # Deprecated use env or model instead
-            'self': self,
+            'self': obj,
             'pool': self.pool,
             'cr': self._cr,
             'uid': self._uid,

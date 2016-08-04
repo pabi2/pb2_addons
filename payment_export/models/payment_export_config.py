@@ -27,6 +27,10 @@ class PaymentExportConfigLine(models.Model):
         'payment.export.config',
         string='Invoice Detail Configuration',
     )
+    detail_configure_id = fields.Many2one(
+        'payment.export.config',
+        string='Detail Configuration',
+    )
     sequence = fields.Integer(
         string='Sequence',
         required=True,
@@ -42,8 +46,16 @@ class PaymentExportConfigLine(models.Model):
     mandatory = fields.Boolean(
         string='Mandatory?',
     )
-    notes = fields.Text(
+    notes = fields.Char(
         string='Remarks',
+    )
+    default_value = fields.Char(
+        string='Default Value',
+    )
+    model_id = fields.Many2one(
+        'ir.model',
+        string='Model',
+        required=False,
     )
 
 
@@ -60,13 +72,14 @@ class PaymentExportConfig(models.Model):
         'res.users',
         string='Responsible User',
         required=False,
-        default = lambda self:self.env.uid,
+        default=lambda self: self.env.uid,
     )
     company_id = fields.Many2one(
         'res.company',
         string='Company',
         required=False,
-        default=lambda self: self.env['res.company']._company_default_get('payment.export.config'),
+        default=lambda self: self.env['res.company'].
+        _company_default_get('payment.export.config'),
     )
     header_config_line_ids = fields.One2many(
         'payment.export.config.lines',
@@ -82,4 +95,9 @@ class PaymentExportConfig(models.Model):
         'payment.export.config.lines',
         'invoice_configure_id',
         string='Invoice Configurations',
+    )
+    detail_config_line_ids = fields.One2many(
+        'payment.export.config.lines',
+        'detail_configure_id',
+        string='Details Configurations',
     )
