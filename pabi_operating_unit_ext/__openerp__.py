@@ -31,6 +31,7 @@
         "hr_expense_auto_invoice",  # passing OU from Expense to Invoice
         "sale_operating_unit",
         "sale_stock_operating_unit",
+        "stock_request_operating_unit",
     ],
     "data": [
         "security/operating_unit_security.xml",
