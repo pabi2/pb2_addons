@@ -64,6 +64,16 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         res.update(vals)
         return res
 
+    def _prepare_item(self, line):
+        res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
+            _prepare_item(line)
+        res.update({
+            'price_unit': line.price_unit,
+            'tax_ids': line.tax_ids.ids,
+            'date_required': line.date_required,
+            'fixed_asset': line.fixed_asset,
+        })
+
     @api.model
     def _check_line_reference(self, pr_lines):
         num_of_reference = 0
