@@ -18,6 +18,7 @@ class PaymentExport(models.Model):
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        default="/",
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -96,6 +97,12 @@ class PaymentExport(models.Model):
         'res.company',
         string='Company',
     )
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', '/') == '/':
+            vals['name'] = self.env['ir.sequence'].get('payment.export') or '/'
+        return super(PaymentExport, self).create(vals)
 
     @api.multi
     @api.depends()

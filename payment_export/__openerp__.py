@@ -12,6 +12,7 @@
 
     """,
     "data": [
+        "data/payment_export_sequence.xml",
         "security/ir.model.access.csv",
         'wizard/export_parser_view.xml',
         "views/payment_export_config_view.xml",
