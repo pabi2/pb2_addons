@@ -74,6 +74,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'date_required': line.date_required,
             'fixed_asset': line.fixed_asset,
         })
+        return res
 
     @api.model
     def _check_line_reference(self, pr_lines):
