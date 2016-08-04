@@ -9,9 +9,11 @@ class PurchaseRequisition(models.Model):
     fine_condition = fields.Selection(
         selection=[
             ('day', 'Day'),
+            ('month', 'Month'),
             ('date', 'Date'),
         ],
         string='Fine Condition',
+        default='day',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},

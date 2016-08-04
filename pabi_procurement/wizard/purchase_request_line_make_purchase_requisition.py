@@ -74,6 +74,27 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'date_required': line.date_required,
             'fixed_asset': line.fixed_asset,
         })
+
+    @api.model
+    def _check_line_reference(self, pr_lines):
+        num_of_reference = 0
+        for pr_line in pr_lines:
+            if pr_line.request_id.request_ref_id:
+                num_of_reference += 1
+        if len(pr_lines) == num_of_reference and len(pr_lines) > 1:
+            raise UserError(
+                _("Can't create CfBs by PR lines with many references.")
+            )
+        return True
+
+    @api.model
+    def default_get(self, fields):
+        res = super(PurchaseRequestLineMakePurchaseRequisition,
+                    self).default_get(fields)
+        request_line_obj = self.env['purchase.request.line']
+        request_line_ids = self.env.context['active_ids'] or []
+        pr_lines = request_line_obj.browse(request_line_ids)
+        self._check_line_reference(pr_lines)
         return res
 
     @api.model
