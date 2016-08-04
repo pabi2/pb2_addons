@@ -64,6 +64,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         res.update(vals)
         return res
 
+    @api.model
     def _prepare_item(self, line):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
             _prepare_item(line)
