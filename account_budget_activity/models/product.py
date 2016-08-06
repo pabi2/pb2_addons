@@ -9,13 +9,13 @@ class ProductCategory(models.Model):
         'account.activity.group',
         string='Income Activity Group',
         compute='_compute_activity_group_id',
-        required=True,
+        required=False,
     )
     expense_activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Expense Activity Group',
         compute='_compute_activity_group_id',
-        required=True,
+        required=False,
     )
 
     @api.multi
