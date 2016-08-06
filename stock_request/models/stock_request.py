@@ -9,16 +9,19 @@ class StockRequest(models.Model):
     _name = 'stock.request'
     _inherit = ['mail.thread']
     _description = "Stock Request"
-    _order = "date_request asc, id desc"
+    _order = "id desc"
 
-    _STATES = [('draft', 'Draft'),
-               ('approve1', 'Waiting Approval 1'),
-               ('approve2', 'Waiting Approval 2'),
-               ('approved', 'Approved'),
-               ('done', 'Transferred'),
-               ('done_return', 'Returned'),
-               ('cancel', 'Rejected'),
-               ]
+    _STATES = [
+        ('draft', 'Draft'),
+        ('wait_confirm', 'Waiting Confirmation'),
+        ('confirmed', 'Confirmed'),
+        ('wait_approve', 'Waiting Approval'),
+        ('approved', 'Approved'),
+        ('ready', 'Ready to Transfer'),
+        ('done', 'Transferred'),
+        ('done_return', 'Returned'),
+        ('cancel', 'Rejected'),
+    ]
 
     name = fields.Char(
         string='Number',
@@ -46,7 +49,7 @@ class StockRequest(models.Model):
     )
     employee_id = fields.Many2one(
         'hr.employee',
-        string='Employee',
+        string='Requester',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -54,30 +57,22 @@ class StockRequest(models.Model):
         default=lambda self: self.env['hr.employee'].
         search([('user_id', '=', self._uid)]),
     )
-    date_request = fields.Datetime(
-        string='Request Date',
+    prepare_emp_id = fields.Many2one(
+        'hr.employee',
+        string='Preparer',
+        required=True,
         readonly=True,
-        copy=False,
+        default=lambda self: self.env['hr.employee'].
+        search([('user_id', '=', self._uid)]),
     )
-    date_approve1 = fields.Datetime(
-        string='Date Approve 1',
-        readonly=True,
-        copy=False,
-    )
-    date_approve2 = fields.Datetime(
-        string='Date Approve 2',
-        readonly=True,
-        copy=False,
-    )
-    date_transfer = fields.Datetime(
-        string='Transfer Date',
-        readonly=True,
-        copy=False,
-    )
-    date_return = fields.Datetime(
-        string='Return Date',
-        readonly=True,
-        copy=False,
+    receive_emp_id = fields.Many2one(
+        'hr.employee',
+        string='Receiver',
+        required=False,
+        readonly=False,
+        states={'done': [('readonly', True)],
+                'done_return': [('readonly', True)],
+                'cancel': [('readonly', True)]},
     )
     picking_type_id = fields.Many2one(
         'stock.picking.type',
@@ -134,8 +129,22 @@ class StockRequest(models.Model):
         string='Request Lines',
         readonly=True,
         states={'draft': [('readonly', False)],
-                'approve1': [('readonly', False)]},
+                'wait_confirm': [('readonly', False)],
+                'confirmed': [('readonly', False)],
+                'wait_approve': [('readonly', False)]},
         copy=True,
+    )
+    line2_ids = fields.One2many(
+        'stock.request.line',
+        'request_id',
+        string='Request Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'wait_confirm': [('readonly', False)],
+                'confirmed': [('readonly', False)],
+                'wait_approve': [('readonly', False)]},
+        copy=True,
+        help="For display in draft state"
     )
     note = fields.Text(
         string='Notes',
@@ -154,10 +163,20 @@ class StockRequest(models.Model):
         res = super(StockRequest, self).\
             fields_view_get(view_id=view_id, view_type=view_type,
                             toolbar=toolbar, submenu=submenu)
+        if self._context.get('default_type') == 'request':
+            res['arch'] = res['arch'].replace(
+                'visible="draft,done"',
+                'visible="draft,confirmed,wait_approve,'
+                'approved,ready,done"')
+        if self._context.get('default_type') == 'transfer':
+            res['arch'] = res['arch'].replace(
+                'visible="draft,done"',
+                'visible="draft,ready,done"')
         if self._context.get('default_type') == 'borrow':
             res['arch'] = res['arch'].replace(
-                'visible="draft,approve1,approve2,approved,done"',
-                'visible="draft,approve1,approve2,approved,done,done_return"')
+                'visible="draft,done"',
+                'visible="draft,wait_confirm,confirmed,wait_approve,'
+                'approved,ready,done,return"')
         return res
 
     @api.model
@@ -175,39 +194,50 @@ class StockRequest(models.Model):
         self.location_src_id = self.picking_type_id.default_location_src_id
         self.location_dest_id = self.picking_type_id.default_location_dest_id
 
+    # Internal Actions
     @api.multi
-    def action_to_approve1(self):
+    def action_request(self):
         self.ensure_one()
         if not self.line_ids:
             raise UserError('No lines!')
-        self.write({'date_request': fields.Datetime.now(),
-                    'state': 'approve1'})
+        self.write({'state': 'wait_confirm'})
 
     @api.multi
-    def action_to_approve2(self):
+    def action_confirm(self):
         self.ensure_one()
-        # Check for availability, if not available, show error
-        self.write({'date_approve1': fields.Datetime.now(),
-                    'state': 'approve2'})
+        self.line_ids._check_future_qty()
+        self.write({'state': 'confirmed'})
+
+    @api.multi
+    def action_verify(self):
+        self.ensure_one()
+        self.line_ids._check_future_qty()
+        self.write({'state': 'wait_approve'})
 
     @api.multi
     def action_approve(self):
         self.ensure_one()
+        self.line_ids._check_future_qty()
+        self.write({'state': 'approved'})
+
+    @api.multi
+    def action_prepare(self):
+        self.ensure_one()
+        if not self.receive_emp_id:
+            raise UserError('Please select receiver!')
         self.create_picking('transfer')  # Create
         self.transfer_picking_id.action_confirm()  # Confirm and reserve
         self.transfer_picking_id.action_assign()
         if self.transfer_picking_id.state != 'assigned':
             raise UserError('Requested material(s) not fully available!')
-        self.write({'date_approve2': fields.Datetime.now(),
-                    'state': 'approved'})
+        self.write({'state': 'ready'})
 
     @api.multi
-    def action_done(self):
+    def action_transfer(self):
         self.ensure_one()
         if self.transfer_picking_id:
             self.transfer_picking_id.action_done()
-        self.write({'date_transfer': fields.Datetime.now(),
-                    'state': 'done'})
+        self.write({'state': 'done'})
         if self.type == 'borrow':  # prepare for return
             self.create_picking('return')
 
@@ -220,8 +250,7 @@ class StockRequest(models.Model):
             if self.return_picking_id.state != 'assigned':
                 raise UserError('Requested material(s) not fully available!')
             self.return_picking_id.action_done()
-        self.write({'date_return': fields.Datetime.now(),
-                    'state': 'done_return'})
+        self.write({'state': 'done_return'})
 
     @api.multi
     def action_cancel(self):
@@ -243,7 +272,7 @@ class StockRequest(models.Model):
         data = {
             'origin': request.name,
             'partner_id': partner.id,
-            'date_done': request.date_transfer,
+            'date_done': fields.Datetime.now(),
             'picking_type_id': request.picking_type_id.id,
             'company_id': request.company_id.id,
             'move_type': 'direct',
@@ -326,7 +355,7 @@ class StockRequestLine(models.Model):
         default=1.0,
     )
     product_uom_qty = fields.Float(
-        string='Approved Quantity',
+        string='Verified Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
         required=True,
     )
@@ -334,6 +363,12 @@ class StockRequestLine(models.Model):
         'product.uom',
         string='Unit of Measure',
         required=True,
+    )
+    product_uom_readonly = fields.Many2one(
+        'product.uom',
+        string='Unit of Measure',
+        related='product_uom',
+        readonly=True,
     )
     location_src_id = fields.Many2one(
         'stock.location',
@@ -374,3 +409,9 @@ class StockRequestLine(models.Model):
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):
         self.product_uom_qty = self.request_uom_qty
+
+    @api.multi
+    def _check_future_qty(self):
+        for line in self:
+            if line.product_uom_qty > line.future_qty:
+                raise UserError(_('%s is not enough!') % line.product_id.name)

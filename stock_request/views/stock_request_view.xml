@@ -24,7 +24,6 @@
                 	colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
                     <field name="name" />
                     <field name="employee_id" />
-                    <field name="date_request" />
                     <field name="state" />
                 </tree>
             </field>
@@ -35,16 +34,54 @@
             <field name="model">stock.request</field>
             <field name="arch" type="xml">
             	<form string="Stock Request" >
-                <header>
-                    <button name="action_to_approve1" string="To Approve 1" states="draft" type="object" class="oe_highlight"/>
-                    <button name="action_to_approve2" string="To Approve 2" states="approve1" type="object" class="oe_highlight"/>
-                    <button name="action_approve" string="Approve" states="approve2" type="object" class="oe_highlight"/>
-                    <button name="action_done" string="Transfer" states="approved" type="object" class="oe_highlight"/>
-                    <button name="action_return" string="Return" type="object" class="oe_highlight"
-                    	attrs="{'invisible': ['|', ('state', '!=', 'done'), ('type', '!=', 'borrow')]}" />
-                    <button name="action_cancel" string="Cancel" states="approve1,approve2,approved" type="object" />
-                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" />
-                    <field name="state" widget="statusbar" statusbar_visible="draft,approve1,approve2,approved,done" />
+                <header>    
+                		<!-- Request -->            
+	                    <button name="action_confirm" string="Request" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'draft')]}"/>
+	                    <button name="action_verify" string="Verify" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'confirmed')]}"/>
+	                    <button name="action_approve" string="Approve" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'wait_approve')]}"/>
+	                    <button name="action_prepare" string="Prepare Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'approved')]}"/>
+	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'ready')]}"/>
+	                    <button name="action_cancel" string="Cancel" type="object" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
+	                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'cancel')]}"/>
+
+                		<!-- Transfer -->  
+	                    <button name="action_prepare" string="Prepare Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'draft')]}"/>
+	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'ready')]}"/>
+	                    <button name="action_cancel" string="Cancel" type="object" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
+	                    <button name="action_draft" string="Reset to Draft" type="object" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'cancel')]}"/>
+
+                		<!-- Borrow -->  
+	                    <button name="action_request" string="Request" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'draft')]}"/>
+	                    <button name="action_confirm" string="Confirm" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'wait_confirm')]}"/>
+	                    <button name="action_verify" string="Verify" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'confirmed')]}"/>
+	                    <button name="action_approve" string="Approve" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'wait_approve')]}"/>
+	                    <button name="action_prepare" string="Prepare" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'approved')]}"/>
+	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'ready')]}"/>
+	                    <button name="action_return" string="Return" type="object" class="oe_highlight" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'done')]}"/>
+	                    <button name="action_cancel" string="Cancel" type="object" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
+	                    <button name="action_draft" string="Reset to Draft" type="object" 
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'cancel')]}"/>
+	                    	
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" />
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -61,31 +98,47 @@
                         <group>
                             <field name="employee_id" />
                             <field name="type" invisible="1"/>
-                            <field name="picking_type_id"/>
-                            <field name="location_src_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
-                            <field name="location_dest_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
                         </group>
                         <group>
                        		<field name="company_id" invisible="1" />
-                    		<field name="date_request" />
-                    		<field name="date_approve1" attrs="{'invisible': [('date_approve1', '=', False)]}"/>
-                    		<field name="date_approve2" attrs="{'invisible': [('date_approve2', '=', False)]}"/>
-                    		<field name="date_transfer" attrs="{'invisible': [('date_transfer', '=', False)]}"/>
-                    		<field name="date_return" attrs="{'invisible': [('date_return', '=', False)]}"/>
+                            <field name="prepare_emp_id" />
+                            <field name="receive_emp_id" />
                         </group>
                     </group>
                     <notebook>
 	                    <page string="Requesting Materials" >
-		                   	<field name="line_ids" >
+		                    <group>
+		                        <group>
+		                            <field name="picking_type_id" />
+		                        </group>
+		                        <group>
+		                            <field name="location_src_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                            <field name="location_dest_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                        </group>
+		                    </group>
+		                   	<field name="line_ids" attrs="{'invisible': [('state', '=', 'draft')]}">
 		                   		<tree string="Products" editable="bottom"
 		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
 						            <field name="request_id" invisible="1" />
-						            <field name="product_id" />
+						            <field name="product_id" readonly="1"/>
 				                    <field name="onhand_qty" />
 				                    <field name="future_qty" />
-						            <field name="request_uom_qty" />
+						            <field name="request_uom_qty" readonly="1"/>
 						            <field name="product_uom_qty" />
-						            <field name="product_uom" />
+						            <field name="product_uom" invisible="1"/>
+						            <field name="product_uom_readonly" />
+					            </tree>
+		                   	</field>
+		                   	<field name="line2_ids" attrs="{'invisible': [('state', '!=', 'draft')]}">
+		                   		<tree string="Products" editable="bottom" >
+						            <field name="request_id" invisible="1" />
+						            <field name="product_id" />
+				                    <field name="onhand_qty" invisible="1" />
+				                    <field name="future_qty" invisible="1" />
+						            <field name="request_uom_qty" />
+						            <field name="product_uom_qty" invisible="1" />
+						            <field name="product_uom" invisible="1"/>
+						            <field name="product_uom_readonly" />
 					            </tree>
 		                   	</field>
 	                   	</page>
