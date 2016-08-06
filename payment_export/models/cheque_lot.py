@@ -16,6 +16,13 @@ class ChequeLot(models.Model):
     bank_id = fields.Many2one(
         'res.partner.bank',
         string='Bank',
+        required=True,
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        required=True,
+        domain="[('bank_id', '=', bank_id)]",
     )
     cheque_number_from = fields.Char(
         string='Cheque Number From',
@@ -60,6 +67,10 @@ class ChequeLot(models.Model):
         'cheque_lot_id',
         string='Cheque Registers',
     )
+
+    @api.onchange('bank_id')
+    def _onchange_bank_id(self):
+        self.journal_id = False
 
     @api.multi
     @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')

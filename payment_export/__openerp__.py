@@ -7,6 +7,7 @@
     "category": "Accounting & Finance",
     "depends": [
         "account_voucher",
+        "l10n_th_fields",
     ],
     "description": """
 
