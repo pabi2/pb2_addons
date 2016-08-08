@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import ast
 from openerp import models, fields, api
+from openerp.exceptions import Warning as UserError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 
@@ -186,6 +188,38 @@ class BudgetFiscalPolicy(models.Model):
         states={'draft': [('readonly', False)]},
         domain=[('chart_view', '=', 'invest_construction')],
     )
+    # Smart buttons
+    unit_breakdown_count = fields.Integer(
+        string='Unit Based Breakdown Count',
+        compute='_compute_breakdown_count',
+    )
+    invest_asset_breakdown_count = fields.Integer(
+        string='Investment Asset Breakdown Count',
+        compute='_compute_breakdown_count',
+    )
+
+    @api.multi
+    def action_open_breakdown(self):
+        self.ensure_one()
+        act = False
+        if self._context.get('chart_view') == 'unit_base':
+            act = 'pabi_budget_plan.action_unit_base_policy_breakdown_view'
+        elif self._context.get('chart_view') == 'invest_asset':
+            act = 'pabi_budget_plan.action_invest_asset_policy_breakdown_view'
+        action = self.env.ref(act)
+        result = action.read()[0]
+        return result
+
+    @api.multi
+    def _compute_breakdown_count(self):
+        Breakdown = self.env['budget.fiscal.policy.breakdown']
+        for rec in self:
+            domain = [('fiscalyear_id', '=', rec.fiscalyear_id.id),
+                      ('ref_budget_policy_id', '=', rec.id)]
+            rec.unit_breakdown_count = Breakdown.search_count(
+                domain + [('chart_view', '=', 'unit_base')])
+            rec.invest_asset_breakdown_count = Breakdown.search_count(
+                domain + [('chart_view', '=', 'invest_asset')])
 
     @api.multi
     @api.depends('line_ids',
@@ -254,11 +288,19 @@ class BudgetFiscalPolicy(models.Model):
         })
         return True
 
+    # ======================== Prepare Budget Policy ==========================
+
     @api.multi
     def prepare_fiscal_budget_policy(self):
         self.ensure_one()
         self.line_ids.unlink()  # Delete all
+        self._prepare_project_budget_policy()
+        self._prepare_unit_budget_policy()
+        self._prepare_invest_asset_budget_policy()
 
+    @api.model
+    def _prepare_project_budget_policy(self):
+        self.ensure_one()
         # Projects
         _sql = """
             select tmpl.chart_view, tmpl.program_id, bpp.planned_overall
@@ -276,6 +318,9 @@ class BudgetFiscalPolicy(models.Model):
             lines.append((0, 0, vals))
         self.write({'project_base_ids': lines})
 
+    @api.multi
+    def _prepare_unit_budget_policy(self):
+        self.ensure_one()
         # Unit Base, group by Org
         _sql = """
             select tmpl.chart_view, tmpl.org_id,
@@ -295,39 +340,114 @@ class BudgetFiscalPolicy(models.Model):
             lines.append((0, 0, vals))
         self.write({'unit_base_ids': lines})
 
+    @api.model
+    def _prepare_invest_asset_budget_policy(self):
+        self.ensure_one()
+        # Investment Asset, group by Org
+        _sql = """
+            select tmpl.chart_view,
+            sum(bpia.planned_overall) as planned_overall
+            from budget_plan_invest_asset bpia
+            join budget_plan_template tmpl on tmpl.id = bpia.template_id
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            group by tmpl.chart_view
+        """
+        self._cr.execute(_sql % (self.fiscalyear_id.id,))
+        res = self._cr.dictfetchall()
+        lines = []
+        for r in res:
+            vals = {'chart_view': r['chart_view'],
+                    'planned_amount': r['planned_overall']}
+            lines.append((0, 0, vals))
+        self.write({'invest_asset_ids': lines})
+
+    # ========================================================================
+
+    # ======================== Create Policy Breakdown =======================
+
     @api.multi
     def create_fiscal_budget_policy_breakdown(self):
-        for rec in self:
-            # Unit base
-            Breakdown = self.env['budget.fiscal.policy.breakdown']
-            BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
-            for unit in rec.unit_base_ids:
-                vals = {  # TODO: Sequence Numbering ???
-                    'name': unit.org_id.name,
-                    'chart_view': unit.chart_view,
-                    'org_id': unit.org_id.id,
-                    'planned_overall': unit.planned_amount,
-                    'policy_overall': unit.policy_amount,
-                    'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
-                    'ref_budget_policy_id': rec.id,
+        self.ensure_one()
+        self.create_unit_budget_policy_breakdown()
+        self.create_invest_asset_budget_policy_breakdown()
+
+    @api.multi
+    def create_unit_budget_policy_breakdown(self):
+        self.ensure_one()
+        Breakdown = self.env['budget.fiscal.policy.breakdown']
+        BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+        for unit in self.unit_base_ids:
+            vals = {  # TODO: Sequence Numbering ???
+                'name': unit.org_id.name,
+                'chart_view': unit.chart_view,
+                'org_id': unit.org_id.id,
+                'planned_overall': unit.planned_amount,
+                'policy_overall': unit.policy_amount,
+                'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
+                'ref_budget_policy_id': self.id,
+            }
+            breakdown = Breakdown.create(vals)
+            plans = self.env['budget.plan.unit'].\
+                search([('state', '=', 'approve'),
+                        ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
+                        ('org_id', '=', breakdown.org_id.id)])
+            for plan in plans:
+                vals = {
+                    'breakdown_id': breakdown.id,
+                    'budget_plan_unit_id': plan.id,
+                    'chart_view': plan.chart_view,
+                    'section_id': plan.section_id.id,
+                    'planned_amount': plan.planned_overall,
+                    'policy_amount': 0.0,
                 }
-                breakdown = Breakdown.create(vals)
-                plans = self.env['budget.plan.unit'].\
-                    search([('state', '=', 'approve'),
-                            ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
-                            ('org_id', '=', breakdown.org_id.id)])
-                for plan in plans:
-                    vals = {
-                        'breakdown_id': breakdown.id,
-                        'budget_plan_unit_id': plan.id,
-                        'chart_view': plan.chart_view,
-                        'section_id': plan.section_id.id,
-                        'planned_amount': plan.planned_overall,
-                        'policy_amount': 0.0,
-                    }
-                    BreakdownLine.create(vals)
-                # Upon creation of breakdown, ensure data integrity
-                breakdown._check_data_integrity()
+                BreakdownLine.create(vals)
+            # Upon creation of breakdown, ensure data integrity
+            sum_planned_amount = sum([l.planned_amount
+                                      for l in breakdown.line_ids])
+            if breakdown.planned_overall != sum_planned_amount:
+                raise UserError(
+                    _('For policy breakdown of Org: %s, \n'
+                      'the overall planned amount is not equal to the '
+                      'sum of all its sections') % (breakdown.org_id.name))
+
+    @api.multi
+    def create_invest_asset_budget_policy_breakdown(self):
+        self.ensure_one()
+        Breakdown = self.env['budget.fiscal.policy.breakdown']
+        BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+        self.invest_asset_ids.ensure_one()
+        unit = self.invest_asset_ids[0]  # Always only 1 line in policy
+        vals = {  # TODO: Sequence Numbering ???
+            'name': 'NSTDA/%s' % (unit.budget_policy_id.fiscalyear_id.name,),
+            'chart_view': unit.chart_view,
+            'planned_overall': unit.planned_amount,
+            'policy_overall': unit.policy_amount,
+            'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
+            'ref_budget_policy_id': self.id,
+        }
+        breakdown = Breakdown.create(vals)
+        plans = self.env['budget.plan.invest.asset'].\
+            search([('state', '=', 'approve'),
+                    ('fiscalyear_id', '=', breakdown.fiscalyear_id.id)])
+        for plan in plans:
+            vals = {
+                'breakdown_id': breakdown.id,
+                'budget_plan_invest_asset_id': plan.id,
+                'chart_view': plan.chart_view,
+                'org_id': plan.org_id.id,
+                'planned_amount': plan.planned_overall,
+                'policy_amount': 0.0,
+            }
+            BreakdownLine.create(vals)
+        # Upon creation of breakdown, ensure data integrity
+        sum_planned_amount = sum([l.planned_amount
+                                  for l in breakdown.line_ids])
+        if breakdown.planned_overall != sum_planned_amount:
+            raise UserError(
+                _('The overall planned amount is '
+                  'not equal to the sum of all Orgs'))
+
+    # ========================================================================
 
 
 class BudgetFiscalPolicyLine(ChartField, models.Model):

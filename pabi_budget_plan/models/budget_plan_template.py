@@ -196,30 +196,28 @@ class BudgetPlanCommon(object):
         return list((set(src_fields) & set(trg_fields)) - set(no_fields))
 
     @api.model
-    def _convert_plan_to_budget_control(self, active_ids,
+    def _convert_plan_to_budget_control(self, active_id,
                                         head_src_model,
                                         line_src_model):
-
         head_trg_model = self.env['account.budget']
         line_trg_model = self.env['account.budget.line']
-
         header_fields = self._prepare_copy_fields(head_src_model,
                                                   head_trg_model)
         line_fields = self._prepare_copy_fields(line_src_model,
                                                 line_trg_model)
-
-        for plan in self.browse(active_ids):
-            vals = {}
-            for key in header_fields:
-                vals.update({key: (hasattr(plan[key], '__iter__') and
-                                   plan[key].id or plan[key])})
-            budget = head_trg_model.create(vals)
-            for line in plan.plan_line_ids:
-                for key in line_fields:
-                    vals.update({key: (hasattr(line[key], '__iter__') and
-                                       line[key].id or line[key])})
-                vals.update({'budget_id': budget.id})
-                line_trg_model.create(vals)
+        plan = self.browse(active_id)
+        vals = {}
+        for key in header_fields:
+            vals.update({key: (hasattr(plan[key], '__iter__') and
+                               plan[key].id or plan[key])})
+        budget = head_trg_model.create(vals)
+        for line in plan.plan_line_ids:
+            for key in line_fields:
+                vals.update({key: (hasattr(line[key], '__iter__') and
+                                   line[key].id or line[key])})
+            vals.update({'budget_id': budget.id})
+            line_trg_model.create(vals)
+        return budget
 
     @api.multi
     def button_submit(self):

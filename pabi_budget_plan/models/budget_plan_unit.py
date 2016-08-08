@@ -44,13 +44,12 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         return super(BudgetPlanUnit, self).unlink()
 
     @api.model
-    def convert_plan_to_budget_control(self, active_ids):
+    def convert_plan_to_budget_control(self, active_id):
         head_src_model = self.env['budget.plan.unit']
         line_src_model = self.env['budget.plan.unit.line']
-
-        self._convert_plan_to_budget_control(active_ids,
-                                             head_src_model,
-                                             line_src_model)
+        return self._convert_plan_to_budget_control(active_id,
+                                                    head_src_model,
+                                                    line_src_model)
 
 
 class BudgetPlanUnitLine(models.Model):

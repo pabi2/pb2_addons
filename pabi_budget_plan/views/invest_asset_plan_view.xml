@@ -205,28 +205,30 @@
             <field name="model">invest.asset.plan.item</field>
             <field name="arch" type="xml">
                 <form string="Invest Asset Items">
-                	<h2>
-                		<field name="select" class="oe_inline"/>
-                		<label string="Selected" class="oe_inline"/>
-	                </h2>
-	                <group>
+                	<group>
+                		<group>
+		                	<h1>
+		                		<field name="select" class="oe_inline"/>
+		                		<label string="Selected" class="oe_inline"/>
+			                </h1>
+                		</group>
+                		<group>
+							<field name="quotation_document" />
+							<field name="specification_document" />
+                		</group>
+                	</group>
+	                <group string="Organization">
 						<group>
-							<field name="fiscalyear_id" invisible="0" />
+							<field name="fiscalyear_id" invisible="1" />
 							<field name="org_id" invisible="0" />	
 							<field name="section_id" invisible="0" />
+						</group>
+						<group>
 							<field name="division_id" invisible="0" />
 							<field name="program_group_id" invisible="0" />	
 						</group>
-						<group>
-							<field name="quantity_plan" invisible="0" />
-							<field name="quantity" invisible="0" />
-							<field name="price_unit" invisible="0" />
-							<field name="price_subtotal" invisible="0" />
-							<field name="price_other" invisible="0" />
-							<field name="price_total" invisible="0" />
-						</group>
 					</group>
-					<group>
+					<group string="Asset Item">
 						<group>
 							<field name="asset_common_name" invisible="0" />
 							<field name="asset_name" invisible="0" />
@@ -237,20 +239,29 @@
 							<field name="location" invisible="0" />
 						</group>
 						<group>
+							<field name="quantity" invisible="0" />
+							<field name="price_unit" invisible="0" />
+							<field name="price_subtotal" invisible="0" />
+							<field name="price_other" invisible="0" />
+							<field name="price_total" invisible="0" />
+						</group>
+	                </group>
+	                <group string="Budgeting">
+						<group>
 							<field name="total_commitment" invisible="0" />
 							<field name="pr_commitment" invisible="0" />
 							<field name="po_commitment" invisible="0" />
 							<field name="exp_commitment" invisible="0" />
+						</group>
+						<group>
 							<field name="actual_amount" invisible="0" />
 							<field name="total_commit_and_actual" invisible="0" />
 							<field name="budget_residual" invisible="0" />   
 						</group>
 	                </group>
-					<group>
+					<group string="Reasons">
 						<field name="reason_purchase" invisible="0" />
 						<field name="reason_purchase_text" invisible="0" />
-						<field name="quotation_document" invisible="0" />
-						<field name="specification_document" invisible="0" />
 						<field name="specification_summary" invisible="0" />
 					</group>
                 </form>

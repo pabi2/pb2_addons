@@ -55,7 +55,6 @@
 										<field name="section_id" />
 										
 										<field name="invest_asset_id" />
-										<field name="info_id" widget="many2one_clickable" />
 										<field name="item_id" widget="many2one_clickable" />
 										
 										<field name="m0" />
@@ -88,6 +87,7 @@
             <field name="arch" type="xml">
                <tree string="Budget" >
                     <field name="name" />
+                    <field name="org_id" />
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="creating_user_id"/>
@@ -202,52 +202,6 @@
             </field>
         </record>
         
-        <!-- INFO -->
-        <record model="ir.ui.view" id="view_budget_plan_invest_asset_line_info_form">
-            <field name="name">view.budget.plan.invest.asset.line.info.form</field>
-            <field name="model">budget.plan.invest.asset.line.info</field>
-            <field name="arch" type="xml">
-                <form string="Budget Plan">
-                    <div class="oe_title">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
-                    </div>
-                    <div class="oe_right oe_button_box" name="buttons">
-                    </div>
-                    <group>
-                    	<group>
-                    		<field name="program_group_id" />
-                    		<field name="reason_purchase" />
-                    		<field name="reason_purchase_text" />
-                    		<field name="expected_result_text" />
-                    		<field name="request_user_id" />
-                    		<field name="planned_utilization" />
-                    	</group>
-                    	<group>
-                    		<field name="amount_budget" />
-                    		<field name="location" />
-                    		<field name="priority" />
-                    	
-                    	</group>
-                    	<group string="Pricing">
-                    		<field name="quantity" />
-                    		<field name="price_unit" />
-                    		<field name="price_subtotal" />
-                    		<field name="price_other" />
-                    		<field name="price_total" />
-                    	</group>
-                    	<group string="Supporting Documents">
-                    		<field name="quotation_document" />
-                    		<field name="date_quotation" />
-                    		<field name="days_valid" />
-                    		<field name="date_quotation_valid" />
-                    		<field name="specification_document" />
-                    	</group>
-                    </group>
-                </form>
-            </field>
-        </record>
         <record model="ir.actions.act_window" id="act_budget_plan_invest_asset_line_view">
             <field name="name">Budget Plan Lines</field>
             <field name="res_model">budget.plan.invest.asset.line</field>

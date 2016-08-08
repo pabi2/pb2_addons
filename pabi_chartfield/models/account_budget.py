@@ -157,20 +157,19 @@ class AccountBudgetLine(ChartField, models.Model):
     # === Unit Base ===
     # Nohting for Unit Base, as Section already the lowest
 
-    # === Personnel, Invest Asset, Invest Construction ===
+    # === Invest Asset, Invest Construction ===
     @api.onchange('org_id')
     def _onchange_org_id(self):
         r1 = self._onchange_focus_field(focus_field='org_id',
                                         parent_field=False,
-                                        child_field='personnel_costcenter_id')
-        r2 = self._onchange_focus_field(focus_field='org_id',
-                                        parent_field=False,
                                         child_field='invest_asset_id')
-        r3 = self._onchange_focus_field(focus_field='org_id',
+        r2 = self._onchange_focus_field(focus_field='org_id',
                                         parent_field=False,
                                         child_field='invest_construction_id')
         res = {'domain': {}}
         res['domain'].update(r1['domain'])
         res['domain'].update(r2['domain'])
-        res['domain'].update(r3['domain'])
         return res
+
+    # === Personnel ===
+    # Still unsure !!!

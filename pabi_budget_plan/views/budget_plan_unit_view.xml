@@ -103,6 +103,8 @@
             <field name="arch" type="xml">
                <tree string="Budget" >
                     <field name="name" />
+                    <field name="org_id" />
+                    <field name="section_id" />
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="creating_user_id"/>

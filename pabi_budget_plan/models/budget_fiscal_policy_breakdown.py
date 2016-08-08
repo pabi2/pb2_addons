@@ -24,7 +24,6 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     org_id = fields.Many2one(
         'res.org',
         string='Org',
-        required=True,
         readonly=True,
     )
     state = fields.Selection(
@@ -93,6 +92,22 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    unit_base_ids = fields.One2many(
+        'budget.fiscal.policy.breakdown.line',
+        'breakdown_id',
+        string='Unit Based Breakdown Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'unit_base')],
+    )
+    invest_asset_ids = fields.One2many(
+        'budget.fiscal.policy.breakdown.line',
+        'breakdown_id',
+        string='Invest Asset Breakdown Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'invest_asset')],
+    )
     ref_budget_policy_id = fields.Many2one(
         'budget.fiscal.policy',
         string='Ref Budget Policy',
@@ -129,15 +144,18 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         return True
 
     @api.multi
-    def _check_data_integrity(self):
+    def prepare_budget_control(self):
         self.ensure_one()
-        # Overall and sum of lines must be equal
-        sum_planned_amount = sum([l.planned_amount for l in self.line_ids])
-        if self.planned_overall != sum_planned_amount:
-            raise ValidationError(
-                _('For policy breakdown of Org: %s, \n'
-                  'the overall planned amount is not equal to the '
-                  'sum of all its sections') % (self.org_id.name))
+        data = {'unit_base': ('budget.plan.unit',
+                              'budget_plan_unit_id'),
+                'invest_asset': ('budget.plan.invest.asset',
+                                 'budget_plan_invest_asset_id')}
+        for line in self.line_ids:
+            model = data[self.chart_view][0]
+            active_id = line[data[self.chart_view][1]].id
+            budget = self.env[model].convert_plan_to_budget_control(active_id)
+            budget.policy_amount = line.policy_amount
+            budget.prev_planned_amount = budget.planned_amount
 
 
 class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
@@ -152,6 +170,11 @@ class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
         string='Budget Plan - Unit Base',
         readonly=True,
     )
+    budget_plan_invest_asset_id = fields.Many2one(
+        'budget.plan.invest.asset',
+        string='Budget Plan - Invest Asset',
+        readonly=True,
+    )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
         string='Budget View',
@@ -160,7 +183,12 @@ class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
-        required=True,
+        required=False,
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        required=False,
     )
     planned_amount = fields.Float(
         string='Planned Amount',

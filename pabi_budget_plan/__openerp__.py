@@ -24,6 +24,7 @@
         'views/budget_plan_invest_construction_view.xml',
         'views/budget_fiscal_policy_view.xml',
         'views/invest_asset_plan_view.xml',
+        'views/account_budget_view.xml',
     ],
     'demo': [
     ],
