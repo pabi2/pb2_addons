@@ -36,7 +36,7 @@ class PaymentExportConfigLine(models.Model):
         required=True,
     )
     field_code = fields.Text(
-        string='Field Code',
+        string='Python Code',
         required=False,
     )
     length = fields.Integer(

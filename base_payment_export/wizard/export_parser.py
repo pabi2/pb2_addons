@@ -2,7 +2,12 @@
 import os
 import base64
 import tempfile
+import time
+import datetime
+import dateutil
+import openerp
 from operator import itemgetter
+from openerp import workflow
 from openerp import api, fields, models, _
 from openerp.exceptions import except_orm, Warning, RedirectWarning
 
@@ -53,6 +58,46 @@ class PaymentExportParser(models.TransientModel):
         attachment_id = False
         raise Warning(_('Method not implemented!'))
 
+    @api.model
+    def _get_eval_context(self, active_model_id, active_id):
+        """ Prepare the context used when evaluating python code, like the
+        condition or code server actions.
+
+        :returns: dict -- evaluation context given to (safe_)eval """
+        active_model = str(self._model)
+        if active_model_id:
+            active_model = self.env['ir.model'].browse(active_model_id).model
+        env = openerp.api.Environment(self._cr, self._uid, self._context)
+        model = env[active_model]
+        obj = model.browse(active_id)
+        eval_context =  {
+            # python libs
+            'time': time,
+            'datetime': datetime,
+            'dateutil': dateutil,
+            # orm
+            'env': env,
+            'model': model,
+            'workflow': workflow,
+            # Exceptions
+            'Warning': openerp.exceptions.Warning,
+            # record
+            # deprecated and define record (active_id) and records (active_ids)
+            'object': obj,
+            'obj': obj,
+            # Deprecated use env or model instead
+            'self': obj,
+            'pool': self.pool,
+            'cr': self._cr,
+            'uid': self._uid,
+            'context': self._context,
+            'user': env.user,
+        }
+        return eval_context
+
+    @api.model
+    def _prepare_data(self):
+        raise Warning(_('Method not implemented!'))
 
     @api.multi
     def export_file(self):
@@ -61,7 +106,7 @@ class PaymentExportParser(models.TransientModel):
         payment_model = self.env.context.get('active_model', '')
         payment = self.env[payment_model].browse(payment_id)
         final_line_text = False
-        datas = payment._prepare_data()
+        datas = self._prepare_data()
 
         for data_list in datas:
             self._validate_data(data_list)
