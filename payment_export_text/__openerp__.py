@@ -7,12 +7,14 @@
     "category": "Accounting & Finance",
     "depends": [
         "payment_export",
+        'base_payment_export'
     ],
     "description": """
 Export payment in text file.
     """,
     "data": [
 #         'export_view.xml',
+        'views/payment_export_view.xml',
     ],
     'installable': True,
 }
