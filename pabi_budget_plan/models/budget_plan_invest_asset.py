@@ -24,6 +24,11 @@ class BudgetPlanInvestAsset(BudgetPlanCommon, models.Model):
         compute='_compute_planned_overall',
         store=True,
     )
+    asset_plan_id = fields.Many2one(
+        'invest.asset.plan',
+        string='Invest Asset Plan',
+        readonly=True,
+    )
 
     # Call inherited methods
     @api.multi
@@ -72,6 +77,12 @@ class BudgetPlanInvestAssetLine(models.Model):
     info_id = fields.Many2one(
         'budget.plan.invest.asset.line.info',
         string="More Info",
+        ondelete='restrict',
+        readonly=True,
+    )
+    item_id = fields.Many2one(
+        'invest.asset.plan.item',
+        string='Asset Info',
         ondelete='restrict',
         readonly=True,
     )
