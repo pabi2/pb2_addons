@@ -68,6 +68,7 @@
                     <field name="taxbranch_id" invisible="1" />
 
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
 
@@ -128,6 +129,7 @@
                     <field name="taxbranch_id" invisible="1" />
 
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
 
@@ -184,6 +186,7 @@
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
                     <field name="personnel_costcenter_id" invisible="1" />
@@ -239,6 +242,7 @@
                     <field name="taxbranch_id" invisible="1" />
 
                     <field name="invest_asset_id" invisible="0" />
+                    <field name="item_id" widget="many2one_clickable" invisible="0" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
 
@@ -296,6 +300,7 @@
                     <field name="taxbranch_id" invisible="1" />
                     
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     
                     <field name="invest_construction_id" invisible="0"/>
                     <field name="invest_construction_phase_id" invisible="0" />

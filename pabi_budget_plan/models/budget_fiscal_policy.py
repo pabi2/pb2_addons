@@ -415,37 +415,37 @@ class BudgetFiscalPolicy(models.Model):
         self.ensure_one()
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
-        self.invest_asset_ids.ensure_one()
-        unit = self.invest_asset_ids[0]  # Always only 1 line in policy
-        vals = {  # TODO: Sequence Numbering ???
-            'name': 'NSTDA/%s' % (unit.budget_policy_id.fiscalyear_id.name,),
-            'chart_view': unit.chart_view,
-            'planned_overall': unit.planned_amount,
-            'policy_overall': unit.policy_amount,
-            'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
-            'ref_budget_policy_id': self.id,
-        }
-        breakdown = Breakdown.create(vals)
-        plans = self.env['budget.plan.invest.asset'].\
-            search([('state', '=', 'approve'),
-                    ('fiscalyear_id', '=', breakdown.fiscalyear_id.id)])
-        for plan in plans:
-            vals = {
-                'breakdown_id': breakdown.id,
-                'budget_plan_invest_asset_id': plan.id,
-                'chart_view': plan.chart_view,
-                'org_id': plan.org_id.id,
-                'planned_amount': plan.planned_overall,
-                'policy_amount': 0.0,
+        if self.invest_asset_ids:
+            unit = self.invest_asset_ids[0]  # Always only 1 line in policy
+            vals = {  # TODO: Sequence Numbering ???
+                'name': 'NSTDA',
+                'chart_view': unit.chart_view,
+                'planned_overall': unit.planned_amount,
+                'policy_overall': unit.policy_amount,
+                'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
+                'ref_budget_policy_id': self.id,
             }
-            BreakdownLine.create(vals)
-        # Upon creation of breakdown, ensure data integrity
-        sum_planned_amount = sum([l.planned_amount
-                                  for l in breakdown.line_ids])
-        if breakdown.planned_overall != sum_planned_amount:
-            raise UserError(
-                _('The overall planned amount is '
-                  'not equal to the sum of all Orgs'))
+            breakdown = Breakdown.create(vals)
+            plans = self.env['budget.plan.invest.asset'].\
+                search([('state', '=', 'approve'),
+                        ('fiscalyear_id', '=', breakdown.fiscalyear_id.id)])
+            for plan in plans:
+                vals = {
+                    'breakdown_id': breakdown.id,
+                    'budget_plan_invest_asset_id': plan.id,
+                    'chart_view': plan.chart_view,
+                    'org_id': plan.org_id.id,
+                    'planned_amount': plan.planned_overall,
+                    'policy_amount': 0.0,
+                }
+                BreakdownLine.create(vals)
+            # Upon creation of breakdown, ensure data integrity
+            sum_planned_amount = sum([l.planned_amount
+                                      for l in breakdown.line_ids])
+            if breakdown.planned_overall != sum_planned_amount:
+                raise UserError(
+                    _('The overall planned amount is '
+                      'not equal to the sum of all Orgs'))
 
     # ========================================================================
 

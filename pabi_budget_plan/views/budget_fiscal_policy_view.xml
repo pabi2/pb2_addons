@@ -437,12 +437,6 @@
             <field name="view_id" ref="view_budget_plan_line_template_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_policy"
-            id="menu_act_budget_plan_line_template_view"
-            action="act_budget_plan_line_template_view"
-        	sequence="20"/>
-
-
     </data>
 </openerp>
 

@@ -124,6 +124,13 @@ class AccountBudgetLine(ChartField, models.Model):
         related='budget_id.chart_view',
         store=True,
     )
+    item_id = fields.Many2one(
+        'invest.asset.plan.item',
+        string='Asset Info',
+        ondelete='restrict',
+        readonly=True,
+        help="Special field to store Asset Item information",
+    )
 
     # === Project Base ===
     @api.onchange('program_id')
