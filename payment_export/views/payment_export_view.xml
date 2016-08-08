@@ -59,12 +59,8 @@
                     <div class="oe_right oe_button_box" name="buttons">
                     	<button name="action_assign_cheque_number" string="Assign Cheque Number" 
                     		type="object" attrs="{'invisible': ['|', ('state', 'not in', ('draft')), ('is_cheque_lot', '=', False)]}"/>
- <!--                       <button name="action_export_payment_pack" string="Export Payment Pack" -->
-<!--                            type="object" attrs="{'invisible': ['|', ('state', 'not in', ('draft')), ('is_cheque_lot', '=', True)]}"/>-->
-                        <button name="%(action_payemt_export_parser)d"
-                                string="Export Payment Pack" 
-                                type="action"
-                                attrs="{'invisible': ['|', ('state', 'not in', ('draft')), ('is_cheque_lot', '=', True)]}"/>
+                       <button name="action_export_payment_pack" string="Export Payment Pack"
+                            type="object" attrs="{'invisible': ['|', ('state', 'not in', ('draft')), ('is_cheque_lot', '=', True)]}"/>
                     </div>
                     <group>
                         <group>
