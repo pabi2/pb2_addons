@@ -84,7 +84,7 @@ class PurchaseContract(models.Model):
                         str(purchase.order_id.fine_condition) + " / " + \
                         str(datetime.datetime.strptime(
                             purchase.order_id.date_fine,
-                            '%Y-%m-%d').strftime('%d/%m/%Y'))
+                            '%Y-%m-%d').strftime('%m/%d/%y'))
                 else:
                     return False
             else:
