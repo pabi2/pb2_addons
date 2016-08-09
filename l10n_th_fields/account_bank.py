@@ -14,6 +14,10 @@ class Bank(models.Model):
         'bank_id',
         string='Account Journals',
     )
+    branch_cheque = fields.Char(
+        string='Bank Branch',
+        size=64,
+    )
 
     @api.multi
     def write(self, vals):
