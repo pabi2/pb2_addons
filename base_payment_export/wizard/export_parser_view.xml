@@ -11,7 +11,9 @@
                         <group>
                             <field name="file_type"/>
                         </group>
-                        <group/>
+                        <group>
+                            <field name="config_id" widget="selection"/>
+                        </group>
                     </group>
                     <footer>
                         <button name="export_file" string="_Export" type="object" class="oe_highlight" /> or

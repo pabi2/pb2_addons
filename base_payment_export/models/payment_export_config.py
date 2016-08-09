@@ -63,6 +63,10 @@ class PaymentExportConfig(models.Model):
     _name = 'payment.export.config'
     _description = 'Payment Export Configuration'
 
+    name = fields.Char(
+        string="Name",
+        required=True,
+    )
     date = fields.Date(
         string="Date",
         required=True,
@@ -100,4 +104,8 @@ class PaymentExportConfig(models.Model):
         'payment.export.config.lines',
         'detail_configure_id',
         string='Details Configurations',
+    )
+    delimiter_symbol = fields.Char(
+        string="Joining Delimiter",
+        required=True,
     )

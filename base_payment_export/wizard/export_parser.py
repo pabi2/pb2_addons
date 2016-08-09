@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
-import base64
-import tempfile
 import time
 import datetime
 import dateutil
@@ -9,7 +6,7 @@ import openerp
 from operator import itemgetter
 from openerp import workflow
 from openerp import api, fields, models, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp.exceptions import Warning
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -26,6 +23,11 @@ class PaymentExportParser(models.TransientModel):
         string='File Type',
         required=True,
     )
+    config_id = fields.Many2one(
+        'payment.export.config',
+        string='Export Format',
+        required=True,
+    )
 
     @api.model
     def _validate_data(self, data_list):
@@ -35,11 +37,14 @@ class PaymentExportParser(models.TransientModel):
                              if d['mandatory'] and not d['value']]
         if invalid_data_list:
             raise Warning(_('Please enter valid data for: %s'
-                            %(',\n'.join(invalid_data_list))))
+                            % (',\n'.join(invalid_data_list))))
         return True
 
     @api.model
     def _generate_text_line(self, data_list):
+        joining_delimiter = DELIMITER
+        if self.config_id and self.config_id.delimiter_symbol:
+            joining_delimiter = self.config_id.delimiter_symbol
         line_text = False
         for data in data_list:
             value = data['value']
@@ -50,7 +55,7 @@ class PaymentExportParser(models.TransientModel):
             if not line_text:
                 line_text = value
             else:
-                line_text = line_text + DELIMITER + value
+                line_text = line_text + joining_delimiter + value
         return line_text and line_text + '\n' or False
 
     @api.model
@@ -70,7 +75,7 @@ class PaymentExportParser(models.TransientModel):
         env = openerp.api.Environment(self._cr, self._uid, self._context)
         model = env[active_model]
         obj = model.browse(active_id)
-        eval_context =  {
+        eval_context = {
             # python libs
             'time': time,
             'datetime': datetime,
