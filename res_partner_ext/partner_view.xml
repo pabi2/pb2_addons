@@ -38,8 +38,8 @@
 		        <field name="display_name" position="after">
                 	<field name="search_key"/>
                 	<field name="category_id" string="Category"/>
-		            <field name="vat" string="Tax ID"/>
-		            <field name="taxbranch" string="Tax Branch ID"/>
+		            <!--<field name="vat" string="Tax ID"/>-->
+		            <!--<field name="taxbranch" string="Tax Branch ID"/>-->
 		        </field>
             </field>
         </record>

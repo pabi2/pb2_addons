@@ -11,6 +11,7 @@ class AuditlogLogLine(models.Model):
     def create(self, vals):
         if vals.get('field_id', False):
             field = self.env['ir.model.fields'].browse(vals['field_id'])
+            print field.name
             if field.ttype == 'selection' and field.name == 'state':
                 state_labels =\
                     dict(self.env[field.model_id.model].
