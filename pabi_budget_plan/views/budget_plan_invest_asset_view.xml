@@ -56,6 +56,7 @@
 										
 										<field name="invest_asset_id" />
 										<field name="info_id" widget="many2one_clickable" />
+										<field name="item_id" widget="many2one_clickable" />
 										
 										<field name="m0" />
 										<field name="m1" />
