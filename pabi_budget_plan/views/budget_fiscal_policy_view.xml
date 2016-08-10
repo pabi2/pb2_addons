@@ -436,6 +436,8 @@
             <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_budget_plan_line_template_tree"/>
         </record>
+		
+		<menuitem id="menu_act_budget_plan_line_template_view" action="act_budget_plan_line_template_view" parent="menu_action_budget_plan" sequence="60"/>
 
     </data>
 </openerp>
