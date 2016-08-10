@@ -7,7 +7,7 @@ class ResSection(models.Model):
 
     purchasing_unit_id = fields.Many2many(
         'wkf.config.purchase.unit',
-        'purchasinguint_section_rel',
+        'purchasingunit_section_rel',
         'section_id',
         'purchasing_unit_id',
         string='Purchasing Unit',

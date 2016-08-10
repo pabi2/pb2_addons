@@ -32,7 +32,7 @@ class WkfConfigPurchaseUnit(models.Model):
     )
     section_ids = fields.Many2many(
         'res.section',
-        'purchasinguint_section_rel',
+        'purchasingunit_section_rel',
         'purchasing_unit_id',
         'section_id',
         string='Section',
