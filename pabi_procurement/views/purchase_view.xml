@@ -96,11 +96,11 @@
                 <xpath expr="//form" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
-                <xpath expr="//button[@name='action_cancel']" position="after">
-                    <button name="%(action_force_done)d" string="Force Done"
-                            type="action"
-                            attrs="{'invisible':[('state', '!=', 'approved')]}"/>
-                </xpath>
+                <!--<xpath expr="//button[@name='action_cancel']" position="after">-->
+                    <!--<button name="%(action_force_done)d" string="Force Done"-->
+                            <!--type="action"-->
+                            <!--attrs="{'invisible':[('state', '!=', 'approved')]}"/>-->
+                <!--</xpath>-->
                 <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
