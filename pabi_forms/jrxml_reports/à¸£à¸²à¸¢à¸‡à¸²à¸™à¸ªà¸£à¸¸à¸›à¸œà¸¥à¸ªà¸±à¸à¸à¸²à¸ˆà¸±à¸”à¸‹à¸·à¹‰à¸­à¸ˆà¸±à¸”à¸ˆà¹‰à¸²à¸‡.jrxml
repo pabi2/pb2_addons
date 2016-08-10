@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="รายงานสรุปผลการดำเนินการจัดซื้อจัดจ้าง" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="76">
+	<property name="ireport.zoom" value="0.8264462809917383"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table" lineSpacing="Single">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1"/>
+	<queryString>
+		<![CDATA[select * from purchase_order]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="origin" class="java.lang.String">
+		<fieldDescription><![CDATA[Source Document]]></fieldDescription>
+	</field>
+	<field name="create_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Created on]]></fieldDescription>
+	</field>
+	<field name="company_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Company]]></fieldDescription>
+	</field>
+	<field name="currency_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Secondary Currency]]></fieldDescription>
+	</field>
+	<field name="partner_ref" class="java.lang.String">
+		<fieldDescription><![CDATA[Supplier Reference]]></fieldDescription>
+	</field>
+	<field name="date_order" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Order Date]]></fieldDescription>
+	</field>
+	<field name="partner_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Customer]]></fieldDescription>
+	</field>
+	<field name="dest_address_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Customer Address (Direct Delivery)]]></fieldDescription>
+	</field>
+	<field name="create_uid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Created by]]></fieldDescription>
+	</field>
+	<field name="fiscal_position" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Fiscal Position]]></fieldDescription>
+	</field>
+	<field name="amount_untaxed" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Subtotal]]></fieldDescription>
+	</field>
+	<field name="picking_type_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Picking Type]]></fieldDescription>
+	</field>
+	<field name="location_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Procurement Location]]></fieldDescription>
+	</field>
+	<field name="message_last_post" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Last Message Date]]></fieldDescription>
+	</field>
+	<field name="journal_id" class="java.lang.Integer"/>
+	<field name="amount_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Tax]]></fieldDescription>
+	</field>
+	<field name="state" class="java.lang.String"/>
+	<field name="bid_validity" class="java.sql.Date">
+		<fieldDescription><![CDATA[Bid Valid Until]]></fieldDescription>
+	</field>
+	<field name="pricelist_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Price List]]></fieldDescription>
+	</field>
+	<field name="incoterm_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Incoterm]]></fieldDescription>
+	</field>
+	<field name="bid_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[Bid Received On]]></fieldDescription>
+	</field>
+	<field name="payment_term_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Payment Term]]></fieldDescription>
+	</field>
+	<field name="write_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Last Updated on]]></fieldDescription>
+	</field>
+	<field name="write_uid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Last Updated by]]></fieldDescription>
+	</field>
+	<field name="date_approve" class="java.sql.Date">
+		<fieldDescription><![CDATA[Date Approved]]></fieldDescription>
+	</field>
+	<field name="amount_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<field name="notes" class="java.lang.String">
+		<fieldDescription><![CDATA[Notes]]></fieldDescription>
+	</field>
+	<field name="invoice_method" class="java.lang.String">
+		<fieldDescription><![CDATA[Invoicing Control]]></fieldDescription>
+	</field>
+	<field name="shipped" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Received]]></fieldDescription>
+	</field>
+	<field name="validator" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Validated by]]></fieldDescription>
+	</field>
+	<field name="minimum_planned_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[Expected Date]]></fieldDescription>
+	</field>
+	<field name="related_location_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Related location]]></fieldDescription>
+	</field>
+	<field name="amount_total_text_en" class="java.lang.String">
+		<fieldDescription><![CDATA[Amount Total (EN)]]></fieldDescription>
+	</field>
+	<field name="amount_total_text_th" class="java.lang.String">
+		<fieldDescription><![CDATA[Amount Total (TH)]]></fieldDescription>
+	</field>
+	<field name="requisition_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Latest Requisition]]></fieldDescription>
+	</field>
+	<field name="order_type" class="java.lang.String">
+		<fieldDescription><![CDATA[Order Type]]></fieldDescription>
+	</field>
+	<field name="order_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Purchase Order]]></fieldDescription>
+	</field>
+	<field name="quote_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quotation Reference]]></fieldDescription>
+	</field>
+	<field name="plan_invoice_created" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Invoice Created]]></fieldDescription>
+	</field>
+	<field name="use_invoice_plan" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Use Invoice Plan]]></fieldDescription>
+	</field>
+	<field name="invoice_mode" class="java.lang.String">
+		<fieldDescription><![CDATA[Invoice Mode]]></fieldDescription>
+	</field>
+	<field name="use_advance" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Advance on 1st Invoice]]></fieldDescription>
+	</field>
+	<field name="use_deposit" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[1st Deposit Invoice]]></fieldDescription>
+	</field>
+	<field name="operating_unit_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Default Operating Unit]]></fieldDescription>
+	</field>
+	<field name="requesting_operating_unit_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Requesting Operating Unit]]></fieldDescription>
+	</field>
+	<field name="taxbranch_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Tax Branch]]></fieldDescription>
+	</field>
+	<field name="date_verify" class="java.sql.Date">
+		<fieldDescription><![CDATA[Verified Date]]></fieldDescription>
+	</field>
+	<field name="date_reference" class="java.sql.Date">
+		<fieldDescription><![CDATA[Reference Date]]></fieldDescription>
+	</field>
+	<field name="mycontract_id" class="java.lang.String">
+		<fieldDescription><![CDATA[myContract]]></fieldDescription>
+	</field>
+	<field name="doc_no" class="java.lang.String">
+		<fieldDescription><![CDATA[No.]]></fieldDescription>
+	</field>
+	<field name="create_by" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Created By]]></fieldDescription>
+	</field>
+	<field name="date_doc_approve" class="java.sql.Date">
+		<fieldDescription><![CDATA[Approved Date]]></fieldDescription>
+	</field>
+	<field name="verify_uid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Verified by]]></fieldDescription>
+	</field>
+	<field name="doc_approve_uid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Approved by]]></fieldDescription>
+	</field>
+	<field name="date_contract_start" class="java.sql.Date">
+		<fieldDescription><![CDATA[Contract Start Date]]></fieldDescription>
+	</field>
+	<field name="count_acceptance" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Count Acceptance]]></fieldDescription>
+	</field>
+	<field name="date_fine" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fine Date]]></fieldDescription>
+	</field>
+	<field name="fine_rate" class="java.lang.Double">
+		<fieldDescription><![CDATA[Fine Rate]]></fieldDescription>
+	</field>
+	<field name="fine_condition" class="java.lang.String">
+		<fieldDescription><![CDATA[Fine Condition]]></fieldDescription>
+	</field>
+	<field name="fine_num_days" class="java.lang.Integer">
+		<fieldDescription><![CDATA[No. of Days]]></fieldDescription>
+	</field>
+	<field name="date_bill" class="java.sql.Date">
+		<fieldDescription><![CDATA[Billing Date]]></fieldDescription>
+	</field>
+	<field name="bill_uid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Received by]]></fieldDescription>
+	</field>
+	<field name="bill_number" class="java.lang.String">
+		<fieldDescription><![CDATA[Billing No.]]></fieldDescription>
+	</field>
+	<field name="bill_note" class="java.lang.String">
+		<fieldDescription><![CDATA[Additional Info]]></fieldDescription>
+	</field>
+	<field name="delivery_address" class="java.lang.String">
+		<fieldDescription><![CDATA[Delivery Address]]></fieldDescription>
+	</field>
+	<field name="force_done_reason" class="java.lang.String">
+		<fieldDescription><![CDATA[Force Done Reason]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="100" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="55" width="28" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สัญญาเลขที่]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="29" y="55" width="47" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ลงวันที่]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="76" y="55" width="131" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[คู่สัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="207" y="55" width="62" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รายละเอียด
+ของสัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="269" y="55" width="90" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนเงิน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="359" y="55" width="65" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สถานที่ส่งมอบ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="424" y="55" width="35" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวน
+งวด]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="459" y="55" width="120" height="23"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วันที่]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="579" y="55" width="33" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[อากร
+แสตมป์]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="612" y="55" width="101" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หลักประกันสัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="713" y="55" width="89" height="45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วิธีการจัดซื้อ/จัดจ้าง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="459" y="78" width="60" height="22"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เริ่มต้นสัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="519" y="78" width="60" height="22"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สิ้นสุดสัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="321" y="7" width="416" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="286" y="32" width="416" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รายงานการสรุปผลสัญญาจัดซื้อจัดจ้าง ระหว่าง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="702" y="7" width="128" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="8" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[PAGE :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="702" y="36" width="128" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="8" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[TIME :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="702" y="21" width="128" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="8" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[DATE :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="801" y="56" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="712" y="55" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="611" y="55" width="1" height="45"/>
+			</line>
+			<line>
+				<reportElement x="578" y="56" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="459" y="55" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="423" y="56" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="359" y="55" width="1" height="45"/>
+			</line>
+			<line>
+				<reportElement x="268" y="55" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="206" y="55" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="75" y="56" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="1" y="56" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="28" y="56" width="1" height="44"/>
+			</line>
+			<line>
+				<reportElement x="519" y="78" width="1" height="22"/>
+			</line>
+			<staticText>
+				<reportElement x="2" y="21" width="128" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="8" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[USER :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="7" width="128" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="8" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[PROGRAM :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="36" width="128" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="8" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[CLIENT :]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" style="table" x="1" y="0" width="802" height="21"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Table Dataset 1">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="28">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="28" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="47">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="47" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="131">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="131" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="62">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="62" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="65">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="65" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="35">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="35" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="33">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="33" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="101">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="101" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="89">
+						<jr:detailCell style="table_TD" height="21" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="89" height="21"/>
+								<box>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="10" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="83"/>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

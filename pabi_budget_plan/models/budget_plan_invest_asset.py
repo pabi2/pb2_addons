@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from .budget_plan_template import BudgetPlanCommon
+from openerp.addons.account_budget_activity.models.account_activity \
+    import ActivityCommon
 
 
 class BudgetPlanInvestAsset(BudgetPlanCommon, models.Model):
@@ -47,7 +49,7 @@ class BudgetPlanInvestAsset(BudgetPlanCommon, models.Model):
                                                     line_src_model)
 
 
-class BudgetPlanInvestAssetLine(models.Model):
+class BudgetPlanInvestAssetLine(ActivityCommon, models.Model):
     _name = 'budget.plan.invest.asset.line'
     _inherits = {'budget.plan.line.template': 'template_id'}
     _description = "Investment Asset Budget - Budget Plan Line"
@@ -64,14 +66,6 @@ class BudgetPlanInvestAssetLine(models.Model):
         'budget.plan.line.template',
         required=True,
         ondelete='cascade',
-    )
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
     )
     item_id = fields.Many2one(
         'invest.asset.plan.item',

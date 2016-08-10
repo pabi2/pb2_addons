@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="28" bottomMargin="141">
-	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.zoom" value="1.2100000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[select
 po.id,
+CONCAT(
+to_char(current_date,'DD'),' ',
+CASE to_char(current_date,'MM')
+WHEN '01' THEN 'ม.ค.'
+WHEN '02' THEN 'ก.พ.'
+WHEN '03' THEN 'มี.ค.'
+WHEN '04' THEN 'เม.ย.'
+WHEN '05' THEN 'พ.ค.'
+WHEN '06' THEN 'มิ.ย.'
+WHEN '07' THEN 'ก.ค.'
+WHEN '08' THEN 'ส.ค.'
+WHEN '09' THEN 'ก.ย.'
+WHEN '10' THEN 'ต.ค.'
+WHEN '11' THEN 'พ.ย.'
+WHEN '12' THEN 'ธ.ค.'
+END,' ',
+EXTRACT(year FROM current_date + interval '543 years')) now_date,
 rp.name supplier,
 rp.phone phonesup,
 rp.fax,
@@ -21,16 +39,44 @@ rct.name township,
 rp_partner.zip,
 rp_partner.phone,
 rp_partner.mobile,
-po.date_order,
+CONCAT(
+to_char( po.date_order,'DD'),' ',
+CASE to_char(po.date_order,'MM')
+WHEN '01' THEN 'ม.ค.'
+WHEN '02' THEN 'ก.พ.'
+WHEN '03' THEN 'มี.ค.'
+WHEN '04' THEN 'เม.ย.'
+WHEN '05' THEN 'พ.ค.'
+WHEN '06' THEN 'มิ.ย.'
+WHEN '07' THEN 'ก.ค.'
+WHEN '08' THEN 'ส.ค.'
+WHEN '09' THEN 'ก.ย.'
+WHEN '10' THEN 'ต.ค.'
+WHEN '11' THEN 'พ.ย.'
+WHEN '12' THEN 'ธ.ค.'
+END,' ',
+EXTRACT(year FROM po.date_order + interval '543 years')) date_order,
 po.notes,
 po.name ponum,
 rp_partner.image as rp_image,
 rp2.phone phonevali,
 rp2.fax faxvali,
-rp2.name namevali,
+CONCAT(
+(SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,last_name')
+) namevali,
 convert_from(rp_partner.image, 'UTF8') ou_image,
 rt.name branch,concat(rt.street,' ',rt.street2,' ',rt.city,' ',rt.zip) address,
-(select name validated from res_partner where id = ru.partner_id),
+CONCAT(
+(SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,last_name')
+) validated,
 po.delivery_address
 
 from purchase_order po
@@ -44,11 +90,13 @@ left join res_country_district rcd on rp_partner.district_id = rcd.id
 left join res_country_township rct on rp_partner.township_id = rct.id
 left join res_taxbranch rt on po.taxbranch_id = rt.id
 left join res_users ru on po.validator = ru.id
+LEFT JOIN hr_employee he ON he.employee_code = ru.login
 left join res_partner rp2 on ru.partner_id = rp2.id
 
 where $X{IN,po.id,PIDS} and po.name not like '-']]>
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
+	<field name="now_date" class="java.lang.String"/>
 	<field name="supplier" class="java.lang.String">
 		<fieldDescription><![CDATA[Supplier]]></fieldDescription>
 	</field>
@@ -72,7 +120,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 	<field name="mobile" class="java.lang.String">
 		<fieldDescription><![CDATA[Mobile]]></fieldDescription>
 	</field>
-	<field name="date_order" class="java.sql.Timestamp">
+	<field name="date_order" class="java.lang.String">
 		<fieldDescription><![CDATA[Order Date]]></fieldDescription>
 	</field>
 	<field name="notes" class="java.lang.String">
@@ -172,12 +220,12 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[โทรสาร :]]></text>
 			</staticText>
-			<textField pattern="dd MMM yy" isBlankWhenNull="true">
-				<reportElement x="63" y="168" width="100" height="16"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="63" y="168" width="145" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date($V{current_date}.year+543, $V{current_date}.month, $V{current_date}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{now_date} == null ? '-' : $F{now_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="120" width="62" height="16"/>
@@ -191,49 +239,49 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{phonesup}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phonesup} == null ? '-' : $F{phonesup}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="63" y="93" width="153" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier} == null ? '-' : $F{supplier}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="63" y="136" width="146" height="16"/>
+				<reportElement x="62" y="136" width="146" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fax} == null ? '-' : $F{fax}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="275" y="93" width="189" height="16"/>
+				<reportElement x="275" y="93" width="208" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{ouname}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ouname} == null ? '-' : $F{ouname}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="275" y="120" width="189" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{validated}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{validated} == null ? '-' : $F{validated}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="275" y="136" width="189" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{phonevali}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phonevali} == null ? '-' : $F{phonevali}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="275" y="152" width="189" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{faxvali}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{faxvali} == null ? '-' : $F{faxvali}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -261,7 +309,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[2.2 ส่งใบสั่งซื้อ/จ้าง กลับทาง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="103" y="45" width="106" height="15"/>
+				<reportElement x="103" y="45" width="228" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -295,13 +343,12 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[ลงวันที่]]></text>
 			</staticText>
-			<textField pattern="dd MMM yy" isBlankWhenNull="true">
-				<reportElement x="216" y="0" width="65" height="15"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="216" y="0" width="208" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{date_order}.year+543, $F{date_order}.month, $F{date_order}.date)
-]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="30">

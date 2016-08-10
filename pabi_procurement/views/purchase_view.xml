@@ -93,11 +93,14 @@
                         <!--<field name="force_done_reason" class="oe_inline" />-->
                     <!--</h2>-->
                 <!--</xpath>-->
-                <xpath expr="//button[@name='action_cancel']" position="after">
-                    <button name="%(action_force_done)d" string="Force Done"
-                            type="action"
-                            attrs="{'invisible':[('state', '!=', 'approved')]}"/>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
                 </xpath>
+                <!--<xpath expr="//button[@name='action_cancel']" position="after">-->
+                    <!--<button name="%(action_force_done)d" string="Force Done"-->
+                            <!--type="action"-->
+                            <!--attrs="{'invisible':[('state', '!=', 'approved')]}"/>-->
+                <!--</xpath>-->
                 <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
@@ -144,6 +147,18 @@
                 </xpath>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="purchase_order_tree">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+                <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+                </field>
+        </record>
+
         <!--Hide Merge PO action-->
         <!--<record id="make_invisible" model="res.groups">-->
             <!--<field name="name">Invisible</field>-->

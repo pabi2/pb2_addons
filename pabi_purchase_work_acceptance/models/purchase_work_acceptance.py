@@ -311,7 +311,8 @@ class PurchaseWorkAcceptance(models.Model):
     acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
         'acceptance_id',
-        string='Work Acceptance',
+        string='Work Acceptance Line',
+        required=True,
     )
     order_id = fields.Many2one(
         'purchase.order',

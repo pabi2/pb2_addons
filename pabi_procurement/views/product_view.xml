@@ -21,6 +21,16 @@
                 </xpath>
             </field>
         </record>
+        <record model="ir.ui.view" id="product_product_template_form_view" >
+            <field name="name">product.template.stock.property.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='standard_price']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
         <record model="ir.ui.view" id="product_template_form_view" >
             <field name="name">product.template.form.inherit</field>
             <field name="model">product.template</field>
@@ -39,7 +49,7 @@
                 </xpath>
             </field>
         </record>
-        <record model="ir.ui.view" id="view_template_property_form" >
+        <record model="ir.ui.view" id="stock_view_template_property_form" >
             <field name="name">product.template.stock.property.form.inherit</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="stock.view_template_property_form"/>
@@ -61,7 +71,27 @@
                 </xpath>
             </field>
         </record>
-
+        <record model="ir.ui.view" id="product_template_tree_view" >
+            <field name="name">product.template.product.tree</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_stock_product_template_tree" >
+            <field name="name">product.template.product.tree</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_stock_product_template_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='virtual_available']" position="after">
+                    <field name="standard_price" />
+                    <field name="uom_id" />
+                </xpath>
+            </field>
+        </record>
         <record id="view_category_property_form" model="ir.ui.view">
             <field name="name">product.category.property.form.inherit</field>
             <field name="model">product.category</field>
