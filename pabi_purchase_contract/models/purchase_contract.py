@@ -36,7 +36,7 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def get_admin_id(self):
-        Employees = self.env['hr.employee']
+        Employees = self.env["hr.employee"]
         Emp = Employees.search(
             [['user_id', '=', self._uid]],
             limit=1)
@@ -254,7 +254,7 @@ class PurchaseContract(models.Model):
     def get_org_groups_id(self):
         Ext_group = 'base.group_pabi_purchase_contract_user_'
         if self._uid:
-            Employees = self.env['hr.employee']
+            Employees = self.env["hr.employee"]
             Emp = Employees.search(
                 [['user_id', '=', self._uid]], limit=1)
             gid = False
@@ -280,7 +280,7 @@ class PurchaseContract(models.Model):
     def create(self, vals):
         # Get 2 Digits Org
         formatCode = ""
-        Employees = self.env['hr.employee']
+        Employees = self.env["hr.employee"]
         Orgs = self.env['res.org']
         Emp = Employees.search([['id', '=', vals.get('admin_id', False)]],
                                limit=1)
@@ -383,7 +383,7 @@ class PurchaseContract(models.Model):
         readonly=True
     )
     admin_id = fields.Many2one(
-        'hr.employee',
+        "hr.employee",
         ondelete='set null',
         string="Creator",
         default=get_admin_id
@@ -471,26 +471,39 @@ class PurchaseContract(models.Model):
         store=False,
         default=get_purchase_method_id
     )
-    collateral_performance_amt = fields.Float("Collateral performance amount",
-                                              track_visibility='onchange',
-                                              digits=(10, 2))
-    contract_amt = fields.Float(string="Contract amount",
-                                track_visibility='onchange',
-                                digits=(10, 2), default=get_contract_amt)
-    collateral_agreement_amt = fields.Float("Collateral agreement amount",
-                                            track_visibility='onchange',
-                                            digits=(10, 2))
-    advance_amt = fields.Float(string="Pay in advance",
-                               digits=(10, 2))
+    collateral_performance_amt = fields.Float(
+        "Collateral performance amount",
+        track_visibility='onchange',
+        digits=(10, 2)
+    )
+    contract_amt = fields.Float(
+        "Contract amount",
+        track_visibility='onchange',
+        digits=(10, 2),
+        default=get_contract_amt
+    )
+    collateral_agreement_amt = fields.Float(
+        "Collateral agreement amount",
+        track_visibility='onchange',
+        digits=(10, 2)
+    )
+    advance_amt = fields.Float(
+        "Pay in advance",
+        digits=(10, 2)
+    )
     collateral_type_id = fields.Many2one(
-        'purchase.contract.collateral',
-        ondelete='set null',
+        "purchase.contract.collateral",
+        ondelete="set null",
         string="Collateral type"
     )
-    check_final_date = fields.Date(string='Final inspection period date')
-    contractual_fines = fields.Float("Contractual fines",
-                                     digits=(10, 2))
-    warranty = fields.Integer(string='Warranty')
+    check_final_date = fields.Date(
+        "Final inspection period date"
+    )
+    contractual_fines = fields.Float(
+        "Contractual fines",
+        digits=(10, 2)
+    )
+    warranty = fields.Integer("Warranty")
     warranty_type = fields.Selection(
         WARRANTY_TYPE,
         string='Warranty type'
@@ -500,76 +513,96 @@ class PurchaseContract(models.Model):
         compute='_compute_fine_rate',
         default='get_fine_rate'
     )
-    collateral_no = fields.Char(string="Collateral No.")
+    collateral_no = fields.Char(
+        "Collateral No."
+    )
     contractual_amt = fields.Float(
         "Contractual Amount",
         digits=(10, 2))
-    collateral_due_date = fields.Date(string='Collateral Due date')
-    collateral_remand_date = fields.Date('Collateral Remand date')
-    collateral_remand_real_date = fields.Date('Collateral Remand date(Real)')
-    collateral_received_date = fields.Date(string='Collateral Received date')
-    bank = fields.Char(string="Bank")
-    branch = fields.Char(string="Branch")
-    account = fields.Char(string="Account")
-    postdating = fields.Date(string='Postdating')
+    collateral_due_date = fields.Date(
+        "Collateral Due date"
+    )
+    collateral_remand_date = fields.Date(
+        "Collateral Remand date"
+    )
+    collateral_remand_real_date = fields.Date(
+        "Collateral Remand date(Real)"
+    )
+    collateral_received_date = fields.Date(
+        "Collateral Received date"
+    )
+    bank = fields.Char("Bank")
+    branch = fields.Char("Branch")
+    account = fields.Char("Account")
+    postdating = fields.Date("Postdating")
 
-    description = fields.Text(string="Description")
-    state = fields.Selection(STATES, default=DRAFT)
-    create_date = fields.Datetime(string="Create Date")
-    create_uid = fields.Many2one('res.users',
-                                 ondelete='set null',
-                                 string="Create User")
-    write_date = fields.Datetime(string="Write Date")
-    write_uid = fields.Many2one('res.users',
-                                ondelete='set null',
-                                string="Write User")
-    write_emp_id = fields.Many2one('hr.employee',
-                                   compute='_compute_write_emp_id')
+    description = fields.Text("Description")
+    state = fields.Selection(
+        STATES,
+        default=DRAFT
+    )
+    create_date = fields.Datetime("Create Date")
+    create_uid = fields.Many2one(
+        "res.users",
+        ondelete='set null',
+        string="Create User"
+    )
+    write_date = fields.Datetime("Write Date")
+    write_uid = fields.Many2one(
+        'res.users',
+        ondelete='set null',
+        string="Write User"
+    )
+    write_emp_id = fields.Many2one(
+        "hr.employee",
+        compute='_compute_write_emp_id'
+    )
     active = fields.Boolean(
-        string="Active",
+        "Active",
         default=True
     )
     send_uid = fields.Many2one(
-        'hr.employee',
+        "hr.employee",
         string='Send By'
     )
     send_date = fields.Date('Send Date')
     close_uid = fields.Many2one(
-        'hr.employee',
+        "hr.employee",
         string='Send By'
     )
-    close_date = fields.Date(string='Send Date')
+    close_date = fields.Date("Send Date")
     verify_uid = fields.Many2one(
-        'hr.employee',
-        string='Verify By'
+        "hr.employee",
+        string="Verify By"
     )
-    verify_date = fields.Date(string='Verify Date')
+    verify_date = fields.Date('Verify Date')
     cancel_uid = fields.Many2one(
-        'hr.employee',
+        "hr.employee",
         string='Cancel By'
     )
-    cancel_date = fields.Date(string='Cancel Date')
+    cancel_date = fields.Date("Cancel Date")
     termination_uid = fields.Many2one(
-        'hr.employee',
-        string='Termination By'
+        "hr.employee",
+        string="Termination By"
     )
-    termination_date = fields.Date(string='Termination Date')
+    termination_date = fields.Date(
+        "Termination Date")
     reflow_uid = fields.Many2one(
-        'hr.employee',
+        "hr.employee",
         string='Reflow By'
     )
-    reflow_date = fields.Date(string='Reflow Date')
+    reflow_date = fields.Date('Reflow Date')
     reversion_uid = fields.Many2one(
-        'hr.employee',
+        "hr.employee",
         string='Reversion By'
     )
-    reversion_date = fields.Date(string='Reversion Date')
+    reversion_date = fields.Date('Reversion Date')
 
     _order = "poc_org asc, year desc, running desc, poc_rev desc"
 
     @api.v7
     def action_button_verify_doc_v7(self, cr, uid, ids, context=None):
-        Employees = self.pool.get('hr.employee')
+        Employees = self.pool.get("hr.employee")
         Emp = Employees.search([['user_id', '=', self._uid]],
                                 limit=1)
         verify_date = datetime.datetime.now(timezone('UTC'))
@@ -595,7 +628,7 @@ class PurchaseContract(models.Model):
             [('res_model', '=', 'purchase.contract'),
              ('res_id', '=', self.id)])
         if doc_ids:
-            Employees = self.env['hr.employee']
+            Employees = self.env["hr.employee"]
             Emp = Employees.search([['user_id', '=', self._uid]],
                                    limit=1)
             if Emp:
@@ -615,7 +648,7 @@ class PurchaseContract(models.Model):
     @api.multi
     def action_button_close(self):
         if self.collateral_remand_date and self.collateral_remand_date:
-            Employees = self.env['hr.employee']
+            Employees = self.env["hr.employee"]
             Emp = Employees.search([['user_id', '=', self._uid]],
                                    limit=1)
             if Emp:
@@ -634,7 +667,7 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def action_button_reflow(self):
-        Employees = self.env['hr.employee']
+        Employees = self.env["hr.employee"]
         Emp = Employees.search([['user_id', '=', self._uid]],
                                limit=1)
         if Emp:
@@ -647,7 +680,7 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def action_button_verify_doc(self):
-        Employees = self.env['hr.employee']
+        Employees = self.env["hr.employee"]
         Emp = Employees.search([['user_id', '=', self._uid]],
                                limit=1)
         if Emp:
@@ -688,7 +721,7 @@ class PurchaseContract(models.Model):
                 name = filename + '_R' + str(NextRev) + file_extension
                 doc_id.copy(
                     {'res_id': po.id, 'name': name})
-            Employees = self.env['hr.employee']
+            Employees = self.env["hr.employee"]
             Emp = Employees.search([['user_id', '=', self._uid]],
                                    limit=1)
             if Emp:
@@ -742,7 +775,7 @@ class PurchaseContract(models.Model):
     def get_admin_org_groups_id(self):
         Ext_group = 'base.group_pabi_purchase_contract_user_'
         if self.admin_id:
-            Employees = self.env['hr.employee']
+            Employees = self.env["hr.employee"]
             Emp = Employees.search(
                 [['user_id', '=', self._uid]], limit=1)
             gid = False
@@ -771,7 +804,7 @@ class PurchaseContract(models.Model):
     @api.depends('write_uid')
     def _compute_write_emp_id(self):
         if self.write_uid:
-            Employees = self.env['hr.employee']
+            Employees = self.env["hr.employee"]
             Emp = Employees.search([['user_id', '=', self.write_uid.id]],
                                    limit=1)
             self.write_emp_id = Emp.id
