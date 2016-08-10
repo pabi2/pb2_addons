@@ -117,7 +117,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_invest_asset_plan_view">
-            <field name="name">Invest Asset Plan</field>
+            <field name="name">Asset Item Plan</field>
             <field name="res_model">invest.asset.plan</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -269,7 +269,7 @@
         </record>
         
         <record model="ir.actions.act_window" id="act_invest_asset_plan_item_view">
-            <field name="name">Invest Asset Items</field>
+            <field name="name">Asset Item Plan Line</field>
             <field name="res_model">invest.asset.plan.item</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,graph</field>

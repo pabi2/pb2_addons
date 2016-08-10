@@ -9,6 +9,7 @@
                 <xpath expr="/form/sheet/group//field[@name='company_id']" position="after">
                 	<field name="prev_planned_amount" />  
                 	<field name="policy_amount" />       
+                	<field name="planned_amount" />       
                 </xpath>
             </field>
         </record>

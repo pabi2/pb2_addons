@@ -14,6 +14,10 @@ class AccountBudget(models.Model):
         string='Policy Amount',
         readonly=True,
     )
+    planned_amount = fields.Float(
+        string='Current Amount',  # Existing field, change label only
+        help="Current Planned Amount",
+    )
 
     @api.multi
     def budget_confirm(self):
@@ -27,5 +31,6 @@ class AccountBudgetLine(models.Model):
     _inherit = 'account.budget.line'
 
     planned_amount = fields.Float(
-        string='Policy Amount',
+        string='Current Amount',  # Existing field, change label only
+        help="Current Planned Amount"
     )
