@@ -2,6 +2,8 @@
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import except_orm, Warning as UserError
+from .account_activity import ActivityCommon
+
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -312,7 +314,7 @@ class AccountBudget(models.Model):
         return True
 
 
-class AccountBudgetLine(models.Model):
+class AccountBudgetLine(ActivityCommon, models.Model):
 
     _name = "account.budget.line"
     _description = "Budget Line"
@@ -331,14 +333,6 @@ class AccountBudgetLine(models.Model):
         type='many2one',
         store=True,
         readonly=True,
-    )
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -542,38 +536,3 @@ class AccountBudgetLine(models.Model):
                     }
             releases.append(line)
         return releases
-
-    @api.model
-    def _onchange_focus_field(self, focus_field=False,
-                              parent_field=False, child_field=False):
-        """ Helper method
-            - assign domain to child_field
-            - assign value to parent field
-        """
-        if parent_field:
-            if self[focus_field]:
-                self[parent_field] = self[focus_field][parent_field]
-        if child_field:
-            child_domain = []
-            if self[focus_field]:
-                child_ids = self.env[self[child_field]._name].\
-                    search([(focus_field, '=', self[focus_field].id)])
-                if self[child_field] not in child_ids:
-                    self[child_field] = False
-                child_domain = [(focus_field, '=', self[focus_field].id)]
-            else:
-                self[child_field] = False
-            return {'domain': {child_field: child_domain}}
-        return {'domain': {}}
-
-    @api.onchange('activity_id')
-    def _onchange_activity_id(self):
-        return self._onchange_focus_field(focus_field='activity_id',
-                                          parent_field='activity_group_id',
-                                          child_field=False)
-
-    @api.onchange('activity_group_id')
-    def _onchange_activity_group_id(self):
-        return self._onchange_focus_field(focus_field='activity_group_id',
-                                          parent_field=False,
-                                          child_field='activity_id')
