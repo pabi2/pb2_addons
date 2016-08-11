@@ -11,6 +11,12 @@ class AccountInvoice(models.Model):
         string="Expense Ref",
         copy=False,
     )
+    invoice_ref_id = fields.Many2one(
+        'account.invoice',
+        string="New Invoice Ref",
+        copy=False,
+        readonly=True,
+    )
 
 #     @api.multi
 #     def confirm_paid(self):
