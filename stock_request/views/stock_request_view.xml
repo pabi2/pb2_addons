@@ -46,7 +46,7 @@
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'approved')]}"/>
 	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'ready')]}"/>
-	                    <button name="action_cancel" string="Cancel" type="object" 
+	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_1"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
 	                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" 
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'cancel')]}"/>
@@ -56,7 +56,7 @@
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'draft')]}"/>
 	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'ready')]}"/>
-	                    <button name="action_cancel" string="Cancel" type="object" 
+	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_2"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
 	                    <button name="action_draft" string="Reset to Draft" type="object" 
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'cancel')]}"/>
@@ -76,7 +76,7 @@
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'ready')]}"/>
 	                    <button name="action_return" string="Return" type="object" class="oe_highlight" 
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'done')]}"/>
-	                    <button name="action_cancel" string="Cancel" type="object" 
+	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_3"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
 	                    <button name="action_draft" string="Reset to Draft" type="object" 
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'cancel')]}"/>
