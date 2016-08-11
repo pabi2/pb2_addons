@@ -8,7 +8,7 @@
     "depends": [
         "account_voucher",
         "l10n_th_fields",
-        "base_payment_export",
+        "base_document_export",
     ],
     "description": """
 
