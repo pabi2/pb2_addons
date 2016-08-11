@@ -22,7 +22,6 @@ Stock - Stock Request Reject Reason
     ],
     "data": [
         "wizard/reject_reason_view.xml",
-        "security/ir.model.access.csv",
         "views/stock_request_view.xml",
     ],
 }
