@@ -113,6 +113,14 @@ class HRExpenseExpese(models.Model):
             type, partner_id, expense.date_valid, payment_term=False,
             partner_bank_id=False, company_id=expense.company_id.id)['value']
 
+        invoice_ref_id = False
+        if expense.invoice_ids:
+            if any([invoice.state == 'cancel' for
+                    invoice in
+                    expense.invoice_ids]):
+                invoice_ids = expense.invoice_ids.ids
+                invoice_ref_id = invoice_ids[-1]
+
         return {
             'origin': expense.number,
             'comment': expense.name,
@@ -127,6 +135,7 @@ class HRExpenseExpese(models.Model):
             'currency_id': expense.currency_id.id,
             'journal_id': journal_id,
             'expense_id': expense.id,
+            'invoice_ref_id': invoice_ref_id,
         }
 
     @api.model

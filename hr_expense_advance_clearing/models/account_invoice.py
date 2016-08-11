@@ -63,10 +63,14 @@ class AccountInvoice(models.Model):
             self.invoice_line = []
             advance_invoice = self.advance_expense_id.invoice_id
             if advance_invoice.invoice_line:
+                Expense = self.env['hr.expense.expense']
                 advance_line = advance_invoice.invoice_line[0]
                 return_line = self.env['account.invoice.line'].new()
                 # Prepare line
                 return_line.product_id = advance_line.product_id
+                return_line.account_id = Expense.\
+                    _choose_account_from_exp_line(advance_line,
+                                                  self.fiscal_position)
                 return_line.name = advance_line.name
                 return_line.quantity = 1.0
                 self.invoice_line += return_line
