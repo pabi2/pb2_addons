@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
 from openerp.exceptions import Warning as UserError
+from .account_activity import ActivityCommon
 
 
 class HRExpenseExpense(models.Model):
@@ -92,19 +93,9 @@ class HRExpenseExpense(models.Model):
         return super(HRExpenseExpense, self).write(vals)
 
 
-class HRExpenseLine(models.Model):
+class HRExpenseLine(ActivityCommon, models.Model):
     _inherit = 'hr.expense.line'
 
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-        compute='_compute_activity_group',
-        store=True,
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
-    )
     temp_invoiced_qty = fields.Float(
         string='Temporary Invoiced Quantity',
         digits=(12, 6),
@@ -116,35 +107,15 @@ class HRExpenseLine(models.Model):
         "for calculate release commitment amount",
     )
 
-    @api.one
-    @api.depends('product_id', 'activity_id')
-    def _compute_activity_group(self):
-        if self.product_id and self.activity_id:
-            self.product_id = self.activity_id = False
-            self.name = False
-        if self.product_id:
-            account_id = self.product_id.property_account_expense.id or \
-                self.product_id.categ_id.property_account_expense_categ.id
-            if not account_id:
-                raise UserError(
-                    _('No Account Code assigned for product - %s') %
-                    (self.product_id.name,))
-            activity_group = self.env['account.activity.group'].\
-                search([('account_id', '=', account_id)])
-            self.activity_group_id = activity_group
-        elif self.activity_id:
-            self.activity_group_id = self.activity_id.activity_group_id
-            self.name = self.activity_id.name
-
     @api.model
     def _get_non_product_account_id(self):
-        if 'activity_group_id' in self:
-            if not self.activity_group_id.account_id:
+        if 'activity_id' in self:
+            if not self.activity_id.account_id:
                 raise UserError(
-                    _('No Account Code assigned to Activity Group - %s') %
-                    (self.activity_group_id.name,))
+                    _('No Account Code assigned to Activity - %s') %
+                    (self.activity_id.name,))
             else:
-                return self.activity_group_id.account_id.id
+                return self.activity_id.account_id.id
         else:
             return super(HRExpenseLine, self)._get_non_product_account_id()
 

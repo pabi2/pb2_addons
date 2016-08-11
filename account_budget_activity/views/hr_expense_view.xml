@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="before">
                     <field name="activity_id"/>
-                    <field name="activity_group_id" required="1" invisible="0"/>
+                    <field name="activity_group_id" invisible="0"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account']" position="attributes">
                 	<attribute name="invisible">0</attribute>
