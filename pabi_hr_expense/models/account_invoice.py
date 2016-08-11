@@ -25,12 +25,12 @@ class AccountInvoice(models.Model):
         states={'draft': [('readonly', False)]},
         help="Reason when amount is different from Expense",
     )
-    invoice_ref_id = fields.Many2one(
-        'account.invoice',
-        string="New Invoice Ref",
-        copy=False,
-        readonly=True,
-    )
+#     invoice_ref_id = fields.Many2one(
+#         'account.invoice',
+#         string="New Invoice Ref",
+#         copy=False,
+#         readonly=True,
+#     )
 
     @api.multi
     @api.depends('amount_total')
