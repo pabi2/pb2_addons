@@ -51,17 +51,15 @@ class AccountInvoice(models.Model):
     def _check_amount_not_over_expense(self):
         # For expense related invoice
         # Positive line amount must not over total expense
-
         if self.expense_id:
-            Precision = self.env['decimal.precision']
-            precision_digits = Precision.precision_get('Account')
             # Negative amount is advance clearing
             clear_amount = sum([x.price_subtotal < 0.0 and
                                 x.price_subtotal or 0.0
                                 for x in self.invoice_line])
             amount = self.amount_total - clear_amount
+            # 1 digit precision only to avoid error.
             if float_compare(amount, self.expense_id.amount,
-                             precision_digits=precision_digits) == 1:
+                             precision_digits=1) == 1:
                 raise UserError(_('New amount over expense is not allowed!'))
 
     @api.multi
