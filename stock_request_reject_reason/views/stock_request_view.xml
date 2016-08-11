@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_request_form">
+            <field name="name">view.purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id"
+                   ref="stock_request.view_stock_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@button_id='action_cancel_1']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_cancel_1']" position="attributes">
+                	<attribute name="name">%(action_request_reject)d</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/h1" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="reject_reason_txt" string="Reject Reason:"/>
+                        <field name="reject_reason_txt" class="oe_inline" />
+                    </h2>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
