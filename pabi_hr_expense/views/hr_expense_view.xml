@@ -123,6 +123,9 @@
 				<xpath expr="/form/sheet/notebook/page/field/tree//field[@name='activity_id']" position="attributes" >
 					<attribute name="invisible">context.get('is_employee_advance', False)</attribute>
 				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field/tree//field[@name='activity_group_id']" position="attributes" >
+					<attribute name="invisible">context.get('is_employee_advance', False)</attribute>
+				</xpath>
             </field>
         </record>
 

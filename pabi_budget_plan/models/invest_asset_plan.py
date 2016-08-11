@@ -223,6 +223,7 @@ class InvestAssetPlanItem(models.Model):
         'res.division',
         related='section_id.division_id',
         string='Division',
+        readonly=True,
     )
     location = fields.Char(
         string='Asset Location',
