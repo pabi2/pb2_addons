@@ -205,12 +205,16 @@ class StockRequest(models.Model):
     @api.multi
     def action_confirm(self):
         self.ensure_one()
+        if not self.line_ids:
+            raise UserError('No lines!')
         self.line_ids._check_future_qty()
         self.write({'state': 'confirmed'})
 
     @api.multi
     def action_verify(self):
         self.ensure_one()
+        if not self.line_ids:
+            raise UserError('No lines!')
         self.line_ids._check_future_qty()
         self.write({'state': 'wait_approve'})
 
@@ -223,6 +227,8 @@ class StockRequest(models.Model):
     @api.multi
     def action_prepare(self):
         self.ensure_one()
+        if not self.line_ids:
+            raise UserError('No lines!')
         if not self.receive_emp_id:
             raise UserError('Please select receiver!')
         self.create_picking('transfer')  # Create
