@@ -10,16 +10,19 @@
     <field name="model">invest.asset.selection.wiz</field>
     <field name="arch" type="xml">
         <form string="Select Asset Line">
-            <p class="oe_grey">It will make selection ticked for selected line. i.e. If select is ticked on wizard then it make select ticked on selected lines else set unticked.</p>
-            <group>
-                <group>
+            <p class="oe_grey">This wizard will update select option on related line items.</p>
+            <field name="invest_plan_id" invisible="True"/>
+            <field name="invset_asset_wiz_line_ids">
+                <tree editable="bottom" create="false" delete="false">
                     <field name="select"/>
-                </group>
-                <group>
-                    <field name="invest_plan_id"/>
-                </group>
-            </group>
-            <field name="asset_line_ids" domain="[('plan_id', '=', invest_plan_id)]"/>
+                    <field name="invest_asset_plan_item_id" invisible="True" domain="[('plan_id', '=', parent.invest_plan_id)]"/>
+                    <field name="section_id"/>
+                    <field name="division_id"/> 
+                    <field name="priority"/> 
+                    <field name="quantity"/> 
+                    <field name="price_total"/>
+                </tree>
+            </field>
             <footer>
                 <button name="update_asset_lines"
                         type="object"
