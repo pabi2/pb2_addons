@@ -8,5 +8,6 @@ class AccountInvoice(models.Model):
         [('normal', 'Normal Invoice')],
         string="Invoice Type",
         readonly=True,
+        copy=False,
         default='normal',
     )
