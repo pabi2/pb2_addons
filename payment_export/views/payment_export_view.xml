@@ -87,7 +87,7 @@
                     <notebook>
 	                    <page string="Supplier Payment &amp; Cheque Number" >
 		                   	<field name="line_ids" >
-		                   		<tree create="0" delete="0">
+		                   		<tree create="0" delete="0" editable="bottom">
 		                   		    <field name="use_export_line"/>
 						            <field name="export_id" invisible="1" />
 						            <field name="voucher_id" />
