@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2016 Kitti U.
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+
+<openerp>
+<data>
+
+<record id="wizard_invest_asset_selection" model="ir.ui.view">
+    <field name="name">invest.asset.selection.wizard</field>
+    <field name="model">invest.asset.selection.wiz</field>
+    <field name="arch" type="xml">
+        <form string="Select Asset Line">
+            <p class="oe_grey">It will make selection ticked for selected line. i.e. If select is ticked on wizard then it make select ticked on selected lines else set unticked.</p>
+            <group>
+                <group>
+                    <field name="select"/>
+                </group>
+                <group>
+                    <field name="invest_plan_id"/>
+                </group>
+            </group>
+            <field name="asset_line_ids" domain="[('plan_id', '=', invest_plan_id)]"/>
+            <footer>
+                <button name="update_asset_lines"
+                        type="object"
+                        string="Update"
+                        class="oe_highlight"/>
+                or
+                <button special="cancel"
+                        class="oe_link"
+                        string="Cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="action_invest_asset_selection" model="ir.actions.act_window">
+    <field name="name">Update Selection on Asset Lines</field>
+    <field name="res_model">invest.asset.selection.wiz</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">form</field>
+    <field name="context">{'default_invest_plan_id': active_id}</field>
+    <field name="target">new</field>
+</record>
+
+</data>
+</openerp>
