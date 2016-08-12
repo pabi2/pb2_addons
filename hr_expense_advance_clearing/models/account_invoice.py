@@ -56,6 +56,21 @@ class AccountInvoice(models.Model):
             res['domain'].update({'advance_expense_id': domain})
         return res
 
+    @api.model
+    def _get_account_id_from_product(self, product, fpos):
+        account_id = product.property_account_expense.id
+        if not account_id:
+            categ = product.categ_id
+            account_id = categ.property_account_expense_categ.id
+        if not account_id:
+            raise ValidationError(
+                _('Define an expense account for this '
+                  'product: "%s" (id:%d).') %
+                (product.name, product.id,))
+        if fpos:
+            account_id = fpos.map_account(account_id)
+        return account_id
+
     @api.onchange('advance_expense_id')
     def _onchange_advance_expense_id(self):
         # This method is called from Customer invoice to return money
@@ -63,14 +78,13 @@ class AccountInvoice(models.Model):
             self.invoice_line = []
             advance_invoice = self.advance_expense_id.invoice_id
             if advance_invoice.invoice_line:
-                Expense = self.env['hr.expense.expense']
                 advance_line = advance_invoice.invoice_line[0]
                 return_line = self.env['account.invoice.line'].new()
                 # Prepare line
                 return_line.product_id = advance_line.product_id
-                return_line.account_id = Expense.\
-                    _choose_account_from_exp_line(advance_line,
-                                                  self.fiscal_position)
+                return_line.account_id = self.\
+                    _get_account_id_from_product(advance_line.product_id,
+                                                 self.fiscal_position)
                 return_line.name = advance_line.name
                 return_line.quantity = 1.0
                 self.invoice_line += return_line
