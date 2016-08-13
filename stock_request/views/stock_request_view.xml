@@ -112,8 +112,9 @@
 		                            <field name="picking_type_id" />
 		                        </group>
 		                        <group>
-		                            <field name="location_src_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
-		                            <field name="location_dest_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                        	<field name="location_borrow_id" attrs="{'invisible': [('type', '!=', 'borrow')], 'required': [('type', '=', 'borrow')]}"/>
+		                            <field name="location_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                            <field name="location_dest_id" attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
 		                        </group>
 		                    </group>
 		                   	<field name="line_ids" attrs="{'invisible': [('state', '=', 'draft')]}">
@@ -121,6 +122,7 @@
 		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
 						            <field name="request_id" invisible="1" />
 						            <field name="product_id" readonly="1"/>
+						            <field name="location_id" />
 				                    <field name="onhand_qty" />
 				                    <field name="future_qty" />
 						            <field name="request_uom_qty" readonly="1"/>
@@ -133,6 +135,7 @@
 		                   		<tree string="Products" editable="bottom" >
 						            <field name="request_id" invisible="1" />
 						            <field name="product_id" />
+						            <field name="location_id" />
 				                    <field name="onhand_qty" invisible="1" />
 				                    <field name="future_qty" invisible="1" />
 						            <field name="request_uom_qty" />
