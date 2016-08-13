@@ -159,7 +159,7 @@
 	<!-- stock_request_operating_unit -->
     <record id="stock_request_operating_unit.ir_rule_stock_request_allowed_operating_units"
             model="ir.rule">
-        <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
+        <field name="domain_force">['|', '|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids]),('operating_unit_borrow_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
 </data>
 </openerp>
