@@ -19,5 +19,6 @@
         "data/stock_request_sequence.xml",
         "security/ir.model.access.csv",
         "views/stock_request_view.xml",
+        "views/stock_view.xml",
     ],
 }

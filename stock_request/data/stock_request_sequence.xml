@@ -2,21 +2,6 @@
 <openerp>
     <data noupdate="1">
 
-		<!-- Request -->
-        <record id="seq_type_stock_request" model="ir.sequence.type">
-            <field name="name">Stock Request</field>
-            <field name="code">stock.request</field>
-        </record>
-
-        <record id="seq_stock_request" model="ir.sequence">
-            <field name="name">Stock Request</field>
-            <field name="code">stock.request</field>
-            <field name="prefix">SR</field>
-            <field name="padding">4</field>
-            <field name="company_id" eval="False"/>
-        </record>
-
-		<!-- Transfer -->
         <record id="seq_type_stock_transfer" model="ir.sequence.type">
             <field name="name">Stock Transfer</field>
             <field name="code">stock.transfer</field>
@@ -26,20 +11,6 @@
             <field name="name">Stock Transfer</field>
             <field name="code">stock.transfer</field>
             <field name="prefix">ST</field>
-            <field name="padding">4</field>
-            <field name="company_id" eval="False"/>
-        </record>
-
-		<!-- Borrow -->
-        <record id="seq_type_stock_borrow" model="ir.sequence.type">
-            <field name="name">Stock Borrow</field>
-            <field name="code">stock.borrow</field>
-        </record>
-
-        <record id="seq_stock_borrow" model="ir.sequence">
-            <field name="name">Stock Borrow</field>
-            <field name="code">stock.borrow</field>
-            <field name="prefix">SB</field>
             <field name="padding">4</field>
             <field name="company_id" eval="False"/>
         </record>

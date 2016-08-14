@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from lxml import etree
+import ast
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError, ValidationError
@@ -91,7 +91,7 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
-        domain=[('usage', '=', 'internal')],
+        domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
     )
     location_dest_id = fields.Many2one(
         'stock.location',
@@ -100,7 +100,7 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
-        domain=[('usage', '=', 'internal')],
+        domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
     )
     location_borrow_id = fields.Many2one(
         'stock.location',
@@ -109,7 +109,7 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
-        domain=[('usage', '=', 'internal')],
+        domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
     )
     transfer_picking_id = fields.Many2one(
         'stock.picking',
@@ -192,11 +192,7 @@ class StockRequest(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('name', '/') == '/':
-            stype = vals.get('type', False)
-            code = (stype == 'request' and 'stock.request') or \
-                (stype == 'transfer' and 'stock.transfer') or \
-                (stype == 'borrow' and 'stock.borrow') or False
-            vals['name'] = self.env['ir.sequence'].get(code) or '/'
+            vals['name'] = self.env['ir.sequence'].get('stock.transfer') or '/'
         return super(StockRequest, self).create(vals)
 
     @api.onchange('picking_type_id')
@@ -432,16 +428,31 @@ class StockRequestLine(models.Model):
                     location=rec_sudo.location_id.id)._product_available()
                 onhand_qty = qty[rec_sudo.product_id.id]['qty_available']
                 future_qty = qty[rec_sudo.product_id.id]['virtual_available']
-                rec.onhand_qty = UOM._compute_qty(rec_sudo.product_id.uom_id.id,
-                                                  onhand_qty,
-                                                  rec_sudo.product_uom.id)
-                rec.future_qty = UOM._compute_qty(rec_sudo.product_id.uom_id.id,
-                                                  future_qty,
-                                                  rec_sudo.product_uom.id)
+                rec.onhand_qty = \
+                    UOM._compute_qty(rec_sudo.product_id.uom_id.id,
+                                     onhand_qty,
+                                     rec_sudo.product_uom.id)
+                rec.future_qty = \
+                    UOM._compute_qty(rec_sudo.product_id.uom_id.id,
+                                     future_qty,
+                                     rec_sudo.product_uom.id)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
         self.product_uom = self.product_id.uom_id
+        # ensure to list only product exists in all relevant locations
+        dom = [('type', '<>', 'service')]
+        request = self.request_id
+        if request.type == 'request':
+            dom += [('location_ids', 'in', request.location_id.id)]
+        if request.type == 'transfer':
+            dom += [('location_ids', 'in', request.location_id.id),
+                    ('location_ids', 'in', request.location_dest_id.id)]
+        if request.type == 'borrow':
+            dom += [('location_ids', 'in', request.location_id.id),
+                    ('location_ids', 'in', request.location_borrow_id.id)]
+        res = {'domain': {'product_id': dom}}
+        return res
 
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):
