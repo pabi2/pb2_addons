@@ -232,40 +232,37 @@ class StockRequest(models.Model):
 
     @api.multi
     def action_prepare(self):
-        self_sudo = self.sudo()
-        self_sudo.ensure_one()
-        if not self_sudo.line_ids:
+        self.ensure_one()
+        if not self.line_ids:
             raise UserError('No lines!')
-        if not self_sudo.receive_emp_id:
+        if not self.receive_emp_id:
             raise UserError('Please select receiver!')
-        self_sudo.create_picking('transfer')  # Create
-        self_sudo.transfer_picking_id.action_confirm()  # Confirm and reserve
-        self_sudo.transfer_picking_id.action_assign()
-        if self_sudo.transfer_picking_id.state != 'assigned':
+        self.sudo().create_picking('transfer')  # Create
+        self.transfer_picking_id.sudo().action_confirm()  # Confirm and reserve
+        self.transfer_picking_id.sudo().action_assign()
+        if self.transfer_picking_id.state != 'assigned':
             raise UserError('Requested material(s) not fully available!')
-        self_sudo.write({'state': 'ready'})
+        self.write({'state': 'ready'})
 
     @api.multi
     def action_transfer(self):
-        self_sudo = self.sudo()
-        self_sudo.ensure_one()
-        if self_sudo.transfer_picking_id:
-            self_sudo.transfer_picking_id.action_done()
-        self_sudo.write({'state': 'done'})
-        if self_sudo.type == 'borrow':  # prepare for return
-            self_sudo.create_picking('return')
+        self.ensure_one()
+        if self.transfer_picking_id:
+            self.transfer_picking_id.sudo().action_done()
+        self.write({'state': 'done'})
+        if self.type == 'borrow':  # prepare for return
+            self.sudo().create_picking('return')
 
     @api.multi
     def action_return(self):
-        self_sudo = self.sudo()
-        self_sudo.ensure_one()
-        if self_sudo.return_picking_id:
-            self_sudo.return_picking_id.action_confirm()
-            self_sudo.return_picking_id.action_assign()
-            if self_sudo.return_picking_id.state != 'assigned':
+        self.ensure_one()
+        if self.return_picking_id:
+            self.return_picking_id.sudo().action_confirm()
+            self.return_picking_id.sudo().action_assign()
+            if self.return_picking_id.state != 'assigned':
                 raise UserError('Requested material(s) not fully available!')
-            self_sudo.return_picking_id.action_done()
-        self_sudo.write({'state': 'done_return'})
+            self.return_picking_id.sudo().action_done()
+        self.write({'state': 'done_return'})
 
     @api.multi
     def action_cancel(self):
@@ -409,33 +406,32 @@ class StockRequestLine(models.Model):
     )
 
     @api.one
-    @api.depends('request_id.location_id', 'request_id.location_borrow_id', )
+    @api.depends('request_id.location_id', 'request_id.location_borrow_id')
     def _compute_location_id(self):
-        self_sudo = self.sudo()
-        if self_sudo.request_id.type == 'borrow':
-            self.location_id = self_sudo.request_id.location_borrow_id
+        if self.request_id.type == 'borrow':
+            self.location_id = self.sudo().request_id.location_borrow_id
         else:
-            self.location_id = self_sudo.request_id.location_id
+            self.location_id = self.sudo().request_id.location_id
 
     @api.multi
     @api.depends('product_id', 'product_uom', 'location_id')
     def _compute_product_available(self):
         for rec in self:
-            rec_sudo = rec.sudo()
             UOM = self.env['product.uom']
-            if rec_sudo.product_id:
-                qty = rec_sudo.product_id.with_context(
-                    location=rec_sudo.location_id.id)._product_available()
-                onhand_qty = qty[rec_sudo.product_id.id]['qty_available']
-                future_qty = qty[rec_sudo.product_id.id]['virtual_available']
+            if rec.product_id:
+                qty = rec.product_id.with_context(
+                    location=rec.sudo().location_id.id
+                ).sudo()._product_available()
+                onhand_qty = qty[rec.product_id.id]['qty_available']
+                future_qty = qty[rec.product_id.id]['virtual_available']
                 rec.onhand_qty = \
-                    UOM._compute_qty(rec_sudo.product_id.uom_id.id,
+                    UOM._compute_qty(rec.product_id.uom_id.id,
                                      onhand_qty,
-                                     rec_sudo.product_uom.id)
+                                     rec.product_uom.id)
                 rec.future_qty = \
-                    UOM._compute_qty(rec_sudo.product_id.uom_id.id,
+                    UOM._compute_qty(rec.product_id.uom_id.id,
                                      future_qty,
-                                     rec_sudo.product_uom.id)
+                                     rec.product_uom.id)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
