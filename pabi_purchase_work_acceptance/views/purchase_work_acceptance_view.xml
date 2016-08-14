@@ -52,9 +52,9 @@
                     </field>
                     <h2>Supplier Evaluation</h2>
                     <group>
-                        <field name="eval_receiving" attrs="{'readonly': [('state','!=','evaluation')]}"/>
-                        <field name="eval_quality" attrs="{'readonly': [('state','!=','evaluation')]}"/>
-                        <field name="eval_service" attrs="{'readonly': [('state','!=','evaluation')]}"/>
+                        <field name="eval_receiving" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                        <field name="eval_quality" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                        <field name="eval_service" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
                     </group>
                     </sheet>
                 </form>

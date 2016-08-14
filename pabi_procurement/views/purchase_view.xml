@@ -87,6 +87,9 @@
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
                 </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
                 <!--<xpath expr="/form/sheet//h1[1]" position="after">-->
                     <!--<h2 attrs="{'invisible': [('state', '!=', 'done')]}">-->
                         <!--<label for="force_done_reason" string="Force Done Reason:"/>-->
