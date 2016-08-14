@@ -348,10 +348,12 @@ class PurchaseRequisition(models.Model):
                                          purchase_id, supplier)
         # Always use price and tax_ids from pr_line (NOT from product)
         res.update({
-            'name': requisition_line.product_name,
-            'price_unit': requisition_line.price_unit,
-            'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
-            'product_uom': requisition_line.product_uom_id.id,
+            'name': requisition_line.product_name or res['name'],
+            'price_unit': requisition_line.price_unit or res['price_unit'],
+            'taxes_id': ([(6, 0, requisition_line.tax_ids.ids)] or
+                         res['taxes_id']),
+            'product_uom': (requisition_line.product_uom_id.id or
+                            res['product_uom']),
         })
         return res
 
