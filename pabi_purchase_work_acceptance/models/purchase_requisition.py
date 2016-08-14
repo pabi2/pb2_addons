@@ -25,8 +25,14 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
     )
     fine_num_days = fields.Integer(
-        string='No. of Days',
+        string='Delivery Within (Days)',
         default=15,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    fine_num_months = fields.Integer(
+        string='Delivery Within (Months)',
+        default=1,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -51,5 +57,6 @@ class PurchaseRequisition(models.Model):
                     'fine_condition': self.fine_condition,
                     'date_fine': self.date_fine,
                     'fine_num_days': self.fine_num_days,
+                    'fine_num_months': self.fine_num_months,
                 })
         return res

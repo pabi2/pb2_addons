@@ -30,6 +30,7 @@ class PurchaseOrder(models.Model):
     fine_condition = fields.Selection(
         selection=[
             ('day', 'Day'),
+            ('month', 'Month'),
             ('date', 'Date'),
         ],
         string='Fine Condition',
@@ -47,6 +48,12 @@ class PurchaseOrder(models.Model):
     fine_num_days = fields.Integer(
         string='Delivery Within (Days)',
         default=15,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    fine_num_months = fields.Integer(
+        string='Delivery Within (Months)',
+        default=1,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

@@ -15,6 +15,8 @@
                                 attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
                             <field name="fine_num_days"
                                 attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
+                            <field name="fine_num_months"
+                                attrs="{'invisible':[('fine_condition', '!=', 'month')]}"/>
                         </group>
                     </page>
                 </xpath>
