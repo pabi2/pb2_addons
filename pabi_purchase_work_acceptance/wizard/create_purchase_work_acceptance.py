@@ -4,6 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class CreatePurchaseWorkAcceptance(models.TransientModel):
@@ -86,6 +87,12 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         if order.fine_condition == 'day':
             num_of_day = order.fine_num_days
             end_date = start_date + datetime.timedelta(days=num_of_day)
+            date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
+            next_working_end_date = THHoliday.\
+                find_next_working_day(date_scheduled_end)
+        if order.fine_condition == 'month':
+            num_months = order.fine_num_months
+            end_date = start_date + relativedelta(months=+num_months)
             date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
             next_working_end_date = THHoliday.\
                 find_next_working_day(date_scheduled_end)
