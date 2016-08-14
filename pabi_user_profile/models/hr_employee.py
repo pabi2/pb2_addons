@@ -90,6 +90,14 @@ class HREmployee(models.Model):
             rec.name = ("%s%s%s%s%s" % (code, title, first_name,
                                         mid_name, last_name)).strip()
 
+    @api.multi
+    def write(self, vals):
+        res = super(HREmployee, self).write(vals)
+        if 'org_ids' in vals or 'section_id' in vals:
+            for employee in self:
+                employee.user_id.write({})  # Write to clear cache
+        return res
+
     # Kitti U. Remove this otherwise, can't update Related user on Employee
     # @Poon, will you have any other problem?
     #     user_id = fields.Many2one(
