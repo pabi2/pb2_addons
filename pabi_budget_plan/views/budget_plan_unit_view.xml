@@ -23,7 +23,8 @@
 	                        </h1>
 	                    </div>
 	                    <div class="oe_right oe_button_box" name="buttons">
-		                	<button name="%(action_convert_to_budget_control)d" type="action" string="Convert to Budget Control" />
+		                	<button name="%(action_convert_to_budget_control)d" type="action" string="Convert to Budget Control" 
+		                		invisible="1"/> <!-- Remove -->
 	                    </div>
 	                    <group>
 	                        <group>
@@ -103,6 +104,8 @@
             <field name="arch" type="xml">
                <tree string="Budget" >
                     <field name="name" />
+                    <field name="org_id" />
+                    <field name="section_id" />
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="creating_user_id"/>

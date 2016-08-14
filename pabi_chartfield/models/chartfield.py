@@ -465,8 +465,8 @@ class ChartFieldAction(ChartField):
     @api.depends('activity_id', 'product_id')
     def _compute_require_chartfield(self):
         for rec in self:
-            if 'activity_group_id' in rec and rec.activity_group_id:
-                report_type = rec.activity_group_id.\
+            if 'activity_id' in rec and rec.activity_group_id:
+                report_type = rec.activity_id.\
                     account_id.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')

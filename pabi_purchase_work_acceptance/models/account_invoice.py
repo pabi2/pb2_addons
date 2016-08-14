@@ -48,6 +48,21 @@ class AccountInvoice(models.Model):
             res['domain'].update({'late_delivery_work_acceptance_id': domain})
         return res
 
+    @api.model
+    def _get_account_id_from_product(self, product, fpos):
+        account_id = product.property_account_expense.id
+        if not account_id:
+            categ = product.categ_id
+            account_id = categ.property_account_expense_categ.id
+        if not account_id:
+            raise ValidationError(
+                _('Define an expense account for this '
+                  'product: "%s" (id:%d).') %
+                (product.name, product.id,))
+        if fpos:
+            account_id = fpos.map_account(account_id)
+        return account_id
+
     @api.onchange('late_delivery_work_acceptance_id')
     def _onchange_late_delivery_work_acceptance_id(self):
         # This method is called from Customer invoice to charge penalty
@@ -63,6 +78,8 @@ class AccountInvoice(models.Model):
                 raise ValidationError(_('No Delivery Penalty Product has been '
                                         'set in Account Settings!'))
             penalty_line.product_id = product
+            penalty_line.account_id = self.\
+                _get_account_id_from_product(product, self.fiscal_position)
             penalty_line.name = product.name
             penalty_line.quantity = 1.0
             penalty_line.price_unit = amount_penalty

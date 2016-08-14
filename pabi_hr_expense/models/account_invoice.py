@@ -4,6 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError
+from openerp.tools import float_compare
 
 
 class AccountInvoice(models.Model):
@@ -25,12 +26,12 @@ class AccountInvoice(models.Model):
         states={'draft': [('readonly', False)]},
         help="Reason when amount is different from Expense",
     )
-    invoice_ref_id = fields.Many2one(
-        'account.invoice',
-        string="New Invoice Ref",
-        copy=False,
-        readonly=True,
-    )
+#     invoice_ref_id = fields.Many2one(
+#         'account.invoice',
+#         string="New Invoice Ref",
+#         copy=False,
+#         readonly=True,
+#     )
 
     @api.multi
     @api.depends('amount_total')
@@ -56,7 +57,9 @@ class AccountInvoice(models.Model):
                                 x.price_subtotal or 0.0
                                 for x in self.invoice_line])
             amount = self.amount_total - clear_amount
-            if amount > self.expense_id.amount:
+            # 1 digit precision only to avoid error.
+            if float_compare(amount, self.expense_id.amount,
+                             precision_digits=1) == 1:
                 raise UserError(_('New amount over expense is not allowed!'))
 
     @api.multi

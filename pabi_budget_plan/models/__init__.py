@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import account_budget
 from . import budget_plan_template
 from . import budget_plan_unit
 from . import budget_plan_project
