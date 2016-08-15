@@ -90,11 +90,11 @@
 	<!-- purchase_operating_unit -->
     <record id="purchase_operating_unit.ir_rule_purchase_order_allowed_operating_units"
             model="ir.rule">
-        <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
+        <field name="domain_force">['|', '|', '|', ('is_central_purchase', '=', True), (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
     <record id="purchase_operating_unit.ir_rule_purchase_order_line_allowed_operating_units"
             model="ir.rule">
-        <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
+        <field name="domain_force">['|', '|', '|', ('order_id.is_central_purchase', '=', True), (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
  
 	<!-- purchase_request_operating_unit -->

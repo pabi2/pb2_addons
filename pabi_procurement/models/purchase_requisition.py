@@ -327,6 +327,7 @@ class PurchaseRequisition(models.Model):
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
             'delivery_address': combined_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
+            'is_central_purchase': requisition.is_central_purchase,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
