@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from lxml import etree
+import ast
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError, ValidationError
@@ -30,6 +30,7 @@ class StockRequest(models.Model):
         states={'draft': [('readonly', False)]},
         required=True,
         default='/',
+        copy=False,
     )
     company_id = fields.Many2one(
         'res.company',
@@ -83,14 +84,14 @@ class StockRequest(models.Model):
         ondelete='restrict',
         domain=[('code', '=', 'internal')],
     )
-    location_src_id = fields.Many2one(
+    location_id = fields.Many2one(
         'stock.location',
-        string='Source Location',
+        string='Location',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
-        domain=[('usage', '=', 'internal')],
+        domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
     )
     location_dest_id = fields.Many2one(
         'stock.location',
@@ -99,7 +100,16 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
-        domain=[('usage', '=', 'internal')],
+        domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
+    )
+    location_borrow_id = fields.Many2one(
+        'stock.location',
+        string='Borrow from Location',
+        required=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        ondelete='restrict',
+        domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
     )
     transfer_picking_id = fields.Many2one(
         'stock.picking',
@@ -151,9 +161,9 @@ class StockRequest(models.Model):
     )
 
     @api.one
-    @api.constrains('location_src_id', 'location_dest_id')
+    @api.constrains('location_id', 'location_dest_id')
     def _check_location(self):
-        if self.location_dest_id == self.location_src_id:
+        if self.location_dest_id == self.location_id:
             raise UserError(_('Source and Destination Location '
                               'can not be the same location'))
 
@@ -182,16 +192,12 @@ class StockRequest(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('name', '/') == '/':
-            stype = vals.get('type', False)
-            code = (stype == 'request' and 'stock.request') or \
-                (stype == 'transfer' and 'stock.transfer') or \
-                (stype == 'borrow' and 'stock.borrow') or False
-            vals['name'] = self.env['ir.sequence'].get(code) or '/'
+            vals['name'] = self.env['ir.sequence'].get('stock.transfer') or '/'
         return super(StockRequest, self).create(vals)
 
     @api.onchange('picking_type_id')
     def _onchange_picking_type_id(self):
-        self.location_src_id = self.picking_type_id.default_location_src_id
+        self.location_id = self.picking_type_id.default_location_src_id
         self.location_dest_id = self.picking_type_id.default_location_dest_id
 
     # Internal Actions
@@ -231,9 +237,9 @@ class StockRequest(models.Model):
             raise UserError('No lines!')
         if not self.receive_emp_id:
             raise UserError('Please select receiver!')
-        self.create_picking('transfer')  # Create
-        self.transfer_picking_id.action_confirm()  # Confirm and reserve
-        self.transfer_picking_id.action_assign()
+        self.sudo().create_picking('transfer')  # Create
+        self.transfer_picking_id.sudo().action_confirm()  # Confirm and reserve
+        self.transfer_picking_id.sudo().action_assign()
         if self.transfer_picking_id.state != 'assigned':
             raise UserError('Requested material(s) not fully available!')
         self.write({'state': 'ready'})
@@ -242,20 +248,20 @@ class StockRequest(models.Model):
     def action_transfer(self):
         self.ensure_one()
         if self.transfer_picking_id:
-            self.transfer_picking_id.action_done()
+            self.transfer_picking_id.sudo().action_done()
         self.write({'state': 'done'})
         if self.type == 'borrow':  # prepare for return
-            self.create_picking('return')
+            self.sudo().create_picking('return')
 
     @api.multi
     def action_return(self):
         self.ensure_one()
         if self.return_picking_id:
-            self.return_picking_id.action_confirm()
-            self.return_picking_id.action_assign()
+            self.return_picking_id.sudo().action_confirm()
+            self.return_picking_id.sudo().action_assign()
             if self.return_picking_id.state != 'assigned':
                 raise UserError('Requested material(s) not fully available!')
-            self.return_picking_id.action_done()
+            self.return_picking_id.sudo().action_done()
         self.write({'state': 'done_return'})
 
     @api.multi
@@ -289,7 +295,7 @@ class StockRequest(models.Model):
 
     @api.model
     def _prepare_picking_line(self, line, picking,
-                              location_src_id,
+                              location_id,
                               location_dest_id):
         data = {
             'name': line.product_id.name,
@@ -301,7 +307,7 @@ class StockRequest(models.Model):
             'product_uos_qty': abs(line.product_uom_qty),
             'product_uom_qty': abs(line.product_uom_qty),
             'state': 'draft',
-            'location_id': location_src_id,
+            'location_id': location_id,
             'location_dest_id': location_dest_id,
         }
         return data
@@ -317,22 +323,30 @@ class StockRequest(models.Model):
                for t in self.line_ids.mapped('product_id.type')):
             raise UserError('Requested material(s) not of type stockable!')
         picking = picking_obj.create(self._prepare_picking(self))
-        location_src_id = False
+        location_id = False
         location_dest_id = False
         if ttype == 'transfer':
             self.write({'transfer_picking_id': picking.id})
-            location_src_id = self.location_src_id.id
-            location_dest_id = self.location_dest_id.id
+            if self.type == 'borrow':
+                location_id = self.location_borrow_id.id
+                location_dest_id = self.location_id.id
+            else:
+                location_id = self.location_id.id
+                location_dest_id = self.location_dest_id.id
         elif ttype == 'return':
             self.write({'return_picking_id': picking.id})
-            location_dest_id = self.location_src_id.id
-            location_src_id = self.location_dest_id.id
+            if self.type == 'borrow':
+                location_dest_id = self.location_borrow_id.id
+                location_id = self.location_id.id
+            else:
+                location_dest_id = self.location_id.id
+                location_id = self.location_dest_id.id
         for line in self.line_ids:
             if line.product_id and line.product_id.type == 'service':
                 continue
-            move_obj.create(self._prepare_picking_line(line, picking,
-                                                       location_src_id,
-                                                       location_dest_id))
+            move_obj.sudo().create(
+                self._prepare_picking_line(line, picking,
+                                           location_id, location_dest_id))
         return picking.id
 
 
@@ -376,9 +390,9 @@ class StockRequestLine(models.Model):
         related='product_uom',
         readonly=True,
     )
-    location_src_id = fields.Many2one(
+    location_id = fields.Many2one(
         'stock.location',
-        related='request_id.location_src_id',
+        compute='_compute_location_id',
         string='Src',
         readonly=True,
     )
@@ -391,26 +405,50 @@ class StockRequestLine(models.Model):
         compute='_compute_product_available',
     )
 
+    @api.one
+    @api.depends('request_id.location_id', 'request_id.location_borrow_id')
+    def _compute_location_id(self):
+        if self.request_id.type == 'borrow':
+            self.location_id = self.sudo().request_id.location_borrow_id
+        else:
+            self.location_id = self.sudo().request_id.location_id
+
     @api.multi
-    @api.depends('product_id', 'product_uom', 'location_src_id')
+    @api.depends('product_id', 'product_uom', 'location_id')
     def _compute_product_available(self):
         for rec in self:
             UOM = self.env['product.uom']
             if rec.product_id:
                 qty = rec.product_id.with_context(
-                    location=rec.location_src_id.id)._product_available()
+                    location=rec.sudo().location_id.id
+                ).sudo()._product_available()
                 onhand_qty = qty[rec.product_id.id]['qty_available']
                 future_qty = qty[rec.product_id.id]['virtual_available']
-                rec.onhand_qty = UOM._compute_qty(rec.product_id.uom_id.id,
-                                                  onhand_qty,
-                                                  rec.product_uom.id)
-                rec.future_qty = UOM._compute_qty(rec.product_id.uom_id.id,
-                                                  future_qty,
-                                                  rec.product_uom.id)
+                rec.onhand_qty = \
+                    UOM._compute_qty(rec.product_id.uom_id.id,
+                                     onhand_qty,
+                                     rec.product_uom.id)
+                rec.future_qty = \
+                    UOM._compute_qty(rec.product_id.uom_id.id,
+                                     future_qty,
+                                     rec.product_uom.id)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
         self.product_uom = self.product_id.uom_id
+        # ensure to list only product exists in all relevant locations
+        dom = [('type', '<>', 'service')]
+        request = self.request_id
+        if request.type == 'request':
+            dom += [('location_ids', 'in', request.location_id.id)]
+        if request.type == 'transfer':
+            dom += [('location_ids', 'in', request.location_id.id),
+                    ('location_ids', 'in', request.location_dest_id.id)]
+        if request.type == 'borrow':
+            dom += [('location_ids', 'in', request.location_id.id),
+                    ('location_ids', 'in', request.location_borrow_id.id)]
+        res = {'domain': {'product_id': dom}}
+        return res
 
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):

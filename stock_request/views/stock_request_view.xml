@@ -48,7 +48,7 @@
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'ready')]}"/>
 	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_1"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
-	                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" 
+	                    <button name="action_draft" string="Reset to Draft" type="object" 
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'cancel')]}"/>
 
                 		<!-- Transfer -->  
@@ -112,10 +112,12 @@
 		                            <field name="picking_type_id" />
 		                        </group>
 		                        <group>
-		                            <field name="location_src_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
-		                            <field name="location_dest_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                        	<field name="location_borrow_id" attrs="{'invisible': [('type', '!=', 'borrow')], 'required': [('type', '=', 'borrow')]}"/>
+		                            <field name="location_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                            <field name="location_dest_id" attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
 		                        </group>
 		                    </group>
+		                    <p class="oe_gray">NOTE: Only product available in selected locations will be listed!</p>
 		                   	<field name="line_ids" attrs="{'invisible': [('state', '=', 'draft')]}">
 		                   		<tree string="Products" editable="bottom"
 		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
