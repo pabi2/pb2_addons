@@ -192,6 +192,7 @@ class PaymentExport(models.Model):
                                   limit=self.cheque_lot_id.remaining)
         for voucher in vouchers:
             export_line = ExportLine.new()
+            export_line.use_export_line = True
             export_line.voucher_id = voucher
             export_line.amount = voucher.amount
             self.line_ids += export_line
@@ -325,6 +326,7 @@ class PaymentExportLine(models.Model):
     )
     use_export_line = fields.Boolean(
         string="Use line",
+        default=True,
         copy=False,
     )
     amount_fee = fields.Float(

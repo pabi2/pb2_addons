@@ -68,7 +68,7 @@
 				            <field name="voucher_id" />
 				            <field name="amount" />
 				            <field name="void" />
-				            <field name="note" />
+				            <field name="note" attrs="{'required': [('void', '=', True)]}"/>
 				            <field name="payment_export_id" />
 			            </tree>
                    	</field>
@@ -120,7 +120,7 @@
                     <field name="voucher_id" />
                     <field name="amount" sum="Amount Total"/>
                     <field name="void" />
-	               	<field name="note" />
+	               	<field name="note" attrs="{'required': [('void', '=', True)]}"/>
 				    <field name="payment_export_id" />
                 </tree>
             </field>
