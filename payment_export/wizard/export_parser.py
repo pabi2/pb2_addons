@@ -3,13 +3,13 @@ from openerp import api, fields, models, _
 from openerp.exceptions import Warning as UserError
 
 
-class PaymentExportParser(models.TransientModel):
-    _inherit = 'payment.export.parser'
-    _description = 'Export Payment'
+class DocumentExportParser(models.TransientModel):
+    _inherit = 'document.export.parser'
+    _description = 'Export Document'
 
     @api.multi
     def export_file(self):
-        res = super(PaymentExportParser, self).export_file()
+        res = super(DocumentExportParser, self).export_file()
         if res:
             self.ensure_one()
             payment_export_id = self.env.context.get('active_id', False)
