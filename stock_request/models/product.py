@@ -28,7 +28,6 @@ class ProductProduct(models.Model):
         if stock_request_type == 'borrow':
             args += [('location_ids', 'in', location_id),
                      ('location_ids', 'in', location_borrow_id)]
-        print args
         return super(ProductProduct, self).search(args, offset=offset,
                                                   limit=limit, order=order,
                                                   count=count)
