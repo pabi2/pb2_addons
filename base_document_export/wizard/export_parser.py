@@ -14,9 +14,9 @@ _logger = logging.getLogger(__name__)
 DELIMITER = '~'
 
 
-class PaymentExportParser(models.TransientModel):
-    _name = 'payment.export.parser'
-    _description = 'Export Payment'
+class DocumentExportParser(models.TransientModel):
+    _name = 'document.export.parser'
+    _description = 'Export Document'
 
     file_type = fields.Selection(
         selection=[],
@@ -24,10 +24,24 @@ class PaymentExportParser(models.TransientModel):
         required=True,
     )
     config_id = fields.Many2one(
-        'payment.export.config',
+        'document.export.config',
         string='Export Format',
         required=True,
     )
+
+    @api.model
+    def default_get(self, fields):
+        res = super(DocumentExportParser, self).default_get(fields)
+        active_id = self._context.get('active_id')
+        active_model = self._context.get('active_model')
+        export = self.env[active_model].browse(active_id)
+        if export.journal_id:
+            config = self.env['document.export.config'].search([('journal_id', '=', export.journal_id.id)], limit=1)
+            if config:
+                res['config_id'] = config.id
+            if export.journal_id.file_type:
+                res['file_type'] = export.journal_id.file_type
+        return res
 
     @api.model
     def _validate_data(self, data_list):
@@ -107,9 +121,9 @@ class PaymentExportParser(models.TransientModel):
     @api.multi
     def export_file(self):
         self.ensure_one()
-        payment_id = self.env.context.get('active_id', False)
-        payment_model = self.env.context.get('active_model', '')
-        payment = self.env[payment_model].browse(payment_id)
+        document_id = self.env.context.get('active_id', False)
+        document_model = self.env.context.get('active_model', '')
+        document = self.env[document_model].browse(document_id)
         final_line_text = False
         datas = self._prepare_data()
 

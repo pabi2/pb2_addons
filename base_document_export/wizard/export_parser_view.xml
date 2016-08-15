@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <record id="payemt_export_parser_view" model="ir.ui.view">
-            <field name="name">Export Payment Parser</field>
-            <field name="model">payment.export.parser</field>
+        <record id="document_export_parser_view" model="ir.ui.view">
+            <field name="name">Export Document Parser</field>
+            <field name="model">document.export.parser</field>
             <field name="arch" type="xml">
-                <form string="Export Payment Parser">
-                    <p>This wizard will export the payment in selected file format.</p>
+                <form string="Export Document Parser">
+                    <p>This wizard will export the document in selected file format.</p>
                     <group>
                         <group>
                             <field name="file_type"/>
@@ -23,14 +23,14 @@
             </field>
         </record>
 
-        <record id="action_payemt_export_parser" model="ir.actions.act_window">
+        <record id="action_document_export_parser" model="ir.actions.act_window">
             <field name="name">Export</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">payment.export.parser</field>
+            <field name="res_model">document.export.parser</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="view_id" ref="payemt_export_parser_view"/>
+            <field name="view_id" ref="document_export_parser_view"/>
         </record>
     </data>
 </openerp>
