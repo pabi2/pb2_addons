@@ -134,7 +134,7 @@
 		                   	<field name="line2_ids" attrs="{'invisible': [('state', '!=', 'draft')]}">
 		                   		<tree string="Products" editable="bottom" >
 						            <field name="request_id" invisible="1" />
-						            <field name="product_id" />
+						            <field name="product_id" context="{'stock_request_type': parent.type, 'location_id': parent.location_id,  'location_dest_id': parent.location_dest_id, 'location_borrow_id': parent.location_borrow_id}"/>
 				                    <field name="onhand_qty" invisible="1" />
 				                    <field name="future_qty" invisible="1" />
 						            <field name="request_uom_qty" />

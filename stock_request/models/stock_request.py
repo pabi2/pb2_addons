@@ -433,23 +433,6 @@ class StockRequestLine(models.Model):
                                      future_qty,
                                      rec.product_uom.id)
 
-    @api.onchange('product_id')
-    def _onchange_product_id(self):
-        self.product_uom = self.product_id.uom_id
-        # ensure to list only product exists in all relevant locations
-        dom = [('type', '<>', 'service')]
-        request = self.request_id
-        if request.type == 'request':
-            dom += [('location_ids', 'in', request.location_id.id)]
-        if request.type == 'transfer':
-            dom += [('location_ids', 'in', request.location_id.id),
-                    ('location_ids', 'in', request.location_dest_id.id)]
-        if request.type == 'borrow':
-            dom += [('location_ids', 'in', request.location_id.id),
-                    ('location_ids', 'in', request.location_borrow_id.id)]
-        res = {'domain': {'product_id': dom}}
-        return res
-
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):
         self.product_uom_qty = self.request_uom_qty
