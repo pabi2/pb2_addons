@@ -246,6 +246,8 @@ class StockRequest(models.Model):
     @api.multi
     def action_transfer(self):
         self.ensure_one()
+        if self._uid != self.receive_emp_id.user_id.id:
+            raise UserError('You must be receiver to click "Transfer".')
         if self.transfer_picking_id:
             self.transfer_picking_id.sudo().action_done()
         self.write({'state': 'done'})
@@ -431,6 +433,10 @@ class StockRequestLine(models.Model):
                     UOM._compute_qty(rec.product_id.uom_id.id,
                                      future_qty,
                                      rec.product_uom.id)
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        self.product_uom = self.product_id.uom_id
 
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):
