@@ -36,14 +36,19 @@ class PurchaseRequest(models.Model):
     )
     date_approve = fields.Date(
         string='Approved Date',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
         help="Date when the request has been approved",
     )
+    date_start = fields.Date(
+        required=True,
+    )
     responsible_uid = fields.Many2one(
         'res.users',
         string='Responsible Person',
+        required=True,
         readonly=True,
         states={
             'draft': [('readonly', False)],
@@ -65,6 +70,7 @@ class PurchaseRequest(models.Model):
         digits=(12, 6),
         default=1.0,
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)]},
         copy=False,
     )
@@ -76,12 +82,14 @@ class PurchaseRequest(models.Model):
     purchase_method_id = fields.Many2one(
         'purchase.method',
         string='Procurement Method',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     purchase_price_range_id = fields.Many2one(
         'purchase.price.range',
         string='Price Range',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -105,12 +113,14 @@ class PurchaseRequest(models.Model):
     purchase_prototype_id = fields.Many2one(
         'purchase.prototype',
         string='Prototype',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     purchase_unit_id = fields.Many2one(
         'wkf.config.purchase.unit',
         string='Procurement Unit',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -129,6 +139,7 @@ class PurchaseRequest(models.Model):
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Procurement Type',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

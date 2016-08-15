@@ -132,6 +132,7 @@ class PurchaseWorkAcceptance(models.Model):
             #           % (self.name,)))
         return type, is_consumable
 
+    #  Invoice Plan Fine : Calculate from total amount
     @api.model
     def _calculate_last_invoice_plan_fine(self, invoice):
         total_fine = 0.0
@@ -182,6 +183,7 @@ class PurchaseWorkAcceptance(models.Model):
             for plan_line in order_plan:
                 if plan_line.installment >= last_installment:
                     select_line = plan_line
+                    last_installment += 1
             if select_line:
                 invoice = select_line.ref_invoice_id
                 self._calculate_last_invoice_plan_fine(invoice)
@@ -317,6 +319,7 @@ class PurchaseWorkAcceptance(models.Model):
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+        readonly=True,
     )
     partner_id = fields.Many2one(
         'res.partner',

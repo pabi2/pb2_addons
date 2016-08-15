@@ -5,7 +5,7 @@
             <field name="name">purchase.work.acceptance.form</field>
             <field name="model">purchase.work.acceptance</field>
             <field name="arch" type="xml">
-                <form string="Purchase Work Acceptance">
+                <form string="Purchase Work Acceptance" create="false">
                     <header>
                         <button name="action_evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
                         <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
@@ -64,7 +64,7 @@
             <field name="name">purchase.work.acceptance.tree</field>
             <field name="model">purchase.work.acceptance</field>
             <field name="arch" type="xml">
-                <tree string="Purchase Work Acceptance">
+                <tree string="Purchase Work Acceptance" create="false">
                     <field name="name"/>
                     <field name="date_receive"/>
                     <field name="date_contract_start"/>
