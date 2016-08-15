@@ -600,6 +600,7 @@ class PurchaseRequisitionLine(models.Model):
     )
     product_name = fields.Char(
         string='Description',
+        required=True,
     )
 
     @api.multi
@@ -651,6 +652,7 @@ class PurchaseRequisitionCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

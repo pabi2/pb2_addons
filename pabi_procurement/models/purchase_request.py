@@ -360,6 +360,7 @@ class PurchaseRequestCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

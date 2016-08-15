@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.3286707500000077"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="523"/>
+	<property name="ireport.y" value="379"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
