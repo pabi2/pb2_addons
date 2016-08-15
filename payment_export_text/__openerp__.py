@@ -7,7 +7,7 @@
     "category": "Accounting & Finance",
     "depends": [
         "payment_export",
-        'base_payment_export'
+        'base_document_export'
     ],
     "description": """
 Export payment in text file.

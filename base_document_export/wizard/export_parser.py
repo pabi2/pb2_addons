@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
-import base64
-import tempfile
 import time
 import datetime
 import dateutil
@@ -9,7 +6,7 @@ import openerp
 from operator import itemgetter
 from openerp import workflow
 from openerp import api, fields, models, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp.exceptions import Warning
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -17,15 +14,34 @@ _logger = logging.getLogger(__name__)
 DELIMITER = '~'
 
 
-class PaymentExportParser(models.TransientModel):
-    _name = 'payment.export.parser'
-    _description = 'Export Payment'
+class DocumentExportParser(models.TransientModel):
+    _name = 'document.export.parser'
+    _description = 'Export Document'
 
     file_type = fields.Selection(
         selection=[],
         string='File Type',
         required=True,
     )
+    config_id = fields.Many2one(
+        'document.export.config',
+        string='Export Format',
+        required=True,
+    )
+
+    @api.model
+    def default_get(self, fields):
+        res = super(DocumentExportParser, self).default_get(fields)
+        active_id = self._context.get('active_id')
+        active_model = self._context.get('active_model')
+        export = self.env[active_model].browse(active_id)
+        if export.journal_id:
+            config = self.env['document.export.config'].search([('journal_id', '=', export.journal_id.id)], limit=1)
+            if config:
+                res['config_id'] = config.id
+            if export.journal_id.file_type:
+                res['file_type'] = export.journal_id.file_type
+        return res
 
     @api.model
     def _validate_data(self, data_list):
@@ -35,11 +51,14 @@ class PaymentExportParser(models.TransientModel):
                              if d['mandatory'] and not d['value']]
         if invalid_data_list:
             raise Warning(_('Please enter valid data for: %s'
-                            %(',\n'.join(invalid_data_list))))
+                            % (',\n'.join(invalid_data_list))))
         return True
 
     @api.model
     def _generate_text_line(self, data_list):
+        joining_delimiter = DELIMITER
+        if self.config_id and self.config_id.delimiter_symbol:
+            joining_delimiter = self.config_id.delimiter_symbol
         line_text = False
         for data in data_list:
             value = data['value']
@@ -50,7 +69,7 @@ class PaymentExportParser(models.TransientModel):
             if not line_text:
                 line_text = value
             else:
-                line_text = line_text + DELIMITER + value
+                line_text = line_text + joining_delimiter + value
         return line_text and line_text + '\n' or False
 
     @api.model
@@ -70,7 +89,7 @@ class PaymentExportParser(models.TransientModel):
         env = openerp.api.Environment(self._cr, self._uid, self._context)
         model = env[active_model]
         obj = model.browse(active_id)
-        eval_context =  {
+        eval_context = {
             # python libs
             'time': time,
             'datetime': datetime,
@@ -102,9 +121,9 @@ class PaymentExportParser(models.TransientModel):
     @api.multi
     def export_file(self):
         self.ensure_one()
-        payment_id = self.env.context.get('active_id', False)
-        payment_model = self.env.context.get('active_model', '')
-        payment = self.env[payment_model].browse(payment_id)
+        document_id = self.env.context.get('active_id', False)
+        document_model = self.env.context.get('active_model', '')
+        document = self.env[document_model].browse(document_id)
         final_line_text = False
         datas = self._prepare_data()
 

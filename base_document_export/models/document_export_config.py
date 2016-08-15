@@ -3,9 +3,9 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
-class PaymentExportConfigLine(models.Model):
-    _name = 'payment.export.config.lines'
-    _description = 'Payment Export Configuration Lines'
+class DocumentExportConfigLine(models.Model):
+    _name = 'document.export.config.lines'
+    _description = 'Document Export Configuration Lines'
 
     @api.constrains('sequence', 'length')
     def _check_sequence(self):
@@ -16,19 +16,19 @@ class PaymentExportConfigLine(models.Model):
                 raise UserError(_('Length must be greater then zero.'))
 
     header_configure_id = fields.Many2one(
-        'payment.export.config',
+        'document.export.config',
         string='Header Configuration',
     )
     footer_configure_id = fields.Many2one(
-        'payment.export.config',
+        'document.export.config',
         string='Footer Configuration',
     )
     invoice_configure_id = fields.Many2one(
-        'payment.export.config',
+        'document.export.config',
         string='Invoice Detail Configuration',
     )
     detail_configure_id = fields.Many2one(
-        'payment.export.config',
+        'document.export.config',
         string='Detail Configuration',
     )
     sequence = fields.Integer(
@@ -59,10 +59,14 @@ class PaymentExportConfigLine(models.Model):
     )
 
 
-class PaymentExportConfig(models.Model):
-    _name = 'payment.export.config'
-    _description = 'Payment Export Configuration'
+class DocumentExportConfig(models.Model):
+    _name = 'document.export.config'
+    _description = 'Document Export Configuration'
 
+    name = fields.Char(
+        string="Name",
+        required=True,
+    )
     date = fields.Date(
         string="Date",
         required=True,
@@ -79,25 +83,34 @@ class PaymentExportConfig(models.Model):
         string='Company',
         required=False,
         default=lambda self: self.env['res.company'].
-        _company_default_get('payment.export.config'),
+        _company_default_get('document.export.config'),
     )
     header_config_line_ids = fields.One2many(
-        'payment.export.config.lines',
+        'document.export.config.lines',
         'header_configure_id',
         string='Header Configurations',
     )
     footer_config_line_ids = fields.One2many(
-        'payment.export.config.lines',
+        'document.export.config.lines',
         'footer_configure_id',
         string='Footer Configurations',
     )
     invoice_config_line_ids = fields.One2many(
-        'payment.export.config.lines',
+        'document.export.config.lines',
         'invoice_configure_id',
         string='Invoice Configurations',
     )
     detail_config_line_ids = fields.One2many(
-        'payment.export.config.lines',
+        'document.export.config.lines',
         'detail_configure_id',
         string='Details Configurations',
+    )
+    delimiter_symbol = fields.Char(
+        string="Joining Delimiter",
+        required=True,
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        required=True,
     )
