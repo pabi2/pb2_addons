@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, _
+from openerp import api, models
 
 
 class DocumentExportParser(models.TransientModel):
