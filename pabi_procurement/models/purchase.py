@@ -345,6 +345,7 @@ class PurchaseType(models.Model):
 
     name = fields.Char(
         string='Purchase Type',
+        required=True,
     )
 
 
@@ -354,6 +355,7 @@ class PurchasePrototype(models.Model):
 
     name = fields.Char(
         string='Prototype',
+        required=True,
     )
 
 
@@ -363,6 +365,7 @@ class PurchaseMethod(models.Model):
 
     name = fields.Char(
         string='Purchase Method',
+        required=True,
     )
     require_rfq = fields.Boolean(
         string='Require for RfQ',
@@ -376,6 +379,7 @@ class PurchaseCommitteeType(models.Model):
 
     name = fields.Char(
         string='Purchase Committee Type',
+        required=True,
     )
     web_method_ids = fields.Many2many(
         string='PRWeb Method',
@@ -392,6 +396,7 @@ class PurchasePriceRange(models.Model):
 
     name = fields.Char(
         string='Purchase Price Range',
+        required=True,
     )
     price_from = fields.Float(
         string='Price From',
@@ -409,6 +414,7 @@ class PurchaseCondition(models.Model):
 
     name = fields.Char(
         string='Purchase Condition',
+        required=True,
     )
     condition_detail_ids = fields.Many2many(
         string='Purchase Condition Detail',
@@ -425,6 +431,7 @@ class PurchaseConditionDetail(models.Model):
 
     name = fields.Char(
         string='Purchase Condition Detail',
+        required=True,
     )
 
 
@@ -438,6 +445,7 @@ class PurchaseOrderCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

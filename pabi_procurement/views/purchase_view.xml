@@ -128,6 +128,9 @@
                     <attribute name="create">false</attribute>
                     <attribute name="delete">false</attribute>
                 </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
                         <field name="committee_ids">
