@@ -127,7 +127,6 @@ class InvestAssetPlan(models.Model):
 
     @api.model
     def _prepare_plan_header(self, asset_plan):
-        print asset_plan.fiscalyear_id.id
         data = {
             'name': asset_plan.name,
             'org_id': asset_plan.org_id.id,

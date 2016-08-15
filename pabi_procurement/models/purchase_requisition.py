@@ -562,7 +562,7 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise UserError("Cant' get PD Document Type.")
+            raise UserError(_("Cant' get PD Document Type."))
         report_name = 'purchase.requisition_'+doc_type.name.lower()
         return self.env['report'].get_action(self, report_name)
 
