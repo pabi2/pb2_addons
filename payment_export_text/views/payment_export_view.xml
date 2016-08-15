@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_export_payment_pack']" position="attributes">
                     <attribute name="type">action</attribute>
-                    <attribute name="name">%(base_document_export.action_payemt_export_parser)d</attribute>
+                    <attribute name="name">%(base_document_export.action_document_export_parser)d</attribute>
                 </xpath>
             </field>
         </record>

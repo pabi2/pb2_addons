@@ -6,8 +6,8 @@ from openerp import api, fields, models, _
 from openerp.tools.safe_eval import safe_eval as eval
 
 
-class PaymentExportParser(models.TransientModel):
-    _inherit = 'payment.export.parser'
+class DocumentExportParser(models.TransientModel):
+    _inherit = 'document.export.parser'
 
     file_type = fields.Selection(
         selection_add=[('txt', 'Text')],
