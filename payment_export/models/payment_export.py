@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
-import datetime
-import dateutil
-import openerp
-from openerp import workflow
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 

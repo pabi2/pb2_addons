@@ -24,13 +24,13 @@ class DocumentExportParser(models.TransientModel):
         result = base64.b64encode(line_text)
         (dirName, fileName) = os.path.split(path)
         attachment_id = self.env['ir.attachment'].create({
-                               'name': 'payment' + '.' + self.file_type,
-                               'datas': result,
-                               'datas_fname': fileName,
-                               'res_model': payment_model,
-                               'res_id': payment_id,
-                               'type': 'binary'
-                              })
+            'name': 'payment' + '.' + self.file_type,
+            'datas': result,
+            'datas_fname': fileName,
+            'res_model': payment_model,
+            'res_id': payment_id,
+            'type': 'binary',
+        })
         temp.close()
         return attachment_id
 
@@ -75,10 +75,9 @@ class DocumentExportParser(models.TransientModel):
         # for Line Detail part
         if payment_export_record.line_ids:
             for export_line in payment_export_record.line_ids:
-                line_detail_config_lines =\
-                    config_id.detail_config_line_ids.read(
-                                                          config_fields_to_read
-                                                          )
+                line_detail_config_lines = \
+                    config_id.detail_config_line_ids.\
+                    read(config_fields_to_read)
                 for line in line_detail_config_lines:
                     model_id = active_model.id
                     if line.get('model_id', []):

@@ -36,7 +36,8 @@ class DocumentExportParser(models.TransientModel):
         active_model = self._context.get('active_model')
         export = self.env[active_model].browse(active_id)
         if export.journal_id:
-            config = self.env['document.export.config'].search([('journal_id', '=', export.journal_id.id)], limit=1)
+            config = self.env['document.export.config'].search(
+                [('journal_id', '=', export.journal_id.id)], limit=1)
             if config:
                 res['config_id'] = config.id
             if export.journal_id.file_type:
@@ -74,7 +75,7 @@ class DocumentExportParser(models.TransientModel):
 
     @api.model
     def _generate_file_attachment(self, line_text):
-        attachment_id = False
+        # attachment_id = False
         raise Warning(_('Method not implemented!'))
 
     @api.model
@@ -121,12 +122,11 @@ class DocumentExportParser(models.TransientModel):
     @api.multi
     def export_file(self):
         self.ensure_one()
-        document_id = self.env.context.get('active_id', False)
-        document_model = self.env.context.get('active_model', '')
-        document = self.env[document_model].browse(document_id)
+        # document_id = self.env.context.get('active_id', False)
+        # document_model = self.env.context.get('active_model', '')
+        # document = self.env[document_model].browse(document_id)
         final_line_text = False
         datas = self._prepare_data()
-
         for data_list in datas:
             self._validate_data(data_list)
             data_list = sorted(data_list, key=itemgetter('sequence'))

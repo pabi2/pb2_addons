@@ -13,7 +13,7 @@
 Export payment in text file.
     """,
     "data": [
-#         'export_view.xml',
+        # 'export_view.xml',
         'views/payment_export_view.xml',
     ],
     'installable': True,
