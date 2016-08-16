@@ -58,4 +58,6 @@ class PurchaseLineInvoice(models.TransientModel):
             WAcceptance = self.env['purchase.work.acceptance']
             acceptance = WAcceptance.browse(active_id)
             acceptance.invoice_created = True
+            for wa_line in acceptance.acceptance_line_ids:
+                wa_line,line_id.invoice_id
         return res
