@@ -3,7 +3,7 @@
 import datetime
 import time
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 import openerp.addons.decimal_precision as dp
 
 
@@ -64,6 +64,27 @@ class AccountVoucher(common_voucher, models.Model):
         readonly=False,
         domain=[('tax_code_type', '=', 'wht')],
     )
+    recognize_vat_move_id = fields.Many2one(
+        'account.move',
+        string='Recognize VAT Entry',
+        ondelete='set null',
+        readonly=True,
+    )
+    auto_recognize_vat = fields.Boolean(
+        related='company_id.auto_recognize_vat',
+        string='Auto recognize undue VAT',
+        readonly=True,
+    )
+
+    @api.multi
+    def cancel_voucher(self):
+        for voucher in self:
+            if voucher.type == 'payment' and not voucher.auto_recognize_vat:
+                if voucher.recognize_vat_move_id and \
+                        not voucher.recognize_vat_move_id.reversal_id:
+                    raise UserError(
+                        _('To Unreconcile this payment, you must reverse '
+                          'the Recognize VAT Entry first.'))
 
     @api.model
     def _compute_writeoff_amount(self,
@@ -287,8 +308,9 @@ class AccountVoucher(common_voucher, models.Model):
         res = super(AccountVoucher, self).write(vals)
         # When editing only tax amount, do not reset tax
         to_update = True
-        if vals.get('tax_line', False):
+        if vals.get('tax_line_normal', False):
             for tax_line in vals.get('tax_line'):
+                print tax_line
                 if tax_line[0] == 1 and 'amount' in tax_line[2]:  # 1 = update
                     to_update = False
         if to_update:
@@ -306,8 +328,9 @@ class AccountVoucher(common_voucher, models.Model):
         if voucher.type in ('receipt', 'payment'):
             net_tax = self.voucher_move_line_tax_create(
                 voucher, move_id, company_currency, current_currency)
-            net_retention = self.voucher_move_line_retention_create(
-                voucher, move_id, company_currency, current_currency)
+            if not self._context.get('recognize_vat', False):
+                net_retention = self.voucher_move_line_retention_create(
+                    voucher, move_id, company_currency, current_currency)
         line_total = line_total + net_tax + net_retention
         return line_total
 
@@ -318,7 +341,7 @@ class AccountVoucher(common_voucher, models.Model):
         move_line_obj = self.env['account.move.line']
         avt_obj = self.env['account.voucher.tax']
         # one move line per tax line
-        vtml = avt_obj.move_line_get(voucher.id)
+        vtml = avt_obj.move_line_get(voucher)
         # create gain/loss from currency between invoice and voucher
         vtml = self.compute_tax_currency_gain(voucher, vtml)
         # create one move line for the total and adjust the other lines amount
@@ -488,8 +511,7 @@ class AccountVoucher(common_voucher, models.Model):
                     gain_account_id = income_acct.id
                     loss_account_id = expense_acct.id
                 else:
-                    raise except_orm(
-                        _('Error!'),
+                    raise ValidationError(
                         _('No gain/loss accounting defined in the system!'))
                 if debit > 0.0 or credit > 0.0:
                     sign = debit - credit < 0 and -1 or 1
@@ -530,8 +552,33 @@ class AccountVoucher(common_voucher, models.Model):
                 res['value'].update({'amount': amount})
         return res
 
+    @api.multi
+    def recognize_vat_move_line_create(self):
+        """ This is the cut down version of action_move_line_create()
+            It just post the clearing between due and undue """
+        if self.env.user.company_id.auto_recognize_vat:
+            return False
+        context = self._context.copy()
+        context.update({'recognize_vat': True})
+        move_pool = self.env['account.move']
+        for voucher in self:
+            if voucher.recognize_vat_move_id:
+                raise UserError(_('Recognize VAT Entry already exists'))
+            company_currency = self._get_company_currency(voucher.id)
+            current_currency = self._get_current_currency(voucher.id)
+            context = self.with_context(context)._sel_context(voucher.id)
+            move = move_pool.with_context(context).\
+                create(self.with_context(context).account_move_get(voucher.id))
+            self.with_context(context).\
+                _finalize_line_total(
+                    voucher, 0.0, move.id, company_currency, current_currency)
+            voucher.write({
+                'recognize_vat_move_id': move.id,
+            })
+        return True
 
-class account_voucher_line(common_voucher, models.Model):
+
+class AccountVoucherLine(common_voucher, models.Model):
 
     _inherit = 'account.voucher.line'
 
@@ -1068,11 +1115,19 @@ class AccountVoucherTax(common_voucher, models.Model):
         return tax_gps
 
     @api.model
-    def move_line_get(self, voucher_id):
+    def move_line_get(self, voucher):
         res = []
-        self._cr.execute("""
-            SELECT * FROM account_voucher_tax
-            WHERE voucher_id=%s""", (voucher_id,))
+        sql = "SELECT * FROM account_voucher_tax WHERE voucher_id=%s"
+        # For Supplier Invoice only, check 2step posting
+        if voucher.type == 'payment':
+            if not self.env.user.company_id.auto_recognize_vat:
+                # Step 2 for normal and undue
+                if self._context.get('recognize_vat', False):
+                    sql += " and tax_code_type != 'wht' "
+                else:
+                    sql += " and tax_code_type = 'wht' "
+        self._cr.execute(sql, (voucher.id,))
+        print sql
         for t in self._cr.dictfetchall():
             if not t['amount']:
                 continue

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_config_settings" model="ir.ui.view">
+            <field name="name">account.config.settings.form</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <div name="other_cofing" position="inside">
+                    <div>
+                        <field name="auto_recognize_vat" class="oe_inline"/>
+                        <label for="auto_recognize_vat"/>
+                    </div>
+                    <div>
+                        <label for="recognize_vat_journal_id"/>
+                        <field name="recognize_vat_journal_id" class="oe_inline" attrs="{'required': [('auto_recognize_vat', '=', False)]}"/>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</openerp>

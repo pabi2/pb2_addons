@@ -44,12 +44,16 @@ class AccountTaxWizard(models.TransientModel):
             res['invoice_tax_id'] = tax.id
             doc = tax.invoice_id
             date_doc = doc.date_invoice
+            res['is_readonly'] = doc.state != 'draft'
         else:
             res['voucher_tax_id'] = tax.id
             doc = tax.voucher_id
+            if doc.auto_recognize_vat:
+                res['is_readonly'] = doc.state != 'draft'
+            elif doc.recognize_vat_move_id:
+                res['is_readonly'] = True
         res['base'] = tax.base
         res['amount'] = tax.amount
-        res['is_readonly'] = doc.state != 'draft'
         res['detail_ids'] = []
         for line in tax.detail_ids:
             partner = line.partner_id or doc.partner_id

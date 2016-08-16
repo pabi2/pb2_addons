@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 from .account_tax_detail import InvoiceVoucherTaxDetail
 
 
@@ -9,8 +10,19 @@ class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()
-        self._check_tax_detail_info()
-        self._assign_detail_tax_sequence()
+        if self.type == 'receipt' or \
+                self.env.user.company_id.auto_recognize_vat:
+            self._check_tax_detail_info()
+            self._assign_detail_tax_sequence()
+        return result
+
+    @api.multi
+    def recognize_vat_move_line_create(self):
+        result = super(AccountVoucher, self).recognize_vat_move_line_create()
+        if self.type == 'payment' and \
+                not self.env.user.company_id.auto_recognize_vat:
+            self._check_tax_detail_info()
+            self._assign_detail_tax_sequence()
         return result
 
 
@@ -31,8 +43,8 @@ class AccountVoucherTax(models.Model):
         return voucher_tax
 
     @api.model
-    def move_line_get(self, voucher_id):
-        res = super(AccountVoucherTax, self).move_line_get(voucher_id)
+    def move_line_get(self, voucher):
+        res = super(AccountVoucherTax, self).move_line_get(voucher)
         # Add Tax Difference
         self._cr.execute("""
             select -coalesce(
@@ -40,11 +52,12 @@ class AccountVoucherTax(models.Model):
                 where tax_code_type = 'normal' and voucher_id = %s) +
                 (select sum(amount) amount from account_voucher_tax
                 where tax_code_type = 'undue' and voucher_id = %s), 0.0)
-        """, (voucher_id, voucher_id))
+        """, (voucher.id, voucher.id))
         vat_diff = self._cr.fetchone()[0] or 0.0
         if vat_diff:
-            voucher = self.env['account.voucher'].browse(voucher_id)
             account = voucher.partner_id.property_account_tax_difference
+            if not account:
+                raise ValidationError(_('No Tax Difference Account!'))
             res.append({
                 'type': 'tax',
                 'name': _('Tax Difference'),

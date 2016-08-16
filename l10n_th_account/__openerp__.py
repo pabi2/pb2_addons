@@ -17,6 +17,7 @@
         'views/account_invoice_view.xml',
         'views/voucher_payment_receipt_view.xml',
         'views/res_config_view.xml',
+        'views/account_config.xml',
         'views/res_partner_view.xml',
         'security/ir.model.access.csv'
     ],
