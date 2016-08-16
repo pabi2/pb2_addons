@@ -11,8 +11,11 @@ ALLOWED_OPS = set(['ilike', 'like'])
 @tools.ormcache(skiparg=0)
 def _get_rec_names(self):
     "List of fields to search into"
-    model = self.env['ir.model'].search(
-        [('model', '=', str(self._model))])
+    self._cr.execute("SELECT id from ir_model where model = '%s'"
+                     %(str(self._model)))
+    model_id = self._cr.fetchone()
+    model_id = model_id and model_id[0] or False
+    model = self.env['ir.model'].browse(model_id)
     rec_name = [self._rec_name] or []
     other_names = model.name_search_ids.mapped('name')
     return rec_name + other_names
@@ -23,7 +26,6 @@ def _extend_name_results_translation(self, domain, field_name,
     result_count = len(results)
     if result_count < limit:
         domain += [('id', 'not in', [x[0] for x in results])]
-        # recs = self.search(domain, limit=limit - result_count)
         trans_name = '%s,%s' % (self._model, field_name)
         translation_ids =\
             self.env['ir.translation'].search([('value', 'ilike', name),
@@ -34,6 +36,24 @@ def _extend_name_results_translation(self, domain, field_name,
         results.extend(record_ids.name_get())
         results = list(set(results))
     return results
+
+
+def _extend_search_results_translation(self, sub_domain):
+    field_name = sub_domain[0]
+    value = sub_domain[2]
+    trans_name = '%s,%s' % (self._model, field_name)
+    if isinstance(value, str) or isinstance(value, unicode):
+        self._cr.execute("""
+            SELECT src
+            FROM ir_translation
+            WHERE value ilike '%s' AND
+                name = '%s'
+        """ % (value, trans_name))
+        res = self._cr.fetchone()
+        source_value =  res and res[0] or False
+        if source_value:
+            sub_domain[2] = source_value
+    return sub_domain
 
 
 class ModelExtended(models.Model):
@@ -71,6 +91,33 @@ class ModelExtended(models.Model):
                             rec_name, name, res, limit)
                 return res
             return name_search
+ 
+        def make_search():
+            @api.model
+            def _search(self, args, offset=0, limit=None, order=None, 
+                        count=False, access_rights_uid=None):
+                # Perform standard _search
+                result = _search.origin(
+                    self, args=args, offset=offset, limit=limit, order=order, 
+                        count=count, access_rights_uid=access_rights_uid)
+                if args:
+                     # Perform extended search
+                    base_domain = args or []
+                    for a in base_domain:
+                        if isinstance(a, list) and len(a) == 3:
+                            new_sub_domain = _extend_search_results_translation(self, a)
+                            a = new_sub_domain
+                    new_result = self._search.origin(
+                        self, args=base_domain, offset=offset, limit=limit, order=order, 
+                            count=count, access_rights_uid=access_rights_uid)
+                    if not isinstance(result, list):
+                        result = [result]
+                    if not isinstance(new_result, list):
+                        new_result = [new_result]
+                    result.extend(new_result)
+                    result = list(set(result))
+                return result
+            return _search
 
         if ids is None:
             ids = self.search(cr, SUPERUSER_ID, [])
@@ -78,6 +125,7 @@ class ModelExtended(models.Model):
             Model = self.pool.get(model.model)
             if Model:
                 Model._patch_method('name_search', make_name_search())
+                Model._patch_method('_search', make_search())
         return super(ModelExtended, self)._register_hook(cr)
 
 # @api.model
