@@ -31,7 +31,6 @@ class InvestAssetSelect(models.TransientModel):
         active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
         InvestAssetPlan = self.env[active_model].browse(active_id)
-        InvestAssetPlanItems = InvestAssetPlan.item_ids.ids
         res['invset_asset_wiz_line_ids'] = []
         for item in InvestAssetPlan.item_ids:
             vals = {

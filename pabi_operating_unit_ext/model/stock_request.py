@@ -12,6 +12,6 @@ class StockRequest(models.Model):
 
     @api.model
     def _prepare_inv(self, expense):
-        res = super(HrExpenseExpense, self)._prepare_inv(expense)
+        res = super(StockRequest, self)._prepare_inv(expense)
         res.update({'operating_unit_id': expense.operating_unit_id.id})
         return res

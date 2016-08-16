@@ -1,23 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
 <data>
-	
-	# Customer Invoice 
-	
-	<!-- Delete existing report -->
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_1'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_2'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_3'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_4'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_5'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_6'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_7'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_8'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_9'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_10'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_11'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_12'))]" />
-
 
 	<record id="purchase_work_acceptance" model="ir.actions.report.xml">
 		<field name="string">Work Acceptance</field>
