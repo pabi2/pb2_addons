@@ -126,7 +126,7 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree" position="attributes">
                     <attribute name="create">false</attribute>
-                    <attribute name="delete">false</attribute>
+                    <attribute name="delete">true</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
                     <attribute name="required">1</attribute>
@@ -150,6 +150,17 @@
                     <field name="doc_approve_uid"/>
                     <field name="date_doc_approve"/>
                     <field name="doc_approve_position_id"/>
+                </xpath>
+            </field>
+        </record>
+
+		<!-- added by kittiu -->
+        <record model="ir.ui.view" id="view_purchase_order_form2" >
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
                 </xpath>
             </field>
         </record>

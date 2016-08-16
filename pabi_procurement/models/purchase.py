@@ -101,6 +101,11 @@ class PurchaseOrder(models.Model):
     delivery_address = fields.Text(
         string='Delivery Address',
     )
+    is_central_purchase = fields.Boolean(
+        string='Central Purchase',
+        readonly=True,
+        default=False,
+    )
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -310,6 +315,19 @@ class PurchaseOrder(models.Model):
                 self.signal_workflow(cr, uid, [old_id], 'purchase_cancel')
 
         return orders_info
+
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if not rec.order_id.is_central_purchase:
+                raise UserError(
+                    _('Deletion of purchase order line is not allowed,\n'
+                      'please discard changes!'))
+        return super(PurchaseOrderLine, self).unlink()
 
 
 class PRWebPurchaseMethod(models.Model):

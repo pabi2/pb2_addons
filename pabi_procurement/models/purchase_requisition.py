@@ -327,6 +327,7 @@ class PurchaseRequisition(models.Model):
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
             'delivery_address': combined_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
+            'is_central_purchase': requisition.is_central_purchase,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
@@ -348,10 +349,12 @@ class PurchaseRequisition(models.Model):
                                          purchase_id, supplier)
         # Always use price and tax_ids from pr_line (NOT from product)
         res.update({
-            'name': requisition_line.product_name,
-            'price_unit': requisition_line.price_unit,
-            'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
-            'product_uom': requisition_line.product_uom_id.id,
+            'name': requisition_line.product_name or res['name'],
+            'price_unit': requisition_line.price_unit or res['price_unit'],
+            'taxes_id': ([(6, 0, requisition_line.tax_ids.ids)] or
+                         res['taxes_id']),
+            'product_uom': (requisition_line.product_uom_id.id or
+                            res['product_uom']),
         })
         return res
 
