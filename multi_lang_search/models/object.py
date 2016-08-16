@@ -23,7 +23,7 @@ def _extend_name_results_translation(self, domain, field_name,
     result_count = len(results)
     if result_count < limit:
         domain += [('id', 'not in', [x[0] for x in results])]
-        recs = self.search(domain, limit=limit - result_count)
+        # recs = self.search(domain, limit=limit - result_count)
         trans_name = '%s,%s' % (self._model, field_name)
         translation_ids =\
             self.env['ir.translation'].search([('value', 'ilike', name),

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_payment_export_form" model="ir.ui.view">
+            <field name="name">view.payment_export_filter</field>
+            <field name="model">payment.export</field>
+            <field name="inherit_id" ref="payment_export.view_payment_export_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_export_payment_pack']" position="attributes">
+                    <attribute name="type">action</attribute>
+                    <attribute name="name">%(base_document_export.action_document_export_parser)d</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

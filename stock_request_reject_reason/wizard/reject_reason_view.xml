@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_request_reject" model="ir.ui.view">
+            <field name="name">Reject Reason</field>
+            <field name="model">stock.request.reject</field>
+            <field name="arch" type="xml">
+             <form string="Reject Reason">
+                <p class="oe_grey">
+                    Type in the rejection reason for Stock Request.
+                </p>
+                <group>
+                    <field name="reject_reason_txt" required="1"/>
+                </group>
+                <footer>
+                    <button name="confirm_reject"
+                        string="Reject" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_request_reject" model="ir.actions.act_window">
+            <field name="name">Reject Reason</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.request.reject</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_request_reject"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

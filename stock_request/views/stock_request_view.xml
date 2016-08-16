@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+   
+        <!-- Top menu item -->
+        <menuitem name="Stock" id="menu_stock_request" groups="base.group_user" sequence="71"/>
+        <menuitem name="Stock Operation" id="menu_stock_operation" parent="menu_stock_request" groups="base.group_user" sequence="10"/>
+	    
+   		# Stock Request
+        <record id="view_stock_request_filter" model="ir.ui.view">
+            <field name="name">view.stock.request.filter</field>
+            <field name="model">stock.request</field>
+            <field name="arch" type="xml">
+                <search string="Search Stock Request">
+                    <field name="name"/>
+                    <filter string="Draft" name="draft" domain="[('state','in',('draft',))]" />
+                    <filter string="Waiting Confirmation" name="wait_confirm" domain="[('state','in',('wait_confirm',))]" />
+                    <filter string="Confirmed" name="confirmed" domain="[('state','in',('confirm',))]" />
+                    <filter string="Waiting Approval" name="wait_approve" domain="[('state','in',('wait_approve',))]" />
+                    <filter string="Approved" name="approved" domain="[('state','in',('approved',))]" />
+                    <filter string="Ready to Transfer" name="ready" domain="[('state','in',('ready',))]" />
+                    <filter string="Transferred" name="done" domain="[('state','in',('done',))]" />
+                    <filter string="Returned" name="done_return" domain="[('state','in',('done_return',))]" />
+                    <filter string="Cancelled" name="cancel" domain="[('state','in',('cancel',))]" />
+                    <group expand="0" string="Group By...">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    
+       	<record model="ir.ui.view" id="view_stock_request_tree">
+            <field name="name">view.stock.request.tree</field>
+            <field name="model">stock.request</field>
+            <field name="arch" type="xml">
+                <tree string="Stock Request"
+                	colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                    <field name="name" />
+                    <field name="employee_id" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+   		
+        <record model="ir.ui.view" id="view_stock_request_form">
+            <field name="name">view.stock.request.form</field>
+            <field name="model">stock.request</field>
+            <field name="arch" type="xml">
+            	<form string="Stock Request" >
+                <header>    
+                		<!-- Request -->            
+	                    <button name="action_confirm" string="Request" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'draft')]}"/>
+	                    <button name="action_verify" string="Verify" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'confirmed')]}"/>
+	                    <button name="action_approve" string="Approve" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_manager"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'wait_approve')]}"/>
+	                    <button name="action_prepare" string="Prepare Transfer" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'approved')]}"/>
+	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'ready')]}"/>
+	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_1"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
+	                    <button name="action_draft" string="Reset to Draft" type="object" 
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'cancel')]}"/>
+
+                		<!-- Transfer -->  
+	                    <button name="action_prepare" string="Prepare Transfer" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'draft')]}"/>
+	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'ready')]}"/>
+	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_2"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
+	                    <button name="action_draft" string="Reset to Draft" type="object" 
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'cancel')]}"/>
+
+                		<!-- Borrow -->  
+	                    <button name="action_request" string="Request" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'draft')]}"/>
+	                    <button name="action_confirm" string="Confirm" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'wait_confirm')]}"/>
+	                    <button name="action_verify" string="Verify" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'confirmed')]}"/>
+	                    <button name="action_approve" string="Approve" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_manager"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'wait_approve')]}"/>
+	                    <button name="action_prepare" string="Prepare" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'approved')]}"/>
+	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'ready')]}"/>
+	                    <button name="action_return" string="Return" type="object" class="oe_highlight" 
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'done')]}"/>
+	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_3"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
+	                    <button name="action_draft" string="Reset to Draft" type="object"
+	                    	groups="stock.group_stock_user"
+	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'cancel')]}"/>
+	                    	
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Stock Rquest " attrs="{'invisible': [('type', '!=', 'request')]}"/>
+                            <label string="Stock Transfer " attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
+                            <label string="Stock Borrow " attrs="{'invisible': [('type', '!=', 'borrow')]}"/>
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons">
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" />
+                            <field name="type" invisible="1"/>
+                        </group>
+                        <group>
+                       		<field name="company_id" invisible="1" />
+                            <field name="prepare_emp_id" />
+                            <field name="receive_emp_id" />
+                        </group>
+                    </group>
+                    <notebook>
+	                    <page string="Requesting Materials" >
+		                    <group>
+		                        <group>
+		                            <field name="picking_type_id" />
+		                        </group>
+		                        <group>
+		                        	<field name="location_borrow_id" attrs="{'invisible': [('type', '!=', 'borrow')], 'required': [('type', '=', 'borrow')]}"/>
+		                            <field name="location_id" attrs="{'invisible': [('type', '=', 'request')]}"/>
+		                            <field name="location_dest_id" attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
+		                        </group>
+		                    </group>
+		                    <p class="oe_gray">
+		                    NOTE: Only product available in selected locations will be listed!
+		                    </p>
+		                   	<field name="line_ids" attrs="{'invisible': [('state', '=', 'draft')]}">
+		                   		<tree string="Products" editable="bottom"
+		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
+						            <field name="request_id" invisible="1" />
+						            <field name="product_id" readonly="1"/>
+				                    <field name="onhand_qty" />
+				                    <field name="future_qty" />
+						            <field name="request_uom_qty" readonly="1"/>
+						            <field name="product_uom_qty" />
+						            <field name="product_uom" invisible="1"/>
+						            <field name="product_uom_readonly" />
+					            </tree>
+		                   	</field>
+		                   	<field name="line2_ids" attrs="{'invisible': [('state', '!=', 'draft')]}">
+		                   		<tree string="Products" editable="bottom" >
+						            <field name="request_id" invisible="1" />
+						            <field name="product_id" context="{'stock_request_type': parent.type, 'location_id': parent.location_id,  'location_dest_id': parent.location_dest_id, 'location_borrow_id': parent.location_borrow_id}"/>
+				                    <field name="onhand_qty" invisible="1" />
+				                    <field name="future_qty" invisible="1" />
+						            <field name="request_uom_qty" />
+						            <field name="product_uom_qty" invisible="1" />
+						            <field name="product_uom" invisible="1"/>
+						            <field name="product_uom_readonly" />
+					            </tree>
+		                   	</field>
+	           				<field name="note" placeholder="Notes..."/>
+	                   	</page>
+	                    <page string="Other Info" >
+	                    	<group>
+	                    		<group>
+	                    			<field name="transfer_picking_id" />
+	                    		</group>
+	                    		<group>
+                            		<field name="return_picking_id" attrs="{'invisible': [('type', '!=', 'borrow')]}"/>
+	                    		</group>
+	                    	</group>
+	                   	</page>
+	           		</notebook>
+               	</sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+        
+        
+        
+		<record id="action_stock_request" model="ir.actions.act_window">
+            <field name="name">Stock Request</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'request')]</field>
+            <field name="context">{'default_type': 'request'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Request.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="action_stock_request" sequence="11"
+	    	id="menu_action_stock_request"  parent="menu_stock_operation"
+	    	groups="base.group_user" /> 
+	    	
+	    	
+		<record id="action_stock_transfer" model="ir.actions.act_window">
+            <field name="name">Stock Transfer</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'transfer')]</field>
+            <field name="context">{'default_type': 'transfer'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Transfer.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="action_stock_transfer" sequence="12"
+	    	id="menu_action_stock_transfer"  parent="menu_stock_operation"
+	    	groups="stock.group_stock_user"/> 
+	    	
+	    	
+		<record id="action_stock_borrow" model="ir.actions.act_window">
+            <field name="name">Stock Borrow</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'borrow')]</field>
+            <field name="context">{'default_type': 'borrow'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Borrow.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="action_stock_borrow" sequence="13"
+	    	id="menu_action_stock_borrow" parent="menu_stock_operation"
+	    	groups="stock.group_stock_user" /> 
+	    	       
+    </data>
+</openerp>

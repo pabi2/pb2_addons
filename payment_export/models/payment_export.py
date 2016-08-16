@@ -13,6 +13,7 @@ class PaymentExport(models.Model):
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        default="/",
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -30,19 +31,18 @@ class PaymentExport(models.Model):
     )
     bank_id = fields.Many2one(
         'res.partner.bank',
+        related='journal_id.bank_id',
         string='Bank Account',
-        compute='_compute_bank_cheque_lot',
-        readonly=True,
     )
     is_cheque_lot = fields.Boolean(
         string='Is Cheque Lot Available',
-        compute='_compute_bank_cheque_lot',
-        readonly=True,
+        compute='_compute_is_cheque_lot',
     )
     cheque_lot_id = fields.Many2one(
         'cheque.lot',
         string='Cheque Lot',
-        domain="[('bank_id', '=', bank_id), ('state', '=', 'active')]",
+        domain="[('bank_id', '=', bank_id), "
+        "('journal_id', '=', journal_id),('state', '=', 'active')]",
         ondelete='restrict',
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -87,6 +87,48 @@ class PaymentExport(models.Model):
         string='Supplier Payment',
         help='Search line for Payment',
     )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.user.company_id,
+    )
+    sum_amount = fields.Float(
+        compute="_compute_sum_amount",
+        string="Sum Amount",
+        store=True,
+        copy=False,
+    )
+    sum_total = fields.Float(
+        compute="_compute_sum_amount",
+        string="Sum Total",
+        store=True,
+        copy=False,
+    )
+    cancel_reason_txt = fields.Char(
+        string="Description",
+        readonly=True)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', '/') == '/':
+            vals['name'] = self.env['ir.sequence'].get('payment.export') or '/'
+        return super(PaymentExport, self).create(vals)
+
+    @api.depends('line_ids',
+                 'line_ids.amount',
+                 'line_ids.use_export_line',
+                 'line_ids.amount_total')
+    def _compute_sum_amount(self):
+        for export in self:
+            sum_amount = 0.0
+            sum_total = 0.0
+            for line in export.line_ids:
+                if line.use_export_line:
+                    sum_amount += line.amount
+                    sum_total += line.amount_total
+            export.sum_amount = sum_amount
+            export.sum_total = sum_total
 
     @api.multi
     @api.depends()
@@ -103,21 +145,12 @@ class PaymentExport(models.Model):
             export.cheque_number_to = res[1]
 
     @api.one
-    @api.depends('journal_id')
-    def _compute_bank_cheque_lot(self):
-        Bank = self.env['res.partner.bank']
-        if not self.journal_id:
-            self.bank_id = False
-            self.is_cheque_lot = False
-            return
-        bank = Bank.search([('journal_id', '=', self.journal_id.id)])
-        if bank:
-            self.bank_id = bank
-            if bank.lot_ids:
-                self.is_cheque_lot = True
-        else:
-            self.bank_id = False
-            self.is_cheque_lot = False
+    @api.depends('bank_id', 'journal_id')
+    def _compute_is_cheque_lot(self):
+        Lot = self.env['cheque.lot']
+        lots = Lot.search([('bank_id', '=', self.bank_id.id),
+                           ('journal_id', '=', self.journal_id.id)])
+        self.is_cheque_lot = lots and True or False
 
     @api.onchange('journal_id')
     def _onchange_journal_id(self):
@@ -154,6 +187,7 @@ class PaymentExport(models.Model):
                                   limit=self.cheque_lot_id.remaining)
         for voucher in vouchers:
             export_line = ExportLine.new()
+            export_line.use_export_line = True
             export_line.voucher_id = voucher
             export_line.amount = voucher.amount
             self.line_ids += export_line
@@ -164,50 +198,82 @@ class PaymentExport(models.Model):
             return
         ChequeLot = self.env['cheque.lot']
         for rec in self:
-            limit = len(rec.line_ids)
+            limit = len(filter(lambda l: (l.use_export_line), rec.line_ids))
             cheque_lot_id = rec.cheque_lot_id.id
             res = ChequeLot.get_draft_cheque_register_range(cheque_lot_id,
                                                             limit)
             for i in range(limit):
-                rec.line_ids[i].cheque_register_id = res[i]
+                if rec.line_ids[i].use_export_line:
+                    rec.line_ids[i].cheque_register_id = res[i]
 
     @api.multi
     def action_done(self):
         for export in self:
             if not export.line_ids:
                 raise UserError(_('No Export Lines'))
+            for line in export.line_ids:
+                if line.use_export_line:
+                    voucher = line.voucher_id
+                    export_voucher_ids =\
+                        self.env['payment.export.line'].\
+                        search([('voucher_id', '=', voucher.id)])
+                    voucher_done_export = [(e, e.voucher_id)
+                                           for e in export_voucher_ids
+                                           if e.export_id.state == 'done']
+                    if voucher_done_export:
+                        raise UserError(
+                            _("Supplier Payment %s has been exported by %s:")
+                            % (voucher_done_export[1].number,
+                               voucher_done_export[0].name))
             # Case Cheque only
             if export.is_cheque_lot:
                 for line in export.line_ids:
-                    if not line.cheque_register_id:
-                        raise UserError(
-                            _('Some Payments is not assigned with Cheque '
-                              'Number!\nPlease click Assign Cheque Number.'))
-                    if line.cheque_register_id.voucher_id:
-                        raise UserError(
-                            _('Cheque Number %s is occupied, please reassign '
-                              'again!') % (line.cheque_register_id.number))
-                    if line.cheque_register_id.void:
-                        raise UserError(
-                            _('Cheque Number %s is voided, please reassign '
-                              'again!') % (line.cheque_register_id.number))
-                    line.cheque_register_id.write(
-                        {'voucher_id': line.voucher_id.id,
-                         'payment_export_id': export.id}
-                    )
-            export.line_ids.write({'exported': True})
+                    if line.use_export_line:
+                        if not line.cheque_register_id:
+                            raise UserError(
+                                _('Some Payments is not assigned with Cheque '
+                                  'Number!\nPlease click Assign Cheque Number.'
+                                  ))
+                        if line.cheque_register_id.voucher_id:
+                            raise UserError(
+                                _('Cheque Number %s is occupied, \
+                                    please reassign again!')
+                                % (line.cheque_register_id.number))
+                        if line.cheque_register_id.void:
+                            raise UserError(
+                                _('Cheque Number %s is voided, please reassign'
+                                  ' again!')
+                                % (line.cheque_register_id.number))
+                        line.cheque_register_id.write(
+                            {'voucher_id': line.voucher_id.id,
+                             'payment_export_id': export.id}
+                        )
+                        cheque_register = line.cheque_register_id
+                        cheque_lot = cheque_register.cheque_lot_id
+                        cheque_number = cheque_register.number
+                        cheque_date = export.date_value
+                        bank_name = cheque_lot.bank_id.name
+                        bank_branch = cheque_lot.bank_id.branch_cheque
+                        line.voucher_id.write({
+                            'date_cheque': cheque_date,
+                            'number_cheque': cheque_number,
+                            'bank_cheque': bank_name,
+                            'branch_cheque': bank_branch,
+                        })
+                        line.write({'exported': True})
         self.write({'state': 'done'})
 
     @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
         for rec in self:
-            rec.line_ids.write({'exported': False})
             for line in rec.line_ids:
-                line.cheque_register_id.write(
-                    {'voucher_id': False,
-                     'payment_export_id': False}
-                )
+                if line.use_export_line:
+                    line.cheque_register_id.write(
+                        {'voucher_id': False,
+                         'payment_export_id': False}
+                    )
+                    line.write({'exported': False})
 
     @api.multi
     def action_draft(self):
@@ -253,3 +319,23 @@ class PaymentExportLine(models.Model):
         string='Exported',
         default=False,
     )
+    use_export_line = fields.Boolean(
+        string="Use line",
+        default=True,
+        copy=False,
+    )
+    amount_fee = fields.Float(
+        string="Fee",
+        copy=False,
+    )
+    amount_total = fields.Float(
+        compute="_compute_total",
+        string="Total",
+        store=True,
+        copy=False,
+    )
+
+    @api.depends('amount', 'amount_fee')
+    def _compute_total(self):
+        for line in self:
+            line.amount_total = line.amount + line.amount_fee

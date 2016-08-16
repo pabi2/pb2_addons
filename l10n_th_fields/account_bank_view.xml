@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	
+	    <record id="view_partner_bank_form_inherit" model="ir.ui.view">
+	        <field name="name">Partner Bank Accounts - Journal</field>
+	        <field name="model">res.partner.bank</field>
+	        <field name="inherit_id" ref="account.view_partner_bank_form_inherit"/>
+	        <field name="arch" type="xml">
+	            <group name="accounting" position="attributes">
+	            	<attribute name="attrs" >{}</attribute>
+	            </group>
+	            <xpath expr="//field[@name='journal_id']" position="after">
+	            	<field name="journal_ids" widget="many2many_tags"/>
+	            </xpath>
+	            <xpath expr="//field[@name='bank_bic']" position="after">
+                    <field name="branch_cheque"/>
+                </xpath>
+	        </field>
+	    </record>
+
+    </data>
+</openerp>

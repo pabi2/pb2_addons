@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class AccountActivityGroup(models.Model):
@@ -39,12 +39,12 @@ class AccountActivityGroup(models.Model):
         'activity_group_id',
         string='Activities',
     )
-    account_id = fields.Many2one(
-        'account.account',
-        string='Account',
-        domain=[('type', '!=', 'view')],
-        help="This account has less priority to activitie's account",
-    )
+#     account_id = fields.Many2one(
+#         'account.account',
+#         string='Account',
+#         domain=[('type', '!=', 'view')],
+#         help="This account has less priority to activitie's account",
+#     )
     monitor_ids = fields.One2many(
         'account.activity.group.monitor.view',
         'activity_group_id',
@@ -66,15 +66,15 @@ class AccountActivityGroup(models.Model):
             raise UserError(
                 _('You cannot create recursive Activity Group!'))
 
-    @api.one
-    @api.constrains('account_id', 'activity_ids')
-    def _check_account_id(self):
-        if not self.account_id and \
-                self.env['account.activity'].search_count(
-                    [('activity_group_id', '=', self.id),
-                     ('account_id', '=', False)]) > 0:
-            raise UserError(
-                _('Please select account in group or in activity!'))
+#     @api.one
+#     @api.constrains('account_id', 'activity_ids')
+#     def _check_account_id(self):
+#         if not self.account_id and \
+#                 self.env['account.activity'].search_count(
+#                     [('activity_group_id', '=', self.id),
+#                      ('account_id', '=', False)]) > 0:
+#             raise UserError(
+#                 _('Please select account in group or in activity!'))
 
 
 class AccountActivity(models.Model):
@@ -84,7 +84,7 @@ class AccountActivity(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        ondelete='restrict',
+        ondelete='set null',
     )
     tag_ids = fields.Many2many(
         'account.activity.tag',
@@ -97,13 +97,13 @@ class AccountActivity(models.Model):
         string='Activity',
         required=True,
     )
-    # TODO: May be removed later???
     account_id = fields.Many2one(
         'account.account',
         string='Account',
+        required=True,
         domain=[('type', '!=', 'view')],
         help="This account has higher priority to group activities's account",
-    )  # --
+    )
     monitor_ids = fields.One2many(
         'account.activity.monitor.view',
         'activity_id',
@@ -125,13 +125,13 @@ class AccountActivity(models.Model):
 #                               activity.name or '-')))
 #         return result
 
-    @api.one
-    @api.constrains('account_id')
-    def _check_account_id(self):
-        if not self.account_id and not self.activity_group_id.account_id:
-            raise UserError(
-                _('Please select account for activity in group %s!' %
-                  (self.activity_group_id.name,)))
+#     @api.one
+#     @api.constrains('account_id')
+#     def _check_account_id(self):
+#         if not self.account_id and not self.activity_group_id.account_id:
+#             raise UserError(
+#                 _('Please select account for activity in group %s!' %
+#                   (self.activity_group_id.name,)))
 
 
 class AccountActivityTag(models.Model):
@@ -145,3 +145,63 @@ class AccountActivityTag(models.Model):
         ('activity_tag_uniq', 'unique(name)',
          'Activity Tag be unique!'),
     ]
+
+
+class ActivityCommon(object):
+
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+    )
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        domain="[('activity_group_id', '=', activity_group_id)]",
+    )
+
+    @api.model
+    def _onchange_focus_field(self, focus_field=False,
+                              parent_field=False, child_field=False):
+        """ Helper method
+            - assign domain to child_field
+            - assign value to parent field
+        """
+        if parent_field:
+            if self[focus_field] and parent_field in self[focus_field]:
+                if parent_field in self:
+                    self[parent_field] = self[focus_field][parent_field]
+        if child_field:
+            child_domain = []
+            if self[focus_field]:
+                child_ids = self.env[self[child_field]._name].\
+                    search([(focus_field, '=', self[focus_field].id)])
+                if self[child_field] not in child_ids:
+                    self[child_field] = False
+                child_domain = [(focus_field, '=', self[focus_field].id)]
+            else:
+                self[child_field] = False
+            return {'domain': {child_field: child_domain}}
+        return {'domain': {}}
+
+    @api.onchange('activity_id')
+    def _onchange_activity_id(self):
+        if 'product_id' in self:
+            self['product_id'] = False
+        return self._onchange_focus_field(focus_field='activity_id',
+                                          parent_field='account_id',
+                                          child_field=False)
+
+    @api.onchange('activity_group_id')
+    def _onchange_activity_group_id(self):
+        return self._onchange_focus_field(focus_field='activity_group_id',
+                                          parent_field=False,
+                                          child_field='activity_id')
+
+    @api.multi
+    @api.constrains('activity_id', 'product_id')
+    def _check_activity_product_id(self):
+        for rec in self:
+            if 'product_id' in rec and 'activity_id' in rec:
+                if rec.product_id and rec.activity_id:
+                    raise ValidationError(
+                        _("Activity/Product can not exist together!"))

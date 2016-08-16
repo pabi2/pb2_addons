@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp import api, fields, models
+from .account_activity import ActivityCommon
 
 
 class PurchaseRequisition(models.Model):
@@ -32,40 +32,12 @@ class PurchaseRequisition(models.Model):
         return res
 
 
-class PurchaseRequisitionLine(models.Model):
+class PurchaseRequisitionLine(ActivityCommon, models.Model):
     _inherit = 'purchase.requisition.line'
 
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-        compute='_compute_activity_group',
-        store=True,
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
-    )
     purchase_line_ids = fields.One2many(
         'purchase.order.line',
         'requisition_line_id',
         string='Purchase Order Lines',
         readonly=True,
     )
-
-    @api.one
-    @api.depends('product_id', 'activity_id')
-    def _compute_activity_group(self):
-        if self.product_id and self.activity_id:
-            self.product_id = self.activity_id = False
-        if self.product_id:
-            account_id = self.product_id.property_account_expense.id or \
-                self.product_id.categ_id.property_account_expense_categ.id
-            if not account_id:
-                raise UserError(
-                    _('No Account Code assigned for product - %s') %
-                    (self.product_id.name,))
-            activity_group = self.env['account.activity.group'].\
-                search([('account_id', '=', account_id)])
-            self.activity_group_id = activity_group
-        elif self.activity_id:
-            self.activity_group_id = self.activity_id.activity_group_id

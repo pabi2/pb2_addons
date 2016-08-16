@@ -35,11 +35,19 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_tree"/>
             <field name="arch" type="xml">
+		        <field name="display_name" position="before">
+                	<field name="title"/>
+		        </field>
 		        <field name="display_name" position="after">
-                	<field name="search_key"/>
                 	<field name="category_id" string="Category"/>
-		            <field name="vat" string="Tax ID"/>
-		            <field name="taxbranch" string="Tax Branch ID"/>
+		            <!--<field name="vat" string="Tax ID"/>-->
+		            <!--<field name="taxbranch" string="Tax Branch ID"/>-->
+		        </field>
+		        <field name="phone" position="after">
+                	<field name="mobile"/>
+		        </field>
+                <field name="email" position="after">
+                    <field name="search_key"/>
 		        </field>
             </field>
         </record>
