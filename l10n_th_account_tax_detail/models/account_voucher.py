@@ -11,16 +11,8 @@ class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()
         if self.type == 'receipt' or \
-                self.env.user.company_id.auto_recognize_vat:
-            self._check_tax_detail_info()
-            self._assign_detail_tax_sequence()
-        return result
-
-    @api.multi
-    def recognize_vat_move_line_create(self):
-        result = super(AccountVoucher, self).recognize_vat_move_line_create()
-        if self.type == 'payment' and \
-                not self.env.user.company_id.auto_recognize_vat:
+                self.env.user.company_id.auto_recognize_vat or \
+                self._context.get('recognize_vat', False):
             self._check_tax_detail_info()
             self._assign_detail_tax_sequence()
         return result

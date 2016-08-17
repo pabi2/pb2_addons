@@ -553,28 +553,44 @@ class AccountVoucher(common_voucher, models.Model):
         return res
 
     @api.multi
-    def recognize_vat_move_line_create(self):
+    def action_move_line_create(self):
         """ This is the cut down version of action_move_line_create()
             It just post the clearing between due and undue """
-        if self.env.user.company_id.auto_recognize_vat:
-            return False
-        context = self._context.copy()
-        context.update({'recognize_vat': True})
-        move_pool = self.env['account.move']
-        for voucher in self:
-            if voucher.recognize_vat_move_id:
-                raise UserError(_('Recognize VAT Entry already exists'))
-            company_currency = self._get_company_currency(voucher.id)
-            current_currency = self._get_current_currency(voucher.id)
-            context = self.with_context(context)._sel_context(voucher.id)
-            move = move_pool.with_context(context).\
-                create(self.with_context(context).account_move_get(voucher.id))
-            self.with_context(context).\
-                _finalize_line_total(
-                    voucher, 0.0, move.id, company_currency, current_currency)
-            voucher.write({
-                'recognize_vat_move_id': move.id,
-            })
+        if not self.env.user.company_id.auto_recognize_vat and \
+                self._context.get('recognize_vat', False):
+            # Start its own
+            context = self._context.copy()
+            move_pool = self.env['account.move']
+            for voucher in self:
+                if voucher.recognize_vat_move_id:
+                    raise UserError(_('Recognize VAT Entry already exists'))
+                company_currency = self._get_company_currency(voucher.id)
+                current_currency = self._get_current_currency(voucher.id)
+                context = self.with_context(context)._sel_context(voucher.id)
+                move_dict = \
+                    self.with_context(context).account_move_get(voucher.id)
+                journal = self.env.user.company_id.recognize_vat_journal_id
+                today = fields.Date.context_today(self)
+                period_id = self.env['account.period'].find(self.date)[:1]
+                move_dict.update({
+                    'name': '/',
+                    'journal': journal.id,
+                    'date': today,
+                    'period_id': period_id.id,
+                })
+                move = move_pool.with_context(context).\
+                    create(move_dict)
+                self.with_context(context).\
+                    _finalize_line_total(voucher, 0.0, move.id,
+                                         company_currency, current_currency)
+                voucher.write({
+                    'recognize_vat_move_id': move.id,
+                })
+            # Call just to by pass in hook, but still benefit from others
+            super(AccountVoucher,
+                  self.with_context(bypass=True)).action_move_line_create()
+        else:
+            super(AccountVoucher, self).action_move_line_create()
         return True
 
 

@@ -18,4 +18,14 @@ class AccountVoucher(models.Model):
                     {'doc_ref': voucher.number,
                      'doc_id': '%s,%s' % ('account.voucher', voucher.id)}
                 )
+            # Special for l10n_th_account, if it is being installed
+            if 'recognize_vat_move_id' in voucher and \
+                    voucher.recognize_vat_move_id:
+                # voucher.move_id.line_id.write({'doc_ref': voucher.number})
+                self.pool.get('account.move.line').write(
+                    cr, uid,
+                    voucher.recognize_vat_move_id.line_id.ids,
+                    {'doc_ref': voucher.number,
+                     'doc_id': '%s,%s' % ('account.voucher', voucher.id)}
+                )
         return result

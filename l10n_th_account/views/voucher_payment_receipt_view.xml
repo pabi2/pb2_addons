@@ -111,12 +111,13 @@
 		    <field name="inherit_id" ref="account_voucher.view_vendor_payment_form"/>
 		    <field name="arch" type="xml">
 				<data>
-                	<button name="proforma_voucher" position="after" >
-                		<field name="auto_recognize_vat" invisible="1"/>
-                    	<button name="recognize_vat_move_line_create" string="Clear Undue VAT" type="object" class="oe_highlight" 
-                    		attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'posted'), ('auto_recognize_vat', '=', True),
-                    								('recognize_vat_move_id', '!=', False), ('tax_line_normal', '=', [])]}"/>
-                	</button>
+					<button name="proforma_voucher" position="after"> 	
+			            <field name="auto_recognize_vat" invisible="1"/>
+						<button name="proforma_voucher" string="Clear Undue VAT" type="object" class="oe_highlight" 
+                   			context="{'recognize_vat': True}"
+                   			attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'posted'), ('auto_recognize_vat', '=', True),
+                   						('recognize_vat_move_id', '!=', False), ('tax_line_normal', '=', [])]}"/>								
+					</button>
 					<xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
 						<field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
                 		<field name="retention_on_payment" invisible="1"/>
@@ -147,11 +148,14 @@
 					<page string="Payment Information" position="after">
 			            <page string="Tax">
 			            
-			            	<separator string="Tax" attrs="{'invisible': [('tax_line_normal', '=', False)]}"/>
+							<group attrs="{'invisible': [('tax_line_normal', '=', False)]}">
+								<group string="Tax">
+								</group>
+								<group>			      
+						            <field name="recognize_vat_move_id" class="oe_inline" attrs="{'invisible': [('recognize_vat_move_id', '=', False)]}"/>
+								</group>
+							</group>
 			            	
-			            	<label for="recognize_vat_move_id" class="oe_inline" attrs="{'invisible': [('recognize_vat_move_id', '=', False)]}"/>
-			            	<field name="recognize_vat_move_id" class="oe_inline" attrs="{'invisible': [('recognize_vat_move_id', '=', False)]}"/>
-			                
 			                <field name="tax_line_normal" attrs="{'invisible': [('tax_line_normal', '=', False)]}"
 			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
 			                	
@@ -162,7 +166,11 @@
 			            	<separator string="Withholding Tax" readonly="1" attrs="{'invisible': [('tax_line_wht', '=', False)]}"/>
 			                <field name="tax_line_wht" attrs="{'invisible': [('tax_line_wht', '=', False)]}"
 			                	context="{'tree_view_ref': 'l10n_th_account.voucher_tax_tree_view'}" />
-			                	
+
+
+
+
+			               
 			                <div>
 		                        <label for="amount_tax"/>
 		                        <button name="button_reset_taxes" states="draft,proforma2"
