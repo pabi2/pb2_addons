@@ -574,7 +574,7 @@ class AccountVoucher(common_voucher, models.Model):
                 period_id = self.env['account.period'].find(self.date)[:1]
                 move_dict.update({
                     'name': '/',
-                    'journal': journal.id,
+                    'journal_id': journal.id,
                     'date': today,
                     'period_id': period_id.id,
                 })
