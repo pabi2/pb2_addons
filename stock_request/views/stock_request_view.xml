@@ -15,7 +15,7 @@
                     <field name="name"/>
                     <filter string="Draft" name="draft" domain="[('state','in',('draft',))]" />
                     <filter string="Waiting Confirmation" name="wait_confirm" domain="[('state','in',('wait_confirm',))]" />
-                    <filter string="Confirmed" name="confirmed" domain="[('state','in',('confirm',))]" />
+                    <filter string="Confirmed" name="confirmed" domain="[('state','in',('confirmed',))]" />
                     <filter string="Waiting Approval" name="wait_approve" domain="[('state','in',('wait_approve',))]" />
                     <filter string="Approved" name="approved" domain="[('state','in',('approved',))]" />
                     <filter string="Ready to Transfer" name="ready" domain="[('state','in',('ready',))]" />
@@ -84,9 +84,10 @@
 
                 		<!-- Borrow -->  
 	                    <button name="action_request" string="Request" type="object" class="oe_highlight"
+	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'draft')]}"/>
 	                    <button name="action_confirm" string="Confirm" type="object" class="oe_highlight"
-	                    	groups="stock.group_stock_user"
+	                    	groups="stock.group_stock_manager"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'wait_confirm')]}"/>
 	                    <button name="action_verify" string="Verify" type="object" class="oe_highlight"
 	                    	groups="stock.group_stock_user"
@@ -195,10 +196,9 @@
             </field>
         </record>
         
-        
-        
-		<record id="action_stock_request" model="ir.actions.act_window">
-            <field name="name">Stock Request</field>
+        <!-- Menus and Actions -->
+		<record id="action_new_stock_request" model="ir.actions.act_window">
+            <field name="name">New Stock Request</field>
             <field name="res_model">stock.request</field>
             <field name="view_type">form</field>
             <field name="view_mode">form,tree</field>
@@ -213,16 +213,36 @@
             </field>
         </record>
 
+	    <menuitem action="action_new_stock_request" sequence="10"
+	    	id="menu_action_new_stock_request"  parent="menu_stock_operation"
+	    	groups="base.group_user" /> 
+        
+		<record id="action_stock_request" model="ir.actions.act_window">
+            <field name="name">Stock Request</field>
+            <field name="res_model">stock.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="domain">[('type', '=', 'request')]</field>
+            <field name="context">{'default_type': 'request'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Stock Request.
+              </p>
+            </field>
+        </record>
+
 	    <menuitem action="action_stock_request" sequence="11"
 	    	id="menu_action_stock_request"  parent="menu_stock_operation"
-	    	groups="base.group_user" /> 
+	    	groups="stock.group_stock_user" /> 
 	    	
 	    	
 		<record id="action_stock_transfer" model="ir.actions.act_window">
             <field name="name">Stock Transfer</field>
             <field name="res_model">stock.request</field>
             <field name="view_type">form</field>
-            <field name="view_mode">form,tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
             <field name="domain">[('type', '=', 'transfer')]</field>
@@ -238,12 +258,11 @@
 	    	id="menu_action_stock_transfer"  parent="menu_stock_operation"
 	    	groups="stock.group_stock_user"/> 
 	    	
-	    	
 		<record id="action_stock_borrow" model="ir.actions.act_window">
             <field name="name">Stock Borrow</field>
             <field name="res_model">stock.request</field>
             <field name="view_type">form</field>
-            <field name="view_mode">form,tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
             <field name="domain">[('type', '=', 'borrow')]</field>
