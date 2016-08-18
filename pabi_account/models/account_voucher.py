@@ -137,11 +137,10 @@ class AccountVoucherTax(models.Model):
     _inherit = "account.voucher.tax"
 
     @api.model
-    def move_line_get(self, voucher_id):
+    def move_line_get(self, voucher):
         """ Normal Tax: Use invoice's tax branch for tax move line
             WHT: Use a centralized tax branch """
-        res = super(AccountVoucherTax, self).move_line_get(voucher_id)
-        voucher = self.env['account.voucher'].browse(voucher_id)
+        res = super(AccountVoucherTax, self).move_line_get(voucher)
         taxbranch_id = False
         wht_taxbranch_id = voucher.partner_id.property_wht_taxbranch_id.id
         for line in voucher.line_ids:
