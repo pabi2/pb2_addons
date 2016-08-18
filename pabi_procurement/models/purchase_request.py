@@ -324,6 +324,9 @@ class PurchaseRequestLine(models.Model):
         store=True,
         readonly=True,
     )
+    date_required = fields.Date(
+        string='Scheduled Date',
+    )
 
     @api.one
     @api.depends('requisition_lines.requisition_id.state')
