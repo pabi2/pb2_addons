@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="purchase_request_to_requisition.view_purchase_request_line_make_purchase_requisition"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='purchase_requisition_id']" position="attributes">
-                    <attribute name="domain">[('state','in',('draft', 'done'),(id,'=',item_id))]</attribute>
+                    <attribute name="domain">[('state','in',('draft', 'done'))]</attribute>
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="price_unit" />
