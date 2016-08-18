@@ -25,17 +25,15 @@
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='date_required']" position="attributes">
+                <!--<xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='date_required']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->
-                    <attribute name="String">Scheduled Date</attribute>
-                </xpath>
+                <!--</xpath>-->
                 <xpath expr="//form/sheet/group/group/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/group/group/field[@name='date_required']" position="attributes">
+                <!--<xpath expr="//form/sheet/group/group/field[@name='date_required']" position="attributes">-->
                     <!--<attribute name="invisible">1</attribute>-->
-                    <attribute name="String">Scheduled Date</attribute>
-                </xpath>
+                <!--</xpath>-->
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="objective"/>
                 </xpath>
@@ -244,9 +242,9 @@
                 <xpath expr="//field[@name='supplier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='date_required']" position="attributes">
-                        <attribute name="invisible">1</attribute>
-                </xpath>
+                <!--<xpath expr="//field[@name='date_required']" position="attributes">-->
+                        <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
             </field>
     </record>
     <record model="ir.ui.view" id="view_purchase_request_line_search">
