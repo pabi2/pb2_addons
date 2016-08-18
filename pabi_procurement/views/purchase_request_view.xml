@@ -26,13 +26,15 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='date_required']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <!--<attribute name="invisible">1</attribute>-->
+                    <attribute name="String">Scheduled Date</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='date_required']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <!--<attribute name="invisible">1</attribute>-->
+                    <attribute name="String">Scheduled Date</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="objective"/>
@@ -193,7 +195,7 @@
                         <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
                         <filter name="my_responsible_to_do"
                                 domain="[('responsible_uid','=',uid),('state','=','to_approve')]"
-                                string="My Responsible (To Approve)"/>
+                                string="My Responsible (To Accept)"/>
                 </xpath>
                 <xpath expr="//filter[@name='state_rejected']" position="after">
 
@@ -288,15 +290,15 @@
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_group_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+                <!--<xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_group_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
                 <xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_group_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+                <!--<xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_group_id']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
             </field>
     </record>
 
