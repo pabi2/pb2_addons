@@ -195,7 +195,7 @@
                         <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
                         <filter name="my_responsible_to_do"
                                 domain="[('responsible_uid','=',uid),('state','=','to_approve')]"
-                                string="My Responsible (To Approve)"/>
+                                string="My Responsible (To Accept)"/>
                 </xpath>
                 <xpath expr="//filter[@name='state_rejected']" position="after">
 
