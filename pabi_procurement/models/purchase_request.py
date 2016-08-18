@@ -172,7 +172,10 @@ class PurchaseRequest(models.Model):
     is_central_purchase = fields.Boolean(
         string='Central Purchase',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)],
+        },
         default=False,
     )
 
