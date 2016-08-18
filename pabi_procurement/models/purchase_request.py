@@ -174,7 +174,7 @@ class PurchaseRequest(models.Model):
         readonly=True,
         states={
             'draft': [('readonly', False)],
-            'to_approve': [('readonly', False)]
+            'to_approve': [('readonly', False)],
         },
         default=False,
     )
