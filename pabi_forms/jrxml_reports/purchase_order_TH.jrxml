@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
 	<property name="ireport.zoom" value="1.610510000000013"/>
-	<property name="ireport.x" value="244"/>
-	<property name="ireport.y" value="242"/>
+	<property name="ireport.x" value="275"/>
+	<property name="ireport.y" value="50"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -67,6 +67,8 @@ vendor.phone vendor_phone,
 vendor.fax vendor_fax,
 apt.name payment_term,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = he.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it WHERE
 res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -75,6 +77,8 @@ res_id = he.id AND it.name LIKE 'hr.employee,last_name')
 ) approve_by,
 po.date_doc_approve approve_date,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = verify_hr.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it WHERE
 res_id = verify_hr.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -90,6 +94,8 @@ po.notes notes,
 approve_position.name approve_position,
 po.partner_ref supplier_ref,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = validator_hr.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it WHERE
 res_id = validator_hr.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -164,6 +170,7 @@ LEFT JOIN res_org ro
 ON ro.id = (SELECT DISTINCT pol.org_id
 FROM purchase_order_line pol
 WHERE pol.order_id = po.id)
+
 WHERE $X{IN, po.id, PIDS}]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
@@ -347,11 +354,11 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[วันที่ (Date):]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4" y="170" width="110" height="30"/>
+				<reportElement x="4" y="170" width="127" height="30"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[ผู้ขาย (Vendor):]]></text>
+				<text><![CDATA[ผู้ขาย (Supplier):]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="270" y="170" width="164" height="30"/>

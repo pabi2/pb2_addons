@@ -2,10 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="28" bottomMargin="141">
 	<property name="ireport.zoom" value="1.2100000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="195"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
-		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
@@ -31,13 +30,9 @@ EXTRACT(year FROM current_date + interval '543 years')) now_date,
 rp.name supplier,
 rp.phone phonesup,
 rp.fax,
-rp_partner.name ouname,
-rp_partner.street,
-rcp.name province,
-rcd.name district,
-rct.name township,
-rp_partner.zip,
-rp_partner.phone,
+ou.code ouname,
+CONCAT(rp_partner.street,' ',rcp.name,' ',rcd.name,' ',rct.name,' ',rp_partner.zip) ou_address,
+rp_partner.fax ou_fax,
 rp_partner.mobile,
 CONCAT(
 to_char( po.date_order,'DD'),' ',
@@ -58,19 +53,12 @@ END,' ',
 EXTRACT(year FROM po.date_order + interval '543 years')) date_order,
 po.notes,
 po.name ponum,
-rp_partner.image as rp_image,
 rp2.phone phonevali,
 rp2.fax faxvali,
-CONCAT(
-(SELECT value FROM ir_translation it WHERE
-res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
-' ',
-(SELECT value FROM ir_translation it WHERE
-res_id = he.id AND it.name LIKE 'hr.employee,last_name')
-) namevali,
-convert_from(rp_partner.image, 'UTF8') ou_image,
 rt.name branch,concat(rt.street,' ',rt.street2,' ',rt.city,' ',rt.zip) address,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = he.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it WHERE
 res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -105,18 +93,8 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 		<fieldDescription><![CDATA[Fax]]></fieldDescription>
 	</field>
 	<field name="ouname" class="java.lang.String"/>
-	<field name="street" class="java.lang.String">
-		<fieldDescription><![CDATA[Street]]></fieldDescription>
-	</field>
-	<field name="province" class="java.lang.String"/>
-	<field name="district" class="java.lang.String"/>
-	<field name="township" class="java.lang.String"/>
-	<field name="zip" class="java.lang.String">
-		<fieldDescription><![CDATA[Zip]]></fieldDescription>
-	</field>
-	<field name="phone" class="java.lang.String">
-		<fieldDescription><![CDATA[Phone]]></fieldDescription>
-	</field>
+	<field name="ou_address" class="java.lang.String"/>
+	<field name="ou_fax" class="java.lang.String"/>
 	<field name="mobile" class="java.lang.String">
 		<fieldDescription><![CDATA[Mobile]]></fieldDescription>
 	</field>
@@ -127,11 +105,8 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 		<fieldDescription><![CDATA[Notes]]></fieldDescription>
 	</field>
 	<field name="ponum" class="java.lang.String"/>
-	<field name="rp_image" class="java.lang.Object"/>
 	<field name="phonevali" class="java.lang.String"/>
 	<field name="faxvali" class="java.lang.String"/>
-	<field name="namevali" class="java.lang.String"/>
-	<field name="ou_image" class="java.lang.String"/>
 	<field name="branch" class="java.lang.String"/>
 	<field name="address" class="java.lang.String"/>
 	<field name="validated" class="java.lang.String"/>
@@ -308,13 +283,14 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[2.2 ส่งใบสั่งซื้อ/จ้าง กลับทาง]]></text>
 			</staticText>
-			<staticText>
+			<textField>
 				<reportElement x="103" y="45" width="228" height="15"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[โทรสารหมายเลข 02-564-7060]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA["โทรสารหมายเลข " +
+($F{ou_fax} == null ? "" : $F{ou_fax})]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement x="209" y="45" width="45" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
@@ -363,7 +339,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<reportElement x="11" y="15" width="243" height="15">
 					<printWhenExpression><![CDATA[$F{delivery_address}]]></printWhenExpression>
 				</reportElement>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="styled">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ส่งที่  "+$F{delivery_address}]]></textFieldExpression>
@@ -371,15 +347,15 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 		</band>
 		<band height="30">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="11" y="15" width="243" height="15"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
+				<reportElement x="11" y="15" width="320" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="styled">
 					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{ouname} == null ? "" : $F{ouname})
 +
-($F{branch} == null ? "" : $F{branch})
+($F{branch} == null ? "" : ' '+ $F{branch})
 +
-($F{address} == null ? "" : $F{address})]]></textFieldExpression>
+($F{ou_address} == null ? "" : "<br />" + $F{ou_address}  )]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="0" width="180" height="15"/>
@@ -389,7 +365,7 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[4. ชื่อ-ที่อยู่สำหรับออกใบแจ้งหนี้/ใบกำกับภาษี :]]></text>
 			</staticText>
 		</band>
-		<band height="281">
+		<band height="157">
 			<staticText>
 				<reportElement x="0" y="0" width="140" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
@@ -451,24 +427,28 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[7. วัน เวลา และสถานที่รับวางบิล :]]></text>
 			</staticText>
-			<staticText>
+			<textField>
 				<reportElement x="11" y="142" width="297" height="15"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[** วางบิลทุกวันทำการ เวลา 8.30 - 16.30 น.     - งานพัสดุ สำนักงานกลาง **]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Transparent" x="12" y="157" width="222" height="41"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+				<textFieldExpression class="java.lang.String"><![CDATA["** วางบิลทุกวันทำการ เวลา 8.30 - 16.30 น.     - "
++ ($F{ouname} == null ? '-' : $F{ouname}) +" **"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="22">
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="12" y="0" width="222" height="22"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยีแห่งชาติ
-เลขที่ 111 อุทยานวิทยาศาสตร์ประเทคไทย ถนนพหลโยธิน
-จังหวัดปทุมธานี 12120]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA["สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยีแห่งชาติ"
++ "<br />" + $F{delivery_address}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="86">
 			<staticText>
-				<reportElement x="11" y="213" width="297" height="41"/>
+				<reportElement x="11" y="15" width="297" height="41"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -477,19 +457,21 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 ( ส่งเอกสารมายังเจ้าหน้าที่พัสดุ โทรสารหมายเลข 02-564-7060 )]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="198" width="42" height="15"/>
+				<reportElement x="0" y="0" width="42" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หมายเหตุ :]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="120" y="266" width="229" height="15"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
+			<textField>
+				<reportElement x="0" y="71" width="483" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[งานพัสดุ สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยีแห่งชาติ]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA["งานพัสดุ  " +
+($F{ouname} == null ? "" : $F{ouname} + ' ' )
++  "สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยีแห่งชาติ"]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

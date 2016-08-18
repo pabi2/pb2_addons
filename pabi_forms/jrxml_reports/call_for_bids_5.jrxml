@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
 	<property name="ireport.zoom" value="1.2100000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="121"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -189,6 +189,8 @@ WHERE pdl.requisition_id = $P{ids}]]>
 		<queryString>
 			<![CDATA[SELECT
 CONCAT(
+COALESCE((SELECT it.value FROM ir_translation it
+WHERE it.res_id = requested_employee.title_id AND it.name LIKE 'res.partner.title,name') || ' ',''),
 (SELECT it.value FROM ir_translation it
 WHERE it.res_id = requested_employee.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -197,6 +199,8 @@ WHERE it.res_id = requested_employee.id AND it.name LIKE 'hr.employee,last_name'
 ) requested_by,
 pd.create_date create_date,
 CONCAT(
+COALESCE((SELECT it.value FROM ir_translation it
+WHERE it.res_id = approved_employee.title_id AND it.name LIKE 'res.partner.title,name') || ' ',''),
 (SELECT it.value FROM ir_translation it
 WHERE it.res_id = approved_employee.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -217,6 +221,7 @@ LEFT JOIN hr_employee approved_employee
 ON approved_employee.employee_code = approved.login
 LEFT JOIN res_partner approved_name
 ON approved_name.id = approved.partner_id
+
 WHERE pd.id = $P{ids}]]>
 		</queryString>
 		<field name="requested_by" class="java.lang.String">
@@ -295,6 +300,13 @@ WHERE ru.id = pd.user_id) as ou_name,
 WHERE id = ou.partner_id) as ou_key,
 pd.name as pd_number,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.request_uid) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT he.id FROM res_users ru
 LEFT JOIN hr_employee he
@@ -342,7 +354,9 @@ pm.name as method,
 ppr.name as price_range,
 pd.doc_footer as footer,
 po.name as rfq_number,
-(SELECT rp.name FROM res_partner rp
+(SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) FROM res_partner rp
+LEFT JOIN res_partner_title rpt
+ON rpt.id = rp.title
 WHERE rp.id = po.partner_id) as rfq_supplier,
 (SELECT rp.taxbranch FROM res_partner rp
 WHERE rp.id = po.partner_id) as rfq_taxbranch,
@@ -353,6 +367,13 @@ po.minimum_planned_date-DATE(now()) as minimum_planned_date,
 WHERE p.requisition_id = pd.id AND p.state = 'done'),
 
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.verify_uid) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT he.id
 FROM res_users ru
@@ -369,6 +390,13 @@ WHERE ru.id = pd.verify_uid) AND it.name LIKE 'hr.employee,last_name')
 ) as verified_by,
 pd.date_verify as verified_date,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.doc_approve_uid) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT he.id
 FROM res_users ru
@@ -385,6 +413,13 @@ WHERE ru.id = pd.doc_approve_uid) AND it.name LIKE 'hr.employee,last_name')
 ) as approver,
 pd.date_doc_approve as date_of_approval,
 CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.user_id) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
 (SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT he.id
 FROM res_users ru
