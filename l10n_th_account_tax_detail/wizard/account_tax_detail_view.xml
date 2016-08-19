@@ -21,14 +21,18 @@
 		            	    <field name="is_readonly" invisible="1"/>
 		            		<field name="tax_detail_id" invisible="1"/>
 		            		<field name="partner_id" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
-		            		<field name="vat" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
-		            		<field name="taxbranch" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+		            		<field name="vat" invisible="1"/>
+		            		<field name="taxbranch" invisible="1"/>
+		            		<field name="vat_readonly" />
+		            		<field name="taxbranch_readonly" />
+		            		<field name="period_id" />
 		            		<field name="invoice_number" />
 		            		<field name="invoice_date" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
 		            		<field name="base" sum="Base" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
 		            		<field name="amount" sum="Tax" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
-			         		<field name="tax_sequence" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
-			         		<field name="addition" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+			         		<field name="tax_sequence" invisible="1" />
+			         		<field name="tax_sequence_display" />
+			         		<field name="addition" />
 		            	</tree>
 		            </field>
 		            <footer attrs="{'invisible': [('is_readonly', '=', True)]}">

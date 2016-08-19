@@ -28,9 +28,13 @@ class AccountVoucherTax(models.Model):
     )
 
     @api.model
+    def _prepare_voucher_tax_detail(self, voucher_tax):
+        return {'voucher_tax_id': voucher_tax.id}
+
+    @api.model
     def create(self, vals):
         voucher_tax = super(AccountVoucherTax, self).create(vals)
-        detail = {'voucher_tax_id': voucher_tax.id}
+        detail = self._prepare_voucher_tax_detail(voucher_tax)
         self.env['account.tax.detail'].create(detail)
         return voucher_tax
 

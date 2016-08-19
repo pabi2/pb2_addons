@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from openerp import api, models, fields
 
 
@@ -173,9 +174,17 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         string='Tax ID',
         readonly=True,
     )
+    vat_readonly = fields.Char(
+        string='Tax ID',
+        related='vat',
+    )
     taxbranch = fields.Char(
         string='Tax Branch ID',
         readonly=True,
+    )
+    taxbranch_readonly = fields.Char(
+        string='Tax Branch ID',
+        related='taxbranch',
     )
     invoice_number = fields.Char(
         string='Tax Invoice Number',
@@ -198,14 +207,31 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         readonly=True,
         help="Running sequence for the same period. Reset every period",
     )
+    tax_sequence_display = fields.Char(
+        string='Sequence',
+        compute='_compute_tax_sequence_display',
+    )
     addition = fields.Boolean(
-        strin='Past Period Tax',
+        string='Past Period Tax',
         default=False,
+        readonly=True,
     )
     is_readonly = fields.Boolean(
         related='wizard_id.is_readonly',
         string='Readonly',
     )
+
+    @api.multi
+    @api.depends('tax_sequence')
+    def _compute_tax_sequence_display(self):
+        for rec in self:
+            if rec.period_id and rec.tax_sequence:
+                date_start = rec.period_id.date_start
+                mo = datetime.datetime.strptime(date_start,
+                                                '%Y-%m-%d').date().month
+                month = '{:02d}'.format(mo)
+                sequence = '{:04d}'.format(rec.tax_sequence)
+                rec.tax_sequence_display = '%s/%s' % (month, sequence)
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
