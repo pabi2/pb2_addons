@@ -78,12 +78,11 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
 
     @api.model
     def _check_line_reference(self, pr_lines):
-        num_of_reference = 0
         cur_ref = []
         for pr_line in pr_lines:
             if hasattr(pr_line.request_id, 'request_ref_id'):
                 if pr_line.request_id.request_ref_id.id not in cur_ref \
-                and pr_line.request_id.request_ref_id.id:
+                        and pr_line.request_id.request_ref_id.id:
                     cur_ref.append(pr_line.request_id.request_ref_id.id)
             else:
                 if 'None' not in cur_ref:
