@@ -136,6 +136,21 @@ class AccountVoucherLine(models.Model):
 class AccountVoucherTax(models.Model):
     _inherit = "account.voucher.tax"
 
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        related='invoice_id.taxbranch_id',
+        string='Tax Branch',
+        readonly=True,
+        store=True,
+    )
+
+    @api.model
+    def _prepare_voucher_tax_detail(self, voucher_tax):
+        res = super(AccountVoucherTax, self).\
+            _prepare_voucher_tax_detail(voucher_tax)
+        res.update({'taxbranch_id': voucher_tax.invoice_id.taxbranch_id.id})
+        return res
+
     @api.model
     def move_line_get(self, voucher):
         """ Normal Tax: Use invoice's tax branch for tax move line
