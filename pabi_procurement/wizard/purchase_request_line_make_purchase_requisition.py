@@ -148,8 +148,6 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     @api.multi
     def check_status_request_line(self):
         for item in self.item_ids:
-            print item.line_id.request_id.request_ref_id
-            print self.purchase_requisition_id
             if item.request_id.state != 'approved':
                 raise UserError(
                     _("Some Request hasn't been accepted yet : %s"
@@ -161,7 +159,12 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                       % (item.request_id.name,))
                 )
             elif item.line_id.request_id.request_ref_id:
-                if not item.product_id:
+                if not self.purchase_requisition_id:
+                    raise UserError(
+                        _("You can't create new CfBs from the PR line with"
+                          " PR reference : %s" % (item.request_id.name,))
+                    )
+                elif not item.product_id:
                     raise UserError(
                         _("You have to select the product if the request has a"
                           " PR reference : %s" % (item.request_id.name,))
