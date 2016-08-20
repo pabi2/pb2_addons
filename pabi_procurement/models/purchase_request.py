@@ -341,6 +341,12 @@ class PurchaseRequestLine(models.Model):
     date_required = fields.Date(
         string='Scheduled Date',
     )
+    is_central_purchase = fields.Boolean(
+        string='Is Central Purchase',
+        readonly=True,
+        related='request_id.is_central_purchase',
+        store=True,
+    )
 
     @api.one
     @api.depends('requisition_lines.requisition_id.state')

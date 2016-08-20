@@ -162,6 +162,7 @@
                     <field name="description" string="Reason"/>
                     <field name="objective"/>
                     <field name="amount_total"/>
+                    <field name="is_central_purchase"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -238,6 +239,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='assigned_to']" position="replace">
                     <field name="responsible_uid"/>
+                </xpath>
+                <xpath expr="//field[@name='request_id']" position="after">
+                    <field name="is_central_purchase"/>
                 </xpath>
                 <xpath expr="//field[@name='supplier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
