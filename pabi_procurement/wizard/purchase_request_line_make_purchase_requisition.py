@@ -2,7 +2,7 @@
 # © 2015 TrinityRoots
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import fields, models, api, _
+from openerp import fields, models, api, _, exceptions
 from openerp.exceptions import Warning as UserError
 import ast
 
@@ -30,22 +30,6 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'product_name': item.name,
             'tax_ids': taxes
         })
-        #  Change line's picking type to user's ou picking type
-        if pr.is_central_purchase:
-            type_obj = self.env['stock.picking.type']
-            company_id = self.env.context.get('company_id') or \
-                self.env.user.company_id.id
-            types = type_obj.search([
-                ('code', '=', 'incoming'),
-                ('warehouse_id.company_id', '=', company_id)
-            ])
-            if not types:
-                types = type_obj.search([('code', '=', 'incoming'),
-                                         ('warehouse_id', '=', False)])
-            user_picking_type = types[:1]
-            res.update({
-                'picking_type_id': user_picking_type.id,
-            })
         return res
 
     @api.model
@@ -231,11 +215,79 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         return True
 
     @api.multi
+    def make_purchase_requisition_original(self):
+        pr_obj = self.env['purchase.requisition']
+        pr_line_obj = self.env['purchase.requisition.line']
+        company_id = False
+        picking_type_id = False
+        requisition = False
+        res = []
+        for item in self.item_ids:
+            line = item.line_id
+            if item.product_qty <= 0.0:
+                raise exceptions.Warning(
+                    _('Enter a positive quantity.'))
+            line_company_id = line.company_id \
+                and line.company_id.id or False
+            if company_id is not False \
+                    and line_company_id != company_id \
+                    and not line.request_id.is_central_purchase:
+                raise exceptions.Warning(
+                    _('You have to select lines '
+                      'from the same company.'))
+            else:
+                company_id = line_company_id
+
+            line_picking_type = line.request_id.picking_type_id
+            if picking_type_id is not False \
+                    and line_picking_type.id != picking_type_id \
+                    and not line.request_id.is_central_purchase:
+                raise exceptions.Warning(
+                    _('You have to select lines '
+                      'from the same picking type.'))
+            else:
+                picking_type_id = line_picking_type.id
+
+            if self.purchase_requisition_id:
+                requisition = self.purchase_requisition_id
+            if not requisition:
+                preq_data = self._prepare_purchase_requisition(picking_type_id,
+                                                               company_id)
+                requisition = pr_obj.create(preq_data)
+
+            # Look for any other PO line in the selected PO with same
+            # product and UoM to sum quantities instead of creating a new
+            # po line
+            domain = self._get_requisition_line_search_domain(requisition,
+                                                              item)
+            available_pr_lines = pr_line_obj.search(domain)
+            if available_pr_lines:
+                pr_line = available_pr_lines[0]
+                new_qty = pr_line.product_qty + item.product_qty
+                pr_line.product_qty = new_qty
+                pr_line.purchase_request_lines = [(4, line.id)]
+            else:
+                po_line_data = self._prepare_purchase_requisition_line(
+                    requisition, item)
+                pr_line_obj.create(po_line_data)
+            res.append(requisition.id)
+
+        return {
+            'domain': "[('id','in', ["+','.join(map(str, res))+"])]",
+            'name': _('Purchase requisition'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'purchase.requisition',
+            'view_id': False,
+            'context': False,
+            'type': 'ir.actions.act_window'
+        }
+
+    @api.multi
     def make_purchase_requisition(self):
         res = False
         if self.check_status_request_line():
-            res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
-                make_purchase_requisition()
+            res = self.make_purchase_requisition_original()
             domain = ast.literal_eval(res['domain'])
             requisition_id = list(set(domain[0][2]))[0]
             requisition = self.env['purchase.requisition'].\
