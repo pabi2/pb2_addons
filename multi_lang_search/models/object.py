@@ -114,11 +114,8 @@ class ModelExtended(models.Model):
                         result = [result]
                     if not isinstance(new_result, list):
                         new_result = [new_result]
-                    result_add = [x for x in new_result if not x in result]
-                    if result_add:
-                        result.extend(result_add)
-                    #result.extend(new_result)
-                    #result = list(set(result))
+                    result.extend(new_result)
+                    result = list(set(result))
                 return result
             return _search
 
