@@ -14,7 +14,7 @@ class PurchaseOrder(models.Model):
         ('sent', 'RFQ'),
         ('bid', 'Bid Received'),
         ('confirmed', 'Waiting to Release'),
-        ('approved', 'Purchase Confirmed'),
+        ('approved', 'PO Released'),
         ('except_picking', 'Shipping Exception'),
         ('except_invoice', 'Invoice Exception'),
         ('done', 'Done'),
