@@ -30,6 +30,22 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'product_name': item.name,
             'tax_ids': taxes
         })
+        #  Change line's picking type to user's ou picking type
+        if pr.is_central_purchase:
+            type_obj = self.env['stock.picking.type']
+            company_id = self.env.context.get('company_id') or \
+                self.env.user.company_id.id
+            types = type_obj.search([
+                ('code', '=', 'incoming'),
+                ('warehouse_id.company_id', '=', company_id)
+            ])
+            if not types:
+                types = type_obj.search([('code', '=', 'incoming'),
+                                         ('warehouse_id', '=', False)])
+            user_picking_type = types[:1]
+            res.update({
+                'picking_type_id': user_picking_type.id,
+            })
         return res
 
     @api.model
