@@ -81,6 +81,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                 'operating_unit_id': user_ou_id.id,
                 'picking_type_id': user_picking_type.id,
                 'company_id': company_id,
+                'is_central_purchase': req_id.is_central_purchase,
             })
         return res
 
