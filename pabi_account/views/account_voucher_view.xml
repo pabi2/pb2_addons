@@ -62,5 +62,17 @@
             </field>
         </record>
 
+
+        <record id="voucher_tax_tree_view" model="ir.ui.view">
+            <field name="name">voucher.tax.tree.view</field>
+            <field name="model">account.voucher.tax</field>
+            <field name="inherit_id" ref="l10n_th_account.voucher_tax_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='invoice_id']" position="after" >
+                    <field name="taxbranch_id" />
+                 </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>

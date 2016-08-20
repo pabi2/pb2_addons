@@ -17,6 +17,7 @@
     "installable": True,
     "depends": [
         "l10n_th_account",
+        "l10n_th_account_tax_detail",
         "pabi_base",
         "pabi_chartfield",
         "account_move_line_doc_ref",
