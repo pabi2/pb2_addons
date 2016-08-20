@@ -13,7 +13,7 @@ class PurchaseOrder(models.Model):
         ('draft', 'Draft'),
         ('sent', 'RFQ'),
         ('bid', 'Bid Received'),
-        ('confirmed', 'Waiting Approval'),
+        ('confirmed', 'Waiting to Release'),
         ('approved', 'Purchase Confirmed'),
         ('except_picking', 'Shipping Exception'),
         ('except_invoice', 'Invoice Exception'),
