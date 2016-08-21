@@ -45,7 +45,6 @@ class InvoiceVoucherTaxDetail(object):
     @api.multi
     def _assign_detail_tax_sequence(self):
         Period = self.env['account.period']
-        TaxDetail = self.env['account.tax.detail']
         ConfParam = self.env['ir.config_parameter']
         months = ConfParam.get_param('number_month_tax_addition')
         tax_months = months and int(months) or 6
@@ -65,13 +64,13 @@ class InvoiceVoucherTaxDetail(object):
                     invoice_date = datetime.strptime(detail.invoice_date,
                                                      '%Y-%m-%d').date()
                     if date_start <= invoice_date <= date_stop:
-                        next_seq = TaxDetail._get_next_sequence(period_id)
+                        next_seq = detail._get_next_sequence(period_id)
                         detail.write({'tax_sequence': next_seq,
                                       'period_id': period_id,
                                       })
                     else:
                         add_period_id = Period.find(detail.invoice_date)[:1].id
-                        next_seq = TaxDetail._get_next_sequence(add_period_id)
+                        next_seq = detail._get_next_sequence(add_period_id)
                         detail.write({'tax_sequence': next_seq,
                                       'period_id': add_period_id,
                                       'addition': True,

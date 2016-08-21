@@ -29,9 +29,13 @@ class AccountInvoiceTax(models.Model):
     )
 
     @api.model
+    def _prepare_invoice_tax_detail(self, invoice_tax):
+        return {'invoice_tax_id': invoice_tax.id}
+
+    @api.model
     def create(self, vals):
         invoice_tax = super(AccountInvoiceTax, self).create(vals)
-        detail = {'invoice_tax_id': invoice_tax.id}
+        detail = self._prepare_invoice_tax_detail(invoice_tax)
         self.env['account.tax.detail'].create(detail)
         return invoice_tax
 
