@@ -107,6 +107,7 @@
 		        	<field name="require_taxid" invisible="1"/>
 		        	<field name="require_taxbranch" invisible="1"/>
 		            <field name="is_government" string="Government"/>
+                    <field name="is_shop"/>
 		            <field name="vat" string="Tax ID" attrs="{'required': [('require_taxid', '=', True)]}"/>
 		            <field name="taxbranch" string="Tax Branch ID" attrs="{'required': [('require_taxbranch', '=', True)]}"/>
 		        </field>
@@ -146,6 +147,7 @@
                         </group>
                        	<group>
 				            <field name="is_government" string="Government"/>
+                            <field name="is_shop"/>
 				            <field name="vat" string="Tax ID"/>
 				            <field name="taxbranch" string="Tax Branch ID"/>
                             <field name="user_ids" invisible="1"/>

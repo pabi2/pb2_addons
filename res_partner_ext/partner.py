@@ -63,24 +63,27 @@ class ResPartner(models.Model):
         'res.partner.tag',
         string='Tags',
     )
+    is_shop = fields.Boolean(
+        string='Shop',
+    )
 
     @api.one
-    @api.constrains('name', 'supplier', 'customer')
+    @api.constrains('name', 'supplier', 'customer', 'is_shop')
     def _check_partner_name(self):
         partner_ids = self.search([('name', '=', self.name),
                                    '|', ('supplier', '=', True),
                                    ('customer', '=', True)])
-        if len(partner_ids) > 1:
+        if len(partner_ids) > 1 and not self.is_shop:
             raise ValidationError("Partner Name must be unique!")
 
     @api.one
-    @api.constrains('vat', 'taxbranch', 'category_id')
+    @api.constrains('vat', 'taxbranch', 'category_id', 'is_shop')
     def _check_vat_taxbranch_unique(self):
         if not self.is_government and \
                 self.category_id.require_tax_branch_unique:
             partners = self.search([('vat', '=', self.vat),
                                     ('taxbranch', '=', self.taxbranch)])
-            if len(partners) > 1:
+            if len(partners) > 1 and not self.is_shop:
                 raise ValidationError(_(
                     "Tax ID + Tax Branch ID must be unique for "
                     "non-governmental organization!"))
