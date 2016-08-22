@@ -10,7 +10,6 @@
     <field name="model">expense.create.supplier.invoice</field>
     <field name="arch" type="xml">
         <form string="Select invoice date">
-            <p>Please select date for supplier invoice</p>
             <group>
 				<group>            
 	            	<field name="date_invoice" />
