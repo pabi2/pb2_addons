@@ -78,6 +78,7 @@
                 <xpath expr="//field[@name='partner_ref']" position="after">
                     <field name="date_reference" />
                 </xpath>
+
                 <xpath expr="//button[@name='action_cancel']" position="before">
                     <button name="wkf_send_rfq" states="approved" string="Send by Email" type="object" context="{'send_rfq':True}"/>
                 	<field name="plan_invoice_created" invisible="1"/>
@@ -86,6 +87,9 @@
                             attrs="{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='purchase_approve']" position="attributes">
+                    <attribute name="string">Release</attribute>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="attributes">
                     <attribute name="required">1</attribute>
