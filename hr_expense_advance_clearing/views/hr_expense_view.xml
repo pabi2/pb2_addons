@@ -56,7 +56,7 @@
                     <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
-                    <page string="Advance Clearing Expenses" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
+                    <page string="Advance Clearing" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
                         <group>
                             <group>
                                 <field name="amount_advanced"/>

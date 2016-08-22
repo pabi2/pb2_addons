@@ -41,7 +41,7 @@ class HRExpenseExpense(models.Model):
     )
     amount_advanced = fields.Float(
         string='Advanced Amount',
-        readonly=False,
+        readonly=True,
     )
     outstanding_advance_count = fields.Integer(
         string='Outstanding Advance Count',
@@ -71,7 +71,7 @@ class HRExpenseExpense(models.Model):
     def _compute_outstanding_advance_count(self):
         for rec in self:
             domain = rec._get_outstanding_advance_domain()
-            rec.outstanding_advance_count = self.search_count(domain)
+            rec.outstanding_advance_count = len(self.search(domain))
 
     @api.multi
     def action_open_outstanding_advance(self):
