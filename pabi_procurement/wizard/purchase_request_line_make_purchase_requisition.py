@@ -82,6 +82,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                 'picking_type_id': user_picking_type.id,
                 'company_id': company_id,
                 'is_central_purchase': req_id.is_central_purchase,
+                'exclusive' : 'multiple',
+                'multiple_rfq_per_supplier' : True,
             })
         return res
 
