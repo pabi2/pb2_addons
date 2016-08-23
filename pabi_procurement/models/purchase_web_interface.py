@@ -51,7 +51,7 @@ class PurchaseRequest(models.Model):
         # Final Preparation of fields and data
         try:
             fields, data = self._finalize_data_to_load(fields, data)
-            load_res = self.load(fields, data)
+            load_res = self.sudo().load(fields, data)
             res_id = load_res['ids'] and load_res['ids'][0] or False
             if not res_id:
                 ret = {
