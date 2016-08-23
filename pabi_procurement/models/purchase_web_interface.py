@@ -45,7 +45,7 @@ class PurchaseRequest(models.Model):
     @api.model
     def generate_purchase_request(self, data_dict):
         ret = {}
-        data_dict = self._get_request_info(data_dict)
+        data_dict = self.sudo()._get_request_info(data_dict)
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data
