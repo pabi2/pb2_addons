@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+
+<openerp>
+<data> 
+        <record id="invoice_form_doctype" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position']" position="after">
+                    <field name="doctype_id"/>
+                </xpath>
+            </field>
+        </record>
+</data>
+</openerp>
+    
