@@ -355,6 +355,7 @@ class PurchaseRequisition(models.Model):
                          res['taxes_id']),
             'product_uom': (requisition_line.product_uom_id.id or
                             res['product_uom']),
+            'fiscal_year_id': requisition_line.fiscal_year_id.id or False,
         })
         return res
 
@@ -604,6 +605,11 @@ class PurchaseRequisitionLine(models.Model):
     product_name = fields.Char(
         string='Description',
         required=True,
+    )
+    fiscal_year_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
     )
 
     @api.multi

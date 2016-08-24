@@ -28,7 +28,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'schedule_date': item.date_required,
             'fixed_asset': item.fixed_asset,
             'product_name': item.name,
-            'tax_ids': taxes
+            'tax_ids': taxes,
+            'fiscal_year_id': item.line_id.fiscal_year_id.id or False,
         })
         return res
 
