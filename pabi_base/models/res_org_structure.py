@@ -20,7 +20,7 @@ class ResOrg(ResCommon, models.Model):
 
     name_short = fields.Char(
         string='Name',
-        size=5,
+        size=10,
         translate=True,
     )
     operating_unit_id = fields.Many2one(
