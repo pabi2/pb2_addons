@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_vat" inherit_id="l10n_th_vat_report.report_vat">
+            <xpath expr="//div/div[4]/table/tbody/t/tr/td[6]" position="replace">
+                <td>
+                    <span t-esc="line.get('taxbranch', False) and line['taxbranch'].name or ''"/>
+                </td>
+            </xpath>
+        </template>
+    </data>
+</openerp>
