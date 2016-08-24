@@ -10,10 +10,10 @@
                 <xpath expr="/form/sheet/group" position="after">
                 	<group>
                 		<group>
-                    		<field name="project_id" />
+                    		<field name="project_id" context="{'project_manager_emp_id': employee_id}"/>
                 		</group>
                 		<group>
-                    		<field name="section_id" />
+                    		<field name="section_id" context="{'employee_id': employee_id}"/>
                 		</group>
                 	</group>
                 </xpath>
