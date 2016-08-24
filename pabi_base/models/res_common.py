@@ -17,7 +17,9 @@ class ResCommon(object):
     def name_get(self):
         result = []
         for rec in self:
+            name = rec.name
+            name_short = ('name_short' in rec) and rec['name_short'] or False
             result.append((rec.id, "%s%s" %
                            (rec.code and '[' + rec.code + '] ' or '',
-                            rec.name or '')))
+                            name_short or name or '')))
         return result

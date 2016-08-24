@@ -18,6 +18,11 @@ class ResOrg(ResCommon, models.Model):
     _name = 'res.org'
     _description = 'Org'
 
+    name_short = fields.Char(
+        string='Name',
+        size=5,
+        translate=True,
+    )
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
