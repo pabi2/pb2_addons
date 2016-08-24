@@ -23,6 +23,8 @@
         "account_move_line_doc_ref",
     ],
     "data": [
+        "security/security_group.xml",
+        "security/ir.model.access.csv",
         "views/res_config_view.xml",
         "views/account_voucher_view.xml",
         "views/voucher_payment_receipt_view.xml",

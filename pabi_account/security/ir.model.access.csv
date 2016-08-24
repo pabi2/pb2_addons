@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bank_account_manager,access_bank_account_manager,base.model_res_partner_bank,pabi_account.group_bank_account_manager,1,1,1,1
