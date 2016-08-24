@@ -13,6 +13,7 @@
         'purchase',
         'purchase_requisition',
         'purchase_request',
+        'stock_request',
     ],
     'data': [
         'security/security.xml',
