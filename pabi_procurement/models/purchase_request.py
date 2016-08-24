@@ -347,6 +347,11 @@ class PurchaseRequestLine(models.Model):
         related='request_id.is_central_purchase',
         store=True,
     )
+    fiscal_year_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
+    )
 
     @api.one
     @api.depends('requisition_lines.requisition_id.state')
