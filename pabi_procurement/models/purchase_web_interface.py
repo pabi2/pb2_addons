@@ -14,7 +14,7 @@ class PurchaseRequest(models.Model):
     @api.model
     def _get_request_info(self, data_dict):
         if 'org_id' in data_dict:
-            Org = self.env['res.org']
+            Org = self.sudo().env['res.org']
             organization = Org.search([
                 ('id', '=', data_dict['org_id']),
             ])
@@ -60,9 +60,9 @@ class PurchaseRequest(models.Model):
                     'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                res = self.browse(res_id)
-                self.create_purchase_request_attachment(data_dict, res_id)
-                self.create_purchase_request_committee(data_dict, res_id)
+                res = self.sudo().browse(res_id)
+                self.sudo().create_purchase_request_attachment(data_dict, res_id)
+                self.sudo().create_purchase_request_committee(data_dict, res_id)
                 ret = {
                     'is_success': True,
                     'result': {
@@ -277,7 +277,8 @@ class PurchaseWebInterface(models.Model):
                 continue
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
-                'content': pd_att.datas
+                'content': pd_att.datas,
+                'url': pd_att.url,
             }
             attachment.append(pd_attach)
         pr_name = ''
