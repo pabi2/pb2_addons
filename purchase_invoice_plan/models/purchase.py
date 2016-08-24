@@ -55,6 +55,10 @@ class PurchaseOrder(models.Model):
         help="Compute whether number of invoices (not cancelled invoices) "
         "are created as planned"
     )
+    total_invoice_amount = fields.Float(
+        compute='_compute_plan_invoice_created',
+        string='Invoice Amount'
+    )
 
     @api.one
     @api.depends('invoice_ids.state')
@@ -62,13 +66,17 @@ class PurchaseOrder(models.Model):
         if not self.invoice_ids:
             self.plan_invoice_created = False
         else:
+            total_invoice_amt = 0
             num_valid_invoices = 0
             for i in self.invoice_ids:
                 if i.state not in ('cancel'):
                     num_valid_invoices += 1
+                if i.state in ('open', 'paid'):
+                    total_invoice_amt += i.amount_untaxed
             num_plan_invoice = len(list(set([i.installment
                                              for i in self.invoice_plan_ids])))
             self.plan_invoice_created = num_valid_invoices == num_plan_invoice
+            self.total_invoice_amount = total_invoice_amt
 
     @api.model
     def _calculate_subtotal(self, vals):
