@@ -15,7 +15,7 @@ class ProductProduct(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        # Conditional domain baed on type
+        # Conditional domain based on type of request
         stock_request_type = self._context.get('stock_request_type', False)
         location_id = self._context.get('location_id', False)
         location_dest_id = self._context.get('location_dest_id', False)
