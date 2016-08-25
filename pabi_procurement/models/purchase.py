@@ -184,6 +184,7 @@ class PurchaseOrder(models.Model):
             order.write({
                 'origin': order.quote_id.origin,
                 'committee_ids': self._prepare_order_committees(order.id),
+                'requisition_id': order.quote_id.requisition_id.id,
             })
         return res
 

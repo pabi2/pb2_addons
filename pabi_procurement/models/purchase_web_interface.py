@@ -14,10 +14,11 @@ class PurchaseRequest(models.Model):
     @api.model
     def _get_request_info(self, data_dict):
         if 'org_id' in data_dict:
-            Org = self.env['res.org']
+            Org = self.sudo().env['res.org']
             organization = Org.search([
                 ('id', '=', data_dict['org_id']),
             ])
+            print organization
             for org in organization:
                 type_id = False
                 Warehouse = self.env['stock.warehouse']
@@ -25,6 +26,7 @@ class PurchaseRequest(models.Model):
                 warehouse = Warehouse.search([
                     ('operating_unit_id', '=', org.operating_unit_id.id),
                 ])
+                print warehouse
                 for wh in warehouse:
                     picking_type = PType.search([
                         ('warehouse_id', '=', wh.id),
@@ -34,6 +36,7 @@ class PurchaseRequest(models.Model):
                         type_id = picking.id
                         break
                     break
+                    print picking_type
                 data_dict.update({
                     'picking_type_id.id': type_id,
                     'operating_unit_id.id': org.operating_unit_id.id,
@@ -41,6 +44,23 @@ class PurchaseRequest(models.Model):
                 del data_dict['org_id']
                 break
         return data_dict
+
+    @api.model
+    def rewrite_create_uid(self, request):
+        request_line_sql = """UPDATE purchase_request_line SET create_uid = %s,
+          write_uid = %s WHERE request_id = %s""" % (
+            str(request.requested_by.id),
+            str(request.requested_by.id),
+            str(request.id),
+        )
+        self.env.cr.execute(request_line_sql)
+        request_sql = """UPDATE purchase_request SET create_uid = %s
+            , write_uid = %s WHERE id = %s""" % (
+            str(request.requested_by.id),
+            str(request.requested_by.id),
+            str(request.id),
+        )
+        self.env.cr.execute(request_sql)
 
     @api.model
     def generate_purchase_request(self, data_dict):
@@ -60,9 +80,9 @@ class PurchaseRequest(models.Model):
                     'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                res = self.browse(res_id)
-                self.create_purchase_request_attachment(data_dict, res_id)
-                self.create_purchase_request_committee(data_dict, res_id)
+                res = self.sudo().browse(res_id)
+                self.sudo().create_purchase_request_attachment(data_dict, res_id)
+                self.sudo().create_purchase_request_committee(data_dict, res_id)
                 ret = {
                     'is_success': True,
                     'result': {
@@ -72,6 +92,7 @@ class PurchaseRequest(models.Model):
                     'messages': _('PR has been created.'),
                 }
                 res.state = 'to_approve'
+                self.sudo().rewrite_create_uid(res)
             self._cr.commit()
         except Exception, e:
             ret = {
@@ -277,7 +298,8 @@ class PurchaseWebInterface(models.Model):
                 continue
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
-                'content': pd_att.datas
+                'content': pd_att.datas,
+                'url': pd_att.url,
             }
             attachment.append(pd_attach)
         pr_name = ''

@@ -171,7 +171,16 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         assert len(active_ids) == 1, "Only 1 Purchase Order expected"
         acceptance = self._prepare_acceptance()
         acceptance.order_id = active_ids[0]
-        return act_close
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_model': 'purchase.work.acceptance',
+            'target': 'current',
+            'context': self._context,
+            'res_id': acceptance.id,
+            'domain': [('order_id','=', active_ids[0])],
+        }
 
 
 class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
