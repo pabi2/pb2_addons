@@ -412,6 +412,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _description = 'Purchase Work Acceptance Line'
 
     @api.one
+    @api.depends('acceptance_id', 'line_id')
     def _get_balance_qty(self):
         self.balance_qty = self.line_id.product_qty - self.line_id.invoiced_qty
 

@@ -95,6 +95,13 @@
                     <field name="price_unit"/>
                     <field name="price_standard"/>
                 </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
+                    <field name="price_unit"/>
+                    <field name="price_standard"/>
+                </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
+                    <field name="product_name"/>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
                        position="after">
                     <field name="fixed_asset"/>
@@ -123,6 +130,9 @@
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree" position="attributes">
                 	<attribute name="editable">bottom</attribute>
+                </xpath>
+                <xpath expr="//tree[@string='Products']" position="attributes">
+                    <attribute name="editable"/>
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='name']" position="replace">
                 	<field name="operating_unit_id" />
