@@ -13,6 +13,7 @@ Vat Report By TaxBranch
     "application": False,
     "installable": True,
     "depends": [
+        'pabi_account',
         'l10n_th_vat_report',
     ],
     "data": [
