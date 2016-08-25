@@ -320,6 +320,12 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
+    fiscal_year_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
+    )
+
     @api.multi
     def unlink(self):
         for rec in self:

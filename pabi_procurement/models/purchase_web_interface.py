@@ -105,11 +105,13 @@ class PurchaseRequisition(models.Model):
             if af_info['action'] == 'C1':  # approve
                 att_file = []
                 try:
+                    ConfParam = self.env['ir.config_parameter']
+                    file_prefix = ConfParam.get_param('pabiweb_file_prefix')
                     attachments = {
                         'res_id': requisition.id,
                         'res_model': 'purchase.requisition',
                         'name': af_info['file_name'],
-                        'url': af_info['file_url'],
+                        'url': file_prefix + af_info['file_url'],
                         'type': 'url',
                     }
                     att_file.append([0, False, attachments])

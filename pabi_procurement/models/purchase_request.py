@@ -350,6 +350,7 @@ class PurchaseRequestLine(models.Model):
     fiscal_year_id = fields.Many2one(
         'account.fiscalyear',
         'Fiscal Year',
+        readonly=True,
     )
 
     @api.one
