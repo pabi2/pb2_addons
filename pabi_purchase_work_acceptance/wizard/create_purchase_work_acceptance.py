@@ -78,6 +78,20 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         }
 
     @api.model
+    def is_acceptance_done(self, order):
+        OrderLine = self.env['purchase.order.line']
+        order_lines = OrderLine.search([
+            ('order_id', '=', order.id),
+        ])
+        for order_line in order_lines:
+            if order_line.invoiced_qty >= order_line.product_qty:
+                raise UserError(
+                    _("""Can't create new work acceptance.
+                    This order's shipments may be completed.
+                    """)
+                )
+
+    @api.model
     def _get_contract_end_date(self, order):
         THHoliday = self.env['thai.holiday']
         start_date = datetime.datetime.strptime(
@@ -115,6 +129,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         if order.invoice_method == 'invoice_plan':
             res['is_invoice_plan'] = True
         else:
+            self.is_acceptance_done(order)
             order_lines = OrderLine.search([('order_id', 'in', order_ids)])
             for line in order_lines:
                 if not hasattr(line, 'product_uom'):
@@ -179,7 +194,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'target': 'current',
             'context': self._context,
             'res_id': acceptance.id,
-            'domain': [('order_id','=', active_ids[0])],
+            'domain': [('order_id', '=', active_ids[0])],
         }
 
 

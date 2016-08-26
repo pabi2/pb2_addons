@@ -18,7 +18,6 @@ class PurchaseRequest(models.Model):
             organization = Org.search([
                 ('id', '=', data_dict['org_id']),
             ])
-            print organization
             for org in organization:
                 type_id = False
                 Warehouse = self.env['stock.warehouse']
@@ -26,7 +25,6 @@ class PurchaseRequest(models.Model):
                 warehouse = Warehouse.search([
                     ('operating_unit_id', '=', org.operating_unit_id.id),
                 ])
-                print warehouse
                 for wh in warehouse:
                     picking_type = PType.search([
                         ('warehouse_id', '=', wh.id),
@@ -36,7 +34,6 @@ class PurchaseRequest(models.Model):
                         type_id = picking.id
                         break
                     break
-                    print picking_type
                 data_dict.update({
                     'picking_type_id.id': type_id,
                     'operating_unit_id.id': org.operating_unit_id.id,
@@ -81,8 +78,10 @@ class PurchaseRequest(models.Model):
                 }
             else:
                 res = self.sudo().browse(res_id)
-                self.sudo().create_purchase_request_attachment(data_dict, res_id)
-                self.sudo().create_purchase_request_committee(data_dict, res_id)
+                self.sudo().create_purchase_request_attachment(data_dict,
+                                                               res_id)
+                self.sudo().create_purchase_request_committee(data_dict,
+                                                              res_id)
                 ret = {
                     'is_success': True,
                     'result': {
