@@ -83,8 +83,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                 'picking_type_id': user_picking_type.id,
                 'company_id': company_id,
                 'is_central_purchase': req_id.is_central_purchase,
-                'exclusive' : 'multiple',
-                'multiple_rfq_per_supplier' : True,
+                'exclusive': 'multiple',
+                'multiple_rfq_per_supplier': True,
             })
         return res
 
@@ -123,7 +123,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         domain = []
         for pr_line in pr_lines:
             if pr_line.request_id.request_ref_id and \
-                pr_line.request_id.request_ref_id not in pr_ref:
+               pr_line.request_id.request_ref_id not in pr_ref:
                     pr_ref.append(pr_line.request_id.request_ref_id.id)
         if len(pr_ref) > 0:
             domain = {

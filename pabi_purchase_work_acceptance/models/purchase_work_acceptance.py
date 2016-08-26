@@ -18,7 +18,7 @@ class PurchaseWorkAcceptance(models.Model):
         ('done', 'Done'),
     ]
 
-    @api.one
+    @api.model
     @api.depends('date_receive', 'date_contract_end')
     def _fine_amount_to_word_th(self):
         res = {}
@@ -33,7 +33,7 @@ class PurchaseWorkAcceptance(models.Model):
             'ลบ' + amount_text or amount_text
         return res
 
-    @api.one
+    @api.model
     @api.depends('date_receive', 'date_contract_end')
     def _fine_per_day_to_word_th(self):
         res = {}
@@ -231,7 +231,7 @@ class PurchaseWorkAcceptance(models.Model):
             self.fine_per_day = total_fine_per_day
             self.overdue_day = -1 * overdue_day
 
-    @api.one
+    @api.model
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         product_type, is_consumable = self._check_product_type()
@@ -295,7 +295,7 @@ class PurchaseWorkAcceptance(models.Model):
     )
     amount_total_fine_text_th = fields.Char(
         string='Total Fine TH Text',
-        compute='_fine_amount_to_word_th',
+        compute='_compute_fine_amount_to_word_th',
         store=True,
     )
     supplier_invoice = fields.Char(
