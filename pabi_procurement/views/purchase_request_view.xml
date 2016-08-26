@@ -165,6 +165,7 @@
                     <field name="description" string="Reason"/>
                     <field name="objective"/>
                     <field name="amount_total"/>
+                    <field name="currency_id"/>
                     <field name="is_central_purchase"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="attributes">
