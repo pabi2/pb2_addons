@@ -225,6 +225,7 @@
                     <field name="purchase_type_id"/>
                     <field name="objective"/>
                     <field name="amount_total" string="Total Amount"/>
+                    <field name="currency_id"/>
                 </xpath>
                 <xpath expr="//field[@name='ordering_date']" position="attributes">
                     <attribute name="invisible">1</attribute>

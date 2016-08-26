@@ -180,6 +180,9 @@
                 <xpath expr="//tree" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="currency_id"/>
+                </xpath>
                 </field>
         </record>
 

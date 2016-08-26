@@ -20,7 +20,7 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.model
     @api.depends('date_receive', 'date_contract_end')
-    def _fine_amount_to_word_th(self):
+    def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
         order = self.order_id
