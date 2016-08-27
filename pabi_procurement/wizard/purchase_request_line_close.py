@@ -31,5 +31,10 @@ class PurchaseRequestLineClose(models.TransientModel):
                     _("Can't close purchase request lines."
                       " Some lines are already closed.")
                 )
+            elif line.requisition_state != 'none':
+                raise UserError(
+                    _("Each Request bid status should be 'No Bid' : %s"
+                      % (line.request_id.name,))
+                )
             else:
                 line.state = 'close'

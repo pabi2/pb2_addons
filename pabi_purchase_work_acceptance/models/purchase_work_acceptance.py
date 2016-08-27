@@ -23,14 +23,16 @@ class PurchaseWorkAcceptance(models.Model):
     def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
-        order = self.order_id
-        amount_total = self.total_fine
-        if amount_total < 0:
-            minus = True
-            amount_total = -amount_total
-        amount_text = amount_to_text_th(amount_total, order.currency_id.name)
-        self.amount_total_fine_text_th = minus and\
-            'ลบ' + amount_text or amount_text
+        for acceptance in self:
+            order = acceptance.order_id
+            amount_total = acceptance.total_fine
+            if amount_total < 0:
+                minus = True
+                amount_total = -amount_total
+            amount_text = amount_to_text_th(amount_total,
+                                            order.currency_id.name)
+            acceptance.amount_total_fine_text_th = minus and\
+                'ลบ' + amount_text or amount_text
         return res
 
     @api.model
@@ -38,14 +40,16 @@ class PurchaseWorkAcceptance(models.Model):
     def _compute_fine_per_day_to_word_th(self):
         res = {}
         minus = False
-        order = self.order_id
-        fine_per_day = self.fine_per_day
-        if fine_per_day < 0:
-            minus = True
-            fine_per_day = -fine_per_day
-        amount_text = amount_to_text_th(fine_per_day, order.currency_id.name)
-        self.amount_fine_per_day_text_th = minus and\
-            'ลบ' + amount_text or amount_text
+        for acceptance in self:
+            order = acceptance.order_id
+            fine_per_day = acceptance.fine_per_day
+            if fine_per_day < 0:
+                minus = True
+                fine_per_day = -fine_per_day
+            amount_text = amount_to_text_th(fine_per_day,
+                                            order.currency_id.name)
+            acceptance.amount_fine_per_day_text_th = minus and\
+                'ลบ' + amount_text or amount_text
         return res
 
     @api.onchange('manual_fine')
