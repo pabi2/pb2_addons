@@ -13,3 +13,9 @@ class ResPersonnelCostcenter(ResCommon, models.Model):
         string='Section',
         required=False,
     )
+    fund_ids = fields.Many2many(
+        'res.fund',
+        'res_fund_personnel_costcenter_rel',
+        'personnel_costcenter_id', 'fund_id',
+        string='Funds',
+    )

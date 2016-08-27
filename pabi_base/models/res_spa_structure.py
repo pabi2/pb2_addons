@@ -9,6 +9,7 @@ from openerp.addons.pabi_base.models.res_common import ResCommon
 #        (org)           (org)        (org)         (org)         (org)
 # functional_area -> program_group -> program -> project_group -> project
 #                                    (spa(s))                   (mission)
+#                                                                (fund)
 
 
 class SpaStructureTag(object):
@@ -251,4 +252,10 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
         related='project_group_id.functional_area_id',
         readonly=True,
         store=True,
+    )
+    fund_ids = fields.Many2many(
+        'res.fund',
+        'res_fund_project_rel',
+        'project_id', 'fund_id',
+        string='Funds',
     )

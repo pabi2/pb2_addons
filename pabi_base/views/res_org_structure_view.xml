@@ -290,6 +290,17 @@
 		                    <field name="mission_id"/>
                         </group>
                     </group>
+                    <notebook>
+	                    <page string="Source of Funds" >
+		                    <field name="fund_ids" nolabel="1" >
+		                    	<tree editable="bottom">
+		                    		<field name="name" readonly="1"/>
+		                    		<field name="code" readonly="1"/>
+		                    		<field name="type" readonly="1"/>
+		                    	</tree>
+		                    </field>
+	                    </page>
+                    </notebook>
                 </form>
             </field>
         </record>        

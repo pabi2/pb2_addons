@@ -35,10 +35,13 @@ org -> sector -> subsector -> division -> section -> costcenter
         "base_name_search_improved",
     ],
     "data": [
+        # Data
+        'data/fund_data.xml',
         # security
         'security/ir.model.access.csv',
         # views
         'views/menu_view.xml',
+        'views/res_fund_view.xml',
         'views/res_spa_structure_view.xml',
         'views/res_org_structure_view.xml',
         'views/res_personnel_structure_view.xml',

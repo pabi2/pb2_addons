@@ -25,6 +25,12 @@ class ResInvestAsset(ResCommon, models.Model):
     name_common = fields.Char(
         string='Common Name',
     )
+    fund_ids = fields.Many2many(
+        'res.fund',
+        'res_fund_invest_asset_rel',
+        'invest_asset_id', 'fund_id',
+        string='Funds',
+    )
 
 
 class ResInvestAssetCategory(ResCommon, models.Model):
@@ -78,6 +84,12 @@ class ResInvestConstructionPhase(models.Model):
         PHASE.items(),
         string='Phase',
         required=True,
+    )
+    fund_ids = fields.Many2many(
+        'res.fund',
+        'res_fund_invest_construction_phase_rel',
+        'invest_construction_phase_id', 'fund_id',
+        string='Funds',
     )
     _sql_constraints = [
         ('phase_uniq', 'unique(invest_construction_id, phase)',
