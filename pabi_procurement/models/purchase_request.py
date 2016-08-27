@@ -352,6 +352,16 @@ class PurchaseRequestLine(models.Model):
         'Fiscal Year',
         readonly=True,
     )
+    state = fields.Selection(
+        selection=[
+            ('open', 'Open'),
+            ('close', 'Closed'),
+        ],
+         string='Status',
+         track_visibility='onchange',
+         required=True,
+         default='open',
+    )
 
     @api.one
     @api.depends('requisition_lines.requisition_id.state')

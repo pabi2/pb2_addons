@@ -122,14 +122,15 @@ class PurchaseWorkAcceptance(models.Model):
     def _check_product_type(self):
         type = False
         is_consumable = False
-        for line in self.acceptance_line_ids:
-            type = line.product_id.type
-            is_consumable = line.product_id.categ_id.is_consumable
-            break
-            # if check_type != line.product_id.type:
-            #     raise UserError(
-            #         _("All products must have the same type. %s"
-            #           % (self.name,)))
+        for acceptance in self:
+            for line in acceptance.acceptance_line_ids:
+                type = line.product_id.type
+                is_consumable = line.product_id.categ_id.is_consumable
+                break
+                # if check_type != line.product_id.type:
+                #     raise UserError(
+                #         _("All products must have the same type. %s"
+                #           % (self.name,)))
         return type, is_consumable
 
     #  Invoice Plan Fine : Calculate from total amount

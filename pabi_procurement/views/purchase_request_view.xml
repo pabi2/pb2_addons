@@ -234,7 +234,20 @@
                 </xpath>
             </field>
     </record>
-
+    <record model="ir.ui.view" id="purchase_request_line_form">
+        <field name="name">purchase.request.line.form</field>
+        <field name="model">purchase.request.line</field>
+        <field name="inherit_id" ref="purchase_request.purchase_request_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                    <header>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="open,close"
+                               statusbar_colors='{"open":"blue"}'/>
+                    </header>
+                </xpath>
+            </field>
+    </record>
     <record model="ir.ui.view" id="view_purchase_request_line_tree">
         <field name="name">purchase.request.line.tree</field>
         <field name="model">purchase.request.line</field>
@@ -246,6 +259,7 @@
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="fiscal_year_id"/>
                     <field name="is_central_purchase"/>
+                    <field name="state" string="Line State"/>
                 </xpath>
                 <xpath expr="//field[@name='supplier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
