@@ -218,6 +218,9 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    purchase_ids = fields.One2many(
+        domain=[('order_type', '=', 'quotation')],
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')

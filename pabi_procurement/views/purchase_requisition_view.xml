@@ -143,9 +143,6 @@
                 	<field name="order_id" widget="many2one_clickable"/>
                     <field name="order_state"/>
                 </xpath>
-                <xpath expr="//notebook/page/field[@name='purchase_ids']" position="attributes">
-                	<attribute name="domain">[('order_type','=','quotation')]</attribute>
-                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
                         <field name="committee_ids">
@@ -251,6 +248,23 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_request_line_search">
+            <field name="name">purchase.request.line.search</field>
+            <field name="model">purchase.request.line</field>
+            <field name="inherit_id" ref="purchase_request.purchase_request_line_search"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//filter[@string='Assigned to']" position="replace">
+                            <filter string="Responsible"
+                                    domain="[]"
+                                    context="{'group_by':'responsible_uid'}"/>
+                    </xpath>
+                    <xpath expr="//filter[@name='request_state_rejected']" position="after">
+                        <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
+                        <filter name="my_responsible_no_bid" domain="[('responsible_uid','=',uid), ('requisition_state','=','none')]" string="My Responsible, No Bid"/>
+                        <filter name="no_bid" domain="[('requisition_state','=','none')]" string="No Bid"/>
+                    </xpath>
+                </field>
         </record>
     </data>
 </openerp>
