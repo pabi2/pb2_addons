@@ -422,10 +422,14 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _name = 'purchase.work.acceptance.line'
     _description = 'Purchase Work Acceptance Line'
 
-    @api.one
+    @api.model
     @api.depends('acceptance_id', 'line_id')
-    def _get_balance_qty(self):
-        self.balance_qty = self.line_id.product_qty - self.line_id.invoiced_qty
+    def _compute_get_balance_qty(self):
+        if self.line_id.order_id.invoice_method == 'invoice_plan':
+            self.balance_qty = self.line_id.product_qty
+        else:
+            self.balance_qty = self.line_id.product_qty - \
+                               self.line_id.invoiced_qty
 
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
@@ -454,7 +458,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     balance_qty = fields.Float(
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
-        compute='_get_balance_qty',
+        compute='_compute_get_balance_qty',
         store=True,
     )
     to_receive_qty = fields.Float(

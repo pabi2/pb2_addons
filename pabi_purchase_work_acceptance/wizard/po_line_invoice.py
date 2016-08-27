@@ -38,6 +38,8 @@ class PurchaseLineInvoice(models.TransientModel):
                 po_line = wa_line.line_id
                 max_quantity = po_line.product_qty - po_line.invoiced_qty -\
                     po_line.cancelled_qty
+                if po_line.order_id.invoice_method == 'invoice_plan':
+                    max_quantity = po_line.product_qty
                 lines.append({
                     'po_line_id': po_line.id,
                     'product_qty': max_quantity,
