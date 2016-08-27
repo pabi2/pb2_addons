@@ -52,16 +52,18 @@ class MonitorView(models.AbstractModel):
                 sum(amount_actual) amount_actual,
                 sum(amount_balance) amount_balance
             from budget_monitor_report
-            where %s is not null
+            where %s
             group by fiscalyear_id, %s
         )
     """
 
     def _create_monitor_view(self, cr, field):
+        conds = [x.strip() + ' is not null' for x in field.split(',')]
+        where = ' and '.join(conds)
         tools.drop_view_if_exists(cr, self._table)
         cr.execute(
             self._monitor_view_tempalte %
-            (self._table, field, field, field))
+            (self._table, field, where, field))
 
 
 class AccountActivityGroupMonitorView(models.Model):

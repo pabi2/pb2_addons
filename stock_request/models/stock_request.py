@@ -190,14 +190,12 @@ class StockRequest(models.Model):
             # For type = borrow, change name Transferred -> Waiting Return
             if 'state' in res['fields']:
                 new_selection = []
-                print res['fields']['state']['selection']
                 for s_tuple in res['fields']['state']['selection']:
                     s_list = list(s_tuple)
                     if s_list[0] == 'done':
                         s_list[1] = _('Waiting Return')
                     new_selection.append(tuple(s_list))
                 res['fields']['state']['selection'] = new_selection
-                print res['fields']['state']['selection']
         return res
 
     @api.model
