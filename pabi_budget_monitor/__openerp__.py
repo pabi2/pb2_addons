@@ -14,6 +14,7 @@
     'data': [
         'security/ir.model.access.csv',
         # View
+        'views/res_fund_view.xml',
         'views/res_org_structure_view.xml',
         'views/res_spa_structure_view.xml',
         'views/res_other_structure_view.xml',

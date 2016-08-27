@@ -12,7 +12,7 @@ class AccountBudget(models.Model):
     )
     policy_amount = fields.Float(
         string='Policy Amount',
-        readonly=True,
+        readonly=False,  # TODO: change back to True
     )
     planned_amount = fields.Float(
         string='Current Amount',  # Existing field, change label only

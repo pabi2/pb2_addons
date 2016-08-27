@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError, Warning as UserError
 
 
 class AccountBudget(models.Model):
@@ -9,6 +10,8 @@ class AccountBudget(models.Model):
         # Code not cover Activity level yet
         # 'activity_group_id': 'Activity Group',
         # 'activity_id': 'Activity',
+        # Fund
+        'fund_id': 'Fund (for all)',
         # Project Based
         'spa_id': 'SPA',
         'mission_id': 'Mission',
@@ -39,6 +42,8 @@ class AccountBudget(models.Model):
         # Code not cover Activity level yet
         # 'activity_group_id': 'account.activity.group',
         # 'activity_id': 'Activity'  # No Activity Level{
+        'fund_id': 'res.fund',
+
         'spa_id': 'res.spa',
         'mission_id': 'res.mission',
         'tag_type_id': 'res.tag.type',
@@ -80,3 +85,82 @@ class AccountBudget(models.Model):
         for rec in self:
             budget_type = rec.chart_view
             super(AccountBudget, rec)._validate_budget_level(budget_type)
+
+    @api.model
+    def _get_budget_monitor(self, fiscal, budget_type,
+                            budget_level, resource,
+                            ext_field=False,
+                            ext_res_id=False):
+        # For funding level, we go deeper
+        if budget_level == 'fund_id':
+            budget_type_dict = {
+                'unit_base': 'monitor_section_ids',
+                'project_base': 'monitor_project_ids',
+                'personnel': 'monitor_personnel_costcenter_ids',
+                'invest_asset': 'monitor_invest_asset_ids',
+                'invest_construction':
+                'monitor_invest_construction_phase_ids'}
+            return resource[budget_type_dict[budget_type]].\
+                filtered(lambda x:
+                         (x.fiscalyear_id == fiscal and
+                          x[ext_field].id == ext_res_id))
+            raise ValidationError(
+                _('Budget Check at Fund level require a compliment dimension'))
+        else:
+            return super(AccountBudget, self).\
+                _get_budget_monitor(fiscal, budget_type,
+                                    budget_level, resource)
+
+    @api.model
+    def get_document_query(self, head_table, line_table):
+        query = """
+            select %(sel_fields)s,
+                coalesce(sum(l.price_subtotal), 0.0) amount
+            from """ + line_table + """ l
+            join """ + head_table + """ h on h.id = l.invoice_id
+            where h.id = %(active_id)s
+            group by %(sel_fields)s
+        """
+        return query
+
+    @api.model
+    def document_check_budget(self, query, budget_level_info,
+                              fiscal_id, active_id):
+        Budget = self.env['account.budget']
+        # Check for all budget types
+        for budget_type in dict(Budget.BUDGET_LEVEL_TYPE).keys():
+            if budget_type not in budget_level_info:
+                raise UserError(_('Budget level is not set!'))
+            budget_level = budget_level_info[budget_type]
+            sel_fields = [budget_level]
+            if budget_level == 'fund_id':
+                budget_type_dict = {
+                    'unit_base': 'section_id',
+                    'project_base': 'project_id',
+                    'personnel': 'personnel_costcenter_id',
+                    'invest_asset': 'investment_asset_id',
+                    'invest_construction': 'invest_construction_phase_id'}
+                sel_fields.append(budget_type_dict[budget_type])
+            self._cr.execute(
+                query % {'sel_fields': ','.join(['l.'+i
+                                                 for i in sel_fields]),
+                         'active_id': active_id}
+            )
+            # Check budget at this budgeting level
+            for rec in self._cr.dictfetchall():
+                if rec[budget_level]:  # If no value, do not check.
+                    ext_field = (len(sel_fields) > 1 and
+                                 sel_fields[1] or
+                                 False)
+                    ext_res_id = (len(sel_fields) > 1 and
+                                  rec[sel_fields[1]] or
+                                  False)
+                    res = Budget.check_budget(fiscal_id,
+                                              budget_type,
+                                              budget_level,
+                                              rec[budget_level],
+                                              rec['amount'],
+                                              ext_field=ext_field,
+                                              ext_res_id=ext_res_id)
+                    if not res['budget_ok']:
+                        raise UserError(res['message'])

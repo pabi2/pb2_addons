@@ -158,6 +158,7 @@ CHART_FIELDS = [
     ('program_id', ['project_base']),
     ('project_group_id', ['project_base']),
     ('project_id', ['project_base']),
+    ('fund_id', ['project_base']),
     # Unit Based
     ('org_id', ['unit_base',
                 'project_base',
@@ -337,6 +338,18 @@ class ChartField(object):
         string='Project',
         default=lambda self: self.env['res.project'].
         browse(self._context.get('project_id')),
+    )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        domain="['|', '|', '|', '|',"
+        "('project_ids', 'in', [project_id or 0]),"
+        "('section_ids', 'in', [section_id or 0]),"
+        "('invest_asset_ids', 'in', [invest_asset_id or 0]),"
+        "('invest_construction_phase_ids', 'in', "
+        "[invest_construction_phase_id or 0]),"
+        "('personnel_costcenter_ids', 'in', [personnel_costcenter_id or 0]),"
+        "]",
     )
     # Unit Base
     org_id = fields.Many2one(

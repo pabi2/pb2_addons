@@ -161,6 +161,12 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
         digits_compute=dp.get_precision('Account'),
         store=True,
     )
+    # Set default for Fund
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        default=lambda self: self.env.ref('base.fund_nstda'),
+    )
 
     @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
