@@ -143,41 +143,43 @@ class PurchaseWorkAcceptance(models.Model):
         total_fine = 0.0
         today = fields.Date.context_today(self)
         THHoliday = self.env['thai.holiday']
-        if not self.date_receive:
-            self.date_receive = today.strftime('%Y-%m-%d')
-        received = THHoliday.find_next_working_day(self.date_receive)
-        received = datetime.datetime.strptime(
-            received,
-            "%Y-%m-%d",
-        )
-        if not self.date_contract_end:
-            self.date_contract_end = today.strftime('%Y-%m-%d')
-        end_date = datetime.datetime.strptime(
-            self.date_contract_end,
-            "%Y-%m-%d",
-        )
-        delta = end_date - received
-        overdue_day = delta.days
-        total_fine_per_day = 0.0
-        if overdue_day < 0:
-            for line in invoice.invoice_line:
-                line_tax = 0.0
-                fine_rate = self.order_id.fine_rate
-                unit_price = line.price_unit
-                to_receive_qty = line.quantity
-                taxes = line.invoice_line_tax_id.compute_all(
-                    unit_price,
-                    to_receive_qty,
-                    product=line.product_id,
-                )
-                line_tax += sum([tax['amount'] for tax in taxes['taxes']])
-                fine_per_day = (fine_rate*0.01) * \
-                               ((to_receive_qty * unit_price) + line_tax)
-                total_fine_per_day += fine_per_day
-                total_fine += -1 * overdue_day * fine_per_day
-            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.fine_per_day = total_fine_per_day
-            self.overdue_day = -1 * overdue_day
+        for acceptance in self:
+            if not acceptance.date_receive:
+                acceptance.date_receive = today.strftime('%Y-%m-%d')
+            received = THHoliday.find_next_working_day(acceptance.date_receive)
+            received = datetime.datetime.strptime(
+                received,
+                "%Y-%m-%d",
+            )
+            if not acceptance.date_contract_end:
+                acceptance.date_contract_end = today.strftime('%Y-%m-%d')
+            end_date = datetime.datetime.strptime(
+                acceptance.date_contract_end,
+                "%Y-%m-%d",
+            )
+            delta = end_date - received
+            overdue_day = delta.days
+            total_fine_per_day = 0.0
+            if overdue_day < 0:
+                for line in invoice.invoice_line:
+                    line_tax = 0.0
+                    fine_rate = acceptance.order_id.fine_rate
+                    unit_price = line.price_unit
+                    to_receive_qty = line.quantity
+                    taxes = line.invoice_line_tax_id.compute_all(
+                        unit_price,
+                        to_receive_qty,
+                        product=line.product_id,
+                    )
+                    line_tax += sum([tax['amount'] for tax in taxes['taxes']])
+                    fine_per_day = (fine_rate*0.01) * \
+                                   ((to_receive_qty * unit_price) + line_tax)
+                    total_fine_per_day += fine_per_day
+                    total_fine += -1 * overdue_day * fine_per_day
+                acceptance.total_fine = 100.0 if 0 < total_fine < 100.0 \
+                    else total_fine
+                acceptance.fine_per_day = total_fine_per_day
+                acceptance.overdue_day = -1 * overdue_day
 
     @api.model
     def _calculate_service_fine(self):
@@ -242,13 +244,14 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
-        product_type, is_consumable = self._check_product_type()
-        if product_type == 'service' and not is_consumable:
-            self._calculate_service_fine()
-        else:
-            self._calculate_incoming_fine()
-        if self.manual_fine > 0:
-            self.total_fine = self.manual_fine
+        for acceptance in self:
+            product_type, is_consumable = acceptance._check_product_type()
+            if product_type == 'service' and not is_consumable:
+                acceptance._calculate_service_fine()
+            else:
+                acceptance._calculate_incoming_fine()
+            if acceptance.manual_fine > 0:
+                acceptance.total_fine = acceptance.manual_fine
 
     name = fields.Char(
         string="Acceptance No.",
