@@ -249,20 +249,13 @@
                 </xpath>
             </field>
         </record>
-        <record model="ir.ui.view" id="view_purchase_request_line_search">
-            <field name="name">purchase.request.line.search</field>
-            <field name="model">purchase.request.line</field>
-            <field name="inherit_id" ref="purchase_request.purchase_request_line_search"/>
+        <record model="ir.ui.view" id="view_purchase_requisition_filter">
+            <field name="name">purchase.requisition.search</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
                 <field name="arch" type="xml">
-                    <xpath expr="//filter[@string='Assigned to']" position="replace">
-                            <filter string="Responsible"
-                                    domain="[]"
-                                    context="{'group_by':'responsible_uid'}"/>
-                    </xpath>
-                    <xpath expr="//filter[@name='request_state_rejected']" position="after">
-                        <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
-                        <filter name="my_responsible_no_bid" domain="[('responsible_uid','=',uid), ('requisition_state','=','none')]" string="My Responsible, No Bid"/>
-                        <filter name="no_bid" domain="[('requisition_state','=','none')]" string="No Bid"/>
+                    <xpath expr="//filter[@string='Unassigned']" position="after">
+                        <filter name="po_created" domain="[('state','=','done')]" string="PO Created"/>
                     </xpath>
                 </field>
         </record>
