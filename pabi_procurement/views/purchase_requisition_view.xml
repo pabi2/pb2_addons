@@ -210,6 +210,17 @@
                 </xpath>
             </field>
         </record>
+        <record model="ir.ui.view" id="cancel_reason_view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition_cancel_reason.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(purchase_requisition_cancel_reason.action_requisition_cancel)d']" position="attributes">
+                    <attribute name="states">draft,in_progress,done</attribute>
+                </xpath>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_purchase_requisition_tree">
             <field name="name">purchase.requisition.tree</field>
             <field name="model">purchase.requisition</field>
