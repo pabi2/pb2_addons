@@ -199,6 +199,16 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                     _("Each Request bid status should be 'No Bid' : %s"
                       % (item.request_id.name,))
                 )
+            elif item.line_id.state != 'open':
+                raise UserError(
+                    _("Some request line is already closed' : %s"
+                      % (item.request_id.name,))
+                )
+            elif item.line_id.requisition_state != 'none':
+                raise UserError(
+                    _("Each Request bid status should be 'No Bid' : %s"
+                      % (item.request_id.name,))
+                )
             elif item.line_id.request_id.request_ref_id:
                 if not self.purchase_requisition_id:
                     raise UserError(

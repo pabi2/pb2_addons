@@ -602,7 +602,7 @@ class PurchaseRequisitionLine(models.Model):
         'purchase.order.line',
         string='Purchase Order Line'
     )
-    product_name = fields.Char(
+    product_name = fields.Text(
         string='Description',
         required=True,
     )
