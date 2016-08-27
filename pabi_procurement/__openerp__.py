@@ -32,6 +32,7 @@ PABI2 - Procurement Module
         "purchase_requisition_cancel_reason",
         "purchase_request_reject_reason",
         "purchase_force_done",
+        "purchase_cancel_reason",
         "l10n_th_thai_holidays",
         "l10n_th_amount_text_ext",
         "res_partner_ext",

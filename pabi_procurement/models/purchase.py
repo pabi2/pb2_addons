@@ -317,6 +317,16 @@ class PurchaseOrder(models.Model):
 
         return orders_info
 
+    @api.multi
+    def wkf_action_cancel(self):
+        res = super(PurchaseOrder, self).wkf_action_cancel()
+        for order in self:
+            self.state2 = 'cancel'
+            if order.quote_id:
+                order.quote_id.wkf_action_cancel()
+                order.quote_id.state2 = 'cancel'
+        return res
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
