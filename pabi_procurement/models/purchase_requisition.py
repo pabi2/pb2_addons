@@ -180,15 +180,15 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
     )
     doc_header = fields.Text(
-        string='Header',
+        string='Dear,',
         readonly=True,
         states={
             'draft': [('readonly', False)],
             'done': [('readonly', False)],
         },
     )
-    doc_footer = fields.Text(
-        string='Footer',
+    doc_body = fields.Text(
+        string='Body',
         readonly=True,
         states={
             'draft': [('readonly', False)],

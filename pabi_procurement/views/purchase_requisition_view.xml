@@ -143,6 +143,9 @@
                 	<field name="order_id" widget="many2one_clickable"/>
                     <field name="order_state"/>
                 </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']" position="attributes">
+                	<attribute name="domain">[('order_type','=','quotation')]</attribute>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
                         <field name="committee_ids">
@@ -189,7 +192,7 @@
                             <group>
                                 <field name="doc_no"/>
                                 <field name="doc_header"/>
-                                <field name="doc_footer"/>
+                                <field name="doc_body"/>
                             </group>
                         </group>
                     </page>
