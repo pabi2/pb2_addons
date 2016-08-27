@@ -425,11 +425,12 @@ class PurchaseWorkAcceptanceLine(models.Model):
     @api.model
     @api.depends('acceptance_id', 'line_id')
     def _compute_get_balance_qty(self):
-        if self.line_id.order_id.invoice_method == 'invoice_plan':
-            self.balance_qty = self.line_id.product_qty
-        else:
-            self.balance_qty = self.line_id.product_qty - \
-                               self.line_id.invoiced_qty
+        for acc_line in self:
+            if acc_line.line_id.order_id.invoice_method == 'invoice_plan':
+                acc_line.balance_qty = acc_line.line_id.product_qty
+            else:
+                acc_line.balance_qty = acc_line.line_id.product_qty - \
+                                   acc_line.line_id.invoiced_qty
 
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
