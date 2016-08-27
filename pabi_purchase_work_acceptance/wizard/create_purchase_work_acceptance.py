@@ -80,16 +80,19 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def is_acceptance_done(self, order):
         OrderLine = self.env['purchase.order.line']
+        completed_line = 0
         order_lines = OrderLine.search([
             ('order_id', '=', order.id),
         ])
         for order_line in order_lines:
             if order_line.invoiced_qty >= order_line.product_qty:
-                raise UserError(
-                    _("""Can't create new work acceptance.
-                    This order's shipments may be completed.
-                    """)
-                )
+                completed_line += 1
+        if completed_line == len(order_lines):
+            raise UserError(
+                _("""Can't create new work acceptance.
+                This order's shipments may be completed.
+                """)
+            )
 
     @api.model
     def _get_contract_end_date(self, order):
