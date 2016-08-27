@@ -143,9 +143,6 @@
                 	<field name="order_id" widget="many2one_clickable"/>
                     <field name="order_state"/>
                 </xpath>
-                <xpath expr="//notebook/page/field[@name='purchase_ids']" position="attributes">
-                	<attribute name="domain">[('order_type','=','quotation')]</attribute>
-                </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                		<page string="Committee">
                         <field name="committee_ids">
@@ -251,6 +248,16 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_requisition_filter">
+            <field name="name">purchase.requisition.search</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//filter[@string='Unassigned']" position="after">
+                        <filter name="po_created" domain="[('state','=','done')]" string="PO Created"/>
+                    </xpath>
+                </field>
         </record>
     </data>
 </openerp>
