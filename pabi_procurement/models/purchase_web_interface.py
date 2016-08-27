@@ -269,6 +269,7 @@ class PurchaseWebInterface(models.Model):
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
+        file_prefix = ConfParam.get_param('pabiweb_file_prefix')
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
         Attachment = self.env['ir.attachment']
@@ -295,10 +296,13 @@ class PurchaseWebInterface(models.Model):
         for pd_att in requisition.attachment_ids:
             if '_main_form.pdf' in pd_att.name:
                 continue
+            url = ""
+            if pd_att.url:
+                url = pd_att.url.replace(file_prefix, "")
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
                 'content': pd_att.datas,
-                'url': pd_att.url,
+                'url': url,
             }
             attachment.append(pd_attach)
         pr_name = ''
