@@ -221,6 +221,10 @@ class PurchaseRequisition(models.Model):
     purchase_ids = fields.One2many(
         domain=[('order_type', '=', 'quotation')],
     )
+    sent_pbweb = fields.Boolean(
+        string='Is sent to PABI Web',
+        default=False,
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
