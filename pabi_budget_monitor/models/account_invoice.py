@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, _
-from openerp.exceptions import Warning as UserError
+from openerp import api, models
 
 
 class AccountInvoice(models.Model):
