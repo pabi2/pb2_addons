@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, Warning as UserError
 from openerp.tools.float_utils import float_round as round
@@ -45,6 +48,34 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         string='Invoice Mode',
         required=True,
         default='change_quantity')
+    installment_date = fields.Date(
+        string='Installment Date',
+        default=fields.Date.context_today,
+        required=True,
+    )
+    interval = fields.Integer(
+        string='Interval',
+        default=1,
+        required=True,
+    )
+    interval_type = fields.Selection(
+        [('day', 'Day'),
+         ('month', 'Month'),
+         ('year', 'Year')],
+        string='Interval Type',
+        default='month',
+        required=True,
+    )
+    installment_amount = fields.Float(
+        string='Installment Amount',
+        compute='_compute_installment_amount',
+    )
+
+    @api.one
+    @api.depends('num_installment')
+    def _compute_installment_amount(self):
+        if self.num_installment > 0:
+            self.installment_amount = self.order_amount / self.num_installment
 
     @api.onchange('use_advance')
     def _onchange_use_advance(self):
@@ -149,6 +180,39 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order.use_deposit = self.use_deposit
         order.invoice_mode = self.invoice_mode
 
+    @api.model
+    def _compute_installment_details(self):
+        if self.installment_ids:
+            installment_date =\
+                datetime.strptime(self.installment_date, "%Y-%m-%d")
+            count = 0
+            for i in self.installment_ids:
+                if i.is_advance_installment or i.is_deposit_installment:
+                    i.date_invoice = self.installment_date
+                    continue
+                interval = self.interval
+                if count == 0:
+                    interval = 0
+                if self.interval_type == 'month':
+                    installment_date =\
+                        installment_date + relativedelta(months=+interval)
+                elif self.interval_type == 'year':
+                    installment_date =\
+                        installment_date + relativedelta(years=+interval)
+                else:
+                    installment_date =\
+                        installment_date + relativedelta(days=+interval)
+                count += 1
+                i.date_invoice = installment_date
+                i.amount = self.installment_amount
+                obj_precision = self.env['decimal.precision']
+                prec = obj_precision.precision_get('Account')
+                if not self.order_amount:
+                    raise Warning(_('Order amount equal to 0.0!'))
+                new_val = i.amount / self.order_amount * 100
+                if round(new_val, prec) != round(i.percent, prec):
+                    i.percent = new_val
+
     @api.onchange('use_advance', 'num_installment', 'use_deposit')
     def _onchange_plan(self):
         order = self.env['purchase.order'].\
@@ -180,9 +244,18 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                           'amount': i == 1 and base_amount or 0,
                           'percent': i == 1 and 100 or 0})
             i += 1
+
         self.installment_ids = False
         self.installment_ids = lines
+        self._compute_installment_details()
 
+    @api.one
+    @api.onchange('installment_date',
+                  'interval_type',
+                  'interval',
+                  'installment_amount')
+    def _onchange_installment_config(self):
+        self._compute_installment_details()
 
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
     _name = 'purchase.create.invoice.plan.installment'
