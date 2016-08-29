@@ -111,20 +111,22 @@ class AccountBudget(models.Model):
                 _get_budget_monitor(fiscal, budget_type,
                                     budget_level, resource)
 
-    @api.model
-    def get_document_query(self, head_table, line_table):
-        query = """
-            select %(sel_fields)s,
-                coalesce(sum(l.price_subtotal), 0.0) amount
-            from """ + line_table + """ l
-            join """ + head_table + """ h on h.id = l.invoice_id
-            where h.id = %(active_id)s
-            group by %(sel_fields)s
-        """
-        return query
+#     @api.model
+#     def get_document_query(self, head_table, line_table):
+#         query = """
+#             select %(sel_fields)s,
+#                 coalesce(sum(l.price_subtotal), 0.0) amount
+#             from """ + line_table + """ l
+#             join """ + head_table + """ h on h.id = l.invoice_id
+#             where h.id = %(active_id)s
+#             group by %(sel_fields)s
+#         """
+#         return query
 
     @api.model
-    def document_check_budget(self, query, budget_level_info,
+    def document_check_budget(self, doc_lines,
+                              amount_field,
+                              budget_level_info,
                               fiscal_id, active_id):
         Budget = self.env['account.budget']
         # Check for all budget types
@@ -141,26 +143,37 @@ class AccountBudget(models.Model):
                     'invest_asset': 'investment_asset_id',
                     'invest_construction': 'invest_construction_phase_id'}
                 sel_fields.append(budget_type_dict[budget_type])
-            self._cr.execute(
-                query % {'sel_fields': ','.join(['l.'+i
-                                                 for i in sel_fields]),
-                         'active_id': active_id}
-            )
-            # Check budget at this budgeting level
-            for rec in self._cr.dictfetchall():
-                if rec[budget_level]:  # If no value, do not check.
-                    ext_field = (len(sel_fields) > 1 and
-                                 sel_fields[1] or
-                                 False)
-                    ext_res_id = (len(sel_fields) > 1 and
-                                  rec[sel_fields[1]] or
-                                  False)
-                    res = Budget.check_budget(fiscal_id,
-                                              budget_type,
-                                              budget_level,
-                                              rec[budget_level],
-                                              rec['amount'],
-                                              ext_field=ext_field,
-                                              ext_res_id=ext_res_id)
-                    if not res['budget_ok']:
-                        raise UserError(res['message'])
+            group_vals = []
+            for l in doc_lines:
+                val = ()
+                for f in sel_fields:
+                    val += (l[f].id,)
+                group_vals.append(val)
+            group_vals = list(set(group_vals))
+            for val in group_vals:
+                res_id = val[0]
+                ext_field = False
+                ext_res_id = False
+                if not res_id:
+                    continue
+                filtered_lines = doc_lines
+                i = 0
+                for f in sel_fields:
+                    filtered_lines = filtered_lines.\
+                        filtered(lambda l:
+                                 f in l and l[f] and l[f].id == val[i])
+                    i += 1
+                amount = sum(filtered_lines.mapped(amount_field))
+                # For funding case, add more dimension
+                if len(sel_fields) == 2:
+                    ext_res_id = val[1]
+                    ext_field = sel_fields[1]
+                res = Budget.check_budget(fiscal_id,
+                                          budget_type,  # eg, project_base
+                                          budget_level,  # eg, project_id
+                                          res_id,
+                                          amount,
+                                          ext_field=ext_field,
+                                          ext_res_id=ext_res_id)
+                if not res['budget_ok']:
+                    raise UserError(res['message'])

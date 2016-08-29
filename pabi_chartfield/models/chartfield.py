@@ -496,7 +496,8 @@ class ChartFieldAction(ChartField):
     @api.multi
     def write(self, vals):
         res = super(ChartFieldAction, self).write(vals)
-        self.update_related_dimension(vals)
+        if not self._context.get('update_dimension', False):
+            self.update_related_dimension(vals)
         return res
 
     @api.model
@@ -529,7 +530,7 @@ class ChartFieldAction(ChartField):
                 if field in res:
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
-            self.write(res)
+            self.with_context(update_dimension=True).write(res)
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

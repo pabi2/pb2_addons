@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class BudgetFundRule(models.Model):
@@ -86,6 +87,78 @@ class BudgetFundRule(models.Model):
                 self.env['ir.sequence'].get('budget.fund.rule') or '/'
         return super(BudgetFundRule, self).create(vals)
 
+    @api.model
+    def document_check_fund_activity_spending(self, fiscalyear_id,
+                                              doc_lines, amount_field):
+            group_vals = []
+            for l in doc_lines:
+                val = ()
+                for f in ['project_id', 'fund_id', 'activity_group_id']:
+                    val += (l[f].id,)
+                if False not in val:
+                    group_vals.append(val)
+            group_vals = list(set(group_vals))
+            for val in group_vals:
+                project_id, fund_id, activity_group_id = val[0], val[1], val[2]
+                filtered_lines = doc_lines
+                i = 0
+                for f in ['project_id', 'fund_id', 'activity_group_id']:
+                    filtered_lines = filtered_lines.\
+                        filtered(lambda l:
+                                 f in l and l[f] and l[f].id == val[i])
+                    i += 1
+                amount = sum(filtered_lines.mapped('price_subtotal'))
+                self.check_fund_activity_spending(fiscalyear_id,
+                                                  project_id,
+                                                  fund_id,
+                                                  activity_group_id,
+                                                  amount)
+
+    @api.model
+    def check_fund_activity_spending(self, fiscalyear_id, project_id,
+                                     fund_id, activity_group_id, amount):
+        rule = self.env['budget.fund.rule.activity.group'].\
+            search([('fiscalyear_id', '=', fiscalyear_id),
+                    ('project_id', '=', project_id),
+                    ('fund_id', '=', fund_id),
+                    ('activity_group_id', '=', activity_group_id),
+                    ('is_control', '=', True)])
+        if not rule:
+            return
+        max_spending_percent = rule.max_spending_percent
+        self._cr.execute("""
+            select
+                coalesce(sum(planned_amount), 0.0) as planned_amount,
+                coalesce(sum(released_amount), 0.0) as released_amount,
+                coalesce(sum(amount_balance), 0.0) as amount_balance
+            from budget_monitor_report
+            where fiscalyear_id = %s
+                and project_id = %s
+                and fund_id = %s
+                and activity_group_id = %s
+        """, (fiscalyear_id, project_id, fund_id, activity_group_id,))
+        res = self._cr.fetchone()
+        released_amount = res[1]
+        amount_balance = res[2]
+        ActivityGroup = self.env['account.activity.group']
+        group = ActivityGroup.browse(activity_group_id)
+        if released_amount <= 0.0:
+            raise ValidationError(
+                _('No budget released for Activity Group %s!') %
+                (group.name,))
+        spending_percent = 100.0 * ((released_amount -
+                                     amount_balance +
+                                     amount) /
+                                    released_amount)
+        if spending_percent > max_spending_percent:
+            raise ValidationError(
+                _('Amount exceeded maximum spending '
+                  'for Activity Group %s!\n'
+                  '(%s%% vs %s%%)') %
+                (group.name,
+                 round(spending_percent, 2),
+                 round(max_spending_percent, 2)))
+
 
 class BudgetFundRuleActivityGroup(models.Model):
     _name = "budget.fund.rule.activity.group"
@@ -106,6 +179,24 @@ class BudgetFundRuleActivityGroup(models.Model):
         'account.budget',
         string='Budget Control',
         related='budget_line_ref_id.budget_id',
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        related='fund_rule_id.fiscalyear_id',
+        string='Fiscal Year',
+        store=True,
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        related='fund_rule_id.project_id',
+        string='Project',
+        store=True,
+    )
+    fund_id = fields.Many2one(
+        'res.fund',
+        related='fund_rule_id.fund_id',
+        string='Fund',
+        store=True,
     )
     activity_group_id = fields.Many2one(
         'account.activity.group',

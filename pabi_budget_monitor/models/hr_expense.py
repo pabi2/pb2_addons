@@ -14,8 +14,8 @@ class HRExpenseExpense(models.Model):
             budget_level_info = Budget.\
                 get_fiscal_and_budget_level(expense.date)
             fiscal_id = budget_level_info['fiscal_id']
-            query = Budget.get_document_query('hr_expense_expense',
-                                              'hr_expense_line')
-            Budget.document_check_budget(query, budget_level_info,
+            Budget.document_check_budget(expense.line_ids,
+                                         'total_amount',
+                                         budget_level_info,
                                          fiscal_id, active_id)
         return True
