@@ -421,13 +421,13 @@
 	</record>
 
 	<record id="purchase_requisition_summary" model="ir.actions.report.xml">
-		<field name="string">PD summary Form</field>
+		<field name="string">Approval report</field>
 		<field name="auto">True</field>
 		<field name="model">purchase.requisition</field>
 		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
-		<field name="name">Call For Bids summary</field>
+		<field name="name">Approval report</field>
 		<field name="report_name">purchase.requisition_summary</field>
-		<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_summary.jrxml</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/approval_report.jrxml</field>
 		<field name="menu">True</field>
 		<field name="header">False</field>
 		<field name="jasper_report">True</field>
@@ -436,7 +436,7 @@
 	</record>
 
 	<record id="purchase_requisition_summary_values" model="ir.values">
-		<field name="name">PD summary Form</field>
+		<field name="name">Approval report</field>
 		<field name="model">purchase.requisition</field>
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_requisition_summary)" />
