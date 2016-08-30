@@ -4,7 +4,7 @@
    
         <!-- Top menu item -->
         <menuitem name="Stock" id="menu_stock_request" groups="base.group_user" sequence="71"/>
-        <menuitem name="Stock Operation" id="menu_stock_operation" parent="menu_stock_request" groups="base.group_user" sequence="10"/>
+        <menuitem name="Stock Operation" id="menu_stock_operation" parent="menu_stock_request" groups="stock.group_stock_user" sequence="10"/>
 	    
    		# Stock Request
         <record id="view_stock_request_filter" model="ir.ui.view">
@@ -146,9 +146,25 @@
 		                            <field name="location_dest_id" attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
 		                        </group>
 		                    </group>
-		                    <p class="oe_gray">
+		                    <p class="oe_grey">
 		                    NOTE: Only product available in selected locations will be listed!
 		                    </p>
+		                   	<field name="line_ids" >
+		                   		<tree string="Products" editable="bottom"
+		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
+						            <field name="request_id" invisible="1" />
+						            <field name="product_id" attrs="{'readonly': [('state', '!=', 'draft')]}"
+						            	context="{'stock_request_type': parent.type, 'location_id': parent.location_id,  'location_dest_id': parent.location_dest_id, 'location_borrow_id': parent.location_borrow_id}"/>
+				                    <field name="onhand_qty" groups="stock.group_stock_user" />
+				                    <field name="future_qty" groups="stock.group_stock_user" />
+						            <field name="request_uom_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+						            <field name="product_uom_qty" groups="stock.group_stock_user" />
+						            <field name="product_uom" invisible="1"/>
+						            <field name="product_uom_readonly" />
+						            <field name="state" />
+					            </tree>
+		                   	</field>
+		                   	<!--                
 		                   	<field name="line_ids" attrs="{'invisible': [('state', '=', 'draft')]}">
 		                   		<tree string="Products" editable="bottom"
 		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
@@ -173,7 +189,7 @@
 						            <field name="product_uom" invisible="1"/>
 						            <field name="product_uom_readonly" />
 					            </tree>
-		                   	</field>
+		                   	</field> -->		     
 	           				<field name="note" placeholder="Notes..."/>
 	                   	</page>
 	                    <page string="Other Info" >
@@ -197,14 +213,15 @@
         </record>
         
         <!-- Menus and Actions -->
-		<record id="action_new_stock_request" model="ir.actions.act_window">
-            <field name="name">New Stock Request</field>
+		<record id="action_my_stock_request" model="ir.actions.act_window">
+            <field name="name">My Stock Request</field>
             <field name="res_model">stock.request</field>
             <field name="view_type">form</field>
-            <field name="view_mode">form,tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
-            <field name="domain">[('type', '=', 'request')]</field>
+            <field name="domain">[('type', '=', 'request'),
+            					'|', '|', ('employee_id.user_id', '=', uid), ('prepare_emp_id.user_id', '=', uid), ('receive_emp_id.user_id', '=', uid)]</field>
             <field name="context">{'default_type': 'request'}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -213,8 +230,8 @@
             </field>
         </record>
 
-	    <menuitem action="action_new_stock_request" sequence="10"
-	    	id="menu_action_new_stock_request"  parent="menu_stock_operation"
+	    <menuitem action="action_my_stock_request" sequence="10"
+	    	id="menu_action_my_stock_request"  parent="menu_stock_operation"
 	    	groups="base.group_user" /> 
         
 		<record id="action_stock_request" model="ir.actions.act_window">

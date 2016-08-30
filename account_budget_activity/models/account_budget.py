@@ -139,8 +139,8 @@ class AccountBudget(models.Model):
                                   'for this fiscal year'))
             budget_level = fiscal.budget_level_ids.\
                 filtered(lambda x: x.type == budget_type)[0].budget_level
-            count = self.env['account.budget.line'].search_count(
-                [('budget_id', '=', budget.id), (budget_level, '=', False)])
+            count = len(self.env['account.budget.line'].search(
+                [('budget_id', '=', budget.id), (budget_level, '=', False)]))
             if count:
                 raise except_orm(
                     _('Budgeting Level Warning'),
@@ -204,14 +204,17 @@ class AccountBudget(models.Model):
 
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
-                            budget_level, resource):
+                            budget_level, resource,
+                            add_field=False,
+                            add_res_id=False):
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal)
         return monitors
 
     @api.model
     def check_budget(self, fiscal_id, budget_type,
-                     budget_level, budget_level_res_id, amount):
+                     budget_level, budget_level_res_id, amount,
+                     ext_field=False, ext_res_id=False):
         res = {'budget_ok': True,
                'message': False, }
         AccountFiscalyear = self.env['account.fiscalyear']
@@ -232,7 +235,9 @@ class AccountBudget(models.Model):
                                              budget_level,
                                              budget_level_res_id)
         monitors = self._get_budget_monitor(fiscal, budget_type,
-                                            budget_level, resource)
+                                            budget_level, resource,
+                                            ext_field=ext_field,
+                                            ext_res_id=ext_res_id)
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
