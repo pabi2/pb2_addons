@@ -2,6 +2,17 @@
 <openerp>
     <data>
         <template id="report_vat" inherit_id="l10n_th_vat_report.report_vat">
+            <xpath expr="//t/t/div/div[3]/div[2]/span" position="replace">
+                <span t-field="o.taxbranch_id.name"/>
+            </xpath>
+            <xpath expr="//t/t/div/div[2]/div[5]" position="replace">
+                <div class="col-xs-3" style="border-bottom: 1px solid black;">
+                    <span t-field="o.taxbranch_id.taxid"/>
+                </div>
+            </xpath>
+            <xpath expr="//t/t/div/div[3]/div[5]/span" position="replace">
+                <span t-field="o.taxbranch_id.code"/>
+            </xpath>
             <xpath expr="//div/div[4]/table/tbody/t/tr/td[6]" position="replace">
                 <td>
                     <span t-esc="line['taxbranch']"/>
