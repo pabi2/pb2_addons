@@ -12,6 +12,9 @@
                             <span t-if="o.tax_id.type_tax_use == 'purchase'">
                                 Purchase VAT Report
                             </span>
+                            <span t-if="o.tax_id.type_tax_use == 'all'">
+                                Sale/Purchase VAT Report
+                            </span>
                         </h2>
                         <div class="row mt16 mb8">
                             <div class="col-xs-2" t-if="o.period_id" >
