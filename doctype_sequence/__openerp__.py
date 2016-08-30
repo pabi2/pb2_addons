@@ -31,6 +31,5 @@ If Sequence is not specified, it will be using sequence of Journal as normal.
         "security/ir.model.access.csv",
         "views/doctype_view.xml",
         "data/doctype_data.xml",
-        "views/invoice_view.xml",
     ],
 }
