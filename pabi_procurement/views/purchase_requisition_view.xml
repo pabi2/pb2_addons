@@ -234,6 +234,7 @@
                     <field name="create_date" widget="date" string="Create Date"/>
                     <field name="request_uid" string="Requested by"/>
                     <field name="purchase_type_id"/>
+                    <field name="purchase_method_id"/>
                     <field name="objective"/>
                     <field name="amount_total" string="Total Amount"/>
                     <field name="currency_id"/>
