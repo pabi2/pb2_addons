@@ -20,11 +20,15 @@ class VatReportParser(report_sxw.rml_parse):
     def get_tax_total(self):
         return self.total_tax
 
-    def _get_customer_tax_lines(self, record):
+    def _get_domain_tax_lines(self, record):
         domain = [('base_code_id', '=', record.base_code_id.id),
                   ('tax_code_id', '=', record.tax_code_id.id),
                   ('period_id', '=', record.period_id.id),
                   ('company_id', '=', record.company_id.id)]
+        return domain
+
+    def _get_customer_tax_lines(self, record):
+        domain = self._get_domain_tax_lines(record)
         tax_lines =\
             self.pool['vat.report'].search_read(self.cr, self.uid, domain)
         return tax_lines
