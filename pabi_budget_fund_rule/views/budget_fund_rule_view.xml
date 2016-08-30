@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+    	# Fund Rule
+        <record id="view_budget_fund_rule_tree" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.tree</field>
+            <field name="model">budget.fund.rule</field>
+            <field name="arch" type="xml">
+                <tree string="Fund Rule">
+                    <field name="name"/>
+                    <field name="fund_id"/>
+                    <field name="project_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_budget_fund_rule_form" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.form</field>
+            <field name="model">budget.fund.rule</field>
+            <field name="arch" type="xml">
+            	<form string="Fund">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+		                    <field name="fiscalyear_id"/>
+		                    <field name="fund_id"/>
+		                    <field name="planned_amount" />
+                        </group>
+                        <group>
+                    		<field name="active"/>
+                    		<field name="project_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+	                    <page string="Activity Group's Spending Rule">
+	                    	<p class="oe_grey">
+								Following are additional rule for each Activity Group.
+								Without it, there is no limit for spending in Activity Group.<br/>
+								The amount is only controlled by Budgeting Level.
+	                    	</p>
+		                    <field name="activity_group_spending_rule_ids" nolabel="1" >
+		                    	<tree editable="bottom">
+		                    		<field name="fund_rule_id" invisible="1"/>
+		                    		<field name="budget_ref_id" readonly="1" />
+		                    		<field name="budget_line_ref_id" invisible="1"/>
+		                    		<field name="activity_group_id" />
+		                    		<field name="planned_amount" />
+		                    		<field name="max_spending_percent" />
+		                    		<field name="is_control" />
+		                    	</tree>
+		                    </field>
+	                    </page>
+	                    <page string="Custom Rules">
+	                    	<p class="oe_grey">
+								Additionally, you can define the custom rules for more control.
+	                    	</p>
+		                    <field name="custom_rule_line_ids" nolabel="1" >
+		                    	<tree editable="bottom">
+		                    		<field name="sequence" widget="handle" />
+		                    		<field name="fund_rule_id" invisible="1"/>
+		                    		<field name="custom_rule_id" />
+		                    		<field name="activity_group_ids" widget="many2many_tags"/>
+		                    		<field name="params" />
+		                    		<field name="help" />
+		                    		<field name="is_control" />
+		                    	</tree>
+		                    </field>
+	                    </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_budget_fund_rule_search" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.search</field>
+            <field name="model">budget.fund.rule</field>
+            <field name="arch" type="xml">
+                <search string="Fund">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+            	</search>
+            </field>
+        </record>    
+
+        <record id="action_budget_fund_rule" model="ir.actions.act_window">
+            <field name="name">Budget Fund Rule</field>
+            <field name="res_model">budget.fund.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_budget_fund_rule_tree"/>
+        </record>
+
+        <menuitem name="Budget Fund Rule"
+        	id="menu_budget_fund_rule" 
+        	action="action_budget_fund_rule" 
+        	parent="account_budget_activity.menu_action_account_budget_config" 
+        	sequence="140" />
+        	
+        	
+    	# Budget Custom Rule
+        <record id="view_budget_custom_rule_tree" model="ir.ui.view">
+            <field name="name">view.budget.custom.rule.tree</field>
+            <field name="model">budget.custom.rule</field>
+            <field name="arch" type="xml">
+                <tree string="Custom Rule">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_budget_custom_rule_form" model="ir.ui.view">
+            <field name="name">view.budget.custom.rule.form</field>
+            <field name="model">budget.custom.rule</field>
+            <field name="arch" type="xml">
+            	<form string="Custom Rule">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                   	<separator string="Logic" />
+                   	<field name="logic" nolabel="1"/>
+                   	<separator string="Help" />
+                   	<field name="help" nolabel="1"/>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_budget_custom_rule_search" model="ir.ui.view">
+            <field name="name">view.budget.custom.rule.search</field>
+            <field name="model">budget.custom.rule</field>
+            <field name="arch" type="xml">
+                <search string="Customer Rule">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+            	</search>
+            </field>
+        </record>    
+
+        <record id="action_budget_custom_rule" model="ir.actions.act_window">
+            <field name="name">Budget custom Rule</field>
+            <field name="res_model">budget.custom.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_budget_custom_rule_tree"/>
+        </record>
+
+        <menuitem name="Budget Custom Rule"
+        	id="menu_budget_custom_rule" 
+        	action="action_budget_custom_rule" 
+        	parent="account_budget_activity.menu_action_account_budget_config" 
+        	sequence="145" />
+	</data>
+</openerp>

@@ -6,7 +6,7 @@
             <field name="model">employee.message</field>
             <field name="arch" type="xml">
                 <form>
-                    <p class="oe_gray">
+                    <p class="oe_grey">
                         This wizard will send message to employee.
                     </p>
                     <field name="message" />

@@ -56,6 +56,7 @@
 	
 										<field name="program_id" invisible="0"/>
 										<field name="project_id" />
+										<field name="fund_id" required="1" />
 				
 										<field name="cur_current_budget" sum="Total" />
 										<field name="cur_release_budget" sum="Total" />
@@ -232,6 +233,7 @@
             
    					<field name="c_or_n" invisible="1" />
    					<field name="project_id" invisible="0" />
+   					<field name="fund_id" />
 					
 					<field name="functional_area_id" invisible="1" />
 					<field name="program_group_id" invisible="1" />

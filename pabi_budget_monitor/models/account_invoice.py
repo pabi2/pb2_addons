@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, _
-from openerp.exceptions import Warning as UserError
+from openerp import api, models
 
 
 class AccountInvoice(models.Model):
@@ -8,37 +7,17 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def _invoice_budget_check(self):
-        Budget = self.env['account.budget']
-        for invoice in self:
-            if invoice.type != 'in_invoice':
-                continue
-            # Get budget level type resources
-            r = Budget.get_fiscal_and_budget_level(invoice.date_invoice)
-            fiscal_id = r['fiscal_id']
-            # Check for all budget types
-            for budget_type in dict(Budget.BUDGET_LEVEL_TYPE).keys():
-                if budget_type not in r:
-                    raise UserError(_('Budget level is not set!'))
-                budget_level = r[budget_type]  # specify what to check
-                # Find amount in this invoice to check against budget
-                self._cr.execute("""
-                    select ail.%(budget_level)s,
-                        coalesce(sum(ail.price_subtotal), 0.0) amount
-                    from account_invoice_line ail
-                    join account_invoice ai on ai.id = ail.invoice_id
-                    where ai.id = %(invoice_id)s
-                    group by ail.%(budget_level)s
-                """ % {'budget_level': budget_level,
-                       'invoice_id': invoice.id}
-                )
-                # Check budget at this budgeting level
-                for rec in self._cr.dictfetchall():
-                    if rec[budget_level]:  # If no value, do not check.
-                        res = Budget.check_budget(fiscal_id,
-                                                  budget_type,
-                                                  budget_level,
-                                                  rec[budget_level],
-                                                  rec['amount'])
-                        if not res['budget_ok']:
-                            raise UserError(res['message'])
+#         Budget = self.env['account.budget']
+#         for invoice in self:
+#             if invoice.type != 'in_invoice':
+#                 continue
+#             active_id = invoice.id
+#             # Get budget level type resources
+#             budget_level_info = Budget.\
+#                 get_fiscal_and_budget_level(invoice.date_invoice)
+#             fiscal_id = budget_level_info['fiscal_id']
+#             Budget.document_check_budget(invoice.invoice_line,
+#                                          'price_subtotal',
+#                                          budget_level_info,
+#                                          fiscal_id, active_id)
         return True

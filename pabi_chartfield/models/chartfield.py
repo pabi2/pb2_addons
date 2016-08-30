@@ -158,6 +158,7 @@ CHART_FIELDS = [
     ('program_id', ['project_base']),
     ('project_group_id', ['project_base']),
     ('project_id', ['project_base']),
+    ('fund_id', ['project_base']),
     # Unit Based
     ('org_id', ['unit_base',
                 'project_base',
@@ -338,6 +339,18 @@ class ChartField(object):
         default=lambda self: self.env['res.project'].
         browse(self._context.get('project_id')),
     )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        domain="['|', '|', '|', '|',"
+        "('project_ids', 'in', [project_id or 0]),"
+        "('section_ids', 'in', [section_id or 0]),"
+        "('invest_asset_ids', 'in', [invest_asset_id or 0]),"
+        "('invest_construction_phase_ids', 'in', "
+        "[invest_construction_phase_id or 0]),"
+        "('personnel_costcenter_ids', 'in', [personnel_costcenter_id or 0]),"
+        "]",
+    )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
@@ -483,7 +496,8 @@ class ChartFieldAction(ChartField):
     @api.multi
     def write(self, vals):
         res = super(ChartFieldAction, self).write(vals)
-        self.update_related_dimension(vals)
+        if not self._context.get('update_dimension', False):
+            self.update_related_dimension(vals)
         return res
 
     @api.model
@@ -516,7 +530,7 @@ class ChartFieldAction(ChartField):
                 if field in res:
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
-            self.write(res)
+            self.with_context(update_dimension=True).write(res)
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

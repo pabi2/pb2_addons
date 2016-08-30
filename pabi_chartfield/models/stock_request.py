@@ -13,6 +13,14 @@ class StockRequest(models.Model):
         'res.section',
         string='Section',
     )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        domain="['|',"
+        "('project_ids', 'in', [project_id or 0]),"
+        "('section_ids', 'in', [section_id or 0]),"
+        "]",
+    )
 
 
 class ResProject(models.Model):
