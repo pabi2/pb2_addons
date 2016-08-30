@@ -8,33 +8,18 @@ class VatReportParser(vat_report.VatReportParser):
     def __init__(self, cr, uid, name, context):
         super(VatReportParser, self).__init__(cr, uid, name, context=context)
 
-    def _from_for_invoice_tax(self):
-        res = super(VatReportParser, self)._from_for_invoice_tax()
-        res = res + 'LEFT JOIN res_taxbranch t ON (ait.taxbranch_id = t.id)'
+    def _get_from_tax_details(self):
+        res = super(VatReportParser, self)._get_from_tax_details()
+        res = res + 'LEFT JOIN res_taxbranch t ON (atd.taxbranch_id = t.id)'
         return res
 
-    def _group_by_for_invoice_tax(self):
-        res = super(VatReportParser, self)._group_by_for_invoice_tax()
+    def _get_groupby_tax_details(self):
+        res = super(VatReportParser, self)._get_groupby_tax_details()
         res = res + ', t.name'
         return res
 
-    def _select_for_invoice_tax(self):
-        res = super(VatReportParser, self)._select_for_invoice_tax()
-        res = res + ',t.name as taxbranch'
-        return res
-
-    def _from_for_voucher_tax(self):
-        res = super(VatReportParser, self)._from_for_voucher_tax()
-        res = res + 'LEFT JOIN res_taxbranch t ON (avt.taxbranch_id = t.id)'
-        return res
-
-    def _group_by_for_voucher_tax(self):
-        res = super(VatReportParser, self)._group_by_for_voucher_tax()
-        res = res + ', t.name'
-        return res
-
-    def _select_for_voucher_tax(self):
-        res = super(VatReportParser, self)._select_for_voucher_tax()
+    def _get_select_tax_details(self):
+        res = super(VatReportParser, self)._get_select_tax_details()
         res = res + ',t.name as taxbranch'
         return res
 
