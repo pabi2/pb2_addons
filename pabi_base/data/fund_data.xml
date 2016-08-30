@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+    
+        <record id="base.fund_nstda" model="res.fund">
+        	<field name="name">NSTDA</field>
+            <field name="type">internal</field>
+            <field name="code"></field>
+        </record>
+        
+    </data>
+</openerp>

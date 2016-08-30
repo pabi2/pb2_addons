@@ -123,6 +123,12 @@ class ResSection(ResCommon, models.Model):
         string='Mission',
         required=False,
     )
+    fund_ids = fields.Many2many(
+        'res.fund',
+        'res_fund_section_rel',
+        'section_id', 'fund_id',
+        string='Funds',
+    )
 
 
 class ResCostcenter(ResCommon, models.Model):

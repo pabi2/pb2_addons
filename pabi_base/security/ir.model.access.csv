@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_fund,access_res_fund,model_res_org,base.group_user,1,0,0,0
 access_res_org,access_res_org,model_res_org,base.group_user,1,0,0,0
 access_res_sector,access_res_sector,model_res_sector,base.group_user,1,0,0,0
 access_res_subsector,access_res_subsector,model_res_subsector,base.group_user,1,0,0,0
