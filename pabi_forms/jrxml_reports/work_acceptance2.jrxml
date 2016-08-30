@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
-	<property name="ireport.zoom" value="2.139837529582526"/>
-	<property name="ireport.x" value="393"/>
-	<property name="ireport.y" value="1273"/>
+	<property name="ireport.zoom" value="0.9982500000000142"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="54"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -38,7 +38,7 @@ ORDER BY poc.id]]>
 	<queryString>
 		<![CDATA[SELECT
 rt.name tax_branch_name,
-ou.name operation_unit_name,
+ou.code operation_unit_name,
 pwa.name gr_no,
 pwa.create_date create_date,
 po.name po_name,
@@ -155,25 +155,25 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<background>
 		<band height="802" splitType="Stretch">
 			<line>
-				<reportElement x="462" y="220" width="1" height="182"/>
+				<reportElement x="462" y="220" width="1" height="159"/>
 			</line>
 			<line>
-				<reportElement x="387" y="220" width="1" height="182"/>
+				<reportElement x="387" y="220" width="1" height="159"/>
 			</line>
 			<line>
-				<reportElement x="554" y="220" width="1" height="182"/>
+				<reportElement x="554" y="220" width="1" height="159"/>
 			</line>
 			<line>
-				<reportElement x="325" y="220" width="1" height="182"/>
+				<reportElement x="325" y="220" width="1" height="159"/>
 			</line>
 			<line>
-				<reportElement x="0" y="220" width="1" height="182"/>
+				<reportElement x="0" y="220" width="1" height="159"/>
 			</line>
 			<line>
-				<reportElement x="50" y="220" width="1" height="182"/>
+				<reportElement x="50" y="220" width="1" height="159"/>
 			</line>
 			<line>
-				<reportElement x="0" y="402" width="555" height="1"/>
+				<reportElement x="0" y="378" width="555" height="1"/>
 			</line>
 		</band>
 	</background>

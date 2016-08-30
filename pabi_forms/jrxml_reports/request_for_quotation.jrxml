@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="0.7513148009015849"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.6105100000000165"/>
+	<property name="ireport.x" value="242"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<parameter name="IDS" class="java.lang.Object"/>
@@ -11,9 +11,10 @@
 	<queryString>
 		<![CDATA[SELECT
 po.id as po_id,
+ou.id as ou_id,
 po.name as po_number,
 po.date_order as po_date,
-rp_ou.name as ou_name,
+ou.code as ou_name,
 convert_from(rp_ou.image,'UTF8') as ou_image,
 CONCAT(rp_ou.street,' ',rp_ou.street2,' ',
 (SELECT rct.name FROM res_country_township rct WHERE rct.id = rp_ou.township_id),' ',
@@ -47,6 +48,8 @@ pol.quantity_bid as line_qty
 FROM purchase_order po
 LEFT JOIN purchase_requisition pd
 ON pd.name = po.origin
+LEFT JOIN operating_unit ou
+ON po.operating_unit_id = ou.id
 LEFT JOIN res_partner rp_ou
 ON rp_ou.id = (SELECT ou.partner_id FROM operating_unit ou WHERE ou.id = po.operating_unit_id)
 LEFT JOIN res_taxbranch rt
@@ -89,28 +92,29 @@ WHERE $X{IN, po.id, PIDS}]]>
 	</field>
 	<field name="line_name" class="java.lang.String"/>
 	<field name="line_qty" class="java.math.BigDecimal"/>
+	<field name="ou_id" class="java.lang.Integer"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
 	<background>
 		<band height="802" splitType="Stretch">
 			<line>
-				<reportElement x="47" y="407" width="1" height="272"/>
+				<reportElement x="47" y="397" width="1" height="282"/>
 			</line>
 			<line>
-				<reportElement x="554" y="407" width="1" height="272"/>
+				<reportElement x="554" y="397" width="1" height="282"/>
 			</line>
 			<line>
-				<reportElement x="402" y="407" width="1" height="272"/>
+				<reportElement x="402" y="397" width="1" height="282"/>
 			</line>
 			<line>
-				<reportElement x="474" y="407" width="1" height="272"/>
+				<reportElement x="474" y="397" width="1" height="282"/>
 			</line>
 			<line>
-				<reportElement x="323" y="407" width="1" height="272"/>
+				<reportElement x="323" y="397" width="1" height="282"/>
 			</line>
 			<line>
-				<reportElement x="0" y="408" width="1" height="271"/>
+				<reportElement x="0" y="398" width="1" height="281"/>
 			</line>
 			<line>
 				<reportElement x="0" y="679" width="555" height="1"/>
@@ -319,6 +323,42 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ship_to}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="441" y="1" width="112" height="49">
+					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nanotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="441" y="1" width="112" height="49">
+					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_tmc.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="441" y="1" width="112" height="49">
+					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nectec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="441" y="1" width="112" height="49">
+					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="441" y="1" width="112" height="49">
+					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_mtec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="441" y="1" width="112" height="49">
+					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_biotec.gif"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<columnHeader>
