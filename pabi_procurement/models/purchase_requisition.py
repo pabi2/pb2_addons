@@ -331,6 +331,7 @@ class PurchaseRequisition(models.Model):
             if requisition.delivery_address else '',
         )
         res.update({
+            'notes': '',
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
             'delivery_address': combined_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
