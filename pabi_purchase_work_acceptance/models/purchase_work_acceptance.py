@@ -311,9 +311,11 @@ class PurchaseWorkAcceptance(models.Model):
     )
     supplier_invoice = fields.Char(
         string="Invoice No.",
+        required=True,
     )
     date_invoice = fields.Date(
         string="Invoice Date",
+        required=True,
     )
     write_to_invoice = fields.Boolean(
         string="Write to invoice date",
@@ -330,6 +332,7 @@ class PurchaseWorkAcceptance(models.Model):
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+        required=True,
         readonly=True,
     )
     partner_id = fields.Many2one(
