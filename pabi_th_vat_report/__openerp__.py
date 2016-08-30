@@ -17,6 +17,7 @@ Vat Report By TaxBranch
         'l10n_th_vat_report',
     ],
     "data": [
+        "wizard/vat_report_wiz_view.xml",
         "report/vat_report_view.xml",
     ],
 }
