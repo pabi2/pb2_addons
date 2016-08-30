@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.2100000000000026"/>
 	<property name="ireport.x" value="64"/>
-	<property name="ireport.y" value="33"/>
+	<property name="ireport.y" value="177"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -211,7 +211,7 @@ WHERE requisition_id = $P{ids}]]>
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>
 		<variable name="difference" class="java.lang.Number">
-			<variableExpression><![CDATA[$P{cfb_amount_total}-$F{amount_total}]]></variableExpression>
+			<variableExpression><![CDATA[$P{cfb_amount_total}- ($F{amount_total} == null ? 0 : $F{amount_total})]]></variableExpression>
 		</variable>
 	</subDataset>
 	<subDataset name="request_approval">
@@ -275,6 +275,7 @@ ORDER BY prc.sequence]]>
 		<![CDATA[SELECT
 pd.id pd_id,
 pd.name pd_name,
+pd.amount_total pd_amount_total,
 CONCAT(
 to_char(pd.schedule_date,'DD'),'/',
 to_char(pd.schedule_date,'MM'),'/',
@@ -305,7 +306,7 @@ pt.name ty ,
 pd.objective obj,
 pd.description des,
 (SELECT rs.name FROM res_section rs WHERE rs.id = (SELECT pdl.section_id FROM purchase_requisition_line pdl WHERE pdl.requisition_id = pd.id LIMIT 1)),
-LTRIM((SELECT po.amount_total FROM purchase_order po WHERE po.requisition_id = pd.id AND po.state = 'done')::numeric::money::varchar, '฿ ')::varchar amount_total,
+LTRIM(pd.amount_total::numeric::money::varchar, '฿ ')::varchar amount_total,
 CONCAT(
 to_char(pd.date_doc_approve ,'DD'),' ',
 CASE to_char(pd.date_doc_approve ,'MM')
@@ -430,6 +431,7 @@ WHERE $X{IN,pd.id,PIDS}]]>
 	<field name="purchase_method_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[Procurement Method]]></fieldDescription>
 	</field>
+	<field name="pd_amount_total" class="java.lang.Double"/>
 	<variable name="current_date" class="java.util.Date" resetType="None">
 		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
 	</variable>
@@ -552,7 +554,7 @@ WHERE $X{IN,pd.id,PIDS}]]>
 							<datasetParameterExpression><![CDATA[$F{pd_id}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="cfb_amount_total">
-							<datasetParameterExpression><![CDATA[$F{amount_total}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{pd_amount_total}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
@@ -793,9 +795,18 @@ PR  (บาท)]]></text>
 									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
-								<textElement lineSpacing="Single"/>
+								<textElement lineSpacing="Single">
+									<font size="8"/>
+								</textElement>
 								<text><![CDATA[]]></text>
 							</staticText>
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="66" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$V{difference}]]></textFieldExpression>
+							</textField>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="52">
