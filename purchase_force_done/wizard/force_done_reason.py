@@ -9,6 +9,7 @@ class PurchaseOrderForceDone(models.TransientModel):
 
     force_done_reason = fields.Char(
         string="Force Done Reason",
+        required=True,
     )
 
     @api.one
@@ -29,6 +30,8 @@ class PurchaseOrderForceDone(models.TransientModel):
             ])
             if len(picking) > 0:
                 picking.action_cancel()
-            order.force_done_reason = self.force_done_reason
+            order.write({
+                'force_done_reason': self.force_done_reason,
+            })
             order.wkf_po_done()
         return act_close

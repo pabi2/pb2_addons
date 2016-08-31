@@ -7,11 +7,8 @@
             <field name="inherit_id"
                    ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet//h1[1]" position="after">
-                    <h2 attrs="{'invisible': [('state', '!=', 'done')]}">
-                        <label for="force_done_reason" string="Force Done Reason:"/>
-                        <field name="force_done_reason" class="oe_inline" />
-                    </h2>
+                <xpath expr="//field[@name='shipped']" position="after">
+                    <field name="force_done_reason"/>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="after">
                     <button name="%(action_force_done)d" string="Force Done"
