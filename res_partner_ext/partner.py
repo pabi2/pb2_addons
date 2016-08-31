@@ -225,6 +225,27 @@ class ResPartner(models.Model):
             self.property_account_payable = False
             self.property_account_position = False
 
+    @api.multi
+    def name_get(self):
+        res = []
+        for record in self:
+            if record.title:
+                name = "%s %s" % (record.title.name, record.name)
+            else:
+                name = record.name
+            if record.parent_id and not record.is_company:
+                name = "%s, %s" % (record.parent_name, name)
+            if self._context.get('show_address_only'):
+                name = self._display_address(record, without_company=True)
+            if self._context.get('show_address'):
+                name = name + "\n" + self._display_address(record, without_company=True)
+            name = name.replace('\n\n','\n')
+            name = name.replace('\n\n','\n')
+            if self._context.get('show_email') and record.email:
+                name = "%s <%s>" % (name, record.email)
+            res.append((record.id, name))
+        return res
+
 
 class ResPartnerCategory(models.Model):
 
