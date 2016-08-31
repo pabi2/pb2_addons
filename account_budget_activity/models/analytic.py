@@ -156,7 +156,9 @@ class AccountAnalyticAccount(models.Model):
             vals = dict((x[0], x[2]) for x in domain)
             vals['name'] = (rec.product_id.name or
                             rec.activity_id.name or
-                            rec.name)
+                            ('name' in rec and rec.name) or
+                            ('product_name' in rec and rec.product_name) or
+                            False)
             vals['type'] = ((rec.product_id and 'product') or
                             (rec.activity_id and 'activity') or
                             'pr_product')

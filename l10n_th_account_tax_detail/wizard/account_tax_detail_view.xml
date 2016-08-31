@@ -7,7 +7,7 @@
 		    <field name="name">view.tax.wizard</field>
 		    <field name="model">account.tax.wizard</field>
 		    <field name="arch" type="xml">
-		        <form string="Tax Detail">
+		        <form string="Tax Invoice Detail">
 		           	<field name="invoice_tax_id" invisible="1"/>
 		           	<field name="is_readonly" invisible="1"/>
                     <h2 class="oe_right">
@@ -50,7 +50,7 @@
 		</record>
 		
 		<record id="action_tax_detail" model="ir.actions.act_window">
-		    <field name="name">Tax Detail</field>
+		    <field name="name">Tax Invoice Detail</field>
 		    <field name="res_model">account.tax.wizard</field>
 		    <field name="view_type">form</field>
 		    <field name="view_mode">form</field>

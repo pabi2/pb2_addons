@@ -310,7 +310,6 @@ class AccountVoucher(common_voucher, models.Model):
         to_update = True
         if vals.get('tax_line_normal', False):
             for tax_line in vals.get('tax_line'):
-                print tax_line
                 if tax_line[0] == 1 and 'amount' in tax_line[2]:  # 1 = update
                     to_update = False
         if to_update:
@@ -1143,7 +1142,6 @@ class AccountVoucherTax(common_voucher, models.Model):
                 else:
                     sql += " and tax_code_type = 'wht' "
         self._cr.execute(sql, (voucher.id,))
-        print sql
         for t in self._cr.dictfetchall():
             if not t['amount']:
                 continue
