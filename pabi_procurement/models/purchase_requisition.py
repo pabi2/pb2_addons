@@ -406,7 +406,7 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def send_pbweb_requisition_cancel(self):
-        if self.send_pbweb:
+        if self.sent_pbweb:
             PWInterface = self.env['purchase.web.interface']
             PWInterface.send_pbweb_requisition_cancel(self)
         return True
