@@ -1,25 +1,7 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-TODAY OpenERP S.A. <http://www.odoo.com>
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This progfram is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
 
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class StockTransferDetails(models.TransientModel):
@@ -32,6 +14,9 @@ class StockTransferDetails(models.TransientModel):
         picking = Picking.browse(picking_ids)
         res = super(StockTransferDetails, self).default_get(fields)
         if picking.picking_type_code == 'incoming':
+            if len(picking.acceptance_id.acceptance_line_ids) == 0:
+                raise UserError(
+                    _("You have to input Work Acceptance first."))
             new_item_ids = []
             for item in res['item_ids']:
                 new_qty = 0

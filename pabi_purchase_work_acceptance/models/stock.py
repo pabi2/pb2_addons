@@ -11,6 +11,7 @@ class StockPicking(models.Model):
         string='Work Acceptance',
         domain="[('state', 'not in', ('done','cancel')),"
                "('order_id', '=', origin)]",
+        copy=False,
     )
 
     @api.model
