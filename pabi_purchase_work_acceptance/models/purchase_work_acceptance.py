@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models, api
+from openerp import fields, models, api, _
 import datetime
 import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
     import amount_to_text_th
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseWorkAcceptance(models.Model):
@@ -19,7 +20,7 @@ class PurchaseWorkAcceptance(models.Model):
     ]
 
     @api.model
-    @api.depends('date_receive', 'date_contract_end')
+    @api.depends('date_receive', 'date_scheduled_end')
     def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
@@ -54,6 +55,7 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.onchange('manual_fine')
     def _onchange_manual_fine(self):
+        self.total_fine_cal = self.manual_fine
         self.total_fine = self.manual_fine
 
     @api.onchange('date_scheduled_end')
@@ -176,8 +178,9 @@ class PurchaseWorkAcceptance(models.Model):
                                    ((to_receive_qty * unit_price) + line_tax)
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * overdue_day * fine_per_day
-                acceptance.total_fine = 100.0 if 0 < total_fine < 100.0 \
+                acceptance.total_fine_cal = 100.0 if 0 < total_fine < 100.0 \
                     else total_fine
+                acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
 
@@ -236,8 +239,9 @@ class PurchaseWorkAcceptance(models.Model):
                                    ((to_receive_qty * unit_price) + line_tax)
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * overdue_day * fine_per_day
-                acceptance.total_fine = 100.0 if 0 < total_fine < 100.0 \
+                acceptance.total_fine_cal = 100.0 if 0 < total_fine < 100.0 \
                     else total_fine
+                acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
 
@@ -251,6 +255,7 @@ class PurchaseWorkAcceptance(models.Model):
             else:
                 acceptance._calculate_incoming_fine()
             if acceptance.manual_fine > 0:
+                acceptance.total_fine_cal = acceptance.manual_fine
                 acceptance.total_fine = acceptance.manual_fine
 
     name = fields.Char(
@@ -299,10 +304,13 @@ class PurchaseWorkAcceptance(models.Model):
         string="Overdue Days",
         default=0,
     )
-    total_fine = fields.Float(
-        string="Total Fine",
+    total_fine_cal = fields.Float(
+        string="Total Fine Calculation",
         compute="_compute_total_fine",
         store=True,
+    )
+    total_fine = fields.Float(
+        string="Total Fine",
     )
     amount_total_fine_text_th = fields.Char(
         string='Total Fine TH Text',
@@ -380,6 +388,10 @@ class PurchaseWorkAcceptance(models.Model):
     @api.multi
     def action_evaluate(self):
         self.ensure_one()
+        if len(self.acceptance_line_ids) == 0:
+            raise UserError(
+                _("Can't evaluate the acceptance with no line.")
+            )
         self.state = 'evaluation'
 
     @api.multi
@@ -453,6 +465,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     product_id = fields.Many2one(
         'product.product',
         string='Product',
+        required=True,
         readonly=True,
     )
     name = fields.Char(

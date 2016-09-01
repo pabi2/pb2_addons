@@ -406,8 +406,9 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def send_pbweb_requisition_cancel(self):
-        PWInterface = self.env['purchase.web.interface']
-        PWInterface.send_pbweb_requisition_cancel(self)
+        if self.send_pbweb_requisition:
+            PWInterface = self.env['purchase.web.interface']
+            PWInterface.send_pbweb_requisition_cancel(self)
         return True
 
     @api.multi
@@ -618,6 +619,9 @@ class PurchaseRequisitionLine(models.Model):
         'account.fiscalyear',
         'Fiscal Year',
         readonly=True,
+    )
+    product_id = fields.Many2one(
+        required=True,
     )
 
     @api.multi
