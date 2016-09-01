@@ -162,10 +162,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'date_receive': self.date_receive,
             'order_id': self.order_id.id,
         })
-        print vals
         acceptance = PWAcceptance.create(vals)
-        print acceptance.date_scheduled_end
-        print acceptance.date_contract_end
         if self.is_invoice_plan:
             items = self._prepare_acceptance_plan_line(self.invoice_plan_id)
             lines = items

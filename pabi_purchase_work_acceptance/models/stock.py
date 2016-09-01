@@ -9,7 +9,8 @@ class StockPicking(models.Model):
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
         string='Work Acceptance',
-        domain="[('state', '!=', 'done'),('order_id', '=', origin)]",
+        domain="[('state', 'not in', ('done','cancel')),"
+               "('order_id', '=', origin)]",
     )
 
     @api.model
