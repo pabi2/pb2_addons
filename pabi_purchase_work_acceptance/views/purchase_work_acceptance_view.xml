@@ -25,12 +25,14 @@
                             <field name="name"/>
                             <field name ="order_id"/>
                             <field name="date_contract_start" readonly="1"/>
-                            <field name="date_contract_end" readonly="1"/>
-                            <field name="total_fine" readonly="1"/>
+                            <field name="date_scheduled_end" string="Contract End Date" readonly="1"/>
+                            <field name="date_contract_end" invisible="1"/>
+                            <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="fine_per_day" invisible="1"/>
                             <field name="overdue_day" invisible="1"/>
                             <field name="order_method" invisible="1"/>
                             <field name="invoice_created" invisible="1"/>
+                            <field name="total_fine_cal" invisible="1"/>
                         </group>
                         <group>
                             <field name="is_manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
@@ -68,7 +70,8 @@
                     <field name="name"/>
                     <field name="date_receive"/>
                     <field name="date_contract_start"/>
-                    <field name="date_contract_end"/>
+                    <field name="date_scheduled_end" string="Contract End Date"/>
+                    <field name="date_contract_end" invisible="1"/>
                     <field name="is_manual_fine"/>
                     <field name="manual_fine"/>
                     <field name="manual_days"/>

@@ -7,11 +7,9 @@
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
-            	<!-- THIS PRINT BUTTON IS ONLY FOR TESTING, PLEASE REMOVE -->
-            	<!--<button name="cancel_requisition" >-->
-            		<!--<button name="print_call_for_bid_form" type="object" string="Print Form" />-->
-            	<!--</button>-->
-
+                <xpath expr="//form[@string='Call for Bids']" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
                 <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
@@ -227,6 +225,10 @@
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_tree"/>
             <field name="arch" type="xml">
+                <!-- #  Note :: take out when this up to production -->
+                <!--<xpath expr="//tree" position="attributes">-->
+                    <!--<attribute name="create">false</attribute>-->
+                <!--</xpath>-->
                 <xpath expr="//tree" position="attributes">
                     <attribute name="default_order">create_date desc</attribute>
                 </xpath>
