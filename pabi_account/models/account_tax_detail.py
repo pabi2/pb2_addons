@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
@@ -23,8 +23,6 @@ class AccountTaxDetail(models.Model):
     @api.depends('invoice_tax_id', 'voucher_tax_id')
     def _compute_taxbranch_id(self):
         for rec in self:
-            print rec.invoice_tax_id
-            print rec.voucher_tax_id
             if rec.invoice_tax_id:
                 rec.taxbranch_id = rec.invoice_tax_id.invoice_id.taxbranch_id
             elif rec.voucher_tax_id:
