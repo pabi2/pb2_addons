@@ -82,10 +82,11 @@ class AccountBudget(models.Model):
         default=lambda self: self.env[
             'res.company']._company_default_get('account.budget')
     )
-    version = fields.Integer(
+    version = fields.Float(
         string='Version',
         readonly=True,
-        default=1,
+        default=1.0,
+        digits=(2, 1),
         help="Indicate revision of the same budget plan. "
         "Only latest one is used",
     )
@@ -176,6 +177,21 @@ class AccountBudget(models.Model):
     def budget_done(self):
         self.write({'state': 'done'})
         return True
+
+    # New Revision
+    @api.multi
+    def new_minor_revision(self):
+        self.ensure_one()
+        budget = self.copy()
+        self.latest_version = False
+        budget.latest_version = True
+        budget.version = self.version + 0.1
+        action = self.env.ref('account_budget_activity.'
+                              'act_account_budget_view')
+        result = action.read()[0]
+        dom = [('id', '=', budget.id)]
+        result.update({'domain': dom})
+        return result
 
     # ---- BUDGET CHECK ----
     @api.model

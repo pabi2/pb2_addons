@@ -19,6 +19,7 @@
                         <button string="Done" name="done" states="validate" type="workflow" class="oe_highlight"/>
                         <button name="draft" states="cancel" string="Reset to Draft" type="workflow" />
                         <button string="Cancel Budget" name="cancel" states="confirm,validate" type="workflow"/>
+                        <button string="Minor Revision" name="new_minor_revision" type="object" attrs="{'invisible': ['|', ('latest_version', '=', False), ('state', 'not in', ('validate'))]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
                     </header>
                     <sheet string="Budget">
@@ -90,6 +91,8 @@
             <field name="arch" type="xml">
                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
                     <field name="name"/>
+                    <field name="version" />
+                    <field name="latest_version" />
                     <field name="date_from"/>
                     <field name="date_to"/>
                 	<button name="%(action_budget_release_wizard)d"
