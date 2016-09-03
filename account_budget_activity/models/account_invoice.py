@@ -55,8 +55,9 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_date_assign(self):
+        res = super(AccountInvoice, self).action_date_assign()
         self._invoice_budget_check()
-        return super(AccountInvoice, self).action_date_assign()
+        return res
 
     @api.multi
     def action_move_create(self):
