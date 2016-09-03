@@ -194,6 +194,18 @@ class AccountBudget(models.Model):
         return result
 
     # ---- BUDGET CHECK ----
+    def convert_lines_to_doc_lines(self, lines):
+        result = []
+        for line in lines:
+            values = {}
+            for name, field in line._fields.iteritems():
+                if field.type == 'many2one':
+                    values[name] = line[name].id
+                elif field.type not in ['many2many', 'one2many']:
+                    values[name] = line[name]
+            result.append(values)
+        return result
+
     @api.model
     def get_fiscal_and_budget_level(self, budget_date=False):
         if not budget_date:

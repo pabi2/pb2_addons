@@ -85,6 +85,11 @@ class HRExpenseExpense(models.Model):
         # Commit budget as soon as Draft (approved by AP Web)
         # TODO: will only AP and not AV be in commitment?
         if vals.get('state', False) == 'draft':
+            for expense in self:
+                for line in expense.line_ids:
+                    Analytic = self.env['account.analytic.account']
+                    line.analytic_account = \
+                        Analytic.create_matched_analytic(line)
             self.line_ids._create_analytic_line(reverse=True)
         # Create negative amount for the remain product_qty - open_invoiced_qty
         if vals.get('state') in ('cancelled',):
