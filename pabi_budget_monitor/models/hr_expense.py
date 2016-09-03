@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models
+from openerp.exceptions import Warning as UserError
 
 
 class HRExpenseExpense(models.Model):
@@ -9,13 +10,11 @@ class HRExpenseExpense(models.Model):
     def _expense_budget_check(self):
         Budget = self.env['account.budget']
         for expense in self:
-            active_id = expense.id
-            # Get budget level type resources
-            budget_level_info = Budget.\
-                get_fiscal_and_budget_level(expense.date)
-            fiscal_id = budget_level_info['fiscal_id']
-            Budget.document_check_budget(expense.line_ids,
-                                         'total_amount',
-                                         budget_level_info,
-                                         fiscal_id, active_id)
+            doc_date = expense.date
+            doc_lines = Budget.convert_lines_to_doc_lines(expense.line_ids)
+            res = Budget.document_check_budget(doc_date,
+                                               doc_lines,
+                                               'total_amount')
+            if not res['budget_ok']:
+                raise UserError(res['message'])
         return True

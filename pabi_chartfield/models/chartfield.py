@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields
 from openerp.addons.pabi_base.models.res_common import ResCommon
+from openerp.exceptions import ValidationError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                           (mission)
@@ -469,10 +470,31 @@ class ChartFieldAction(ChartField):
             - invest_construction_id
     """
 
+    chart_view = fields.Selection(
+        CHART_VIEW_LIST,
+        compute='_compute_chart_view',
+        store=True,
+    )
     require_chartfield = fields.Boolean(
         string='Require Chartfield',
         compute='_compute_require_chartfield',
     )
+
+    @api.multi
+    @api.depends('project_id', 'section_id', 'personnel_costcenter_id',
+                 'invest_asset_id', 'invest_construction_id')
+    def _compute_chart_view(self):
+        for rec in self:
+            rec.chart_view = False
+            view_set = False
+            for k, v in CHART_VIEW_FIELD.items():
+                if rec[v] and not view_set:
+                    if not view_set:
+                        rec.chart_view = k
+                        view_set = True
+                    else:
+                        raise ValidationError(
+                            _('More than 1 dimension selected'))
 
     @api.multi
     @api.depends('activity_id', 'product_id')
@@ -496,22 +518,22 @@ class ChartFieldAction(ChartField):
     @api.multi
     def write(self, vals):
         res = super(ChartFieldAction, self).write(vals)
-        if not self._context.get('update_dimension', False):
+        if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
         return res
 
-    @api.model
-    def _get_chart_view(self, selects_yes):
-        # update chart_view
-        chart_view = False
-        keys = list(set(selects_yes.keys()) & set(CHART_VIEW_FIELD.values()))
-        assert len(keys) <= 1, 'Only 1 chart_view allowed!'
-        if selects_yes.keys():
-            selected_field = selects_yes.keys()[0]
-            for k, v in CHART_VIEW_FIELD.items():
-                if v == selected_field:
-                    chart_view = k
-        return chart_view
+#     @api.model
+#     def _get_chart_view(self, selects_yes):
+#         # update chart_view
+#         chart_view = False
+#         keys = list(set(selects_yes.keys()) & set(CHART_VIEW_FIELD.values()))
+#         assert len(keys) <= 1, 'Only 1 chart_view allowed!'
+#         if selects_yes.keys():
+#             selected_field = selects_yes.keys()[0]
+#             for k, v in CHART_VIEW_FIELD.items():
+#                 if v == selected_field:
+#                     chart_view = k
+#         return chart_view
 
     @api.multi
     def update_related_dimension(self, vals):
@@ -525,12 +547,12 @@ class ChartFieldAction(ChartField):
             res = {}
             for field, _dummy in selects_no.items():
                 res.update(self._get_chained_dimension(field, clear=True))
-            res.update({'chart_view': self._get_chart_view(selects_yes)})
+            # res.update({'chart_view': self._get_chart_view(selects_yes)})
             for field, _dummy in selects_yes.items():
                 if field in res:
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
-            self.with_context(update_dimension=True).write(res)
+            self.with_context(MyModelLoopBreaker=True).write(res)
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

@@ -12,7 +12,7 @@
                     <field name="fiscalyear_ids"/>
                     <field name="fund_id"/>
                     <field name="project_id"/>
-                    <field name="active"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -24,7 +24,7 @@
                 <tree string="Fund Rule">
                     <field name="name"/>
                     <field name="fund_id"/>
-                    <field name="active"/>
+                    <field name="state" invisible="1" />
                 </tree>
             </field>
         </record>
@@ -33,7 +33,15 @@
             <field name="name">view.budget.fund.rule.form</field>
             <field name="model">budget.fund.rule</field>
             <field name="arch" type="xml">
-            	<form string="Fund">
+	            <form string="Fund">
+	           		<header attrs="{'invisible': [('template', '=', True)]}">
+	                    <button name="action_confirm" string="Confirm" type="object" states="draft" class="oe_highlight"/>
+	                    <button name="action_acknowledge" string="Acknowledge" type="object" states="confirmed" class="oe_highlight"/>
+	                    <button name="action_cancel" string="Cancel" type="object" states="confirmed,acknowledged"/>
+	                    <button name="action_draft" string="Draft" type="object" states="cancel"/>
+	                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,acknowledged" />
+	                </header>            	
+	            	
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" attrs="{'readonly': [('template', '=', False)], 'required': [('template', '=', True)]}"
