@@ -72,6 +72,9 @@
 										<field name="org_id" />
 										<field name="planned_amount" sum="Planned Amount" />
 										<field name="policy_amount" sum="Policy Amount" />
+										<field name="policy_amount_v1" sum="Policy Amount Rev.1" />
+										<field name="policy_amount_v2" sum="Policy Amount Rev.2" />
+										<field name="policy_amount_v3" sum="Policy Amount Rev.3" />
 	                                </tree>
 	                            </field>
 	                        </page>

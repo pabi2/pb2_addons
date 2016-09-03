@@ -470,3 +470,12 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     policy_amount = fields.Float(
         string='Policy Amount',
     )
+    policy_amount_v1 = fields.Float(
+        string='Policy Amount Rev.1',
+    )
+    policy_amount_v2 = fields.Float(
+        string='Policy Amount Rev.2',
+    )
+    policy_amount_v3 = fields.Float(
+        string='Policy Amount Rev.3',
+    )

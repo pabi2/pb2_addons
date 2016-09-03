@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, fields, api
 
 
 class AccountInvoice(models.Model):
@@ -8,18 +7,18 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_date_assign(self):
+        res = super(AccountInvoice, self).action_date_assign()
         self._invoice_check_budget_fund_activity_spending()
-        return super(AccountInvoice, self).action_date_assign()
+        return res
 
     @api.multi
     def _invoice_check_budget_fund_activity_spending(self):
         FundRule = self.env['budget.fund.rule']
+        Fiscal = self.env['account.fiscalyear']
         for invoice in self:
-            budget_date = invoice.date_invoice
-            if not budget_date:
-                budget_date = fields.Date.context_today(self)
-            Fiscal = self.env['account.fiscalyear']
-            fiscalyear_id = Fiscal.find(budget_date)
+            if invoice.type != 'in_invoice':
+                continue
+            fiscalyear_id = Fiscal.find(invoice.date_invoice)
             doc_lines = invoice.invoice_line
             FundRule.document_check_fund_activity_spending(fiscalyear_id,
                                                            doc_lines,
