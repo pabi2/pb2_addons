@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="budget_transfer_view_form">
+            <field name="name">budget.transfer.view.form</field>
+            <field name="model">budget.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Budget Transfer">
+                    <header>
+                        <button string="Confirm" name="confirm" states="draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                    </header>
+                    <sheet string="Budget">
+	                    <div class="oe_right oe_button_box" name="buttons">
+	                    </div>
+                        <group>
+                            <group>
+                                <field name="creating_user_id" attrs="{'readonly':[('state','!=','draft')]}" />
+                                <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="fiscalyear_id" />
+                                <label for="date_from" string="Duration"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
+                                    <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Budget Lines">
+                                <field name="budget_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                    <tree string="Budget Lines" editable="bottom">
+                                    	<field name="activity_group_id" />
+                                    	<field name="activity_id" />
+                                        <!--field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="0"/-->
+                                        <field name="fiscalyear_id" invisible="1"/>
+                                        <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="released_amount" sum="Released Amount"/>
+                                        <field name="m0" />
+                                        <field name="m1" />
+                                        <field name="m2" />
+                                        <field name="m3" />
+                                        <field name="m4" />
+                                        <field name="m5" />
+                                        <field name="m6" />
+                                        <field name="m7" />
+                                        <field name="m8" />
+                                        <field name="m9" />
+                                        <field name="m10" />
+                                        <field name="m11" />
+                                        <field name="m12" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="budget_transfer_view_tree">
+            <field name="name">budget.transfer.view.tree</field>
+            <field name="model">budget.transfer</field>
+            <field name="arch" type="xml">
+               <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
+                    <field name="name"/>
+                    <field name="version" />
+                    <field name="latest_version" />
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                	<button name="%(action_budget_release_wizard)d"
+                     	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    <field name="creating_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_transfer_search" model="ir.ui.view">
+           <field name="name">budget.transfer.search</field>
+           <field name="model">budget.transfer</field>
+           <field name="arch" type="xml">
+               <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <filter string="Draft" icon="terp-document-new" domain="[('state','=','draft')]" help="Draft Budgets"/>
+                    <filter string="To Approve" icon="terp-camera_test" domain="[('state','=','confirm')]" help="To Approve Budgets" />
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_budget_transfer_view">
+            <field name="name">Internal Budget Transfer</field>
+            <field name="res_model">budget.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="budget_transfer_view_tree"/>
+            <field name="search_view_id" ref="view_budget_transfer_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget transfer.
+              </p>
+            </field>
+        </record>
+
+	    <menuitem action="menu_budget_transfer" sequence="20"
+	    	id="menu_budget_transfer"
+	    	parent="budget_transfer_activity.menu_action_budget_transfer_control" /> 
+	    	       
+    </data>
+</openerp>

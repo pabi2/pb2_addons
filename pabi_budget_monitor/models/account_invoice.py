@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -7,17 +8,15 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def _invoice_budget_check(self):
-#         Budget = self.env['account.budget']
-#         for invoice in self:
-#             if invoice.type != 'in_invoice':
-#                 continue
-#             active_id = invoice.id
-#             # Get budget level type resources
-#             budget_level_info = Budget.\
-#                 get_fiscal_and_budget_level(invoice.date_invoice)
-#             fiscal_id = budget_level_info['fiscal_id']
-#             Budget.document_check_budget(invoice.invoice_line,
-#                                          'price_subtotal',
-#                                          budget_level_info,
-#                                          fiscal_id, active_id)
+        Budget = self.env['account.budget']
+        for invoice in self:
+            if invoice.type != 'in_invoice':
+                continue
+            doc_date = invoice.date_invoice
+            doc_lines = Budget.convert_lines_to_doc_lines(invoice.invoice_line)
+            res = Budget.document_check_budget(doc_date,
+                                               doc_lines,
+                                               'price_subtotal')
+            if not res['budget_ok']:
+                raise UserError(res['message'])
         return True

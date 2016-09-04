@@ -123,12 +123,36 @@ class AccountBudget(models.Model):
 #         """
 #         return query
 
+
+#     @api.model
+#     def get_fiscal_and_budget_level(self, budget_date=False):
+#         if not budget_date:
+#             budget_date = fields.Date.context_today(self)
+#         Fiscal = self.env['account.fiscalyear']
+#         fiscal_id = Fiscal.find(budget_date)
+#         res = {'fiscal_id': fiscal_id}
+#         for level in Fiscal.browse(fiscal_id).budget_level_ids:
+#             res[level.type] = level.budget_level
+#         return res
+
     @api.model
-    def document_check_budget(self, doc_lines,
-                              amount_field,
-                              budget_level_info,
-                              fiscal_id, active_id):
+    def _get_doc_field_combination(self, doc_lines, args):
+        combinations = []
+        for l in doc_lines:
+            val = ()
+            for f in args:
+                val += (l[f],)
+            if False not in val:
+                combinations.append(val)
+        return combinations
+
+    @api.model
+    def document_check_budget(self, doc_date, doc_lines, amount_field):
+        res = {'budget_ok': True,
+               'message': False}
         Budget = self.env['account.budget']
+        budget_level_info = Budget.get_fiscal_and_budget_level(doc_date)
+        fiscal_id = budget_level_info['fiscal_id']
         # Check for all budget types
         for budget_type in dict(Budget.BUDGET_LEVEL_TYPE).keys():
             if budget_type not in budget_level_info:
@@ -143,13 +167,7 @@ class AccountBudget(models.Model):
                     'invest_asset': 'investment_asset_id',
                     'invest_construction': 'invest_construction_phase_id'}
                 sel_fields.append(budget_type_dict[budget_type])
-            group_vals = []
-            for l in doc_lines:
-                val = ()
-                for f in sel_fields:
-                    val += (l[f].id,)
-                group_vals.append(val)
-            group_vals = list(set(group_vals))
+            group_vals = self._get_doc_field_combination(doc_lines, sel_fields)
             for val in group_vals:
                 res_id = val[0]
                 ext_field = False
@@ -159,11 +177,11 @@ class AccountBudget(models.Model):
                 filtered_lines = doc_lines
                 i = 0
                 for f in sel_fields:
-                    filtered_lines = filtered_lines.\
-                        filtered(lambda l:
-                                 f in l and l[f] and l[f].id == val[i])
+                    filtered_lines = filter(lambda l:
+                                            f in l and l[f] and l[f] == val[i],
+                                            filtered_lines)
                     i += 1
-                amount = sum(filtered_lines.mapped(amount_field))
+                amount = sum(map(lambda l: l[amount_field], filtered_lines))
                 # For funding case, add more dimension
                 if len(sel_fields) == 2:
                     ext_res_id = val[1]
@@ -176,4 +194,5 @@ class AccountBudget(models.Model):
                                           ext_field=ext_field,
                                           ext_res_id=ext_res_id)
                 if not res['budget_ok']:
-                    raise UserError(res['message'])
+                    return res
+        return res
