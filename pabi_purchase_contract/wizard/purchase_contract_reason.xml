@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_purchase_contract_reason_cancel" model="ir.ui.view">
+			<field name="name">purchase.contract.reason.wizard</field>
+			<field name="model">purchase.contract.reason</field>
+			<field name="arch" type="xml">
+				<form string="Cancel Contract" version="7.0">
+					<group>
+						<field name="description" class="oe_inline" string='Reason for Cancel'
+							required="1" placeholder="Please specify." />
+					</group>
+					<footer>
+						<button name="send_cancel" string="Confirm Cancel" type="object"
+							class="oe_highlight" />
+						or
+						<button string="Close Windows" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_view_purchase_contract_reason_cancel" model="ir.actions.act_window">
+			<field name="name">Reason for Cancel</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.reason</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_purchase_contract_reason_cancel" />
+			<field name="target">new</field>
+		</record>
+
+		<record id="view_purchase_contract_termination" model="ir.ui.view">
+			<field name="name">purchase.contract.reason.wizard</field>
+			<field name="model">purchase.contract.reason</field>
+			<field name="arch" type="xml">
+				<form string="Please attach file for Termination" version="7.0">
+					<group string='Attach File'>
+						<field name="datas_fname" string="File name" invisible='1'
+							required="0" />
+						<field name="datas" string="Browse" filename='datas_fname'
+							required="1" />
+						<field name="description" class="oe_inline" string='Reason for Termination'
+							required="1" placeholder="Please specify." />
+					</group>
+					<footer>
+						<button name="send_termination" string="Confirm Termination"
+							type="object" class="oe_highlight" />
+						or
+						<button string="Close Windows" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_view_purchase_contract_termination" model="ir.actions.act_window">
+			<field name="name">Reason for Termination</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.reason</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_purchase_contract_termination" />
+			<field name="target">new</field>
+		</record>
+
+		<record id="view_purchase_contract_reason_delete" model="ir.ui.view">
+			<field name="name">purchase.contract.reason.delete.wizard</field>
+			<field name="model">purchase.contract.reason</field>
+			<field name="arch" type="xml">
+				<form string="Deleting Contract" version="7.0">
+					<group>
+						<field name="description" class="oe_inline" string='Reason for Deleting'
+							required="1" placeholder="Please specify." />
+					</group>
+					<footer>
+						<button name="send_delete" string="Confirm Deleting" type="object"
+							class="oe_highlight" />
+						or
+						<button string="Close Windows" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_view_purchase_contract_reason_delete" model="ir.actions.act_window">
+			<field name="name">Reason for deletion</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.reason</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_purchase_contract_reason_delete" />
+			<field name="target">new</field>
+		</record>
+	</data>
+</openerp>
