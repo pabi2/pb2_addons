@@ -1,9 +1,8 @@
+
 # -*- coding: utf-8 -*-
-import ast
-from datetime import datetime, date
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from openerp import api, models, fields
-from openerp.exceptions import Warning as UserError
+from openerp import api, models
 
 
 class sale_create_invoice_plan(models.TransientModel):

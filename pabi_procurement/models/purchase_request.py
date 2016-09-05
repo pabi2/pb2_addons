@@ -36,14 +36,19 @@ class PurchaseRequest(models.Model):
     )
     date_approve = fields.Date(
         string='Approved Date',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
         help="Date when the request has been approved",
     )
+    date_start = fields.Date(
+        required=True,
+    )
     responsible_uid = fields.Many2one(
         'res.users',
         string='Responsible Person',
+        required=True,
         readonly=True,
         states={
             'draft': [('readonly', False)],
@@ -65,6 +70,7 @@ class PurchaseRequest(models.Model):
         digits=(12, 6),
         default=1.0,
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)]},
         copy=False,
     )
@@ -76,12 +82,14 @@ class PurchaseRequest(models.Model):
     purchase_method_id = fields.Many2one(
         'purchase.method',
         string='Procurement Method',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     purchase_price_range_id = fields.Many2one(
         'purchase.price.range',
         string='Price Range',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -105,12 +113,14 @@ class PurchaseRequest(models.Model):
     purchase_prototype_id = fields.Many2one(
         'purchase.prototype',
         string='Prototype',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     purchase_unit_id = fields.Many2one(
         'wkf.config.purchase.unit',
         string='Procurement Unit',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -129,6 +139,7 @@ class PurchaseRequest(models.Model):
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Procurement Type',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -161,9 +172,26 @@ class PurchaseRequest(models.Model):
     is_central_purchase = fields.Boolean(
         string='Central Purchase',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)],
+        },
         default=False,
     )
+
+    @api.onchange('is_central_purchase')
+    def _onchange_is_central_purchase(self):
+        if self.is_central_purchase:
+            domain = {
+                'responsible_uid': []
+            }
+        else:
+            domain = {
+                'responsible_uid': [
+                    ('operating_unit_ids', 'in', self.operating_unit_id.id)
+                ]
+            }
+        return {'domain': domain}
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -310,6 +338,30 @@ class PurchaseRequestLine(models.Model):
         store=True,
         readonly=True,
     )
+    date_required = fields.Date(
+        string='Scheduled Date',
+    )
+    is_central_purchase = fields.Boolean(
+        string='Is Central Purchase',
+        readonly=True,
+        related='request_id.is_central_purchase',
+        store=True,
+    )
+    fiscal_year_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
+    )
+    state = fields.Selection(
+        selection=[
+            ('open', 'Open'),
+            ('close', 'Closed'),
+        ],
+         string='Status',
+         track_visibility='onchange',
+         required=True,
+         default='open',
+    )
 
     @api.one
     @api.depends('requisition_lines.requisition_id.state')
@@ -360,6 +412,7 @@ class PurchaseRequestCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

@@ -13,8 +13,8 @@ class PurchaseOrder(models.Model):
         ('draft', 'Draft'),
         ('sent', 'RFQ'),
         ('bid', 'Bid Received'),
-        ('confirmed', 'Waiting Approval'),
-        ('approved', 'Purchase Confirmed'),
+        ('confirmed', 'Waiting to Release'),
+        ('approved', 'PO Released'),
         ('except_picking', 'Shipping Exception'),
         ('except_invoice', 'Invoice Exception'),
         ('done', 'Done'),
@@ -101,6 +101,11 @@ class PurchaseOrder(models.Model):
     delivery_address = fields.Text(
         string='Delivery Address',
     )
+    is_central_purchase = fields.Boolean(
+        string='Central Purchase',
+        readonly=True,
+        default=False,
+    )
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -179,6 +184,7 @@ class PurchaseOrder(models.Model):
             order.write({
                 'origin': order.quote_id.origin,
                 'committee_ids': self._prepare_order_committees(order.id),
+                'requisition_id': order.quote_id.requisition_id.id,
             })
         return res
 
@@ -311,6 +317,35 @@ class PurchaseOrder(models.Model):
 
         return orders_info
 
+    @api.multi
+    def wkf_action_cancel(self):
+        res = super(PurchaseOrder, self).wkf_action_cancel()
+        for order in self:
+            self.state2 = 'cancel'
+            if order.quote_id:
+                order.quote_id.wkf_action_cancel()
+                order.quote_id.state2 = 'cancel'
+        return res
+
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    fiscal_year_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
+    )
+
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if not rec.order_id.is_central_purchase:
+                raise UserError(
+                    _('Deletion of purchase order line is not allowed,\n'
+                      'please discard changes!'))
+        return super(PurchaseOrderLine, self).unlink()
+
 
 class PRWebPurchaseMethod(models.Model):
     _name = 'prweb.purchase.method'
@@ -345,6 +380,7 @@ class PurchaseType(models.Model):
 
     name = fields.Char(
         string='Purchase Type',
+        required=True,
     )
 
 
@@ -354,6 +390,7 @@ class PurchasePrototype(models.Model):
 
     name = fields.Char(
         string='Prototype',
+        required=True,
     )
 
 
@@ -363,11 +400,13 @@ class PurchaseMethod(models.Model):
 
     name = fields.Char(
         string='Purchase Method',
+        required=True,
     )
     require_rfq = fields.Boolean(
         string='Require for RfQ',
         help='At least 1 RfQ must be created before verifying CfBs',
     )
+
 
 class PurchaseCommitteeType(models.Model):
     _name = 'purchase.committee.type'
@@ -375,6 +414,7 @@ class PurchaseCommitteeType(models.Model):
 
     name = fields.Char(
         string='Purchase Committee Type',
+        required=True,
     )
     web_method_ids = fields.Many2many(
         string='PRWeb Method',
@@ -391,6 +431,7 @@ class PurchasePriceRange(models.Model):
 
     name = fields.Char(
         string='Purchase Price Range',
+        required=True,
     )
     price_from = fields.Float(
         string='Price From',
@@ -408,6 +449,7 @@ class PurchaseCondition(models.Model):
 
     name = fields.Char(
         string='Purchase Condition',
+        required=True,
     )
     condition_detail_ids = fields.Many2many(
         string='Purchase Condition Detail',
@@ -424,6 +466,7 @@ class PurchaseConditionDetail(models.Model):
 
     name = fields.Char(
         string='Purchase Condition Detail',
+        required=True,
     )
 
 
@@ -437,6 +480,7 @@ class PurchaseOrderCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

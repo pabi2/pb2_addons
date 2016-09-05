@@ -275,3 +275,80 @@ class ResCostControlTypeMonitorView(models.Model):
 
     def init(self, cr):
         self._create_monitor_view(cr, self._dimension)
+
+
+# ---------------------- Fund ---------------------
+class ResFundMonitorProjectView(models.Model):
+    _name = 'res.fund.monitor.project.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'fund_id, project_id'
+
+    fund_id = fields.Many2one(
+        'res.fund', 'Fund', readonly=True)
+    project_id = fields.Many2one(
+        'res.project', 'Project', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+class ResFundMonitorSectionView(models.Model):
+    _name = 'res.fund.monitor.section.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'fund_id, section_id'
+
+    fund_id = fields.Many2one(
+        'res.fund', 'Fund', readonly=True)
+    section_id = fields.Many2one(
+        'res.section', 'Section', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+class ResFundMonitorInvestAssetView(models.Model):
+    _name = 'res.fund.monitor.invest.asset.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'fund_id, invest_asset_id'
+
+    fund_id = fields.Many2one(
+        'res.fund', 'Fund', readonly=True)
+    invest_asset_id = fields.Many2one(
+        'res.invest.asset', 'Invest Asset', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+class ResFundMonitorInvestConstructionPhaseView(models.Model):
+    _name = 'res.fund.monitor.invest.construction.phase.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'fund_id, invest_construction_phase_id'
+
+    fund_id = fields.Many2one(
+        'res.fund', 'Fund', readonly=True)
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        'Invest Construction Phase', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
+class ResFundMonitorPersonnelCostcenterView(models.Model):
+    _name = 'res.fund.monitor.personnel.costcenter.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'fund_id, personnel_costcenter_id'
+
+    fund_id = fields.Many2one(
+        'res.fund', 'Fund', readonly=True)
+    personnel_costcenter_id = fields.Many2one(
+        'res.personnel.costcenter', 'Personnel Costcenter', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)

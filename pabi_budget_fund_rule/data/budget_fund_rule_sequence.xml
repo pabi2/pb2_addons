@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="seq_type_budget_fund_rule" model="ir.sequence.type">
+            <field name="name">Budget Fund Rule</field>
+            <field name="code">budget.fund.rule</field>
+        </record>
+
+        <record id="seq_budget_fund_rule" model="ir.sequence">
+            <field name="name">Budget Fund Rule</field>
+            <field name="code">budget.fund.rule</field>
+            <field name="prefix">BG</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</openerp>

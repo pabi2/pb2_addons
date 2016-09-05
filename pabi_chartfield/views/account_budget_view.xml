@@ -58,6 +58,7 @@
                     <field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
                     <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
 
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
@@ -68,6 +69,7 @@
                     <field name="taxbranch_id" invisible="1" />
 
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
 
@@ -118,6 +120,7 @@
                     <field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="0" />
                     <field name="project_id" invisible="0" />
+                    <field name="fund_id" required="1" invisible="0" />
 
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
@@ -128,6 +131,7 @@
                     <field name="taxbranch_id" invisible="1" />
 
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
 
@@ -176,6 +180,8 @@
                     <field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
                     <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
+                    
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
                     <field name="subsector_id" invisible="1"/>
@@ -184,6 +190,7 @@
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
                     <field name="personnel_costcenter_id" invisible="1" />
@@ -229,6 +236,7 @@
                     <field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
                     <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
 
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
@@ -239,6 +247,7 @@
                     <field name="taxbranch_id" invisible="1" />
 
                     <field name="invest_asset_id" invisible="0" />
+                    <field name="item_id" widget="many2one_clickable" invisible="0" />
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1" />
 
@@ -286,6 +295,7 @@
                     <field name="program_id" invisible="1" />
                     <field name="project_group_id" invisible="1" />
                     <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
                     
                     <field name="org_id" invisible="1" />
                     <field name="sector_id" invisible="1" />
@@ -296,6 +306,7 @@
                     <field name="taxbranch_id" invisible="1" />
                     
                     <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
                     
                     <field name="invest_construction_id" invisible="0"/>
                     <field name="invest_construction_phase_id" invisible="0" />

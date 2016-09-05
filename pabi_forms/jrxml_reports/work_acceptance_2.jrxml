@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
-	<property name="ireport.zoom" value="1.6105100000000014"/>
-	<property name="ireport.x" value="58"/>
-	<property name="ireport.y" value="289"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="70" bottomMargin="107">
+	<property name="ireport.zoom" value="1.2100000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="79"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -13,26 +13,110 @@
 rp.name supplier,
 rp_ou.name operating_unit,
 po.name PO_NO,
-pwa.date_contract_end,
-po.date_contract_start contract_start_date,
+CONCAT(
+to_char(pwa.date_contract_end,'DD'),' ',
+CASE to_char(pwa.date_contract_end,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM pwa.date_contract_end + interval '543 years')) date_contract_end,
+CONCAT(
+to_char(po.date_contract_start,'DD'),' ',
+CASE to_char(po.date_contract_start,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM po.date_contract_start + interval '543 years')) contract_start_date,
 po.amount_total_text_th,
-po.amount_total amount,
-pwa.date_receive date_receive,
-po.fine_rate fine_rate,
-current_date now_date,
+LTRIM(po.amount_total::money::varchar,'฿ ') amount,
+CONCAT(
+to_char(pwa.date_receive,'DD'),' ',
+CASE to_char(pwa.date_receive,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM pwa.date_receive + interval '543 years')) date_receive,
+po.fine_rate::numeric::varchar fine_rate,
+CONCAT(
+to_char(current_date,'DD'),' ',
+CASE to_char(current_date,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM current_date + interval '543 years')) now_date,
 po.doc_approve_uid,
 hp.name hr_position,
-ro.description,
-rpa.name name_approve,
-convert_from(rp_ou.image, 'UTF8') image ,
-po.date_order date_order,
-date_part('day',(pwa.date_receive - po.date_order))::integer over_date,
+ro.name description,
+CONCAT((SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it WHERE
+res_id = he.id AND it.name LIKE 'hr.employee,last_name')) name_approve,
+CONCAT(
+to_char(po.date_order,'DD'),' ',
+CASE to_char(po.date_order,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM po.date_order + interval '543 years')) date_order,
+date_part('day',(pwa.date_receive - po.date_order))::integer::varchar over_date,
+LTRIM((pwa.overdue_day*pwa.fine_per_day)::numeric::money::varchar, '฿ ')::varchar total_fine,
 pwa.amount_total_fine_text_th,
-pwa.manual_fine,
+LTRIM(pwa.fine_per_day::numeric::money::varchar,'฿ ') fine_per_day,
 pwa.amount_fine_per_day_text_th,
-pwa.overdue_day,
-pwa.fine_per_day,
-ou.code
+pwa.overdue_day::varchar,
+ou.code,
+ou.id ou_id
 
 from purchase_order po
 left join res_partner rp on po.partner_id = rp.id
@@ -55,292 +139,242 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	</field>
 	<field name="operating_unit" class="java.lang.String"/>
 	<field name="po_no" class="java.lang.String"/>
-	<field name="date_contract_end" class="java.sql.Date">
+	<field name="date_contract_end" class="java.lang.String">
 		<fieldDescription><![CDATA[Contract End Date]]></fieldDescription>
 	</field>
-	<field name="contract_start_date" class="java.sql.Date"/>
+	<field name="contract_start_date" class="java.lang.String"/>
 	<field name="amount_total_text_th" class="java.lang.String">
 		<fieldDescription><![CDATA[Amount Total (TH)]]></fieldDescription>
 	</field>
-	<field name="amount" class="java.math.BigDecimal">
+	<field name="amount" class="java.lang.String">
 		<fieldDescription><![CDATA[Amount]]></fieldDescription>
 	</field>
-	<field name="date_receive" class="java.sql.Date">
+	<field name="date_receive" class="java.lang.String">
 		<fieldDescription><![CDATA[Receive Date]]></fieldDescription>
 	</field>
-	<field name="fine_rate" class="java.lang.Double">
+	<field name="fine_rate" class="java.lang.String">
 		<fieldDescription><![CDATA[Fine Rate]]></fieldDescription>
 	</field>
-	<field name="now_date" class="java.sql.Date"/>
+	<field name="now_date" class="java.lang.String"/>
 	<field name="doc_approve_uid" class="java.lang.Integer">
 		<fieldDescription><![CDATA[Approved by]]></fieldDescription>
 	</field>
 	<field name="hr_position" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="name_approve" class="java.lang.String"/>
-	<field name="image" class="java.lang.String">
-		<fieldDescription><![CDATA[Photo]]></fieldDescription>
-	</field>
-	<field name="date_order" class="java.sql.Timestamp">
+	<field name="date_order" class="java.lang.String">
 		<fieldDescription><![CDATA[Order Date]]></fieldDescription>
 	</field>
-	<field name="over_date" class="java.lang.Integer"/>
+	<field name="over_date" class="java.lang.String"/>
+	<field name="total_fine" class="java.lang.String"/>
 	<field name="amount_total_fine_text_th" class="java.lang.String">
 		<fieldDescription><![CDATA[Total Fine TH Text]]></fieldDescription>
 	</field>
-	<field name="manual_fine" class="java.lang.Double">
-		<fieldDescription><![CDATA[Manual Fine]]></fieldDescription>
+	<field name="fine_per_day" class="java.lang.String">
+		<fieldDescription><![CDATA[Fine per Day]]></fieldDescription>
 	</field>
 	<field name="amount_fine_per_day_text_th" class="java.lang.String">
 		<fieldDescription><![CDATA[Fine per Day TH Text]]></fieldDescription>
 	</field>
-	<field name="overdue_day" class="java.lang.Integer">
+	<field name="overdue_day" class="java.lang.String">
 		<fieldDescription><![CDATA[Overdue Days]]></fieldDescription>
-	</field>
-	<field name="fine_per_day" class="java.lang.Double">
-		<fieldDescription><![CDATA[Fine per Day]]></fieldDescription>
 	</field>
 	<field name="code" class="java.lang.String">
 		<fieldDescription><![CDATA[Code]]></fieldDescription>
 	</field>
+	<field name="ou_id" class="java.lang.Integer"/>
+	<variable name="current_date" class="java.util.Date" resetType="None">
+		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
+	</variable>
 	<background>
 		<band height="665" splitType="Stretch">
 			<staticText>
-				<reportElement x="216" y="468" width="68" height="14"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="199" y="471" width="214" height="22"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ขอแสดงความนับถือ]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="199" y="535" width="100" height="14"/>
+				<reportElement x="199" y="535" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{hr_position}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="199" y="521" width="100" height="14"/>
+				<reportElement x="199" y="521" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name_approve}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="199" y="549" width="100" height="14"/>
+				<reportElement x="199" y="549" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</background>
 	<pageHeader>
-		<band height="81" splitType="Stretch"/>
+		<band height="81" splitType="Stretch">
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nectec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_tmc.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_biotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nanotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="331" y="0" width="152" height="81">
+					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_mtec.gif"]]></imageExpression>
+			</image>
+		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="119" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="26" height="20"/>
+				<reportElement x="0" y="0" width="26" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ที่ วท]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="40" width="248" height="16"/>
+				<reportElement x="46" y="41" width="202" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[เรื่อง          แจ้งค่าปรับเนื่องจากส่งสินค้า/งานจ้าง เกินกำหนด]]></text>
+				<text><![CDATA[สงวนสิทธิ์ค่าปรับ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="66" width="287" height="15"/>
+				<reportElement x="46" y="66" width="241" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["เรียน         "  +($F{name} == null ? ' ' : $F{name})+" " +($F{supplier} == null ? ' ' : $F{supplier})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{name} == null ? "" : $F{name}+ ' ')+"" +($F{supplier} == null ? ' ' : $F{supplier})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1" y="90" width="271" height="14"/>
+				<reportElement x="46" y="90" width="367" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["อ้างถึง        ใบสั่งซื้อ/จ้าง หรือสัญญา เลขที่ "+($F{po_no} == null ? ' ' : $F{po_no})+" ลงวันที่ "]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ใบสั่งซื้อ/จ้าง หรือสัญญา เลขที่ "+($F{po_no} == null ? ' ' : $F{po_no})
++" ลงวันที่ " + ($F{contract_start_date} == null ? "" : $F{contract_start_date})]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="215" y="90" width="100" height="14"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="229" y="19" width="161" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract_start_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{now_date}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="215" y="20" width="79" height="20"/>
+			<staticText>
+				<reportElement x="0" y="41" width="46" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[เรื่อง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="66" width="46" height="22"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เรียน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="90" width="46" height="22"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[อ้างถึง]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="54">
-			<staticText>
-				<reportElement x="46" y="31" width="80" height="16"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+		<band height="21">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="483" height="21"/>
+				<textElement textAlignment="Justified" lineSpacing="Single" markup="html">
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[ความละเอียดแจ้งแล้วนั้น]]></text>
-			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="-1" y="31" width="60" height="14"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_contract_end}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="66" y="15" width="390" height="14"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_text_th} == null ?
-"("+")"+ "โดยกำหนดส่งมอบสินค้า/งานจ้าง ภายในวันที่" :
-"("+$F{amount_total_text_th}+")"+ "โดยกำหนดส่งมอบสินค้า/งานจ้าง ภายในวันที่"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="41" y="0" width="374" height="15"/>
-				<textElement lineSpacing="Single" markup="none">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง "
+				<textFieldExpression class="java.lang.String"><![CDATA["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง "
 + ($F{operating_unit} == null ? ' ' : $F{operating_unit}) +"โดยศูนย์" +($F{code} == null? ' ' : $F{code})+
 " ได้ตกลงซื้อ/จ้าง กับ "
-+ ($F{supplier} == null ? ' ' : $F{supplier}) +
-"  เป็นจำนวนเงิน "]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="48" y="15" width="21" height="14"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[บาท]]></text>
-			</staticText>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="-1" y="15" width="47" height="14"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
++ ($F{name} == null ? "" : $F{name} + ' ') + "" + ($F{supplier} == null ? ' ' : $F{supplier}) +
+"  เป็นจำนวนเงิน " +
+($F{amount} == null ? "" : $F{amount} + " บาท") +
+($F{amount} == null ? "" :
+$F{amount_total_text_th} == null ? "" : " (" + $F{amount_total_text_th} +  ") ")
++ "โดยกำหนด ส่งมอบสินค้า/งานจ้าง ภายในวันที่ "+
+($F{date_contract_end} == null ? "" : $F{date_contract_end}) +
+" ความละเอียดแจ้งแล้วนั้น"
++
+ "<br />" +
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + ($F{name} == null ? "" : $F{name}+ ' ')
++"" +
+($F{supplier} == null ? ' ' : $F{supplier} )+
+"  ได้ส่งมอบสินค้า/งานจ้างดังกล่าวให้กับสำนักงานฯ/ศูนย์ฯ เป็นที่เรียบร้อยแล้ว เมื่อวันที่ " +
+($F{date_receive} == null ? "" : $F{date_receive} + ' ') +
+"ซึ่งเกินกำหนดการส่งมอบ ดังนั้น สำนักงานฯ/ศูนย์ฯ จึงขอสงวนสิทธิ์ปรับ ในกรณีส่งมอบสินค้า/งานจ้าง เกินกำหนด " +
+"โดยคิดค่าปรับเป็นรายวัน ในอัตราร้อยละ "+
+($F{fine_rate} == null ? " " : $F{fine_rate}) +
+" ของราคาสินค้า/งานจ้าง ที่ยังไม่ได้ส่งมอบ คิดเป็นค่าปรับวันละ " +
+($F{fine_per_day} == null ? " " : $F{fine_per_day} + " บาท")+
+($F{fine_per_day} == null ? " " :
+$F{amount_fine_per_day_text_th} == null ? "" : " (" + $F{amount_fine_per_day_text_th} + ") ")+
+"เป็นระยะเวลา " +
+($F{overdue_day} == null ? " " : $F{overdue_day} + " วัน ") +
+"คิดเป็นค่าปรับทั้งสิ้น " +
+($F{total_fine} == null ? " " : $F{total_fine} +" บาท") +
+($F{total_fine} == null ? "" :
+$F{amount_total_fine_text_th} == null ? "" : " (" + $F{amount_total_fine_text_th} + ") ")
++
+"โดยสำนักงานฯ/ศูนย์ฯ จะหักเงินค่าปรับจากเงินที่ต้องชำระค่าสินค้า/งานจ้าง และออกใบเสร็จรับเงินให้ เพื่อเป็นหลักฐานในวันที่รับเช็ค"
++
+"และผู้ขาย/ผู้รับรับจ้าง จะต้องออกใบเสร็จรับเงินให้กับสำนักงานฯ/ศูนย์ฯ ตามจำนวนเงินค่าสินค้า/งานจ้างก่อนหักค่าปรับดังกล่าวด้วย"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="77">
-			<textField>
-				<reportElement x="41" y="0" width="361" height="16"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{supplier} == null ? ' ' : $F{supplier} )+
-"  ได้ส่งมอบสินค้า/งานจ้างดังกล่าวให้กับสำนักงานฯ/ศูนย์ฯ เป็นที่เรียบร้อยแล้ว เมื่อวันที่"]]></textFieldExpression>
-			</textField>
+		<band height="45">
 			<staticText>
-				<reportElement x="1" y="16" width="436" height="16"/>
+				<reportElement x="46" y="13" width="169" height="21"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[ซึ่งเกินกำหนดการส่งมอบ ดังนั้น สำนักงานฯ/ศูนย์ฯ จึงขอสงวนสิทธิ์ปรับ ในกรณีส่งมอบสินค้า/งานจ้างเกินกำหนด]]></text>
-			</staticText>
-			<textField isBlankWhenNull="false">
-				<reportElement x="1" y="47" width="105" height="15"/>
-				<textElement lineSpacing="Single" markup="none">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_fine_per_day_text_th} == null ?  '' : "( " +  $F{amount_fine_per_day_text_th}  + " )"]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="342" y="32" width="70" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_per_day}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="389" y="0" width="95" height="16"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_receive}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="2" y="62" width="435" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[โดยสำนักงานฯ/ศูนย์ฯ จะหักเงินค่าปรับจากเงินที่ต้องชำระค่าสินค้า/งานจ้าง และออกใบเสร็จรับเงินให้ เพื่อเป็นหลักฐานในวันที่รับเช็ค]]></text>
-			</staticText>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="239" y="47" width="70" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{manual_fine}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="318" y="47" width="181" height="15"/>
-				<textElement lineSpacing="Single" markup="none">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_fine_text_th} == null ?  '' : "( " +  $F{amount_total_fine_text_th}  + " )"]]></textFieldExpression>
-			</textField>
-			<textField pattern="">
-				<reportElement x="1" y="32" width="477" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["โดยคิดค่าปรับเป็นรายวัน ในอัตราร้อยละ "+$F{fine_rate}+" ของราคาสินค้า/งานจ้าง ที่ยังไม่ได้ส่งมอบ คิดเป็นค่าปรับวันละ"]]></textFieldExpression>
-			</textField>
-			<textField pattern="">
-				<reportElement x="97" y="47" width="210" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{overdue_day} == null ? "เป็นระยะเวลา "+"0" + " วัน  คิดเป็นค่าปรับทั้งสิ้น" : "เป็นระยะเวลา "+$F{overdue_day} + " วัน  คิดเป็นค่าปรับทั้งสิ้น"]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="287" y="47" width="24" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[บาท]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="389" y="32" width="24" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[บาท]]></text>
-			</staticText>
-		</band>
-		<band height="62">
-			<staticText>
-				<reportElement x="1" y="0" width="488" height="15"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[และผู้ขาย/ผู้รับรับจ้างจะต้องออกใบเสร็จรับเงินให้กับสำนักงานฯ/ศูนย์ฯ ตามจำนวนเงินค่าสินค้า/งานจ้างก่อนหักค่าปรับดังกล่าวด้วย]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="41" y="27" width="169" height="20"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จึงเรียนมาเพื่อโปรดทราบ]]></text>
 			</staticText>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="118" splitType="Stretch"/>
+		<band height="119" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
 		<band height="54" splitType="Stretch"/>

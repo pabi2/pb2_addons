@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from openerp import fields, models, api
+from openerp import fields, models, api, _
 import datetime
 import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
     import amount_to_text_th
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseWorkAcceptance(models.Model):
@@ -18,38 +19,43 @@ class PurchaseWorkAcceptance(models.Model):
         ('done', 'Done'),
     ]
 
-    @api.one
-    @api.depends('date_receive', 'date_contract_end')
-    def _fine_amount_to_word_th(self):
+    @api.model
+    @api.depends('date_receive', 'date_scheduled_end')
+    def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
-        order = self.order_id
-        amount_total = self.total_fine
-        if amount_total < 0:
-            minus = True
-            amount_total = -amount_total
-        amount_text = amount_to_text_th(amount_total, order.currency_id.name)
-        self.amount_total_fine_text_th = minus and\
-            'ลบ' + amount_text or amount_text
+        for acceptance in self:
+            order = acceptance.order_id
+            amount_total = acceptance.total_fine
+            if amount_total < 0:
+                minus = True
+                amount_total = -amount_total
+            amount_text = amount_to_text_th(amount_total,
+                                            order.currency_id.name)
+            acceptance.amount_total_fine_text_th = minus and\
+                'ลบ' + amount_text or amount_text
         return res
 
-    @api.one
+    @api.model
     @api.depends('date_receive', 'date_contract_end')
-    def _fine_per_day_to_word_th(self):
+    def _compute_fine_per_day_to_word_th(self):
         res = {}
         minus = False
-        order = self.order_id
-        fine_per_day = self.fine_per_day
-        if fine_per_day < 0:
-            minus = True
-            fine_per_day = -fine_per_day
-        amount_text = amount_to_text_th(fine_per_day, order.currency_id.name)
-        self.amount_fine_per_day_text_th = minus and\
-            'ลบ' + amount_text or amount_text
+        for acceptance in self:
+            order = acceptance.order_id
+            fine_per_day = acceptance.fine_per_day
+            if fine_per_day < 0:
+                minus = True
+                fine_per_day = -fine_per_day
+            amount_text = amount_to_text_th(fine_per_day,
+                                            order.currency_id.name)
+            acceptance.amount_fine_per_day_text_th = minus and\
+                'ลบ' + amount_text or amount_text
         return res
 
     @api.onchange('manual_fine')
     def _onchange_manual_fine(self):
+        self.total_fine_cal = self.manual_fine
         self.total_fine = self.manual_fine
 
     @api.onchange('date_scheduled_end')
@@ -122,123 +128,135 @@ class PurchaseWorkAcceptance(models.Model):
     def _check_product_type(self):
         type = False
         is_consumable = False
-        for line in self.acceptance_line_ids:
-            type = line.product_id.type
-            is_consumable = line.product_id.categ_id.is_consumable
-            break
-            # if check_type != line.product_id.type:
-            #     raise UserError(
-            #         _("All products must have the same type. %s"
-            #           % (self.name,)))
+        for acceptance in self:
+            for line in acceptance.acceptance_line_ids:
+                type = line.product_id.type
+                is_consumable = line.product_id.categ_id.is_consumable
+                break
+                # if check_type != line.product_id.type:
+                #     raise UserError(
+                #         _("All products must have the same type. %s"
+                #           % (self.name,)))
         return type, is_consumable
 
+    #  Invoice Plan Fine : Calculate from total amount
     @api.model
     def _calculate_last_invoice_plan_fine(self, invoice):
         total_fine = 0.0
         today = fields.Date.context_today(self)
         THHoliday = self.env['thai.holiday']
-        if not self.date_receive:
-            self.date_receive = today.strftime('%Y-%m-%d')
-        received = THHoliday.find_next_working_day(self.date_receive)
-        received = datetime.datetime.strptime(
-            received,
-            "%Y-%m-%d",
-        )
-        if not self.date_contract_end:
-            self.date_contract_end = today.strftime('%Y-%m-%d')
-        end_date = datetime.datetime.strptime(
-            self.date_contract_end,
-            "%Y-%m-%d",
-        )
-        delta = end_date - received
-        overdue_day = delta.days
-        total_fine_per_day = 0.0
-        if overdue_day < 0:
-            for line in invoice.invoice_line:
-                line_tax = 0.0
-                fine_rate = self.order_id.fine_rate
-                unit_price = line.price_unit
-                to_receive_qty = line.quantity
-                taxes = line.invoice_line_tax_id.compute_all(
-                    unit_price,
-                    to_receive_qty,
-                    product=line.product_id,
-                )
-                line_tax += sum([tax['amount'] for tax in taxes['taxes']])
-                fine_per_day = (fine_rate*0.01) * \
-                               ((to_receive_qty * unit_price) + line_tax)
-                total_fine_per_day += fine_per_day
-                total_fine += -1 * overdue_day * fine_per_day
-            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.fine_per_day = total_fine_per_day
-            self.overdue_day = -1 * overdue_day
+        for acceptance in self:
+            if not acceptance.date_receive:
+                acceptance.date_receive = today.strftime('%Y-%m-%d')
+            received = THHoliday.find_next_working_day(acceptance.date_receive)
+            received = datetime.datetime.strptime(
+                received,
+                "%Y-%m-%d",
+            )
+            if not acceptance.date_contract_end:
+                acceptance.date_contract_end = today.strftime('%Y-%m-%d')
+            end_date = datetime.datetime.strptime(
+                acceptance.date_contract_end,
+                "%Y-%m-%d",
+            )
+            delta = end_date - received
+            overdue_day = delta.days
+            total_fine_per_day = 0.0
+            if overdue_day < 0:
+                for line in invoice.invoice_line:
+                    line_tax = 0.0
+                    fine_rate = acceptance.order_id.fine_rate
+                    unit_price = line.price_unit
+                    to_receive_qty = line.quantity
+                    taxes = line.invoice_line_tax_id.compute_all(
+                        unit_price,
+                        to_receive_qty,
+                        product=line.product_id,
+                    )
+                    line_tax += sum([tax['amount'] for tax in taxes['taxes']])
+                    fine_per_day = (fine_rate*0.01) * \
+                                   ((to_receive_qty * unit_price) + line_tax)
+                    total_fine_per_day += fine_per_day
+                    total_fine += -1 * overdue_day * fine_per_day
+                acceptance.total_fine_cal = 100.0 if 0 < total_fine < 100.0 \
+                    else total_fine
+                acceptance.total_fine = acceptance.total_fine_cal
+                acceptance.fine_per_day = total_fine_per_day
+                acceptance.overdue_day = -1 * overdue_day
 
     @api.model
     def _calculate_service_fine(self):
-        if self.order_id.use_invoice_plan:  # invoice plan
-            order_plan = self.order_id.invoice_plan_ids
-            last_installment = 0
-            select_line = False
-            for plan_line in order_plan:
-                if plan_line.installment >= last_installment:
-                    select_line = plan_line
-            if select_line:
-                invoice = select_line.ref_invoice_id
-                self._calculate_last_invoice_plan_fine(invoice)
-        else:  # normal service
-            self._calculate_incoming_fine()
+        for acceptance in self:
+            if acceptance.order_id.use_invoice_plan:  # invoice plan
+                order_plan = acceptance.order_id.invoice_plan_ids
+                last_installment = 0
+                select_line = False
+                for plan_line in order_plan:
+                    if plan_line.installment >= last_installment:
+                        select_line = plan_line
+                        last_installment += 1
+                if select_line:
+                    invoice = select_line.ref_invoice_id
+                    acceptance._calculate_last_invoice_plan_fine(invoice)
+            else:  # normal service
+                acceptance._calculate_incoming_fine()
 
     @api.model
     def _calculate_incoming_fine(self):
         total_fine = 0.0
         today = fields.Date.context_today(self)
         THHoliday = self.env['thai.holiday']
-        if not self.date_receive:
-            self.date_receive = today.strftime('%Y-%m-%d')
-        received = THHoliday.find_next_working_day(self.date_receive)
-        received = datetime.datetime.strptime(
-            received,
-            "%Y-%m-%d",
-        )
-        if not self.date_contract_end:
-            self.date_contract_end = today.strftime('%Y-%m-%d')
-        end_date = datetime.datetime.strptime(
-            self.date_contract_end,
-            "%Y-%m-%d",
-        )
-        delta = end_date - received
-        overdue_day = delta.days
-        total_fine_per_day = 0.0
-        if overdue_day < 0:
-            for line in self.acceptance_line_ids:
-                line_tax = 0.0
-                fine_rate = self.order_id.fine_rate
-                unit_price = line.line_id.price_unit
-                to_receive_qty = line.to_receive_qty
-                taxes = line.line_id.taxes_id.compute_all(
-                    unit_price,
-                    to_receive_qty,
-                    product=line.product_id,
-                )
-                line_tax += sum([tax['amount'] for tax in taxes['taxes']])
-                fine_per_day = (fine_rate*0.01) * \
-                               ((to_receive_qty * unit_price) + line_tax)
-                total_fine_per_day += fine_per_day
-                total_fine += -1 * overdue_day * fine_per_day
-            self.total_fine = 100.0 if 0 < total_fine < 100.0 else total_fine
-            self.fine_per_day = total_fine_per_day
-            self.overdue_day = -1 * overdue_day
+        for acceptance in self:
+            if not acceptance.date_receive:
+                acceptance.date_receive = today.strftime('%Y-%m-%d')
+            received = THHoliday.find_next_working_day(acceptance.date_receive)
+            received = datetime.datetime.strptime(
+                received,
+                "%Y-%m-%d",
+            )
+            if not acceptance.date_contract_end:
+                acceptance.date_contract_end = today.strftime('%Y-%m-%d')
+            end_date = datetime.datetime.strptime(
+                acceptance.date_contract_end,
+                "%Y-%m-%d",
+            )
+            delta = end_date - received
+            overdue_day = delta.days
+            total_fine_per_day = 0.0
+            if overdue_day < 0:
+                for line in acceptance.acceptance_line_ids:
+                    line_tax = 0.0
+                    fine_rate = self.order_id.fine_rate
+                    unit_price = line.line_id.price_unit
+                    to_receive_qty = line.to_receive_qty
+                    taxes = line.line_id.taxes_id.compute_all(
+                        unit_price,
+                        to_receive_qty,
+                        product=line.product_id,
+                    )
+                    line_tax += sum([tax['amount'] for tax in taxes['taxes']])
+                    fine_per_day = (fine_rate*0.01) * \
+                                   ((to_receive_qty * unit_price) + line_tax)
+                    total_fine_per_day += fine_per_day
+                    total_fine += -1 * overdue_day * fine_per_day
+                acceptance.total_fine_cal = 100.0 if 0 < total_fine < 100.0 \
+                    else total_fine
+                acceptance.total_fine = acceptance.total_fine_cal
+                acceptance.fine_per_day = total_fine_per_day
+                acceptance.overdue_day = -1 * overdue_day
 
-    @api.one
+    @api.model
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
-        product_type, is_consumable = self._check_product_type()
-        if product_type == 'service' and not is_consumable:
-            self._calculate_service_fine()
-        else:
-            self._calculate_incoming_fine()
-        if self.manual_fine > 0:
-            self.total_fine = self.manual_fine
+        for acceptance in self:
+            product_type, is_consumable = acceptance._check_product_type()
+            if product_type == 'service' and not is_consumable:
+                acceptance._calculate_service_fine()
+            else:
+                acceptance._calculate_incoming_fine()
+            if acceptance.manual_fine > 0:
+                acceptance.total_fine_cal = acceptance.manual_fine
+                acceptance.total_fine = acceptance.manual_fine
 
     name = fields.Char(
         string="Acceptance No.",
@@ -279,40 +297,51 @@ class PurchaseWorkAcceptance(models.Model):
     )
     amount_fine_per_day_text_th = fields.Char(
         string='Fine per Day TH Text',
-        compute='_fine_per_day_to_word_th',
+        compute='_compute_fine_per_day_to_word_th',
         store=True,
     )
     overdue_day = fields.Integer(
         string="Overdue Days",
         default=0,
     )
-    total_fine = fields.Float(
-        string="Total Fine",
+    total_fine_cal = fields.Float(
+        string="Total Fine Calculation",
         compute="_compute_total_fine",
         store=True,
     )
+    total_fine = fields.Float(
+        string="Total Fine",
+    )
     amount_total_fine_text_th = fields.Char(
         string='Total Fine TH Text',
-        compute='_fine_amount_to_word_th',
+        compute='_compute_fine_amount_to_word_th',
         store=True,
     )
     supplier_invoice = fields.Char(
         string="Invoice No.",
+        required=True,
     )
     date_invoice = fields.Date(
         string="Invoice Date",
+        required=True,
     )
     write_to_invoice = fields.Boolean(
         string="Write to invoice date",
     )
+    invoice_created = fields.Boolean(
+        string="Invoice created",
+    )
     acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
         'acceptance_id',
-        string='Work Acceptance',
+        string='Work Acceptance Line',
+        required=True,
     )
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+        required=True,
+        readonly=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -359,6 +388,10 @@ class PurchaseWorkAcceptance(models.Model):
     @api.multi
     def action_evaluate(self):
         self.ensure_one()
+        if len(self.acceptance_line_ids) == 0:
+            raise UserError(
+                _("Can't evaluate the acceptance with no line.")
+            )
         self.state = 'evaluation'
 
     @api.multi
@@ -404,6 +437,16 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _name = 'purchase.work.acceptance.line'
     _description = 'Purchase Work Acceptance Line'
 
+    @api.model
+    @api.depends('acceptance_id', 'line_id')
+    def _compute_get_balance_qty(self):
+        for acc_line in self:
+            if acc_line.line_id.order_id.invoice_method == 'invoice_plan':
+                acc_line.balance_qty = acc_line.line_id.product_qty
+            else:
+                acc_line.balance_qty = acc_line.line_id.product_qty - \
+                                   acc_line.line_id.invoiced_qty
+
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
         string='Acceptance Reference',
@@ -422,6 +465,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     product_id = fields.Many2one(
         'product.product',
         string='Product',
+        required=True,
         readonly=True,
     )
     name = fields.Char(
@@ -431,8 +475,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
     balance_qty = fields.Float(
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
-        readonly=True,
-        required=True,
+        compute='_compute_get_balance_qty',
+        store=True,
     )
     to_receive_qty = fields.Float(
         string='To Receive Quantity',

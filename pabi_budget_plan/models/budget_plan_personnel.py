@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from .budget_plan_template import BudgetPlanCommon
+from openerp.addons.account_budget_activity.models.account_activity \
+    import ActivityCommon
 
 
 class BudgetPlanPersonnel(BudgetPlanCommon, models.Model):
@@ -38,16 +40,15 @@ class BudgetPlanPersonnel(BudgetPlanCommon, models.Model):
         return super(BudgetPlanPersonnel, self).unlink()
 
     @api.model
-    def convert_plan_to_budget_control(self, active_ids):
+    def convert_plan_to_budget_control(self, active_id):
         head_src_model = self.env['budget.plan.personnel']
         line_src_model = self.env['budget.plan.personnel.line']
+        return self._convert_plan_to_budget_control(active_id,
+                                                    head_src_model,
+                                                    line_src_model)
 
-        self._convert_plan_to_budget_control(active_ids,
-                                             head_src_model,
-                                             line_src_model)
 
-
-class BudgetPlanPersonnelLine(models.Model):
+class BudgetPlanPersonnelLine(ActivityCommon, models.Model):
     _name = 'budget.plan.personnel.line'
     _inherits = {'budget.plan.line.template': 'template_id'}
     _description = "Personnel Budget - Budget Plan Line"
@@ -63,14 +64,6 @@ class BudgetPlanPersonnelLine(models.Model):
         'budget.plan.line.template',
         required=True,
         ondelete='cascade',
-    )
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
     )
 
     @api.model

@@ -180,15 +180,15 @@ class PurchaseRequisition(models.Model):
         states={'draft': [('readonly', False)]},
     )
     doc_header = fields.Text(
-        string='Header',
+        string='Dear,',
         readonly=True,
         states={
             'draft': [('readonly', False)],
             'done': [('readonly', False)],
         },
     )
-    doc_footer = fields.Text(
-        string='Footer',
+    doc_body = fields.Text(
+        string='Body',
         readonly=True,
         states={
             'draft': [('readonly', False)],
@@ -217,6 +217,13 @@ class PurchaseRequisition(models.Model):
         string='Delivery Address',
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    purchase_ids = fields.One2many(
+        domain=[('order_type', '=', 'quotation')],
+    )
+    sent_pbweb = fields.Boolean(
+        string='Is sent to PABI Web',
+        default=False,
     )
 
     @api.one
@@ -308,18 +315,27 @@ class PurchaseRequisition(models.Model):
     def _prepare_purchase_order(self, requisition, supplier):
         res = super(PurchaseRequisition, self).\
             _prepare_purchase_order(requisition, supplier)
-        address = "%s\n%s\n%s\n%s\n%s\n%s" % (
-            requisition.operating_unit_id.partner_id.street.strip(),
-            requisition.operating_unit_id.partner_id.township_id.name.strip(),
-            requisition.operating_unit_id.partner_id.district_id.name.strip(),
-            requisition.operating_unit_id.partner_id.province_id.name.strip(),
-            requisition.operating_unit_id.partner_id.zip.strip(),
-            requisition.delivery_address.strip(),
+        ou_address = requisition.operating_unit_id.partner_id
+        combined_address = "%s\n%s %s %s %s\n%s" % (
+            ou_address.street.strip()
+            if ou_address.street else '',
+            ou_address.township_id.name.strip()
+            if ou_address.township_id else '',
+            ou_address.district_id.name.strip()
+            if ou_address.district_id else '',
+            ou_address.province_id.name.strip()
+            if ou_address.province_id else '',
+            ou_address.zip.strip()
+            if ou_address.zip else '',
+            requisition.delivery_address.strip()
+            if requisition.delivery_address else '',
         )
         res.update({
+            'notes': '',
             'requesting_operating_unit_id': requisition.operating_unit_id.id,
-            'delivery_address': address,
+            'delivery_address': combined_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
+            'is_central_purchase': requisition.is_central_purchase,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
@@ -341,10 +357,13 @@ class PurchaseRequisition(models.Model):
                                          purchase_id, supplier)
         # Always use price and tax_ids from pr_line (NOT from product)
         res.update({
-            'name': requisition_line.product_name,
-            'price_unit': requisition_line.price_unit,
-            'taxes_id': [(6, 0, requisition_line.tax_ids.ids)],
-            'product_uom': requisition_line.product_uom_id.id,
+            'name': requisition_line.product_name or res['name'],
+            'price_unit': requisition_line.price_unit or res['price_unit'],
+            'taxes_id': ([(6, 0, requisition_line.tax_ids.ids)] or
+                         res['taxes_id']),
+            'product_uom': (requisition_line.product_uom_id.id or
+                            res['product_uom']),
+            'fiscal_year_id': requisition_line.fiscal_year_id.id or False,
         })
         return res
 
@@ -387,18 +406,29 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def send_pbweb_requisition_cancel(self):
-        PWInterface = self.env['purchase.web.interface']
-        PWInterface.send_pbweb_requisition_cancel(self)
+        if self.sent_pbweb:
+            PWInterface = self.env['purchase.web.interface']
+            PWInterface.send_pbweb_requisition_cancel(self)
         return True
 
     @api.multi
     def check_rfq_no(self):
         Order = self.env['purchase.order']
-        rfq = Order.search([('requisition_id', '=', self.id)])
-        if len(rfq) == 0 and self.purchase_method_id.require_rfq:
-            raise UserError(
-                _("You haven't create the Request to Quotation yet.")
-            )
+        rfqs = Order.search([('requisition_id', '=', self.id)])
+        if self.purchase_method_id.require_rfq:
+            if len(rfqs) == 0:
+                raise UserError(
+                    _("You haven't create the Request to Quotation yet.")
+                )
+            else:
+                state_confirmed = 0
+                for rfq in rfqs:
+                    if rfq.state == 'confirmed':
+                        state_confirmed += 1
+                if state_confirmed == 0:
+                    raise UserError(
+                        _("At least one RfQ must be confirmed.")
+                    )
         return True
 
     @api.multi
@@ -545,7 +575,7 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise UserError("Cant' get PD Document Type.")
+            raise UserError(_("Cant' get PD Document Type."))
         report_name = 'purchase.requisition_'+doc_type.name.lower()
         return self.env['report'].get_action(self, report_name)
 
@@ -581,8 +611,17 @@ class PurchaseRequisitionLine(models.Model):
         'purchase.order.line',
         string='Purchase Order Line'
     )
-    product_name = fields.Char(
+    product_name = fields.Text(
         string='Description',
+        required=True,
+    )
+    fiscal_year_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
+    )
+    product_id = fields.Many2one(
+        required=True,
     )
 
     @api.multi
@@ -634,6 +673,7 @@ class PurchaseRequisitionCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

@@ -4,6 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class CreatePurchaseWorkAcceptance(models.TransientModel):
@@ -77,6 +78,23 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         }
 
     @api.model
+    def is_acceptance_done(self, order):
+        OrderLine = self.env['purchase.order.line']
+        completed_line = 0
+        order_lines = OrderLine.search([
+            ('order_id', '=', order.id),
+        ])
+        for order_line in order_lines:
+            if order_line.invoiced_qty >= order_line.product_qty:
+                completed_line += 1
+        if completed_line == len(order_lines):
+            raise UserError(
+                _("""Can't create new work acceptance.
+                This order's shipments may be completed.
+                """)
+            )
+
+    @api.model
     def _get_contract_end_date(self, order):
         THHoliday = self.env['thai.holiday']
         start_date = datetime.datetime.strptime(
@@ -86,6 +104,12 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         if order.fine_condition == 'day':
             num_of_day = order.fine_num_days
             end_date = start_date + datetime.timedelta(days=num_of_day)
+            date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
+            next_working_end_date = THHoliday.\
+                find_next_working_day(date_scheduled_end)
+        if order.fine_condition == 'month':
+            num_months = order.fine_num_months
+            end_date = start_date + relativedelta(months=+num_months)
             date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
             next_working_end_date = THHoliday.\
                 find_next_working_day(date_scheduled_end)
@@ -108,6 +132,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         if order.invoice_method == 'invoice_plan':
             res['is_invoice_plan'] = True
         else:
+            self.is_acceptance_done(order)
             order_lines = OrderLine.search([('order_id', 'in', order_ids)])
             for line in order_lines:
                 if not hasattr(line, 'product_uom'):
@@ -164,7 +189,16 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         assert len(active_ids) == 1, "Only 1 Purchase Order expected"
         acceptance = self._prepare_acceptance()
         acceptance.order_id = active_ids[0]
-        return act_close
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_model': 'purchase.work.acceptance',
+            'target': 'current',
+            'context': self._context,
+            'res_id': acceptance.id,
+            'domain': [('order_id', '=', active_ids[0])],
+        }
 
 
 class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
@@ -195,7 +229,6 @@ class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
     balance_qty = fields.Float(
         string='Balance Quantity',
         digits_compute=dp.get_precision('Product Unit of Measure'),
-        required=True,
         readonly=True,
     )
     to_receive_qty = fields.Float(

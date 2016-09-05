@@ -13,3 +13,4 @@ from . import purchase_request
 from . import purchase_requisition
 from . import purchase
 from . import stock
+from . import stock_request

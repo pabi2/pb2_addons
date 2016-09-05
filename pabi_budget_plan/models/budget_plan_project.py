@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from .budget_plan_template import BudgetPlanCommon
+from openerp.addons.account_budget_activity.models.account_activity \
+    import ActivityCommon
 
 
 class BudgetPlanProject(BudgetPlanCommon, models.Model):
@@ -52,7 +54,7 @@ class BudgetPlanProject(BudgetPlanCommon, models.Model):
         return super(BudgetPlanProject, self).unlink()
 
 
-class BudgetPlanProjectLine(models.Model):
+class BudgetPlanProjectLine(ActivityCommon, models.Model):
     _name = 'budget.plan.project.line'
     _inherits = {'budget.plan.line.template': 'template_id'}
     _description = "Project Based - Budget Plan Line"

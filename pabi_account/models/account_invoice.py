@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api
+from openerp import models, fields, api
 
 
 class AccountInvoice(models.Model):
@@ -17,6 +17,21 @@ class AccountInvoice(models.Model):
 
 class AccountInvoiceTax(models.Model):
     _inherit = "account.invoice.tax"
+
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        related='invoice_id.taxbranch_id',
+        string='Tax Branch',
+        readonly=True,
+        store=True,
+    )
+
+    @api.model
+    def _prepare_invoice_tax_detail(self, invoice_tax):
+        res = super(AccountInvoiceTax, self).\
+            _prepare_invoice_tax_detail(invoice_tax)
+        res.update({'taxbranch_id': invoice_tax.invoice_id.taxbranch_id.id})
+        return res
 
     @api.model
     def move_line_get(self, invoice_id):

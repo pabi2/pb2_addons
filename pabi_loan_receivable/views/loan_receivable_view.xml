@@ -179,8 +179,6 @@
                             <field name="mou_id" />
                             <field name="mou_bank" invisible="1"/>
                             <field name="bank_id" />
-                            <field name="monthly_due_type" />
-                            <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
                             <label for="section_id"/>
                             <div>
                                 <field name="section_id" class="oe_inline"/> 

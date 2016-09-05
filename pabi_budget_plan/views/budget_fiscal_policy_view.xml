@@ -21,7 +21,6 @@
 	                    </div>
 	                    <div class="oe_right oe_button_box" name="buttons">
 	                    	<button name="prepare_fiscal_budget_policy" states="draft" type="object" string="Generate Budget Policy Lines" />
-	                    	<button name="create_fiscal_budget_policy_breakdown" states="confirm" type="object" string="Generate Budget Policy Breakdown" />
 	                    </div>
 	                    <group>
 	                    	<group>	
@@ -56,11 +55,26 @@
 	                    </group>
 	                    <notebook>
 	                        <page string="Unit Based">
+	                    		<group>
+	                    			<group>
+	                    				<button name="create_unit_budget_policy_breakdown" states="confirm" type="object" string="=> Create Breakdown" />
+	                    			</group>
+	                    			<group>
+ 										<button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+				                                name="action_open_breakdown" context="{'chart_view': 'unit_base'}"
+				                                states="confirm">
+				                            <field string="Breakdowns" name="unit_breakdown_count" widget="statinfo" />
+				                        </button>
+				              		</group>
+	                    		</group>
 	                            <field name="unit_base_ids" colspan="4" nolabel="1" >
 	                                <tree editable="bottom" create="0" delete="0">
 										<field name="org_id" />
 										<field name="planned_amount" sum="Planned Amount" />
 										<field name="policy_amount" sum="Policy Amount" />
+										<field name="policy_amount_v1" sum="Policy Amount Rev.1" />
+										<field name="policy_amount_v2" sum="Policy Amount Rev.2" />
+										<field name="policy_amount_v3" sum="Policy Amount Rev.3" />
 	                                </tree>
 	                            </field>
 	                        </page>
@@ -83,9 +97,20 @@
 	                            </field>
 	                        </page>
 	                        <page string="Investment Asset">
+	                    		<group>
+	                    			<group>
+	                    				<button name="create_invest_asset_budget_policy_breakdown" states="confirm" type="object" string="=> Create Breakdown" />
+	                    			</group>
+	                    			<group>
+ 										<button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+				                                name="action_open_breakdown" context="{'chart_view': 'invest_asset'}"
+				                                states="confirm">
+				                            <field string="Breakdowns" name="invest_asset_breakdown_count" widget="statinfo" />
+				                        </button>
+	                    			</group>
+	                    		</group>
 	                            <field name="invest_asset_ids" colspan="4" nolabel="1" >
 	                                <tree editable="bottom" create="0" delete="0">
-										<field name="invest_asset_id" />
 										<field name="planned_amount" sum="Planned Amount" />
 										<field name="policy_amount" sum="Policy Amount" />
 	                                </tree>
@@ -190,11 +215,22 @@
 	                   </group>
 	                    <notebook>
 	                        <page string="Section Policy Amount">
-	                            <field name="line_ids" colspan="4" nolabel="1" >
+	                            <field name="unit_base_ids" colspan="4" nolabel="1" 
+	                            	attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
 	                                <tree editable="bottom" create="0" delete="0">
 	                                	<field name="budget_plan_unit_id" />
 	                                	<field name="chart_view" />
 										<field name="section_id" />
+										<field name="planned_amount" sum="Planned Amount" />
+										<field name="policy_amount" sum="Policy Amount" />
+	                                </tree>
+	                            </field>
+	                            <field name="invest_asset_ids" colspan="4" nolabel="1" 
+	                            	attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
+	                                <tree editable="bottom" create="0" delete="0">
+	                                	<field name="budget_plan_invest_asset_id" />
+	                                	<field name="chart_view" />
+										<field name="org_id" />
 										<field name="planned_amount" sum="Planned Amount" />
 										<field name="policy_amount" sum="Policy Amount" />
 	                                </tree>
@@ -206,12 +242,28 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_budget_fiscal_policy_breakdown_tree">
-            <field name="name">view.budget.fiscal.policy.breakdown.tree</field>
+        <record model="ir.ui.view" id="view_unit_base_policy_breakdown_tree">
+            <field name="name">view.unit.base.policy.breakdown.tree</field>
             <field name="model">budget.fiscal.policy.breakdown</field>
             <field name="arch" type="xml">
-               <tree string="Fiscal Budget Policy">
+               <tree string="Unit Base Budget Policy Breakdown">
                     <field name="org_id" />
+                    <field name="chart_view" invisible="1" />
+                    <field name="name" />
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_overall"/>
+                    <field name="policy_overall"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_invest_asset_policy_breakdown_tree">
+            <field name="name">view.invest.asset.policy.breakdown.tree</field>
+            <field name="model">budget.fiscal.policy.breakdown</field>
+            <field name="arch" type="xml">
+               <tree string="Invest Asset Budget Policy Breakdown">
+                    <field name="chart_view" invisible="1" />
                     <field name="name" />
                     <field name="fiscalyear_id"/>
                     <field name="planned_overall"/>
@@ -231,13 +283,14 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_budget_fiscal_policy_breakdown_view">
-            <field name="name">Policy Breakdown</field>
+        <record model="ir.actions.act_window" id="action_unit_base_policy_breakdown_view">
+            <field name="name">Breakdown - Unit Based</field>
             <field name="res_model">budget.fiscal.policy.breakdown</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_budget_fiscal_policy_breakdown_tree"/>
+            <field name="view_id" ref="view_unit_base_policy_breakdown_tree"/>
             <field name="search_view_id" ref="view_budget_fiscal_policy_breakdown_search"/>
+            <field name="domain" >[('chart_view', '=', 'unit_base')]</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Click to create a new fiscal budget policy breakdown.
@@ -245,8 +298,27 @@
             </field>
         </record>
         <menuitem parent="menu_action_budget_policy"
-            id="menu_budget_fiscal_policy_breakdown_view"
-            action="action_budget_fiscal_policy_breakdown_view" sequence="10" />
+            id="menu_unit_base_policy_breakdown_view"
+            action="action_unit_base_policy_breakdown_view" sequence="10" />
+
+        <record model="ir.actions.act_window" id="action_invest_asset_policy_breakdown_view">
+            <field name="name">Breakdown - Invest Asset</field>
+            <field name="res_model">budget.fiscal.policy.breakdown</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_invest_asset_policy_breakdown_tree"/>
+            <field name="search_view_id" ref="view_budget_fiscal_policy_breakdown_search"/>
+            <field name="domain" >[('chart_view', '=', 'invest_asset')]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new fiscal budget policy breakdown.
+              </p>
+            </field>
+        </record>
+        
+        <menuitem parent="menu_action_budget_policy"
+            id="menu_invest_asset_policy_breakdown_view"
+            action="action_invest_asset_policy_breakdown_view" sequence="15" />
 
 
 		<!-- Budget Plan Analysis -->
@@ -367,12 +439,8 @@
             <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_budget_plan_line_template_tree"/>
         </record>
-
-        <menuitem parent="menu_action_budget_policy"
-            id="menu_act_budget_plan_line_template_view"
-            action="act_budget_plan_line_template_view"
-        	sequence="20"/>
-
+		
+		<menuitem id="menu_act_budget_plan_line_template_view" action="act_budget_plan_line_template_view" parent="menu_action_budget_plan" sequence="60"/>
 
     </data>
 </openerp>

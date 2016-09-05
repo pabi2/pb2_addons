@@ -13,6 +13,7 @@
         'purchase',
         'purchase_requisition',
         'purchase_request',
+        'stock_request',
     ],
     'data': [
         'security/security.xml',
@@ -29,6 +30,7 @@
         'views/purchase_request_view.xml',
         'views/purchase_requisition_view.xml',
         'views/purchase_request_line_make_purchase_requisition_view.xml',
+        'views/stock_request_view.xml',
     ],
     'demo': [
     ],
