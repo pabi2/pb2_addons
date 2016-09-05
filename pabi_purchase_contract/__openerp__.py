@@ -27,7 +27,6 @@ PABI2 - Purchase Contract Module
         'security/ir.model.access.csv',
         'data/purchase.contract.collateral.csv',
         'data/purchase.contract.type.csv',
-        'data/nstdamas.org.csv',
         'wizard/purchase_contract_reason.xml',
         'views/purchase_contract.xml',
         'views/purchase_contract_type.xml',
