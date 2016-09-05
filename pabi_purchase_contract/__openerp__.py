@@ -19,15 +19,15 @@ PABI2 - Purchase Contract Module
     "depends": [
         'base',
         'mail',
-        'nstdaperm',
-        'nstdamas'
     ],
     "data": [
-        'security/ir.model.access.csv',
+        
         'security/module_data.xml',
         'security/purchase_contract_security.xml',
+        'security/ir.model.access.csv',
         'data/purchase.contract.collateral.csv',
         'data/purchase.contract.type.csv',
+        'data/nstdamas.org.csv',
         'wizard/purchase_contract_reason.xml',
         'views/purchase_contract.xml',
         'views/purchase_contract_type.xml',
