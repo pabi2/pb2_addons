@@ -88,7 +88,14 @@
                                 <tbody>
                                     <t t-foreach="get_lines(o)" t-as="line">
                                         <tr>
-                                            <td><span t-esc="line_index+1"/></td>
+                                            <td>
+                                                <t t-if="line.get('tax_sequence', False)">
+                                                    <span t-esc="line['tax_sequence']"/>
+                                                </t>
+                                                <t t-if="not line.get('tax_sequence', False)">
+                                                    <span t-esc="line_index+1"/>
+                                                </t>
+                                            </td>
                                             <td><span t-esc="time.strftime('%d/%m/%Y ',time.strptime(line['date'],'%Y-%m-%d'))"/></td>
                                             <td><span t-esc="line['number']"/></td>
                                             <td><span t-esc="line['partner_name']"/></td>
