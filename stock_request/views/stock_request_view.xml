@@ -146,7 +146,7 @@
 		                            <field name="location_dest_id" attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
 		                        </group>
 		                    </group>
-		                    <p class="oe_gray">
+		                    <p class="oe_grey">
 		                    NOTE: Only product available in selected locations will be listed!
 		                    </p>
 		                   	<field name="line_ids" >

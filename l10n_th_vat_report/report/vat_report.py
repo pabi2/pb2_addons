@@ -20,181 +20,105 @@ class VatReportParser(report_sxw.rml_parse):
     def get_tax_total(self):
         return self.total_tax
 
-    def _select_for_voucher_tax(self):
+    def _get_domain_tax_lines(self, record):
+        domain = [('base_code_id', '=', record.base_code_id.id),
+                  ('tax_code_id', '=', record.tax_code_id.id),
+                  ('period_id', '=', record.period_id.id),
+                  ('company_id', '=', record.company_id.id)]
+        return domain
+
+    def _get_customer_tax_lines(self, record):
+        domain = self._get_domain_tax_lines(record)
+        tax_lines =\
+            self.pool['vat.report'].search_read(self.cr, self.uid, domain)
+        return tax_lines
+
+    def _get_select_tax_details(self):
         select_str = """
-            SELECT
-                avt.id,
-                CASE WHEN voucher.state = 'cancel' THEN 0.0
-                    ELSE SUM(avt.base_amount) END as base_amount,
-                CASE WHEN voucher.state = 'cancel' THEN 0.0
-                    ELSE SUM(avt.tax_amount) END as tax_amount,
-                voucher.date as date,
-                CASE WHEN voucher.state = 'cancel'
-                    THEN voucher.number || ' (CANCELLED)'
-                    ELSE voucher.number END as number,
-                p.name as partner_name,
-                p.vat as tax_id,
-                avt.tax_id as tax
+            atd.id,
+            p.name as partner_name,
+            p.vat as tax_id,
+            atd.invoice_date as date,
+            atd.invoice_number as number,
+            COALESCE(SUM(atd.amount), 0.0) as tax_amount,
+            COALESCE(SUM(atd.base), 0.0) as base_amount,
+            atd.tax_sequence as tax_sequence
         """
         return select_str
 
-    def _from_for_voucher_tax(self):
-        from_str = """
-            FROM
-                account_voucher_tax as avt
+    def _get_from_tax_details(self):
+        from_tax_details = """
+                account_tax_detail as atd
+            LEFT JOIN account_invoice_tax ait ON
+                (atd.invoice_tax_id = ait.id)
+            LEFT JOIN account_voucher_tax avt ON
+                (atd.voucher_tax_id = avt.id)
+            LEFT JOIN account_invoice invoice ON
+                (ait.invoice_id = invoice.id)
             LEFT JOIN account_voucher voucher ON
                 (avt.voucher_id = voucher.id)
             LEFT JOIN res_partner p ON
-                (voucher.partner_id = p.id)
+                (atd.partner_id = p.id)
         """
-        return from_str
+        return from_tax_details
 
-    def _where_for_voucher_tax(self):
-        where_str = """
-            WHERE
-                voucher.state in ('cancel', 'posted') AND
-                avt.tax_id = %s AND
-                avt.base_code_id = %s AND
-                avt.tax_code_id = %s AND
-                voucher.period_id = %s AND
-                avt.company_id =%s
+    def _get_where_tax_details(self, record):
+        where_tax_details = """
+            atd.tax_sequence IS NOT NULL AND
+            atd.period_id = %s AND
+            ((ait.base_code_id = %s) OR (avt.base_code_id = %s)) AND
+            ((ait.tax_code_id = %s) OR (avt.tax_code_id = %s)) AND
+            ((ait.company_id = %s) OR (avt.company_id = %s)) AND
+            ((invoice.state in ('open', 'paid')) OR
+            (voucher.state in ('posted')))
+        """ % (
+               record.period_id.id,
+               record.base_code_id.id, record.base_code_id.id,
+               record.tax_code_id.id, record.tax_code_id.id,
+               record.company_id.id, record.company_id.id)
+        return where_tax_details
+
+    def _get_groupby_tax_details(self):
+        groupby_str = """
+            atd.id,
+            atd.invoice_date,
+            atd.invoice_number,
+            p.name,
+            p.vat
         """
-        return where_str
+        return groupby_str
 
-    def _group_by_for_voucher_tax(self):
-        group_by_str = """
-             GROUP BY
-                voucher.state,
-                avt.id,
-                voucher.date,
-                voucher.number,
-                p.name,
-                p.vat,
-                avt.tax_id
-        """
-        return group_by_str
-
-    def _args_for_voucher_tax(self, record):
-        period = record.period_id
-        company = record.company_id
-        tax = record.tax_id
-        base_code = record.base_code_id
-        tax_code = record.tax_code_id
-
-        args = (tax.id, base_code.id,
-                tax_code.id, period.id,
-                company.id)
-        return args
-
-    def get_voucher_tax(self, record):
-        """Prepare the report data from account_voucher_tax
-            base on selected tax, tax code, base code,
-            company and period on wizard.
-            :param recordset record: record of current wizard
-            :return: list of dictionary of value to print report
-        """
-
-        query = self._select_for_voucher_tax() + \
-            self._from_for_voucher_tax() + \
-            self._where_for_voucher_tax() + \
-            self._group_by_for_voucher_tax()
-
-        args = self._args_for_voucher_tax(record)
-        self.cr.execute(query, args)
-
-        voucher_tax = self.cr.dictfetchall()
-        return voucher_tax
-
-    def _select_for_invoice_tax(self):
-        select_str = """
+    def _get_supplier_tax_lines(self, record):
+        self.cr.execute("""
             SELECT
-                ait.id,
-                CASE WHEN invoice.state = 'cancel' THEN 0.0
-                    ELSE SUM(ait.base_amount) END as base_amount,
-                CASE WHEN invoice.state = 'cancel' THEN 0.0
-                    ELSE SUM(ait.tax_amount) END as tax_amount,
-                invoice.date_invoice as date,
-                invoice.internal_number as number,
-                p.name as partner_name,
-                p.vat as tax_id
-        """
-        return select_str
-
-    def _from_for_invoice_tax(self):
-        from_str = """
+                %s
             FROM
-                account_invoice_tax as ait
-            LEFT JOIN account_invoice invoice ON
-                (ait.invoice_id = invoice.id)
-            LEFT JOIN res_partner p ON
-                (invoice.partner_id = p.id)
-        """
-        return from_str
-
-    def _where_for_invoice_tax(self):
-        where_str = """
+                %s
             WHERE
-                invoice.state in ('cancel', 'open', 'paid') AND
-                invoice.internal_number is not null AND
-                ait.base_code_id = %s AND
-                ait.tax_code_id = %s AND
-                invoice.period_id = %s AND
-                ait.company_id =%s
-        """
-        return where_str
-
-    def _group_by_for_invoice_tax(self):
-        group_by_str = """
+                %s
             GROUP BY
-                invoice.state,
-                ait.id,
-                invoice.date_invoice,
-                invoice.internal_number,
-                p.name,
-                p.vat
-        """
-        return group_by_str
-
-    def _args_for_invoice_tax(self, record):
-        period = record.period_id
-        company = record.company_id
-        base_code = record.base_code_id
-        tax_code = record.tax_code_id
-        args = (base_code.id, tax_code.id, period.id, company.id)
-        return args
-
-    def get_invoice_tax(self, record):
-        """Prepare the report data from account_invoice_tax
-            base on selected tax code, base code,
-            company and period on wizard.
-            :param recordset record: record of current wizard
-            :return: list of dictionary of value to print report
-        """
-
-    #         CASE WHEN invoice.state = 'cancel'
-    #             THEN invoice.internal_number || ' (CANCELLED)'
-    #             ELSE invoice.internal_number END as number,
-    #             CASE WHEN invoice.state = 'cancel'
-    #                 THEN invoice.internal_number || ' (CANCELLED)'
-    #                 ELSE invoice.internal_number END as number,
-        query = self._select_for_invoice_tax() + \
-            self._from_for_invoice_tax() + \
-            self._where_for_invoice_tax() + \
-            self._group_by_for_invoice_tax()
-        args = self._args_for_invoice_tax(record)
-        self.cr.execute(query, args)
-        invoice_tax = self.cr.dictfetchall()
-        return invoice_tax
+                %s
+        """ % (self._get_select_tax_details(),
+               self._get_from_tax_details(),
+               self._get_where_tax_details(record),
+               self._get_groupby_tax_details()))
+        tax_details = self.cr.dictfetchall()
+        return tax_details
 
     def get_lines(self, record):
-        result = []
-        voucher_tax = self.get_voucher_tax(record)
-        result.extend(voucher_tax)
-        invoice_tax = self.get_invoice_tax(record)
-        result.extend(invoice_tax)
-        self.total_tax = sum(res['tax_amount'] for res in result)
-        self.total_base = sum(res['base_amount'] for res in result)
-        return result
+        tax_details = []
+        if record.tax_id.type_tax_use == 'sale':
+            tax_details = self._get_customer_tax_lines(record)
+        if record.tax_id.type_tax_use == 'purchase':
+            tax_details = self._get_supplier_tax_lines(record)
+        if record.tax_id.type_tax_use == 'all':
+            tax_details =\
+                self._get_customer_tax_lines(record) +\
+                self._get_supplier_tax_lines(record)
+
+        self.total_tax = sum(res['tax_amount'] for res in tax_details)
+        self.total_base = sum(res['base_amount'] for res in tax_details)
+        return tax_details
 
 
 class VatReportAbstarct(osv.AbstractModel):

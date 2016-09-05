@@ -82,10 +82,11 @@ class AccountBudget(models.Model):
         default=lambda self: self.env[
             'res.company']._company_default_get('account.budget')
     )
-    version = fields.Integer(
+    version = fields.Float(
         string='Version',
         readonly=True,
-        default=1,
+        default=1.0,
+        digits=(2, 1),
         help="Indicate revision of the same budget plan. "
         "Only latest one is used",
     )
@@ -177,7 +178,34 @@ class AccountBudget(models.Model):
         self.write({'state': 'done'})
         return True
 
+    # New Revision
+    @api.multi
+    def new_minor_revision(self):
+        self.ensure_one()
+        budget = self.copy()
+        self.latest_version = False
+        budget.latest_version = True
+        budget.version = self.version + 0.1
+        action = self.env.ref('account_budget_activity.'
+                              'act_account_budget_view')
+        result = action.read()[0]
+        dom = [('id', '=', budget.id)]
+        result.update({'domain': dom})
+        return result
+
     # ---- BUDGET CHECK ----
+    def convert_lines_to_doc_lines(self, lines):
+        result = []
+        for line in lines:
+            values = {}
+            for name, field in line._fields.iteritems():
+                if field.type == 'many2one':
+                    values[name] = line[name].id
+                elif field.type not in ['many2many', 'one2many']:
+                    values[name] = line[name]
+            result.append(values)
+        return result
+
     @api.model
     def get_fiscal_and_budget_level(self, budget_date=False):
         if not budget_date:
