@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-   
+
         <!-- Top menu item -->
         <menuitem name="Stock" id="menu_stock_request" groups="base.group_user" sequence="71"/>
         <menuitem name="Stock Operation" id="menu_stock_operation" parent="menu_stock_request" groups="stock.group_stock_user" sequence="10"/>
-	    
+
    		# Stock Request
         <record id="view_stock_request_filter" model="ir.ui.view">
             <field name="name">view.stock.request.filter</field>
@@ -28,7 +28,7 @@
                 </search>
             </field>
         </record>
-    
+
        	<record model="ir.ui.view" id="view_stock_request_tree">
             <field name="name">view.stock.request.tree</field>
             <field name="model">stock.request</field>
@@ -41,14 +41,14 @@
                 </tree>
             </field>
         </record>
-   		
+
         <record model="ir.ui.view" id="view_stock_request_form">
             <field name="name">view.stock.request.form</field>
             <field name="model">stock.request</field>
             <field name="arch" type="xml">
             	<form string="Stock Request" >
-                <header>    
-                		<!-- Request -->            
+                <header>
+                		<!-- Request -->
 	                    <button name="action_confirm" string="Request" type="object" class="oe_highlight"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'draft')]}"/>
 	                    <button name="action_verify" string="Verify" type="object" class="oe_highlight"
@@ -65,11 +65,11 @@
 	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_1"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
-	                    <button name="action_draft" string="Reset to Draft" type="object" 
+	                    <button name="action_draft" string="Reset to Draft" type="object"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'cancel')]}"/>
 
-                		<!-- Transfer -->  
+                		<!-- Transfer -->
 	                    <button name="action_prepare" string="Prepare Transfer" type="object" class="oe_highlight"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'draft')]}"/>
@@ -78,11 +78,11 @@
 	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_2"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', 'not in', ('draft','wait_confirm','confirmed','wait_approve','approved','ready'))]}"/>
-	                    <button name="action_draft" string="Reset to Draft" type="object" 
+	                    <button name="action_draft" string="Reset to Draft" type="object"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'transfer'), ('state', '!=', 'cancel')]}"/>
 
-                		<!-- Borrow -->  
+                		<!-- Borrow -->
 	                    <button name="action_request" string="Request" type="object" class="oe_highlight"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'draft')]}"/>
@@ -100,7 +100,7 @@
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'approved')]}"/>
 	                    <button name="action_transfer" string="Transfer" type="object" class="oe_highlight"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'ready')]}"/>
-	                    <button name="action_return" string="Return" type="object" class="oe_highlight" 
+	                    <button name="action_return" string="Return" type="object" class="oe_highlight"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'done')]}"/>
 	                    <button name="action_cancel" string="Reject" type="object" button_id="action_cancel_3"
@@ -109,7 +109,7 @@
 	                    <button name="action_draft" string="Reset to Draft" type="object"
 	                    	groups="stock.group_stock_user"
 	                    	attrs="{'invisible': ['|', ('type', '!=', 'borrow'), ('state', '!=', 'cancel')]}"/>
-	                    	
+
                     <field name="state" widget="statusbar" statusbar_visible="draft,done" />
                 </header>
                 <sheet>
@@ -164,7 +164,7 @@
 						            <field name="state" />
 					            </tree>
 		                   	</field>
-		                   	<!--                
+		                   	<!--
 		                   	<field name="line_ids" attrs="{'invisible': [('state', '=', 'draft')]}">
 		                   		<tree string="Products" editable="bottom"
 		                   			colors="black:product_uom_qty &lt;= future_qty;red:product_uom_qty &gt; future_qty" >
@@ -189,7 +189,7 @@
 						            <field name="product_uom" invisible="1"/>
 						            <field name="product_uom_readonly" />
 					            </tree>
-		                   	</field> -->		     
+		                   	</field> -->
 	           				<field name="note" placeholder="Notes..."/>
 	                   	</page>
 	                    <page string="Other Info" >
@@ -211,13 +211,13 @@
                 </form>
             </field>
         </record>
-        
+
         <!-- Menus and Actions -->
 		<record id="action_my_stock_request" model="ir.actions.act_window">
             <field name="name">My Stock Request</field>
             <field name="res_model">stock.request</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">form,tree</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
             <field name="domain">[('type', '=', 'request'),
@@ -232,8 +232,8 @@
 
 	    <menuitem action="action_my_stock_request" sequence="10"
 	    	id="menu_action_my_stock_request"  parent="menu_stock_operation"
-	    	groups="base.group_user" /> 
-        
+	    	groups="base.group_user" />
+
 		<record id="action_stock_request" model="ir.actions.act_window">
             <field name="name">Stock Request</field>
             <field name="res_model">stock.request</field>
@@ -252,9 +252,9 @@
 
 	    <menuitem action="action_stock_request" sequence="11"
 	    	id="menu_action_stock_request"  parent="menu_stock_operation"
-	    	groups="stock.group_stock_user" /> 
-	    	
-	    	
+	    	groups="stock.group_stock_user" />
+
+
 		<record id="action_stock_transfer" model="ir.actions.act_window">
             <field name="name">Stock Transfer</field>
             <field name="res_model">stock.request</field>
@@ -273,8 +273,8 @@
 
 	    <menuitem action="action_stock_transfer" sequence="12"
 	    	id="menu_action_stock_transfer"  parent="menu_stock_operation"
-	    	groups="stock.group_stock_user"/> 
-	    	
+	    	groups="stock.group_stock_user"/>
+
 		<record id="action_stock_borrow" model="ir.actions.act_window">
             <field name="name">Stock Borrow</field>
             <field name="res_model">stock.request</field>
@@ -293,7 +293,7 @@
 
 	    <menuitem action="action_stock_borrow" sequence="13"
 	    	id="menu_action_stock_borrow" parent="menu_stock_operation"
-	    	groups="stock.group_stock_user" /> 
-	    	       
+	    	groups="stock.group_stock_user" />
+
     </data>
 </openerp>
