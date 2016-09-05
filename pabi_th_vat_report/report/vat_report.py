@@ -30,8 +30,9 @@ class VatReportParser(vat_report.VatReportParser):
 
     def _get_where_tax_details(self, record):
         res = super(VatReportParser, self)._get_where_tax_details(record)
-        res = res + 'AND atd.taxbranch_id = %s' %(record.taxbranch_id.id)
+        res = res + 'AND atd.taxbranch_id = %s' % (record.taxbranch_id.id)
         return res
+
 
 class VatReportAbstarct(osv.AbstractModel):
     _name = "report.l10n_th_vat_report.report_vat"
