@@ -68,14 +68,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     )
     installment_amount = fields.Float(
         string='Installment Amount',
-        compute='_compute_installment_amount',
     )
-
-    @api.one
-    @api.depends('num_installment')
-    def _compute_installment_amount(self):
-        if self.num_installment > 0:
-            self.installment_amount = self.order_amount / self.num_installment
 
     @api.onchange('use_advance')
     def _onchange_use_advance(self):
@@ -182,10 +175,14 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
     @api.model
     def _compute_installment_details(self):
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
         if self.installment_ids:
             installment_date =\
                 datetime.strptime(self.installment_date, "%Y-%m-%d")
             count = 0
+            remaning_installment_amount = self.order_amount
+            last_line = False
             for i in self.installment_ids:
                 if i.is_advance_installment or i.is_deposit_installment:
                     i.date_invoice = self.installment_date
@@ -204,19 +201,27 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                         installment_date + relativedelta(days=+interval)
                 count += 1
                 i.date_invoice = installment_date
-                i.amount = self.installment_amount
-                obj_precision = self.env['decimal.precision']
-                prec = obj_precision.precision_get('Account')
-                if not self.order_amount:
-                    raise Warning(_('Order amount equal to 0.0!'))
+                remaning_installment_amount = remaning_installment_amount - self.installment_amount
+                if i.amount == 0.0 or i.amount != self.installment_amount:
+                    i.amount = self.installment_amount
                 new_val = i.amount / self.order_amount * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
+                last_line = i
+            if last_line and remaning_installment_amount:
+                last_line.amount = last_line.amount + remaning_installment_amount
+                new_val = last_line.amount / self.order_amount * 100
+                if round(new_val, prec) != round(last_line.percent, prec):
+                    last_line.percent = new_val
 
     @api.onchange('use_advance', 'num_installment', 'use_deposit')
     def _onchange_plan(self):
         order = self.env['purchase.order'].\
             browse(self._context.get('active_id'))
+
+        if self.num_installment > 0:
+            self.installment_amount = self.order_amount / self.num_installment
+
         i = 1
 
         lines = []
