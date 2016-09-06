@@ -17,6 +17,19 @@
                             <field name="use_deposit"/>
                         </group>
                     </group>
+                    <group>
+                        <group>
+                            <field name="installment_date"/>
+                            <field name="installment_amount"/>
+                        </group>
+                        <group>
+                            <label for="interval"/>
+                            <div>
+                                <field name="interval" class="oe_inline"/>
+                                <field name="interval_type" class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
                     <field name="installment_ids" nolabel="1" >
                         <tree string="Installments" create="0" delete="0" editable="bottom">
                             <field name="installment" />
