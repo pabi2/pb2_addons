@@ -16,6 +16,7 @@ Thai Vat Report
         'l10n_th_account_tax_detail',
     ],
     "data": [
+        "wizard/output_xls.xml",
         'wizard/vat_report_wizard_view.xml',
         'views/report_view.xml',
         'views/report.xml',

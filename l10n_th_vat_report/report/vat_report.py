@@ -4,6 +4,7 @@ from openerp.osv import osv
 
 
 class VatReportParser(report_sxw.rml_parse):
+
     def __init__(self, cr, uid, name, context):
         super(VatReportParser, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
@@ -42,7 +43,7 @@ class VatReportParser(report_sxw.rml_parse):
             atd.invoice_number as number,
             COALESCE(SUM(atd.amount), 0.0) as tax_amount,
             COALESCE(SUM(atd.base), 0.0) as base_amount,
-            atd.tax_sequence as tax_sequence
+            atd.tax_sequence_display as tax_sequence
         """
         return select_str
 

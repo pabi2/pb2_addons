@@ -120,12 +120,29 @@ class AccountTaxDetail(models.Model):
     amount = fields.Float(
         string='Tax',
     )
+    tax_sequence_display = fields.Char(
+        string='Sequence',
+        compute='_compute_tax_sequence_display',
+        store=True,
+    )
 
     _sql_constraints = [
         ('tax_sequence_uniq', 'unique(tax_sequence, period_id)',
             'Tax Detail Sequence has been used by other user, '
             'please validate document again'),
     ]
+
+    @api.multi
+    @api.depends('tax_sequence')
+    def _compute_tax_sequence_display(self):
+        for rec in self:
+            if rec.period_id and rec.tax_sequence:
+                date_start = rec.period_id.date_start
+                mo = datetime.strptime(date_start,
+                                                '%Y-%m-%d').date().month
+                month = '{:02d}'.format(mo)
+                sequence = '{:04d}'.format(rec.tax_sequence)
+                rec.tax_sequence_display = '%s/%s' % (month, sequence)
 
     @api.model
     def _get_next_sequence(self, period_id):
