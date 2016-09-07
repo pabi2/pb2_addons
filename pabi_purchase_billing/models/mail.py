@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, fields, _
+from openerp import models, api
 
 
 class Mail(models.Model):
@@ -11,4 +11,5 @@ class Mail(models.Model):
         if mail_sent and mail.model == 'purchase.billing':
             obj = self.env['purchase.billing'].browse(mail.res_id)
             obj.write({'email_sent':  True})
-        return super(Mail, self)._postprocess_sent_message(mail, mail_sent=mail_sent)
+        return super(Mail, self)._postprocess_sent_message(mail,
+                                                           mail_sent=mail_sent)
