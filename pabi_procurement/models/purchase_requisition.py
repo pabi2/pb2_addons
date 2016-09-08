@@ -374,6 +374,11 @@ class PurchaseRequisition(models.Model):
             raise UserError(
                 _('Product line cannot be empty.')
             )
+        for line in self.line_ids:
+            if not line.product_id:
+                raise UserError(
+                    _("You have to specify products first.")
+                )
         types = [(l.product_id.type in ('product', 'consu') and
                   'stock' or
                   l.product_id.type) for l in self.line_ids]
