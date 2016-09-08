@@ -258,12 +258,12 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def _add_line_data(self, fields, data):
-        if 'fund_id' not in fields:
+        if 'line_ids/fund_id' not in fields:
             new_data = []
             for data_line in data:
-                data_line = data_line +('NSTDA',)
+                data_line = data_line +(u'NSTDA',)
                 new_data.append(data_line)
-            fields = fields +('fund_id',)
+            fields.append('line_ids/fund_id')
             return fields, new_data
         else:
             return fields, data
