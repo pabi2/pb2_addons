@@ -682,3 +682,6 @@ class PurchaseRequisitionCommittee(models.Model):
         'purchase.committee.type',
         string='Type',
     )
+    product_id = fields.Many2one(
+        required=True,
+    )
