@@ -59,9 +59,10 @@
                        position="after">
                     <field name="purchase_method_id"/>
                     <field name="purchase_price_range_id"/>
-                    <field name="purchase_condition_id"/>
-                    <field name="purchase_condition_detail_id"/>
-                    <field name="purchase_condition_detail"/>
+                    <field name="require_rfq" invisible='1'/>
+                    <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>

@@ -225,6 +225,10 @@ class PurchaseRequisition(models.Model):
         string='Is sent to PABI Web',
         default=False,
     )
+    require_rfq = fields.Boolean(
+        string='Require for RFQs',
+        related='purchase_method_id.require_rfq',
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
