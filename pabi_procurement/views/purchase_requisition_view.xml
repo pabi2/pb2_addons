@@ -10,6 +10,15 @@
                 <xpath expr="//form[@string='Call for Bids']" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
+                <xpath expr="//field[@name='name']"
+                       position="attributes">
+                    <attribute name="attrs"/>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']"
+                       position="attributes">
+                    <attribute name="widget">date</attribute>
+                </xpath>
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
                 <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
@@ -21,8 +30,8 @@
                     <field name="is_central_purchase"/>
                     <field name="purchase_type_id"/>
                     <field name="objective"/>
-                    <field name="description"/>
-                    <field name="total_budget_value"/>
+                    <field name="description" string="Reason"/>
+                    <field name="total_budget_value" attrs="{'invisible': [('total_budget_value', '=', 0)]}"/>
                     <field name="purchase_prototype_id"/>
                     <field name="request_uid"/>
                     <field name="assign_uid"/>

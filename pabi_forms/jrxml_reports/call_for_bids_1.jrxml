@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.464100000000027"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="342"/>
+	<property name="ireport.zoom" value="3.1384283767210617"/>
+	<property name="ireport.x" value="1251"/>
+	<property name="ireport.y" value="767"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -942,7 +942,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="55">
+		<band height="71">
 			<staticText>
 				<reportElement x="37" y="3" width="166" height="21"/>
 				<textElement lineSpacing="Single">
@@ -987,6 +987,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{footer}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="50" width="565" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ทั้งนี้ได้เป็นตามข้อบังคับคณะกรรมการพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติว่าด้วยการพัสดุ พ.ศ. 2543 ข้อ 18]]></text>
+			</staticText>
 		</band>
 		<band height="71">
 			<staticText>
