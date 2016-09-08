@@ -59,7 +59,7 @@
                        position="after">
                     <field name="purchase_method_id"/>
                     <field name="purchase_price_range_id"/>
-                    <field name="purchase_condition_id" attrs="{'invisible': [('purchase_method_id.require_rfq', '!=', 1)]}"/>
+                    <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>
                     <field name="purchase_condition_detail"/>
                     <field name="currency_id"/>
