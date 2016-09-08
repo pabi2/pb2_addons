@@ -21,6 +21,7 @@ the invoice date and due date be set for all selected documents.
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/purchase_billing_email_template.xml",
         "data/purchase_billing_sequence.xml",
         "views/purchase_billing_view.xml",
         "views/account_invoice_view.xml",
