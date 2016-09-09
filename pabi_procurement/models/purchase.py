@@ -146,8 +146,17 @@ class PurchaseOrder(models.Model):
         self.dummy_quote_id = self.id
 
     @api.model
+    def _check_request_for_quotation(self):
+        if self.requisition_id.purchase_method_id.require_rfq:
+            raise UserError(
+                _("Can't convert to order. Have to wait for PD approval.")
+            )
+        return True
+
+    @api.model
     def by_pass_approve(self, ids):
         quotation = self.browse(ids)
+        quotation._check_request_for_quotation()
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
