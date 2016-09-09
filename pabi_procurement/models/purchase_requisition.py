@@ -269,11 +269,11 @@ class PurchaseRequisition(models.Model):
         res['domain'] = [('order_id', 'in', pur_line_ids)]
         return res
 
-    @api.multi
-    def by_pass_approve(self):
-        po_obj = self.env["purchase.order"]
-        po_obj.action_button_convert_to_order()
-        return True
+    # @api.multi
+    # def by_pass_approve(self):
+    #     po_obj = self.env["purchase.order"]
+    #     po_obj.action_button_convert_to_order()
+    #     return True
 
     @api.multi
     def create_approval_no(self):

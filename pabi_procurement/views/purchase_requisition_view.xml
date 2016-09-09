@@ -92,11 +92,12 @@
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
                     <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok" confirm="Approve this RfQ?"/>
                 </xpath>
-                <xpath expr="//button[@name='purchase_cancel']" position="attributes">
-                    <attribute name="confirm">Cancel this RfQ?</attribute>
-                </xpath>
                 <xpath expr="//button[@name='purchase_confirm']" position="attributes">
                     <attribute name="confirm">Confirm this RfQ?</attribute>
+                </xpath>
+                <xpath expr="//button[@name='purchase_cancel']" position="replace">
+                    <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
+
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">

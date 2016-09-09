@@ -163,6 +163,24 @@ class PurchaseOrder(models.Model):
         return True
 
     @api.multi
+    def wkf_action_cancel(self):
+        res = super(PurchaseOrder, self).wkf_action_cancel()
+        for order in self:
+            self.state2 = 'cancel'
+            if order.quote_id:
+                order.quote_id.wkf_action_cancel()
+                order.quote_id.state2 = 'cancel'
+        return res
+
+    @api.model
+    def by_pass_cancel(self, ids):
+        quotation = self.browse(ids)
+        quotation.action_cancel()
+        if quotation.state != 'cancel':
+            quotation.state = 'cancel'
+        return True
+
+    @api.multi
     def wkf_validate_invoice_method(self):
         """ Change invoice method to 'or' when picking + service """
         for po in self:
@@ -331,16 +349,6 @@ class PurchaseOrder(models.Model):
                 self.signal_workflow(cr, uid, [old_id], 'purchase_cancel')
 
         return orders_info
-
-    @api.multi
-    def wkf_action_cancel(self):
-        res = super(PurchaseOrder, self).wkf_action_cancel()
-        for order in self:
-            self.state2 = 'cancel'
-            if order.quote_id:
-                order.quote_id.wkf_action_cancel()
-                order.quote_id.state2 = 'cancel'
-        return res
 
 
 class PurchaseOrderLine(models.Model):
