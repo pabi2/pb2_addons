@@ -106,6 +106,12 @@ class PurchaseOrder(models.Model):
         readonly=True,
         default=False,
     )
+    select_reason = fields.Many2one(
+        'purchase.select.reason',
+        string='Selected Reason',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -390,6 +396,16 @@ class PurchasePrototype(models.Model):
 
     name = fields.Char(
         string='Prototype',
+        required=True,
+    )
+
+
+class PurchaseSelectReason(models.Model):
+    _name = 'purchase.select.reason'
+    _description = 'PABI2 Purchase Selected Reason'
+
+    name = fields.Char(
+        string='Select Reason',
         required=True,
     )
 
