@@ -115,9 +115,15 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                             _('For invoice plan mode "As 1 Job", '
                               'all line quantity must equal to 1'))
 
+    @api.model
+    def _check_installment_amount(self):
+        if any([i.amount < 0 for i in self.installment_ids]):
+            raise UserError(_('Negative installment amount not allowed!'))
+
     @api.one
     def do_create_purchase_invoice_plan(self):
         self._validate_total_amount()
+        self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
             self.installment_ids)
         order = self.env['purchase.order'].browse(self._context['active_id'])
@@ -201,14 +207,18 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                         installment_date + relativedelta(days=+interval)
                 count += 1
                 i.date_invoice = installment_date
-                remaning_installment_amount = remaning_installment_amount - self.installment_amount
-                if i.amount == 0.0 or i.amount != self.installment_amount:
+                if remaning_installment_amount > self.installment_amount:
                     i.amount = self.installment_amount
+                elif remaning_installment_amount < 0:
+                    i.amount = 0
+                else:
+                    i.amount = remaning_installment_amount
+                remaning_installment_amount = remaning_installment_amount - self.installment_amount
                 new_val = i.amount / self.order_amount * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
                 last_line = i
-            if last_line and remaning_installment_amount:
+            if last_line and remaning_installment_amount > 0:
                 last_line.amount = last_line.amount + remaning_installment_amount
                 new_val = last_line.amount / self.order_amount * 100
                 if round(new_val, prec) != round(last_line.percent, prec):
