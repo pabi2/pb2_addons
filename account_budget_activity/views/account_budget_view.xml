@@ -6,13 +6,13 @@
 	        <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="100"/>
         	<menuitem name="Budget Monitor" id="menu_action_budget_report" parent="menu_budgeting" sequence="110"/>
 	        <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="120"/>
-        
+
 
         <record model="ir.ui.view" id="account_budget_view_form">
             <field name="name">account.budget.view.form</field>
             <field name="model">account.budget</field>
             <field name="arch" type="xml">
-                <form string="Budget">
+                <form string="Budget" duplicate="false">
                     <header>
                         <button string="Confirm" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
                         <button string="Approve" name="validate" states="confirm" type="workflow" class="oe_highlight"/>
@@ -32,7 +32,7 @@
 	                    <div class="oe_right oe_button_box" name="buttons">
 		                    <button class="oe_inline oe_stat_button" icon="fa-bookmark-o">
 		                        <field name="version" widget="statinfo"/>
-		                    </button>	       
+		                    </button>
 		                    <field name="latest_version" invisible="1"/>
 		                    <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up"
 		                    	string="Latest"
@@ -47,7 +47,7 @@
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration"/>
                                 <div>
-                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> -
                                     <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company" widget="selection"/>
@@ -148,7 +148,7 @@
         <menuitem parent="menu_action_account_budget_control"
             id="menu_act_account_budget_view"
             action="act_account_budget_view" sequence="1" />
-        
+
        <!--record id="view_account_budget_line_search" model="ir.ui.view">
             <field name="name">account.budget.line.search</field>
             <field name="model">account.budget.line</field>
@@ -158,15 +158,15 @@
                 </search>
             </field>
         </record-->
-        
+
         <record model="ir.ui.view" id="view_account_budget_line_tree">
             <field name="name">account.budget.line.tree</field>
             <field name="model">account.budget.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Lines">
                     <!--field name="analytic_account_id" groups="analytic.group_analytic_accounting"/-->
-                    <field name="budget_id" invisible="1"/>                                        
-                    <field name="fiscalyear_id" />                                            
+                    <field name="budget_id" invisible="1"/>
+                    <field name="fiscalyear_id" />
                 	<button name="%(action_budget_release_wizard)d"
                      	string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="planned_amount" sum="Planned Amount"/>
@@ -194,7 +194,7 @@
                 <form string="Budget Lines">
                     <sheet>
                     	<group>
-	                        <group>                	
+	                        <group>
 			                    <field name="planned_amount" sum="Planned Amount"/>
 			                    <field name="released_amount" sum="Released Amount"/>
 	                        </group>
@@ -266,5 +266,3 @@
 
     </data>
 </openerp>
-
-
