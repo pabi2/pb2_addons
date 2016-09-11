@@ -10,6 +10,15 @@
                 <xpath expr="//form[@string='Call for Bids']" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
+                <xpath expr="//field[@name='name']"
+                       position="attributes">
+                    <attribute name="attrs"/>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']"
+                       position="attributes">
+                    <attribute name="widget">date</attribute>
+                </xpath>
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
                 <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
@@ -21,8 +30,8 @@
                     <field name="is_central_purchase"/>
                     <field name="purchase_type_id"/>
                     <field name="objective"/>
-                    <field name="description"/>
-                    <field name="total_budget_value"/>
+                    <field name="description" string="Reason"/>
+                    <field name="total_budget_value" attrs="{'invisible': [('total_budget_value', '=', 0)]}"/>
                     <field name="purchase_prototype_id"/>
                     <field name="request_uid"/>
                     <field name="assign_uid"/>
@@ -50,9 +59,10 @@
                        position="after">
                     <field name="purchase_method_id"/>
                     <field name="purchase_price_range_id"/>
-                    <field name="purchase_condition_id"/>
-                    <field name="purchase_condition_detail_id"/>
-                    <field name="purchase_condition_detail"/>
+                    <field name="require_rfq" invisible='1'/>
+                    <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
@@ -82,11 +92,12 @@
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
                     <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok" confirm="Approve this RfQ?"/>
                 </xpath>
-                <xpath expr="//button[@name='purchase_cancel']" position="attributes">
-                    <attribute name="confirm">Cancel this RfQ?</attribute>
-                </xpath>
                 <xpath expr="//button[@name='purchase_confirm']" position="attributes">
                     <attribute name="confirm">Confirm this RfQ?</attribute>
+                </xpath>
+                <xpath expr="//button[@name='purchase_cancel']" position="replace">
+                    <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
+
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">

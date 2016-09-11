@@ -8,6 +8,7 @@
                 <search string="Search Billings">
                     <filter string="Draft" domain="[('state','=','draft')]" help="Draft Billing"/>
                     <filter string="Billed" domain="[('state','=','billed')]" help="Billed Billing"/>
+                    <filter string="Billed, not printed" domain="[('email_sent','=',False), ('state','=','billed')]" help="Billed Billing"/>
                     <field name="name"/>
                     <field name="date"/>    
                     <field name="partner_id" string="Customer"/>

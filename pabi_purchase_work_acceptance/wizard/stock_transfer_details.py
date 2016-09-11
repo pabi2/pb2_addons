@@ -27,3 +27,20 @@ class StockTransferDetails(models.TransientModel):
                 new_item_ids.append(item)
             res['item_ids'] = new_item_ids
         return res
+
+    @api.one
+    def do_detailed_transfer(self):
+        Picking = self.env['stock.picking']
+        picking_ids = self.env.context['active_ids'] or []
+        picking = Picking.browse(picking_ids)
+        if picking.picking_type_code == 'incoming':
+            for item in self.item_ids:
+                for wa_line in picking.acceptance_id.acceptance_line_ids:
+                    if wa_line.product_id.id == item.product_id.id:
+                        if item.quantity > wa_line.to_receive_qty:
+                            raise UserError(
+                                _("Can't receive product's quantity over than "
+                                  "work acceptance's quantity.")
+                            )
+        res = super(StockTransferDetails, self).do_detailed_transfer()
+        return res

@@ -257,6 +257,30 @@ class PurchaseRequest(models.Model):
             return fields, [tuple(data)]   # one line sales order
 
     @api.model
+    def _add_line_data(self, fields, data):
+        if 'line_ids/fund_id.id' not in fields:
+            new_data = []
+            for data_line in data:
+                data_line = data_line +(u'NSTDA',)
+                new_data.append(data_line)
+            fields.append('line_ids/fund_id')
+            return fields, new_data
+        else:
+            Fund = self.env['res.fund']
+            fund = Fund.search([
+                ('name', '=', 'NSTDA'),
+            ])
+            fund_idx = fields.index('line_ids/fund_id.id')
+            new_data = []
+            for data_line in data:
+                if not data_line[fund_idx]:
+                    lst = list(data_line)
+                    lst[fund_idx] = fund.id
+                    data_line = tuple(lst)
+                new_data.append(data_line)
+            return fields, new_data
+
+    @api.model
     def create_purchase_request_attachment(self, data_dict, pr_id):
         attachment_ids = []
         attach_data = {}

@@ -225,6 +225,10 @@ class PurchaseRequisition(models.Model):
         string='Is sent to PABI Web',
         default=False,
     )
+    require_rfq = fields.Boolean(
+        string='Require for RFQs',
+        related='purchase_method_id.require_rfq',
+    )
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -265,11 +269,11 @@ class PurchaseRequisition(models.Model):
         res['domain'] = [('order_id', 'in', pur_line_ids)]
         return res
 
-    @api.multi
-    def by_pass_approve(self):
-        po_obj = self.env["purchase.order"]
-        po_obj.action_button_convert_to_order()
-        return True
+    # @api.multi
+    # def by_pass_approve(self):
+    #     po_obj = self.env["purchase.order"]
+    #     po_obj.action_button_convert_to_order()
+    #     return True
 
     @api.multi
     def create_approval_no(self):
@@ -374,6 +378,11 @@ class PurchaseRequisition(models.Model):
             raise UserError(
                 _('Product line cannot be empty.')
             )
+        for line in self.line_ids:
+            if not line.product_id:
+                raise UserError(
+                    _("You have to specify products first.")
+                )
         types = [(l.product_id.type in ('product', 'consu') and
                   'stock' or
                   l.product_id.type) for l in self.line_ids]
@@ -681,4 +690,7 @@ class PurchaseRequisitionCommittee(models.Model):
     committee_type_id = fields.Many2one(
         'purchase.committee.type',
         string='Type',
+    )
+    product_id = fields.Many2one(
+        required=True,
     )
