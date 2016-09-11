@@ -445,7 +445,6 @@ class ChartField(object):
             ('personnel_costcenter_ids', 'in',
                 [personnel_costcenter_id or 0])]
         """
-        print domain_str
         return domain_str
 
     @api.multi
