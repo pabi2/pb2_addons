@@ -32,6 +32,9 @@ class PurchaseRequest(models.Model):
         'ir.attachment',
         'res_id',
         string='Attach Files',
+        domain=[
+            ('res_model', '=', 'purchase.request'),
+        ],
         readonly=False,
     )
     date_approve = fields.Date(
