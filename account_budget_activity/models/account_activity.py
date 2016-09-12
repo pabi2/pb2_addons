@@ -34,9 +34,10 @@ class AccountActivityGroup(models.Model):
         string='Right Parent',
         select=True,
     )
-    activity_ids = fields.One2many(
+    activity_ids = fields.Many2many(
         'account.activity',
-        'activity_group_id',
+        'activity_group_activity_rel',
+        'activity_group_id', 'activity_id',
         string='Activities',
     )
 #     account_id = fields.Many2one(
@@ -81,10 +82,11 @@ class AccountActivity(models.Model):
     _name = 'account.activity'
     _description = 'Activity'
 
-    activity_group_id = fields.Many2one(
+    activity_group_ids = fields.Many2many(
         'account.activity.group',
-        string='Activity Group',
-        ondelete='set null',
+        'activity_group_activity_rel',
+        'activity_id', 'activity_group_id',
+        string='Activity Groups',
     )
     tag_ids = fields.Many2many(
         'account.activity.tag',
@@ -156,7 +158,7 @@ class ActivityCommon(object):
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
-        domain="[('activity_group_id', '=', activity_group_id)]",
+        domain="[('activity_group_ids', 'in', [activity_group_id])]",
     )
 
     @api.model
@@ -193,9 +195,7 @@ class ActivityCommon(object):
 
     @api.onchange('activity_group_id')
     def _onchange_activity_group_id(self):
-        return self._onchange_focus_field(focus_field='activity_group_id',
-                                          parent_field=False,
-                                          child_field='activity_id')
+        self.activity_id = False
 
     @api.multi
     @api.constrains('activity_id', 'product_id')

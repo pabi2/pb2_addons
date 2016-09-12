@@ -51,7 +51,7 @@
 	                    <page string="Activities">
 	                    	<field name="activity_ids">
 				                <tree string="Activity" editable="bottom">
-		                    		<field name="activity_group_id" invisible="1"/>
+		                    		<field name="activity_group_ids" invisible="1"/>
 				                    <field name="name"/>
                     				<field name="account_id" />
 				                </tree>
@@ -76,7 +76,7 @@
             	</form>
             </field>
         </record>
-    	
+
     	<!-- Activity by Group -->
         <record id="view_account_activity_group_chart_tree" model="ir.ui.view">
             <field name="name">view.account.activity.group.chart.tree</field>
@@ -123,7 +123,7 @@
             <field name="name">Activities by Group</field>
             <field eval="'ir.actions.act_window,%d'%view_account_activity_action_tree" name="value"/>
         </record>
-    	
+
     	# Activity
         <record id="view_account_activity_search" model="ir.ui.view">
             <field name="name">view.account.activity.search</field>
@@ -131,7 +131,7 @@
             <field name="arch" type="xml">
                 <search string="Activity">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Activity"/>
-                    <field name="activity_group_id" filter_domain="[('activity_group_id', 'child_of', self)]"/>
+                    <field name="activity_group_ids" filter_domain="[('activity_group_ids', 'child_of', self)]"/>
                 </search>
             </field>
         </record>
@@ -142,7 +142,7 @@
             <field name="arch" type="xml">
                 <tree string="Activity">
                     <field name="name"/>
-                    <field name="activity_group_id"/>
+                    <field name="activity_group_ids"/>
                    	<!--field name="account_id"/-->
                 </tree>
             </field>
@@ -168,8 +168,8 @@
 	                        <field name="account_id"/>
                     	</group>
                         <group>
-                    		<field name="activity_group_id" required="1"/>
-							<field name="tag_ids" widget="many2many_tags"/>                    		
+                    		<field name="activity_group_ids" required="1" widget="many2many_tags"/>
+							<field name="tag_ids" widget="many2many_tags"/>
                     	</group>
                     </group>
                     <notebook>
