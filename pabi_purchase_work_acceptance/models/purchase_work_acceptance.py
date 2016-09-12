@@ -532,10 +532,10 @@ class PurchaseWorkAcceptanceLine(models.Model):
         string='UoM',
     )
 
-    # @api.constrains('to_receive_qty')
-    # def _check_over_qty(self):
-    #     if self.to_receive_qty > self.balance_qty:
-    #         raise UserError(
-    #             _("Can't receive product's quantity over than "
-    #               "work acceptance's quantity.")
-    #         )
+    @api.constrains('to_receive_qty')
+    def _check_over_qty(self):
+        if self.to_receive_qty > self.balance_qty:
+            raise UserError(
+                _("To receive quantity can't be over than "
+                  "balance quantity.")
+            )
