@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*-
+
+{
+    'name': 'NSTDA :: PABI2 - Purchase Invoice Plan',
+    'version': '8.0.1.0.0',
+    'author': 'Ecosoft',
+    'website': 'http://ecosoft.co.th',
+    'depends': [
+        'purchase_invoice_plan',
+    ],
+    "description": """
+    Purchase invoice plan by fiscal year
+    """,
+    'data': [
+        'views/purchase_view.xml',
+        'wizard/purchase_create_invoice_plan_view.xml',
+    ],
+    'installable': True,
+    'auto_install': False,
+}
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
