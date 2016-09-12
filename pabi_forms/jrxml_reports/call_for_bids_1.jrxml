@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.6105100000000323"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="623"/>
+	<property name="ireport.zoom" value="1.3310000000000266"/>
+	<property name="ireport.x" value="43"/>
+	<property name="ireport.y" value="210"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -97,7 +97,7 @@ pdl.price_subtotal,
 pu.name unit
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_request_purchase_requisition_line_rel prpd
-ON prpd.purchase_requisition_line_id = pdl.requisition_id
+ON prpd.purchase_requisition_line_id = pdl.id
 LEFT JOIN purchase_request_line prl
 ON prl.id = prpd.purchase_request_line_id
 LEFT JOIN purchase_request pr
@@ -392,7 +392,7 @@ ON pm.id = pd.purchase_method_id
 LEFT JOIN purchase_price_range ppr
 ON ppr.id = pd.purchase_price_range_id
 LEFT JOIN purchase_order po
-ON po.requisition_id = pd.id AND po.state = 'done'
+ON po.requisition_id = pd.id AND po.state = 'confirmed'
 
 WHERE $X{IN, pd.id, PIDS}]]>
 	</queryString>
@@ -1336,22 +1336,22 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[เสนอหัวหน้าเจ้าหน้าที่พัสดุหรือผู้ที่ได้รับมอบหมาย]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="216" y="32" width="255" height="21"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<reportElement x="220" y="32" width="255" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ลงชื่อ "
 +
-($F{verified_by} == null ?  "_________________________": $F{verified_by})]]></textFieldExpression>
+($F{verified_by} == null ?  "_________________________": "<u>" + $F{verified_by} + "</u>")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="397" y="32" width="229" height="21"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<reportElement x="401" y="32" width="229" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ลงชื่อ "
 +
-($F{approver} == null ?  "_________________________": $F{approver})]]></textFieldExpression>
+($F{approver} == null ?  "_________________________": "<u>" + $F{approver} + "</u>")]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="61" y="49" width="60" height="21"/>
@@ -1404,12 +1404,12 @@ WHERE $X{IN, pd.id, PIDS}]]>
 			</textField>
 			<textField>
 				<reportElement x="27" y="32" width="245" height="21"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ลงชื่อ "
 +
-($F{responsible} == null ?  "_________________________": $F{responsible})]]></textFieldExpression>
+($F{responsible} == null ?  "_________________________": "<u>" + $F{responsible} + "</u>")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
