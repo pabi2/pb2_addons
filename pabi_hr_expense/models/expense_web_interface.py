@@ -18,6 +18,8 @@ class HRExpense(models.Model):
             'name': u'From Description field',  # objective
             'note': u'From Reason field',
             'apweb_ref_url': u'XXX',
+            'receive_method': '1',  # 0, 1
+            'employee_bank_id.id': u'99',
             'line_ids': [  # 1 line only, Advance
                 {
                     'section_id.id': u'1276',
@@ -26,7 +28,7 @@ class HRExpense(models.Model):
                     'invest_construction_phase_id.id': u'',
                     'fund_id.id': u'1',
                     'is_advance_product_line': u'True',
-                    'name': u'Employee Advance',  # Expense Note (not in AF?)
+                    'name': u'Employee Advance',
                     'unit_amount': u'2000',  # total
                     'cost_control_id.id': u'',
                 },
