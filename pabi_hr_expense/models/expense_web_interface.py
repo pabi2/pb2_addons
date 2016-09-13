@@ -56,10 +56,12 @@ class HRExpense(models.Model):
             ],
             'attendee_external_ids': [
                 {
+                    'sequence': u'1',
                     'attendee_name': u'Walai.',
                     'position': u'Manager',
                 },
                 {
+                    'sequence': u'2',
                     'attendee_name': u'Thongchai.',
                     'position': u'Programmer',
                 },
