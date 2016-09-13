@@ -11,20 +11,31 @@ class HRExpense(models.Model):
             'is_employee_advance': u'True',
             'number': u'/',  # av_id
             'employee_code': u'004012',  # request for employee
+            'preparer_code': u'004012',  # request for employee
             'date': u'2016-01-31',  # by_time
-            'write_date': u'2016-01-31 00:00:00',  # updated_time
             'advance_type': u'attend_seminar',  # attend_seminar, buy_product
-            'date_back': u'2016-10-30',  # cost_control_to
-            'name': u'Object of this Advance',  # objective
-            'apweb_ref_url': u'',
+            'date_back': u'2016-10-30',  # back from seminar
+            'name': u'From Description field',  # objective
+            'note': u'From Reason field',
+            'apweb_ref_url': u'XXX',
             'line_ids': [  # 1 line only, Advance
                 {
+                    'section_id.id': u'1276',
+                    'project_id.id': u'',
+                    'invest_asset_id.id': u'',
+                    'invest_construction_phase_id.id': u'',
+                    'fund_id.id': u'1',
                     'is_advance_product_line': u'True',
                     'name': u'Employee Advance',  # Expense Note (not in AF?)
                     'unit_amount': u'2000',  # total
                     'cost_control_id.id': u'',
                 },
                 {
+                    'section_id.id': u'1276',
+                    'project_id.id': u'',
+                    'invest_asset_id.id': u'',
+                    'invest_construction_phase_id.id': u'',
+                    'fund_id.id': u'2',
                     'is_advance_product_line': u'True',
                     'name': u'Employee Advance 2',  # Expense Note (not in AF?)
                     'unit_amount': u'3000',  # total
@@ -33,26 +44,22 @@ class HRExpense(models.Model):
             ],
             'attendee_employee_ids': [
                 {
+                    'sequence': u'1',
                     'employee_code': u'000143',
-                    'position_id.id': u'',
                 },
                 {
+                    'sequence': u'2',
                     'employee_code': u'000165',
-                    'position_id.id': u'',
-                },
-                {
-                    'employee_code': u'000166',
-                    'position_id.id': u'',
-                },
-                {
-                    'employee_code': u'000177',
-                    'position_id.id': u'',
                 },
             ],
             'attendee_external_ids': [
                 {
-                    'attendee_name': u'Walai Charoenchaimongkol',
+                    'attendee_name': u'Walai.',
                     'position': u'Manager',
+                },
+                {
+                    'attendee_name': u'Thongchai.',
+                    'position': u'Programmer',
                 },
             ],
             'attachment_ids': [
@@ -73,11 +80,16 @@ class HRExpense(models.Model):
     @api.model
     def _pre_process_hr_expense(self, data_dict):
         Employee = self.env['hr.employee']
-        # employee_code to employee_id.idย
+        # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
         employee = Employee.search(domain)
         data_dict['employee_id.id'] = employee.id
         del data_dict['employee_code']
+        # preparer_code to user_id.id
+        domain = [('employee_code', '=', data_dict.get('preparer_code'))]
+        employee = Employee.search(domain)
+        data_dict['user_id.id'] = employee.user_id.id
+        del data_dict['preparer_code']
         # OU based on employee
         data_dict['operating_unit_id.id'] = \
             employee.org_id.operating_unit_id.id

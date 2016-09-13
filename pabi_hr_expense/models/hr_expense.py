@@ -11,11 +11,6 @@ class HRExpense(models.Model):
         string='PABI Web Ref.',
         readonly=True, states={'draft': [('readonly', False)]},
     )
-    create_uid = fields.Many2one(
-        'res.users',
-        string='Prepared by',
-        readonly=True,
-    )
     date = fields.Date(
         string='Approved Date',
     )
@@ -30,6 +25,13 @@ class HRExpense(models.Model):
         string='Due Date',
         related='advance_due_history_ids.date_due',
         store=True,
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    receive_method = fields.Selection(
+        [('0', 'BBL (e-Payment System)'),
+         ('1', 'Bank')],
+        string='Receive Method',
+        default='0',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     employee_bank_id = fields.Many2one(
@@ -204,17 +206,16 @@ class HRExpenseAttendeeEmployee(models.Model):
     )
     position_id = fields.Many2one(
         'hr.position',
+        related='employee_id.position_id',
         string='Position',
+        store=True,
     )
     section_id = fields.Many2one(
         'res.section',
+        related='employee_id.section_id',
         string='Section',
+        store=True,
     )
-    project_id = fields.Many2one(
-        'res.project',
-        string='Project',
-    )
-    # TODO: may display section_id and project_id in same column to save space
 
 
 class HRExpenseAttendeeExternal(models.Model):
