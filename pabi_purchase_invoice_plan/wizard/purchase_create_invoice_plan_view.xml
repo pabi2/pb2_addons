@@ -9,6 +9,9 @@
                 <xpath expr="//field[@name='use_advance']" position="before">
                     <field name="by_fiscalyear"/>
                 </xpath>
+                <xpath expr="//field[@name='installment_ids']/tree/field[@name='date_invoice']" position="before">
+                    <field name="fiscalyear_id"/>
+                </xpath>
             </field>
         </record>
     </data>

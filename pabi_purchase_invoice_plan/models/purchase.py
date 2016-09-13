@@ -21,3 +21,12 @@ class PurchaseOrderLine(models.Model):
         related='order_id.by_fiscalyear',
         string='By Fiscal Year',
     )
+
+
+class PurchaseInvoicePlan(models.Model):
+    _inherit = "purchase.invoice.plan"
+
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+    )
