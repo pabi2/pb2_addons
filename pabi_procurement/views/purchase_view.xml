@@ -146,7 +146,7 @@
                     <attribute name="required">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
-                    <field name="fiscal_year_id"/>
+                    <field name="fiscalyear_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
