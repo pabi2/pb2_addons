@@ -9,6 +9,11 @@ class ResCommon(object):
         required=True,
         translate=True,
     )
+    name_short = fields.Char(
+        string='Short Name',
+        size=10,
+        translate=True,
+    )
     code = fields.Char(
         string='Code',
     )
