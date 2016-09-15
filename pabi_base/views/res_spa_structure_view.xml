@@ -28,6 +28,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group string="Tag">
                             <field name="org_id"/>
@@ -87,6 +88,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group></group>
                         <group string="Tag">
@@ -153,6 +155,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group string="Based On">
                             <field name="functional_area_id"/>
@@ -219,6 +222,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group string="Based On">
                             <field name="functional_area_id"/>
@@ -293,6 +297,7 @@
                             <field name="name_short"/>
                             <field name="costcenter_id"/>
                             <field name="date_start"/>
+                            <field name="active"/>
                         </group>
                         <group string="Based On">
                             <field name="functional_area_id"/>

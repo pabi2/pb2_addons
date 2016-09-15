@@ -17,6 +17,10 @@ class ResCommon(object):
     code = fields.Char(
         string='Code',
     )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
 
     @api.multi
     def name_get(self):

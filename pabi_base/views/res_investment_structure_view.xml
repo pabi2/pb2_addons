@@ -13,7 +13,7 @@
                 </tree>
             </field>
         </record>
-        
+
         <record id="view_res_invest_asset_form" model="ir.ui.view">
             <field name="name">view.res.invest.asset.form</field>
             <field name="model">res.invest.asset</field>
@@ -32,6 +32,7 @@
                     		<field name="code"/>
                     		<field name="org_id" />
                     		<field name="costcenter_id" />
+                        <field name="active"/>
                     	</group>
                     </group>
                     <notebook>
@@ -48,7 +49,7 @@
                 </form>
             </field>
         </record>
-        
+
         <record id="view_res_invest_asset_search" model="ir.ui.view">
             <field name="name">view.res.invest.asset.search</field>
             <field name="model">res.invest.asset</field>
@@ -57,7 +58,7 @@
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
                  </search>
             </field>
-        </record>    
+        </record>
 
         <record id="action_res_invest_asset" model="ir.actions.act_window">
             <field name="name">Investment Asset</field>
@@ -65,13 +66,13 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_res_invest_asset_tree"/>
         </record>
-        
+
         <menuitem name="Investment Asset"
-        	id="menu_res_invest_asset" 
-        	action="action_res_invest_asset" 
-        	parent="menu_investment_structure" 
+        	id="menu_res_invest_asset"
+        	action="action_res_invest_asset"
+        	parent="menu_investment_structure"
         	sequence="20"/>
-        	
+
 
     	# Asset Category
         <record id="view_res_invest_asset_category_tree" model="ir.ui.view">
@@ -84,7 +85,7 @@
                 </tree>
             </field>
         </record>
-        
+
         <record id="view_res_invest_asset_category_form" model="ir.ui.view">
             <field name="name">view.res.invest.asset.category.form</field>
             <field name="model">res.invest.asset.category</field>
@@ -95,12 +96,17 @@
                         <field name="name" class="oe_inline" placeholder="Name"/>
                     </h1>
                     <group>
-                    	<field name="code"/>
+                      <group>
+                      	<field name="code"/>
+                      </group>
+                      <group>
+                      	<field name="active"/>
+                      </group>
                     </group>
                 </form>
             </field>
         </record>
-        
+
         <record id="view_res_invest_asset_category_search" model="ir.ui.view">
             <field name="name">view.res.invest.asset.category.search</field>
             <field name="model">res.invest.asset.category</field>
@@ -109,7 +115,7 @@
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
                  </search>
             </field>
-        </record>    
+        </record>
 
         <record id="action_res_invest_asset_category" model="ir.actions.act_window">
             <field name="name">Investment Asset Category</field>
@@ -117,13 +123,13 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_res_invest_asset_category_tree"/>
         </record>
-        
+
         <menuitem name="Asset Category"
-        	id="menu_res_invest_asset_category" 
-        	action="action_res_invest_asset_category" 
-        	parent="menu_investment_structure" 
+        	id="menu_res_invest_asset_category"
+        	action="action_res_invest_asset_category"
+        	parent="menu_investment_structure"
         	sequence="10"/>
-        	
+
 
     	# Investment Construction
         <record id="view_res_invest_construction_tree" model="ir.ui.view">
@@ -136,7 +142,7 @@
                 </tree>
             </field>
         </record>
-        
+
         <record id="view_res_invest_construction_form" model="ir.ui.view">
             <field name="name">view.res.invest.construction.form</field>
             <field name="model">res.invest.construction</field>
@@ -153,6 +159,7 @@
                     	<group>
                     		<field name="code"/>
                     		<field name="costcenter_id" />
+                        <field name="active"/>
                     	</group>
                     	<field name="phase_ids" nolabel="1">
                     		<tree editable="bottom">
@@ -164,7 +171,7 @@
                 </form>
             </field>
         </record>
-        
+
         <record id="view_res_invest_construction_search" model="ir.ui.view">
             <field name="name">view.res.invest.construction.search</field>
             <field name="model">res.invest.construction</field>
@@ -173,7 +180,7 @@
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
                  </search>
             </field>
-        </record>    
+        </record>
 
         <record id="action_res_invest_construction" model="ir.actions.act_window">
             <field name="name">Investment Construction</field>
@@ -181,12 +188,12 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_res_invest_construction_tree"/>
         </record>
-        
+
         <menuitem name="Investment Construction"
-        	id="menu_res_invest_construction" 
-        	action="action_res_invest_construction" 
-        	parent="menu_investment_structure" 
+        	id="menu_res_invest_construction"
+        	action="action_res_invest_construction"
+        	parent="menu_investment_structure"
         	sequence="30"/>
-        	
+
 	</data>
 </openerp>

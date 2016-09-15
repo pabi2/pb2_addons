@@ -31,6 +31,7 @@
                         </group>
                         <group>
                             <field name="operating_unit_id"/>
+                            <field name="active"/>
                         </group>
                     </group>
                 </form>
@@ -86,6 +87,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group></group>
                     </group>
@@ -144,6 +146,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group string="Based On">
                             <field name="org_id"/>
@@ -205,6 +208,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group string="Based On">
                             <field name="org_id"/>
@@ -268,6 +272,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                         <group string="Based On">
                             <field name="org_id"/>
@@ -350,6 +355,7 @@
                         <group>
                             <field name="code"/>
                             <field name="name_short"/>
+                            <field name="active"/>
                         </group>
                     </group>
                 </form>

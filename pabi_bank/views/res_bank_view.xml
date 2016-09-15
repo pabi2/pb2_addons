@@ -9,13 +9,14 @@
             <field name="arch" type="xml">
                 <form string="Bank Master">
                     <group>
-                    	<group>
-	                        <field name="code"/>
-	                        <field name="abbrev"/>
-						</group>             
-	                    <group>
-	                    	<field name="name"/>
-	                    </group>           
+                        <group>
+                            <field name="code"/>
+                            <field name="abbrev"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
                     </group>
                 </form>
             </field>
@@ -37,11 +38,12 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to create a new bank master
-              </p><p>
-                Manage bank records you want to be used in the system.
-              </p>
+                <p class="oe_view_nocontent_create">
+                    Click to create a new bank master
+                </p>
+                <p>
+                    Manage bank records you want to be used in the system.
+                </p>
             </field>
         </record>
         <menuitem action="action_res_bank_master_form" id="menu_action_res_bank_master_form" parent="base.menu_config_address_book" sequence="10" groups="base.group_no_one"/>

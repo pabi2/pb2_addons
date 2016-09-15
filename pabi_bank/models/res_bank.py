@@ -19,3 +19,7 @@ class ResBankMaster(models.Model):
         string='Abbreviation',
         required=True,
     )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
