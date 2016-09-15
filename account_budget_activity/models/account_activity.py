@@ -40,12 +40,10 @@ class AccountActivityGroup(models.Model):
         'activity_group_id', 'activity_id',
         string='Activities',
     )
-#     account_id = fields.Many2one(
-#         'account.account',
-#         string='Account',
-#         domain=[('type', '!=', 'view')],
-#         help="This account has less priority to activitie's account",
-#     )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
     monitor_ids = fields.One2many(
         'account.activity.group.monitor.view',
         'activity_group_id',
@@ -111,6 +109,10 @@ class AccountActivity(models.Model):
         'activity_id',
         string='Activity Monitor',
         help="Plan vs actual per fiscal year for activity"
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
     )
     _sql_constraints = [
         ('activity_uniq', 'unique(name, activity_group_id)',
