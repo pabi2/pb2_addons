@@ -28,15 +28,19 @@ class HRExpense(models.Model):
         readonly=True, states={'draft': [('readonly', False)]},
     )
     receive_method = fields.Selection(
-        [('0', 'BBL (e-Payment System)'),
-         ('1', 'Bank')],
+        [('salary_bank', 'Salary Bank Account'),
+         ('other_bank', 'Other Banks')],
         string='Receive Method',
-        default='0',
+        default='salary_bank',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     employee_bank_id = fields.Many2one(
         'res.bank.master',
         string='Bank',
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    supplier_text = fields.Char(
+        string='Supplier Name',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
@@ -80,7 +84,15 @@ class HRExpense(models.Model):
         store=True,
         help="Show project, only if all lines use the same project",
     )
-    section_id = fields.Many2one(
+    employee_section_id = fields.Many2one(  # Section of Employee, for Security
+        'res.section',
+        string='Section',
+        related='employee_id.section_id',
+        store=True,
+        help="Employee Section to be used for security purposes."
+        "User in group Expense Officer (restrict) will see only his sections",
+    )
+    section_id = fields.Many2one(  # Selected Sectoin
         'res.section',
         string='Section',
         compute='_compute_project_section',

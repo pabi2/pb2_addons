@@ -6,19 +6,19 @@ class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
 
     @api.model
-    def test_generate_hr_expense_advance(self):
+    def test_generate_hr_expense_advance(self):  # For Advance Only
         data_dict = {
             'is_employee_advance': u'True',
             'number': u'/',  # av_id
-            'employee_code': u'004012',  # request for employee
-            'preparer_code': u'004012',  # request for employee
+            'employee_code': u'004012',  # requester
+            'preparer_code': u'004012',  # preparer
             'date': u'2016-01-31',  # by_time
             'advance_type': u'attend_seminar',  # attend_seminar, buy_product
             'date_back': u'2016-10-30',  # back from seminar
             'name': u'From Description field',  # objective
             'note': u'From Reason field',
             'apweb_ref_url': u'XXX',
-            'receive_method': '1',  # 0, 1
+            'receive_method': 'other_bank',  # salary_bank, other_bank
             'employee_bank_id.id': u'99',
             'line_ids': [  # 1 line only, Advance
                 {
@@ -82,6 +82,108 @@ class HRExpense(models.Model):
         return self.generate_hr_expense(data_dict)
 
     @api.model
+    def test_generate_hr_expense_expense(self):  # Expense / Advance
+        # Payment Type
+        # ------------
+        # 1) Employee
+        #  - pay_to = 'employee'
+        #  - supplier_text = None
+        #  - is_advance_clearing = False
+        #  - is_employee_advance = False
+        # 2) Supplier
+        #  - pay_to = 'supplier'
+        #  - supplier_text = 'AAA Co., Ltd.'
+        #  - is_advance_clearing = False
+        #  - is_employee_advance = False
+        # 3) Advance
+        #  - pay_to = 'employee'
+        #  - supplier_text = False
+        #  - is_advance_clearing = True
+        #  - is_employee_advance = False
+        # 4) Internal Charge (Not Available in Odoo Yet)
+        data_dict = {
+            'pay_to': u'supplier',  # 'employee', 'supplier'
+            'supplier_text': u'AAA Co., Ltd.',  # If Pay to Supplier
+            'is_advance_clearing': u'False',  # True if Clear Advance
+            'is_employee_advance': u'False',
+            'number': u'/',  # expense number
+            'employee_code': u'004012',
+            'preparer_code': u'004012',
+            'date': u'2016-01-31',
+            'advance_type': u'attend_seminar',  # attend_seminar, buy_product
+            'date_back': u'2016-10-30',  # back from seminar
+            'name': u'From Description field',  # objective
+            'note': u'From Reason field',
+            'apweb_ref_url': u'XXX',
+            'receive_method': 'other_bank',  # salary_bank, other_bank
+            'employee_bank_id.id': u'99',
+            'advance_expense_id.id': u'',  # Case clearing, refer Exp Advance
+            'line_ids': [  # 1 line only, Advance
+                {
+                    'section_id.id': u'1276',
+                    'project_id.id': u'',
+                    'invest_asset_id.id': u'',
+                    'invest_construction_phase_id.id': u'',
+                    'fund_id.id': u'1',
+                    'is_advance_product_line': u'False',  # Must be False
+                    'activity_group_id.id': u'367',
+                    'activity_id.id': u'3',
+                    'name': u'Some Expense',
+                    'unit_amount': u'2000',  # total
+                    'cost_control_id.id': u'',
+                },
+                {
+                    'section_id.id': u'1276',
+                    'project_id.id': u'',
+                    'invest_asset_id.id': u'',
+                    'invest_construction_phase_id.id': u'',
+                    'fund_id.id': u'2',
+                    'is_advance_product_line': u'False',  # Must be False
+                    'activity_group_id.id': u'367',
+                    'activity_id.id': u'3',
+                    'name': u'Some Expense',  # Expense Note (not in AF?)
+                    'unit_amount': u'3000',  # total
+                    'cost_control_id.id': u'',
+                },
+            ],
+            'attendee_employee_ids': [
+                {
+                    'sequence': u'1',
+                    'employee_code': u'000143',
+                },
+                {
+                    'sequence': u'2',
+                    'employee_code': u'000165',
+                },
+            ],
+            'attendee_external_ids': [
+                {
+                    'sequence': u'1',
+                    'attendee_name': u'Walai.',
+                    'position': u'Manager',
+                },
+                {
+                    'sequence': u'2',
+                    'attendee_name': u'Thongchai.',
+                    'position': u'Programmer',
+                },
+            ],
+            'attachment_ids': [
+                {
+                    'name': u'Expense1.pdf',
+                    'description': u'My Expense 1 Document Description',
+                    'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
+                },
+                {
+                    'name': u'Expense2.pdf',
+                    'description': u'My Expense 2 Document Description',
+                    'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
+                },
+            ]
+        }
+        return self.generate_hr_expense(data_dict)
+
+    @api.model
     def _pre_process_hr_expense(self, data_dict):
         Employee = self.env['hr.employee']
         # employee_code to employee_id.id
@@ -97,8 +199,9 @@ class HRExpense(models.Model):
         # OU based on employee
         data_dict['operating_unit_id.id'] = \
             employee.org_id.operating_unit_id.id
-        # Advance product
-        if 'line_ids' in data_dict:
+        # Advance product if required
+        if data_dict.get('is_employee_advance', u'False') == u'True' and \
+                'line_ids' in data_dict:
             advance_product = self.env['ir.property'].get(
                 'property_employee_advance_product_id', 'res.partner')
             for data in data_dict['line_ids']:
@@ -130,12 +233,26 @@ class HRExpense(models.Model):
     @api.model
     def generate_hr_expense(self, data_dict):
         try:
-            # Start
+            prepare_code = data_dict.get('preparer_code')
             data_dict = self._pre_process_hr_expense(data_dict)
             res = self._create_hr_expense_expense(data_dict)
             if res['is_success'] is True:
                 self._post_process_hr_expense(res)
-            # End
+                # Replace Admin with Preparer
+                dom = [('employee_code', '=', prepare_code)]
+                employee = self.env['hr.employee'].search(dom)
+                expense_id = res['result']['id']
+                self._cr.execute("""
+                    update hr_expense_expense
+                    set create_uid = %s, write_uid = %s where id = %s
+                """, (employee.id, employee.id, expense_id))
+                self._cr.execute("""
+                    update auditlog_log
+                    set user_id = %s where res_id = %s
+                    and model_id = (select id from ir_model
+                                    where model = 'hr.expense.expense')
+                """, (employee.id, expense_id))
+                # --
             self._cr.commit()
         except Exception, e:
             res = {
