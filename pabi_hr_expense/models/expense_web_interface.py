@@ -354,10 +354,13 @@ class HRExpense(models.Model):
         alfresco = xmlrpclib.ServerProxy(connect_string)
         arg = {
             'action': signal,
-            'avNo': self.number,
             'by': self.env.user.login,
             'comment': 'Good'
         }
+        if self.is_employee_advance:
+            arg.update({'avNo': self.number})
+        else:
+            arg.update({'exNo': self.number})
         result = alfresco.brw.action(arg)
         if not result['success']:
             raise UserError(
