@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
+from openerp.exceptions import Warning as UserError
+import xmlrpclib
 
 
 class HRExpense(models.Model):
@@ -339,3 +341,26 @@ class HRExpense(models.Model):
                 'messages': _('Document created successfully'),
             }
         return res
+
+    @api.model
+    def send_signal_to_pabiweb_advance(self, signal):
+        ConfParam = self.env['ir.config_parameter']
+        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+            return False
+        url = ConfParam.get_param('pabiweb_url')
+        username = self.user_valid.login
+        password = ConfParam.get_param('pabiweb_password')
+        connect_string = "http://%s:%s@%s" % (username, password, url)
+        alfresco = xmlrpclib.ServerProxy(connect_string)
+        arg = {
+            'action': signal,
+            'avNo': self.number,
+            'by': self.env.user.login,
+            'comment': 'Good'
+        }
+        result = alfresco.brw.action(arg)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
+        return result

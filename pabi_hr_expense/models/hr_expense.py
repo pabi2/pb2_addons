@@ -111,6 +111,13 @@ class HRExpense(models.Model):
     )
 
     @api.multi
+    def expense_accept(self):
+        res = super(HRExpense, self).expense_accept()
+        for expense in self:
+            expense.send_signal_to_pabiweb_advance('1')  # Approved
+        return res
+
+    @api.multi
     @api.depends('line_ids', 'line_ids.project_id', 'line_ids.section_id')
     def _compute_project_section(self):
         for rec in self:
