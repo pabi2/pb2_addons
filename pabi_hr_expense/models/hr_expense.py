@@ -114,7 +114,8 @@ class HRExpense(models.Model):
     def expense_accept(self):
         res = super(HRExpense, self).expense_accept()
         for expense in self:
-            expense.send_signal_to_pabiweb_advance('1')  # Approved
+            expense.send_signal_to_pabiweb_advance('1')
+            # '1' = Approve, '2' = Cancel, '3' = Paid
         return res
 
     @api.multi
