@@ -57,10 +57,7 @@ class AccountMoveReversal(models.TransientModel):
 
         for account in line_dict.keys():
             move_line_ids = account_move_line_obj.browse(line_dict[account])
-            move_line_ids.reconcile('manual', False,
-                                    period_id, False)
-#         move_line_ids.reconcile('manual', False,
-#                                     period_id, False)
+            move_line_ids.reconcile('manual', False, period_id, False)
 
     @api.multi
     def action_reverse_invoice(self):
