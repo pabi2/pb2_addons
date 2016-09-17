@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_pit,access_account_pit,model_account_pit,,1,1,1,1
+access_account_pit_rate,access_account_pit_rate,model_account_pit_rate,,1,1,1,1
+access_personal_income_tax,access_personal_income_tax,model_personal_income_tax,,1,1,1,1
