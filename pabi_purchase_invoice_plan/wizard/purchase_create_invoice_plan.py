@@ -7,7 +7,7 @@ from openerp.exceptions import Warning as UserError
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
     _inherit = 'purchase.create.invoice.plan.installment'
     
-    fiscalyear_id = fields.Many2one(
+    fiscal_year_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
     )
@@ -16,13 +16,24 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     _inherit = 'purchase.create.invoice.plan'
     _description = 'Create Purchase Invoice Plan'
 
+    @api.model
+    def _get_interval_type(self):
+        order = self.env['purchase.order'].\
+            browse(self._context.get('active_id'))
+        selection_list = [('day', 'Day'),
+                    ('month', 'Month')]
+        if order.by_fiscalyear:
+            return selection_list
+        else:
+            selection_list.append(('year', 'Year'))
+            return selection_list
 
     @api.model
     def _default_by_fiscalyear(self):
         order = self.env['purchase.order'].\
             browse(self._context.get('active_id'))
         if order.by_fiscalyear:
-            if any([not l.fiscalyear_id for l in order.order_line]):
+            if any([not l.fiscal_year_id for l in order.order_line]):
                 raise UserError(_('Please set fiscal year on product line'))
         return order.by_fiscalyear
 
@@ -30,6 +41,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         string='By Fiscal Year',
         readonly=True,
         default=_default_by_fiscalyear,
+    )
+    interval_type = fields.Selection(
+        _get_interval_type,
     )
 
     @api.model
@@ -42,19 +56,17 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order = self.env['purchase.order'].browse(self._context['active_id'])
         self._check_invoice_mode(order)
         fiscalyear_dict = {}
-
         for f in self.env['account.fiscalyear'].search_read([],['name', 'id']):
             fiscalyear_dict[f['id']] = f['name']
 
         line_by_fiscalyear = {}
         for line in order.order_line:
-            if line.fiscalyear_id:
-                if line.fiscalyear_id.id not in line_by_fiscalyear:
-                    line_by_fiscalyear[line.fiscalyear_id.id] = line.price_subtotal
+            if line.fiscal_year_id:
+                if line.fiscal_year_id.id not in line_by_fiscalyear:
+                    line_by_fiscalyear[line.fiscal_year_id.id] = line.price_subtotal
                 else:
-                    line_by_fiscalyear[line.fiscalyear_id.id] += line.price_subtotal
+                    line_by_fiscalyear[line.fiscal_year_id.id] += line.price_subtotal
         line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
-        print "line_by_fiscalyear:::::::::::::",line_by_fiscalyear
         new_line_dict = {}
         installment_no = 1
         for l in line_by_fiscalyear:
@@ -77,19 +89,46 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     (fiscalyear_dict[l], installment_amt, l)
                 installment_no += 1
                 line_cnt -= 1
-        print "new_line_dict:::::::::::",new_line_dict
+        
+        count = 0
+        installment_date = datetime.strptime(self.installment_date, "%Y-%m-%d")
+        day = installment_date.day
+        month = installment_date.month
+        old_fy = False
         for i in self.installment_ids:
             if i.is_advance_installment or i.is_deposit_installment:
+                i.date_invoice = self.installment_date
                 continue
+            interval = self.interval
+            st_date = self.installment_date
             if i.installment in new_line_dict:
                 f_amount = line_by_fiscalyear[new_line_dict[i.installment][2]]
-                i.fiscalyear_id = new_line_dict[i.installment][2]
+                i.fiscal_year_id = new_line_dict[i.installment][2]
                 i.amount = new_line_dict[i.installment][1]
                 new_val = i.amount / f_amount * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
                 fy = new_line_dict[i.installment][0]
-                i.date_invoice = datetime.strptime('01/01/' + fy, '%m/%d/%Y')
+                date_invoice = self.installment_date
+
+                if count == 0:
+                    interval = 0
+
+                if self.interval_type == 'month':
+                    if month < 12:
+                        month += interval
+                else:
+                    day += interval
+
+                if not old_fy:
+                    old_fy = fy
+                if old_fy != fy:
+                    day = installment_date.day
+                    month = installment_date.month
+                    old_fy = fy
+                
+                i.date_invoice = datetime.strptime(str(month) + '/' + str(day)  + '/' + fy, '%m/%d/%Y')
+                count += 1
 
     @api.one
     def do_create_purchase_invoice_plan(self):
@@ -135,9 +174,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     })
             elif install.installment > 0:
                 for order_line in order.order_line:
-                    print "install fiscalyear........",install.fiscalyear_id.code
-                    print "order_line::::::::::",order_line, order_line.fiscalyear_id.code
-                    if order_line.fiscalyear_id == install.fiscalyear_id:
+                    if order_line.fiscal_year_id == install.fiscal_year_id:
                         subtotal = order_line.price_subtotal
                         lines.append({
                             'order_id': order.id,
@@ -148,9 +185,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                             'invoice_percent': install.percent,
                             'invoice_amount': round(install.percent/100 *
                                                     subtotal, prec),
-                            'fiscalyear_id': install.fiscalyear_id.id,
+                            'fiscal_year_id': install.fiscal_year_id.id,
                         })
-        print "lines:::::::::::::::::::::::::",lines
         order.invoice_plan_ids = lines
         order.use_advance = self.use_advance
         order.use_deposit = self.use_deposit
