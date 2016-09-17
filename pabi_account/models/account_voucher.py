@@ -52,6 +52,7 @@ class AccountVoucher(models.Model):
     def _compute_total_ar_ap_amount(self):
         for record in self:
             invoice_ids = record._get_related_invoices()
+            amount = 0.0
             if invoice_ids:
                 invoices = self.env['account.invoice'].browse(invoice_ids)
                 amount = sum([i.amount_total for i in invoices])
