@@ -10,9 +10,10 @@
                     Now, you are going to create the work acceptance.
                 </p>
                  <group>
-                    <field name="invoice_plan_id"
+                    <field name="select_invoice_plan"
                            attrs="{
-                                'invisible':[('is_invoice_plan','!=',True)]
+                                'invisible':[('is_invoice_plan','!=',True)],
+                                'required':[('is_invoice_plan','=',True)],
                            }"
                     />
                     <field name="order_id" invisible="1"/>
