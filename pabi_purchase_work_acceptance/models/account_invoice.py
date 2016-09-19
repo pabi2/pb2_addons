@@ -72,8 +72,7 @@ class AccountInvoice(models.Model):
             penalty_line = self.env['account.invoice.line'].new()
             amount_penalty = acceptance.total_fine
             # Prepare line
-            product = self.env['ir.property'].get(
-                'property_delivery_penalty_product_id', 'res.partner')
+            product = self.env.user.company_id.delivery_penalty_product_id
             if not product:
                 raise ValidationError(_('No Delivery Penalty Product has been '
                                         'set in Account Settings!'))
