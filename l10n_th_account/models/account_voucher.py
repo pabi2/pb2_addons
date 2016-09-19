@@ -374,21 +374,22 @@ class AccountVoucher(common_voucher, models.Model):
         res = []
         self._cr.execute("""
             SELECT * FROM account_voucher_line
-            WHERE voucher_id=%s and amount_retention != 0""", (voucher.id,))
+            WHERE voucher_id=%s and amount_retention != 0
+        """, (voucher.id,))
         for t in self._cr.dictfetchall():
-            prop = voucher.type in ('sale', 'receipt') \
-                and self.env['ir.property'].get(
-                'property_account_retention_customer', 'res.partner') \
-                or self.env['ir.property'].get(
-                'property_account_retention_supplier', 'res.partner')
-            account = self.env['account.fiscal.position'].map_account(prop)
+            account_id = False
+            company = self.env.user.company_id
+            if voucher.type in ('sale', 'receipt'):
+                account_id = company.account_retention_customer.id
+            else:
+                account_id = company.account_retention_supplier.id
             res.append({
                 'type': 'src',
                 'name': _('Retention Amount'),
                 'price_unit': t['amount_retention'],
                 'quantity': 1,
                 'price': t['amount_retention'],
-                'account_id': account.id,
+                'account_id': account_id,
                 'product_id': False,
                 'uos_id': False,
                 'account_analytic_id': False,
