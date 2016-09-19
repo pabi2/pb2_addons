@@ -10,4 +10,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     def _prepare_installment_line(self, order, order_line, install):
         res = super(PurchaseCreateInvoicePlan, self).\
             _prepare_installment_line(order, order_line, install)
+        if install.installment:
+            res.update({
+                'installment': install.installment,
+            })
         return res
