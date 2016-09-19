@@ -95,8 +95,7 @@ class AccountInvoice(models.Model):
             # Prepare header
             self.currency_id = late_invoice.currency_id
             # Prepare line
-            product = self.env['ir.property'].get(
-                'property_loan_penalty_product_id', 'res.partner')
+            product = self.env.user.company_id.loan_penalty_product_id
             if not product:
                 raise ValidationError(_('No Loan Penalty Product has been '
                                         'set in Account Settings!'))

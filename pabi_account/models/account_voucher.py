@@ -158,14 +158,14 @@ class AccountVoucherTax(models.Model):
             WHT: Use a centralized tax branch """
         res = super(AccountVoucherTax, self).move_line_get(voucher)
         taxbranch_id = False
-        wht_taxbranch_id = voucher.partner_id.property_wht_taxbranch_id.id
         for line in voucher.line_ids:
             if line.amount or line.amount_wht or line.amount_retention:
                 taxbranch_id = line.supplier_invoice_taxbranch_id.id
-        if voucher.partner_id.property_tax_move_by_taxbranch:
+        tax_move_by_taxbranch = self.env.user.company_id.tax_move_by_taxbranch
+        if tax_move_by_taxbranch:
+            wht_taxbranch_id = self.env.user.company_id.wht_taxbranch_id.id
             for r in res:
-                if r['tax_code_type'] == 'wht' and \
-                        voucher.partner_id.property_wht_taxbranch_id:
+                if r['tax_code_type'] == 'wht' and wht_taxbranch_id:
                     r.update({'taxbranch_id': wht_taxbranch_id})
                 else:
                     r.update({'taxbranch_id': taxbranch_id})
