@@ -204,8 +204,8 @@ class HRExpense(models.Model):
         # Advance product if required
         if data_dict.get('is_employee_advance', u'False') == u'True' and \
                 'line_ids' in data_dict:
-            advance_product = self.env['ir.property'].get(
-                'property_employee_advance_product_id', 'res.partner')
+            advance_product = \
+                self.env.user.company_id.employee_advance_product_id
             for data in data_dict['line_ids']:
                 data['product_id.id'] = advance_product.id
                 data['uom_id.id'] = advance_product.uom_id.id
