@@ -18,7 +18,7 @@
         'wizard/account_tax_detail_view.xml',
         'views/account_invoice_view.xml',
         'views/account_voucher_view.xml',
-        'views/res_config_view.xml',
+        'views/account_config.xml',
     ],
     'demo': [
     ],

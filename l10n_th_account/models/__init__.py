@@ -4,8 +4,6 @@ from . import account_invoice
 from . import account_voucher_v7
 from . import account_voucher
 from . import account
-from . import res_partner
-from . import res_config
 from . import account_config_settings
 from . import res_company
 
