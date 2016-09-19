@@ -36,8 +36,9 @@ class AccountInvoiceTax(models.Model):
     @api.model
     def move_line_get(self, invoice_id):
         res = super(AccountInvoiceTax, self).move_line_get(invoice_id)
-        invoice = self.env['account.invoice'].browse(invoice_id)
-        if invoice.partner_id.property_tax_move_by_taxbranch:
+        tax_move_by_taxbranch = self.env.user.company_id.tax_move_by_taxbranch
+        if tax_move_by_taxbranch:
+            invoice = self.env['account.invoice'].browse(invoice_id)
             for r in res:
                 r.update({'taxbranch_id': invoice.taxbranch_id.id})
         return res
