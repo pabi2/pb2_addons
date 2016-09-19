@@ -26,7 +26,11 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             for plan in plans:
                 if plan.installment != installment and plan.installment > 0:
                     res.append(
-                        (plan.installment, '# ' + str(plan.installment))),
+                        (
+                            plan.installment,
+                            '#' + str(plan.installment) + ' '+plan.description,
+                        )
+                    ),
                     installment = plan.installment
                 else:
                     continue
@@ -92,6 +96,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'inv_line_id': inv_line.id,
                 }
                 items.append([0, 0, vals])
+            break
         return items
 
     @api.model
