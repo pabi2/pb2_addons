@@ -92,6 +92,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'inv_line_id': inv_line.id,
                 }
                 items.append([0, 0, vals])
+            break
         return items
 
     @api.model
