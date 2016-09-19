@@ -84,6 +84,71 @@ class HRExpense(models.Model):
         return self.generate_hr_expense(data_dict)
 
     @api.model
+    def test_xxx(self):
+        data_dict = {
+            'date': '2016-09-19',
+            'attachment_ids': [{
+                'name': u'Quotation #3.pdf',
+                'description': u'เอกสารแนบ #3',
+                'url': u''
+            }],
+            'note': u'',
+            'preparer_code': '002648',
+            'receive_method': 'salary_bank',
+            'supplier_text': '',
+            'employee_code': '002648',
+            'is_advance_clearing': 'False',
+            'number': 'EX16000081',
+            'line_ids': [{
+              'is_advance_product_line': 'False',
+              'project_id.id': '',
+              'activity_group_id.id': '367',
+              'cost_control_id.id': '',
+              'activity_id.id': '3',
+              'fund_id.id': '1',
+              'name': '',
+              'invest_asset_id.id': '',
+              'section_id.id': '1267',
+              'invest_construction_phase_id.id': '',
+              'unit_amount': '1000.0'
+            }, {
+                'is_advance_product_line': 'False',
+                'project_id.id': '',
+                'activity_group_id.id': '367',
+                'cost_control_id.id': '',
+                'activity_id.id': '3',
+                'fund_id.id': '1',
+                'name': '',
+                'invest_asset_id.id': '',
+                'section_id.id': '1267',
+                'invest_construction_phase_id.id': '',
+                'unit_amount': '1000.0'
+            }],
+            'advance_type': '',
+            'is_employee_advance': 'False',
+            'attendee_external_ids': [{
+                'sequence': '1',
+                'attendee_name': 'a b',
+                'position': 'c'
+            }],
+            'name': 'ทดสอบ จ่ ายเงินคืนพนั กงาน',
+            'date_back': '2016-09-19',
+
+            'attendee_employee_ids': [{
+                'sequence': '1',
+                'employee_code': '001033'
+                }, {
+                    'sequence': '2',
+                    'employee_code': '001529'
+                }],
+            'apweb_ref_url': 'f618eaf8 - 80 a5 - 4e fb - bf4f - e5b643b91b82',
+            'employee_bank_id.id': '',
+            'pay_to': 'employee',
+            'advance_expense_id.id': '',
+        }
+        return self.generate_hr_expense(data_dict)
+
+    @api.model
     def test_generate_hr_expense_expense(self):  # Expense / Advance
         # Payment Type
         # ------------
@@ -209,6 +274,12 @@ class HRExpense(models.Model):
             for data in data_dict['line_ids']:
                 data['product_id.id'] = advance_product.id
                 data['uom_id.id'] = advance_product.uom_id.id
+        if 'line_ids' in data_dict:
+            for data in data_dict['line_ids']:
+                if not data.get('name', False):
+                    Activity = self.env['account.activity']
+                    activity = Activity.browse(int(data['activity_id.id']))
+                    data['name'] = activity.name
         # attendee's employee_code
         if 'attendee_employee_ids' in data_dict:
             for data in data_dict['attendee_employee_ids']:
@@ -301,7 +372,7 @@ class HRExpense(models.Model):
             if data_array[table]:
                 data_array[table+'_fields'] = \
                     [table+'/'+key for key in data_array[table][0].keys()]
-            fields += data_array[table+'_fields']
+            fields += data_array[table+'_fields'] or []
         # Data
         datas = []
         for i in range(0, line_count, 1):
@@ -312,7 +383,8 @@ class HRExpense(models.Model):
                     data_array[table+'_data'] = \
                         (len(data_array[table]) > i and data_array[table][i] or
                          {key: False for key in data_array[table+'_fields']})
-                record += data_array[table+'_data'].values()
+                record += data_array[table+'_data'] and \
+                    data_array[table+'_data'].values() or []
             if i == 0:
                 datas += [tuple(data + record)]
             else:
