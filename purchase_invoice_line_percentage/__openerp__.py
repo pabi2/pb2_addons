@@ -31,7 +31,7 @@ In addition, it also allow user to use Amount instead of percent
     'data': ['wizards/purchase_make_invoice_advance.xml',
              'views/purchase_view.xml',
              'views/account_invoice_view.xml',
-             'views/res_config_view.xml',
+             'views/account_config.xml',
              ],
     'test': [],
     'auto_install': False,

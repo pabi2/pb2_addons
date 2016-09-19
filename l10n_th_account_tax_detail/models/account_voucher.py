@@ -51,7 +51,7 @@ class AccountVoucherTax(models.Model):
         """, (voucher.id, voucher.id))
         vat_diff = self._cr.fetchone()[0] or 0.0
         if vat_diff:
-            account = voucher.partner_id.property_account_tax_difference
+            account = self.env.user.company_id.account_tax_difference
             if not account:
                 raise ValidationError(_('No Tax Difference Account!'))
             res.append({

@@ -8,8 +8,9 @@ class account_invoice(models.Model):
 
     _inherit = "account.invoice"
 
-    is_advance = fields.Boolean('Advance', readonly=True)
-
+    is_advance = fields.Boolean(
+        string='Advance',
+        readonly=True)
     sale_ids = fields.Many2many(
         'sale.order',
         'sale_order_invoice_rel', 'invoice_id', 'order_id',

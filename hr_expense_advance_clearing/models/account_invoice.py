@@ -96,8 +96,7 @@ class AccountInvoice(models.Model):
 
     @api.model
     def _prev_advance_amount(self, invoice):
-        advance_product = self.env['ir.property'].get(
-            'property_employee_advance_product_id', 'res.partner')
+        advance_product = self.env.user.company_id.employee_advance_product_id
         if not advance_product:
             raise ValidationError(_('No Employee Advance Product has been '
                                     'set in HR Settings!'))
