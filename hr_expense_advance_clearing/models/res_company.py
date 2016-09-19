@@ -8,5 +8,4 @@ class ResCompany(models.Model):
     employee_advance_product_id = fields.Many2one(
         'product.product',
         string='Employee Advance Product',
-        domain=[('hr_expense_ok', '=', True)],
     )
