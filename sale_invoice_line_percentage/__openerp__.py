@@ -48,7 +48,7 @@ evenly by percentage of the invoice amount.
     'data': ['wizards/sale_make_invoice_advance.xml',
              'views/sale_view.xml',
              'views/account_invoice_view.xml',
-             'views/res_config_view.xml',
+             'views/account_config.xml',
              'data/sale_workflow.xml', ],
     'test': [],
     'auto_install': False,

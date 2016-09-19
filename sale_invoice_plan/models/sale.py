@@ -178,11 +178,8 @@ class sale_order(models.Model):
         for order in self:
             if amount:
                 advance_label = 'Advance'
-                prop = self.env['ir.property'].get(
-                    'property_account_deposit_customer', 'res.partner')
-                prop_id = prop and prop.id or False
-                account_id = self.env[
-                    'account.fiscal.position'].map_account(prop_id)
+                company = self.env.user.company_id
+                account_id = company.company.account_deposit_customer.id
                 name = _("%s of %s %%") % (advance_label, percent)
                 # create the invoice
                 inv_line_values = {

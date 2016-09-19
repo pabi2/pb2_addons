@@ -113,8 +113,7 @@ class HRExpenseExpense(models.Model):
     @api.model
     def default_get(self, field_list):
         result = super(HRExpenseExpense, self).default_get(field_list)
-        advance_product = self.env['ir.property'].get(
-            'property_employee_advance_product_id', 'res.partner')
+        advance_product = self.env.user.company_id.employee_advance_product_id
         if not advance_product:
             raise ValidationError(_('No Employee Advance Product has been '
                                     'set in HR Settings!'))
@@ -164,8 +163,7 @@ class HRExpenseExpense(models.Model):
 
     @api.model
     def _create_negative_clearing_line(self, expense, invoice):
-        advance_product = self.env['ir.property'].get(
-            'property_employee_advance_product_id', 'res.partner')
+        advance_product = self.env.user.company_id.employee_advance_product_id
         product_categ = advance_product.categ_id
         if (not advance_product.property_account_expense and
                 not product_categ.property_account_expense_categ):

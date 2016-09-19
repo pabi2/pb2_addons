@@ -203,12 +203,8 @@ class PurchaseOrder(models.Model):
                 elif blines.is_deposit_installment:
                     advance_label = _('Deposit')
                     filter_values.update({'is_deposit': True, })
-
-                prop = self.env['ir.property'].get(
-                    'property_account_deposit_supplier', 'res.partner')
-                prop_id = prop and prop.id or False
-                account_id = self.env[
-                    'account.fiscal.position'].map_account(prop_id)
+                company = self.env.user.company_id
+                account_id = company.account_deposit_supplier.id
                 name = _("%s of %s %%") % (advance_label, percent)
                 # create the invoice
                 inv_line_values = {

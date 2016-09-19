@@ -72,13 +72,12 @@ class sale_advance_payment_inv(osv.osv_memory):
         taxes = {}
         for sale in sale_obj.browse(cr, uid, sale_ids, context=context):
             if not wizard.product_id.id:
-                prop = ir_property_obj.get(
-                    cr, uid,
-                    'property_account_deposit_customer',
-                    'res.partner', context=context)
-                prop_id = prop and prop.id or False
+                company = self.pool.get('res.users').\
+                    browse(cr, uid, uid, context=context).company_id
+                account_id = company.account_deposit_customer \
+                    and company.account_deposit_customer.id or False
                 account_id = fiscal_obj.map_account(
-                    cr, uid, sale.fiscal_position or False, prop_id)
+                    cr, uid, sale.fiscal_position or False, account_id)
                 if not account_id:
                     raise osv.except_osv(
                         _('Configuration Error!'),
