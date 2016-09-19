@@ -7,15 +7,24 @@ class PurchaseOrder(models.Model):
 
     by_fiscalyear = fields.Boolean(
         string='By Fiscal Year',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
-    
+
     @api.model
     def _create_invoice_line(self, inv_line_data, inv_lines, po_line):
+        if not po_line.order_id.by_fiscalyear:
+            return super(PurchaseOrder, self).\
+                    _create_invoice_line(inv_line_data, inv_lines, po_line)
+
         installment = self._context.get('installment', False)
         if installment:
-            installment = self.env['purchase.invoice.plan'].search([('installment', '=', installment),
-                                           ('order_id', '=', po_line.order_id.id),
-                                           ('state', 'in', [False, 'cancel'])])
+            installment =\
+                self.env['purchase.invoice.plan'].search(
+                    [('installment', '=', installment),
+                     ('order_id', '=', po_line.order_id.id),
+                     ('state', 'in', [False, 'cancel'])]
+                )
         if installment:
             fiscalyear = installment.fiscal_year_id
             if po_line.order_id.by_fiscalyear:

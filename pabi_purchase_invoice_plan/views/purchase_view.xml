@@ -14,7 +14,7 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                     <field name="by_fiscalyear" invisible="True"/>
-                    <field name="fiscal_year_id" attrs="{'required': [('by_fiscalyear', '=', False)]}"/>
+                    <field name="fiscal_year_id"/>
                 </xpath>
             </field>
         </record>

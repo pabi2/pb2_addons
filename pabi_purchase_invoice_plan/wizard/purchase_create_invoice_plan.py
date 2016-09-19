@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
+import calendar
 from datetime import datetime
 
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
+
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
     _inherit = 'purchase.create.invoice.plan.installment'
-    
+
     fiscal_year_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
     )
-    
+
+
 class PurchaseCreateInvoicePlan(models.TransientModel):
     _inherit = 'purchase.create.invoice.plan'
     _description = 'Create Purchase Invoice Plan'
@@ -21,7 +24,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order = self.env['purchase.order'].\
             browse(self._context.get('active_id'))
         selection_list = [('day', 'Day'),
-                    ('month', 'Month')]
+                          ('month', 'Month')]
         if order.by_fiscalyear:
             return selection_list
         else:
@@ -56,16 +59,18 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order = self.env['purchase.order'].browse(self._context['active_id'])
         self._check_invoice_mode(order)
         fiscalyear_dict = {}
-        for f in self.env['account.fiscalyear'].search_read([],['name', 'id']):
+        for f in self.env['account.fiscalyear'].search_read([],
+                                                            ['name', 'id']):
             fiscalyear_dict[f['id']] = f['name']
 
         line_by_fiscalyear = {}
         for line in order.order_line:
-            if line.fiscal_year_id:
-                if line.fiscal_year_id.id not in line_by_fiscalyear:
-                    line_by_fiscalyear[line.fiscal_year_id.id] = line.price_subtotal
+            line_fy = line.fiscal_year_id
+            if line_fy:
+                if line_fy.id not in line_by_fiscalyear:
+                    line_by_fiscalyear[line_fy.id] = line.price_subtotal
                 else:
-                    line_by_fiscalyear[line.fiscal_year_id.id] += line.price_subtotal
+                    line_by_fiscalyear[line_fy.id] += line.price_subtotal
         line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
         new_line_dict = {}
         installment_no = 1
@@ -76,7 +81,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             number_of_lines = round(number_of_lines)
             remaining_amt = line_by_fiscalyear[l]
             line_cnt = number_of_lines
-            
+
             while line_cnt > 0:
                 installment_amt = self.installment_amount
                 if line_cnt == 1 or installment_no == self.num_installment or\
@@ -89,7 +94,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     (fiscalyear_dict[l], installment_amt, l)
                 installment_no += 1
                 line_cnt -= 1
-        
+
         count = 0
         installment_date = datetime.strptime(self.installment_date, "%Y-%m-%d")
         day = installment_date.day
@@ -100,7 +105,6 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 i.date_invoice = self.installment_date
                 continue
             interval = self.interval
-            st_date = self.installment_date
             if i.installment in new_line_dict:
                 f_amount = line_by_fiscalyear[new_line_dict[i.installment][2]]
                 i.fiscal_year_id = new_line_dict[i.installment][2]
@@ -109,7 +113,6 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
                 fy = new_line_dict[i.installment][0]
-                date_invoice = self.installment_date
 
                 if count == 0:
                     interval = 0
@@ -126,14 +129,20 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     day = installment_date.day
                     month = installment_date.month
                     old_fy = fy
-                
-                i.date_invoice = datetime.strptime(str(month) + '/' + str(day)  + '/' + fy, '%m/%d/%Y')
+
+                day_range = calendar.monthrange(int(fy), month)[1]
+                if day > day_range:
+                    day = day_range
+                date_str = str(month) + '/' + str(day) + '/' + fy
+                i.date_invoice = datetime.strptime(date_str, '%m/%d/%Y')
                 count += 1
 
     @api.one
     def do_create_purchase_invoice_plan(self):
         if not self.by_fiscalyear:
-            return super(PurchaseCreateInvoicePlan, self).do_create_purchase_invoice_plan()
+            return super(PurchaseCreateInvoicePlan, self).\
+                do_create_purchase_invoice_plan()
+
         self._validate_total_amount()
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
@@ -191,5 +200,3 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order.use_advance = self.use_advance
         order.use_deposit = self.use_deposit
         order.invoice_mode = self.invoice_mode
-
-
