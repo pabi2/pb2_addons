@@ -130,54 +130,70 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         self._check_invoice_mode(order)
         order.invoice_plan_ids.unlink()
         lines = []
-        obj_precision = self.env['decimal.precision']
-        prec = obj_precision.precision_get('Account')
 
         for install in self.installment_ids:
             if install.installment == 0:
                 self._check_deposit_account()
-                base_amount = order.amount_untaxed
                 if install.is_advance_installment:
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': False,
-                        'installment': 0,
-                        'description': install.description,
-                        'is_advance_installment': True,
-                        'date_invoice': install.date_invoice,
-                        'deposit_percent': install.percent,
-                        'deposit_amount': round(install.percent/100 *
-                                                base_amount, prec)
-                    })
+                    line_data = self._prepare_advance_line(order, install)
+                    lines.append(line_data)
                 if install.is_deposit_installment:
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': False,
-                        'installment': 0,
-                        'description': install.description,
-                        'is_deposit_installment': True,
-                        'date_invoice': install.date_invoice,
-                        'deposit_percent': install.percent,
-                        'deposit_amount': round(install.percent/100 *
-                                                base_amount, prec)
-                    })
+                    line_data = self._prepare_deposit_line(order, install)
+                    lines.append(line_data)
             elif install.installment > 0:
                 for order_line in order.order_line:
-                    subtotal = order_line.price_subtotal
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': order_line.id,
-                        'description': order_line.name,
-                        'installment': install.installment,
-                        'date_invoice': install.date_invoice,
-                        'invoice_percent': install.percent,
-                        'invoice_amount': round(install.percent/100 *
-                                                subtotal, prec),
-                    })
+                    line_data = self._prepare_installment_line(order,
+                                                               order_line,
+                                                               install)
+                    lines.append(line_data)
         order.invoice_plan_ids = lines
         order.use_advance = self.use_advance
         order.use_deposit = self.use_deposit
         order.invoice_mode = self.invoice_mode
+
+    @api.model
+    def _prepare_advance_line(self, order, install):
+        return self._prepare_advance_deposit_line(order, install, True, False)
+
+    @api.model
+    def _prepare_deposit_line(self, order, install):
+        return self._prepare_advance_deposit_line(order, install, False, True)
+
+    @api.model
+    def _prepare_advance_deposit_line(self, order, install, advance, deposit):
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        base_amount = order.amount_untaxed
+        data = {
+            'order_id': order.id,
+            'order_line_id': False,
+            'installment': 0,
+            'description': install.description,
+            'is_advance_installment': advance,
+            'is_deposit_installment': deposit,
+            'date_invoice': install.date_invoice,
+            'deposit_percent': install.percent,
+            'deposit_amount': round(install.percent/100 *
+                                    base_amount, prec)
+        }
+        return data
+
+    @api.model
+    def _prepare_installment_line(self, order, order_line, install):
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        subtotal = order_line.price_subtotal
+        data = {
+            'order_id': order.id,
+            'order_line_id': order_line.id,
+            'description': order_line.name,
+            'installment': install.installment,
+            'date_invoice': install.date_invoice,
+            'invoice_percent': install.percent,
+            'invoice_amount': round(install.percent/100 *
+                                    subtotal, prec),
+        }
+        return data
 
     @api.model
     def _compute_installment_details(self):
