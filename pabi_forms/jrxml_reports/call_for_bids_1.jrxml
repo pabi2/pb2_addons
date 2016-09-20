@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="2.3579476910000485"/>
-	<property name="ireport.x" value="17"/>
-	<property name="ireport.y" value="525"/>
+	<property name="ireport.zoom" value="1.1000000000000225"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="110"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -89,11 +89,11 @@
 			<parameterDescription><![CDATA[]]></parameterDescription>
 		</parameter>
 		<queryString>
-			<![CDATA[SELECT pdl.product_name,
-pdl.price_unit,
+			<![CDATA[SELECT TRIM(pdl.product_name) product_name,
+SUM(pdl.price_unit) price_unit,
 pr.name pr_no,
-pdl.product_qty,
-pdl.price_subtotal,
+SUM(pdl.product_qty) product_qty,
+SUM(pdl.price_subtotal) price_subtotal,
 pu.name unit
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_request_purchase_requisition_line_rel prpd
@@ -103,7 +103,8 @@ ON prl.id = prpd.purchase_request_line_id
 LEFT JOIN purchase_request pr
 ON pr.id = prl.request_id
 left join product_uom pu on pdl.product_uom_id = pu.id
-WHERE pdl.requisition_id = $P{ids}]]>
+WHERE pdl.requisition_id = $P{ids}
+GROUP BY TRIM(pdl.product_name),pr.name,pu.name]]>
 		</queryString>
 		<field name="product_name" class="java.lang.String">
 			<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
