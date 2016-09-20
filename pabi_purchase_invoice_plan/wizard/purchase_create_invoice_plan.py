@@ -120,8 +120,14 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 if self.interval_type == 'month':
                     if month < 12:
                         month += interval
+                    if month > 12:
+                        month = 12
                 else:
                     day += interval
+                    day_range = calendar.monthrange(int(fy), month)[1]
+                    if day > day_range:
+                        day = day - day_range
+                        month += 1
 
                 if not old_fy:
                     old_fy = fy
@@ -130,9 +136,6 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     month = installment_date.month
                     old_fy = fy
 
-                day_range = calendar.monthrange(int(fy), month)[1]
-                if day > day_range:
-                    day = day_range
                 date_str = str(month) + '/' + str(day) + '/' + fy
                 i.date_invoice = datetime.strptime(date_str, '%m/%d/%Y')
                 count += 1
