@@ -106,6 +106,12 @@ class PurchaseOrder(models.Model):
         readonly=True,
         default=False,
     )
+    select_reason = fields.Many2one(
+        'purchase.select.reason',
+        string='Selected Reason',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -140,11 +146,38 @@ class PurchaseOrder(models.Model):
         self.dummy_quote_id = self.id
 
     @api.model
+    def _check_request_for_quotation(self):
+        if self.requisition_id.purchase_method_id.require_rfq:
+            raise UserError(
+                _("Can't convert to order. Have to wait for PD approval.")
+            )
+        return True
+
+    @api.model
     def by_pass_approve(self, ids):
         quotation = self.browse(ids)
+        quotation._check_request_for_quotation()
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
+        return True
+
+    @api.multi
+    def wkf_action_cancel(self):
+        res = super(PurchaseOrder, self).wkf_action_cancel()
+        for order in self:
+            self.state2 = 'cancel'
+            if order.quote_id:
+                order.quote_id.wkf_action_cancel()
+                order.quote_id.state2 = 'cancel'
+        return res
+
+    @api.model
+    def by_pass_cancel(self, ids):
+        quotation = self.browse(ids)
+        quotation.action_cancel()
+        if quotation.state != 'cancel':
+            quotation.state = 'cancel'
         return True
 
     @api.multi
@@ -317,21 +350,11 @@ class PurchaseOrder(models.Model):
 
         return orders_info
 
-    @api.multi
-    def wkf_action_cancel(self):
-        res = super(PurchaseOrder, self).wkf_action_cancel()
-        for order in self:
-            self.state2 = 'cancel'
-            if order.quote_id:
-                order.quote_id.wkf_action_cancel()
-                order.quote_id.state2 = 'cancel'
-        return res
-
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    fiscal_year_id = fields.Many2one(
+    fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         'Fiscal Year',
         readonly=True,
@@ -390,6 +413,16 @@ class PurchasePrototype(models.Model):
 
     name = fields.Char(
         string='Prototype',
+        required=True,
+    )
+
+
+class PurchaseSelectReason(models.Model):
+    _name = 'purchase.select.reason'
+    _description = 'PABI2 Purchase Selected Reason'
+
+    name = fields.Char(
+        string='Select Reason',
         required=True,
     )
 

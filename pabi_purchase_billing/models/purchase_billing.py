@@ -71,6 +71,11 @@ class PurchaseBilling(models.Model):
         readonly=True,
         store=True,
     )
+    email_sent = fields.Boolean(
+        string='Email Sent',
+        readonly=False,
+    )
+
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Billing Number must be unique!'),
     ]
@@ -105,6 +110,42 @@ class PurchaseBilling(models.Model):
         self.write({'state': 'draft'})
         self.message_post(body=_('Billing is reset to draft'))
         return True
+
+    @api.multi
+    def action_send_bill(self):
+        self.ensure_one()
+        try:
+            template_id = self.env.ref(
+                'pabi_purchase_billing.email_template_purchase_billing'
+            ).id
+        except ValueError:
+            template_id = False
+
+        try:
+            compose_form_id = self.env.ref(
+                'mail.email_compose_message_wizard_form').id
+        except ValueError:
+            compose_form_id = False
+
+        ctx = dict(self.env.context)
+        ctx.update({
+            'default_model': 'purchase.billing',
+            'default_res_id': self._ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+        })
+        return {
+            'name': _('Compose Email'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
     @api.multi
     def cancel_billing(self):
