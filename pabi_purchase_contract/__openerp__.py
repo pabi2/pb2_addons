@@ -19,9 +19,9 @@ PABI2 - Purchase Contract Module
     "depends": [
         'base',
         'mail',
+        'purchase_requisition',
     ],
     "data": [
-        
         'security/module_data.xml',
         'security/purchase_contract_security.xml',
         'security/ir.model.access.csv',
@@ -31,7 +31,8 @@ PABI2 - Purchase Contract Module
         'views/purchase_contract.xml',
         'views/purchase_contract_type.xml',
         'views/purchase_contract_menu_item.xml',
-        'views/purchase_contract_view.xml'
+        'views/purchase_contract_view.xml',
+        'views/purchase_requisition_view.xml',
     ],
 }
 

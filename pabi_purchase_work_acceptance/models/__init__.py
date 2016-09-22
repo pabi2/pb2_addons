@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from . import res_config
-from . import res_partner
+from . import account_config_settings
+from . import res_company
 from . import purchase_requisition
 from . import purchase
 from . import purchase_work_acceptance
