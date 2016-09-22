@@ -17,16 +17,16 @@ XGENERATE = 'X'
 XTERMINATION = 'Y'
 XDELETE = 'Z'
 
-STATES = [(DRAFT, "Draft"),
-          (GENERATE, "Generated"),
-          (SEND, "Sending"),
-          (CLOSE, "Closed"),
-          (XGENERATE, "Cancel Generated"),
-          (XTERMINATION, "Termination"),
-          (XDELETE, "Delete")]
-WARRANTY_TYPE = [('D', "Day"),
-                 ('M', "Month"),
-                 ('Y', "Year")]
+STATES = [(DRAFT, _("Draft")),
+          (GENERATE, _("Generated")),
+          (SEND, _("Sending")),
+          (CLOSE, _("Closed")),
+          (XGENERATE, _("Cancel Generated")),
+          (XTERMINATION, _("Termination")),
+          (XDELETE, _("Delete"))]
+WARRANTY_TYPE = [('D', _("Day")),
+                 ('M', _("Month")),
+                 ('Y', _("Year"))]
 REPORT_NO = 0
 
 
@@ -264,7 +264,7 @@ class PurchaseContract(models.Model):
                 if Emp.org_id.code == 'CT':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    gid = self.env.ref(Ext_group + Emp.org_id.code.lower())
+                    gid = self.env.ref(Ext_group + Emp.org_id.org_shortname_en.lower())
                 return gid
             else:
                 raise osv.except_osv(
@@ -785,7 +785,7 @@ class PurchaseContract(models.Model):
                 if Emp.org_id.code == 'CT':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    gid = self.env.ref(Ext_group + Emp.org_id.code.lower())
+                    gid = self.env.ref(Ext_group + Emp.org_id.org_shortname_en.lower())
                 self.admin_org_groups_id = gid
             else:
                 self.admin_org_groups_id = False
@@ -811,7 +811,7 @@ class PurchaseContract(models.Model):
         else:
             self.write_emp_id = False
 
-    @api.multi
+    @api.one
     @api.depends('poc_code', 'poc_rev')
     def _compute_display_code(self):
         name = ""
@@ -854,5 +854,5 @@ class PurchaseContract(models.Model):
                 start2end += str(rd.days)
                 start2end += _(' Day ')
             else:
-                start2end = "** Wrong Date **"
+                start2end = _("** Wrong Date **")
         self.duration_start2end = start2end
