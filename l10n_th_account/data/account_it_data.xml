@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="account_it_form_pnd3" model="account.it.form">
+            <field name="name">ภงด.3</field>
+            <field name="code">PND3</field>
+        </record>
+            <record id="account_it_form_pnd53" model="account.it.form">
+                <field name="name">ภงด.53</field>
+                <field name="code">PND53</field>
+            </record>
+    </data>
+</openerp>

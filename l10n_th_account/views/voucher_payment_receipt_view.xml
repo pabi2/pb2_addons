@@ -101,7 +101,6 @@
             </field>
         </record>
 
-        
         <record id="view_vendor_payment_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.payment.form.ext</field>
             <field name="model">account.voucher</field>
@@ -119,6 +118,7 @@
                             context="{'recognize_vat': True}"
                             attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'posted'), ('auto_recognize_vat', '=', True),
                    						('recognize_vat_move_id', '!=', False), ('tax_line_normal', '=', [])]}"/>
+                          <button name="%(action_print_wht_cert)d" type="action" string="Print Withholding Tax Certificate" />
                     </button>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
                         <field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>

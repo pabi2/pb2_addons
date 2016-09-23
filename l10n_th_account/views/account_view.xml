@@ -2,30 +2,95 @@
 <openerp>
     <data>
         <record id="view_tax_form_ext" model="ir.ui.view">
-		    <field name="name">view.tax.form.ext</field>
-		    <field name="model">account.tax</field>
-		    <field name="type">form</field>
-		    <field name="inherit_id" ref="account.view_tax_form"/>
-		    <field name="arch" type="xml">
-		        <field name="price_include" position="after">
-		            <field name="is_wht" />
-		            <field name="threshold_wht" attrs="{'invisible': [('is_wht','=',False)]}"/>
-		            <field name="is_undue_tax" />
-		            <field name="refer_tax_id" attrs="{'invisible': [('is_undue_tax','=',False)]}" class="oe_inline"/>
-		        </field>
-			</field>
-		</record>
-		<record id="view_tax_tree_ext" model="ir.ui.view">
-		    <field name="name">view.tax.tree.ext</field>
-		    <field name="model">account.tax</field>
-		    <field name="type">tree</field>
-		    <field name="inherit_id" ref="account.view_tax_tree"/>
-		    <field name="arch" type="xml">
-		        <field name="description" position="after">
-		            <field name="is_undue_tax"/>
-		            <field name="is_wht"/>
-		        </field>
-		    </field>
-		</record>    
-	</data>
+            <field name="name">view.tax.form.ext</field>
+            <field name="model">account.tax</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <field name="price_include" position="after">
+                    <label for="is_wht"/>
+                    <div>
+                        <div>
+                            <field name="is_wht"/>
+                        </div>
+                        <div attrs="{'invisible': [('is_wht','=',False)], 'required': [('is_wht','=',True)]}">
+                            <label string="Income Tax Form" class="oe_inline"/>
+                            -
+                            <field name="it_form_id" class="oe_inline"/>
+                        </div>
+                        <div attrs="{'invisible': [('is_wht','=',False)], 'required': [('is_wht','=',True)]}">
+                            <label string="Threshold Amount" class="oe_inline"/>
+                            -
+                            <field name="threshold_wht" class="oe_inline"/>
+                        </div>
+                    </div>
+                    <field name="threshold_wht" attrs="{'invisible': [('is_wht','=',False)]}"/>
+                    <field name="is_undue_tax"/>
+                    <field name="refer_tax_id" attrs="{'invisible': [('is_undue_tax','=',False)]}" class="oe_inline"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_tax_tree_ext" model="ir.ui.view">
+            <field name="name">view.tax.tree.ext</field>
+            <field name="model">account.tax</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_tax_tree"/>
+            <field name="arch" type="xml">
+                <field name="description" position="after">
+                    <field name="is_undue_tax"/>
+                    <field name="is_wht"/>
+                </field>
+            </field>
+        </record>
+
+        # Income Tax Form master data
+        <record id="view_account_it_form_tree" model="ir.ui.view">
+            <field name="name">view.account.it.form.tree</field>
+            <field name="model">account.it.form</field>
+            <field name="arch" type="xml">
+                <tree string="Income Tax Form">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_it_form_form" model="ir.ui.view">
+            <field name="name">view.account.it.form.form</field>
+            <field name="model">account.it.form</field>
+            <field name="arch" type="xml">
+                <form string="Income Tax Form">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_it_form_search" model="ir.ui.view">
+            <field name="name">view.account.it.form.search</field>
+            <field name="model">account.it.form</field>
+            <field name="arch" type="xml">
+                <search string="Income Tax Form">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_account_it_form" model="ir.actions.act_window">
+            <field name="name">Income Tax Form</field>
+            <field name="res_model">account.it.form</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_it_form_tree"/>
+        </record>
+
+        <menuitem name="Income Tax Forms" id="menu_account_it_form" action="action_account_it_form" parent="account.next_id_27" sequence="60" groups="account.group_account_invoice"/>
+    </data>
 </openerp>

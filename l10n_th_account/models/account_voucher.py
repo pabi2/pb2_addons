@@ -6,6 +6,9 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, ValidationError
 import openerp.addons.decimal_precision as dp
 
+WHT_CERT_INCOME_TYPE = [('1', '1'), ('2', '2'), ('3', '3'),
+                        ('5', '5'), ('6', '6')]
+
 
 class common_voucher(object):
 
@@ -815,6 +818,13 @@ class AccountVoucherTax(common_voucher, models.Model):
     factor_tax = fields.Float(
         string='Multipication factor Tax code',
         compute='_count_factor',
+    )
+    wht_cert_income_type = fields.Selection(
+        WHT_CERT_INCOME_TYPE,
+        string='Type of Income',
+    )
+    wht_cert_income_desc = fields.Char(
+        string='Income Description',
     )
 
     @api.model

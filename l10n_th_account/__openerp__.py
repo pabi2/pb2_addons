@@ -13,11 +13,14 @@
         'account_voucher_action_move_line_create_hooks',
     ],
     'data': [
+        'wizard/print_wht_cert_wizard.xml',
         'views/account_view.xml',
         'views/account_invoice_view.xml',
         'views/voucher_payment_receipt_view.xml',
         'views/account_config.xml',
-        'security/ir.model.access.csv'
+        'security/ir.model.access.csv',
+        'data/account_it_data.xml',
+        'data/report_data.xml',
     ],
     'demo': [
     ],
