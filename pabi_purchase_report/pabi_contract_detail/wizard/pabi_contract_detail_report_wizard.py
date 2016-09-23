@@ -12,7 +12,7 @@ class PabiContractDetailReportWizard(models.TransientModel):
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
-        string='Purchase Type',
+        string='Purchase Method',
     )
     date_from = fields.Date(string='Contract Start Date')
     date_to = fields.Date(string='Contract End Date')
