@@ -6,5 +6,4 @@ from . import account_voucher
 from . import account
 from . import account_config_settings
 from . import res_company
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+from . import res_partner

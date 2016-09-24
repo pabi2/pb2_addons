@@ -17,12 +17,6 @@ class AccountTaxTemplate(models.Model):
         string='Withholding Tax',
         help="Tax will be withhold and will be used in Payment",
     )
-    it_form_id = fields.Many2one(
-        'account.it.form',
-        string='Incorm Tax Form',
-        help="""If WHT is checked, this option is visible and will be used
-                to determine how WHT cert/forms/reports will be rendered""",
-    )
     threshold_wht = fields.Float(
         string='Threshold Amount',
         help="""Withholding Tax will be applied only if base amount more
@@ -56,12 +50,6 @@ class AccountTax(models.Model):
     is_wht = fields.Boolean(
         string='Withholding Tax',
         help="Tax will be withhold and will be used in Payment",
-    )
-    it_form_id = fields.Many2one(
-        'account.it.form',
-        string='Incorm Tax Form',
-        help="""If WHT is checked, this option is visible and will be used
-                to determine how WHT cert/forms/reports will be rendered""",
     )
     threshold_wht = fields.Float(
         string='Threshold Amount',
@@ -156,26 +144,3 @@ class AccountTaxCode(models.Model):
             self.tax_code_type = 'wht'
         elif is_undue_tax:
             self.tax_code_type = 'undue'
-
-
-class AccountITForm(models.Model):
-    _name = 'account.it.form'
-    _description = 'Master data for Income Tax types, i..e, PND3, PND53'
-
-    name = fields.Char(
-        string='Name',
-        required=True,
-        size=255,
-    )
-    code = fields.Char(
-        string='Code',
-        size=5,
-        readonly=True,
-    )
-    active = fields.Boolean(
-        string='Active',
-        default=True,
-    )
-    _sql_constraints = [
-        ('code_uniq', 'unique (code)', 'The code must be unique !'),
-    ]

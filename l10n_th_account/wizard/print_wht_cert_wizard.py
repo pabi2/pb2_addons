@@ -1,19 +1,27 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.addons.l10n_th_account.models.account_voucher \
-    import WHT_CERT_INCOME_TYPE
+    import WHT_CERT_INCOME_TYPE, TAX_PAYER
+from openerp.addons.l10n_th_account.models.res_partner \
+    import INCOME_TAX_FORM
 
 
 class PrintWhtCertWizard(models.TransientModel):
     _name = 'print.wht.cert.wizard'
 
+    voucher_id = fields.Many2one(
+        'account.voucher',
+        string='Voucher',
+    )
     company_partner_id = fields.Many2one(
         'res.partner',
         string='Company',
+        readonly=True,
     )
     supplier_partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
+        readonly=True,
     )
     company_taxid = fields.Char(
         related='company_partner_id.vat',
@@ -35,18 +43,23 @@ class PrintWhtCertWizard(models.TransientModel):
         compute='_compute_address',
         readonly=True,
     )
-    pnd3 = fields.Boolean(
-        string='PND3',
-        compute='_compute_it_form',
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        required=True,
     )
-    pnd53 = fields.Boolean(
-        string='PND53',
-        compute='_compute_it_form',
+    wht_sequence_display = fields.Char(
+        string='WHT Sequence',
     )
     wht_line = fields.One2many(
         'wht.cert.tax.line',
         'wizard_id',
         string='Withholding Line',
+    )
+    tax_payer = fields.Selection(
+        TAX_PAYER,
+        string='Tax Payer',
+        required=True,
     )
 
     @api.one
@@ -54,19 +67,6 @@ class PrintWhtCertWizard(models.TransientModel):
     def _compute_address(self):
         self.company_address = self._prepare_address(self.company_partner_id)
         self.supplier_address = self._prepare_address(self.supplier_partner_id)
-
-    @api.one
-    @api.depends('wht_line')
-    def _compute_it_form(self):
-        pnd3 = False
-        pnd53 = False
-        for line in self.wht_line:
-            if line.voucher_tax_id.tax_id.it_form_id.code == 'PND3':
-                pnd3 = True
-            if line.voucher_tax_id.tax_id.it_form_id.code == 'PND53':
-                pnd53 = True
-        self.pnd3 = pnd3
-        self.pnd53 = pnd53
 
     @api.model
     def default_get(self, fields):
@@ -76,8 +76,13 @@ class PrintWhtCertWizard(models.TransientModel):
         voucher = self.env[active_model].browse(active_id)
         company_partner = self.env.user.company_id.partner_id
         supplier = voucher.partner_id
+        res['voucher_id'] = voucher.id
         res['company_partner_id'] = company_partner.id
         res['supplier_partner_id'] = supplier.id
+        res['income_tax_form'] = (voucher.income_tax_form or
+                                  supplier.income_tax_form)
+        res['wht_sequence_display'] = voucher.wht_sequence_display
+        res['tax_payer'] = (voucher.tax_payer or False)
         res['wht_line'] = []
         for line in voucher.tax_line_wht:
             vals = {
@@ -94,6 +99,8 @@ class PrintWhtCertWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
+        self._save_selection()
+        self.voucher_id._assign_wht_sequence()
         form_data = self._get_form_data()
         data['parameters'] = form_data
         res = {
@@ -101,14 +108,17 @@ class PrintWhtCertWizard(models.TransientModel):
             'report_name': 'report_withholding_cert',
             'datas': data,
         }
-        self._save_selection()
         return res
 
     @api.model
     def _get_form_data(self):
+        """ Data to pass as parameter in iReport """
         data = {}
-        company = self.company_partner_id
-        supplier = self.supplier_partner_id
+        voucher = self.voucher_id
+        data['voucher_number'] = voucher.number
+        data['date_value'] = voucher.date_value
+        company = self.env.user.company_id.partner_id
+        supplier = voucher.partner_id
         data['company_name'] = company.name_get()[0][1]
         data['supplier_name'] = supplier.name_get()[0][1]
         company_taxid = len(company.vat) == 13 and company.vat or ''
@@ -117,20 +127,42 @@ class PrintWhtCertWizard(models.TransientModel):
         data['supplier_taxid'] = list(supplier_taxid)
         data['company_address'] = self.company_address
         data['supplier_address'] = self.supplier_address
-        data['pnd3'] = self.pnd3 and 'X' or ''
-        data['pnd53'] = self.pnd53 and 'X' or ''
-        data['type_1_base'] = 0.0
-        data['type_1_tax'] = 0.0
-        data['type_2_base'] = 0.0
-        data['type_2_tax'] = 0.0
-        data['type_3_base'] = 0.0
-        data['type_3_tax'] = 0.0
-        data['type_5_base'] = 0.0
-        data['type_5_tax'] = 0.0
-        data['type_6_base'] = 1000.0
-        data['type_6_tax'] = 100.0
-        data['type_6_desc'] = 'Service'
+        data['pnd3'] = voucher.income_tax_form == 'pnd3' and 'X' or ''
+        data['pnd53'] = voucher.income_tax_form == 'pnd53' and 'X' or ''
+        data['wht_sequence_display'] = voucher.wht_sequence_display
+        data['withholding'] = voucher.tax_payer == 'withholding' and 'X' or ''
+        data['paid_one_time'] = (voucher.tax_payer == 'paid_one_time' and
+                                 'X' or '')
+        data['total_base'] = self._get_summary_by_type('base')
+        data['total_tax'] = self._get_summary_by_type('tax')
+        data['type_1_base'] = self._get_summary_by_type('base', '1')
+        data['type_1_tax'] = self._get_summary_by_type('tax', '1')
+        data['type_2_base'] = self._get_summary_by_type('base', '2')
+        data['type_2_tax'] = self._get_summary_by_type('tax', '2')
+        data['type_3_base'] = self._get_summary_by_type('base', '3')
+        data['type_3_tax'] = self._get_summary_by_type('tax', '3')
+        data['type_5_base'] = self._get_summary_by_type('base', '5')
+        data['type_5_tax'] = self._get_summary_by_type('tax', '5')
+        data['type_6_base'] = self._get_summary_by_type('base', '6')
+        data['type_6_tax'] = self._get_summary_by_type('tax', '6')
+        data['type_6_desc'] = self._get_summary_by_type('desc', '6')
+        data['signature'] = self.env.user.name_get()[0][1]
         return data
+
+    @api.model
+    def _get_summary_by_type(self, column, ttype='all'):
+        wht_lines = self.wht_line
+        if ttype != 'all':
+            wht_lines = self.wht_line.filtered(lambda l:
+                                               l.wht_cert_income_type == ttype)
+        if column == 'base':
+            return sum([x.base for x in wht_lines])
+        if column == 'tax':
+            return sum([x.amount for x in wht_lines])
+        if column == 'desc':
+            descs = [x.wht_cert_income_desc for x in wht_lines]
+            descs = filter(lambda x: x is not False and x != '', descs)
+            return ', '.join(descs)
 
     @api.model
     def _prepare_address(self, partner):
@@ -144,6 +176,9 @@ class PrintWhtCertWizard(models.TransientModel):
 
     @api.model
     def _save_selection(self):
+        if not self.voucher_id.income_tax_form:
+            self.voucher_id.income_tax_form = self.income_tax_form
+        self.voucher_id.tax_payer = self.tax_payer
         for line in self.wht_line:
             line.voucher_tax_id.write({
                 'wht_cert_income_type': line.wht_cert_income_type,

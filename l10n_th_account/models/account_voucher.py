@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
-
-import datetime
 import time
+from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, ValidationError
 import openerp.addons.decimal_precision as dp
+from openerp.addons.l10n_th_account.models.res_partner \
+    import INCOME_TAX_FORM
 
 WHT_CERT_INCOME_TYPE = [('1', '1'), ('2', '2'), ('3', '3'),
                         ('5', '5'), ('6', '6')]
+TAX_PAYER = [('withholding', 'Withholding'),
+             ('paid_one_time', 'Paid One Time')]
 
 
 class common_voucher(object):
@@ -16,7 +19,7 @@ class common_voucher(object):
     def _to_invoice_currency(self, invoice, journal, amount):
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or
-            datetime.datetime.today())
+            datetime.today())
         company_currency = (journal.currency and
                             journal.currency.id or
                             journal.company_id.currency_id)
@@ -27,7 +30,7 @@ class common_voucher(object):
     def _to_voucher_currency(self, invoice, journal, amount):
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or
-            datetime.datetime.today())
+            datetime.today())
         company_currency = (journal.currency and
                             journal.currency.id or
                             journal.company_id.currency_id)
@@ -67,6 +70,31 @@ class AccountVoucher(common_voucher, models.Model):
         readonly=False,
         domain=[('tax_code_type', '=', 'wht')],
     )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        readonly=True,
+        help="Specify form for withholding tax, default with setup in supplier"
+    )
+    wht_sequence = fields.Integer(
+        string='WHT Sequence',
+        readonly=True,
+        help="Running sequence for the same period. Reset every period",
+    )
+    wht_sequence_display = fields.Char(
+        string='WHT Sequence',
+        compute='_compute_wht_sequence_display',
+        store=True,
+    )
+    wht_period_id = fields.Many2one(
+        'account.period',
+        string='WHT Period',
+        readonly=True,
+    )
+    tax_payer = fields.Selection(
+        TAX_PAYER,
+        string='Tax Payer',
+    )
     recognize_vat_move_id = fields.Many2one(
         'account.move',
         string='Recognize VAT Entry',
@@ -78,6 +106,18 @@ class AccountVoucher(common_voucher, models.Model):
         string='Auto recognize undue VAT',
         readonly=True,
     )
+
+    @api.multi
+    @api.depends('wht_sequence')
+    def _compute_wht_sequence_display(self):
+        for rec in self:
+            if rec.wht_period_id and rec.wht_sequence:
+                date_start = rec.wht_period_id.date_start
+                mo = datetime.strptime(date_start,
+                                       '%Y-%m-%d').date().month
+                month = '{:02d}'.format(mo)
+                sequence = '{:04d}'.format(rec.wht_sequence)
+                rec.wht_sequence_display = '%s/%s' % (month, sequence)
 
     @api.multi
     def cancel_voucher(self):
@@ -595,6 +635,32 @@ class AccountVoucher(common_voucher, models.Model):
         else:
             super(AccountVoucher, self).action_move_line_create()
         return True
+
+    @api.multi
+    def _assign_wht_sequence(self):
+        """ Only if not assigned, this method will assign next sequence """
+        Period = self.env['account.period']
+        for voucher in self:
+            if not voucher.income_tax_form:
+                raise ValidationError(_("No Income Tax Form selected, "
+                                        "can not assign WHT Sequence"))
+            if voucher.wht_sequence:
+                continue
+            wht_period_id = Period.find(voucher.date_value)[:1].id
+            wht_sequence = \
+                voucher._get_next_wht_sequence(voucher.income_tax_form,
+                                               wht_period_id)
+            voucher.write({'wht_period_id': wht_period_id,
+                           'wht_sequence': wht_sequence})
+
+    @api.model
+    def _get_next_wht_sequence(self, income_tax_form, wht_period_id):
+        self._cr.execute("""
+            select coalesce(max(wht_sequence), 0) + 1
+            from account_voucher
+            where period_id = %s and income_tax_form = %s
+        """, (wht_period_id, income_tax_form))
+        return self._cr.fetchone()[0]
 
 
 class AccountVoucherLine(common_voucher, models.Model):

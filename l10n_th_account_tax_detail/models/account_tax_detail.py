@@ -95,6 +95,11 @@ class AccountTaxDetail(models.Model):
         readonly=True,
         help="Running sequence for the same period. Reset every period",
     )
+    tax_sequence_display = fields.Char(
+        string='Sequence',
+        compute='_compute_tax_sequence_display',
+        store=True,
+    )
     period_id = fields.Many2one(
         'account.period',
         string='Period',
@@ -119,11 +124,6 @@ class AccountTaxDetail(models.Model):
     )
     amount = fields.Float(
         string='Tax',
-    )
-    tax_sequence_display = fields.Char(
-        string='Sequence',
-        compute='_compute_tax_sequence_display',
-        store=True,
     )
 
     _sql_constraints = [

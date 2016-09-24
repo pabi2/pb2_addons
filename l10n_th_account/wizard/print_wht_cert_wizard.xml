@@ -8,29 +8,31 @@
                 <form string="Print Withholding Tax Certificate">
                     <group>
                         <group>
+                            <field name="voucher_id" invisible="1"/>
                             <field name="company_partner_id"/>
+                            <field name="company_taxid" string="Tax ID"/>
                         </group>
                         <group>
-                            <field name="company_taxid" string="Tax ID"/>
                             <field name="company_address" nolabel="1"/>
                         </group>
                     </group>
                     <group>
                         <group>
                             <field name="supplier_partner_id"/>
+                            <field name="supplier_taxid" string="Tax ID"/>
                         </group>
                         <group>
-                            <field name="supplier_taxid" string="Tax ID"/>
                             <field name="supplier_address" nolabel="1"/>
                         </group>
                     </group>
                     <group string="WHT Cert Options">
-                        <div>
-                            <field name="pnd3" class="oe_inline"/>
-                            <label for="pnd3" class="oe_inline"/>
-                            <field name="pnd53" class="oe_inline"/>
-                            <label for="pnd53" class="oe_inline"/>
-                        </div>
+                        <group>
+                            <field name="income_tax_form" widget="radio" attrs="{'readonly': [('wht_sequence_display', '!=', False)]}"/>
+                            <field name="wht_sequence_display" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="tax_payer" />
+                        </group>
                     </group>
                     <field name="wht_line">
                         <tree editable="bottom">
