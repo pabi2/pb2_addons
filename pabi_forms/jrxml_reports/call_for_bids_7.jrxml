@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.4641000000000017"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="94"/>
+	<property name="ireport.zoom" value="7.40024994425818"/>
+	<property name="ireport.x" value="1207"/>
+	<property name="ireport.y" value="984"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -152,21 +152,22 @@
 			<parameterDescription><![CDATA[]]></parameterDescription>
 		</parameter>
 		<queryString>
-			<![CDATA[SELECT pdl.product_name,
-pdl.price_unit,
+			<![CDATA[SELECT TRIM(pdl.product_name) product_name,
+SUM(pdl.price_unit) price_unit,
 pr.name pr_no,
-pdl.product_qty,
-pdl.price_subtotal,
+SUM(pdl.product_qty) product_qty,
+SUM(pdl.price_subtotal) price_subtotal,
 pu.name unit
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_request_purchase_requisition_line_rel prpd
-ON prpd.purchase_requisition_line_id = pdl.requisition_id
+ON prpd.purchase_requisition_line_id = pdl.id
 LEFT JOIN purchase_request_line prl
 ON prl.id = prpd.purchase_request_line_id
 LEFT JOIN purchase_request pr
 ON pr.id = prl.request_id
 left join product_uom pu on pdl.product_uom_id = pu.id
-WHERE pdl.requisition_id = $P{ids}]]>
+WHERE pdl.requisition_id = $P{ids}
+GROUP BY TRIM(pdl.product_name),pr.name,pu.name]]>
 		</queryString>
 		<field name="product_name" class="java.lang.String">
 			<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
@@ -290,11 +291,12 @@ ORDER BY prc.sequence]]>
 	<queryString>
 		<![CDATA[SELECT pd.id as pd_id,
 pd.schedule_date schedule_date,
-(SELECT ro.name FROM res_users ru
+(SELECT it.value FROM res_users ru
 LEFT JOIN res_partner rp ON rp.id = ru.partner_id
 LEFT JOIN hr_employee he ON he.employee_code = ru.login
 LEFT JOIN hr_position hp ON hp.id = he.position_id
 left join res_org ro on he.org_id = ro.id
+LEFT JOIN ir_translation it ON it.res_id = ro.id AND it.name LIKE 'res.org,name'
 WHERE ru.id = pd.user_id) as ou_name,
 (SELECT search_key FROM res_partner
 WHERE id = ou.partner_id) as ou_key,
@@ -447,7 +449,7 @@ ON pm.id = pd.purchase_method_id
 LEFT JOIN purchase_price_range ppr
 ON ppr.id = pd.purchase_price_range_id
 LEFT JOIN purchase_order po
-ON po.requisition_id = pd.id AND po.state = 'done'
+ON po.requisition_id = pd.id AND po.state = 'confirmed'
 
 WHERE $X{IN, pd.id, PIDS}]]>
 	</queryString>
@@ -844,6 +846,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{schedule_date}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="142" y="62" width="87" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[บาท]]></text>
+			</staticText>
 		</band>
 		<band height="21">
 			<staticText>

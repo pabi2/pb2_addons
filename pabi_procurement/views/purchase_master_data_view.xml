@@ -283,6 +283,51 @@
                  parent="menu_purchase_config_pabi_master"
                  groups="purchase.group_purchase_manager"/>
 
+       <record id="view_purchase_select_reason_form" model="ir.ui.view">
+            <field name="name">purchase.select.reason.form</field>
+            <field name="model">purchase.select.reason</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Select Reason">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_select_reason_tree" model="ir.ui.view">
+            <field name="name">purchase.select.reason.tree</field>
+            <field name="model">purchase.select.reason</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Select Reason">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_select_reason_search" model="ir.ui.view">
+            <field name="name">purchase.select.reason.search</field>
+            <field name="model">purchase.select.reason</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Select Reason">
+                    <field name="name" string="Purchase Select Reason"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_select_reason_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Select Reason</field>
+            <field name="res_model">purchase.select.reason</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Select Reason.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_select_reason_tree"
+                 id="menu_action_purchase_select_reason_tree"
+                 parent="menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
        <record id="view_purchase_committee_type_form" model="ir.ui.view">
             <field name="name">purchase.committee.type.form</field>
             <field name="model">purchase.committee.type</field>

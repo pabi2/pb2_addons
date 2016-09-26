@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3636363636363653"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.y" value="318"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -487,7 +487,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="114">
+		<band height="135">
 			<rectangle>
 				<reportElement x="74" y="0" width="361" height="48"/>
 			</rectangle>
@@ -514,12 +514,6 @@ WHERE $X{IN, pb.id, PIDS}]]>
 			<rectangle>
 				<reportElement x="279" y="57" width="222" height="34"/>
 			</rectangle>
-			<line>
-				<reportElement x="74" y="98" width="427" height="1"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineStyle="Dashed"/>
-				</graphicElement>
-			</line>
 			<staticText>
 				<reportElement x="81" y="68" width="55" height="16"/>
 				<textElement lineSpacing="Single">
@@ -565,9 +559,6 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
 			</textField>
-			<break>
-				<reportElement x="0" y="105" width="100" height="1"/>
-			</break>
 			<staticText>
 				<reportElement x="373" y="1" width="62" height="16"/>
 				<textElement lineSpacing="Single">
@@ -575,6 +566,20 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[รวมเป็นเงิน]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="77" y="91" width="499" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สอบถามสถานะเช็คและรับเช็คได้ที่ฝ่ายการเงินและบัญชี โทร 025647000]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="77" y="115" width="499" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billnote} != null ? "หมายเหตุ : "+$F{billnote} : ' ']]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="161">
 			<staticText>
@@ -769,6 +774,9 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[ ลำดับที่]]></text>
 			</staticText>
+			<break>
+				<reportElement x="0" y="0" width="100" height="1"/>
+			</break>
 		</band>
 		<band height="21">
 			<componentElement>

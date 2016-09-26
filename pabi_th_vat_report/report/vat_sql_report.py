@@ -17,7 +17,8 @@ class VatReport(models.Model):
     def _get_voucher_tax_select(self):
         select_str = super(VatReport, self)._get_voucher_tax_select()
         select_str =\
-            select_str + ', avt.taxbranch_id as taxbranch_id, p.taxbranch as taxbranch'
+            select_str + ', avt.taxbranch_id as taxbranch_id, \
+            p.taxbranch as taxbranch'
         return select_str
 
     def _get_voucher_tax_groupby(self):
@@ -28,7 +29,8 @@ class VatReport(models.Model):
     # Methods for create invoice tax query
     def _get_invoice_tax_select(self):
         select_str = super(VatReport, self)._get_invoice_tax_select()
-        select_str = select_str + ', ait.taxbranch_id as taxbranch_id, p.taxbranch as taxbranch'
+        select_str = select_str + ', ait.taxbranch_id as taxbranch_id,\
+        p.taxbranch as taxbranch'
         return select_str
 
     def _get_invoice_tax_groupby(self):

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		# PDF
+
+		<record id="report_sample_partner_sql" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.sample.partner.sql</field>
+			<field name="name">Sample Partner (SQL)</field>
+			<field name="report_name">report_sample_partner_sql</field>
+			<field name="report_rml">report_sample_partner_sql/report/report_sample_partner_sql.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_sample_partner_sql_values" model="ir.values">
+			<field name="name">Partner List</field>
+			<field name="model">report.sample.partner.sql</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_sample_partner_sql)"/>
+		</record>
+
+		# XLS (change jasper output format and report name)
+		<!-- XLS -->
+		<record id="report_sample_partner_sql_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.sample.partner.sql</field>
+			<field name="name">Sample Partner (SQL)</field>
+			<!-- XLS -->
+			<field name="report_name">report_sample_partner_sql_xls</field>
+			<field name="report_rml">report_sample_partner_sql/report/report_sample_partner_sql.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<!-- XLS -->
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+
+		<!-- XLS -->
+		<record id="report_sample_partner_sql_xls_values" model="ir.values">
+			<field name="name">Partner List</field>
+			<field name="model">report.sample.partner.sql</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_sample_partner_sql_xls)"/>
+		</record>
+
+	</data>
+</openerp>
