@@ -370,7 +370,7 @@ class HRExpense(models.Model):
             result = alfresco.brw.action(arg)
         else:
             arg.update({'exNo': self.number})
-            result = alfresco.exp.action(arg)
+            result = alfresco.use.action(arg)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
