@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0000000000000084"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="499"/>
+	<property name="ireport.y" value="691"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/home/kittiu/workspace/openerp_ecosoft/ecosoft_addons/jrxml_reports/custom_reports/"]]></defaultValueExpression>
 	</parameter>
@@ -199,7 +199,7 @@ select id from res_company limit 1;]]>
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company_address}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_address}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="446" y="135" width="10" height="25"/>
@@ -255,7 +255,7 @@ select id from res_company limit 1;]]>
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{supplier_address}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{supplier_address}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement isPrintRepeatedValues="false" x="448" y="211" width="17" height="25"/>

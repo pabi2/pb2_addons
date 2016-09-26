@@ -160,7 +160,7 @@ class ActivityCommon(object):
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
-        domain="[('activity_group_ids', 'in', [activity_group_id])]",
+        domain="[('activity_group_ids', 'in', [activity_group_id or 0])]",
     )
 
     @api.model

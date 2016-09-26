@@ -16,7 +16,7 @@
              </graph>
          </field>
     </record>
-    
+
     <record id="view_budget_consume_report_tree" model="ir.ui.view">
          <field name="name">budget.consume.report.tree</field>
          <field name="model">budget.consume.report</field>
@@ -46,8 +46,8 @@
             <search string="Budget Consume">
                 <group expand="1" string="Group By">
                     <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
-                    <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
                     <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
+                    <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
                     <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
                     <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                     <filter string="Year" context="{'group_by':'date:year'}"/>
