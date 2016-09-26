@@ -354,7 +354,7 @@ class HRExpense(models.Model):
         ConfParam = self.env['ir.config_parameter']
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
-        url = ConfParam.get_param('pabiweb_url')
+        url = ConfParam.get_param('pabiweb_exp_url')
         username = self.user_valid.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
@@ -364,11 +364,13 @@ class HRExpense(models.Model):
             'by': self.env.user.login,
             'comment': 'Good'
         }
+        result = False
         if self.is_employee_advance:
             arg.update({'avNo': self.number})
+            result = alfresco.brw.action(arg)
         else:
             arg.update({'exNo': self.number})
-        result = alfresco.brw.action(arg)
+            result = alfresco.exp.action(arg)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
