@@ -28,62 +28,13 @@ class StockMove(models.Model):
     generate_asset = fields.Boolean(string='Generate Asset',)
 
     @api.multi
+    def _assign_lot_by_category(self):
+        return True
+
+    @api.multi
     def write(self, vals):
-        asset_obj = self.env['account.asset.asset']
-        asset_categ_obj = self.env['account.asset.category']
-        result = super(StockMove, self).write(vals)
-        for move in self:
-            asset_ids = []
-            asset_ids = asset_obj.search(
-                [('prodlot_id', '=', move.lot_ids.id)], limit=1)
-            if (move.state == 'done' and not asset_ids and
-                (move.generate_asset is True or
-                 move.product_id.financial_asset is True)):
-                #  Initialization
-                date = move.date
-                partner_id = False
-                purchase_value = 0
-                if move.purchase_line_id:
-                    purchase_value = move.purchase_line_id.price_unit
-                    date = move.purchase_line_id.date_planned
-                else:
-                    purchase_value = move.product_id.standard_price
-                # Move of date asset on rely
-                if move.picking_id and move.purchase_line_id.order_id and \
-                        move.purchase_line_id.order_id.partner_id:
-                    partner_id = move.purchase_line_id.order_id.partner_id.id
-                elif move.picking_id and move.picking_id.partner_id:
-                    partner_id = move.picking_id.partner_id.id
-                company_id = self.env.user.company_id.id
-                category_ids = asset_categ_obj.search(
-                    [('company_id', '=', company_id)], limit=1)
-                if category_ids:
-                    category_id = category_ids[0]
-                else:
-                    category_id = self.env.ref(
-                        "stock_asset.account_asset_category_misc_operational"
-                    )
-                # Process #
-                create_vals = {
-                    'name': move.product_id.name,
-                    'category_id': category_id.id or False,
-                    'code': move.lot_ids.name or False,
-                    'purchase_value': purchase_value,
-                    'purchase_date': date,
-                    'partner_id': partner_id,
-                    'product_id': move.product_id and
-                    move.product_id.id or False,
-                    'prodlot_id': move.lot_ids and
-                    move.lot_ids.id or False,
-                    'move_id': move.id,
-                    'picking_id': move.picking_id and
-                    move.picking_id.id or False,
-                    'state': 'draft',
-                }
-                qty = move.product_qty
-                while qty > 0:
-                    qty -= 1
-                    asset_obj.create(create_vals)
-        return result
+        self._assign_lot_by_category()
+        res = super(StockMove, self).write(vals)
+        return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
