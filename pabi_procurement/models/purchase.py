@@ -163,6 +163,15 @@ class PurchaseOrder(models.Model):
         return True
 
     @api.multi
+    def wkf_confirm_order(self):
+        for order in self:
+            if order.requisition_id.is_central_purchase:
+                order.requisition_id.exclusive = 'multiple'
+                order.requisition_id.multiple_rfq_per_supplier = True
+            res = super(PurchaseOrder, order).wkf_confirm_order()
+            return res
+
+    @api.multi
     def wkf_action_cancel(self):
         res = super(PurchaseOrder, self).wkf_action_cancel()
         for order in self:
