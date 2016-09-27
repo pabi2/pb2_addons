@@ -99,7 +99,7 @@ class AccountInvoice(models.Model):
         advance_product = self.env.user.company_id.employee_advance_product_id
         if not advance_product:
             raise ValidationError(_('No Employee Advance Product has been '
-                                    'set in HR Settings!'))
+                                    'set in Account Settings!'))
         lines = invoice.invoice_line
         # Advance with Negative Amount
         advance_lines = lines.filtered(lambda x: x.price_subtotal < 0 and

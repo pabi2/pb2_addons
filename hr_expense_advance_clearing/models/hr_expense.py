@@ -116,7 +116,7 @@ class HRExpenseExpense(models.Model):
         advance_product = self.env.user.company_id.employee_advance_product_id
         if not advance_product:
             raise ValidationError(_('No Employee Advance Product has been '
-                                    'set in HR Settings!'))
+                                    'set in Account Settings!'))
         if result.get('is_employee_advance', False):
             line = [(0, 0, {'product_id': advance_product.id,
                             'date_value': fields.Date.context_today(self),

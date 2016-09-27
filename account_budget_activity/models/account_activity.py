@@ -15,6 +15,9 @@ class AccountActivityGroup(models.Model):
         string='Activity Group',
         required=True,
     )
+    description = fields.Char(
+        string='Description',
+    )
     parent_id = fields.Many2one(
         'account.activity.group',
         string='Parent Activity Group',
