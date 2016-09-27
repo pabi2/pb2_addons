@@ -90,6 +90,7 @@
 						</group>
 
 						<br />
+<!-- 						** เลขที่สัญญาไม่สามารถแก้ไขได้  หากกดออกเลขแล้ว ** on 20/09/2016 -->
 						<h1>
 							<label string="Contract No." for="display_code" />
 							<field name="display_code" class="oe_inline" readonly="1" />
