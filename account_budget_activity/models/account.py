@@ -120,3 +120,14 @@ class AccountJournal(models.Model):
         string='Account for Expense Commitment',
         domain=[('type', '!=', 'view')]
     )
+
+
+class AccountAccount(models.Model):
+    _inherit = 'account.account'
+
+    activity_ids = fields.One2many(
+        'account.activity',
+        'account_id',
+        string='Activities',
+        readonly=True,
+    )
