@@ -13,7 +13,7 @@
     "author": "Kitti U.",
     "license": "AGPL-3",
     "application": False,
-    "installable": False,  # Mark uninstallable for now.
+    "installable": True,  # Mark uninstallable for now.
     "depends": [
         "account_budget_activity",
         'web_widget_x2many_2d_matrix',
