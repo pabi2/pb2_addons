@@ -15,7 +15,7 @@ def report_pnd53_form_parser(cr, uid, ids, data, context):
 
 jasper_reports.report_jasper(
     'report.report_pnd53_form',  # report_name in report_data.xml
-    'report.pnd53.form',  # Model View name
+    'account.voucher',  # Model View name
     parser=report_pnd53_form_parser,
 )
 
@@ -33,6 +33,6 @@ def report_pnd3_form_parser(cr, uid, ids, data, context):
 
 jasper_reports.report_jasper(
     'report.report_pnd3_form',  # report_name in report_data.xml
-    'report.pnd3.form',  # Model View name
+    'account.voucher',  # Model View name
     parser=report_pnd3_form_parser,
 )

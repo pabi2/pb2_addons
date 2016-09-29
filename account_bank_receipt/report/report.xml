@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+
+        <report id="report_account_bank_receipt" model="account.bank.receipt" string="Bank Receipt" report_type="qweb-pdf" name="account_bank_receipt.report_bank_receipt" file="account_bank_receipt.report_bank_receipt"/>
+
+    </data>
+</openerp>
