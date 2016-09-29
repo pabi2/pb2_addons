@@ -11,11 +11,105 @@ class AccountBankReceipt(models.Model):
     _description = "Account Bank Receipt"
     _order = 'receipt_date desc'
 
+    name = fields.Char(
+        string='Name',
+        size=64,
+        readonly=True,
+        default='/',
+    )
+    bank_intransit_ids = fields.One2many(
+        'account.move.line',
+        'bank_receipt_id',
+        string='Intransit Payments',
+        states={'done': [('readonly', '=', True)]},
+    )
+    receipt_date = fields.Date(
+        string='Receipt Date', required=True,
+        states={'done': [('readonly', '=', True)]},
+        default=fields.Date.context_today)
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        domain=[('type', '=', 'bank'), ('intransit', '=', True)],
+        required=True,
+        states={'done': [('readonly', '=', True)]},
+    )
+    journal_default_account_id = fields.Many2one(
+        'account.account',
+        related='journal_id.default_debit_account_id',
+        string='Default Debit Account of the Journal',
+        readonly=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        required=True,
+        states={'done': [('readonly', '=', True)]},
+    )
+    currency_none_same_company_id = fields.Many2one(
+        'res.currency',
+        compute='_compute_bank_receipt',
+        string='Currency (False if same as company)',
+    )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('done', 'Done'), ],
+        string='Status',
+        default='draft',
+        readonly=True,
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        readonly=True,
+    )
+    partner_bank_id = fields.Many2one(
+        'res.partner.bank',
+        string='Bank Account',
+        required=True,
+        domain="[('company_id', '=', company_id)]",
+        states={'done': [('readonly', '=', True)]},
+    )
+    bank_account_id = fields.Many2one(
+        'account.account',
+        string="Bank's Account Code",
+        related='partner_bank_id.journal_id.default_debit_account_id',
+        readonly=True,
+    )
+    line_ids = fields.One2many(
+        'account.move.line',
+        related='move_id.line_id',
+        string='Lines',
+        readonly=True,
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        states={'done': [('readonly', '=', True)]},
+        default=lambda self: self.env['res.company']._company_default_get(
+            'account.bank.receipt'),
+    )
+    total_amount = fields.Float(
+        compute='_compute_bank_receipt',
+        string="Total Amount", readonly=True,
+        digits=dp.get_precision('Account'),
+    )
+    intransit_count = fields.Integer(
+        compute='_compute_bank_receipt',
+        readonly=True,
+        string="Number of Intransit Payment",
+    )
+    is_reconcile = fields.Boolean(
+        compute='_compute_bank_receipt',
+        readonly=True,
+        string="Reconcile",
+    )
+
     @api.multi
-    @api.depends(
-        'company_id', 'currency_id', 'bank_intransit_ids.debit',
-        'bank_intransit_ids.amount_currency',
-        'move_id.line_id.reconcile_id')
+    @api.depends('company_id', 'currency_id', 'bank_intransit_ids.debit',
+                 'bank_intransit_ids.amount_currency',
+                 'move_id.line_id.reconcile_id')
     def _compute_bank_receipt(self):
         for receipt in self:
             total = 0.0
@@ -40,55 +134,6 @@ class AccountBankReceipt(models.Model):
                 currency_none_same_company_id
             receipt.intransit_count = count
 
-    name = fields.Char(string='Name', size=64, readonly=True, default='/')
-    bank_intransit_ids = fields.One2many(
-        'account.move.line', 'bank_receipt_id', string='Intransit Payments',
-        states={'done': [('readonly', '=', True)]})
-    receipt_date = fields.Date(
-        string='Receipt Date', required=True,
-        states={'done': [('readonly', '=', True)]},
-        default=fields.Date.context_today)
-    journal_id = fields.Many2one(
-        'account.journal', string='Journal', domain=[('type', '=', 'bank')],
-        required=True, states={'done': [('readonly', '=', True)]})
-    journal_default_account_id = fields.Many2one(
-        'account.account', related='journal_id.default_debit_account_id',
-        string='Default Debit Account of the Journal', readonly=True)
-    currency_id = fields.Many2one(
-        'res.currency', string='Currency', required=True,
-        states={'done': [('readonly', '=', True)]})
-    currency_none_same_company_id = fields.Many2one(
-        'res.currency', compute='_compute_bank_receipt',
-        string='Currency (False if same as company)')
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('done', 'Done'),
-    ], string='Status', default='draft', readonly=True)
-    move_id = fields.Many2one(
-        'account.move', string='Journal Entry', readonly=True)
-    partner_bank_id = fields.Many2one(
-        'res.partner.bank', string='Bank Account', required=True,
-        domain="[('company_id', '=', company_id)]",
-        states={'done': [('readonly', '=', True)]})
-    line_ids = fields.One2many(
-        'account.move.line', related='move_id.line_id',
-        string='Lines', readonly=True)
-    company_id = fields.Many2one(
-        'res.company', string='Company', required=True,
-        states={'done': [('readonly', '=', True)]},
-        default=lambda self: self.env['res.company']._company_default_get(
-            'account.bank.receipt'))
-    total_amount = fields.Float(
-        compute='_compute_bank_receipt',
-        string="Total Amount", readonly=True,
-        digits=dp.get_precision('Account'))
-    intransit_count = fields.Integer(
-        compute='_compute_bank_receipt', readonly=True,
-        string="Number of Intransit Payment")
-    is_reconcile = fields.Boolean(
-        compute='_compute_bank_receipt', readonly=True,
-        string="Reconcile")
-
     @api.multi
     @api.constrains('currency_id', 'bank_intransit_ids', 'company_id')
     def _bank_receipt(self):
@@ -99,21 +144,21 @@ class AccountBankReceipt(models.Model):
                     if line.currency_id:
                         raise ValidationError(
                             _("The bank intransit with amount %s and "
-                                "reference '%s' is in currency %s but the "
-                                "receipt is in currency %s.") % (
-                                line.debit, line.ref or '',
-                                line.currency_id.name,
-                                receipt_currency.name))
+                              "reference '%s' is in currency %s but the "
+                              "receipt is in currency %s.") % (
+                              line.debit, line.ref or '',
+                              line.currency_id.name,
+                              receipt_currency.name))
             else:
                 for line in receipt.bank_intransit_ids:
                     if line.currency_id != receipt_currency:
                         raise ValidationError(
                             _("The bank intransit with amount %s and "
-                                "reference '%s' is in currency %s but the "
-                                "receipt is in currency %s.") % (
-                                line.debit, line.ref or '',
-                                line.currency_id.name,
-                                receipt_currency.name))
+                              "reference '%s' is in currency %s but the "
+                              "receipt is in currency %s.") % (
+                              line.debit, line.ref or '',
+                              line.currency_id.name,
+                              receipt_currency.name))
 
     @api.multi
     def unlink(self):
@@ -121,8 +166,7 @@ class AccountBankReceipt(models.Model):
             if receipt.state == 'done':
                 raise UserError(
                     _("The receipt '%s' is in valid state, so you must "
-                        "cancel it before deleting it.")
-                    % receipt.name)
+                      "cancel it before deleting it.") % receipt.name)
         return super(AccountBankReceipt, self).unlink()
 
     @api.multi
@@ -180,7 +224,7 @@ class AccountBankReceipt(models.Model):
             'name': _('Bank Receipt %s') % receipt.name,
             'debit': total_debit,
             'credit': 0.0,
-            'account_id': receipt.company_id.bank_receipt_account_id.id,
+            'account_id': receipt.bank_account_id.id,
             'partner_id': False,
             'currency_id': receipt.currency_none_same_company_id.id or False,
             'amount_currency': total_amount_currency,
@@ -205,10 +249,10 @@ class AccountBankReceipt(models.Model):
                 to_reconcile_lines.append(line + move_line)
 
             # Create counter-part
-            if not receipt.company_id.bank_receipt_account_id:
+            if not receipt.bank_account_id:
                 raise UserError(
-                    _("Missing Account for Bank Receipt on the "
-                        "company '%s'.") % receipt.company_id.name)
+                    _("Missing Account for Bank Receipt on the journal '%s'.")
+                    % receipt.partner_bank_id.journal_id.name)
 
             counter_vals = self._prepare_counterpart_move_lines_vals(
                 receipt, total_debit, total_amount_currency)
@@ -246,14 +290,3 @@ class AccountMoveLine(models.Model):
 
     bank_receipt_id = fields.Many2one(
         'account.bank.receipt', string='Bank Receipt', copy=False)
-
-
-class ResCompany(models.Model):
-    _inherit = 'res.company'
-
-    bank_receipt_account_id = fields.Many2one(
-        'account.account', string='Account for Bank Receipts', copy=False,
-        domain=[
-            ('type', '<>', 'view'),
-            ('type', '<>', 'closed'),
-            ('reconcile', '=', True)])
