@@ -1,40 +1,50 @@
 # -*- coding: utf-8 -*-
-##########################################################################
-#
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2012 Julius Network Solutions SARL <contact@julius.fr>
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##########################################################################
 
 from openerp import models, fields, api
 
 
 class StockMove(models.Model):
+
     _inherit = 'stock.move'
 
-    generate_asset = fields.Boolean(string='Generate Asset',)
+    parent_asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='Parent Asset'
+    )
 
-    @api.multi
-    def _assign_lot_by_category(self):
-        return True
+    @api.model
+    def _assign_lot_to_asset(self):
+        parent = []
+        Seq = self.env['ir.sequence']
+        Lot = self.env['stock.production.lot']
+        for item in self.item_ids:
+            if item.product_id.sequence_id and item.product_id.financial_asset:
+                new_seq = Seq.get(item.product_id.sequence_id.code)
+                new_lot = Lot.create({
+                    'name': new_seq,
+                    'product_id': item.product_id.id,
+                })
+                item.lot_id = new_lot.id
+                if item.parent_asset_id:
+                    parent.append(
+                        (new_lot.id, item.parent_asset_id.id or False),
+                    )
+        return parent
 
     @api.multi
     def write(self, vals):
-        self._assign_lot_by_category()
-        res = super(StockMove, self).write(vals)
-        return res
+        asset_obj = self.env['account.asset.asset']
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+        result = super(StockMove, self).write(vals)
+        for move in self:
+            if move.state == 'done' and \
+                move.generate_asset and \
+                    move.product_id.financial_asset:
+                write_vals = {
+                    'name': move.name or move.product_id.name,
+                    'parent_id': move.parent_asset_id.id or False,
+                }
+                asset_ids = asset_obj.search(
+                    [('move_id', '=', move.id)], limit=1)
+                asset_ids.write(write_vals)
+        return result
