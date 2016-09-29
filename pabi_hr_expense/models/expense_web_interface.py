@@ -350,7 +350,7 @@ class HRExpense(models.Model):
         return res
 
     @api.model
-    def send_signal_to_pabiweb_advance(self, signal):
+    def send_signal_to_pabiweb_advance(self, signal, comment=''):
         ConfParam = self.env['ir.config_parameter']
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
@@ -362,7 +362,7 @@ class HRExpense(models.Model):
         arg = {
             'action': signal,
             'by': self.env.user.login,
-            'comment': 'Good'
+            'comment': comment,
         }
         result = False
         if self.is_employee_advance:
