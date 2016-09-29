@@ -12,7 +12,7 @@
     ],
     'data': [
         # 'data/config_data.xml',
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         # 'wizard/account_tax_detail_view.xml',
         'views/account_pit_view.xml',
         'views/voucher_payment_receipt_view.xml',
