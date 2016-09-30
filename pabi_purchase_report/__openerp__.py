@@ -20,6 +20,8 @@
         'pabi_purchase_summarize/wizard/pabi_purchase_summarize_report_wizard.xml',
         'pabi_supplier_evaluation/report_data.xml',
         'pabi_supplier_evaluation/wizard/pabi_supplier_evaluation_report_wizard.xml',
+        'pabi_supplier_summarize/report_data.xml',
+        'pabi_supplier_summarize/wizard/pabi_supplier_summarize_report_wizard.xml',
     ],
     'demo': [
     ],
