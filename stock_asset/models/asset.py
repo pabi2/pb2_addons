@@ -45,12 +45,6 @@ class StockMove(models.Model):
             if (move.state == 'done' and not asset_ids and
                 (move.generate_asset is True or
                  move.product_id.financial_asset is True)):
-                print 'stock'
-                print move.state
-                print asset_ids
-                print move.product_id.financial_asset
-                print move.generate_asset
-                print move.lot_ids.id
 
                 #  Initialization
                 date = move.date
