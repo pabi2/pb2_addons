@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_summarize_report" language="groovy" pageWidth="1417" pageHeight="595" orientation="Landscape" columnWidth="1377" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="0.909090909090913"/>
+	<property name="ireport.x" value="630"/>
+	<property name="ireport.y" value="0"/>
+	<style name="THfont" isDefault="true" fill="Solid" hAlign="Left" vAlign="Middle" rotation="None" lineSpacing="Single" isBlankWhenNull="true" fontSize="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+	<style name="table" lineSpacing="Single">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="rfq_list">
+		<parameter name="po_id" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) rfq_supplier,
+po.amount_total
+FROM purchase_order po
+LEFT JOIN res_partner rp
+ON rp.id = po.partner_id
+LEFT JOIN res_partner_title rpt
+ON rpt.id = rp.title
+WHERE po.id IN ($P!{po_id})]]>
+		</queryString>
+		<field name="rfq_supplier" class="java.lang.String"/>
+		<field name="amount_total" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[Total]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="date_from" class="java.lang.String"/>
+	<parameter name="date_to" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+po_id,
+pd_number,
+objective,
+qty,
+amount_total,
+method,
+rfq_supplier,
+rfq_amount_total,
+reason,
+create_date
+FROM pabi_purchase_summarize_report
+WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
+	</queryString>
+	<field name="po_id" class="java.lang.String"/>
+	<field name="pd_number" class="java.lang.String"/>
+	<field name="objective" class="java.lang.String"/>
+	<field name="qty" class="java.lang.Long">
+		<fieldDescription><![CDATA[Quantity]]></fieldDescription>
+	</field>
+	<field name="amount_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Total]]></fieldDescription>
+	</field>
+	<field name="method" class="java.lang.String">
+		<fieldDescription><![CDATA[Computation Method]]></fieldDescription>
+	</field>
+	<field name="rfq_supplier" class="java.lang.String"/>
+	<field name="rfq_amount_total" class="java.math.BigDecimal"/>
+	<field name="reason" class="java.lang.String"/>
+	<field name="create_date" class="java.util.Date"/>
+	<variable name="count_column" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="69">
+			<staticText>
+				<reportElement x="0" y="0" width="1377" height="34"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยี]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="339" y="34" width="436" height="35"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[รายงานสรุปผลการดำเนินการจัดซื้อจัดจ้าง ระหว่าง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="887" y="34" width="33" height="35"/>
+				<textElement lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[ถึง]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="787" y="34" width="184" height="35"/>
+				<textElement lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($P{date_from} != null && $P{date_from}.length() == 10) ? $P{date_from}.substring(8,10)+"/"+$P{date_from}.substring(5,7)+"/"+$P{date_from}.substring(0,4) : "") ]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="915" y="34" width="168" height="35"/>
+				<textElement lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($P{date_to} != null && $P{date_to}.length() == 10) ? $P{date_to}.substring(8,10)+"/"+$P{date_to}.substring(5,7)+"/"+$P{date_to}.substring(0,4) : "") ]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement style="THfont" x="0" y="0" width="35" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="35" y="0" width="86" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[เลขที่เอกสาร]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="121" y="0" width="218" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[รายละเอียดจัดซื้อ/จัดจ้าง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="339" y="0" width="82" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[จำนวน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="421" y="0" width="122" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[งบประมาณ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="543" y="0" width="142" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[วิธีการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="685" y="0" width="243" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ผู้เสนอราคา และราคาที่เสนอ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="928" y="0" width="250" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ผู้ที่ได้รับการคัดเลือกและราคา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" x="1178" y="0" width="199" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[เหตุผลที่คัดเลือก]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="0" width="1377" height="20"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="rfq_list">
+						<datasetParameter name="po_id">
+							<datasetParameterExpression><![CDATA[$F{po_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="1377">
+						<jr:columnFooter height="0" rowSpan="1">
+							<box>
+								<topPen lineWidth="1.0"/>
+							</box>
+						</jr:columnFooter>
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+							<textField>
+								<reportElement style="THfont" x="691" y="0" width="180" height="19"/>
+								<textElement lineSpacing="Single">
+									<font fontName="TH SarabunPSK"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{rfq_supplier}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0.00">
+								<reportElement style="THfont" x="836" y="0" width="70" height="19"/>
+								<textElement textAlignment="Right" lineSpacing="Single">
+									<font fontName="TH SarabunPSK"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
+							</textField>
+							<staticText>
+								<reportElement x="908" y="0" width="35" height="19">
+									<printWhenExpression><![CDATA[$F{amount_total}]]></printWhenExpression>
+								</reportElement>
+								<textElement lineSpacing="Single">
+									<font fontName="TH SarabunPSK"/>
+								</textElement>
+								<text><![CDATA[บาท]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="0" y="0" width="35" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="35" y="0" width="86" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="121" y="0" width="218" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="339" y="0" width="82" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="421" y="0" width="122" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="543" y="0" width="142" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="685" y="0" width="243" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="928" y="0" width="250" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+							<staticText>
+								<reportElement style="THfont" stretchType="RelativeToTallestObject" x="1178" y="0" width="199" height="19"/>
+								<box>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement x="0" y="0" width="35" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{count_column}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="0" width="86" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pd_number}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="209" height="20"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{objective}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="339" y="0" width="82" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="0" width="96" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="543" y="0" width="142" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{method}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="935" y="0" width="182" height="20"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rfq_supplier}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="1088" y="0" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{rfq_amount_total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="0" y="0" width="35" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="35" y="0" width="86" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="121" y="0" width="218" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="339" y="0" width="82" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="421" y="0" width="122" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="543" y="0" width="142" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="685" y="0" width="243" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="928" y="0" width="250" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="THfont" stretchType="RelativeToTallestObject" x="1178" y="0" width="199" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1184" y="0" width="193" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reason}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1160" y="0" width="16" height="20">
+					<printWhenExpression><![CDATA[$F{rfq_amount_total}]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK"/>
+				</textElement>
+				<text><![CDATA[บาท]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="523" y="0" width="16" height="20">
+					<printWhenExpression><![CDATA[$F{amount_total}]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK"/>
+				</textElement>
+				<text><![CDATA[บาท]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>
