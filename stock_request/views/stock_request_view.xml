@@ -96,7 +96,7 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <label string="Stock Rquest " attrs="{'invisible': [('type', '!=', 'request')]}"/>
+                                <label string="Stock Request " attrs="{'invisible': [('type', '!=', 'request')]}"/>
                                 <label string="Stock Transfer " attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
                                 <label string="Stock Borrow " attrs="{'invisible': [('type', '!=', 'borrow')]}"/>
                                 <field name="name" class="oe_inline"/>
