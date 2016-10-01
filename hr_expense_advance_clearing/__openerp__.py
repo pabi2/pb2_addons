@@ -26,7 +26,6 @@ HR Expense Advance Clearing
     "data": [
         'security/ir.model.access.csv',
         'data/hr_expense_data.xml',
-        'data/product_data.xml',
         'data/invoice_workflow.xml',
         'views/account_config.xml',
         'views/hr_expense_view.xml',
