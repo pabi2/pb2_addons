@@ -117,7 +117,7 @@ class HRExpense(models.Model):
         try:
             to_state = vals.get('state', False)
             # if to_state in ('accepted', 'cancelled', 'paid'):
-            if to_state in ('accepted', 'cancelled', 'paid'):
+            if to_state in ('accepted', 'cancelled'):
                 # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
                 signals = {'accepted': '1', 'cancelled': '2'}
                 for exp in self:

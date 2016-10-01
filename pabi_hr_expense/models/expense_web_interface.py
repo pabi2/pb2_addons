@@ -204,17 +204,17 @@ class HRExpense(models.Model):
         # Advance product if required
         if data_dict.get('is_employee_advance', u'False') == u'True' and \
                 'line_ids' in data_dict:
-            advance_product = \
-                self.env.user.company_id.employee_advance_product_id
+            advance_account = \
+                self.env.user.company_id.employee_advance_account_id
             for data in data_dict['line_ids']:
-                data['product_id.id'] = advance_product.id
-                data['uom_id.id'] = advance_product.uom_id.id
+                data['account_id.id'] = advance_account.id
+                data['uom_id.id'] = self.env['hr.expense.line']._get_uom_id()
         if 'line_ids' in data_dict:
             for data in data_dict['line_ids']:
                 if not data.get('name', False):
                     Activity = self.env['account.activity']
                     activity = Activity.browse(int(data['activity_id.id']))
-                    data['name'] = activity.name
+                    data['name'] = activity.name or advance_account.name
         # attendee's employee_code
         if 'attendee_employee_ids' in data_dict:
             for data in data_dict['attendee_employee_ids']:
