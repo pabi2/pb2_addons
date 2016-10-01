@@ -65,7 +65,6 @@ class BudgetExportWizard(models.Model):
             dv = DataValidation(type="list",
                     formula1=formula1.format(quote_sheetname('ActivityGroup_MasterData'))
                     )
-
             Non_CostControl_Sheet = workbook.get_sheet_by_name('Non_CostControl')
             Non_CostControl_Sheet.protection.sheet = True
 
@@ -89,10 +88,9 @@ class BudgetExportWizard(models.Model):
             line_start = row
             for line in budget.plan_line_ids:
                 section_name = line.section_id.name
-
-                Non_CostControl_Sheet.cell(row=row, column=1, value="=$B$2").fill = redFill
+                Non_CostControl_Sheet.cell(row=row, column=1, value='=B2').fill = redFill
                 Non_CostControl_Sheet.cell(row=row, column=1).border = border
-                Non_CostControl_Sheet.cell(row=row, column=2, value="=$B$3").fill = redFill
+                Non_CostControl_Sheet.cell(row=row, column=2, value="=B3").fill = redFill
                 Non_CostControl_Sheet.cell(row=row, column=2).border = border
                 Non_CostControl_Sheet.cell(row=row, column=3, value=line.section_id.name).border = border
                 Non_CostControl_Sheet.cell(row=row, column=3).fill = redFill
@@ -107,11 +105,12 @@ class BudgetExportWizard(models.Model):
                 Non_CostControl_Sheet.cell(row=row, column=8).border = border
                 Non_CostControl_Sheet.cell(row=row, column=9).border = border
 
+                Non_CostControl_Sheet.cell(row=row, column=6).protection = protection
                 Non_CostControl_Sheet.cell(row=row, column=7).protection = protection
                 Non_CostControl_Sheet.cell(row=row, column=8).protection = protection
                 Non_CostControl_Sheet.cell(row=row, column=9).protection = protection
 
-                Non_CostControl_Sheet.cell(row=row, column=10, value="=G%s*H%s*I%s" %(row, row, row)).border = border
+                Non_CostControl_Sheet.cell(row=row, column=10, value="=G%s*$H$%s*$I$%s" %(row, row, row)).border = border
                 Non_CostControl_Sheet.cell(row=row, column=10).fill = redFill
 
                 Non_CostControl_Sheet.cell(row=row, column=11, value=line.m0).protection = protection
@@ -154,11 +153,11 @@ class BudgetExportWizard(models.Model):
                 Non_CostControl_Sheet.cell(row=row, column=23, value=line.m12).protection = protection
                 Non_CostControl_Sheet.cell(row=row, column=23).border = border
 
-                Non_CostControl_Sheet.cell(row=row, column=24, value="=SUM(L%s:W%s)" %(row, row))
+                Non_CostControl_Sheet.cell(row=row, column=24, value="=SUM(L%s:$W$%s)" %(row, row))
                 Non_CostControl_Sheet.cell(row=row, column=24).border = border
                 Non_CostControl_Sheet.cell(row=row, column=24).fill = redFill
 
-                Non_CostControl_Sheet.cell(row=row, column=25, value="=J%s-X%s" %(row, row))
+                Non_CostControl_Sheet.cell(row=row, column=25, value="=J%s-$X$%s" %(row, row))
                 Non_CostControl_Sheet.cell(row=row, column=25).border = border
                 Non_CostControl_Sheet.cell(row=row, column=25).fill = redFill
 
@@ -166,9 +165,9 @@ class BudgetExportWizard(models.Model):
 
             to_row = row + self.editable_lines
             for r in range(row, to_row):
-                Non_CostControl_Sheet.cell(row=row, column=1, value="=$B$2").fill = redFill
+                Non_CostControl_Sheet.cell(row=row, column=1, value="=B2").fill = redFill
                 Non_CostControl_Sheet.cell(row=row, column=1).border = border
-                Non_CostControl_Sheet.cell(row=row, column=2, value="=$B$3").fill = redFill
+                Non_CostControl_Sheet.cell(row=row, column=2, value="=B3").fill = redFill
                 Non_CostControl_Sheet.cell(row=row, column=2).border = border
                 Non_CostControl_Sheet.cell(row=row, column=3, value=section_name).fill = redFill
                 Non_CostControl_Sheet.cell(row=row, column=3).border = border
@@ -186,7 +185,7 @@ class BudgetExportWizard(models.Model):
                 Non_CostControl_Sheet.cell(row=row, column=8).protection = protection
                 Non_CostControl_Sheet.cell(row=row, column=9).protection = protection
 
-                Non_CostControl_Sheet.cell(row=row, column=10, value="=G%s*H%s*I%s" %(row, row, row)).border = border
+                Non_CostControl_Sheet.cell(row=row, column=10, value="=G%s*$H$%s*$I$%s" %(row, row, row)).border = border
                 Non_CostControl_Sheet.cell(row=row, column=10).fill = redFill
 
                 Non_CostControl_Sheet.cell(row=row, column=11).protection = protection
@@ -218,11 +217,11 @@ class BudgetExportWizard(models.Model):
                 Non_CostControl_Sheet.cell(row=row, column=22).border = border
                 Non_CostControl_Sheet.cell(row=row, column=23).border = border
 
-                Non_CostControl_Sheet.cell(row=row, column=24, value="=SUM(L%s:W%s)" %(row, row))
+                Non_CostControl_Sheet.cell(row=row, column=24, value="=SUM(L%s:$W$%s)" %(row, row))
                 Non_CostControl_Sheet.cell(row=row, column=24).border = border
                 Non_CostControl_Sheet.cell(row=row, column=24).fill = redFill
 
-                Non_CostControl_Sheet.cell(row=row, column=25, value="=J%s-X%s" %(row, row))
+                Non_CostControl_Sheet.cell(row=row, column=25, value="=J%s-$X$%s" %(row, row))
                 Non_CostControl_Sheet.cell(row=row, column=25).border = border
                 Non_CostControl_Sheet.cell(row=row, column=25).fill = redFill
 
