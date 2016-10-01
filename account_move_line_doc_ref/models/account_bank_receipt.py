@@ -8,7 +8,9 @@ class AccountBankReceipt(models.Model):
     @api.model
     def _prepare_move_line_vals(self, line):
         result = super(AccountBankReceipt, self)._prepare_move_line_vals(line)
-        result.update(doc_ref=line.bank_receipt_id.name)
+        result.update(doc_ref=line.bank_receipt_id.name,
+                      doc_id='%s,%s' % ('account.bank.receipt',
+                                        line.bank_receipt_id.id))
         return result
 
     @api.model
