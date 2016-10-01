@@ -12,6 +12,20 @@ class HRExpenseLine(models.Model):
 
     is_advance_product_line = fields.Boolean('Advance Product Line')
 
+    @api.model
+    def _get_non_product_account_id(self):
+        # If Advance Line, get from setup account
+        if self.is_advance_product_line:
+            advance_account = \
+                self.env.user.company_id.employee_advance_account_id
+            if not advance_account:
+                raise UserError(
+                    _('No Employee Advance Code setup!'))
+            else:
+                return advance_account.id
+        else:
+            return super(HRExpenseLine, self)._get_non_product_account_id()
+
 
 class HRExpenseExpense(models.Model):
     _inherit = "hr.expense.expense"
@@ -113,15 +127,15 @@ class HRExpenseExpense(models.Model):
     @api.model
     def default_get(self, field_list):
         result = super(HRExpenseExpense, self).default_get(field_list)
-        advance_product = self.env.user.company_id.employee_advance_product_id
-        if not advance_product:
-            raise ValidationError(_('No Employee Advance Product has been '
+        advance_account = self.env.user.company_id.employee_advance_account_id
+        if not advance_account:
+            raise ValidationError(_('No Employee Advance Account has been '
                                     'set in Account Settings!'))
         if result.get('is_employee_advance', False):
-            line = [(0, 0, {'product_id': advance_product.id,
-                            'date_value': fields.Date.context_today(self),
-                            'name': advance_product.name,
-                            'uom_id': advance_product.uom_id.id,
+            ExpLine = self.env['hr.expense.line']
+            line = [(0, 0, {'date_value': fields.Date.context_today(self),
+                            'name': advance_account.name,
+                            'uom_id': ExpLine._get_uom_id(),
                             'unit_quantity': 1.0,
                             'is_advance_product_line': True, })]
             result.update({'line_ids': line})
@@ -163,13 +177,6 @@ class HRExpenseExpense(models.Model):
 
     @api.model
     def _create_negative_clearing_line(self, expense, invoice):
-        advance_product = self.env.user.company_id.employee_advance_product_id
-        product_categ = advance_product.categ_id
-        if (not advance_product.property_account_expense and
-                not product_categ.property_account_expense_categ):
-            raise UserError(
-                _('Please define expense account '
-                  'on Employee Advance Product.'))
         employee_advance = expense.amount
         if expense.amount > expense.advance_expense_id.amount_to_clearing:
             employee_advance = \

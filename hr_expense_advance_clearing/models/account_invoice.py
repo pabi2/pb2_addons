@@ -56,21 +56,6 @@ class AccountInvoice(models.Model):
             res['domain'].update({'advance_expense_id': domain})
         return res
 
-    @api.model
-    def _get_account_id_from_product(self, product, fpos):
-        account_id = product.property_account_expense.id
-        if not account_id:
-            categ = product.categ_id
-            account_id = categ.property_account_expense_categ.id
-        if not account_id:
-            raise ValidationError(
-                _('Define an expense account for this '
-                  'product: "%s" (id:%d).') %
-                (product.name, product.id,))
-        if fpos:
-            account_id = fpos.map_account(account_id)
-        return account_id
-
     @api.onchange('advance_expense_id')
     def _onchange_advance_expense_id(self):
         # This method is called from Customer invoice to return money
@@ -81,12 +66,17 @@ class AccountInvoice(models.Model):
                 advance_line = advance_invoice.invoice_line[0]
                 return_line = self.env['account.invoice.line'].new()
                 # Prepare line
-                return_line.product_id = advance_line.product_id
-                return_line.account_id = self.\
-                    _get_account_id_from_product(advance_line.product_id,
-                                                 self.fiscal_position)
-                return_line.name = advance_line.name
-                return_line.quantity = 1.0
+                _no_copy_fields = [
+                    'id', 'expense_line_ids', '__last_update', 'price_unit',
+                    'price_subtotal', 'discount',
+                    'write_date', 'create_date', 'create_uid', 'write_uid',
+                    'sequence', 'invoice_id', 'account_analytic_id',
+                    'partner_id',  'purchase_line_id',
+                ]
+                _fields = [f for f, _x in return_line._fields.iteritems()]
+                _copy_fields = list(set(_fields) - set(_no_copy_fields))
+                for f in _copy_fields:
+                    return_line[f] = advance_line[f]
                 self.invoice_line += return_line
 
     @api.model
@@ -96,14 +86,14 @@ class AccountInvoice(models.Model):
 
     @api.model
     def _prev_advance_amount(self, invoice):
-        advance_product = self.env.user.company_id.employee_advance_product_id
-        if not advance_product:
-            raise ValidationError(_('No Employee Advance Product has been '
+        advance_account = self.env.user.company_id.employee_advance_account_id
+        if not advance_account:
+            raise ValidationError(_('No Employee Advance Account has been '
                                     'set in Account Settings!'))
         lines = invoice.invoice_line
         # Advance with Negative Amount
         advance_lines = lines.filtered(lambda x: x.price_subtotal < 0 and
-                                       x.product_id == advance_product)
+                                       x.account_id == advance_account)
         return sum([l.price_subtotal for l in advance_lines])
 
     @api.multi

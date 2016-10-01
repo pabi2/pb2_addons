@@ -8,8 +8,8 @@
             <field name="arch" type="xml">
                 <div name="account_config" position="inside">
                     <div>
-                        <label for="employee_advance_product_id"/>
-                        <field name="employee_advance_product_id" class="oe_inline"/>
+                        <label for="employee_advance_account_id"/>
+                        <field name="employee_advance_account_id" class="oe_inline"/>
                     </div>
                 </div>
             </field>
