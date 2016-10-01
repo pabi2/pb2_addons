@@ -14,7 +14,7 @@ class PurchaseRequest(models.Model):
     @api.model
     def _get_request_info(self, data_dict):
         if 'org_id' in data_dict:
-            Org = self.env['res.org']
+            Org = self.sudo().env['res.org']
             organization = Org.search([
                 ('id', '=', data_dict['org_id']),
             ])
@@ -43,15 +43,33 @@ class PurchaseRequest(models.Model):
         return data_dict
 
     @api.model
+    def rewrite_create_uid(self, request):
+        request_line_sql = """UPDATE purchase_request_line SET create_uid = %s,
+          write_uid = %s WHERE request_id = %s""" % (
+            str(request.requested_by.id),
+            str(request.requested_by.id),
+            str(request.id),
+        )
+        self.env.cr.execute(request_line_sql)
+        request_sql = """UPDATE purchase_request SET create_uid = %s
+            , write_uid = %s WHERE id = %s""" % (
+            str(request.requested_by.id),
+            str(request.requested_by.id),
+            str(request.id),
+        )
+        self.env.cr.execute(request_sql)
+
+    @api.model
     def generate_purchase_request(self, data_dict):
         ret = {}
-        data_dict = self._get_request_info(data_dict)
+        data_dict = self.sudo()._get_request_info(data_dict)
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data
         try:
             fields, data = self._finalize_data_to_load(fields, data)
-            load_res = self.load(fields, data)
+            fields, data = self._add_line_data(fields, data)
+            load_res = self.sudo().load(fields, data)
             res_id = load_res['ids'] and load_res['ids'][0] or False
             if not res_id:
                 ret = {
@@ -60,9 +78,11 @@ class PurchaseRequest(models.Model):
                     'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
-                res = self.browse(res_id)
-                self.create_purchase_request_attachment(data_dict, res_id)
-                self.create_purchase_request_committee(data_dict, res_id)
+                res = self.sudo().browse(res_id)
+                self.sudo().create_purchase_request_attachment(data_dict,
+                                                               res_id)
+                self.sudo().create_purchase_request_committee(data_dict,
+                                                              res_id)
                 ret = {
                     'is_success': True,
                     'result': {
@@ -72,6 +92,7 @@ class PurchaseRequest(models.Model):
                     'messages': _('PR has been created.'),
                 }
                 res.state = 'to_approve'
+                self.sudo().rewrite_create_uid(res)
             self._cr.commit()
         except Exception, e:
             ret = {
@@ -105,11 +126,13 @@ class PurchaseRequisition(models.Model):
             if af_info['action'] == 'C1':  # approve
                 att_file = []
                 try:
+                    ConfParam = self.env['ir.config_parameter']
+                    file_prefix = ConfParam.get_param('pabiweb_file_prefix')
                     attachments = {
                         'res_id': requisition.id,
                         'res_model': 'purchase.requisition',
                         'name': af_info['file_name'],
-                        'url': af_info['file_url'],
+                        'url': file_prefix + af_info['file_url'],
                         'type': 'url',
                     }
                     att_file.append([0, False, attachments])
@@ -247,6 +270,7 @@ class PurchaseWebInterface(models.Model):
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         ConfParam = self.env['ir.config_parameter']
+        file_prefix = ConfParam.get_param('pabiweb_file_prefix')
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
         Attachment = self.env['ir.attachment']
@@ -273,9 +297,13 @@ class PurchaseWebInterface(models.Model):
         for pd_att in requisition.attachment_ids:
             if '_main_form.pdf' in pd_att.name:
                 continue
+            url = ""
+            if pd_att.url:
+                url = pd_att.url.replace(file_prefix, "")
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
-                'content': pd_att.datas
+                'content': pd_att.datas,
+                'url': url,
             }
             attachment.append(pd_attach)
         pr_name = ''
@@ -284,7 +312,7 @@ class PurchaseWebInterface(models.Model):
                 pr_name += pd_pr_line.request_id.name + ','
             pr_name = pr_name[:-1]
         doc_type = requisition.get_doc_type()
-        action = '1' if not requisition.reject_reason_txt else '2'
+        action = '1' if not requisition.sent_pbweb else '2'
         arg = {
             'action': action,
             'pdNo': requisition.name,
@@ -303,7 +331,7 @@ class PurchaseWebInterface(models.Model):
         }
         try:
             result = alfresco.ord.action(arg)
-        except Exception, e:
+        except Exception:
             raise UserError(
                 _("Can't send data to PabiWeb : PRWeb Authentication Failed")
             )
@@ -311,6 +339,8 @@ class PurchaseWebInterface(models.Model):
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        else:
+            requisition.sent_pbweb = True
         return result
 
     @api.model

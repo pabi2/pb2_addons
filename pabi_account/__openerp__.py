@@ -17,14 +17,18 @@
     "installable": True,
     "depends": [
         "l10n_th_account",
+        "l10n_th_account_tax_detail",
         "pabi_base",
         "pabi_chartfield",
         "account_move_line_doc_ref",
     ],
     "data": [
-        "views/res_config_view.xml",
+        "security/security_group.xml",
+        "security/ir.model.access.csv",
+        "views/account_config.xml",
         "views/account_voucher_view.xml",
         "views/account_invoice_view.xml",
         "views/voucher_payment_receipt_view.xml",
+        "views/account_invoice_view.xml",
     ],
 }

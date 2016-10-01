@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35">
-	<property name="ireport.zoom" value="0.7513148009015795"/>
-	<property name="ireport.x" value="76"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.zoom" value="0.8264462809917376"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -43,6 +43,7 @@ WHERE pol.order_id = $P{ids}]]>
 	<queryString>
 		<![CDATA[SELECT
 po.id po_id,
+ou.id ou_id,
 ou_partner.image partner_image,
 ou_partner.name partner_name,
 regexp_replace(ou_partner.street, '\r|\n', ' ', 'g') as partner_street,
@@ -66,9 +67,10 @@ vendor.phone vendor_phone,
 vendor.email vendor_mail,
 vendor.fax vendor_fax,
 apt.name payment_term,
-approver.name approve_by,
+
+CONCAT((COALESCE((SELECT rpt.name FROM res_partner_title rpt WHERE rpt.id = approver.title_id)|| ' ','')),approver.first_name,' ',approver.last_name) approve_by,
 po.date_doc_approve approve_date,
-verify.name verify_by,
+CONCAT((COALESCE((SELECT rpt.name FROM res_partner_title rpt WHERE rpt.id = verify.title_id)|| ' ','')),verify.first_name,' ',verify.last_name) verify_by,
 po.date_verify verify_date,
 po.fine_rate fine_rate,
 po.fine_condition fine_condition,
@@ -77,8 +79,8 @@ po.date_fine fine_date,
 po.notes notes,
 approve_position.name approve_position,
 po.partner_ref supplier_ref,
-validater.name buyer,
-validater.email buyer_mail,
+CONCAT((COALESCE((SELECT rpt.name FROM res_partner_title rpt WHERE rpt.id = validater.title_id)|| ' ','')),validater.first_name,' ',validater.last_name) buyer,
+(SELECT rp.email FROM res_partner rp WHERE rp.id = validator.partner_id) buyer_mail,
 taxbranch.name tax_branch_name,
 taxbranch.street tax_branch_street,
 taxbranch.street2 tax_branch_street2,
@@ -122,20 +124,20 @@ LEFT JOIN account_payment_term apt
 ON apt.id = po.payment_term_id
 LEFT JOIN res_users approve_user
 ON approve_user.id = po.doc_approve_uid
-LEFT JOIN res_partner approver
-ON approver.id = approve_user.partner_id
+LEFT JOIN hr_employee approver
+ON approver.employee_code = approve_user.login
 LEFT JOIN res_users verify_user
 ON verify_user.id = po.verify_uid
-LEFT JOIN res_partner verify
-ON verify.id = verify_user.partner_id
+LEFT JOIN hr_employee verify
+ON verify.employee_code = verify_user.login
 LEFT JOIN hr_employee he
 ON he.employee_code = approve_user.login
 LEFT JOIN hr_position approve_position
 ON approve_position.id = he.position_id
 LEFT JOIN res_users validator
 ON validator.id = po.validator
-LEFT JOIN res_partner validater
-ON validater.id = validator.partner_id
+LEFT JOIN hr_employee validater
+ON validater.employee_code = validator.login
 LEFT JOIN res_taxbranch taxbranch
 ON taxbranch.id = po.taxbranch_id
 LEFT JOIN stock_incoterms si
@@ -218,6 +220,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 		<fieldDescription><![CDATA[Incoterm]]></fieldDescription>
 	</field>
 	<field name="vendor_phone" class="java.lang.String"/>
+	<field name="ou_id" class="java.lang.Integer"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -259,7 +262,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<reportElement x="266" y="117" width="259" height="84"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="201" y="19" width="254" height="54"/>
+				<reportElement x="192" y="19" width="254" height="54"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="20" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -493,6 +496,42 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{incoterm}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="414" y="3" width="109" height="47">
+					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_mtec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="414" y="3" width="109" height="47">
+					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_tmc.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="414" y="3" width="109" height="47">
+					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nanotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="414" y="3" width="109" height="47">
+					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="414" y="3" width="109" height="47">
+					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_biotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="414" y="3" width="109" height="47">
+					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nectec.gif"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<columnHeader>
@@ -993,6 +1032,13 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<text><![CDATA[Approved by]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="33" y="233" width="127" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{approve_by} == null ? "" : "( " + $F{approve_by} + " )"]]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 </jasperReport>

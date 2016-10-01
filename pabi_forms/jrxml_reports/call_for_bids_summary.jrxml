@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="0.8264462809917362"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="22"/>
+	<property name="ireport.zoom" value="0.9090909090909105"/>
+	<property name="ireport.x" value="11"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -193,15 +193,16 @@
 		</parameter>
 		<queryString>
 			<![CDATA[SELECT apt.name da,
-rp.name,
+CONCAT((COALESCE(rpt.name || ' ','')),rp.name) as corp,
 po.amount_total
 FROM purchase_order po
 left join account_payment_term apt on po.payment_term_id = apt.id
 left join res_partner rp on po.partner_id = rp.id
+LEFT JOIN res_partner_title rpt ON rpt.id = rp.title
 WHERE requisition_id = $P{ids}]]>
 		</queryString>
 		<field name="da" class="java.lang.String"/>
-		<field name="name" class="java.lang.String"/>
+		<field name="corp" class="java.lang.String"/>
 		<field name="amount_total" class="java.math.BigDecimal">
 			<fieldDescription><![CDATA[Total]]></fieldDescription>
 		</field>
@@ -258,49 +259,143 @@ ORDER BY prc.sequence]]>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/jan/workspace/ERP/PABI2/odoo/customised_module/pb2_pabi/pabi_forms/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="IDS" class="java.lang.Object"/>
-	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
-	</parameter>
 	<queryString>
 		<![CDATA[SELECT
 pd.id pd_id,
-
+CASE ou.code
+WHEN 'สำนักงานกลาง' THEN ''
+ELSE ou.code
+END,
+CONCAT(
+to_char(current_date,'DD'),' ',
+CASE to_char(current_date,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM current_date + interval '543 years')) now_date,
 pt.name ty ,
 pd.objective obj,
 pd.description des,
 (SELECT rs.name FROM res_section rs WHERE rs.id = (SELECT pdl.section_id FROM purchase_requisition_line pdl WHERE pdl.requisition_id = pd.id LIMIT 1)),
-(SELECT po.amount_total FROM purchase_order po WHERE po.requisition_id = pd.id AND po.state = 'done'),
-pd.date_doc_approve datedocaprrove,
+LTRIM((SELECT po.amount_total FROM purchase_order po WHERE po.requisition_id = pd.id AND po.state = 'done')::numeric::money::varchar, '฿ ')::varchar amount_total,
+CONCAT(
+to_char(pd.date_doc_approve ,'DD'),' ',
+CASE to_char(pd.date_doc_approve ,'MM')
+WHEN '01' THEN 'มกราคม'
+WHEN '02' THEN 'กุมภาพันธ์'
+WHEN '03' THEN 'มีนาคม'
+WHEN '04' THEN 'เมษายน'
+WHEN '05' THEN 'พฤษภาคม'
+WHEN '06' THEN 'มิถุนายน'
+WHEN '07' THEN 'กรกฎาคม'
+WHEN '08' THEN 'สิงหาคม'
+WHEN '09' THEN 'กันยายน'
+WHEN '10' THEN 'ตุลาคม'
+WHEN '11' THEN 'พฤศจิกายน'
+WHEN '12' THEN 'ธันวาคม'
+END,' ',
+EXTRACT(year FROM pd.date_doc_approve  + interval '543 years')) datedocaprrove,
 pm.name method,
 pd.doc_footer,
 pd.doc_header,
-rp.name responsible,
-rp2.name verified,
-rp3.name approver
+CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.user_id) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
+(SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT he.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+WHERE ru.id = pd.user_id) AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT he.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+WHERE ru.id = pd.user_id) AND it.name LIKE 'hr.employee,last_name')
+) as responsible,
+CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.verify_uid) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
+(SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT he.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+WHERE ru.id = pd.verify_uid) AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT he.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+WHERE ru.id = pd.verify_uid) AND it.name LIKE 'hr.employee,last_name')
+) as verified,
+CONCAT(
+COALESCE((SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT rpt.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+LEFT JOIN res_partner_title rpt
+ON rpt.id = he.title_id
+WHERE ru.id = pd.doc_approve_uid) AND it.name LIKE 'res.partner.title,name') || ' ', ''),
+(SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT he.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+WHERE ru.id = pd.doc_approve_uid) AND it.name LIKE 'hr.employee,first_name'),
+' ',
+(SELECT value FROM ir_translation it
+WHERE it.res_id = (SELECT he.id FROM res_users ru
+LEFT JOIN hr_employee he
+ON ru.login = he.employee_code
+WHERE ru.id = pd.doc_approve_uid) AND it.name LIKE 'hr.employee,last_name')
+) approver
 
 FROM purchase_requisition pd
 LEFT JOIN purchase_type pt ON pt.id = pd.purchase_type_id
 LEFT JOIN purchase_method pm ON pm.id = pd.purchase_method_id
 left join res_users ru on pd.user_id = ru.id
 left join res_partner rp on rp.id = ru.partner_id
-
 left join res_users ru2 on pd.verify_uid = ru2.id
 left join res_partner rp2 on rp2.id = ru2.partner_id
-
 left join res_users ru3 on pd.doc_approve_uid = ru3.id
 left join res_partner rp3 on rp3.id = ru3.partner_id
-WHERE $X{IN,pd.id,PIDS}]]>
+LEFT JOIN operating_unit ou ON ou.id = pd.operating_unit_id
+WHERE pd.id = 13
+
+]]>
 	</queryString>
 	<field name="pd_id" class="java.lang.Integer"/>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[Code]]></fieldDescription>
+	</field>
+	<field name="now_date" class="java.lang.String"/>
 	<field name="ty" class="java.lang.String"/>
 	<field name="obj" class="java.lang.String"/>
 	<field name="des" class="java.lang.String"/>
 	<field name="name" class="java.lang.String"/>
-	<field name="amount_total" class="java.math.BigDecimal">
+	<field name="amount_total" class="java.lang.String">
 		<fieldDescription><![CDATA[Total]]></fieldDescription>
 	</field>
-	<field name="datedocaprrove" class="java.sql.Date"/>
+	<field name="datedocaprrove" class="java.lang.String"/>
 	<field name="method" class="java.lang.String">
 		<fieldDescription><![CDATA[Computation Method]]></fieldDescription>
 	</field>
@@ -364,12 +459,12 @@ WHERE $X{IN,pd.id,PIDS}]]>
 				</textElement>
 				<text><![CDATA[อ้างถึง        ]]></text>
 			</staticText>
-			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="453" y="0" width="119" height="21"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date($V{current_date}.year+543, $V{current_date}.month, $V{current_date}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{now_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement x="59" y="81" width="799" height="21"/>
@@ -385,33 +480,13 @@ WHERE $X{IN,pd.id,PIDS}]]>
 +" "+
 ($F{des} == null ? '-' : $F{des})]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="32" y="95" width="54" height="21"/>
-				<textElement lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[เป็นวงเงิน ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="59" y="110" width="361" height="21"/>
+			<textField>
+				<reportElement x="59" y="110" width="497" height="21"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[คณะกรรมการตรวจรับพัสดุ/การจ้าง ได้พิจารณาข้อเสนอ เมื่อวันที่ ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="325" y="110" width="201" height="21"/>
-				<textElement lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[ แล้วปรากฎว่ามีผู้เสนอราคาดังต่อไปนี้]]></text>
-			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="257" y="110" width="68" height="20"/>
-				<textElement lineSpacing="Single">
-					<font fontName="SansSerif" size="12" isItalic="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{datedocaprrove}.year+543, $F{datedocaprrove}.month, $F{datedocaprrove}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["คณะกรรมการตรวจรับพัสดุ/การจ้าง ได้พิจารณาข้อเสนอ เมื่อวันที่ " + $F{datedocaprrove}
++ " แล้วปรากฎว่ามีผู้เสนอราคาดังต่อไปนี้"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="86" y="52" width="470" height="21"/>
@@ -420,19 +495,21 @@ WHERE $X{IN,pd.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_header}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="87" y="95" width="98" height="21"/>
-				<textElement lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total} ]]></textFieldExpression>
-			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement x="151" y="95" width="673" height="21"/>
+				<reportElement x="32" y="95" width="792" height="21"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" บาท ตามแบบขออนุมัติจัดหาพัสดุ โดยวิธี  "+ ($F{method} == null ? "" : $F{method}) +" ที่อ้างถึงนั้น"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["เป็นวงเงิน "
++ ($F{amount_total} == null ? "" : $F{amount_total}) +
+" บาท ตามแบบขออนุมัติจัดหาพัสดุ โดยวิธี  "+ ($F{method} == null ? "" : $F{method}) +" ที่อ้างถึงนั้น"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="572" height="22"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{code}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -547,7 +624,7 @@ WHERE $X{IN,pd.id,PIDS}]]>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{corp}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -735,7 +812,9 @@ PR  (บาท)]]></text>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{da}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{da} == "30 Net Days" ? "30 วัน" :
+$F{da} == "15 Days" ? "15 วัน" :
+$F{da} == "Immediate Payment" ? "จ่ายทันที" : ""]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -930,27 +1009,27 @@ PR  (บาท)]]></text>
 				</textElement>
 				<text><![CDATA[ลงชื่อ _________________________]]></text>
 			</staticText>
-			<staticText>
+			<textField>
 				<reportElement x="0" y="40" width="174" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[(นาง สรรชัย นิจสุนกิจ)]]></text>
-			</staticText>
-			<staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{responsible}]]></textFieldExpression>
+			</textField>
+			<textField>
 				<reportElement x="185" y="40" width="174" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[(นางสาว เมทินี ประภาประไพ)]]></text>
-			</staticText>
-			<staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{verified}]]></textFieldExpression>
+			</textField>
+			<textField>
 				<reportElement x="377" y="40" width="169" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[(นาง ชุมชัย แซ่โง้ว)]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{approver}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement x="12" y="60" width="162" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
@@ -971,6 +1050,27 @@ PR  (บาท)]]></text>
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่ ____ / ____ / ____]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="20" width="120" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[___________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="20" width="120" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[___________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="20" width="120" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[___________________]]></text>
 			</staticText>
 		</band>
 	</detail>

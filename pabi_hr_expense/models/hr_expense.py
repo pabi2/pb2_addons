@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class HRExpense(models.Model):
@@ -10,11 +11,6 @@ class HRExpense(models.Model):
     apweb_ref_url = fields.Char(
         string='PABI Web Ref.',
         readonly=True, states={'draft': [('readonly', False)]},
-    )
-    create_uid = fields.Many2one(
-        'res.users',
-        string='Prepared by',
-        readonly=True,
     )
     date = fields.Date(
         string='Approved Date',
@@ -32,9 +28,20 @@ class HRExpense(models.Model):
         store=True,
         readonly=True, states={'draft': [('readonly', False)]},
     )
+    receive_method = fields.Selection(
+        [('salary_bank', 'Salary Bank Account'),
+         ('other_bank', 'Other Banks')],
+        string='Receive Method',
+        default='salary_bank',
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
     employee_bank_id = fields.Many2one(
         'res.bank.master',
         string='Bank',
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    supplier_text = fields.Char(
+        string='Supplier Name',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
@@ -78,7 +85,15 @@ class HRExpense(models.Model):
         store=True,
         help="Show project, only if all lines use the same project",
     )
-    section_id = fields.Many2one(
+    employee_section_id = fields.Many2one(  # Section of Employee, for Security
+        'res.section',
+        string='Section',
+        related='employee_id.section_id',
+        store=True,
+        help="Employee Section to be used for security purposes."
+        "User in group Expense Officer (restrict) will see only his sections",
+    )
+    section_id = fields.Many2one(  # Selected Sectoin
         'res.section',
         string='Section',
         compute='_compute_project_section',
@@ -95,6 +110,22 @@ class HRExpense(models.Model):
         related='section_id.code',
         store=True,
     )
+
+    @api.multi
+    def write(self, vals):
+        res = super(HRExpense, self).write(vals)
+        try:
+            to_state = vals.get('state', False)
+            # if to_state in ('accepted', 'cancelled', 'paid'):
+            if to_state in ('accepted', 'cancelled'):
+                # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
+                signals = {'accepted': '1', 'cancelled': '2'}
+                for exp in self:
+                    exp.send_signal_to_pabiweb_advance(signals[to_state])
+        except Exception, e:
+            self._cr.rollback()
+            raise ValidationError(e)
+        return res
 
     @api.multi
     @api.depends('line_ids', 'line_ids.project_id', 'line_ids.section_id')
@@ -204,17 +235,16 @@ class HRExpenseAttendeeEmployee(models.Model):
     )
     position_id = fields.Many2one(
         'hr.position',
+        related='employee_id.position_id',
         string='Position',
+        store=True,
     )
     section_id = fields.Many2one(
         'res.section',
+        related='employee_id.section_id',
         string='Section',
+        store=True,
     )
-    project_id = fields.Many2one(
-        'res.project',
-        string='Project',
-    )
-    # TODO: may display section_id and project_id in same column to save space
 
 
 class HRExpenseAttendeeExternal(models.Model):

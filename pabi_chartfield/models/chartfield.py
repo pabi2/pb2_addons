@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields, _
-from openerp.exceptions import Warning as UserError
 from openerp.addons.pabi_base.models.res_common import ResCommon
+from openerp.exceptions import ValidationError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                           (mission)
@@ -115,6 +115,7 @@ CHART_STRUCTURE = \
         'cost_control_id': {
             'cost_control_type_id': {},
         },
+        'fund_id': {}
     }
 
 
@@ -202,6 +203,12 @@ CHART_FIELDS = [
                          'project_base',
                          'personnel',
                          ]),
+    ('fund_id', ['unit_base',
+                 'project_base',
+                 'personnel',
+                 'invest_asset',
+                 'invest_construction',
+                 ]),
     ]
 
 
@@ -339,6 +346,10 @@ class ChartField(object):
         default=lambda self: self.env['res.project'].
         browse(self._context.get('project_id')),
     )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+    )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
@@ -427,6 +438,20 @@ class ChartField(object):
         copy=True,
     )
 
+    @api.model
+    def _get_fund_domain(self):
+        domain_str = """
+            ['|', '|', '|', '|',
+            ('project_ids', 'in', [project_id or 0]),
+            ('section_ids', 'in', [section_id or 0]),
+            ('invest_asset_ids', 'in', [invest_asset_id or 0]),
+            ('invest_construction_phase_ids', 'in',
+                [invest_construction_phase_id or 0]),
+            ('personnel_costcenter_ids', 'in',
+                [personnel_costcenter_id or 0])]
+        """
+        return domain_str
+
     @api.multi
     def validate_chartfields(self, chart_type):
         # Only same chart type as specified will remains
@@ -444,6 +469,100 @@ class ChartField(object):
             res.pop(field)  # To avoid recursive
         return res
 
+    @api.model
+    def _get_default_fund(self):
+        # If that dimension have 1 funds, use that fund.
+        # If that dimension have no funds, use NSTDA
+        # Else return false
+        fund_id = False
+        funds = False
+        if self.project_id:
+            funds = self.project_id.fund_ids
+        if self.section_id:
+            funds = self.section_id.fund_ids
+        if self.personnel_costcenter_id:
+            funds = self.personnel_costcenter_id.fund_ids
+        if self.invest_asset_id:
+            funds = self.invest_asset_id.fund_ids
+        if self.invest_construction_phase_id:
+            funds = self.invest_construction_phase_id.fund_ids
+        # Get default fund
+        if len(funds) == 1:
+            fund_id = funds[0].id
+        else:
+            fund_id = False
+        return fund_id
+
+    # Section
+    @api.onchange('section_id')
+    def _onchange_section_id(self):
+        if self.section_id:
+            if 'project_id' in self:
+                self.project_id = False
+            if 'personnel_costcenter_id' in self:
+                self.personnel_costcenter_id = False
+            if 'invest_asset_id' in self:
+                self.invest_asset_id = False
+            if 'invest_construction_phase_id' in self:
+                self.invest_construction_phase_id = False
+            self.fund_id = self._get_default_fund()
+
+    # Project Base
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        if self.project_id:
+            if 'section_id' in self:
+                self.section_id = False
+            if 'personnel_costcenter_id' in self:
+                self.personnel_costcenter_id = False
+            if 'invest_asset_id' in self:
+                self.invest_asset_id = False
+            if 'invest_construction_phase_id' in self:
+                self.invest_construction_phase_id = False
+            self.fund_id = self._get_default_fund()
+
+    # Personnel
+    @api.onchange('personnel_costcenter_id')
+    def _onchange_personnel_costcenter_id(self):
+        if self.personnel_costcenter_id:
+            if 'section_id' in self:
+                self.section_id = False
+            if 'project_id' in self:
+                self.project_id = False
+            if 'invest_asset_id' in self:
+                self.invest_asset_id = False
+            if 'invest_construction_phase_id' in self:
+                self.invest_construction_phase_id = False
+            self.fund_id = self._get_default_fund()
+
+    # Investment Asset
+    @api.onchange('invest_asset_id')
+    def _onchange_invest_asset_id(self):
+        if self.invest_asset_id:
+            if 'section_id' in self:
+                self.section_id = False
+            if 'project_id' in self:
+                self.project_id = False
+            if 'personnel_costcenter_id' in self:
+                self.personnel_costcenter_id = False
+            if 'invest_construction_phase_id' in self:
+                self.invest_construction_phase_id = False
+            self.fund_id = self._get_default_fund()
+
+    # Investment Construction
+    @api.onchange('invest_construction_phase_id')
+    def _onchange_invest_construction_phase_id(self):
+        if self.invest_construction_phase_id:
+            if 'section_id' in self:
+                self.section_id = False
+            if 'project_id' in self:
+                self.project_id = False
+            if 'invest_asset_id' in self:
+                self.invest_asset_id = False
+            if 'personnel_costcenter_id' in self:
+                self.personnel_costcenter_id = False
+            self.fund_id = self._get_default_fund()
+
 
 class ChartFieldAction(ChartField):
     """ Chartfield + Onchange for Document Transaction
@@ -457,17 +576,41 @@ class ChartFieldAction(ChartField):
             - invest_construction_id
     """
 
+    chart_view = fields.Selection(
+        CHART_VIEW_LIST,
+        compute='_compute_chart_view',
+        store=True,
+    )
     require_chartfield = fields.Boolean(
         string='Require Chartfield',
         compute='_compute_require_chartfield',
     )
+    fund_id = fields.Many2one(
+        domain=lambda self: self._get_fund_domain(),
+    )
+
+    @api.multi
+    @api.depends('project_id', 'section_id', 'personnel_costcenter_id',
+                 'invest_asset_id', 'invest_construction_id')
+    def _compute_chart_view(self):
+        for rec in self:
+            rec.chart_view = False
+            view_set = False
+            for k, v in CHART_VIEW_FIELD.items():
+                if rec[v] and not view_set:
+                    if not view_set:
+                        rec.chart_view = k
+                        view_set = True
+                    else:
+                        raise ValidationError(
+                            _('More than 1 dimension selected'))
 
     @api.multi
     @api.depends('activity_id', 'product_id')
     def _compute_require_chartfield(self):
         for rec in self:
-            if 'activity_group_id' in rec and rec.activity_group_id:
-                report_type = rec.activity_group_id.\
+            if 'activity_id' in rec and rec.activity_group_id:
+                report_type = rec.activity_id.\
                     account_id.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')
@@ -484,21 +627,22 @@ class ChartFieldAction(ChartField):
     @api.multi
     def write(self, vals):
         res = super(ChartFieldAction, self).write(vals)
-        self.update_related_dimension(vals)
+        if not self._context.get('MyModelLoopBreaker', False):
+            self.update_related_dimension(vals)
         return res
 
-    @api.model
-    def _get_chart_view(self, selects_yes):
-        # update chart_view
-        chart_view = False
-        keys = list(set(selects_yes.keys()) & set(CHART_VIEW_FIELD.values()))
-        assert len(keys) <= 1, 'Only 1 chart_view allowed!'
-        if selects_yes.keys():
-            selected_field = selects_yes.keys()[0]
-            for k, v in CHART_VIEW_FIELD.items():
-                if v == selected_field:
-                    chart_view = k
-        return chart_view
+#     @api.model
+#     def _get_chart_view(self, selects_yes):
+#         # update chart_view
+#         chart_view = False
+#         keys = list(set(selects_yes.keys()) & set(CHART_VIEW_FIELD.values()))
+#         assert len(keys) <= 1, 'Only 1 chart_view allowed!'
+#         if selects_yes.keys():
+#             selected_field = selects_yes.keys()[0]
+#             for k, v in CHART_VIEW_FIELD.items():
+#                 if v == selected_field:
+#                     chart_view = k
+#         return chart_view
 
     @api.multi
     def update_related_dimension(self, vals):
@@ -512,53 +656,9 @@ class ChartFieldAction(ChartField):
             res = {}
             for field, _dummy in selects_no.items():
                 res.update(self._get_chained_dimension(field, clear=True))
-            res.update({'chart_view': self._get_chart_view(selects_yes)})
+            # res.update({'chart_view': self._get_chart_view(selects_yes)})
             for field, _dummy in selects_yes.items():
                 if field in res:
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
-            self.write(res)
-
-    @api.onchange('section_id')
-    def _onchange_section_id(self):
-        if self.section_id:
-            self.project_id = False
-            self.personnel_costcenter_id = False
-            self.invest_asset_id = False
-            self.invest_construction_phase_id = False
-
-    # Project Base
-    @api.onchange('project_id')
-    def _onchange_project_id(self):
-        if self.project_id:
-            self.section_id = False
-            self.personnel_costcenter_id = False
-            self.invest_asset_id = False
-            self.invest_construction_phase_id = False
-
-    # Personnel
-    @api.onchange('personnel_costcenter_id')
-    def _onchange_personnel_costcenter_id(self):
-        if self.personnel_costcenter_id:
-            self.section_id = False
-            self.project_id = False
-            self.invest_asset_id = False
-            self.invest_construction_phase_id = False
-
-    # Investment Asset
-    @api.onchange('invest_asset_id')
-    def _onchange_invest_asset_id(self):
-        if self.invest_asset_id:
-            self.section_id = False
-            self.project_id = False
-            self.personnel_costcenter_id = False
-            self.invest_construction_phase_id = False
-
-    # Investment Construction
-    @api.onchange('invest_construction_phase_id')
-    def _onchange_invest_construction_phase_id(self):
-        if self.invest_construction_phase_id:
-            self.section_id = False
-            self.project_id = False
-            self.invest_asset_id = False
-            self.personnel_costcenter_id = False
+            self.with_context(MyModelLoopBreaker=True).write(res)

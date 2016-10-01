@@ -13,8 +13,8 @@ class PurchaseOrder(models.Model):
         ('draft', 'Draft'),
         ('sent', 'RFQ'),
         ('bid', 'Bid Received'),
-        ('confirmed', 'Waiting Approval'),
-        ('approved', 'Purchase Confirmed'),
+        ('confirmed', 'Waiting to Release'),
+        ('approved', 'PO Released'),
         ('except_picking', 'Shipping Exception'),
         ('except_invoice', 'Invoice Exception'),
         ('done', 'Done'),
@@ -101,6 +101,17 @@ class PurchaseOrder(models.Model):
     delivery_address = fields.Text(
         string='Delivery Address',
     )
+    is_central_purchase = fields.Boolean(
+        string='Central Purchase',
+        readonly=True,
+        default=False,
+    )
+    select_reason = fields.Many2one(
+        'purchase.select.reason',
+        string='Selected Reason',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -135,11 +146,47 @@ class PurchaseOrder(models.Model):
         self.dummy_quote_id = self.id
 
     @api.model
+    def _check_request_for_quotation(self):
+        if self.requisition_id.purchase_method_id.require_rfq:
+            raise UserError(
+                _("Can't convert to order. Have to wait for PD approval.")
+            )
+        return True
+
+    @api.model
     def by_pass_approve(self, ids):
         quotation = self.browse(ids)
+        quotation._check_request_for_quotation()
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
+        return True
+
+    @api.multi
+    def wkf_confirm_order(self):
+        for order in self:
+            if order.requisition_id.is_central_purchase:
+                order.requisition_id.exclusive = 'multiple'
+                order.requisition_id.multiple_rfq_per_supplier = True
+            res = super(PurchaseOrder, order).wkf_confirm_order()
+            return res
+
+    @api.multi
+    def wkf_action_cancel(self):
+        res = super(PurchaseOrder, self).wkf_action_cancel()
+        for order in self:
+            self.state2 = 'cancel'
+            if order.quote_id:
+                order.quote_id.wkf_action_cancel()
+                order.quote_id.state2 = 'cancel'
+        return res
+
+    @api.model
+    def by_pass_cancel(self, ids):
+        quotation = self.browse(ids)
+        quotation.action_cancel()
+        if quotation.state != 'cancel':
+            quotation.state = 'cancel'
         return True
 
     @api.multi
@@ -179,6 +226,7 @@ class PurchaseOrder(models.Model):
             order.write({
                 'origin': order.quote_id.origin,
                 'committee_ids': self._prepare_order_committees(order.id),
+                'requisition_id': order.quote_id.requisition_id.id,
             })
         return res
 
@@ -312,6 +360,25 @@ class PurchaseOrder(models.Model):
         return orders_info
 
 
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        'Fiscal Year',
+        readonly=True,
+    )
+
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if not rec.order_id.is_central_purchase:
+                raise UserError(
+                    _('Deletion of purchase order line is not allowed,\n'
+                      'please discard changes!'))
+        return super(PurchaseOrderLine, self).unlink()
+
+
 class PRWebPurchaseMethod(models.Model):
     _name = 'prweb.purchase.method'
     _description = 'PRWeb Purchase Method'
@@ -345,6 +412,7 @@ class PurchaseType(models.Model):
 
     name = fields.Char(
         string='Purchase Type',
+        required=True,
     )
 
 
@@ -354,6 +422,17 @@ class PurchasePrototype(models.Model):
 
     name = fields.Char(
         string='Prototype',
+        required=True,
+    )
+
+
+class PurchaseSelectReason(models.Model):
+    _name = 'purchase.select.reason'
+    _description = 'PABI2 Purchase Selected Reason'
+
+    name = fields.Char(
+        string='Select Reason',
+        required=True,
     )
 
 
@@ -363,11 +442,13 @@ class PurchaseMethod(models.Model):
 
     name = fields.Char(
         string='Purchase Method',
+        required=True,
     )
     require_rfq = fields.Boolean(
         string='Require for RfQ',
         help='At least 1 RfQ must be created before verifying CfBs',
     )
+
 
 class PurchaseCommitteeType(models.Model):
     _name = 'purchase.committee.type'
@@ -375,6 +456,7 @@ class PurchaseCommitteeType(models.Model):
 
     name = fields.Char(
         string='Purchase Committee Type',
+        required=True,
     )
     web_method_ids = fields.Many2many(
         string='PRWeb Method',
@@ -391,6 +473,7 @@ class PurchasePriceRange(models.Model):
 
     name = fields.Char(
         string='Purchase Price Range',
+        required=True,
     )
     price_from = fields.Float(
         string='Price From',
@@ -408,6 +491,7 @@ class PurchaseCondition(models.Model):
 
     name = fields.Char(
         string='Purchase Condition',
+        required=True,
     )
     condition_detail_ids = fields.Many2many(
         string='Purchase Condition Detail',
@@ -424,6 +508,7 @@ class PurchaseConditionDetail(models.Model):
 
     name = fields.Char(
         string='Purchase Condition Detail',
+        required=True,
     )
 
 
@@ -437,6 +522,7 @@ class PurchaseOrderCommittee(models.Model):
     )
     name = fields.Char(
         string='Name',
+        required=True,
     )
     position = fields.Char(
         string='Position',

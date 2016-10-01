@@ -35,10 +35,22 @@
                                 attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
                             <field name="fine_num_days"
                                 attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
+                            <field name="fine_num_months"
+                                attrs="{'invisible':[('fine_condition', '!=', 'month')]}"/>
                         </group>
                     </page>
                 </xpath>
             </field>
+        </record>
+        <record model="ir.ui.view" id="purchase_order_tree">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+                <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="acceptance_done"/>
+                </xpath>
+                </field>
         </record>
     </data>
 </openerp>

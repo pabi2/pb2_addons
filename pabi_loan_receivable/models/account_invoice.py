@@ -64,6 +64,21 @@ class AccountInvoice(models.Model):
             res['domain'].update({'loan_late_payment_invoice_id': domain})
         return res
 
+    @api.model
+    def _get_account_id_from_product(self, product, fpos):
+        account_id = product.property_account_expense.id
+        if not account_id:
+            categ = product.categ_id
+            account_id = categ.property_account_expense_categ.id
+        if not account_id:
+            raise ValidationError(
+                _('Define an expense account for this '
+                  'product: "%s" (id:%d).') %
+                (product.name, product.id,))
+        if fpos:
+            account_id = fpos.map_account(account_id)
+        return account_id
+
     @api.onchange('loan_late_payment_invoice_id')
     def _onchange_loan_late_payment_invoice_id(self):
         # This method is called from Customer invoice to charge penalty
@@ -80,12 +95,13 @@ class AccountInvoice(models.Model):
             # Prepare header
             self.currency_id = late_invoice.currency_id
             # Prepare line
-            product = self.env['ir.property'].get(
-                'property_loan_penalty_product_id', 'res.partner')
+            product = self.env.user.company_id.loan_penalty_product_id
             if not product:
                 raise ValidationError(_('No Loan Penalty Product has been '
                                         'set in Account Settings!'))
             penalty_line.product_id = product
+            penalty_line.account_id = self.\
+                _get_account_id_from_product(product, self.fiscal_position)
             penalty_line.name = _('%s (%s Days)') % (product.name, days)
             penalty_line.quantity = 1.0
             penalty_line.price_unit = amount_penalty

@@ -35,6 +35,7 @@
             
                     <field name="personnel_costcenter_id" />
                     
+                    <field name="fund_id" />
                     <field name="cost_control_type_id"/>
                     <field name="cost_control_id" />   
                                          
@@ -74,6 +75,7 @@
             
                     <field name="personnel_costcenter_id" />
                     
+                    <field name="fund_id" />
                     <field name="cost_control_type_id"/>
                     <field name="cost_control_id" />
                     
@@ -114,6 +116,7 @@
 
                     <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
 
+					<filter string="Fund" context="{'group_by':'fund_id'}"/>
                     <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
                     <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
                     
@@ -168,6 +171,7 @@
             
                     <field name="personnel_costcenter_id" invisible="1" />
                     
+                    <field name="fund_id" invisible="1"/>
                     <field name="cost_control_type_id" invisible="1" />
                     <field name="cost_control_id" invisible="1" />
                     
@@ -209,6 +213,7 @@
             
                     <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
                     
+                    <filter string="Fund" context="{'group_by':'fund_id'}" />
                     <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
                     <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
                     

@@ -52,6 +52,7 @@ class AccountVoucher(models.Model):
     def _compute_total_ar_ap_amount(self):
         for record in self:
             invoice_ids = record._get_related_invoices()
+            amount = 0.0
             if invoice_ids:
                 invoices = self.env['account.invoice'].browse(invoice_ids)
                 amount = sum([i.amount_total for i in invoices])
@@ -136,21 +137,35 @@ class AccountVoucherLine(models.Model):
 class AccountVoucherTax(models.Model):
     _inherit = "account.voucher.tax"
 
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        related='invoice_id.taxbranch_id',
+        string='Tax Branch',
+        readonly=True,
+        store=True,
+    )
+
     @api.model
-    def move_line_get(self, voucher_id):
+    def _prepare_voucher_tax_detail(self, voucher_tax):
+        res = super(AccountVoucherTax, self).\
+            _prepare_voucher_tax_detail(voucher_tax)
+        res.update({'taxbranch_id': voucher_tax.invoice_id.taxbranch_id.id})
+        return res
+
+    @api.model
+    def move_line_get(self, voucher):
         """ Normal Tax: Use invoice's tax branch for tax move line
             WHT: Use a centralized tax branch """
-        res = super(AccountVoucherTax, self).move_line_get(voucher_id)
-        voucher = self.env['account.voucher'].browse(voucher_id)
+        res = super(AccountVoucherTax, self).move_line_get(voucher)
         taxbranch_id = False
-        wht_taxbranch_id = voucher.partner_id.property_wht_taxbranch_id.id
         for line in voucher.line_ids:
             if line.amount or line.amount_wht or line.amount_retention:
                 taxbranch_id = line.supplier_invoice_taxbranch_id.id
-        if voucher.partner_id.property_tax_move_by_taxbranch:
+        tax_move_by_taxbranch = self.env.user.company_id.tax_move_by_taxbranch
+        if tax_move_by_taxbranch:
+            wht_taxbranch_id = self.env.user.company_id.wht_taxbranch_id.id
             for r in res:
-                if r['tax_code_type'] == 'wht' and \
-                        voucher.partner_id.property_wht_taxbranch_id:
+                if r['tax_code_type'] == 'wht' and wht_taxbranch_id:
                     r.update({'taxbranch_id': wht_taxbranch_id})
                 else:
                     r.update({'taxbranch_id': taxbranch_id})

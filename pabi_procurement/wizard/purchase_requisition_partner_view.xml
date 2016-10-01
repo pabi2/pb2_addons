@@ -11,11 +11,9 @@
                         <field name="partner_id" context="{'default_supplier': 1, 'default_customer': 0}"/>
                     </group>
                     <group>
-                    	<field name="picking_type_id" invisible="1" />
-	                    <field name="operating_unit_id"
-	                    	attrs="{'invisible': [('is_central_purchase','=',False)], 'required': [('is_central_purchase','=',True)]}"/>
 	                    <field name="is_central_purchase" invisible="1" />
-	                    <field name="location_id" invisible="1" />
+	                    <field name="operating_unit_view_id"
+	                    	attrs="{'invisible': [('is_central_purchase','=',False)], 'required': [('is_central_purchase','=',True)]}"/>   
                     </group>
                 </xpath>
             </field>

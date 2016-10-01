@@ -7,11 +7,18 @@
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
-            	<!-- THIS PRINT BUTTON IS ONLY FOR TESTING, PLEASE REMOVE -->
-            	<!--<button name="cancel_requisition" >-->
-            		<!--<button name="print_call_for_bid_form" type="object" string="Print Form" />-->
-            	<!--</button>-->
-
+                <xpath expr="//form[@string='Call for Bids']" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']"
+                       position="attributes">
+                    <attribute name="attrs"/>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']"
+                       position="attributes">
+                    <attribute name="widget">date</attribute>
+                </xpath>
                 <xpath expr="//field[@name='origin']" position="replace">
                 </xpath>
                 <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
@@ -23,8 +30,8 @@
                     <field name="is_central_purchase"/>
                     <field name="purchase_type_id"/>
                     <field name="objective"/>
-                    <field name="description"/>
-                    <field name="total_budget_value"/>
+                    <field name="description" string="Reason"/>
+                    <field name="total_budget_value" attrs="{'invisible': [('total_budget_value', '=', 0)]}"/>
                     <field name="purchase_prototype_id"/>
                     <field name="request_uid"/>
                     <field name="assign_uid"/>
@@ -52,9 +59,10 @@
                        position="after">
                     <field name="purchase_method_id"/>
                     <field name="purchase_price_range_id"/>
-                    <field name="purchase_condition_id"/>
-                    <field name="purchase_condition_detail_id"/>
-                    <field name="purchase_condition_detail"/>
+                    <field name="require_rfq" invisible='1'/>
+                    <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                 </xpath>
@@ -84,22 +92,31 @@
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
                     <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok" confirm="Approve this RfQ?"/>
                 </xpath>
-                <xpath expr="//button[@name='purchase_cancel']" position="attributes">
-                    <attribute name="confirm">Cancel this RfQ?</attribute>
-                </xpath>
                 <xpath expr="//button[@name='purchase_confirm']" position="attributes">
                     <attribute name="confirm">Confirm this RfQ?</attribute>
+                </xpath>
+                <xpath expr="//button[@name='purchase_cancel']" position="replace">
+                    <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
+
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
                 </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
+                    <field name="price_unit"/>
+                    <field name="price_standard"/>
+                </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
+                    <field name="product_name"/>
+                </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
                        position="after">
                     <field name="fixed_asset"/>
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
+                    <field name="fiscalyear_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']"
                        position="after">
@@ -122,6 +139,9 @@
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree" position="attributes">
                 	<attribute name="editable">bottom</attribute>
+                </xpath>
+                <xpath expr="//tree[@string='Products']" position="attributes">
+                    <attribute name="editable"/>
                 </xpath>
                 <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='name']" position="replace">
                 	<field name="operating_unit_id" />
@@ -178,7 +198,7 @@
                             <group>
                                 <field name="doc_no"/>
                                 <field name="doc_header"/>
-                                <field name="doc_footer"/>
+                                <field name="doc_body"/>
                             </group>
                         </group>
                     </page>
@@ -199,12 +219,27 @@
                 </xpath>
             </field>
         </record>
+        <record model="ir.ui.view" id="cancel_reason_view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition_cancel_reason.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(purchase_requisition_cancel_reason.action_requisition_cancel)d']" position="attributes">
+                    <attribute name="states">draft,in_progress,done</attribute>
+                </xpath>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_purchase_requisition_tree">
             <field name="name">purchase.requisition.tree</field>
             <field name="model">purchase.requisition</field>
             <field name="inherit_id"
                    ref="purchase_requisition.view_purchase_requisition_tree"/>
             <field name="arch" type="xml">
+                <!-- #  Note :: take out when this up to production -->
+                <!--<xpath expr="//tree" position="attributes">-->
+                    <!--<attribute name="create">false</attribute>-->
+                <!--</xpath>-->
                 <xpath expr="//tree" position="attributes">
                     <attribute name="default_order">create_date desc</attribute>
                 </xpath>
@@ -212,8 +247,10 @@
                     <field name="create_date" widget="date" string="Create Date"/>
                     <field name="request_uid" string="Requested by"/>
                     <field name="purchase_type_id"/>
+                    <field name="purchase_method_id"/>
                     <field name="objective"/>
                     <field name="amount_total" string="Total Amount"/>
+                    <field name="currency_id"/>
                 </xpath>
                 <xpath expr="//field[@name='ordering_date']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -236,6 +273,16 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_requisition_filter">
+            <field name="name">purchase.requisition.search</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//filter[@string='Unassigned']" position="after">
+                        <filter name="po_created" domain="[('state','=','done')]" string="PO Created"/>
+                    </xpath>
+                </field>
         </record>
     </data>
 </openerp>

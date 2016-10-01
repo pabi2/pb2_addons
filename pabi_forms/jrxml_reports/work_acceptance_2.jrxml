@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="70" bottomMargin="107">
-	<property name="ireport.zoom" value="0.8264462809917363"/>
+	<property name="ireport.zoom" value="1.2100000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="79"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -86,7 +86,7 @@ END,' ',
 EXTRACT(year FROM current_date + interval '543 years')) now_date,
 po.doc_approve_uid,
 hp.name hr_position,
-ro.description,
+ro.name description,
 CONCAT((SELECT value FROM ir_translation it WHERE
 res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -272,7 +272,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[แจ้งค่าปรับเนื่องจากส่งสินค้า/งานจ้าง เกินกำหนด]]></text>
+				<text><![CDATA[สงวนสิทธิ์ค่าปรับ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="46" y="66" width="241" height="22"/>

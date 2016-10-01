@@ -1,23 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
 <data>
-	
-	# Customer Invoice 
-	
-	<!-- Delete existing report -->
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_1'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_2'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_3'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_4'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_5'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_6'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_7'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_8'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_9'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_10'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_11'))]" />
-	<delete model="ir.actions.report.xml" search="[('id', '=', ref('purchase_requisition_12'))]" />
-
 
 	<record id="purchase_work_acceptance" model="ir.actions.report.xml">
 		<field name="string">Work Acceptance</field>
@@ -438,13 +421,13 @@
 	</record>
 
 	<record id="purchase_requisition_summary" model="ir.actions.report.xml">
-		<field name="string">PD summary Form</field>
+		<field name="string">Approval report</field>
 		<field name="auto">True</field>
 		<field name="model">purchase.requisition</field>
 		<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
-		<field name="name">Call For Bids summary</field>
+		<field name="name">Approval report</field>
 		<field name="report_name">purchase.requisition_summary</field>
-		<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_summary.jrxml</field>
+		<field name="report_rml">pabi_forms/jrxml_reports/approval_report.jrxml</field>
 		<field name="menu">True</field>
 		<field name="header">False</field>
 		<field name="jasper_report">True</field>
@@ -453,7 +436,7 @@
 	</record>
 
 	<record id="purchase_requisition_summary_values" model="ir.values">
-		<field name="name">PD summary Form</field>
+		<field name="name">Approval report</field>
 		<field name="model">purchase.requisition</field>
 		<field name="key2" eval="'client_print_multi'" />
 		<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(purchase_requisition_summary)" />

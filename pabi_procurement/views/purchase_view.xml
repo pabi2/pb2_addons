@@ -78,6 +78,7 @@
                 <xpath expr="//field[@name='partner_ref']" position="after">
                     <field name="date_reference" />
                 </xpath>
+
                 <xpath expr="//button[@name='action_cancel']" position="before">
                     <button name="wkf_send_rfq" states="approved" string="Send by Email" type="object" context="{'send_rfq':True}"/>
                 	<field name="plan_invoice_created" invisible="1"/>
@@ -87,20 +88,37 @@
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  '|',('plan_invoice_created','=',True)]}"/>
                 </xpath>
+                <xpath expr="//button[@name='purchase_approve']" position="attributes">
+                    <attribute name="string">Release</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
                 <!--<xpath expr="/form/sheet//h1[1]" position="after">-->
                     <!--<h2 attrs="{'invisible': [('state', '!=', 'done')]}">-->
                         <!--<label for="force_done_reason" string="Force Done Reason:"/>-->
                         <!--<field name="force_done_reason" class="oe_inline" />-->
                     <!--</h2>-->
                 <!--</xpath>-->
-                <xpath expr="//button[@name='action_cancel']" position="after">
-                    <button name="%(action_force_done)d" string="Force Done"
-                            type="action"
-                            attrs="{'invisible':[('state', '!=', 'approved')]}"/>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
                 </xpath>
-                <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
+                <!--<xpath expr="//button[@name='action_cancel']" position="after">-->
+                    <!--<button name="%(action_force_done)d" string="Force Done"-->
+                            <!--type="action"-->
+                            <!--attrs="{'invisible':[('state', '!=', 'approved')]}"/>-->
                 <!--</xpath>-->
+                <xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!-- start :: cancel reason -->
+                <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_cancel']" position="after">
+                    <button name="%(purchase_cancel_reason.action_order_cancel)d" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="action"/>
+                </xpath>
+                <!-- end :: cancel reason -->
                 <xpath expr="//header[@name='quotation']/button[@name='action_cancel']" position="before">
                     <button name="wkf_send_rfq" states="draft" string="Send by Email" type="object" context="{'send_rfq':True}" class="oe_highlight" groups="base.group_user"/>
                 </xpath>
@@ -113,6 +131,8 @@
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field name="mycontract_id" />
                     <field name="date_contract_start" />
+                    <field name="currency_id"/>
+                    <field name="select_reason" attrs="{'invisible': [('order_type','!=','quotation')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='notes']" position="after">
                     <div class="oe_clear"/>
@@ -120,7 +140,13 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree" position="attributes">
                     <attribute name="create">false</attribute>
-                    <attribute name="delete">false</attribute>
+                    <attribute name="delete">true</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+                    <field name="fiscalyear_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">
@@ -144,6 +170,33 @@
                 </xpath>
             </field>
         </record>
+
+		<!-- added by kittiu -->
+        <record model="ir.ui.view" id="view_purchase_order_form2" >
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_order_tree">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+                <field name="arch" type="xml">
+                <!-- #  Note :: take out when this up to production -->
+                <!--<xpath expr="//tree" position="attributes">-->
+                    <!--<attribute name="create">false</attribute>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="currency_id"/>
+                </xpath>
+                </field>
+        </record>
+
         <!--Hide Merge PO action-->
         <!--<record id="make_invisible" model="res.groups">-->
             <!--<field name="name">Invisible</field>-->

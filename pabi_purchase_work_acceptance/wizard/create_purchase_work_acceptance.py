@@ -4,10 +4,37 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class CreatePurchaseWorkAcceptance(models.TransientModel):
     _name = 'create.purchase.work.acceptance'
+
+    @api.model
+    def _get_invoice_plan(self):
+        res = []
+        installment = 0
+        Plan = self.env['purchase.invoice.plan']
+        if 'active_id' in self._context:
+            plans = Plan.search(
+                [
+                    ('order_id', '=', self._context['active_id']),
+                    ('ref_invoice_id.state', '=', 'draft'),
+                ],
+                order='installment'
+            )
+            for plan in plans:
+                if plan.installment != installment and plan.installment > 0:
+                    res.append(
+                        (
+                            plan.installment,
+                            '#' + str(plan.installment) + ' '+plan.description,
+                        )
+                    ),
+                    installment = plan.installment
+                else:
+                    continue
+        return res
 
     name = fields.Char(
         string="Acceptance No.",
@@ -36,29 +63,40 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     is_invoice_plan = fields.Boolean(
         string='Is Invoice Plan',
     )
-    invoice_plan_id = fields.Many2one(
-        'purchase.invoice.plan',
-        string='Invoice Plan',
-        domain="[('order_id', '=',order_id),"
-               "('ref_invoice_id.state', '=','draft')]",
+    select_invoice_plan = fields.Selection(
+        _get_invoice_plan,
+        string='Select the Invoice Plan',
+        select=True,
     )
 
     @api.model
-    def _prepare_acceptance_plan_line(self, plan):
+    def _prepare_acceptance_plan_line(self, plan_installment):
+        Plan = self.env['purchase.invoice.plan']
         items = []
-        if len(plan.ref_invoice_id) == 0:
-            raise UserError(_("You have to create invoices first."))
-        for inv_line in plan.ref_invoice_id.invoice_line:
-            vals = {
-                'line_id': inv_line.purchase_line_id.id,
-                'product_id': inv_line.product_id.id,
-                'name': inv_line.name or inv_line.product_id.name,
-                'balance_qty': inv_line.purchase_line_id.product_qty,
-                'to_receive_qty': inv_line.quantity,
-                'product_uom': inv_line.uos_id.id,
-                'inv_line_id': inv_line.id,
-            }
-            items.append([0, 0, vals])
+        plans = Plan.search(
+            [
+                ('order_id', '=', self._context['active_id']),
+                ('ref_invoice_id.state', '=', 'draft'),
+                ('installment', '=', plan_installment),
+            ],
+        )
+        for plan in plans:
+            if len(plan.ref_invoice_id) == 0:
+                raise UserError(_("You have to create invoices first."))
+            for inv_line in plan.ref_invoice_id.invoice_line:
+                if not inv_line.product_id.id:
+                    continue
+                vals = {
+                    'line_id': inv_line.purchase_line_id.id,
+                    'product_id': inv_line.product_id.id,
+                    'name': inv_line.name or inv_line.product_id.name,
+                    'balance_qty': inv_line.purchase_line_id.product_qty,
+                    'to_receive_qty': inv_line.quantity,
+                    'product_uom': inv_line.uos_id.id,
+                    'inv_line_id': inv_line.id,
+                }
+                items.append([0, 0, vals])
+            break
         return items
 
     @api.model
@@ -77,6 +115,23 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         }
 
     @api.model
+    def is_acceptance_done(self, order):
+        OrderLine = self.env['purchase.order.line']
+        completed_line = 0
+        order_lines = OrderLine.search([
+            ('order_id', '=', order.id),
+        ])
+        for order_line in order_lines:
+            if order_line.invoiced_qty >= order_line.product_qty:
+                completed_line += 1
+        if completed_line == len(order_lines):
+            raise UserError(
+                _("""Can't create new work acceptance.
+                This order's shipments may be completed.
+                """)
+            )
+
+    @api.model
     def _get_contract_end_date(self, order):
         THHoliday = self.env['thai.holiday']
         start_date = datetime.datetime.strptime(
@@ -86,6 +141,12 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         if order.fine_condition == 'day':
             num_of_day = order.fine_num_days
             end_date = start_date + datetime.timedelta(days=num_of_day)
+            date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
+            next_working_end_date = THHoliday.\
+                find_next_working_day(date_scheduled_end)
+        if order.fine_condition == 'month':
+            num_months = order.fine_num_months
+            end_date = start_date + relativedelta(months=+num_months)
             date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
             next_working_end_date = THHoliday.\
                 find_next_working_day(date_scheduled_end)
@@ -108,6 +169,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         if order.invoice_method == 'invoice_plan':
             res['is_invoice_plan'] = True
         else:
+            self.is_acceptance_done(order)
             order_lines = OrderLine.search([('order_id', 'in', order_ids)])
             for line in order_lines:
                 if not hasattr(line, 'product_uom'):
@@ -139,7 +201,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         })
         acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
-            items = self._prepare_acceptance_plan_line(self.invoice_plan_id)
+            items = self._prepare_acceptance_plan_line(self.select_invoice_plan)
             lines = items
         else:
             for act_line in self.acceptance_line_ids:
@@ -164,7 +226,16 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         assert len(active_ids) == 1, "Only 1 Purchase Order expected"
         acceptance = self._prepare_acceptance()
         acceptance.order_id = active_ids[0]
-        return act_close
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_model': 'purchase.work.acceptance',
+            'target': 'current',
+            'context': self._context,
+            'res_id': acceptance.id,
+            'domain': [('order_id', '=', active_ids[0])],
+        }
 
 
 class CreatePurchaseWorkAcceptanceItem(models.TransientModel):

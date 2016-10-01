@@ -6,7 +6,7 @@
             <field name="model">open.attachment.url</field>
             <field name="arch" type="xml">
                 <form>
-                	<p class="oe_gray">
+                	<p class="oe_grey">
                 		Click open to redirect to the document. 
                 	</p>
                     <footer>

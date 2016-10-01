@@ -8,8 +8,9 @@
                 <search string="Search Billings">
                     <filter string="Draft" domain="[('state','=','draft')]" help="Draft Billing"/>
                     <filter string="Billed" domain="[('state','=','billed')]" help="Billed Billing"/>
+                    <filter string="Billed, not printed" domain="[('email_sent','=',False), ('state','=','billed')]" help="Billed Billing"/>
                     <field name="name"/>
-                    <field name="date"/>	
+                    <field name="date"/>    
                     <field name="partner_id" string="Customer"/>
                     <group expand="0" string="Group By...">
                         <filter string="Supplier" domain="[]" context="{'group_by':'partner_id'}"/>
@@ -19,7 +20,7 @@
             </field>
         </record>
     
-       	<record model="ir.ui.view" id="view_billing_tree">
+           <record model="ir.ui.view" id="view_billing_tree">
             <field name="name">purchase.billing.tree</field>
             <field name="model">purchase.billing</field>
             <field name="arch" type="xml">
@@ -41,6 +42,7 @@
                 <form string="Purchase Billing" >
                 <header>
                     <button name="validate_billing" string="Validate" states="draft" type="object" class="oe_highlight"/>
+                    <button name="action_send_bill" states="billed" string="Send Email" type="object" class="oe_highlight"/>
                     <button name="cancel_billing" string="Cancel" type="object" states="draft"/>
                     <button name="cancel_billing" string="Cancel" type="object" states="billed" confirm="Are you sure to cancel this record ?"/>
                     <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
@@ -56,6 +58,7 @@
                         <group>
                             <field name="date" />
                             <field name="date_due"/>
+                            <field name="email_sent"/>
                         </group>
                     </group>
                     <p class="oe_grey">
@@ -65,25 +68,25 @@
                     <notebook>
                         <page string="Supplier Invoices" >
                             <field name="supplier_invoice_ids"
-                            	domain="[('state', '=', 'draft'), ('partner_id', '=', partner_id), ('type', 'in', ('in_invoice', 'in_refund'))]" >
-                            	<tree>
-                            		<field name="purchase_ids"/>
-                            		<field name="supplier_invoice_number"/>
-                            		<field name="date_invoice"/>
-                            		<field name="date_due"/>
-                            		<field name="residual"/>
-                            		<field name="amount_total"/>
-                            		<field name="state"/>
-                            	</tree>
+                                domain="[('state', '=', 'draft'), ('partner_id', '=', partner_id), ('type', 'in', ('in_invoice', 'in_refund'))]" >
+                                <tree>
+                                    <field name="purchase_ids"/>
+                                    <field name="supplier_invoice_number"/>
+                                    <field name="date_invoice"/>
+                                    <field name="date_due"/>
+                                    <field name="residual"/>
+                                    <field name="amount_total"/>
+                                    <field name="state"/>
+                                </tree>
                             </field>
                             <group col="3">
                                 <group>
                                     <field name="note" colspan="2" nolabel="1"/>
                                 </group>
                             <group class="oe_subtotal_footer oe_right">
-                            	<h2>
+                                <h2>
                                     <label for="amount_total"/>
-                                	<field name="amount_total" class="oe_inline"/>
+                                    <field name="amount_total" class="oe_inline"/>
                                 </h2>
                             </group>
                             </group>
@@ -98,9 +101,8 @@
                 </form>
             </field>
         </record>
-        
-    
-		<record id="action_purchase_billing" model="ir.actions.act_window">
+
+        <record id="action_purchase_billing" model="ir.actions.act_window">
             <field name="name">Purchase Billing</field>
             <field name="res_model">purchase.billing</field>
             <field name="view_type">form</field>
@@ -124,8 +126,8 @@
             <field name="act_window_id" ref="action_purchase_billing"/>
         </record>
 
-	    <menuitem action="action_purchase_billing" sequence="13"
-	    id="menu_action_purchase_billing"  parent="purchase.menu_procurement_management"/>
-	    
+        <menuitem action="action_purchase_billing" sequence="13"
+        id="menu_action_purchase_billing"  parent="purchase.menu_procurement_management"/>
+        
     </data>
 </openerp>

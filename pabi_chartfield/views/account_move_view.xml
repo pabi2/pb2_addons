@@ -8,35 +8,36 @@
             <field name="inherit_id" ref="account.view_move_line_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='reconcile_partial_id']" position="after">
-                    
+
                     <field name="spa_id"/>
-                    <field name="mission_id" />
-                    <field name="tag_type_id" />
-                    <field name="tag_id" />
-                    
-                    <field name="functional_area_id" />
-                    <field name="program_group_id" />
-                    <field name="program_id" />
-                    <field name="project_group_id" />
+                    <field name="mission_id"/>
+                    <field name="tag_type_id"/>
+                    <field name="tag_id"/>
+
+                    <field name="functional_area_id"/>
+                    <field name="program_group_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
                     <field name="project_id"/>
-                    
-                    <field name="org_id" />
-                    <field name="sector_id" />
+
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
                     <field name="subsector_id"/>
-                    <field name="division_id" />
-                    <field name="section_id" />
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="costcenter_id"/>
-                    <field name="taxbranch_id" />
-                    
-                    <field name="invest_asset_id" />
-                        
-                    <field name="invest_construction_id" />
-                    <field name="invest_construction_phase_id" />
-            
-                    <field name="personnel_costcenter_id" />
-                    
+                    <field name="taxbranch_id"/>
+
+                    <field name="invest_asset_id"/>
+
+                    <field name="invest_construction_id"/>
+                    <field name="invest_construction_phase_id"/>
+
+                    <field name="personnel_costcenter_id"/>
+
+                    <field name="fund_id"/>
                     <field name="cost_control_type_id"/>
-                    <field name="cost_control_id" />
+                    <field name="cost_control_id"/>
 
                 </xpath>
             </field>
@@ -48,35 +49,36 @@
             <field name="inherit_id" ref="account.view_move_line_form2"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='reconcile_partial_id']" position="after">
-                    
+
                     <field name="spa_id"/>
-                    <field name="mission_id" />
-                    <field name="tag_type_id" />
-                    <field name="tag_id" />
-                    
-                    <field name="functional_area_id" />
-                    <field name="program_group_id" />
-                    <field name="program_id" />
-                    <field name="project_group_id" />
+                    <field name="mission_id"/>
+                    <field name="tag_type_id"/>
+                    <field name="tag_id"/>
+
+                    <field name="functional_area_id"/>
+                    <field name="program_group_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
                     <field name="project_id"/>
-                    
-                    <field name="org_id" />
-                    <field name="sector_id" />
+
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
                     <field name="subsector_id"/>
-                    <field name="division_id" />
-                    <field name="section_id" />
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="costcenter_id"/>
-                    <field name="taxbranch_id" />
-                    
-                    <field name="invest_asset_id" />
-                        
-                    <field name="invest_construction_id" />
-                    <field name="invest_construction_phase_id" />
-            
-                    <field name="personnel_costcenter_id" />
-                    
+                    <field name="taxbranch_id"/>
+
+                    <field name="invest_asset_id"/>
+
+                    <field name="invest_construction_id"/>
+                    <field name="invest_construction_phase_id"/>
+
+                    <field name="personnel_costcenter_id"/>
+
+                    <field name="fund_id"/>
                     <field name="cost_control_type_id"/>
-                    <field name="cost_control_id" />
+                    <field name="cost_control_id"/>
 
                 </xpath>
             </field>
@@ -88,36 +90,37 @@
             <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='company_id']" position="after">
-                    
+
                     <field name="spa_id"/>
-                    <field name="mission_id" />
-                    <field name="tag_type_id" />
-                    <field name="tag_id" />
-                    
-                    <field name="functional_area_id" />
-                    <field name="program_group_id" />
-                    <field name="program_id" />
-                    <field name="project_group_id" />
+                    <field name="mission_id"/>
+                    <field name="tag_type_id"/>
+                    <field name="tag_id"/>
+
+                    <field name="functional_area_id"/>
+                    <field name="program_group_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
                     <field name="project_id"/>
-                    
-                    <field name="org_id" />
-                    <field name="sector_id" />
+
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
                     <field name="subsector_id"/>
-                    <field name="division_id" />
-                    <field name="section_id" />
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="costcenter_id"/>
-                    <field name="taxbranch_id" />
-                    
-                    <field name="invest_asset_id" />
-                        
-                    <field name="invest_construction_id" />
-                    <field name="invest_construction_phase_id" />
-            
-                    <field name="personnel_costcenter_id" />
-                    
+                    <field name="taxbranch_id"/>
+
+                    <field name="invest_asset_id"/>
+
+                    <field name="invest_construction_id"/>
+                    <field name="invest_construction_phase_id"/>
+
+                    <field name="personnel_costcenter_id"/>
+
+                    <field name="fund_id"/>
                     <field name="cost_control_type_id"/>
-                    <field name="cost_control_id" />
-                    
+                    <field name="cost_control_id"/>
+
                 </xpath>
             </field>
         </record>
@@ -128,39 +131,40 @@
             <field name="inherit_id" ref="account.view_account_move_line_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='account_id']" position="after">
-                    
+
                     <field name="spa_id"/>
-                    <field name="mission_id" />
-                    <field name="tag_type_id" />
-                    <field name="tag_id" />
-                    
-                    <field name="functional_area_id" />
-                    <field name="program_group_id" />
-                    <field name="program_id" />
-                    <field name="project_group_id" />
+                    <field name="mission_id"/>
+                    <field name="tag_type_id"/>
+                    <field name="tag_id"/>
+
+                    <field name="functional_area_id"/>
+                    <field name="program_group_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
                     <field name="project_id"/>
-                    
-                    <field name="org_id" />
-                    <field name="sector_id" />
+
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
                     <field name="subsector_id"/>
-                    <field name="division_id" />
-                    <field name="section_id" />
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="costcenter_id"/>
-                    <field name="taxbranch_id" />
-                    
-                    <field name="invest_asset_id" />
-                        
-                    <field name="invest_construction_id" />
-                    <field name="invest_construction_phase_id" />
-            
-                    <field name="personnel_costcenter_id" />
-                    
+                    <field name="taxbranch_id"/>
+
+                    <field name="invest_asset_id"/>
+
+                    <field name="invest_construction_id"/>
+                    <field name="invest_construction_phase_id"/>
+
+                    <field name="personnel_costcenter_id"/>
+
+                    <field name="fund_id"/>
                     <field name="cost_control_type_id"/>
-                    <field name="cost_control_id" />
+                    <field name="cost_control_id"/>
 
                 </xpath>
                 <xpath expr="/search/group" position="inside">
-                    
+
                     <filter string="SPA" context="{'group_by':'spa_id'}"/>
                     <filter string="Mission" context="{'group_by':'mission_id'}"/>
                     <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
@@ -171,7 +175,7 @@
                     <filter string="Program" context="{'group_by':'program_id'}"/>
                     <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
                     <filter string="Project" context="{'group_by':'project_id'}"/>
-                    
+
                     <filter string="Org" context="{'group_by':'org_id'}"/>
                     <filter string="Sector" context="{'group_by':'sector_id'}"/>
                     <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
@@ -179,21 +183,21 @@
                     <filter string="Section" context="{'group_by':'section_id'}"/>
                     <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
                     <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
-                    
+
                     <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
-                		
+
                     <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
                     <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
-            
+
                     <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
-                    
+
+                    <filter string="Fund" context="{'group_by':'fund_id'}"/>
                     <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
                     <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
-                    
-                </xpath>                    
+
+                </xpath>
             </field>
         </record>
-        
 
         <record id="view_move_form" model="ir.ui.view">
             <field name="name">account.move.form</field>
@@ -201,38 +205,39 @@
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='line_id']/tree//field[@name='reconcile_partial_id']" position="after">
-                    
+
                     <field name="spa_id"/>
-                    <field name="mission_id" />
-                    <field name="tag_type_id" />
-                    <field name="tag_id" />
-                    
-                    <field name="functional_area_id" />
-                    <field name="program_group_id" />
-                    <field name="program_id" />
-                    <field name="project_group_id" />
+                    <field name="mission_id"/>
+                    <field name="tag_type_id"/>
+                    <field name="tag_id"/>
+
+                    <field name="functional_area_id"/>
+                    <field name="program_group_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
                     <field name="project_id"/>
-                    
-                    <field name="org_id" />
-                    <field name="sector_id" />
+
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
                     <field name="subsector_id"/>
-                    <field name="division_id" />
-                    <field name="section_id" />
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="costcenter_id"/>
-                    <field name="taxbranch_id" />
-                    
-                    <field name="invest_asset_id" />
-                        
-                    <field name="invest_construction_id" />
-                    <field name="invest_construction_phase_id" />
-            
-                    <field name="personnel_costcenter_id" />
-                    
+                    <field name="taxbranch_id"/>
+
+                    <field name="invest_asset_id"/>
+
+                    <field name="invest_construction_id"/>
+                    <field name="invest_construction_phase_id"/>
+
+                    <field name="personnel_costcenter_id"/>
+
+                    <field name="fund_id"/>
                     <field name="cost_control_type_id"/>
-                    <field name="cost_control_id" />
+                    <field name="cost_control_id"/>
 
                 </xpath>
             </field>
-        </record>        
+        </record>
     </data>
 </openerp>

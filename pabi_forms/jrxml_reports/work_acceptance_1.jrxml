@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
 	<property name="ireport.zoom" value="1.2396694214876034"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="151"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -86,7 +86,7 @@ END,' ',
 EXTRACT(year FROM current_date + interval '543 years')) now_date,
 po.doc_approve_uid,
 hp.name hr_position,
-ro.description,
+ro.name description,
 CONCAT((SELECT value FROM ir_translation it WHERE
 res_id = he.id AND it.name LIKE 'hr.employee,first_name'),
 ' ',
@@ -287,17 +287,15 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[ติดตามงานส่งมอบสินค้า/งานจ้าง]]></text>
+				<text><![CDATA[แจ้งค่าปรับและเร่งรัดการส่งมอบ]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<staticText>
 				<reportElement x="40" y="65" width="354" height="22"/>
-				<textElement lineSpacing="Single">
+				<textElement lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{name}==null ? "" : $F{name})
-+ ' ' +
-($F{supplier}==null? "":$F{supplier})]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[ผู้จัดการ]]></text>
+			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="40" y="91" width="374" height="22"/>
 				<textElement lineSpacing="Single">
@@ -345,7 +343,8 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement textAlignment="Justified" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง " + ($F{operating_unit}== null? ' ':$F{operating_unit}) +"โดยศูนย์" +($F{code} == null? ' ' : $F{code})+ "  ได้ตกลงซื้อ/จ้าง กับ "
+				<textFieldExpression class="java.lang.String"><![CDATA["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง " + ($F{operating_unit}== null? ' ':$F{operating_unit})
++($F{code} == null? ' ' : $F{code} == "สำนักงานกลาง" ? "" : "โดยศูนย์" + $F{code})+ "  ได้ตกลงซื้อ/จ้าง กับ "
 +($F{name}==null ? "" : $F{name} + ' ') +
 ($F{supplier}==null? ' ': $F{supplier}) +" เป็นจำนวนเงิน "+
 ($F{amount} == null ? "" : $F{amount}+ " บาท ") +

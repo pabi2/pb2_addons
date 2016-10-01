@@ -13,9 +13,24 @@ class PurchaseOrder(models.Model):
         acceptance = PWAcceptance.search([('order_id', '=', self.id)])
         self.count_acceptance = len(acceptance)
 
+    @api.one
+    @api.depends('acceptance_ids')
+    def _is_acceptance_done(self):
+        PWAcceptance = self.env['purchase.work.acceptance']
+        acceptances = PWAcceptance.search([('order_id', '=', self.id)])
+        done = True
+        if len(acceptances) == 0:
+            done = False
+        for acceptance in acceptances:
+            if acceptance.state not in ('done', 'cancel'):
+                done = False
+                break
+        self.acceptance_done = done
+
     fine_condition = fields.Selection(
         selection=[
             ('day', 'Day'),
+            ('month', 'Month'),
             ('date', 'Date'),
         ],
         string='Fine Condition',
@@ -36,6 +51,12 @@ class PurchaseOrder(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    fine_num_months = fields.Integer(
+        string='Delivery Within (Months)',
+        default=1,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     fine_rate = fields.Float(
         string='Fine Rate',
         required=True,
@@ -49,9 +70,13 @@ class PurchaseOrder(models.Model):
         string='Acceptance',
         readonly=False,
     )
+    acceptance_done = fields.Boolean(
+        string='Work Acceptance Done',
+        compute="_is_acceptance_done",
+    )
     count_acceptance = fields.Integer(
         string='Count Acceptance',
-        compute="_count_acceptances",
+        compute='_count_acceptances',
         store=True,
     )
 
