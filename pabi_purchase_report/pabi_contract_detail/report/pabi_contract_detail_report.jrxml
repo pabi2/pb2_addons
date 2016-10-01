@@ -1,32 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="1280" pageHeight="595" orientation="Landscape" columnWidth="1240" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="date_from" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="date_to" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="purchase_type" class="java.lang.Integer" isForPrompting="false"/>
-	<parameter name="purchase.method" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="purchase_method" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select
 po_id,
 contract_no,
-post_contract_date,
+post_contract_date + '7 hours'::interval as post_contract_date,
 supplier,
 product_desc,
 amount_total,
 currency,
 destination,
 purchase_method,
+purchase_method_id,
+purchase_type_id,
 date_start,
 date_end,
 plan_count
-from pabi_contract_detail_report]]>
+from pabi_contract_detail_report
+where
+case when $P{purchase_method} > 0
+then purchase_method_id = $P{purchase_method}
+else purchase_method_id = purchase_method_id
+end
+and
+case when $P{purchase_type} > 0
+then purchase_type_id = $P{purchase_type}
+else purchase_type_id = purchase_type_id
+end
+and
+case when $P{date_from} != 'Null'
+then date($P{date_from}) < (post_contract_date + '7 hours'::interval)
+else po_id is not null
+end
+and
+case when $P{date_to} != 'Null'
+then (post_contract_date + '7 hours'::interval) < date($P{date_to})
+else po_id is not null
+end]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
 	<field name="contract_no" class="java.lang.String"/>
-	<field name="post_contract_date" class="java.sql.Date"/>
+	<field name="post_contract_date" class="java.sql.Timestamp"/>
 	<field name="supplier" class="java.lang.String"/>
 	<field name="product_desc" class="java.lang.String"/>
 	<field name="amount_total" class="java.math.BigDecimal">
@@ -37,6 +61,8 @@ from pabi_contract_detail_report]]>
 	</field>
 	<field name="destination" class="java.lang.String"/>
 	<field name="purchase_method" class="java.lang.String"/>
+	<field name="purchase_method_id" class="java.lang.Integer"/>
+	<field name="purchase_type_id" class="java.lang.Integer"/>
 	<field name="date_start" class="java.sql.Date">
 		<fieldDescription><![CDATA[Start Date]]></fieldDescription>
 	</field>
@@ -50,11 +76,11 @@ from pabi_contract_detail_report]]>
 	<title>
 		<band height="45" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="200" height="29"/>
+				<reportElement x="0" y="0" width="264" height="29"/>
 				<textElement lineSpacing="Single">
 					<font size="22" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Contract Detail]]></text>
+				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -62,34 +88,164 @@ from pabi_contract_detail_report]]>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="21" splitType="Stretch">
+		<band height="32" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="100" height="20"/>
-				<textElement lineSpacing="Single">
-					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="0" y="0" width="100" height="32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="Norasi" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Contract No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="0" width="100" height="20"/>
-				<textElement lineSpacing="Single">
-					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				<reportElement mode="Transparent" x="100" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[Contract Date]]></text>
+				<text><![CDATA[post_contract_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="200" y="0" width="240" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[supplier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="440" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[product_desc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="540" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="640" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Currency]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="740" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[destination]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="840" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[purchase_method]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="940" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Start Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="1040" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Date End]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="1140" y="0" width="100" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Norasi" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[plan_count]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="49" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="9" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<reportElement x="0" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="9" width="100" height="20"/>
-				<textElement lineSpacing="Single"/>
+				<reportElement x="100" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{post_contract_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="240" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_desc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currency}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="740" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{destination}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="840" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{purchase_method}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="940" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_start}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1040" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_end}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1140" y="0" width="100" height="40"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Courier" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{plan_count}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

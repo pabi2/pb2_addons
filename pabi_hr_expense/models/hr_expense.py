@@ -116,8 +116,10 @@ class HRExpense(models.Model):
         res = super(HRExpense, self).write(vals)
         try:
             to_state = vals.get('state', False)
+            # if to_state in ('accepted', 'cancelled', 'paid'):
             if to_state in ('accepted', 'cancelled', 'paid'):
-                signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
+                # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
+                signals = {'accepted': '1', 'cancelled': '2'}
                 for exp in self:
                     exp.send_signal_to_pabiweb_advance(signals[to_state])
         except Exception, e:
