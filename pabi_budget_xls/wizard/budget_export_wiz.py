@@ -17,8 +17,8 @@ from openerp.exceptions import Warning as UserError
 class BudgetExportWizard(models.Model):
     _name = 'unit.budget.plan.export'
 
-    attachment_id = fields.Many2one('ir.attachment', 'Template')
-    editable_lines = fields.Integer('Editable lines', required=True, default=10)
+    attachment_id = fields.Many2one('ir.attachment', 'Template Plan')
+    editable_lines = fields.Integer('Additional Budget lines', required=True, default=10)
 
     @api.multi
     def update_budget_xls(self, budget_ids, template_id=None):
@@ -290,7 +290,11 @@ class BudgetExportWizard(models.Model):
 
         stream1 = cStringIO.StringIO()
         workbook.save(stream1)
-        filename = '%s.xlsx' % (template_file.name)
+#         filename = '%s.xlsx' % (template_file.name)
+        filename = '%s-%s-%s-%s.xlsx' % (budget.fiscalyear_id.name,
+                                         budget.org_id.code,
+                                         budget.section_id.code,
+                                         template_file.name)
         self.env.cr.execute(""" DELETE FROM budget_xls_output """)
         attach_id = self.env['budget.xls.output'].create(
             {'name': filename,

@@ -36,10 +36,10 @@
                         <group/>
                         <group>
                             <div>
-                                <button name="%(budget_import_wizard_action)d" invisible="1"
-                                   type="action" string="Import to Excel" class="oe_highlight oe_inline"/> 
+                                <button name="%(budget_import_wizard_action)d" confirm="Not Implemented." 
+                                   type="action" string="Import Plan" class="oe_highlight oe_inline"/> 
                                  <button name="%(budget_export_wizard_action)d"
-                                   type="action" string="Export to Excel" class="oe_highlight oe_inline"/>
+                                   type="action" string="Export Plan" class="oe_highlight oe_inline"/>
                             </div>
                             
                         </group>
