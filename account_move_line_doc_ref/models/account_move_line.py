@@ -14,7 +14,7 @@ class AccountMoveLine(models.Model):
          ('account.move', 'Journal Entry'),
          ('account.voucher', 'Voucher'),
          ('account.asset.asset', 'Asset'),
-         ('account.check.deposit', 'Check Deposit'),
+         ('account.bank.receipt', 'Bank Receipt'),
          ('stock.picking', 'Picking')],
         string='Doc Ref',
         readonly=True,

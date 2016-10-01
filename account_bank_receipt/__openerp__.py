@@ -15,6 +15,7 @@
         'data/account_bank_receipt_sequence.xml',
         'data/account_data.xml',
         'wizard/voucher_create_bank_receipt_wizard.xml',
+        'views/account_config.xml',
         'views/account_bank_receipt_view.xml',
         'views/account_move_line_view.xml',
         'views/account_view.xml',

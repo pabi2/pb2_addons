@@ -14,7 +14,7 @@ Account Move Line - Doc Ref
         'account_reversal',
         'account_asset',
         'account_voucher',
-        'account_check_deposit',
+        'account_bank_receipt',
         'stock_account',
     ],
     'demo': [],

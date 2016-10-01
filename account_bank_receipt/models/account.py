@@ -21,35 +21,36 @@ class AccountMove(models.Model):
         'account.bank.receipt',
         string='Bank Receipt',
         compute='_compute_bank_receipt',
+        store=True,
         readonly=True,
     )
 
     @api.multi
-    @api.depends('line_id')
+    @api.depends('line_id.bank_receipt_id')
     def _compute_bank_receipt(self):
         for move in self:
             bank_receipt_line = move.line_id.filtered('bank_receipt_id')
             move.bank_receipt_id = bank_receipt_line.bank_receipt_id
 
     @api.multi
-    def create_bank_receipt(self, partner_bank_id):
+    def create_bank_receipt(self, receipt_date):
         self._validate_create_bank_receipt()
-        bank_receipt_id = self._create_bank_receipt(partner_bank_id)
+        bank_receipt_id = self._create_bank_receipt(receipt_date)
         return bank_receipt_id
 
     @api.model
-    def _prepare_bank_receipt(self, move, partner_bank_id):
+    def _prepare_bank_receipt(self, move, receipt_date):
         res = {'journal_id': move.journal_id.id,
-               'partner_bank_id': partner_bank_id,
+               'receipt_date': receipt_date,
                'currency_id': (move.journal_id.currency.id or
                                move.journal_id.company_id.currency_id.id),
                }
         return res
 
     @api.multi
-    def _create_bank_receipt(self, partner_bank_id):
+    def _create_bank_receipt(self, receipt_date):
         first_move = self[0]
-        receipt_vals = self._prepare_bank_receipt(first_move, partner_bank_id)
+        receipt_vals = self._prepare_bank_receipt(first_move, receipt_date)
         domain = [('move_id', 'in', self._ids),  # Find for all selected moves
                   ('reconcile_id', '=', False),
                   ('debit', '>', 0),

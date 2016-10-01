@@ -66,7 +66,6 @@ class AccountBankReceipt(models.Model):
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
         string='Bank Account',
-        required=True,
         domain="[('company_id', '=', company_id)]",
         states={'done': [('readonly', '=', True)]},
     )
@@ -249,6 +248,8 @@ class AccountBankReceipt(models.Model):
                 to_reconcile_lines.append(line + move_line)
 
             # Create counter-part
+            if not receipt.partner_bank_id:
+                raise UserError(_("Missing Bank Account"))
             if not receipt.bank_account_id:
                 raise UserError(
                     _("Missing Account for Bank Receipt on the journal '%s'.")

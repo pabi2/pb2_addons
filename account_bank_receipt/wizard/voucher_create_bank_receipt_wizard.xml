@@ -8,11 +8,16 @@
 			<field name="model">voucher.create.bank.receipt.wizard</field>
 			<field name="arch" type="xml">
 				<form string="Create Bank Receipt">
+					<p class="oe_grey">
+						From Payment Bank Intransit, this action will create draft Bank Receipt. Once money is deposited into target bank,
+						you can specify the bank account in Bak Receipt and complete the operation.
+					</p>
 					<group>
 						<group>
-							<field name="partner_bank_id"/>
+							<field name="receipt_date"/>
 						</group>
-						<group></group>
+						<group>
+						</group>
 					</group>
 					<footer>
 						<button name="voucher_create_bank_receipt" type="object" string="Create Bank Receipt" class="oe_highlight"/>

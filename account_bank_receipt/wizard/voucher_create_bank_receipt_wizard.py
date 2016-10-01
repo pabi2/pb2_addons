@@ -5,10 +5,10 @@ from openerp import api, models, fields
 class VoucherCreateBankReceiptWizard(models.TransientModel):
     _name = "voucher.create.bank.receipt.wizard"
 
-    partner_bank_id = fields.Many2one(
-        'res.partner.bank',
-        string='Bank Account',
+    receipt_date = fields.Date(
+        string='Receipt Date',
         required=True,
+        default=fields.Date.context_today,
     )
 
     @api.multi
@@ -17,4 +17,5 @@ class VoucherCreateBankReceiptWizard(models.TransientModel):
         active_model = self._context.get('active_model')
         active_ids = self._context.get('active_ids')
         moves = self.env[active_model].browse(active_ids).mapped('move_id')
-        bank_receipt_id = moves.create_bank_receipt(self.partner_bank_id.id)
+        moves.create_bank_receipt(self.receipt_date)
+        return
