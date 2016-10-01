@@ -31,6 +31,8 @@ class AccountMove(models.Model):
         for move in self:
             bank_receipt_line = move.line_id.filtered('bank_receipt_id')
             move.bank_receipt_id = bank_receipt_line.bank_receipt_id
+            if move.bank_receipt_id:
+                break
 
     @api.multi
     def create_bank_receipt(self, receipt_date):

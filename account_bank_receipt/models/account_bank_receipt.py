@@ -63,10 +63,17 @@ class AccountBankReceipt(models.Model):
         string='Journal Entry',
         readonly=True,
     )
+    company_partner_id = fields.Many2one(
+        'res.partner',
+        string='Company Partner',
+        related='company_id.partner_id',
+        readonly=True,
+    )
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
         string='Bank Account',
-        domain="[('company_id', '=', company_id)]",
+        domain="['|', ('company_id', '=', company_id),"
+               "('partner_id', '=', company_partner_id)]",
         states={'done': [('readonly', '=', True)]},
     )
     bank_account_id = fields.Many2one(
