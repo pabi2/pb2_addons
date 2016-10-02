@@ -17,6 +17,24 @@ class ResPartner(models.Model):
         size=5,
         copy=False,
     )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        sring='Employee',
+        compute='_compute_employee_id',
+        help="Employee represent this partner (if any)",
+    )
+
+    @api.multi
+    @api.depends()
+    def _compute_employee_id(self):
+        for partner in self:
+            self._cr.execute("""
+            select id from hr_employee where resource_id in
+            (select id from resource_resource where user_id =
+            (select id from res_users where partner_id = %s))
+            """, (partner.id,))
+            res = self._cr.fetchone()
+            partner.employee_id = res and res[0] or False
 
     @api.one
     @api.constrains('vat')

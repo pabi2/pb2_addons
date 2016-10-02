@@ -30,7 +30,7 @@ class PrintPNDFormWizard(models.TransientModel):
             report_name = 'report_pnd3_form'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
-
+        # result include voucher with wht_sequences
         domain = [
             ('income_tax_form', '=', self.income_tax_form),
             ('wht_period_id', '=', self.calendar_period_id.period_id.id),
@@ -44,8 +44,8 @@ class PrintPNDFormWizard(models.TransientModel):
         company_taxid = len(company.vat) == 13 and company.vat or ''
         company_branch = \
             len(company.taxbranch) == 5 and company.taxbranch or ''
-        data['parameters']['company_taxid'] = company_taxid
-        data['parameters']['company_branch'] = company_branch
+        data['parameters']['company_taxid'] = list(company_taxid)
+        data['parameters']['company_branch'] = list(company_branch)
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
