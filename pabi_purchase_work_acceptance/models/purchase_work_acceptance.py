@@ -489,7 +489,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
                 acc_line.balance_qty = acc_line.line_id.product_qty
             else:
                 acc_line.balance_qty = acc_line.line_id.product_qty - \
-                                   acc_line.line_id.open_invoiced_qty
+                                   acc_line.line_id.invoiced_qty
 
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
