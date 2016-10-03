@@ -7,7 +7,7 @@
           <field name="model">budget.xls.output</field>
           <field name="arch" type="xml">
               <form string="Excel Output">
-                    <separator colspan="4" string="Please save file as .xls excel format"/>
+                    <separator colspan="4" string="Successfully exported. You can download now."/>
                     <field name="name" invisible="1"/>
                     <field name="xls_output" filename='name'/>
                     <footer>

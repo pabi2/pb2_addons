@@ -121,7 +121,12 @@ class HRExpense(models.Model):
                 # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
                 signals = {'accepted': '1', 'cancelled': '2'}
                 for exp in self:
-                    exp.send_signal_to_pabiweb_advance(signals[to_state])
+                    if to_state == 'cancelled':
+                        comment = exp.cancel_reason_txt or ''
+                        exp.send_signal_to_pabiweb_advance(signals[to_state],
+                                                           comment)
+                    else:
+                        exp.send_signal_to_pabiweb_advance(signals[to_state])
         except Exception, e:
             self._cr.rollback()
             raise ValidationError(e)
