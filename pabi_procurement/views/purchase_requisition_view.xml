@@ -89,15 +89,18 @@
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
                 </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="attributes">
+                    <attribute name="String">Bidding Date</attribute>
+                </xpath>
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
-                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok" confirm="Approve this RfQ?"/>
+                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-go-forward" confirm="Approve this RfQ?"/>
                 </xpath>
                 <xpath expr="//button[@name='purchase_confirm']" position="attributes">
                     <attribute name="confirm">Confirm this RfQ?</attribute>
                 </xpath>
                 <xpath expr="//button[@name='purchase_cancel']" position="replace">
                     <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
-
+                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
