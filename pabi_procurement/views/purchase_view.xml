@@ -112,12 +112,12 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <!-- start :: cancel reason -->
-                <xpath expr="//header/button[@name='action_cancel']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//header/button[@name='action_cancel']" position="after">
-                    <button name="%(purchase_cancel_reason.action_order_cancel)d" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="action"/>
-                </xpath>
+                <!--<xpath expr="//header/button[@name='action_cancel']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//header/button[@name='action_cancel']" position="after">-->
+                    <!--<button name="%(purchase_cancel_reason.action_order_cancel)d" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="action"/>-->
+                <!--</xpath>-->
                 <!-- end :: cancel reason -->
                 <xpath expr="//header[@name='quotation']/button[@name='action_cancel']" position="before">
                     <button name="wkf_send_rfq" states="draft" string="Send by Email" type="object" context="{'send_rfq':True}" class="oe_highlight" groups="base.group_user"/>
@@ -131,7 +131,7 @@
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field name="mycontract_id" />
                     <field name="date_contract_start" />
-                    <field name="currency_id"/>
+                    <!--<field name="currency_id"/>-->
                     <field name="select_reason" attrs="{'invisible': [('order_type','!=','quotation')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='notes']" position="after">
