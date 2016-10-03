@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pabi_stock_card_for_accounting_report_wizard" model="ir.ui.view">
+            <field name="name">PABI Stock Card For Accounting Report</field>
+            <field name="model">pabi.stock.card.for.accounting.report.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Selection Criteria">
+                    <group>
+                        <group>
+                            <field name="operating_unit"/>
+                            <field name="product"/>
+                            <field name='category' />
+                        </group>
+                        <group>
+                            <field name='date_from'/>
+                            <field name='date_to'/>
+                        </group>
+                        <group>
+                            <field name="format"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Run Report" name="run_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_stock_card_for_accounting_report_wizard" model="ir.actions.act_window">
+            <field name="name">PABI Stock Card For Accounting Report</field>
+            <field name="res_model">pabi.stock.card.for.accounting.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="pabi_stock_card_for_accounting_report_wizard"/>
+            <field name="target">new</field>
+            <field name="help">Print PABI Stock Card For Accounting Report</field>
+        </record>
+
+        <menuitem id="menu_pabi_stock_card_for_accounting_report_wizard" action="action_pabi_stock_card_for_accounting_report_wizard" parent="jasper_reports.jasper_reports_menu" sequence="110"/>
+
+    </data>
+</openerp>
