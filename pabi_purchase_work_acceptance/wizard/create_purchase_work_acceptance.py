@@ -122,7 +122,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             ('order_id', '=', order.id),
         ])
         for order_line in order_lines:
-            if order_line.invoiced_qty >= order_line.product_qty:
+            if order_line.open_invoiced_qty >= order_line.product_qty:
                 completed_line += 1
         if completed_line == len(order_lines):
             raise UserError(
