@@ -199,6 +199,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'date_receive': self.date_receive,
             'order_id': self.order_id.id,
             'supplier_invoice': '-',
+            'date_invoice': self.date_invoice,
         })
         acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
