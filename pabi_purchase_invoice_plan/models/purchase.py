@@ -22,7 +22,7 @@ class PurchaseOrder(models.Model):
         if install:
             installments =\
                 self.env['purchase.invoice.plan'].search(
-                    [('installment', '=', installment),
+                    [('installment', '=', install),
                      ('order_id', '=', po_line.order_id.id),
                      ('state', 'in', [False, 'cancel'])]
                 )
