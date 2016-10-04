@@ -14,10 +14,51 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         string='Fiscal Year',
     )
 
+    @api.onchange('percent')
+    def _onchange_percent(self):
+        if not self.plan_id.by_fiscalyear:
+            return super(PurchaseCreateInvoicePlanInstallment, self).\
+                _onchange_percent()
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        line_by_fiscalyear = self.plan_id._get_total_by_fy()
+        order_amount = line_by_fiscalyear[self.fiscal_year_id.id]
+        self.amount = round(order_amount * self.percent / 100, prec)
+
+    @api.onchange('amount')
+    def _onchange_amount(self):
+        if not self.plan_id.by_fiscalyear:
+            return super(PurchaseCreateInvoicePlanInstallment, self)._onchange_amount()
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        line_by_fiscalyear = self.plan_id._get_total_by_fy()
+        order_amount = line_by_fiscalyear[self.fiscal_year_id.id]
+        if not order_amount:
+            raise Warning(_('Order amount equal to 0.0!'))
+        new_val = self.amount / order_amount * 100
+        if round(new_val, prec) != round(self.percent, prec):
+            self.percent = new_val
+
 
 class PurchaseCreateInvoicePlan(models.TransientModel):
     _inherit = 'purchase.create.invoice.plan'
     _description = 'Create Purchase Invoice Plan'
+
+    @api.model
+    def _get_total_by_fy(self):
+        order = self.po_id
+        if self._context.get('active_id', False):
+            purchase_id = self._context['active_id']
+            order = self.env['purchase.order'].browse(purchase_id)
+        line_by_fiscalyear = {}
+        for line in order.order_line:
+            line_fy = line.fiscal_year_id
+            if line_fy:
+                if line_fy.id not in line_by_fiscalyear:
+                    line_by_fiscalyear[line_fy.id] = line.price_subtotal
+                else:
+                    line_by_fiscalyear[line_fy.id] += line.price_subtotal
+        return line_by_fiscalyear
 
     @api.model
     def _get_interval_type(self):
@@ -30,6 +71,11 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         else:
             selection_list.append(('year', 'Year'))
             return selection_list
+
+    @api.model
+    def _default_order(self):
+        return self.env['purchase.order'].\
+            browse(self._context.get('active_id'))
 
     @api.model
     def _default_by_fiscalyear(self):
@@ -48,6 +94,21 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     interval_type = fields.Selection(
         _get_interval_type,
     )
+    po_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+        default=_default_order,
+    )
+
+    @api.one
+    @api.onchange('installment_date',
+                  'interval_type',
+                  'interval',
+                  'installment_amount')
+    def _onchange_installment_config(self):
+        if self.interval < 0:
+            raise UserError('Negative interval not allowed!')
+        return super(PurchaseCreateInvoicePlan, self)._onchange_installment_config()
 
     @api.model
     def _compute_installment_details(self):
@@ -63,15 +124,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                                                             ['name', 'id']):
             fiscalyear_dict[f['id']] = f['name']
 
-        line_by_fiscalyear = {}
-        for line in order.order_line:
-            line_fy = line.fiscal_year_id
-            if line_fy:
-                if line_fy.id not in line_by_fiscalyear:
-                    line_by_fiscalyear[line_fy.id] = line.price_subtotal
-                else:
-                    line_by_fiscalyear[line_fy.id] += line.price_subtotal
+        line_by_fiscalyear = self._get_total_by_fy()
         line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
+
         new_line_dict = {}
         installment_no = 1
         for l in line_by_fiscalyear:
@@ -143,9 +198,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     @api.one
     def do_create_purchase_invoice_plan(self):
         if not self.by_fiscalyear:
-            return super(PurchaseCreateInvoicePlan, self).\
-                do_create_purchase_invoice_plan()
-
+            return super(PurchaseCreateInvoicePlan, self).do_create_purchase_invoice_plan()
         self._validate_total_amount()
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
@@ -154,52 +207,33 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         self._check_invoice_mode(order)
         order.invoice_plan_ids.unlink()
         lines = []
-        obj_precision = self.env['decimal.precision']
-        prec = obj_precision.precision_get('Account')
+
         for install in self.installment_ids:
             if install.installment == 0:
                 self._check_deposit_account()
-                base_amount = order.amount_untaxed
                 if install.is_advance_installment:
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': False,
-                        'installment': 0,
-                        'description': install.description,
-                        'is_advance_installment': True,
-                        'date_invoice': install.date_invoice,
-                        'deposit_percent': install.percent,
-                        'deposit_amount': round(install.percent/100 *
-                                                base_amount, prec)
-                    })
+                    line_data = self._prepare_advance_line(order, install)
+                    lines.append(line_data)
                 if install.is_deposit_installment:
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': False,
-                        'installment': 0,
-                        'description': install.description,
-                        'is_deposit_installment': True,
-                        'date_invoice': install.date_invoice,
-                        'deposit_percent': install.percent,
-                        'deposit_amount': round(install.percent/100 *
-                                                base_amount, prec)
-                    })
+                    line_data = self._prepare_deposit_line(order, install)
+                    lines.append(line_data)
             elif install.installment > 0:
                 for order_line in order.order_line:
                     if order_line.fiscal_year_id == install.fiscal_year_id:
-                        subtotal = order_line.price_subtotal
-                        lines.append({
-                            'order_id': order.id,
-                            'order_line_id': order_line.id,
-                            'description': order_line.name,
-                            'installment': install.installment,
-                            'date_invoice': install.date_invoice,
-                            'invoice_percent': install.percent,
-                            'invoice_amount': round(install.percent/100 *
-                                                    subtotal, prec),
-                            'fiscal_year_id': install.fiscal_year_id.id,
-                        })
+                        line_data = self._prepare_installment_line(order,
+                                                                   order_line,
+                                                                   install)
+                        lines.append(line_data)
         order.invoice_plan_ids = lines
         order.use_advance = self.use_advance
         order.use_deposit = self.use_deposit
         order.invoice_mode = self.invoice_mode
+
+    @api.model
+    def _prepare_advance_deposit_line(self, order, install, advance, deposit):
+        result = super(PurchaseCreateInvoicePlan, self).\
+                _prepare_advance_deposit_line(order, install, advance, deposit)
+        if not self.by_fiscalyear:
+            return result
+        result.update({'fiscal_year_id': install.fiscal_year_id.id})
+        return result
