@@ -17,7 +17,7 @@ PABI2 - Purchase Stock Request
     "application": False,
     "installable": True,
     "depends": [
-        "stock_request",
+        "stock_request_operating_unit",
     ],
     "data": [
         "views/stock_request_view.xml",
