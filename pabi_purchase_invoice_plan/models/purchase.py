@@ -17,16 +17,18 @@ class PurchaseOrder(models.Model):
             return super(PurchaseOrder, self).\
                     _create_invoice_line(inv_line_data, inv_lines, po_line)
 
-        installments = self._context.get('installment', False)
-        for installment in installments:
-            if installment:
-                installment =\
-                    self.env['purchase.invoice.plan'].search(
-                        [('installment', '=', installment),
-                         ('order_id', '=', po_line.order_id.id),
-                         ('state', 'in', [False, 'cancel'])]
-                    )
-            if installment:
+        installments = False
+        install = self._context.get('installment', False)
+        if install:
+            installments =\
+                self.env['purchase.invoice.plan'].search(
+                    [('installment', '=', install),
+                     ('order_id', '=', po_line.order_id.id),
+                     ('state', 'in', [False, 'cancel'])]
+                )
+
+        if installments:
+            for installment in installments:
                 fiscalyear = installment.fiscal_year_id
                 if po_line.order_id.by_fiscalyear:
                     if po_line.fiscal_year_id == fiscalyear:
