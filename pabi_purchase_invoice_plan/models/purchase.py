@@ -17,25 +17,22 @@ class PurchaseOrder(models.Model):
             return super(PurchaseOrder, self).\
                     _create_invoice_line(inv_line_data, inv_lines, po_line)
 
-        installments = False
-        install = self._context.get('installment', False)
-        if install:
-            installments =\
+        installment = self._context.get('installment', False)
+        if installment:
+            installment =\
                 self.env['purchase.invoice.plan'].search(
-                    [('installment', '=', install),
+                    [('installment', '=', installment),
                      ('order_id', '=', po_line.order_id.id),
                      ('state', 'in', [False, 'cancel'])]
                 )
-
-        if installments:
-            for installment in installments:
-                fiscalyear = installment.fiscal_year_id
-                if po_line.order_id.by_fiscalyear:
-                    if po_line.fiscal_year_id == fiscalyear:
-                        inv_line_obj = self.env['account.invoice.line']
-                        inv_line_id = inv_line_obj.create(inv_line_data).id
-                        inv_lines.append(inv_line_id)
-                        po_line.write({'invoice_lines': [(4, inv_line_id)]})
+        if installment:
+            fiscalyear = installment.fiscal_year_id
+            if po_line.order_id.by_fiscalyear:
+                if po_line.fiscal_year_id == fiscalyear:
+                    inv_line_obj = self.env['account.invoice.line']
+                    inv_line_id = inv_line_obj.create(inv_line_data).id
+                    inv_lines.append(inv_line_id)
+                    po_line.write({'invoice_lines': [(4, inv_line_id)]})
         return inv_lines
 
 
