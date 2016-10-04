@@ -633,9 +633,9 @@ class PurchaseRequisitionLine(models.Model):
         'Fiscal Year',
         readonly=True,
     )
-    product_id = fields.Many2one(
-        required=True,
-    )
+    # product_id = fields.Many2one(
+    #     required=True,
+    # )
 
     @api.multi
     def onchange_product_id(self, product_id, product_uom_id,
@@ -694,7 +694,4 @@ class PurchaseRequisitionCommittee(models.Model):
     committee_type_id = fields.Many2one(
         'purchase.committee.type',
         string='Type',
-    )
-    product_id = fields.Many2one(
-        required=True,
     )

@@ -12,22 +12,19 @@
                     <attribute name="string">Value/Cheque Date</attribute>
                 </field>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="after">
-                    <field name="supplier_invoice_taxbranch_id" />
+                    <field name="supplier_invoice_taxbranch_id"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="after">
-                    <field name="supplier_invoice_taxbranch_id" />
+                    <field name="supplier_invoice_taxbranch_id"/>
                 </xpath>
                 <xpath expr="//field[@name='date']" position="after">
-                    <field name="validate_user_id" />
+                    <field name="validate_user_id"/>
                     <field name="validate_date"/>
                 </xpath>
                 <xpath expr="//sheet/field[@name='account_id']" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
-                        <button class="oe_inline oe_stat_button"
-                                name="action_open_invoices"
-                                type="object"
-                                icon="fa-file-text">
-                            <field string="AR" name="total_ar_amount" widget="statinfo" />
+                        <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
+                            <field string="AR" name="total_ar_amount" widget="statinfo"/>
                         </button>
                     </div>
                 </xpath>
@@ -42,38 +39,34 @@
             <field name="arch" type="xml">
                 <xpath expr="//sheet/h1" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
-                        <button class="oe_inline oe_stat_button"
-                                name="action_open_invoices"
-                                type="object"
-                                icon="fa-file-text">
-                            <field string="AP" name="total_ap_amount" widget="statinfo" />
+                        <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
+                            <field string="AP" name="total_ap_amount" widget="statinfo"/>
                         </button>
                     </div>
                 </xpath>
             </field>
         </record>
-        
+
         # List invoices in Payment tree view
         <record id="view_voucher_tree" model="ir.ui.view">
             <field name="name">account.voucher.tree</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='partner_id']" position="before" >
-                    <field name="invoices_text" />
-                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <field name="invoices_text"/>
+                </xpath>
             </field>
         </record>
-
 
         <record id="voucher_tax_tree_view" model="ir.ui.view">
             <field name="name">voucher.tax.tree.view</field>
             <field name="model">account.voucher.tax</field>
             <field name="inherit_id" ref="l10n_th_account.voucher_tax_tree_view"/>
             <field name="arch" type="xml">
-                <xpath expr="/tree/field[@name='invoice_id']" position="after" >
-                    <field name="taxbranch_id" />
-                 </xpath>
+                <xpath expr="/tree/field[@name='invoice_id']" position="after">
+                    <field name="taxbranch_id"/>
+                </xpath>
             </field>
         </record>
 

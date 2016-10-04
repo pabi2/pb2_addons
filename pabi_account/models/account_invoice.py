@@ -1,10 +1,47 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, api, fields
 
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
+        copy=False,
+    )
+    validate_date = fields.Date(
+        'Validate On',
+        readonly=True,
+        copy=False,
+    )
+
+    @api.multi
+    def invoice_validate(self):
+        result = super(AccountInvoice, self).invoice_validate()
+        for invoice in self:
+            invoice.write({'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.today()})
+        return result
+
+    show_account = fields.Boolean(
+        string='Show account (hide product)',
+        default=False,
+        change_default=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]}
+    )
+    invoice_line_show_account = fields.One2many(
+        'account.invoice.line',
+        'invoice_id',
+        string='Invoice Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=True,
+        help="Used when user choose option Show Account instead of Product"
+    )
 
     @api.model
     def line_get_convert(self, line, part, date):
@@ -12,6 +49,21 @@ class AccountInvoice(models.Model):
         res.update({
             'taxbranch_id': line.get('taxbranch_id', False),
         })
+        return res
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    @api.multi
+    def onchange_account_id(self, product_id, partner_id, inv_type,
+                            fposition_id, account_id):
+        res = super(AccountInvoiceLine, self).onchange_account_id(
+            product_id, partner_id, inv_type, fposition_id, account_id)
+        account = self.env['account.account'].browse(account_id)
+        if not res.get('value'):
+            res['value'] = {}
+        res['value'].update({'name': account.name})
         return res
 
 

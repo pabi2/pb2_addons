@@ -204,17 +204,14 @@ class HRExpense(models.Model):
         # Advance product if required
         if data_dict.get('is_employee_advance', u'False') == u'True' and \
                 'line_ids' in data_dict:
-            advance_product = \
-                self.env.user.company_id.employee_advance_product_id
             for data in data_dict['line_ids']:
-                data['product_id.id'] = advance_product.id
-                data['uom_id.id'] = advance_product.uom_id.id
+                data['uom_id.id'] = self.env['hr.expense.line']._get_uom_id()
         if 'line_ids' in data_dict:
             for data in data_dict['line_ids']:
                 if not data.get('name', False):
                     Activity = self.env['account.activity']
                     activity = Activity.browse(int(data['activity_id.id']))
-                    data['name'] = activity.name
+                    data['name'] = activity.name or '-'
         # attendee's employee_code
         if 'attendee_employee_ids' in data_dict:
             for data in data_dict['attendee_employee_ids']:
@@ -350,11 +347,11 @@ class HRExpense(models.Model):
         return res
 
     @api.model
-    def send_signal_to_pabiweb_advance(self, signal):
+    def send_signal_to_pabiweb_advance(self, signal, comment=''):
         ConfParam = self.env['ir.config_parameter']
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
-        url = ConfParam.get_param('pabiweb_url')
+        url = ConfParam.get_param('pabiweb_exp_url')
         username = self.user_valid.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
@@ -362,13 +359,15 @@ class HRExpense(models.Model):
         arg = {
             'action': signal,
             'by': self.env.user.login,
-            'comment': 'Good'
+            'comment': comment,
         }
+        result = False
         if self.is_employee_advance:
             arg.update({'avNo': self.number})
+            result = alfresco.brw.action(arg)
         else:
             arg.update({'exNo': self.number})
-        result = alfresco.brw.action(arg)
+            result = alfresco.use.action(arg)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

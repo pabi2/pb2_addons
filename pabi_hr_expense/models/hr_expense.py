@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class HRExpense(models.Model):
@@ -111,11 +112,24 @@ class HRExpense(models.Model):
     )
 
     @api.multi
-    def expense_accept(self):
-        res = super(HRExpense, self).expense_accept()
-        for expense in self:
-            expense.send_signal_to_pabiweb_advance('1')
-            # '1' = Approve, '2' = Cancel, '3' = Paid
+    def write(self, vals):
+        res = super(HRExpense, self).write(vals)
+        try:
+            to_state = vals.get('state', False)
+            # if to_state in ('accepted', 'cancelled', 'paid'):
+            if to_state in ('accepted', 'cancelled'):
+                # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
+                signals = {'accepted': '1', 'cancelled': '2'}
+                for exp in self:
+                    if to_state == 'cancelled':
+                        comment = exp.cancel_reason_txt or ''
+                        exp.send_signal_to_pabiweb_advance(signals[to_state],
+                                                           comment)
+                    else:
+                        exp.send_signal_to_pabiweb_advance(signals[to_state])
+        except Exception, e:
+            self._cr.rollback()
+            raise ValidationError(e)
         return res
 
     @api.multi

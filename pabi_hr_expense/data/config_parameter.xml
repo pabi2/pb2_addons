@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="base.ir_config_parameter_pabiweb_exp_url" model="ir.config_parameter">
+            <field name="key">pabiweb_exp_url</field>
+            <field name="value">10.226.202.134/alfresco/s/pb/exp/inf</field>
+        </record>
+    </data>
+</openerp>

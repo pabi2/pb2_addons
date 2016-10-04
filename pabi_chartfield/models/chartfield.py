@@ -115,6 +115,7 @@ CHART_STRUCTURE = \
         'cost_control_id': {
             'cost_control_type_id': {},
         },
+        'fund_id': {}
     }
 
 
@@ -159,7 +160,6 @@ CHART_FIELDS = [
     ('program_id', ['project_base']),
     ('project_group_id', ['project_base']),
     ('project_id', ['project_base']),
-    ('fund_id', ['project_base']),
     # Unit Based
     ('org_id', ['unit_base',
                 'project_base',
@@ -203,6 +203,12 @@ CHART_FIELDS = [
                          'project_base',
                          'personnel',
                          ]),
+    ('fund_id', ['unit_base',
+                 'project_base',
+                 'personnel',
+                 'invest_asset',
+                 'invest_construction',
+                 ]),
     ]
 
 
@@ -343,7 +349,6 @@ class ChartField(object):
     fund_id = fields.Many2one(
         'res.fund',
         string='Fund',
-        required=True,  # Required
     )
     # Unit Base
     org_id = fields.Many2one(

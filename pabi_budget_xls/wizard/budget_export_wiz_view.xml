@@ -3,15 +3,17 @@
     <data>
 
         <record model="ir.ui.view" id="budget_export_wizard_form">
-            <field name="name">budget.export.wizard.form</field>
-            <field name="model">budget.export.wizard</field>
+            <field name="name">unit.budget.plan.export.form</field>
+            <field name="model">unit.budget.plan.export</field>
             <field name="arch" type="xml">
-                <form string="Task Form">
+                <form string="Export Budget Plan Form">
                     <group>
                         <group>
                             <field name="attachment_id" domain="[('budget_template', '=', True)]" required="True"/>
                         </group>
-                        <group/>
+                        <group>
+                            <field name="editable_lines"/>
+                        </group>
                     </group>
                     <footer>
                         <button name="export_budget" string="Export" type="object" class="oe_highlight"/>
@@ -23,8 +25,8 @@
         </record>
 
         <record model="ir.actions.act_window" id="budget_export_wizard_action">
-            <field name="name">Export Budget</field>
-            <field name="res_model">budget.export.wizard</field>
+            <field name="name">Export Budget Plan</field>
+            <field name="res_model">unit.budget.plan.export</field>
             <field name="view_mode">form</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="budget_export_wizard_form"/>

@@ -163,6 +163,15 @@ class PurchaseOrder(models.Model):
         return True
 
     @api.multi
+    def wkf_confirm_order(self):
+        for order in self:
+            if order.requisition_id.is_central_purchase:
+                order.requisition_id.exclusive = 'multiple'
+                order.requisition_id.multiple_rfq_per_supplier = True
+            res = super(PurchaseOrder, order).wkf_confirm_order()
+            return res
+
+    @api.multi
     def wkf_action_cancel(self):
         res = super(PurchaseOrder, self).wkf_action_cancel()
         for order in self:
@@ -179,6 +188,13 @@ class PurchaseOrder(models.Model):
         if quotation.state != 'cancel':
             quotation.state = 'cancel'
         return True
+
+    @api.model
+    def by_pass_delete(self, ids):
+        quotation = self.browse(ids)
+        for quote in quotation:
+            quote.unlink()
+        return { 'type': 'ir.actions.client', 'tag': 'reload', }
 
     @api.multi
     def wkf_validate_invoice_method(self):
