@@ -290,7 +290,7 @@ pd.amount_total,
 po.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
-pd.doc_footer as footer,
+pd.doc_body as footer,
 po.name as rfq_number,
 (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) FROM res_partner rp
 LEFT JOIN res_partner_title rpt
