@@ -37,39 +37,39 @@ where voucher_id = $P{voucher_id}]]>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="18" splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="102" height="18"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="102" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_value}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="64" y="0" width="141" height="18"/>
+				<reportElement x="64" y="0" width="141" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{wht_cert_income_desc}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="165" y="0" width="41" height="18"/>
+				<reportElement x="165" y="0" width="41" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{tax_percent}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="193" y="0" width="97" height="18"/>
+				<reportElement x="193" y="0" width="97" height="15"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{base}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="247" y="0" width="141" height="18"/>
+				<reportElement x="247" y="0" width="141" height="15"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{tax}]]></textFieldExpression>
 			</textField>

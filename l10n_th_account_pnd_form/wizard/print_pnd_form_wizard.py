@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
@@ -38,10 +38,15 @@ class PrintPNDFormWizard(models.TransientModel):
             len(company.taxbranch or '') == 5 and company.taxbranch or ''
         data_dict['company_taxid'] = company_taxid
         data_dict['company_branch'] = company_branch
+        data_dict['print_name'] = \
+            self.env.user.name
+        data_dict['print_position'] = \
+            self.env.user.employee_id.position_id.name
         data['parameters'] = data_dict
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
             'datas': data,
+            'context': {'lang': 'th_TH'},
         }
         return res

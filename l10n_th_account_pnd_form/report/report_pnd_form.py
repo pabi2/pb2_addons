@@ -3,6 +3,8 @@ from openerp import tools
 from openerp import models, fields
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
+from openerp.addons.l10n_th_account.models.account_voucher \
+    import TAX_PAYER
 
 
 class ReportPNDForm(models.Model):
@@ -13,6 +15,12 @@ class ReportPNDForm(models.Model):
     voucher_id = fields.Many2one(
         'account.voucher',
         string='Voucher',
+    )
+    wht_sequence_display = fields.Char(
+        string='WHT Sequence Display',
+    )
+    date_value = fields.Date(
+        string='Date Value',
     )
     income_tax_form = fields.Selection(
         INCOME_TAX_FORM,
@@ -25,8 +33,26 @@ class ReportPNDForm(models.Model):
     supplier_taxid = fields.Char(
         string='Supplier TaxID',
     )
+    supplier_branch_th = fields.Char(
+        string='Supplier Branch',
+    )
+    supplier_firstname_th = fields.Char(
+        string='Supplier First Name',
+    )
     supplier_branch = fields.Char(
         string='Supplier Branch',
+    )
+    supplier_name_th = fields.Char(
+        string='Supplier Name (TH)',
+    )
+    supplier_name = fields.Char(
+        string='Supplier Name',
+    )
+    supplier_firstname_th = fields.Char(
+        string='Supplier First Name (TH)',
+    )
+    supplier_lastname_th = fields.Char(
+        string='Supplier Last Name (TH)',
     )
     supplier_firstname = fields.Char(
         string='Supplier First Name',
@@ -55,16 +81,45 @@ class ReportPNDForm(models.Model):
     supplier_country = fields.Char(
         string='Supplier Country',
     )
+    tax_payer = fields.Selection(
+        TAX_PAYER,
+        string='Tax Payer',
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
+        select *, coalesce((select value
+                from ir_translation
+                where name = 'hr.employee,first_name'
+                and type = 'model' and lang='th_TH'
+                and res_id = a.employee_id),
+                a.supplier_firstname) as supplier_firstname_th,
+                coalesce((select value
+                from ir_translation
+                where name = 'hr.employee,last_name'
+                and type = 'model' and lang='th_TH'
+                and res_id = a.employee_id),
+                a.supplier_lastname) as supplier_lastname_th,
+                coalesce((select value
+                from ir_translation
+                where name = 'res.partner,name'
+                and type = 'model' and lang='th_TH'
+                and res_id = a.partner_id),
+                a.supplier_name) as supplier_name_th
+        from (
         select av.id,
+            av.wht_sequence_display,
+            av.date_value,
             av.income_tax_form,
             av.wht_period_id,
             av.id as voucher_id,
+            av.tax_payer,
             rp.vat as supplier_taxid,
             rp.taxbranch as supplier_branch,
+            rp.id as partner_id,
+            rp.name as supplier_name,
+            emp.id as employee_id,
             emp.first_name as supplier_firstname,
             emp.last_name as supplier_lastname,
             rp.street as supplier_street,
@@ -73,8 +128,11 @@ class ReportPNDForm(models.Model):
             dt.name as supplier_district,
             pv.name as supplier_province,
             ts.zip as supplier_zip,
-            co.name as supplier_country
+            co.name as supplier_country,
+            -sum(avt.base) as base_total,
+            -sum(avt.amount) as tax_total
         from account_voucher av
+            left outer join account_voucher_tax avt on avt.voucher_id = av.id
             left outer join res_partner rp on rp.id = av.partner_id
             left outer join res_users ru on ru.partner_id = rp.id
             left outer join resource_resource rr on rr.user_id = ru.id
@@ -84,6 +142,13 @@ class ReportPNDForm(models.Model):
             left outer join res_country_province pv on pv.id = rp.province_id
             left outer join res_country co on co.id = rp.country_id
         where av.wht_sequence > 0
+        group by av.wht_sequence_display,
+            av.date_value, av.income_tax_form, av.wht_period_id, av.id,
+            av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name, emp.id,
+            emp.first_name, emp.last_name, rp.street, rp.street2, ts.name,
+            dt.name, pv.name, ts.zip, co.name
+        ) a
+        order by a.wht_sequence_display
         )""" % (self._table, ))
 
 
