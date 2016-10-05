@@ -46,7 +46,7 @@ class PrintWhtCertWizard(models.TransientModel):
     )
     income_tax_form = fields.Selection(
         INCOME_TAX_FORM,
-        string='Income Tax Form',
+        string='Income Tax Form XXX',
         required=True,
     )
     wht_sequence_display = fields.Char(
@@ -108,6 +108,7 @@ class PrintWhtCertWizard(models.TransientModel):
             'type': 'ir.actions.report.xml',
             'report_name': 'report_withholding_cert',
             'datas': data,
+            'context': {'lang': 'th_TH'},
         }
         return res
 
@@ -146,6 +147,7 @@ class PrintWhtCertWizard(models.TransientModel):
         data['type_3_tax'] = self._get_summary_by_type('tax', '3')
         data['type_5_base'] = self._get_summary_by_type('base', '5')
         data['type_5_tax'] = self._get_summary_by_type('tax', '5')
+        data['type_5_desc'] = self._get_summary_by_type('desc', '5')
         data['type_6_base'] = self._get_summary_by_type('base', '6')
         data['type_6_tax'] = self._get_summary_by_type('tax', '6')
         data['type_6_desc'] = self._get_summary_by_type('desc', '6')

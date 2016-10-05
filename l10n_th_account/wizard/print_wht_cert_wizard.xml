@@ -11,18 +11,12 @@
                             <field name="voucher_id" invisible="1"/>
                             <field name="company_partner_id"/>
                             <field name="company_taxid" string="Tax ID"/>
+                            <field name="company_address" string="Address"/>
                         </group>
-                        <group>
-                            <field name="company_address" nolabel="1"/>
-                        </group>
-                    </group>
-                    <group>
                         <group>
                             <field name="supplier_partner_id"/>
                             <field name="supplier_taxid" string="Tax ID"/>
-                        </group>
-                        <group>
-                            <field name="supplier_address" nolabel="1"/>
+                            <field name="supplier_address" string="Address"/>
                         </group>
                     </group>
                     <group string="WHT Cert Options">
