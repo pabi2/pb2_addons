@@ -26,7 +26,7 @@ class PurchaseOrder(models.Model):
                      ('state', 'in', [False, 'cancel'])]
                 )
         if installment:
-            fiscalyear = installment.fiscal_year_id
+            fiscalyear = installment[0].fiscal_year_id
             if po_line.order_id.by_fiscalyear:
                 if po_line.fiscal_year_id == fiscalyear:
                     inv_line_obj = self.env['account.invoice.line']
