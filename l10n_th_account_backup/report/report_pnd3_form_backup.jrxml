@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="0.9090909090909113"/>
-	<property name="ireport.x" value="82"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/home/kittiu/workspace/openerp_ecosoft/ecosoft_addons/jrxml_reports/custom_reports/"]]></defaultValueExpression>
@@ -13,6 +13,9 @@
 		<defaultValueExpression><![CDATA[$P{company_branch}.toList()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EVENTS_DATA_SOURCE" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="connectParam" class="java.sql.Connection" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.DriverManager.getConnection("jdbc:postgresql://localhost:5432/PABI2_v1","odoo", "odoo")]]></defaultValueExpression>
+	</parameter>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
@@ -52,8 +55,17 @@
 	<field name="contact_address" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/contact_address]]></fieldDescription>
 	</field>
+	<field name="tax_payer" class="java.lang.String">
+		<fieldDescription><![CDATA[tax_payer]]></fieldDescription>
+	</field>
+	<field name="voucher_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
 	<variable name="employee_address" class="java.lang.String">
 		<variableExpression><![CDATA[(new Scriptlet()).getAddress($F{employee_street},$F{employee_street2},$F{employee_township},$F{employee_district},$F{employee_province},$F{employee_zip})]]></variableExpression>
+	</variable>
+	<variable name="tax_payer" class="java.lang.String">
+		<variableExpression><![CDATA[$F{tax_payer} == "withholding" ? "1" : "3"]]></variableExpression>
 	</variable>
 	<background>
 		<band height="595" splitType="Stretch">
@@ -204,7 +216,10 @@
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement x="409" y="1" width="433" height="63"/>
-				<dataSourceExpression><![CDATA[$P{EVENTS_DATA_SOURCE}]]></dataSourceExpression>
+				<subreportParameter name="voucher_id">
+					<subreportParameterExpression><![CDATA[$F{voucher_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{connectParam}]]></connectionExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "report_pnd3_form_subreport.jasper"]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3_form_subreport" language="groovy" pageWidth="420" pageHeight="33" orientation="Landscape" columnWidth="420" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="OPENERP_RELATIONS" value="[&quot;pnd_form_line&quot;]"/>
+	<parameter name="voucher_id" class="java.lang.Integer"/>
+	<queryString language="plsql">
+		<![CDATA[select * from report_pnd_form where voucher_id = $P{voucher_id}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="voucher_id" class="java.lang.Integer"/>
+	<field name="income_tax_form" class="java.lang.String"/>
+	<field name="wht_period_id" class="java.lang.Integer"/>
+	<field name="partner_id" class="java.lang.Integer"/>
+	<field name="date_value" class="java.sql.Date"/>
+	<field name="tax_percent" class="java.math.BigDecimal"/>
+	<field name="wht_cert_income_type" class="java.lang.String"/>
+	<field name="wht_cert_income_desc" class="java.lang.String"/>
+	<field name="base" class="java.math.BigDecimal"/>
+	<field name="tax" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="102" height="25"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_value}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="64" y="0" width="141" height="25"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wht_cert_income_desc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="165" y="0" width="41" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{tax_percent}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="193" y="0" width="97" height="25"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{base}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="247" y="0" width="141" height="25"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{tax}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

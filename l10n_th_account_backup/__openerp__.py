@@ -3,7 +3,7 @@
 {
     'name': "Undue Tax, Withholding Tax, Retention",
     'summary': "Added support for undue Tax, Withholding Tax and Retention",
-    'author': "Ecosoft",
+    'author': "Ecosoft,Odoo Community Association (OCA)",
     'website': "http://ecosoft.co.th",
     'category': 'Account',
     'version': '0.1.0',
@@ -16,6 +16,7 @@
     'data': [
         'views/account_view.xml',
         'wizard/print_wht_cert_wizard.xml',
+        'wizard/print_pnd_form_wizard.xml',
         'views/res_partner_view.xml',
         'views/account_invoice_view.xml',
         'views/voucher_payment_receipt_view.xml',

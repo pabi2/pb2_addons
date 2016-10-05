@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_print_pnd_form" model="ir.ui.view">
+            <field name="name">Print PND Form</field>
+            <field name="model">print.pnd.form.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Print PND Form">
+                    <group>
+                        <group>
+                            <field name="income_tax_form" />
+                        </group>
+                        <group>
+                            <field name="calendar_period_id" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Print" name="run_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_print_pnd_form" model="ir.actions.act_window">
+            <field name="name">Print PND Form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">print.pnd.form.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_print_pnd_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_print_pnd_form" action="action_print_pnd_form"
+              groups="" parent="l10n_th_account.menu_thai_tax_report" sequence="10"/>
+
+
+    </data>
+</openerp>
