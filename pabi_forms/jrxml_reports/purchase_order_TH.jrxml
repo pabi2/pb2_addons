@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
-	<property name="ireport.zoom" value="1.464100000000029"/>
-	<property name="ireport.x" value="178"/>
+	<property name="ireport.zoom" value="1.1000000000000272"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
@@ -268,38 +268,6 @@ WHERE $X{IN, po.id, PIDS}]]>
 		<variableExpression><![CDATA[]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
-	<background>
-		<band height="730">
-			<staticText>
-				<reportElement x="452" y="699" width="7" height="20"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[/]]></text>
-			</staticText>
-			<textField evaluationTime="Report">
-				<reportElement x="459" y="699" width="100" height="20"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="440" y="699" width="30" height="20"/>
-				<textElement lineSpacing="Single">
-					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="424" y="699" width="16" height="20"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[หน้า]]></text>
-			</staticText>
-		</band>
-	</background>
 	<title>
 		<band splitType="Stretch"/>
 	</title>
@@ -318,8 +286,8 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<reportElement x="232" y="150" width="251" height="86"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="182" y="2" width="254" height="54"/>
-				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+				<reportElement x="265" y="3" width="254" height="54"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="20" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ใบสั่งซื้อ/จ้าง
@@ -513,17 +481,8 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_number}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="234" y="218" width="246" height="22" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{phone} != null ? "โทรศัพท์: " + $F{phone} : "")
-+ ' ' +
-($F{fax} != null ? "โทรสาร: " + $F{fax} : "")]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="234" y="173" width="246" height="45" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="234" y="173" width="246" height="66" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -547,7 +506,9 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 +
 ($F{tax_branch_street} == null ? "" : $F{tax_branch_street})
 + ' ' +
-($F{tax_branch_street2} == null ? "" : $F{tax_branch_street2} )
+($F{tax_branch_street2} == null ? "" : $F{tax_branch_street2})
++ ' ' +
+($F{partner_province} == null ? "" : $F{partner_province})
 + ' ' +
 ($F{tax_branch_zip} == null ? "" : $F{tax_branch_zip})]]></textFieldExpression>
 			</textField>
@@ -565,37 +526,37 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 ($F{taxbranch_code} != null ? "สาขาที่ " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="394" y="0" width="86" height="47">
+				<reportElement x="399" y="3" width="81" height="44">
 					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_mtec.gif"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="394" y="0" width="86" height="47">
+				<reportElement x="399" y="3" width="81" height="44">
 					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_tmc.gif"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="394" y="0" width="86" height="47">
+				<reportElement x="399" y="3" width="81" height="44">
 					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nanotec.gif"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="394" y="0" width="86" height="47">
+				<reportElement x="399" y="3" width="81" height="44">
 					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nstda.gif"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="394" y="0" width="86" height="47">
+				<reportElement x="399" y="3" width="81" height="44">
 					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_biotec.gif"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="394" y="0" width="86" height="47">
+				<reportElement x="399" y="3" width="81" height="44">
 					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_pabi/pabi_forms/jrxml_reports/logo_nectec.gif"]]></imageExpression>
@@ -687,9 +648,9 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="31" splitType="Stretch">
+		<band height="16" splitType="Stretch">
 			<componentElement>
-				<reportElement key="table" mode="Opaque" x="0" y="1" width="483" height="30" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="table" mode="Opaque" x="0" y="1" width="483" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="po_line">
 						<datasetParameter name="ids">
@@ -705,7 +666,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 						</jr:columnFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="18" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -713,7 +674,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField>
-								<reportElement x="0" y="0" width="48" height="21"/>
+								<reportElement x="0" y="0" width="48" height="18"/>
 								<textElement textAlignment="Center" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -729,7 +690,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 						</jr:columnFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="18" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -737,7 +698,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true">
-								<reportElement x="5" y="0" width="181" height="21" isPrintWhenDetailOverflows="true"/>
+								<reportElement x="5" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
 								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -753,7 +714,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 						</jr:columnFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="18" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -761,14 +722,14 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="#,##0">
-								<reportElement x="11" y="0" width="51" height="21"/>
+								<reportElement x="11" y="0" width="51" height="18"/>
 								<textElement textAlignment="Left" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Number"><![CDATA[$F{product_qty}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="">
-								<reportElement x="28" y="0" width="34" height="21"/>
+								<reportElement x="28" y="0" width="34" height="18"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -784,7 +745,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 						</jr:columnFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="18" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -792,7 +753,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="#,##0.00">
-								<reportElement x="2" y="0" width="77" height="21"/>
+								<reportElement x="2" y="0" width="77" height="18"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -808,7 +769,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 						</jr:columnFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="18" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -816,7 +777,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="#,##0.00">
-								<reportElement x="1" y="0" width="80" height="21"/>
+								<reportElement x="1" y="0" width="80" height="18"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -828,13 +789,19 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 			</componentElement>
 		</band>
 	</detail>
-	<summary>
-		<band height="292">
+	<lastPageFooter>
+		<band height="316">
 			<rectangle>
-				<reportElement x="0" y="63" width="483" height="229"/>
+				<reportElement x="399" y="0" width="84" height="63"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="299" y="0" width="100" height="63"/>
 			</rectangle>
 			<rectangle>
 				<reportElement x="0" y="0" width="299" height="63"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="63" width="483" height="229"/>
 			</rectangle>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="7" y="45" width="339" height="18"/>
@@ -843,9 +810,6 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_th} == null ? "" : "( " + $F{amount_total_th} + " )"]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement x="299" y="0" width="100" height="63"/>
-			</rectangle>
 			<textField>
 				<reportElement x="301" y="22" width="122" height="21"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
@@ -854,9 +818,6 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textFieldExpression class="java.lang.String"><![CDATA["ภาษีมูลค่าเพิ่ม " +
 ($F{percentvat} == null ? "" : "("+ $F{percentvat} + ")" )]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement x="399" y="0" width="84" height="63"/>
-			</rectangle>
 			<line>
 				<reportElement x="0" y="32" width="300" height="1"/>
 			</line>
@@ -882,13 +843,6 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[รายละเอียดเพิ่มเติม:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="301" y="1" width="84" height="21"/>
-				<textElement verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[จำนวนเงิน]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="301" y="43" width="84" height="20"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -902,13 +856,6 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="400" y="1" width="81" height="21"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="4" y="69" width="66" height="34"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
@@ -918,7 +865,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 (Remark)]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="140" y="114" width="58" height="18">
+				<reportElement x="140" y="125" width="58" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "date"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
@@ -927,7 +874,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fine_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="159" y="114" width="34" height="18">
+				<reportElement x="159" y="125" width="34" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
@@ -936,28 +883,28 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fine_days}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="103" width="431" height="18"/>
+				<reportElement x="45" y="111" width="431" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[3. กรณีเป็นการจ้าง ผู้รับจ้างจะต้องปิดอากรแสตมป์บนใบสั่งจ้างในอัตรา 1,000 บาท ละ 1 บาท เป็นเงิน ]]></text>
 			</staticText>
 			<textField pattern="#,##0">
-				<reportElement x="344" y="103" width="127" height="18"/>
+				<reportElement x="344" y="111" width="127" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{stamp_vat}.setScale(0, java.math.RoundingMode.CEILING)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="81" width="431" height="18"/>
+				<reportElement x="45" y="83" width="431" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[2. หากผู้ขาย/ผู้รับจ้างส่งมอบสินค้า/งานจ้างล่าช้า ผู้ขาย/ผู้รับจ้างจะต้องชำระค่าปรับเป็นรายวันในอัตราร้อยละ ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="114" width="409" height="18">
+				<reportElement x="45" y="125" width="409" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
@@ -966,7 +913,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[4. กำหนดส่งมอบสินค้า/การจ้างภายใน ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="169" y="114" width="399" height="18" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement mode="Transparent" x="169" y="125" width="361" height="18" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -975,7 +922,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[วัน  นับถัดจากวันที่ผู้ขาย/ผู้รับจ้างลงลายมือชื่อในใบสั่งซื้อ/จ้าง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="365" y="103" width="19" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="365" y="111" width="19" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -989,7 +936,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[1. ใบสั่งซื้อ/จ้าง นี้จะสมบูรณ์ต่อเมื่อมีลายมือชื่อผู้ที่มีอำนาจอนุมัติลงนาม]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="114" width="355" height="18">
+				<reportElement x="45" y="125" width="355" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "date"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
@@ -998,28 +945,28 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[4. กำหนดส่งมอบสินค้า/การจ้างภายในวันที่]]></text>
 			</staticText>
 			<textField pattern="###0.00">
-				<reportElement x="362" y="81" width="16" height="18"/>
+				<reportElement x="362" y="83" width="16" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_rate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="377" y="81" width="119" height="18"/>
+				<reportElement x="377" y="83" width="119" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ของสินค้าหรืองานที่ยังไม่ได้รับมอบ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="92" width="364" height="18"/>
+				<reportElement x="45" y="97" width="364" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[กรณีงานจ้างค่าปรับจะต้องไม่น้อยกว่าอัตราวันละ 100 บาท]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="270" y="135" width="213" height="157"/>
+				<reportElement x="270" y="144" width="213" height="148"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="282" y="148" width="117" height="21"/>
@@ -1129,7 +1076,7 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<text><![CDATA[ประทับตราบริษัท (ถ้ามี)]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="135" width="270" height="157"/>
+				<reportElement x="0" y="144" width="270" height="148"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="166" y="218" width="101" height="14"/>
@@ -1255,6 +1202,48 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
+			<staticText>
+				<reportElement x="301" y="1" width="84" height="21"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนเงิน]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="400" y="1" width="81" height="21"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="457" y="296" width="7" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="464" y="296" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="445" y="296" width="30" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="429" y="296" width="16" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หน้า]]></text>
+			</staticText>
 		</band>
-	</summary>
+	</lastPageFooter>
 </jasperReport>
