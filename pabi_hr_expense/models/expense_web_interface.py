@@ -225,14 +225,20 @@ class HRExpense(models.Model):
                 domain = [('employee_code', '=', data.get('employee_code'))]
                 data['employee_id.id'] = Employee.search(domain).id
                 del data['employee_code']
-        # attachment
+        # Attachment Links
+        ConfParam = self.env['ir.config_parameter']
+        file_prefix = ConfParam.get_param('pabiweb_file_prefix')
+        if file_prefix[-1:] != '/':
+            file_prefix += '/'
         if 'attachment_ids' in data_dict:
             for data in data_dict['attachment_ids']:
-                ConfParam = self.env['ir.config_parameter']
-                file_prefix = ConfParam.get_param('pabiweb_file_prefix')
                 data['url'] = file_prefix + data['url']
                 data['res_model'] = self._name
                 data['type'] = 'url'
+        # Web Ref URL
+        if 'apweb_ref_url' in data_dict:
+            data_dict['apweb_ref_url'] = \
+                file_prefix + data_dict['apweb_ref_url']
         return data_dict
 
     @api.model
