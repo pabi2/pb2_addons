@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class OpenAPWebRefURL(models.TransientModel):
@@ -10,6 +11,8 @@ class OpenAPWebRefURL(models.TransientModel):
         self.ensure_one()
         print self._context
         url = self._context.get('apweb_ref_url')
+        if not url:
+            raise UserError(_('No reference document found!'))
         return {
             'type': 'ir.actions.act_url',
             'target': 'new',
