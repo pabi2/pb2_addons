@@ -18,6 +18,7 @@
         'voucher_payment_receipt_view.xml',
         'partner_view.xml',
         'account_bank_view.xml',
+        'account_invoice_view.xml',
     ],
     'test': [
     ],
