@@ -360,7 +360,7 @@ class HRExpense(models.Model):
         return res
 
     @api.model
-    def send_signal_to_pabiweb_advance(self, signal, comment=''):
+    def _get_alfresco_connect(self):
         ConfParam = self.env['ir.config_parameter']
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
@@ -369,9 +369,42 @@ class HRExpense(models.Model):
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string)
+        return alfresco
+
+    @api.model
+    def send_signal_to_pabiweb(self, signal, comment=''):
+        alfresco = self._get_alfresco_connect()
+        if not alfresco:
+            return False
         arg = {
             'action': signal,
             'by': self.env.user.login,
+            'comment': comment,
+        }
+        result = False
+        if self.is_employee_advance:
+            arg.update({'avNo': self.number})
+            result = alfresco.brw.action(arg)
+        else:
+            arg.update({'exNo': self.number})
+            result = alfresco.use.action(arg)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
+        return result
+
+    @api.model
+    def send_comment_to_pabiweb(self, status, status_th, comment):
+        alfresco = self._get_alfresco_connect()
+        if not alfresco:
+            return False
+        arg = {
+            'by': self.env.user.login,
+            'task': '',
+            'task_th': '',
+            'status': status,
+            'status_th': status_th,
             'comment': comment,
         }
         result = False
