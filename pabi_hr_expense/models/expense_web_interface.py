@@ -119,7 +119,7 @@ class HRExpense(models.Model):
             'apweb_ref_url': u'XXX',
             'receive_method': 'other_bank',  # salary_bank, other_bank
             'employee_bank_id.id': u'99',
-            'advance_expense_id.id': u'',  # Case clearing, refer Exp Advance
+            'advance_expense_number': u'',  # Case clearing, refer Exp Advance
             'line_ids': [  # 1 line only, Advance
                 {
                     'section_id.id': u'1276',
@@ -191,12 +191,19 @@ class HRExpense(models.Model):
         # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
         employee = Employee.search(domain)
-        data_dict['employee_id.id'] = employee.id
+        data_dict['employee_id.id'] = employee.id or u''
         del data_dict['employee_code']
+        # advance expense if any
+        if data_dict.get('advance_expense_number', '') != '':
+            domain = [('number', '=', data_dict.get('advance_expense_number'))]
+            expense = self.search(domain)
+            data_dict['advance_expense_id.id'] = expense.id or u''
+        if 'advance_expense_number' in data_dict:
+            del data_dict['advance_expense_number']
         # preparer_code to user_id.id
         domain = [('employee_code', '=', data_dict.get('preparer_code'))]
         employee = Employee.search(domain)
-        data_dict['user_id.id'] = employee.user_id.id
+        data_dict['user_id.id'] = employee.user_id.id or u''
         del data_dict['preparer_code']
         # OU based on employee
         data_dict['operating_unit_id.id'] = \
