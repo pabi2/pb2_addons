@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="346"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA["/home/kittiu/workspace/openerp_ecosoft/ecosoft_addons/jrxml_reports/custom_reports/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="supplier_name" class="java.lang.String" isForPrompting="false"/>
