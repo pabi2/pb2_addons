@@ -198,7 +198,7 @@ class HRExpense(models.Model):
             domain = [('number', '=', data_dict.get('advance_expense_number'))]
             expense = self.search(domain)
             data_dict['advance_expense_id.id'] = expense.id or u''
-            del data_dict['advance_expense_number']
+        del data_dict['advance_expense_number']
         # preparer_code to user_id.id
         domain = [('employee_code', '=', data_dict.get('preparer_code'))]
         employee = Employee.search(domain)
