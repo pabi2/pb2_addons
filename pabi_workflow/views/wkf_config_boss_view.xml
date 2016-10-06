@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>  
+    <data>
     	# TOP Work Flow Configuration Menu
     	<menuitem name="Boss/Employee" id="menu_wkf_config_boss" parent="menu_wkf_config" sequence="3"/>
-    	     	
+
     	# Boss Level Approval
         <record id="view_wkf_cmd_boss_level_approval_tree" model="ir.ui.view">
             <field name="name">view.wkf.cmd.boss.level.approval.tree</field>
@@ -17,7 +17,7 @@
                     <field name="create_date" />
                 </tree>
             </field>
-        </record> 
+        </record>
 
         <record id="view_wkf_cmd_boss_level_approval_form" model="ir.ui.view">
             <field name="name">view.wkf.cmd.boss.level.approval.form</field>
@@ -37,8 +37,8 @@
                     </group>
                 </form>
             </field>
-        </record>      
-              
+        </record>
+
         <record id="view_wkf_cmd_boss_level_approval_search" model="ir.ui.view">
             <field name="name">view.wkf.cmd.boss.level.approval.search</field>
             <field name="model">wkf.cmd.boss.level.approval</field>
@@ -50,21 +50,21 @@
                     </group>
                 </search>
             </field>
-        </record>   
-        
+        </record>
+
         <record id="action_wkf_cmd_boss_level_approval" model="ir.actions.act_window">
             <field name="name">Boss Level Approval</field>
             <field name="res_model">wkf.cmd.boss.level.approval</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_wkf_cmd_boss_level_approval_tree"/>
         </record>
-        
+
         <menuitem name="Boss Level Approval"
          	id="menu_wkf_cmd_boss_level_approval"
-        	action="action_wkf_cmd_boss_level_approval" 
-        	parent="menu_wkf_config_boss" 
-        	sequence="1"/>	
-        	
+        	action="action_wkf_cmd_boss_level_approval"
+        	parent="menu_wkf_config_boss"
+        	sequence="1"/>
+
     	#Boss Special Level Approval
         <record id="view_wkf_cmd_boss_special_level_tree" model="ir.ui.view">
             <field name="name">view.wkf.cmd.boss.special.level.tree</field>
@@ -75,7 +75,7 @@
                     <field name="special_level" />
                 </tree>
             </field>
-        </record> 
+        </record>
 
         <record id="view_wkf_cmd_boss_special_level_form" model="ir.ui.view">
             <field name="name">view.wkf.cmd.boss.special.level.form</field>
@@ -92,7 +92,7 @@
                     </group>
                 </form>
             </field>
-        </record>            
+        </record>
 
         <record id="action_wkf_cmd_boss_special_level" model="ir.actions.act_window">
             <field name="name">Special Level</field>
@@ -100,13 +100,13 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_wkf_cmd_boss_special_level_tree"/>
         </record>
-        
+
         <menuitem name="Special Level"
          	id="menu_wkf_cmd_boss_special_level"
-        	action="action_wkf_cmd_boss_special_level" 
-        	parent="menu_wkf_config_boss" 
-        	sequence="2"/>	
-        	
+        	action="action_wkf_cmd_boss_special_level"
+        	parent="menu_wkf_config_boss"
+        	sequence="2"/>
+
     	#Section Assignment
         <record id="view_wkf_cmd_section_assign_tree" model="ir.ui.view">
             <field name="name">view.wkf.cmd.section.assign.tree</field>
@@ -117,7 +117,7 @@
                     <field name="section_id"/>
                 </tree>
             </field>
-        </record> 
+        </record>
 
         <record id="view_wkf_cmd_section_assign_form" model="ir.ui.view">
             <field name="name">view.wkf.cmd.section.assign.form</field>
@@ -134,19 +134,18 @@
                     </group>
                 </form>
             </field>
-        </record>            
-        
+        </record>
+
         <record id="view_wkf_cmd_section_assign_search" model="ir.ui.view">
             <field name="name">view.wkf.cmd.section.assign.search</field>
             <field name="model">wkf.cmd.section.assign</field>
             <field name="arch" type="xml">
                 <search string="Section Assignment">
-                    <group expand="0" string="Group By">
-						<filter name="employee_id" string="Employee" context="{'group_by':'employee_id'}"/>
-                    </group>
+                    <field name="employee_id" string="Employee" filter_domain="[('employee_id','child_of',self)]"/>
+                    <field name="section_id" string="Section" filter_domain="[('section_id','child_of',self)]"/>
                 </search>
             </field>
-        </record>                
+        </record>
 
         <record id="action_wkf_cmd_section_assign" model="ir.actions.act_window">
             <field name="name">Section Assignment</field>
@@ -154,11 +153,11 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_wkf_cmd_section_assign_tree"/>
         </record>
-        
+
         <menuitem name="Section Assignment"
          	id="menu_wkf_cmd_section_assign"
-        	action="action_wkf_cmd_section_assign" 
-        	parent="menu_wkf_config_boss" 
-        	sequence="3"/>        	
+        	action="action_wkf_cmd_section_assign"
+        	parent="menu_wkf_config_boss"
+        	sequence="3"/>
     </data>
 </openerp>
