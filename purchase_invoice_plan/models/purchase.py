@@ -376,7 +376,7 @@ class PurchaseOrder(models.Model):
                                 100,
                                 'quantity': 1.0})
             else:
-                return False
+                return {}
         return res
 
     @api.multi
