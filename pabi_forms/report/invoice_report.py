@@ -24,12 +24,14 @@ class InvoiceReportParser(report_sxw.rml_parse):
         return header_text
 
     def get_currency_rate(self, currency, date):
+        user = self.pool['res.users'].browse(self.cr, self.uid, self.uid)
+        company = user.company_id
         context = self.localcontext.copy()
         context.update({'date': date})
+        # get rate of company currency to current invoice currency
         rate = self.pool['res.currency'].\
-            _get_current_rate(self.cr, self.uid, [currency.id],
-                              raise_on_no_rate=True, context=context)
-        rate = rate[currency.id]
+            _get_conversion_rate(self.cr, self.uid,
+                                 company.currency_id, currency)
         return rate
 
 
