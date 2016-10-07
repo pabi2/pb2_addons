@@ -38,10 +38,9 @@ class PrintPNDFormWizard(models.TransientModel):
             len(company.taxbranch or '') == 5 and company.taxbranch or ''
         data_dict['company_taxid'] = company_taxid
         data_dict['company_branch'] = company_branch
-        data_dict['print_name'] = \
-            self.env.user.name
+        data_dict['print_name'] = self.env.user.name or ''
         data_dict['print_position'] = \
-            self.env.user.employee_id.position_id.name
+            self.env.user.employee_id.position_id.name or ''
         data['parameters'] = data_dict
         res = {
             'type': 'ir.actions.report.xml',
