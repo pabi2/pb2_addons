@@ -361,7 +361,7 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 					<subreportParameterExpression><![CDATA[$F{voucher_id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_generic/l10n_th_account_pnd_form/report/report_pnd53_form_subreport.jasper"]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_generic/l10n_th_account_pnd_form/report/report_pnd53_form_subreport.jrxml"]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement x="802" y="-1" width="29" height="25"/>
