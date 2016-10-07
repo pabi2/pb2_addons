@@ -46,7 +46,7 @@ class PrintWhtCertWizard(models.TransientModel):
     )
     income_tax_form = fields.Selection(
         INCOME_TAX_FORM,
-        string='Income Tax Form XXX',
+        string='Income Tax Form',
         required=True,
     )
     wht_sequence_display = fields.Char(

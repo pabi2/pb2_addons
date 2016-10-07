@@ -2,9 +2,10 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="0.9090909090909113"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
++"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="company_taxid" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -72,7 +73,7 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 		<band height="595" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="842" height="595"/>
-				<imageExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_generic/l10n_th_account_pnd_form/report/pnd3.png"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "pnd3.png"]]></imageExpression>
 			</image>
 		</band>
 	</background>
@@ -375,7 +376,7 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 					<subreportParameterExpression><![CDATA[$F{voucher_id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA["W:/pabi2/pb2_generic/l10n_th_account_pnd_form/report/report_pnd3_form_subreport.jasper"]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "report_pnd3_form_subreport.jasper"]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement x="802" y="1" width="29" height="25"/>
@@ -414,14 +415,14 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<pageFooter>
 		<band height="129" splitType="Stretch">
 			<textField>
-				<reportElement x="593" y="27" width="198" height="35"/>
+				<reportElement x="593" y="9" width="198" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{print_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="610" y="44" width="206" height="35"/>
+				<reportElement x="589" y="44" width="206" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
