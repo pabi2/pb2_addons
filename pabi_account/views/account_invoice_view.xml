@@ -9,8 +9,20 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='payment_term']" position="after">
-                    <field name="validate_user_id" />
+                    <field name="validate_user_id"/>
                     <field name="validate_date"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="invoice_supplier_form2">
+            <field name="name">account.invoice.supplier.form2</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="l10n_th_fields.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='buttons']" position="inside">
+                    <button class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text">
+                        <field string="Payments" name="payment_count" widget="statinfo"/>
+                    </button>
                 </xpath>
             </field>
         </record>

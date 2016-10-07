@@ -17,15 +17,6 @@ class AccountInvoice(models.Model):
         readonly=True,
         copy=False,
     )
-
-    @api.multi
-    def invoice_validate(self):
-        result = super(AccountInvoice, self).invoice_validate()
-        for invoice in self:
-            invoice.write({'validate_user_id': self.env.user.id,
-                           'validate_date': fields.Date.today()})
-        return result
-
     show_account = fields.Boolean(
         string='Show account (hide product)',
         default=False,
@@ -42,6 +33,39 @@ class AccountInvoice(models.Model):
         copy=True,
         help="Used when user choose option Show Account instead of Product"
     )
+    payment_count = fields.Integer(
+        string='Payment Count',
+        compute='_compute_payment_count',
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends()
+    def _compute_payment_count(self):
+        for rec in self:
+            rec.payment_count = len(rec.payment_ids)
+
+    @api.multi
+    def action_open_payments(self):
+        self.ensure_one()
+        move_ids = self.payment_ids.mapped('move_id')._ids
+        Voucher = self.env['account.voucher']
+        voucher_ids = Voucher.search([('move_id', 'in', move_ids)])._ids
+        action_id = self.env.ref('account_voucher.action_vendor_payment')
+        if action_id:
+            action = action_id.read([])[0]
+            action['domain'] =\
+                "[('id','in', ["+','.join(map(str, voucher_ids))+"])]"
+            return action
+        return True
+
+    @api.multi
+    def invoice_validate(self):
+        result = super(AccountInvoice, self).invoice_validate()
+        for invoice in self:
+            invoice.write({'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.today()})
+        return result
 
     @api.model
     def line_get_convert(self, line, part, date):

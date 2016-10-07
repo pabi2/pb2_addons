@@ -2,7 +2,7 @@
 
 <openerp>
 	<data>
-	
+
 		<!-- Expenses -->
         <record id="view_expenses_form" model="ir.ui.view">
             <field name="name">hr.expense.form</field>
@@ -19,13 +19,13 @@
 								<field name="url" widget="url" invisible="1"/>
 				    			<button name="%(action_open_url)d" string="Open Document"
 				         			type="action" icon="gtk-justify-fill"
-				         			attrs="{'invisible': [('url', '=', False)]}"/> 
+				         			attrs="{'invisible': [('url', '=', False)]}"/>
 							</tree>
 						</field>
 					</page>
 				</notebook>
             </field>
         </record>
-		
+
 	</data>
 </openerp>
