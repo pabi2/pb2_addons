@@ -89,7 +89,7 @@
                                 <td><span t-field="move_line.account_id.name"/></td>
                                 <td><span t-esc="move_line.debit &gt; 0.0 and move_line.debit or ''"/></td>
                                 <td><span t-esc="move_line.credit &gt; 0.0 and move_line.credit or ''"/></td>
-                                <td><span t-field="move_line.org_id.code"></span></td>
+                                <td><span t-field="move_line.org_id.name_short"></span></td>
                                 <td><span t-field="move_line.costcenter_id.code"></span></td>
                                 <td><span t-field="move_line.project_id.code"></span></td>
                                 <td><span t-field="move_line.cost_control_id.code"></span></td>
