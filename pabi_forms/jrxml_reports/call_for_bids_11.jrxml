@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.8150000000000117"/>
-	<property name="ireport.x" value="250"/>
-	<property name="ireport.y" value="600"/>
+	<property name="ireport.zoom" value="1.1269722013523735"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="198"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -363,22 +363,24 @@ left join res_section rs on he.section_id = rs.id
 WHERE ru.id = pd.request_uid) as department,
 pd.objective,
 pd.amount_total,
-po.delivery_address as deliver_to,
+pd.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
 pd.doc_body as footer,
-po.name as rfq_number,
+(SELECT p.name FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed') as rfq_number,
 (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) FROM res_partner rp
 LEFT JOIN res_partner_title rpt
 ON rpt.id = rp.title
-WHERE rp.id = po.partner_id) as rfq_supplier,
+WHERE rp.id = po.partner_id AND po.state = 'confirmed') as rfq_supplier,
 (SELECT rp.taxbranch FROM res_partner rp
-WHERE rp.id = po.partner_id) as rfq_taxbranch,
-po.amount_total as rfq_amount_total,
+WHERE rp.id = po.partner_id AND po.state = 'confirmed') as rfq_taxbranch,
+(SELECT p.amount_total FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed') as rfq_amount_total,
 
 po.minimum_planned_date-DATE(now()) as minimum_planned_date,
 (SELECT p.amount_total_text_th FROM purchase_order p
-WHERE p.requisition_id = pd.id AND p.state = 'done'),
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed'),
 
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
@@ -462,6 +464,9 @@ LEFT JOIN purchase_price_range ppr
 ON ppr.id = pd.purchase_price_range_id
 LEFT JOIN purchase_order po
 ON po.requisition_id = pd.id AND po.state = 'confirmed'
+
+
+
 
 WHERE $X{IN, pd.id, PIDS}]]>
 	</queryString>
