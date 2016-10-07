@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0000000000000084"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="48"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
@@ -405,7 +405,7 @@ select id from res_company limit 1;]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{paid_one_time}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="98" y="609" width="120" height="35">
+				<reportElement x="98" y="609" width="401" height="35">
 					<printWhenExpression><![CDATA[$P{type_6_base} > 0.0]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
@@ -512,7 +512,7 @@ select id from res_company limit 1;]]>
 				<textFieldExpression class="java.util.Date"><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse($P{date_value})]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="127" y="553" width="120" height="35">
+				<reportElement x="127" y="553" width="391" height="35">
 					<printWhenExpression><![CDATA[$P{type_5_base} > 0.0]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
