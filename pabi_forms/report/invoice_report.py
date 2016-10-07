@@ -31,7 +31,8 @@ class InvoiceReportParser(report_sxw.rml_parse):
         # get rate of company currency to current invoice currency
         rate = self.pool['res.currency'].\
             _get_conversion_rate(self.cr, self.uid,
-                                 company.currency_id, currency)
+                                 company.currency_id,
+                                 currency, context=context)
         return rate
 
 
