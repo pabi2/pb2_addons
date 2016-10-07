@@ -173,8 +173,7 @@ class PrintWhtCertWizard(models.TransientModel):
     def _prepare_address(self, partner):
         address_list = [partner.street, partner.street2,
                         partner.township_id.name, partner.district_id.name,
-                        partner.province_id.name, partner.zip,
-                        partner.country_id.name, ]
+                        partner.province_id.name, partner.zip, ]
         address_list = filter(lambda x: x is not False and x != '',
                               address_list)
         return ' '.join(address_list).strip()
