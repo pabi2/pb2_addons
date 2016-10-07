@@ -366,38 +366,6 @@ class PurchaseOrder(models.Model):
 
         return orders_info
 
-    @api.one
-    def _check_invoice_plan(self):
-        if self.invoice_method == 'invoice_plan':
-            if self.invoice_mode == 'change_price':
-                for order_line in self.order_line:
-                    if order_line.product_qty != 1:
-                        raise UserError(
-                            _('For invoice plan mode "As 1 Job", '
-                              'all line quantity must equal to 1'))
-            obj_precision = self.env['decimal.precision']
-            prec = obj_precision.precision_get('Account')
-            for order_line in self.order_line:
-                subtotal = order_line.price_subtotal
-                invoice_lines = self.env['purchase.invoice.plan'].search(
-                    [('order_line_id', '=', order_line.id)])
-                total_amount = 0.0
-                for line in invoice_lines:
-                    total_amount += line.invoice_amount
-                    # Validate percent
-                    if round(line.invoice_percent/100 * subtotal, prec) != \
-                            round(line.invoice_amount, prec):
-                        raise except_orm(
-                            _('Invoice Plan Percent Mismatch!'),
-                            _("%s on installment %s")
-                            % (order_line.name, line.installment))
-                # if round(total_amount, prec) != round(subtotal, prec):
-                #     raise except_orm(
-                #         _('Invoice Plan Amount Mismatch!'),
-                #         _("%s, plan amount %d not equal to line amount %d!")
-                #         % (order_line.name, total_amount, subtotal))
-        return True
-
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
