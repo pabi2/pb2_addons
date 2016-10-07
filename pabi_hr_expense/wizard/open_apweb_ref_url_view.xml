@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_open_apweb_ref_url">
+            <field name="name">view.open.apweb.ref.url</field>
+            <field name="model">open.apweb.ref.url</field>
+            <field name="arch" type="xml">
+                <form>
+                	<p class="oe_grey">
+                		Click open to redirect to the document.
+                	</p>
+                    <footer>
+                        <button name="open" string="View Document" type="object"
+                            class="oe_highlight" />
+                        or
+                        <button string="Close" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_apweb_ref_url">
+            <field name="name">Open Document</field>
+            <field name="res_model">open.apweb.ref.url</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

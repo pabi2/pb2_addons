@@ -119,7 +119,7 @@ class HRExpense(models.Model):
             'apweb_ref_url': u'XXX',
             'receive_method': 'other_bank',  # salary_bank, other_bank
             'employee_bank_id.id': u'99',
-            'advance_expense_id.id': u'',  # Case clearing, refer Exp Advance
+            'advance_expense_number': u'',  # Case clearing, refer Exp Advance
             'line_ids': [  # 1 line only, Advance
                 {
                     'section_id.id': u'1276',
@@ -191,12 +191,19 @@ class HRExpense(models.Model):
         # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
         employee = Employee.search(domain)
-        data_dict['employee_id.id'] = employee.id
+        data_dict['employee_id.id'] = employee.id or u''
         del data_dict['employee_code']
+        # advance expense if any
+        if data_dict.get('advance_expense_number', '') != '':
+            domain = [('number', '=', data_dict.get('advance_expense_number'))]
+            expense = self.search(domain)
+            data_dict['advance_expense_id.id'] = expense.id or u''
+        if 'advance_expense_number' in data_dict:
+            del data_dict['advance_expense_number']
         # preparer_code to user_id.id
         domain = [('employee_code', '=', data_dict.get('preparer_code'))]
         employee = Employee.search(domain)
-        data_dict['user_id.id'] = employee.user_id.id
+        data_dict['user_id.id'] = employee.user_id.id or u''
         del data_dict['preparer_code']
         # OU based on employee
         data_dict['operating_unit_id.id'] = \
@@ -218,14 +225,20 @@ class HRExpense(models.Model):
                 domain = [('employee_code', '=', data.get('employee_code'))]
                 data['employee_id.id'] = Employee.search(domain).id
                 del data['employee_code']
-        # attachment
+        # Attachment Links
+        ConfParam = self.env['ir.config_parameter']
+        file_prefix = ConfParam.get_param('pabiweb_file_prefix')
+        if file_prefix[-1:] != '/':
+            file_prefix += '/'
         if 'attachment_ids' in data_dict:
             for data in data_dict['attachment_ids']:
-                ConfParam = self.env['ir.config_parameter']
-                file_prefix = ConfParam.get_param('pabiweb_file_prefix')
                 data['url'] = file_prefix + data['url']
                 data['res_model'] = self._name
                 data['type'] = 'url'
+        # Web Ref URL
+        if 'apweb_ref_url' in data_dict:
+            data_dict['apweb_ref_url'] = \
+                file_prefix + data_dict['apweb_ref_url']
         return data_dict
 
     @api.model
@@ -347,7 +360,7 @@ class HRExpense(models.Model):
         return res
 
     @api.model
-    def send_signal_to_pabiweb_advance(self, signal, comment=''):
+    def _get_alfresco_connect(self):
         ConfParam = self.env['ir.config_parameter']
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
@@ -356,9 +369,42 @@ class HRExpense(models.Model):
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string)
+        return alfresco
+
+    @api.model
+    def send_signal_to_pabiweb(self, signal, comment=''):
+        alfresco = self._get_alfresco_connect()
+        if alfresco is False:
+            return False
         arg = {
             'action': signal,
             'by': self.env.user.login,
+            'comment': comment,
+        }
+        result = False
+        if self.is_employee_advance:
+            arg.update({'avNo': self.number})
+            result = alfresco.brw.action(arg)
+        else:
+            arg.update({'exNo': self.number})
+            result = alfresco.use.action(arg)
+        if not result['success']:
+            raise UserError(
+                _("Can't send data to PabiWeb : %s" % (result['message'],))
+            )
+        return result
+
+    @api.model
+    def send_comment_to_pabiweb(self, status, status_th, comment):
+        alfresco = self._get_alfresco_connect()
+        if alfresco is False:
+            return False
+        arg = {
+            'by': self.env.user.login,
+            'task': '',
+            'task_th': '',
+            'status': status,
+            'status_th': status_th,
             'comment': comment,
         }
         result = False
