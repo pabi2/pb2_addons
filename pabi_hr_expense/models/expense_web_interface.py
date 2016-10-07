@@ -374,7 +374,7 @@ class HRExpense(models.Model):
     @api.model
     def send_signal_to_pabiweb(self, signal, comment=''):
         alfresco = self._get_alfresco_connect()
-        if not alfresco:
+        if alfresco is False:
             return False
         arg = {
             'action': signal,
@@ -397,7 +397,7 @@ class HRExpense(models.Model):
     @api.model
     def send_comment_to_pabiweb(self, status, status_th, comment):
         alfresco = self._get_alfresco_connect()
-        if not alfresco:
+        if alfresco is False:
             return False
         arg = {
             'by': self.env.user.login,
