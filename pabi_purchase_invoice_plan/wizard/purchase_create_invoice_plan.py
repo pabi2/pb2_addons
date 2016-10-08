@@ -16,7 +16,8 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
 
     @api.onchange('percent')
     def _onchange_percent(self):
-        if not self.plan_id.by_fiscalyear:
+        if not self.plan_id.by_fiscalyear or\
+                self.is_advance_installment or self.is_deposit_installment:
             return super(PurchaseCreateInvoicePlanInstallment, self).\
                 _onchange_percent()
         obj_precision = self.env['decimal.precision']
@@ -27,8 +28,10 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
 
     @api.onchange('amount')
     def _onchange_amount(self):
-        if not self.plan_id.by_fiscalyear:
-            return super(PurchaseCreateInvoicePlanInstallment, self)._onchange_amount()
+        if not self.plan_id.by_fiscalyear or self.is_advance_installment\
+                or self.is_deposit_installment:
+            return super(PurchaseCreateInvoicePlanInstallment,
+                         self)._onchange_amount()
         obj_precision = self.env['decimal.precision']
         prec = obj_precision.precision_get('Account')
         line_by_fiscalyear = self.plan_id._get_total_by_fy()
@@ -108,7 +111,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     def _onchange_installment_config(self):
         if self.interval < 0:
             raise UserError('Negative interval not allowed!')
-        return super(PurchaseCreateInvoicePlan, self)._onchange_installment_config()
+        return super(PurchaseCreateInvoicePlan,
+                     self)._onchange_installment_config()
 
     @api.model
     def _compute_installment_details(self):
@@ -198,7 +202,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     @api.one
     def do_create_purchase_invoice_plan(self):
         if not self.by_fiscalyear:
-            return super(PurchaseCreateInvoicePlan, self).do_create_purchase_invoice_plan()
+            return super(PurchaseCreateInvoicePlan,
+                         self).do_create_purchase_invoice_plan()
         self._validate_total_amount()
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
