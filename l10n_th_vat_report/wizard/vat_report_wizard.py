@@ -39,6 +39,11 @@ class AccountVatReport(models.TransientModel):
     period_id = fields.Many2one(
         'account.period',
         string='Period',
+        related='calendar_period_id.period_id',
+    )
+    calendar_period_id = fields.Many2one(
+        'account.period.calendar',
+        string='Calendar Period',
         required=True,
     )
     tax_id = fields.Many2one(
