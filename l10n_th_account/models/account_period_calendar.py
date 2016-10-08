@@ -19,8 +19,19 @@ class AccountPeriodCalendar(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-            select id, LPAD(date_part('month', date_start)::text, 2, '0') ||
-                '/' || date_part('year', date_start)::text as name,
-                id as period_id
-            from account_period where special = false
+        select id,
+            case when month = '01' then 'Jan-' when month = '02' then 'Feb-'
+            when month = '03' then 'Mar-' when month = '04' then 'Apr-'
+            when month = '05' then 'May-' when month = '06' then 'Jun-'
+            when month = '07' then 'Jul-' when month = '08' then 'Jul-'
+            when month = '09' then 'Sep-' when month = '10' then 'Oct-'
+            when month = '11' then 'Nov-' when month = '12' then 'Dec-'
+            end || year as name,
+            period_id
+        from
+            (select id, LPAD(date_part('month', date_start)::text, 2, '0')
+                as month,
+            date_part('year', date_start)::text as year,
+            id as period_id
+            from account_period where special = false) a
         )""" % (self._table, ))
