@@ -45,9 +45,8 @@ class ChequeLot(models.Model):
         compute='_compute_next_number',
     )
     remaining = fields.Integer(
-        string='Next Cheque Number',
-        compute='_compute_state',
-        store=True,
+        string='Remainings',
+        compute='_compute_remaining',
         readonly=True,
         help="This field show the remaining valid cheque to use",
     )
@@ -73,15 +72,20 @@ class ChequeLot(models.Model):
         self.journal_id = False
 
     @api.multi
-    @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
-    def _compute_state(self):
+    @api.depends()
+    def _compute_remaining(self):
         Cheque = self.env['cheque.register']
         for lot in self:
-            num = Cheque.search_count([('cheque_lot_id', '=', lot.id),
-                                       ('voucher_id', '=', False),
-                                       ('void', '=', False)])
-            lot.remaining = num
-            if num > 0:
+            lot.remaining = Cheque.search([('cheque_lot_id', '=', lot.id),
+                                           ('voucher_id', '=', False),
+                                           ('void', '=', False)],
+                                          count=True)[0]
+
+    @api.multi
+    @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
+    def _compute_state(self):
+        for lot in self:
+            if lot.remaining > 0:
                 lot.state = 'active'
             else:
                 lot.state = 'inactive'
