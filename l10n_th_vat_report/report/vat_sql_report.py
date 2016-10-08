@@ -3,8 +3,8 @@ from openerp import fields, models
 from openerp import tools
 
 
-class VatReport(models.Model):
-    _name = 'vat.report'
+class SaleVatReport(models.Model):
+    _name = 'sale.vat.report'
     _auto = False
 
     base_amount = fields.Float(
@@ -233,6 +233,131 @@ class VatReport(models.Model):
                self._get_from(),
                self._get_groupby(),
                self._get_orderby())
+        return sql_query
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute(""" CREATE or REPLACE VIEW %s as (%s)
+        """ % (self._table, self._get_sql_view()))
+
+
+class PurchaseVatReport(models.Model):
+    _name = 'purchase.vat.report'
+    _auto = False
+
+    base_amount = fields.Float(
+        string='Base Amount'
+    )
+    tax_amount = fields.Float(
+        string='Tax Amount'
+    )
+    date = fields.Date(
+        string='Date',
+    )
+    number = fields.Char(
+        string='Number',
+    )
+    partner_name = fields.Char(
+        string='Partner Name',
+    )
+    tax_id = fields.Char(
+        string='Tax ID'
+    )
+    base_code_id = fields.Many2one(
+        'account.tax.code',
+        string='Base Code'
+    )
+    tax_code_id = fields.Many2one(
+        'account.tax.code',
+        string='Tax Code'
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period'
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+    )
+    tax_sequence = fields.Char(
+        string='Tax Sequence',
+    )
+    taxbranch = fields.Char(
+        string='Tax Branch',
+    )
+
+    # Methods for create main sql view
+    def _get_select(self):
+        select = """
+            atd.id,
+            COALESCE(SUM(atd.base), 0.0) as base_amount,
+            COALESCE(SUM(atd.amount), 0.0) as tax_amount,
+            atd.invoice_date as date,
+            atd.invoice_number as number,
+            ait.base_code_id,
+            ait.tax_code_id,
+            atd.period_id,
+            ait.company_id,
+            p.name as partner_name,
+            p.vat as tax_id,
+            atd.tax_sequence_display as tax_sequence,
+            p.taxbranch as taxbranch
+        """
+        return select
+
+    def _get_from(self):
+        from_str = """
+            account_tax_detail as atd
+            LEFT JOIN account_invoice_tax ait ON
+                (atd.invoice_tax_id = ait.id)
+            LEFT JOIN account_voucher_tax avt ON
+                (atd.voucher_tax_id = avt.id)
+            LEFT JOIN account_invoice invoice ON
+                (ait.invoice_id = invoice.id)
+            LEFT JOIN account_voucher voucher ON
+                (avt.voucher_id = voucher.id)
+            LEFT JOIN res_partner p ON
+                (atd.partner_id = p.id)
+            LEFT JOIN res_taxbranch t ON (atd.taxbranch_id = t.id)
+            WHERE ((invoice.state in ('open', 'paid')) OR
+                (voucher.state in ('posted')))
+        """
+        return from_str
+
+    def _get_groupby(self):
+        groupby_str = """
+            atd.id,
+            atd.invoice_date,
+            atd.invoice_number,
+            p.name,
+            p.vat,
+            p.taxbranch,
+            ait.base_code_id,
+            ait.tax_code_id,
+            atd.taxbranch_id,
+            ait.company_id
+        """
+        return groupby_str
+
+    def _get_orderby(self):
+        order_by = "tax_sequence"
+        return order_by
+
+    def _get_sql_view(self):
+        sql_query = """
+            SELECT
+                %s
+            FROM
+                %s
+            GROUP BY
+                %s
+            ORDER BY
+                %s
+        """ % (self._get_select(),
+               self._get_from(),
+               self._get_groupby(),
+               self._get_orderby())
+        print sql_query
         return sql_query
 
     def init(self, cr):

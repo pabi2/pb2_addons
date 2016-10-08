@@ -21,14 +21,14 @@
                                 <span><b>Month:</b></span>
                             </div>
                             <div class="col-xs-4">
-                                <span><t t-esc=" datetime.datetime.strptime(o.period_id.date_start, '%Y-%m-%d').month"/></span>
+                                <span><t t-esc="datetime.datetime.strptime(o.period_id.date_start, '%Y-%m-%d').month"/></span>
                             </div>
                             <div class="col-xs-1 " >
                                 <span></span>
                             </div>
                             <div class="col-xs-5 " >
                                 <span><b>Calender Year: &amp;nbsp;</b></span>
-                                <span><t t-esc="o.period_id.fiscalyear_id.name"/></span>
+                                <span><t t-esc="datetime.datetime.strptime(o.period_id.date_start, '%Y-%m-%d').year"/></span>
                             </div>
                         </div>
                         <div class="row mt16 mb8">

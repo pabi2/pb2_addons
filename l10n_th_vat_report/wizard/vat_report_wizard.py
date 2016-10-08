@@ -85,12 +85,13 @@ class AccountVatReport(models.TransientModel):
     @api.model
     def _prepare_header_data(self):
         month = datetime.strptime(self.period_id.date_start, '%Y-%m-%d').month
+        year = datetime.strptime(self.period_id.date_start, '%Y-%m-%d').year
         header_list = [
             {'priority': 1, 'label': 'Month', 'value': month},
             {'priority': 3, 'label': 'Company', 'value': self.company_id.name},
             {'priority': 4, 'label': 'Tax ID', 'value': self.company_id.vat},
             {'priority': 2, 'label': 'Calendar Year',
-             'value': self.period_id.fiscalyear_id.name},
+             'value': year},
         ]
         return header_list
 

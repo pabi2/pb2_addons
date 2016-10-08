@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "Thai Vat Report",
+    'name': "Thai VAT Report",
     'version': '8.0.1.0.0',
     'category': 'Accounting',
     'description': """
