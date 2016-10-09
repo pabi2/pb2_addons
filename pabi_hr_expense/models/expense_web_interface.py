@@ -410,10 +410,10 @@ class HRExpense(models.Model):
         result = False
         if self.is_employee_advance:
             arg.update({'avNo': self.number})
-            result = alfresco.brw.action(arg)
+            result = alfresco.brw.history(arg)
         else:
             arg.update({'exNo': self.number})
-            result = alfresco.use.action(arg)
+            result = alfresco.use.history(arg)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
