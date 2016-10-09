@@ -2,7 +2,6 @@
 <openerp>
     <data>
         <menuitem id="menu_purchase_report" name="Purchase Report"
-            groups="purchase.group_purchase_user"
             parent="base.menu_purchase_root" sequence="67"/>
     </data>
 </openerp>
