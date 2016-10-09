@@ -13,26 +13,6 @@ class VatReportParser(vat_report.VatReportParser):
         domain.append(('taxbranch_id', '=', record.taxbranch_id.id))
         return domain
 
-    def _get_from_tax_details(self):
-        res = super(VatReportParser, self)._get_from_tax_details()
-        res = res + 'LEFT JOIN res_taxbranch t ON (atd.taxbranch_id = t.id)'
-        return res
-
-    def _get_groupby_tax_details(self):
-        res = super(VatReportParser, self)._get_groupby_tax_details()
-        res = res + ', p.taxbranch'
-        return res
-
-    def _get_select_tax_details(self):
-        res = super(VatReportParser, self)._get_select_tax_details()
-        res = res + ',p.taxbranch as taxbranch'
-        return res
-
-    def _get_where_tax_details(self, record):
-        res = super(VatReportParser, self)._get_where_tax_details(record)
-        res = res + 'AND atd.taxbranch_id = %s' % (record.taxbranch_id.id)
-        return res
-
 
 class VatReportAbstarct(osv.AbstractModel):
     _name = "report.l10n_th_vat_report.report_vat"
