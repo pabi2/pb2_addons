@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
+
 class PabiYearlyPurchaseReportWizard(models.TransientModel):
 
     _name = 'pabi.yearly.purchase.report.wizard'
@@ -8,7 +9,7 @@ class PabiYearlyPurchaseReportWizard(models.TransientModel):
     year = fields.Many2one(
         'account.fiscalyear',
         string='Year',
-        )
+    )
 
     format = fields.Selection(
         [('pdf', 'PDF'),

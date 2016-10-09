@@ -36,7 +36,7 @@
         </record>
 
         <menuitem id="menu_report_sample_partner_orm_wizard" action="action_report_sample_partner_orm_wizard"
-          groups="" parent="jasper_reports.jasper_reports_menu" sequence="110"/>
+          groups="" parent="pabi_purchase_report.menu_purchase_report" sequence="110"/>
 
     </data>
 </openerp>

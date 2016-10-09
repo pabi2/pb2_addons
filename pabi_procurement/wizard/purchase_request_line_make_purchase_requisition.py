@@ -10,6 +10,40 @@ import ast
 class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     _inherit = "purchase.request.line.make.purchase.requisition"
 
+    # def _requisition_filter(self):
+    #     requisition_ref = ()
+    #     pr_lines = self.item_ids.line_id
+    #     for pr_line in pr_lines:
+    #         if pr_line.request_id.request_ref_id and \
+    #            pr_line.request_id.request_ref_id not in requisition_ref:
+    #                 request_lines = self.env['purchase.request.line'].search(
+    #                     [
+    #                         (
+    #                             'request_id',
+    #                             'in',
+    #                             (pr_line.request_id.request_ref_id.id,)
+    #                         )
+    #                     ]
+    #                 )
+    #                 cfb_lines = self.env['purchase.requisition.line'].search(
+    #                     [
+    #                         (
+    #                             'purchase_request_lines',
+    #                             'in',
+    #                             request_lines._ids
+    #                         )
+    #                     ]
+    #                 )
+    #                 for cfb_line in cfb_lines:
+    #                     requisition_ref.append(cfb_line.requisition_id.id)
+    #     if len(requisition_ref) > 0:
+    #         domain = [
+    #             ('state', '=', 'draft'),
+    #             ('id', 'in', requisition_ref)
+    #         ]
+    #     # res['domain'] = domain
+    #     return domain
+
     @api.model
     def _get_requisition_line_search_domain(self, requisition, item):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
@@ -118,22 +152,6 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         return True
 
     @api.model
-    def _requisition_filter(self, pr_lines):
-        pr_ref = []
-        domain = []
-        for pr_line in pr_lines:
-            if pr_line.request_id.request_ref_id and \
-               pr_line.request_id.request_ref_id not in pr_ref:
-                    pr_ref.append(pr_line.request_id.request_ref_id.id)
-        if len(pr_ref) > 0:
-            domain = {
-                'requisition_id': [
-                    ('request_ids', 'in', pr_ref)
-                ]
-            }
-        return {'domain': domain}
-
-    @api.model
     def default_get(self, fields):
         res = super(PurchaseRequestLineMakePurchaseRequisition,
                     self).default_get(fields)
@@ -141,7 +159,6 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         request_line_ids = self.env.context['active_ids'] or []
         pr_lines = request_line_obj.browse(request_line_ids)
         self._check_line_reference(pr_lines)
-        self._requisition_filter(pr_lines)
         return res
 
     @api.model
