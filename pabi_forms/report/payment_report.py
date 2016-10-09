@@ -13,19 +13,30 @@ class PaymentReportParser(report_sxw.rml_parse):
         })
 
     def get_invoices(self, lines):
-        invoices = []
+        count = 0
+        inv_str = False
         for line in lines:
             if line.amount > 0.0:
-                invoices.append(line.move_line_id.invoice.id)
-        return len(invoices)
+                if line.move_line_id.invoice:
+                    if not inv_str:
+                        inv_str = str(count + 1) + ':' +\
+                            line.move_line_id.invoice.number + '\n'
+                    else:
+                        inv_str += str(count + 1) + ':' +\
+                            line.move_line_id.invoice.number + '\n'
+                    count += 1
+        return inv_str and inv_str or ''
 
     def get_currency_rate(self, currency, date):
+        user = self.pool['res.users'].browse(self.cr, self.uid, self.uid)
+        company = user.company_id
         context = self.localcontext.copy()
         context.update({'date': date})
+        # get rate of company currency to current invoice currency
         rate = self.pool['res.currency'].\
-            _get_current_rate(self.cr, self.uid, [currency.id],
-                              raise_on_no_rate=True, context=context)
-        rate = rate[currency.id]
+            _get_conversion_rate(self.cr, self.uid,
+                                 company.currency_id,
+                                 currency, context=context)
         return rate
 
 
