@@ -105,6 +105,11 @@ class PaymentExport(models.Model):
         store=True,
         copy=False,
     )
+    num_line = fields.Integer(
+        compute="_compute_num_line",
+        string="Num Lines",
+        copy=False,
+    )
     cancel_reason_txt = fields.Char(
         string="Description",
         readonly=True)
@@ -129,6 +134,12 @@ class PaymentExport(models.Model):
                     sum_total += line.amount_total
             export.sum_amount = sum_amount
             export.sum_total = sum_total
+
+    @api.multi
+    @api.depends('line_ids')
+    def _compute_num_line(self):
+        for export in self:
+            export.num_line = len(export.line_ids)
 
     @api.multi
     @api.depends()
@@ -185,12 +196,15 @@ class PaymentExport(models.Model):
             dom.append(('id', 'not in', exported_voucher_ids))
         vouchers = Voucher.search(dom, order='id',
                                   limit=self.cheque_lot_id.remaining)
+        i = 1
         for voucher in vouchers:
             export_line = ExportLine.new()
+            export_line.sequence = i
             export_line.use_export_line = True
             export_line.voucher_id = voucher
             export_line.amount = voucher.amount
             self.line_ids += export_line
+            i += 1
 
     @api.multi
     def action_assign_cheque_number(self):
@@ -284,6 +298,11 @@ class PaymentExportLine(models.Model):
     _name = 'payment.export.line'
     _description = 'Payment Export Line'
 
+    sequence = fields.Integer(
+        string='Sequence',
+        readonly=True,
+        default=0,
+    )
     export_id = fields.Many2one(
         'payment.export',
         string='Payment Export',

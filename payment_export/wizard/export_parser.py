@@ -14,5 +14,5 @@ class DocumentExportParser(models.TransientModel):
             payment_export_id = self.env.context.get('active_id', False)
             payment_export_model = self.env.context.get('active_model', '')
             export = self.env[payment_export_model].browse(payment_export_id)
-            export.action_done()
+            # export.action_done()
         return res
