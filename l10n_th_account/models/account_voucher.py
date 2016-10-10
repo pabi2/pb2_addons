@@ -352,7 +352,7 @@ class AccountVoucher(common_voucher, models.Model):
         # When editing only tax amount, do not reset tax
         to_update = True
         if vals.get('tax_line_normal', False):
-            for tax_line in vals.get('tax_line'):
+            for tax_line in vals.get('tax_line_normal'):
                 if tax_line[0] == 1 and 'amount' in tax_line[2]:  # 1 = update
                     to_update = False
         if to_update:
