@@ -309,7 +309,7 @@ end]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{delay_day}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="540" y="0" width="100" height="35"/>
 				<box>
 					<leftPen lineWidth="0.5"/>
@@ -321,7 +321,7 @@ end]]>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_contract_end}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="640" y="0" width="100" height="35"/>
 				<box>
 					<leftPen lineWidth="0.5"/>
