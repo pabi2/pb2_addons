@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+group_user_model_sale_vat_report,group_user_model_sale_vat_report,model_sale_vat_report,base.group_user,1,1,1,1
+group_user_model_purchase_vat_report,group_user_model_purchase_vat_report,model_purchase_vat_report,base.group_user,1,1,1,1
