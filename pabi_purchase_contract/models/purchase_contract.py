@@ -261,10 +261,12 @@ class PurchaseContract(models.Model):
             if Emp and self.env.ref(
                 'base.group_pabi_purchase_contract_user').id in \
                 self.env.user.groups_id.mapped('id'):
-                if Emp.org_id.code == 'CT':
+                if Emp.org_id.name_short == 'CT' or \
+                    Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    gid = self.env.ref(Ext_group + Emp.org_id.org_shortname_en.lower())
+                    ext_grp = Ext_group + Emp.org_id.name_short.lower()
+                    gid = self.env.ref(ext_grp)
                 return gid
             else:
                 raise osv.except_osv(
@@ -782,10 +784,12 @@ class PurchaseContract(models.Model):
             if Emp and self.env.ref(
                 'base.group_pabi_purchase_contract_user').id in \
                 self.env.user.groups_id.mapped('id'):
-                if Emp.org_id.code == 'CT':
+                if Emp.org_id.name_short == 'CT' or \
+                    Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    gid = self.env.ref(Ext_group + Emp.org_id.org_shortname_en.lower())
+                    ext_grp = Ext_group + Emp.org_id.name_short.lower()
+                    gid = self.env.ref(ext_grp)
                 self.admin_org_groups_id = gid
             else:
                 self.admin_org_groups_id = False
