@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 from .account_activity import ActivityCommon
 
 
@@ -16,7 +16,7 @@ class HRExpenseExpense(models.Model):
             fiscal_id = r['fiscal_id']
             budget_type = 'check_budget'
             if budget_type not in r:
-                raise UserError(_('Budget level is not set!'))
+                raise ValidationError(_('Budget level is not set!'))
             budget_level = r[budget_type]  # specify what to check
             # Find amount in this expense to check against budget
             self._cr.execute("""
