@@ -2,7 +2,8 @@
 # © 2016 Kitti U.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountVoucher(models.Model):
@@ -21,6 +22,8 @@ class AccountVoucher(models.Model):
     def _compute_doctype(self):
         doctype = self.env['res.doctype'].search([('refer_type', '=',
                                                    self.type)], limit=1)
+        if len(doctype) == 0:
+            raise ValidationError(_('Invalid Doctype!'))
         self.doctype_id = doctype.id
 
     @api.model

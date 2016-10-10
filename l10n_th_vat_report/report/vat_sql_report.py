@@ -357,7 +357,6 @@ class PurchaseVatReport(models.Model):
                self._get_from(),
                self._get_groupby(),
                self._get_orderby())
-        print sql_query
         return sql_query
 
     def init(self, cr):

@@ -6,5 +6,5 @@ class IrSequence(models.Model):
     _inherit = 'ir.sequence'
 
     special_type = fields.Selection(
-        selection_add=[('asset', 'Thai Asset Number')]
+        selection_add=[('doctype', 'Doctype Sequence')]
     )

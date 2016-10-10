@@ -14,19 +14,29 @@ class ResDoctype(models.Model):
         readonly=True,
     )
     refer_type = fields.Selection([
-        ('sale', 'Sale Receipt'),
+        # Sale / Purchase
+        ('sale_quotation', 'Sales Quotation'),
+        ('purchase_quotation', 'Purchase Quotation'),
+        ('sale_order', 'Sales Order'),
+        ('purchase_order', 'Purchase Order'),
+        # Voucher Types
+        ('sale', 'Sales Receipt'),
         ('purchase', 'Purchase Receipt'),
         ('payment', 'Supplier Payment'),
         ('receipt', 'Customer Payment'),
+        # Invoice Types
         ('out_invoice', 'Customer Invoice'),
+        ('out_invoice_debitnote', 'Customer Debitnote'),
         ('in_invoice', 'Supplier Invoice'),
+        ('in_invoice_debitnote', 'Supplier Debitnote'),
         ('out_refund', 'Customer Refund'),
         ('in_refund', 'Supplier Refund'),
         ],
-        string='Refer to window',
+        string='Reference Document',
         readonly=True,
     )
     sequence_id = fields.Many2one(
         'ir.sequence',
         string='Sequence',
+        domain=[('special_type', '=', 'doctype')],
     )

@@ -8,7 +8,7 @@
     'category': 'Account',
     'version': '0.1.0',
     'depends': [
-        'base',
+        'l10n_th_fields',
     ],
     'data': [
         'views/ir_sequence_view.xml',

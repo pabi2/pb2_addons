@@ -5,3 +5,6 @@
 from . import res_doctype
 from . import account_voucher
 from . import account_invoice
+from . import ir_sequence
+from . import purchase
+from . import sale

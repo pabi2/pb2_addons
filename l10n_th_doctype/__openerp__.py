@@ -24,12 +24,17 @@ If Sequence is not specified, it will be using sequence of Journal as normal.
     "application": False,
     "installable": True,
     "depends": [
+        'l10n_th_fields',
         'account_voucher',
         'account_voucher_action_move_line_create_hooks',
+        'purchase_split_quote2order',
+        'sale_split_quote2order',
     ],
     "data": [
         "security/ir.model.access.csv",
         "views/doctype_view.xml",
+        "views/ir_sequence_view.xml",
+        "data/ir_sequence_data.xml",
         "data/doctype_data.xml",
     ],
 }

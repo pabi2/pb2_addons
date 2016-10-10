@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_sequence_search" model="ir.ui.view">
+            <field name="name">view.sequence.search</field>
+            <field name="model">ir.sequence</field>
+            <field name="inherit_id" ref="base.view_sequence_search"/>
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                    <filter string="Normal Sequence" domain="[('special_type','=',False)]" name="normal"/>
+                </field>
+            </field>
+        </record>
+        <record id="sequence_view" model="ir.ui.view">
+            <field name="name">sequence.view</field>
+            <field name="model">ir.sequence</field>
+            <field name="inherit_id" ref="base.sequence_view"/>
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                    <field name="special_type"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="base.ir_sequence_form" model="ir.actions.act_window">
+            <field name="context">{'active_test': False, 'search_default_normal': 1}</field>
+        </record>
+    </data>
+</openerp>
