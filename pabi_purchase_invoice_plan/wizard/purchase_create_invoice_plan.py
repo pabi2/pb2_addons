@@ -104,6 +104,39 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         default=_default_order,
     )
 
+
+    @api.model
+    def _get_po_line_fy(self, po):
+        """It will return list of fiscal years on po lines of po"""
+        fy_list = []
+        for line in po.order_line:
+            if line.fiscal_year_id:
+                if line.fiscal_year_id.id not in fy_list:
+                    fy_list.append(line.fiscal_year_id.id)
+        return fy_list
+
+    @api.model
+    def _validate_installment_date_range(self):
+        fy_list = self._get_po_line_fy(self.po_id)
+        fy_list = sorted(fy_list)
+        
+        first_fy_id = False
+        last_fy_id = False
+        if fy_list:
+            if len(fy_list) == 1:
+                first_fy_id = fy_list[0]
+                last_fy_id = fy_list[0]
+            else:
+                first_fy_id = fy_list[0]
+                last_fy_id = fy_list[-1]
+        if first_fy_id and last_fy_id:
+            first_fy = self.env['account.fiscalyear'].browse(first_fy_id)
+            last_fy = self.env['account.fiscalyear'].browse(last_fy_id)
+
+            if self.installment_date > last_fy.date_stop or\
+                    self.installment_date < first_fy.date_start:
+                raise UserError(_('Installment date out of range!'))
+
     @api.one
     @api.onchange('installment_date',
                   'interval_type',
@@ -128,81 +161,100 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         for f in self.env['account.fiscalyear'].search_read([],
                                                             ['name', 'id']):
             fiscalyear_dict[f['id']] = f['name']
-  
+
         line_by_fiscalyear = self._get_total_by_fy()
         line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
-        new_line_dict = {}
-        installment_no = 1
-        for l in line_by_fiscalyear:
-            if len(line_by_fiscalyear) == self.num_installment:
-                number_of_lines = 1
-            else:
-                line_total = line_by_fiscalyear[l]
-                line_percentage = (100 * line_total) / order.amount_total
-                number_of_lines = (line_percentage * self.num_installment) / 100
-                number_of_lines = round(number_of_lines)
-            remaining_amt = line_by_fiscalyear[l]
-            line_cnt = number_of_lines
-  
-            while line_cnt > 0:
-                installment_amt = self.installment_amount
-                if line_cnt == 1 or installment_no == self.num_installment or\
-                        remaining_amt < self.installment_amount:
-                    installment_amt = remaining_amt
-                if installment_amt < 0:
-                    installment_amt = 0
-                remaining_amt -= self.installment_amount
-                new_line_dict[installment_no] =\
-                    (fiscalyear_dict[l], installment_amt, l)
-                installment_no += 1
-                line_cnt -= 1
+ 
+        line_of_fy = {}
         count = 0
         installment_date = datetime.strptime(self.installment_date, "%Y-%m-%d")
-        fy_list = []
+        installment_day = installment_date.day
         for i in self.installment_ids:
             if i.is_advance_installment or i.is_deposit_installment:
                 i.date_invoice = self.installment_date
                 continue
             interval = self.interval
+
+            if count == 0:
+                interval = 0
+            
+            if self.interval_type == 'month':
+                installment_date =\
+                    installment_date + relativedelta(months=+interval)
+            elif self.interval_type == 'year':
+                installment_date =\
+                    installment_date + relativedelta(years=+interval)
+            
+            period_obj = self.env['account.period']
+            period_ids = period_obj.find(dt=installment_date)
+            fy_id = period_ids[0].fiscalyear_id
+            i.fiscal_year_id = fy_id
+            if i.fiscal_year_id.id not in line_of_fy:
+                line_of_fy[i.fiscal_year_id.id] = 1
+            else:
+                line_of_fy[i.fiscal_year_id.id] += 1
+            i.date_invoice = installment_date
+            count += 1
+
+        new_line_dict = {}
+        installment_no = 1
+        if line_of_fy:
+            for l in line_by_fiscalyear:
+                if len(line_by_fiscalyear) == self.num_installment:
+                    number_of_lines = 1
+                else:
+                    if l not in line_of_fy.keys():
+                        raise UserError(
+                            _('Please enter valid installment \
+                                number and installment date .'))
+                    number_of_lines = line_of_fy[l]
+                remaining_amt = line_by_fiscalyear[l]
+                line_cnt = number_of_lines
+                while line_cnt > 0:
+                    if self.env.context.get('from_installment_amount', False):
+                        installment_amt = self.installment_amount
+                    else:
+                        if l in line_of_fy.keys():
+                            installment_amt = line_by_fiscalyear[l] / line_of_fy[l]
+                        else:
+                            installment_amt = self.installment_amount
+                    if line_cnt == 1 or\
+                            installment_no == self.num_installment or\
+                            remaining_amt < self.installment_amount:
+                        installment_amt = remaining_amt
+                    if installment_amt < 0:
+                        installment_amt = 0
+                    remaining_amt -= installment_amt
+                    new_line_dict[installment_no] =\
+                        (fiscalyear_dict[l], installment_amt, l)
+                    installment_no += 1
+                    line_cnt -= 1
+        for i in self.installment_ids:
+            if i.is_advance_installment or i.is_deposit_installment:
+                continue
             if i.installment in new_line_dict:
                 f_amount = line_by_fiscalyear[new_line_dict[i.installment][2]]
-                i.fiscal_year_id = new_line_dict[i.installment][2]
+
+                if i.fiscal_year_id.id != new_line_dict[i.installment][2]:
+                    i.fiscal_year_id = new_line_dict[i.installment][2]
+
+                    fy_start_date = datetime.strptime(
+                        i.fiscal_year_id.date_start,"%Y-%m-%d")
+                    date_str = str(fy_start_date.month) + '/' + \
+                        str(installment_day) + '/' + str(fy_start_date.year)
+                    i.date_invoice = datetime.strptime(date_str, '%m/%d/%Y')
+                
                 i.amount = new_line_dict[i.installment][1]
                 new_val = i.amount / f_amount * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
-  
-                if count == 0:
-                    interval = 0
-  
-                if self.interval_type == 'month':
-                    installment_date =\
-                        installment_date + relativedelta(months=+interval)
-                elif self.interval_type == 'year':
-                    installment_date =\
-                        installment_date + relativedelta(years=+interval)
- 
-                period_obj = self.env['account.period']
-                period_ids = period_obj.find(dt=installment_date)
-                fy_id = period_ids[0].fiscalyear_id
-                if fy_id.id not in fy_list:
-                    fy_list.append(fy_id.id)
-                if i.fiscal_year_id != fy_id:
-                    if i.fiscal_year_id.id not in fy_list:
-                        fy_list.append(i.fiscal_year_id.id)
-                        installment_date =\
-                            datetime.strptime(i.fiscal_year_id.date_start, "%Y-%m-%d")
-                    else:
-                        installment_date =\
-                            datetime.strptime(i.fiscal_year_id.date_stop, "%Y-%m-%d")
-                i.date_invoice = installment_date
-                count += 1
 
     @api.one
     def do_create_purchase_invoice_plan(self):
         if not self.by_fiscalyear:
             return super(PurchaseCreateInvoicePlan,
                          self).do_create_purchase_invoice_plan()
+        self._validate_installment_date_range()
         self._validate_total_amount()
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
