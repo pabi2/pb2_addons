@@ -24,7 +24,7 @@
         "wizards/loan_create_installment_order_wizard.xml",
         'wizards/update_section_view.xml',
         'data/loan_agreement_section_mass_editing_data.xml',
-        "views/res_config_view.xml",
+        "views/account_config.xml",
         "views/loan_receivable_view.xml",
         "views/account_invoice_view.xml",
     ],

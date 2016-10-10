@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="date_from" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="date_to" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="purchase_type" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="purchase.method" class="java.lang.Integer" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select
+po_id,
+contract_no,
+post_contract_date,
+supplier,
+product_desc,
+amount_total,
+currency,
+destination,
+purchase_method,
+date_start,
+date_end,
+plan_count
+from pabi_contract_detail_report]]>
+	</queryString>
+	<field name="po_id" class="java.lang.Integer"/>
+	<field name="contract_no" class="java.lang.String"/>
+	<field name="post_contract_date" class="java.sql.Date"/>
+	<field name="supplier" class="java.lang.String"/>
+	<field name="product_desc" class="java.lang.String"/>
+	<field name="amount_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total]]></fieldDescription>
+	</field>
+	<field name="currency" class="java.lang.String">
+		<fieldDescription><![CDATA[Currency]]></fieldDescription>
+	</field>
+	<field name="destination" class="java.lang.String"/>
+	<field name="purchase_method" class="java.lang.String"/>
+	<field name="date_start" class="java.sql.Date">
+		<fieldDescription><![CDATA[Start Date]]></fieldDescription>
+	</field>
+	<field name="date_end" class="java.sql.Date">
+		<fieldDescription><![CDATA[Date End]]></fieldDescription>
+	</field>
+	<field name="plan_count" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="29"/>
+				<textElement lineSpacing="Single">
+					<font size="22" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Contract Detail]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Contract No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Contract Date]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="49" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="9" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="9" width="100" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{post_contract_date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="14" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="9" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="12" splitType="Stretch"/>
+	</summary>
+</jasperReport>

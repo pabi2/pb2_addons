@@ -108,9 +108,9 @@
                             <!--type="action"-->
                             <!--attrs="{'invisible':[('state', '!=', 'approved')]}"/>-->
                 <!--</xpath>-->
-                <!--<xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
-                <!--</xpath>-->
+                <xpath expr="//button[@name='action_button_convert_to_order']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <!-- start :: cancel reason -->
                 <xpath expr="//header/button[@name='action_cancel']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -131,6 +131,8 @@
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field name="mycontract_id" />
                     <field name="date_contract_start" />
+                    <field name="currency_id"/>
+                    <field name="select_reason" attrs="{'invisible': [('order_type','!=','quotation')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='notes']" position="after">
                     <div class="oe_clear"/>
@@ -144,7 +146,7 @@
                     <attribute name="required">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
-                    <field name="fiscal_year_id"/>
+                    <field name="fiscalyear_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Committee">

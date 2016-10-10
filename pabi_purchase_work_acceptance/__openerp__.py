@@ -28,7 +28,7 @@ PABI2 - Purchase Work Acceptance
     "data": [
         "security/ir.model.access.csv",
         "wizard/create_purchase_work_acceptance_view.xml",
-        "views/res_config_view.xml",
+        "views/account_config.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
         "views/purchase_work_acceptance_view.xml",
