@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="base.ir_sequence_form" model="ir.actions.act_window">
+            <field name="domain">[('is_asset_number', '=', False)]</field>
+        </record>
+
+        # View for Asset Number
+        <record id="ir_sequence_asset_number_form" model="ir.actions.act_window">
+            <field name="name">Asset Sequences</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.sequence</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="base.sequence_view_tree"/>
+            <field name="domain">[('is_asset_number', '=', True)]</field>
+            <field name="context">{'active_test': False}</field>
+        </record>
+        <menuitem action="ir_sequence_asset_number_form" id="menu_ir_sequence_form" parent="base.next_id_5" sequence="12"/>
+    </data>
+</openerp>

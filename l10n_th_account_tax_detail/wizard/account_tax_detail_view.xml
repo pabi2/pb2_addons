@@ -2,7 +2,7 @@
 
 <openerp>
 	<data>
-	
+
 		<record id="view_tax_wizard" model="ir.ui.view">
 		    <field name="name">view.tax.wizard</field>
 		    <field name="model">account.tax.wizard</field>
@@ -17,7 +17,7 @@
                     	<field name="amount" class="oe_inline"/>
                     </h2>
 		            <field name="detail_ids">
-		            	<tree editable="bottom" delete="0">
+		            	<tree editable="bottom" delete="1">
 		            	    <field name="is_readonly" invisible="1"/>
 		            		<field name="tax_detail_id" invisible="1"/>
 		            		<field name="partner_id" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
@@ -48,7 +48,7 @@
 		        </form>
 		    </field>
 		</record>
-		
+
 		<record id="action_tax_detail" model="ir.actions.act_window">
 		    <field name="name">Tax Invoice Detail</field>
 		    <field name="res_model">account.tax.wizard</field>
@@ -57,6 +57,6 @@
 		    <field name="context">{}</field>
 		    <field name="target">new</field>
 		</record>
-        
+
 	</data>
 </openerp>

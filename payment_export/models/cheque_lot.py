@@ -48,6 +48,7 @@ class ChequeLot(models.Model):
         string='Remainings',
         compute='_compute_remaining',
         readonly=True,
+        store=True,
         help="This field show the remaining valid cheque to use",
     )
     state = fields.Selection(
@@ -72,14 +73,14 @@ class ChequeLot(models.Model):
         self.journal_id = False
 
     @api.multi
-    @api.depends()
+    @api.depends('line_ids.void', 'line_ids.voucher_id')
     def _compute_remaining(self):
         Cheque = self.env['cheque.register']
         for lot in self:
-            lot.remaining = Cheque.search([('cheque_lot_id', '=', lot.id),
-                                           ('voucher_id', '=', False),
-                                           ('void', '=', False)],
-                                          count=True)[0]
+            registers = Cheque.search([('cheque_lot_id', '=', lot.id),
+                                       ('voucher_id', '=', False),
+                                       ('void', '=', False)], count=True)
+            lot.remaining = registers[0]
 
     @api.multi
     @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
