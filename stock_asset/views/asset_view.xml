@@ -76,6 +76,7 @@
             <field name="arch" type="xml">
                 <field name="standard_price" position="before">
                     <field name="financial_asset"/>
+                    <field name="sequence_id"/>
                 </field>
             </field>
         </record>

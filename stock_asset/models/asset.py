@@ -31,21 +31,29 @@ class ProductTemplate(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    generate_asset = fields.Boolean(string='Generate Asset',)
+    generate_asset = fields.Boolean(
+        string='Generate Asset',
+    )
+    parent_asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='Parent Asset'
+    )
 
     @api.multi
     def write(self, vals):
         asset_obj = self.env['account.asset.asset']
         asset_categ_obj = self.env['account.asset.category']
+        Seq = self.env['ir.sequence']
+        Lot = self.env['stock.production.lot']
         result = super(StockMove, self).write(vals)
         for move in self:
             asset_ids = []
-            asset_ids = asset_obj.search(
-                [('prodlot_id', '=', move.lot_ids.id)], limit=1)
-            if (move.state == 'done' and not asset_ids and
+            # asset_ids = asset_obj.search(
+            #     [('prodlot_id', '=', move.lot_ids.id)], limit=1)
+            # if (move.state == 'done' and not asset_ids and
+            if (move.state == 'done' and
                 (move.generate_asset is True or
                  move.product_id.financial_asset is True)):
-
                 #  Initialization
                 date = move.date
                 partner_id = False
@@ -80,8 +88,8 @@ class StockMove(models.Model):
                     'partner_id': partner_id,
                     'product_id': move.product_id and
                     move.product_id.id or False,
-                    'prodlot_id': move.lot_ids and
-                    move.lot_ids.id or False,
+                    # 'prodlot_id': move.lot_ids and
+                    # move.lot_ids.id or False,
                     'move_id': move.id,
                     'picking_id': move.picking_id and
                     move.picking_id.id or False,
@@ -90,7 +98,18 @@ class StockMove(models.Model):
                 qty = move.product_qty
                 while qty > 0:
                     qty -= 1
-                    asset_obj.create(create_vals)
+                    if move.product_id.sequence_id:
+                        #generate lot
+                        new_seq = Seq.get(move.product_id.sequence_id.code)
+                        new_lot = Lot.create({
+                            'name': new_seq,
+                            'product_id': move.product_id.id,
+                        })
+                        create_vals.update({
+                            'prodlot_id': new_lot.id,
+                            'parent_id': move.parent_asset_id.id or False,
+                        })
+                        asset_obj.create(create_vals)
         return result
 
 
