@@ -9,6 +9,8 @@ class HRExpenseExpense(models.Model):
     def _prepare_inv_header(self, partner_id, expense):
         invoice_vals = super(HRExpenseExpense, self).\
             _prepare_inv_header(partner_id, expense)
-        invoice_vals.update({'source_document_id': '%s,%s'
-                            % (self._model, expense.id)})
+        invoice_vals.update({
+            'source_document_id': '%s,%s' % (self._model, expense.id),
+            'source_document': expense.number,
+        })
         return invoice_vals

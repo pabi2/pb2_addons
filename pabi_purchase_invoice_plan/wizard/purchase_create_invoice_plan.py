@@ -10,7 +10,7 @@ from openerp.exceptions import Warning as UserError
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
     _inherit = 'purchase.create.invoice.plan.installment'
 
-    fiscal_year_id = fields.Many2one(
+    fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
     )
@@ -24,7 +24,7 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         obj_precision = self.env['decimal.precision']
         prec = obj_precision.precision_get('Account')
         line_by_fiscalyear = self.plan_id._get_total_by_fy()
-        order_amount = line_by_fiscalyear[self.fiscal_year_id.id]
+        order_amount = line_by_fiscalyear[self.fiscalyear_id.id]
         self.amount = round(order_amount * self.percent / 100, prec)
 
     @api.onchange('amount')
@@ -36,7 +36,7 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         obj_precision = self.env['decimal.precision']
         prec = obj_precision.precision_get('Account')
         line_by_fiscalyear = self.plan_id._get_total_by_fy()
-        order_amount = line_by_fiscalyear[self.fiscal_year_id.id]
+        order_amount = line_by_fiscalyear[self.fiscalyear_id.id]
         if not order_amount:
             raise Warning(_('Order amount equal to 0.0!'))
         new_val = self.amount / order_amount * 100
@@ -56,7 +56,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             order = self.env['purchase.order'].browse(purchase_id)
         line_by_fiscalyear = {}
         for line in order.order_line:
-            line_fy = line.fiscal_year_id
+            line_fy = line.fiscalyear_id
             if line_fy:
                 if line_fy.id not in line_by_fiscalyear:
                     line_by_fiscalyear[line_fy.id] = line.price_subtotal
@@ -86,7 +86,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order = self.env['purchase.order'].\
             browse(self._context.get('active_id'))
         if order.by_fiscalyear:
-            if any([not l.fiscal_year_id for l in order.order_line]):
+            if any([not l.fiscalyear_id for l in order.order_line]):
                 raise UserError(_('Please set fiscal year on product line'))
         return order.by_fiscalyear
 
@@ -110,16 +110,16 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         """It will return list of fiscal years on po lines of po"""
         fy_list = []
         for line in po.order_line:
-            if line.fiscal_year_id:
-                if line.fiscal_year_id.id not in fy_list:
-                    fy_list.append(line.fiscal_year_id.id)
+            if line.fiscalyear_id:
+                if line.fiscalyear_id.id not in fy_list:
+                    fy_list.append(line.fiscalyear_id.id)
         return fy_list
 
     @api.model
     def _validate_installment_date_range(self):
         fy_list = self._get_po_line_fy(self.po_id)
         fy_list = sorted(fy_list)
-        
+
         first_fy_id = False
         last_fy_id = False
         if fy_list:
@@ -164,7 +164,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
         line_by_fiscalyear = self._get_total_by_fy()
         line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
- 
+
         line_of_fy = {}
         count = 0
         installment_date = datetime.strptime(self.installment_date, "%Y-%m-%d")
@@ -177,22 +177,22 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
             if count == 0:
                 interval = 0
-            
+
             if self.interval_type == 'month':
                 installment_date =\
                     installment_date + relativedelta(months=+interval)
             elif self.interval_type == 'year':
                 installment_date =\
                     installment_date + relativedelta(years=+interval)
-            
+
             period_obj = self.env['account.period']
             period_ids = period_obj.find(dt=installment_date)
             fy_id = period_ids[0].fiscalyear_id
-            i.fiscal_year_id = fy_id
-            if i.fiscal_year_id.id not in line_of_fy:
-                line_of_fy[i.fiscal_year_id.id] = 1
+            i.fiscalyear_id = fy_id
+            if i.fiscalyear_id.id not in line_of_fy:
+                line_of_fy[i.fiscalyear_id.id] = 1
             else:
-                line_of_fy[i.fiscal_year_id.id] += 1
+                line_of_fy[i.fiscalyear_id.id] += 1
             i.date_invoice = installment_date
             count += 1
 
@@ -235,15 +235,15 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             if i.installment in new_line_dict:
                 f_amount = line_by_fiscalyear[new_line_dict[i.installment][2]]
 
-                if i.fiscal_year_id.id != new_line_dict[i.installment][2]:
-                    i.fiscal_year_id = new_line_dict[i.installment][2]
+                if i.fiscalyear_id.id != new_line_dict[i.installment][2]:
+                    i.fiscalyear_id = new_line_dict[i.installment][2]
 
                     fy_start_date = datetime.strptime(
-                        i.fiscal_year_id.date_start,"%Y-%m-%d")
+                        i.fiscalyear_id.date_start,"%Y-%m-%d")
                     date_str = str(fy_start_date.month) + '/' + \
                         str(installment_day) + '/' + str(fy_start_date.year)
                     i.date_invoice = datetime.strptime(date_str, '%m/%d/%Y')
-                
+
                 i.amount = new_line_dict[i.installment][1]
                 new_val = i.amount / f_amount * 100
                 if round(new_val, prec) != round(i.percent, prec):
@@ -275,7 +275,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     lines.append(line_data)
             elif install.installment > 0:
                 for order_line in order.order_line:
-                    if order_line.fiscal_year_id == install.fiscal_year_id:
+                    if order_line.fiscalyear_id == install.fiscalyear_id:
                         line_data = self._prepare_installment_line(order,
                                                                    order_line,
                                                                    install)
@@ -291,7 +291,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 _prepare_installment_line(order, order_line, install)
         if not self.by_fiscalyear:
             return result
-        result.update({'fiscal_year_id': install.fiscal_year_id.id})
+        result.update({'fiscalyear_id': install.fiscalyear_id.id})
         return result
 
     @api.model
@@ -300,5 +300,5 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 _prepare_advance_deposit_line(order, install, advance, deposit)
         if not self.by_fiscalyear:
             return result
-        result.update({'fiscal_year_id': install.fiscal_year_id.id})
+        result.update({'fiscalyear_id': install.fiscalyear_id.id})
         return result
