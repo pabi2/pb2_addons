@@ -3,16 +3,50 @@
 from openerp import models, fields, api
 
 
-class StockMove(models.Model):
+class StockAsset(models.Model):
 
-    _inherit = 'stock.move'
+    _inherit = 'account.asset.asset'
 
-    parent_asset_id = fields.Many2one(
-        'account.asset.asset',
-        string='Parent Asset'
+    @api.onchange('section_id')
+    def _onchange_section(self):
+        self.org_id = self.section.org_id.id
+
+    owner_id = fields.Many2one(
+        'res.users',
+        string='Owner',
     )
-
-    @api.multi
-    def write(self, vals):
-        result = super(StockMove, self).write(vals)
-        return result
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
+    requester = fields.Many2one(
+        'res.users',
+        string='Requester',
+    )
+    location_id = fields.Many2one(
+        'stock.location',
+        string='Building',
+    )
+    room = fields.Char(
+        string='Room',
+    )
+    serial_number = fields.Char(
+        string='Serial Number',
+    )
+    warranty = fields.Integer(
+        string='Warranty (Month)',
+    )
+    warranty_start_date = fields.Date(
+        string='Warranty Start Date',
+        default=lambda self: fields.Date.context_today(self),
+        track_visibility='onchange',
+    )
+    warranty_expire_date = fields.Date(
+        string='Warranty Expire Date',
+        default=lambda self: fields.Date.context_today(self),
+        track_visibility='onchange',
+    )
