@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0000000000000107"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="88"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
@@ -15,7 +15,7 @@ ou.id as ou_id,
 po.name as po_number,
 po.date_order as po_date,
 (SELECT it.value FROM  ir_translation it
-WHERE it.res_id = pol.org_id AND name LIKE 'res.org,name') as ou_name,
+WHERE it.res_id = ro.id AND name LIKE 'res.org,name') as ou_name,
 convert_from(rp_ou.image,'UTF8') as ou_image,
 CONCAT(rp_ou.street,' ',rp_ou.street2,' ',
 (SELECT rct.name FROM res_country_township rct WHERE rct.id = rp_ou.township_id),' ',
@@ -62,6 +62,8 @@ LEFT JOIN account_payment_term apt
 ON apt.id = po.payment_term_id
 LEFT JOIN purchase_order_line pol
 ON pol.order_id = po.id
+LEFT JOIN res_org ro
+ON ro.operating_unit_id = ou.id
 WHERE $X{IN, po.id, PIDS}]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
