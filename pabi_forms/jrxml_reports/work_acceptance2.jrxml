@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
-	<property name="ireport.zoom" value="1.7684607682500242"/>
-	<property name="ireport.x" value="511"/>
-	<property name="ireport.y" value="49"/>
+	<property name="ireport.zoom" value="0.9982500000000132"/>
+	<property name="ireport.x" value="20"/>
+	<property name="ireport.y" value="0"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -38,7 +38,8 @@ ORDER BY poc.id]]>
 	<queryString>
 		<![CDATA[SELECT
 rt.name tax_branch_name,
-ou.name operation_unit_name,
+(SELECT it.value FROM  ir_translation it
+WHERE it.res_id = ro.id AND name LIKE 'res.org,name') operation_unit_name,
 ou.id ou_id,
 pwa.name gr_no,
 pwa.create_date create_date,
@@ -86,6 +87,8 @@ LEFT JOIN product_uom pu
 ON pu.id = pwal.product_uom
 LEFT JOIN purchase_order_line pol
 ON pol.id = pwal.line_id
+LEFT JOIN res_org ro
+ON ro.operating_unit_id = ou.id
 WHERE $X{IN,pwa.id,PIDS}]]>
 	</queryString>
 	<field name="tax_branch_name" class="java.lang.String"/>
