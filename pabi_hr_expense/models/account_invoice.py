@@ -15,10 +15,16 @@ class AccountInvoice(models.Model):
         copy=False,
         readonly=True,
     )
-    is_diff_expense_amount = fields.Boolean(
+    diff_expense_amount_flag = fields.Integer(
         string='Amount different from expense',
-        compute='_compute_is_diff_expense_amount',
+        compute='_compute_diff_expense_amount_flag',
         readonly=True,
+        default=0,
+        help="""
+        * Flat = 0 when amount invoice = amount expense\n
+        * Flag = 1 when amount invoice > amount expense.\n
+        * Flag = -1 when amount invoice < amount expense.
+        """
     )
     diff_expense_amount_reason = fields.Char(
         string='Amount Diff Reason',
@@ -29,32 +35,34 @@ class AccountInvoice(models.Model):
 
     @api.multi
     @api.depends('amount_total')
-    def _compute_is_diff_expense_amount(self):
+    def _compute_diff_expense_amount_flag(self):
         for rec in self:
-            rec.is_diff_expense_amount = False
             if rec.expense_id:
+                rec.diff_expense_amount_flag = 0
                 clear_amount = sum([x.price_subtotal < 0.0 and
                                     x.price_subtotal or 0.0
                                     for x in rec.invoice_line])
                 amount = rec.amount_total - clear_amount
-                if amount != rec.amount_expense_request:
-                    rec.is_diff_expense_amount = True
+                rec.diff_expense_amount_flag = \
+                    float_compare(amount, rec.amount_expense_request,
+                                  precision_digits=1)
 
-    @api.one
-    @api.constrains('amount_total')
-    def _check_amount_not_over_expense(self):
-        # For expense related invoice
-        # Positive line amount must not over total expense
-        if self.expense_id:
-            # Negative amount is advance clearing
-            clear_amount = sum([x.price_subtotal < 0.0 and
-                                x.price_subtotal or 0.0
-                                for x in self.invoice_line])
-            amount = self.amount_total - clear_amount
-            # 1 digit precision only to avoid error.
-            if float_compare(amount, self.expense_id.amount,
-                             precision_digits=1) == 1:
-                raise UserError(_('New amount over expense is not allowed!'))
+    # Move checking to validate
+    # @api.one
+    # @api.constrains('amount_total')
+    # def _check_amount_not_over_expense(self):
+    #     # For expense related invoice
+    #     # Positive line amount must not over total expense
+    #     if self.expense_id:
+    #         # Negative amount is advance clearing
+    #         clear_amount = sum([x.price_subtotal < 0.0 and
+    #                             x.price_subtotal or 0.0
+    #                             for x in self.invoice_line])
+    #         amount = self.amount_total - clear_amount
+    #         # 1 digit precision only to avoid error.
+    #         if float_compare(amount, self.expense_id.amount,
+    #                          precision_digits=1) == 1:
+    #             raise UserError(_('New amount over expense is not allowed!'))
 
     @api.multi
     def confirm_paid(self):
@@ -100,7 +108,10 @@ class AccountInvoice(models.Model):
     def action_move_create(self):
         result = super(AccountInvoice, self).action_move_create()
         for invoice in self:
-            if invoice.is_diff_expense_amount and \
+            if invoice.diff_expense_amount_flag == 1:
+                raise UserError(
+                    _('New amount over expense is not allowed!'))
+            if invoice.diff_expense_amount_flag == -1 and \
                     not invoice.diff_expense_amount_reason:
                 raise UserError(
                     _('Total amount is changed from Expense Request Amount.\n'
