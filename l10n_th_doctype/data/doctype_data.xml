@@ -78,5 +78,18 @@
             <field name="sequence_id" ref="doctype_supplier_debitnote_seq"/>
             <field name="refer_type">in_invoice_debitnote</field>
         </record>
+
+        <!-- Expense -->
+        <record id="doctype_employee_expense" model="res.doctype" >
+            <field name="name">Employee Expense</field>
+            <field name="sequence_id" ref="doctype_employee_expense_seq"/>
+            <field name="refer_type">employee_expense</field>
+        </record>
+        <record id="doctype_employee_advance" model="res.doctype" >
+            <field name="name">Employee Advance</field>
+            <field name="sequence_id" ref="doctype_employee_advance_seq"/>
+            <field name="refer_type">employee_advance</field>
+        </record>
+
     </data>
 </openerp>

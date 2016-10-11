@@ -22,8 +22,6 @@ class AccountVoucher(models.Model):
     def _compute_doctype(self):
         doctype = self.env['res.doctype'].search([('refer_type', '=',
                                                    self.type)], limit=1)
-        if len(doctype) == 0:
-            raise ValidationError(_('Invalid Doctype!'))
         self.doctype_id = doctype.id
 
     @api.model

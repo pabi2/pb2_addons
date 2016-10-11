@@ -31,6 +31,9 @@ class ResDoctype(models.Model):
         ('in_invoice_debitnote', 'Supplier Debitnote'),
         ('out_refund', 'Customer Refund'),
         ('in_refund', 'Supplier Refund'),
+        # Expense
+        ('employee_expense', 'Employee Expense'),
+        ('employee_advance', 'Employee Advance'),
         ],
         string='Reference Document',
         readonly=True,
@@ -39,4 +42,14 @@ class ResDoctype(models.Model):
         'ir.sequence',
         string='Sequence',
         domain=[('special_type', '=', 'doctype')],
+    )
+    prefix = fields.Char(
+        related='sequence_id.prefix',
+        string='Prefix',
+    )
+    implementation = fields.Selection(
+        [('standard', 'Standard'),
+         ('no_gap', 'No gap'), ],
+        related='sequence_id.implementation',
+        string='Implementation',
     )

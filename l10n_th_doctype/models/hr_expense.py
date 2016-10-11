@@ -10,8 +10,8 @@ _DOCTYPE = {'quotation': 'purchase_quotation',
             'purchase_order': 'purchase_order'}
 
 
-class PurchaseOrder(models.Model):
-    _inherit = 'purchase.order'
+class HRExpense(models.Model):
+    _inherit = 'hr.expense.expense'
 
     doctype_id = fields.Many2one(
         'res.doctype',
@@ -22,20 +22,22 @@ class PurchaseOrder(models.Model):
     )
 
     @api.one
-    @api.depends('order_type')
+    @api.depends('is_employee_advance')
     def _compute_doctype(self):
-        refer_type = _DOCTYPE[self.order_type]
+        refer_type = 'employee_expense'
+        if self.is_employee_advance:
+            refer_type = 'employee_advance'
         doctype = self.env['res.doctype'].search([('refer_type', '=',
                                                    refer_type)], limit=1)
         self.doctype_id = doctype.id
 
     @api.model
     def create(self, vals):
-        new_order = super(PurchaseOrder, self).create(vals)
-        if new_order.doctype_id.sequence_id:
-            sequence_id = new_order.doctype_id.sequence_id.id
+        new_expense = super(HRExpense, self).create(vals)
+        if new_expense.doctype_id.sequence_id:
+            sequence_id = new_expense.doctype_id.sequence_id.id
             fiscalyear_id = self.env['account.fiscalyear'].find()
             next_number = self.with_context(fiscalyear_id=fiscalyear_id).\
                 env['ir.sequence'].next_by_id(sequence_id)
-            new_order.name = next_number
-        return new_order
+            new_expense.number = next_number
+        return new_expense

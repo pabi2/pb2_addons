@@ -29,6 +29,8 @@ If Sequence is not specified, it will be using sequence of Journal as normal.
         'account_voucher_action_move_line_create_hooks',
         'purchase_split_quote2order',
         'sale_split_quote2order',
+        'hr_expense_advance_clearing',
+
     ],
     "data": [
         "security/ir.model.access.csv",

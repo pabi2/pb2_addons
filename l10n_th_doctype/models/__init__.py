@@ -8,3 +8,4 @@ from . import account_invoice
 from . import ir_sequence
 from . import purchase
 from . import sale
+from . import hr_expense

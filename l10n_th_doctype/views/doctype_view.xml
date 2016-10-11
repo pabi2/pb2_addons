@@ -11,7 +11,9 @@
                 <tree string="Doctype" create="0" editable="1">
                     <field name="name"/>
                     <field name="sequence_id"/>
-                    <field name="refer_type"/>
+                    <field name="refer_type" invisible="1"/>
+                    <field name="prefix"/>
+                    <field name="implementation"/>
                 </tree>
             </field>
         </record>

@@ -26,8 +26,6 @@ class SaleOrder(models.Model):
         refer_type = _DOCTYPE[self.order_type]
         doctype = self.env['res.doctype'].search([('refer_type', '=',
                                                    refer_type)], limit=1)
-        if len(doctype) == 0:
-            raise ValidationError(_('Invalid Doctype!'))
         self.doctype_id = doctype.id
 
     @api.model

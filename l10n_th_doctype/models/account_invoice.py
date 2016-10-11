@@ -25,8 +25,6 @@ class AccountInvoice(models.Model):
             ttype += '_debitnote'
         doctype = self.env['res.doctype'].search([('refer_type', '=',
                                                    ttype)], limit=1)
-        if len(doctype) == 0:
-            raise ValidationError(_('Invalid Doctype!'))
         self.doctype_id = doctype.id
 
     @api.multi
