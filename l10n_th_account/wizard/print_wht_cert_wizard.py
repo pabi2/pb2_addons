@@ -116,6 +116,7 @@ class PrintWhtCertWizard(models.TransientModel):
     def _get_form_data(self):
         """ Data to pass as parameter in iReport """
         data = {}
+        TH = {'lang': 'th_TH'}
         voucher = self.voucher_id
         data['voucher_number'] = voucher.number
         data['date_value'] = voucher.date_value
@@ -151,7 +152,7 @@ class PrintWhtCertWizard(models.TransientModel):
         data['type_6_base'] = self._get_summary_by_type('base', '6')
         data['type_6_tax'] = self._get_summary_by_type('tax', '6')
         data['type_6_desc'] = self._get_summary_by_type('desc', '6')
-        data['signature'] = self.env.user.name_get()[0][1]
+        data['signature'] = self.with_context(TH).env.user.name_get()[0][1]
         return data
 
     @api.model
