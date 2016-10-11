@@ -22,7 +22,7 @@ PABI2 - Stock Asset
         "stock_asset",
     ],
     "data": [
-        "views/product_view.xml",
+        # "views/product_view.xml",
         "views/asset_view.xml",
         # "wizards/stock_transfer_details_view.xml",
     ],
