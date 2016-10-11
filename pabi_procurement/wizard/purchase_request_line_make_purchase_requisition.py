@@ -249,9 +249,11 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def make_purchase_requisition_original(self):
         pr_obj = self.env['purchase.requisition']
         pr_line_obj = self.env['purchase.requisition.line']
+        User = self.env['purchase.requisition.line']
         company_id = False
         picking_type_id = False
         requisition = False
+        default_ou_user_id =  User._get_operating_unit(self._uid)
         res = []
         for item in self.item_ids:
             line = item.line_id
@@ -276,6 +278,14 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                 raise exceptions.Warning(
                     _('You have to select lines '
                       'from the same picking type.'))
+            elif line.request_id.is_central_purchase:
+                Warehouse = self.env['stock.warehouse']
+                warehouses = Warehouse.search([
+                    ('operating_unit_id', '=', default_ou_user_id)
+                ])
+                for warehouse in warehouses:
+                    picking_type_id = warehouse.in_type_id.id
+                    break
             else:
                 picking_type_id = line_picking_type.id
 
@@ -284,6 +294,10 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             if not requisition:
                 preq_data = self._prepare_purchase_requisition(picking_type_id,
                                                                company_id)
+                if preq_data['is_central_purchase']:
+                    preq_data.update({
+                        'operating_unit_id': default_ou_user_id,
+                    })
                 requisition = pr_obj.create(preq_data)
 
             # Look for any other PO line in the selected PO with same
