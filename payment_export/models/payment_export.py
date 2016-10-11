@@ -225,20 +225,18 @@ class PaymentExport(models.Model):
         for export in self:
             if not export.line_ids:
                 raise UserError(_('No Export Lines'))
-            for line in export.line_ids:
-                if line.use_export_line:
-                    voucher = line.voucher_id
-                    export_voucher_ids =\
-                        self.env['payment.export.line'].\
-                        search([('voucher_id', '=', voucher.id)])
-                    voucher_done_export = [(e, e.voucher_id)
-                                           for e in export_voucher_ids
-                                           if e.export_id.state == 'done']
-                    if voucher_done_export:
-                        raise UserError(
-                            _("Supplier Payment %s has been exported by %s:")
-                            % (voucher_done_export[1].number,
-                               voucher_done_export[0].name))
+            voucher_ids = [x.use_export_line and x.voucher_id.id
+                           for x in export.line_ids]
+            exported_lines = self.env['payment.export.line'].\
+                search([('voucher_id', 'in', voucher_ids),
+                        ('use_export_line', '=', True),
+                        ('export_id.state', '=', 'done')])
+            print exported_lines
+            if exported_lines:
+                vouchers = [x.voucher_id.number for x in exported_lines]
+                message = _('Following payment had been exported.\n%s\n'
+                            'Please remove continue.') % (', '.join(vouchers),)
+                raise UserError(message)
             # Case Cheque only
             if export.is_cheque_lot:
                 for line in export.line_ids:
