@@ -176,7 +176,7 @@ ON validater.id = validator.partner_id
 LEFT JOIN res_taxbranch taxbranch
 ON taxbranch.id = po.taxbranch_id
 LEFT JOIN res_org ro
-ON ro.id = ro.operating_unit_id = ou.id
+ON ro.operating_unit_id = ou.id
 
 WHERE $X{IN, po.id, PIDS}]]>
 	</queryString>
