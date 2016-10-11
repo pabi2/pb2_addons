@@ -42,7 +42,6 @@ class StockMove(models.Model):
     @api.multi
     def write(self, vals):
         asset_obj = self.env['account.asset.asset']
-        asset_categ_obj = self.env['account.asset.category']
         Seq = self.env['ir.sequence']
         Lot = self.env['stock.production.lot']
         result = super(StockMove, self).write(vals)
@@ -69,20 +68,12 @@ class StockMove(models.Model):
                     partner_id = move.purchase_line_id.order_id.partner_id.id
                 elif move.picking_id and move.picking_id.partner_id:
                     partner_id = move.picking_id.partner_id.id
-                company_id = self.env.user.company_id.id
-                category_ids = asset_categ_obj.search(
-                    [('company_id', '=', company_id)], limit=1)
-                if category_ids:
-                    category_id = category_ids[0]
-                else:
-                    category_id = self.env.ref(
-                        "stock_asset.account_asset_category_misc_operational"
-                    )
+                category_id = move.product_id.categ_id.asset_category_id.id
                 # Process #
                 create_vals = {
-                    'name': move.product_id.name,
-                    'category_id': category_id.id or False,
-                    'code': move.lot_ids.name or False,
+                    'name': move.name,
+                    'category_id': category_id or False,
+                    'code': False,
                     'purchase_value': purchase_value,
                     'purchase_date': date,
                     'partner_id': partner_id,
@@ -107,6 +98,7 @@ class StockMove(models.Model):
                         })
                         create_vals.update({
                             'prodlot_id': new_lot.id,
+                            'code': new_lot.name,
                             'parent_id': move.parent_asset_id.id or False,
                         })
                         asset_obj.create(create_vals)
