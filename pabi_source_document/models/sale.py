@@ -15,6 +15,8 @@ class SaleOrder(models.Model):
         if invoice_id:
             for order in self:
                 invoice = self.env['account.invoice'].browse(invoice_id)
-                invoice.write({'source_document_id': '%s,%s'
-                               % (self._model, order.id)})
+                invoice.write({
+                    'source_document_id': '%s,%s' % (self._model, order.id),
+                    'source_document': order.name,
+                })
         return invoice_id
