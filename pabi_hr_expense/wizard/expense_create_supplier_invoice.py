@@ -78,6 +78,7 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
             context = self._context.copy()
             context.update({'default_multi_supplier_invoice_line': lines,
                             'default_amount_untaxed': amount_untaxed,
+                            'date_invoice': self.date_invoice,
                             'expense_id': expense.id})
             return {
                 'type': 'ir.actions.act_window',
