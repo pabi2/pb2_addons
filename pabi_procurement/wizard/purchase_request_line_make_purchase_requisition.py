@@ -156,6 +156,14 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         res = super(PurchaseRequestLineMakePurchaseRequisition,
                     self).default_get(fields)
         request_line_obj = self.env['purchase.request.line']
+        request_line_ids = self._context.get('active_ids', [])
+        for line in request_line_obj.browse(request_line_ids):
+            if line.request_id.is_central_purchase:
+                user_ou_id = self.env['res.users'].\
+                    operating_unit_default_get(self._uid)
+                res['operating_unit_id'] = user_ou_id
+                break
+        request_line_obj = self.env['purchase.request.line']
         request_line_ids = self.env.context['active_ids'] or []
         pr_lines = request_line_obj.browse(request_line_ids)
         self._check_line_reference(pr_lines)
@@ -249,7 +257,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def make_purchase_requisition_original(self):
         pr_obj = self.env['purchase.requisition']
         pr_line_obj = self.env['purchase.requisition.line']
-        User = self.env['purchase.requisition.line']
+        User = self.env['res.users']
         company_id = False
         picking_type_id = False
         requisition = False

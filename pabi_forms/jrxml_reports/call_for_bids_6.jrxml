@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
 	<property name="ireport.zoom" value="1.000000000000002"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="147"/>
+	<property name="ireport.y" value="184"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -200,7 +200,7 @@ left join purchase_requisition pd on pd.id = po.requisition_id
 LEFT JOIN res_partner_title rpt
 ON rpt.id = rp.title
 WHERE po.requisition_id = $P{ids}
-AND po.order_type LIKE 'quotation' ]]>
+AND po.order_type LIKE 'quotation']]>
 		</queryString>
 		<field name="rfq_number" class="java.lang.String"/>
 		<field name="supplier_name" class="java.lang.String"/>
@@ -725,7 +725,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_SUM}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="58" y="0" width="278" height="21"/>
+								<reportElement x="58" y="0" width="177" height="21"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>

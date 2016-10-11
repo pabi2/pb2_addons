@@ -45,10 +45,8 @@ WHERE pol.order_id = $P{ids}]]>
 po.id po_id,
 ou.id ou_id,
 ou_partner.image partner_image,
-(SELECT ro.name FROM purchase_order_line pol
-LEFT JOIN res_org ro
-ON pol.org_id = ro.id
-WHERE pol.order_id = po.id) partner_name,
+(SELECT ro.name FROM res_org ro
+WHERE ro.operating_unit_id = ou.id) partner_name,
 regexp_replace(ou_partner.street, '\r|\n', ' ', 'g') as partner_street,
 ou_township.name partner_township,
 ou_district.name partner_district,
