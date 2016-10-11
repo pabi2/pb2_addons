@@ -9,7 +9,7 @@ class StockAsset(models.Model):
 
     @api.onchange('section_id')
     def _onchange_section(self):
-        self.org_id = self.section.org_id.id
+        self.org_id = self.section_id.org_id.id
 
     owner_id = fields.Many2one(
         'res.users',
