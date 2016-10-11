@@ -26,9 +26,9 @@ class PurchaseOrder(models.Model):
                      ('state', 'in', [False, 'cancel'])]
                 )
         if installment:
-            fiscalyear = installment[0].fiscal_year_id
+            fiscalyear = installment[0].fiscalyear_id
             if po_line.order_id.by_fiscalyear:
-                if po_line.fiscal_year_id == fiscalyear:
+                if po_line.fiscalyear_id == fiscalyear:
                     inv_line_obj = self.env['account.invoice.line']
                     inv_line_id = inv_line_obj.create(inv_line_data).id
                     inv_lines.append(inv_line_id)
@@ -39,7 +39,7 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    fiscal_year_id = fields.Many2one(
+    fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
     )
@@ -52,7 +52,7 @@ class PurchaseOrderLine(models.Model):
 class PurchaseInvoicePlan(models.Model):
     _inherit = "purchase.invoice.plan"
 
-    fiscal_year_id = fields.Many2one(
+    fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
     )
