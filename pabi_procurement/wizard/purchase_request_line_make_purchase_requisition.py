@@ -153,18 +153,18 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-        res = super(PurchaseRequestLineMakePurchaseRequisition,
-                    self).default_get(fields)
         request_line_obj = self.env['purchase.request.line']
         request_line_ids = self._context.get('active_ids', [])
+        add_context = self._context.copy()
         for line in request_line_obj.browse(request_line_ids):
             if line.request_id.is_central_purchase:
                 user_ou_id = self.env['res.users'].\
                     operating_unit_default_get(self._uid)
-                res['operating_unit_id'] = user_ou_id
+                is_central = user_ou_id
+                add_context['is_central'] = is_central
                 break
-        request_line_obj = self.env['purchase.request.line']
-        request_line_ids = self.env.context['active_ids'] or []
+        res = super(PurchaseRequestLineMakePurchaseRequisition,
+                    self.with_context(add_context)).default_get(fields)
         pr_lines = request_line_obj.browse(request_line_ids)
         self._check_line_reference(pr_lines)
         return res
@@ -257,11 +257,9 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def make_purchase_requisition_original(self):
         pr_obj = self.env['purchase.requisition']
         pr_line_obj = self.env['purchase.requisition.line']
-        User = self.env['res.users']
         company_id = False
         picking_type_id = False
         requisition = False
-        default_ou_user_id =  User._get_operating_unit(self._uid)
         res = []
         for item in self.item_ids:
             line = item.line_id
@@ -289,7 +287,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             elif line.request_id.is_central_purchase:
                 Warehouse = self.env['stock.warehouse']
                 warehouses = Warehouse.search([
-                    ('operating_unit_id', '=', default_ou_user_id)
+                    ('operating_unit_id', '=', self.operating_unit_id.id)
                 ])
                 for warehouse in warehouses:
                     picking_type_id = warehouse.in_type_id.id
@@ -302,10 +300,6 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             if not requisition:
                 preq_data = self._prepare_purchase_requisition(picking_type_id,
                                                                company_id)
-                if preq_data['is_central_purchase']:
-                    preq_data.update({
-                        'operating_unit_id': default_ou_user_id,
-                    })
                 requisition = pr_obj.create(preq_data)
 
             # Look for any other PO line in the selected PO with same
