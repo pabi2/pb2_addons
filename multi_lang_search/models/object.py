@@ -63,7 +63,7 @@ class ModelExtended(models.Model):
         'ir.model.fields',
         string='Name Search Fields')
 
-    def _register_hook(self, cr, ids=None):
+    def register_hook(self, cr, ids=None):
 
         def make_name_search():
 
@@ -91,14 +91,14 @@ class ModelExtended(models.Model):
                             rec_name, name, res, limit)
                 return res
             return name_search
- 
+
         def make_search():
             @api.model
-            def _search(self, args, offset=0, limit=None, order=None, 
+            def _search(self, args, offset=0, limit=None, order=None,
                         count=False, access_rights_uid=None):
                 # Perform standard _search
                 result = _search.origin(
-                    self, args=args, offset=offset, limit=limit, order=order, 
+                    self, args=args, offset=offset, limit=limit, order=order,
                         count=count, access_rights_uid=access_rights_uid)
                 if args:
                      # Perform extended search
@@ -108,7 +108,7 @@ class ModelExtended(models.Model):
                             new_sub_domain = _extend_search_results_translation(self, a)
                             a = new_sub_domain
                     new_result = self._search.origin(
-                        self, args=base_domain, offset=offset, limit=limit, order=order, 
+                        self, args=base_domain, offset=offset, limit=limit, order=order,
                             count=count, access_rights_uid=access_rights_uid)
                     if not isinstance(result, list):
                         result = [result]
@@ -127,7 +127,7 @@ class ModelExtended(models.Model):
             if Model:
                 Model._patch_method('name_search', make_name_search())
                 Model._patch_method('_search', make_search())
-        return super(ModelExtended, self)._register_hook(cr)
+        return super(ModelExtended, self).register_hook(cr)
 
 # @api.model
 # def name_search(self, name='', args=None, operator='ilike', limit=100):
