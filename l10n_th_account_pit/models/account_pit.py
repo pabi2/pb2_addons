@@ -12,6 +12,7 @@ class PersonalIncomeTax(models.Model):
         'account.voucher',
         string='Voucher',
         index=True,
+        ondelete='cascade',
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -19,6 +20,7 @@ class PersonalIncomeTax(models.Model):
         domain=[('supplier', '=', True)],
         index=True,
         required=True,
+        ondelete='cascade',
     )
     date = fields.Date(
         string='Date',
