@@ -87,7 +87,6 @@
                                 groups="account.group_account_user"
                                 domain="[('type', 'not in', ['view', 'consolidation', 'closed']), ('activity_ids', '=', activity_id and [activity_id] or False)]"
                                 on_change="onchange_account_id(product_id, parent.partner_id, parent.type, parent.fiscal_position,account_id)"/>
-                            <field name="name"/>
                             <field name="company_id" invisible="1"/>
                             <field name="account_analytic_id" invisible="1"/>
 
@@ -95,6 +94,8 @@
                             <field name="activity_group_id"/>
                             <field name="activity_id"/>
 
+                            <field name="name"/>
+                            
                             <!-- Chart Fields -->
                             <field name="require_chartfield" invisible="1"/>
 

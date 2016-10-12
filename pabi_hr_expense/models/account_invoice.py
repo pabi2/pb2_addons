@@ -47,22 +47,10 @@ class AccountInvoice(models.Model):
                     float_compare(amount, rec.amount_expense_request,
                                   precision_digits=1)
 
-    # Move checking to validate
-    # @api.one
-    # @api.constrains('amount_total')
-    # def _check_amount_not_over_expense(self):
-    #     # For expense related invoice
-    #     # Positive line amount must not over total expense
-    #     if self.expense_id:
-    #         # Negative amount is advance clearing
-    #         clear_amount = sum([x.price_subtotal < 0.0 and
-    #                             x.price_subtotal or 0.0
-    #                             for x in self.invoice_line])
-    #         amount = self.amount_total - clear_amount
-    #         # 1 digit precision only to avoid error.
-    #         if float_compare(amount, self.expense_id.amount,
-    #                          precision_digits=1) == 1:
-    #             raise UserError(_('New amount over expense is not allowed!'))
+    @api.onchange('advance_expense_id')
+    def _onchange_advance_expense_id(self):
+        super(AccountInvoice, self)._onchange_advance_expense_id()
+        self.taxbranch_id = self.taxbranch_ids.id
 
     @api.multi
     def confirm_paid(self):

@@ -12,6 +12,7 @@ class AccountVoucher(models.Model):
         size=1000,
         compute='_compute_invoices_ref',
         string='Invoices',
+        store=True,
     )
     validate_user_id = fields.Many2one(
         'res.users',
@@ -57,9 +58,9 @@ class AccountVoucher(models.Model):
                 invoices = self.env['account.invoice'].browse(invoice_ids)
                 amount = sum([i.amount_total for i in invoices])
             if record.type == 'receipt':
-                record.total_ap_amount = amount
-            elif record.type == 'payment':
                 record.total_ar_amount = amount
+            elif record.type == 'payment':
+                record.total_ap_amount = amount
 
     @api.depends('line_ids')
     def _compute_invoices_ref(self):
