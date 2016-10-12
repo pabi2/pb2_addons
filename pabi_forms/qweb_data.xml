@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <openerp>
 <data>
-        <report 
+        <report
             id="account_supplier_invoices"
             model="account.invoice"
-            string="Supplier Invoices"
+            string="AP Voucher"
             report_type="qweb-pdf"
             name="pabi_forms.account_supplier_invoices_lang"
             file="pabi_forms.account_supplier_invoices_lang"
         />
 
-        <report 
+        <report
             id="account_supplier_payments"
             model="account.voucher"
-            string="Supplier Payments"
+            string="Payment Voucher"
             report_type="qweb-pdf"
             name="pabi_forms.account_supplier_payment_lang"
             file="pabi_forms.account_supplier_payment_lang"
