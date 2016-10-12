@@ -8,7 +8,7 @@
             <field name="name">view.res.doctype.tree</field>
             <field name="model">res.doctype</field>
             <field name="arch" type="xml">
-                <tree string="Doctype" create="0" editable="1">
+                <tree string="Doctype" create="0" editable="1" delete="0">
                     <field name="name"/>
                     <field name="sequence_id"/>
                     <field name="refer_type" invisible="1"/>
