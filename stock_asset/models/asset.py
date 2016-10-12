@@ -51,6 +51,8 @@ class StockMove(models.Model):
             #     [('prodlot_id', '=', move.lot_ids.id)], limit=1)
             # if (move.state == 'done' and not asset_ids and
             if (move.state == 'done' and
+                move.picking_id.state != 'done' and
+                move.picking_id.picking_type_code == 'incoming' and
                 (move.generate_asset is True or
                  move.product_id.financial_asset is True)):
                 #  Initialization
@@ -129,5 +131,16 @@ class AccountAssetAsset(models.Model):
         'unique (prodlot_id,company_id)',
         'This prodlot is already link to an asset !'
     )]
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for record in self:
+            if record.code:
+                name = "[%s] %s" % (record.code, record.name)
+            else:
+                name = record.name
+            res.append((record.id, name))
+        return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
