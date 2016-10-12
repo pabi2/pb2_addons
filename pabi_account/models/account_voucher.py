@@ -95,14 +95,14 @@ class AccountVoucher(models.Model):
 
     @api.multi
     def proforma_voucher(self):
-        for voucher in self:
-            taxbranchs = []
-            for line in voucher.line_ids:
-                if line.amount or line.amount_wht or line.amount_retention:
-                    taxbranchs.append(line.supplier_invoice_taxbranch_id.id)
-            if len(list(set(taxbranchs))) > 1:
-                raise UserError(_('Mixing invoices of different '
-                                  'tax branch is not allowed!'))
+        # for voucher in self:
+        #     taxbranchs = []
+        #     for line in voucher.line_ids:
+        #         if line.amount or line.amount_wht or line.amount_retention:
+        #             taxbranchs.append(line.supplier_invoice_taxbranch_id.id)
+        #     if len(list(set(taxbranchs))) > 1:
+        #         raise UserError(_('Mixing invoices of different '
+        #                           'tax branch is not allowed!'))
         result = super(AccountVoucher, self).proforma_voucher()
         for voucher in self:
             voucher.write({'validate_user_id': self.env.user.id,
