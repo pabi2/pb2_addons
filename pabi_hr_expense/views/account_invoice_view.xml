@@ -8,11 +8,11 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/group/group" position="inside">
-                    <field name="is_diff_expense_amount" invisible="1"/>
+                    <field name="diff_expense_amount_flag" invisible="1"/>
                     <field name="amount_expense_request"
-                    	attrs="{'invisible': [('is_diff_expense_amount', '=', False)]}"/>
+                    	attrs="{'invisible': [('diff_expense_amount_flag', '!=', -1)]}"/>
                     <field name="diff_expense_amount_reason" placeholder="Reason for amount difference"
-                    	attrs="{'invisible': [('is_diff_expense_amount', '=', False)]}"/>
+                    	attrs="{'invisible': [('diff_expense_amount_flag', '!=', -1)]}"/>
                 </xpath>
             </field>
         </record>
@@ -29,7 +29,7 @@
                 	<filter string="Responsible" context="{'group_by':'user_id'}"/>
                 </filter>
             </field>
-        </record>        
-        
+        </record>
+
 	</data>
 </openerp>

@@ -110,6 +110,10 @@ class HRExpense(models.Model):
         related='section_id.code',
         store=True,
     )
+    reason_bypass_procure = fields.Char(
+        string='Reason purchase bypass procurement',
+        readonly=True,
+    )
 
     @api.multi
     def write(self, vals):
@@ -270,6 +274,9 @@ class HRExpenseAttendeeExternal(models.Model):
     )
     position = fields.Char(
         string='Position',
+    )
+    organization = fields.Char(
+        string='Organization',
     )
 
 

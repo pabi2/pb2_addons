@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+
+        <record model="ir.ui.view" id="view_account_invoice_filter">
+            <field name="name">view.account.invoice.filter</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="source_document" string="Source Document Ref."/>
+                </xpath>
+                <xpath expr="//search/group" position="inside">
+                    <filter name="group_by_source_document" string="Source Document Ref" context="{'group_by':'source_document'}"/>
+                </xpath>
+            </field>
+        </record>
+
         # Customer Invoice/Refund
         <record id="invoice_form" model="ir.ui.view">
             <field name="name">account.invoice.form</field>

@@ -16,7 +16,8 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         request_line_obj = self.env['purchase.request.line']
         request_line_ids = self._context.get('active_ids', [])
         active_model = self.env.context['active_model']
-        res = {}
+        res = super(PurchaseRequestLineMakePurchaseRequisition,
+                    self).default_get(fields)
 
         if not request_line_ids:
             return res

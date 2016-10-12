@@ -35,7 +35,7 @@
             <field name="help">Print PABI Monthly Work Acceptance Report</field>
         </record>
 
-        <menuitem id="menu_pabi_monthly_work_acceptance_report_wizard" action="action_pabi_monthly_work_acceptance_report_wizard" parent="jasper_reports.jasper_reports_menu" sequence="110"/>
+        <menuitem id="menu_pabi_monthly_work_acceptance_report_wizard" action="action_pabi_monthly_work_acceptance_report_wizard" parent="pabi_purchase_report.menu_purchase_report" sequence="110"/>
 
     </data>
 </openerp>

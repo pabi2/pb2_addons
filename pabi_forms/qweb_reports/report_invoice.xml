@@ -71,9 +71,9 @@
                         <tr style="border-top: 1px solid;">
                             <th rowspan="2">Account</th>
                             <th rowspan="2">Name</th>
-                            <th colspan="2" class="text-center" >Amount(THB)</th>
+                            <th colspan="2" class="text-center" >Amount (THB)</th>
                             <th rowspan="2">Org</th>
-                            <th rowspan="2">Costcenter</th>
+                            <th rowspan="2">Section</th>
                             <th rowspan="2">Project</th>
                             <th rowspan="2">Cost Control</th>
                         </tr>
@@ -87,10 +87,18 @@
                             <tr t-foreach="o.move_id.line_id" t-as="move_line" style="page-break-inside: avoid;">
                                 <td><span t-field="move_line.account_id.code"/></td>
                                 <td><span t-field="move_line.account_id.name"/></td>
-                                <td><span t-esc="move_line.debit &gt; 0.0 and move_line.debit or ''"/></td>
-                                <td><span t-esc="move_line.credit &gt; 0.0 and move_line.credit or ''"/></td>
-                                <td><span t-field="move_line.org_id.code"></span></td>
-                                <td><span t-field="move_line.costcenter_id.code"></span></td>
+                                <td>
+                                    <t t-if="move_line.debit &gt; 0.0">
+                                        <span t-field="move_line.debit"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="move_line.credit &gt; 0.0">
+                                        <span t-field="move_line.credit"/>
+                                    </t>
+                                </td>
+                                <td><span t-field="move_line.org_id.name_short"></span></td>
+                                <td><span t-field="move_line.section_id.code"></span></td>
                                 <td><span t-field="move_line.project_id.code"></span></td>
                                 <td><span t-field="move_line.cost_control_id.code"></span></td>
                             </tr>

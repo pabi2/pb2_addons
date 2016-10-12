@@ -12,6 +12,10 @@ class AccountInvoice(models.Model):
         string='Source Document Ref.',
         readonly=True,
     )
+    source_document = fields.Char(
+        string='Source Document Ref.',
+        readonly=True,
+    )
 
     @api.model
     def _prepare_refund(self, invoice, date=None, period_id=None,
@@ -23,4 +27,5 @@ class AccountInvoice(models.Model):
             invoice_refund_vals['source_document_id'] =\
                 '%s,%s' % (invoice.source_document_id._model,
                            invoice.source_document_id.id)
+            invoice_refund_vals['source_document'] = invoice.source_document
         return invoice_refund_vals

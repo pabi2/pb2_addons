@@ -374,7 +374,7 @@ class HRExpense(models.Model):
     @api.model
     def send_signal_to_pabiweb(self, signal, comment=''):
         alfresco = self._get_alfresco_connect()
-        if not alfresco:
+        if alfresco is False:
             return False
         arg = {
             'action': signal,
@@ -397,7 +397,7 @@ class HRExpense(models.Model):
     @api.model
     def send_comment_to_pabiweb(self, status, status_th, comment):
         alfresco = self._get_alfresco_connect()
-        if not alfresco:
+        if alfresco is False:
             return False
         arg = {
             'by': self.env.user.login,
@@ -410,10 +410,10 @@ class HRExpense(models.Model):
         result = False
         if self.is_employee_advance:
             arg.update({'avNo': self.number})
-            result = alfresco.brw.action(arg)
+            result = alfresco.brw.history(arg)
         else:
             arg.update({'exNo': self.number})
-            result = alfresco.use.action(arg)
+            result = alfresco.use.history(arg)
         if not result['success']:
             raise UserError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

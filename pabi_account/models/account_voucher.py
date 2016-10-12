@@ -165,7 +165,8 @@ class AccountVoucherTax(models.Model):
         if tax_move_by_taxbranch:
             wht_taxbranch_id = self.env.user.company_id.wht_taxbranch_id.id
             for r in res:
-                if r['tax_code_type'] == 'wht' and wht_taxbranch_id:
+                if 'tax_code_type' in r and r['tax_code_type'] == 'wht' \
+                        and wht_taxbranch_id:
                     r.update({'taxbranch_id': wht_taxbranch_id})
                 else:
                     r.update({'taxbranch_id': taxbranch_id})

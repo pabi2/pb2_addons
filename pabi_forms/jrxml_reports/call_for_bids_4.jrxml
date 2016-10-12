@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.0000000000000162"/>
+	<property name="ireport.zoom" value="0.909090909090924"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="185"/>
+	<property name="ireport.y" value="104"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -177,7 +177,8 @@ WHERE pdc.requisition_id = $P{ids}]]>
 	<subDataset name="committee_detail1">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
-			<![CDATA[SELECT
+			<![CDATA[SELECT DISTINCT
+prc.sequence,
 prc.name,
 prc.position
 FROM purchase_requisition_committee prc
@@ -193,7 +194,8 @@ ORDER BY prc.sequence]]>
 	<subDataset name="committee_detail2">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
-			<![CDATA[SELECT
+			<![CDATA[SELECT DISTINCT
+prc.sequence,
 prc.name,
 prc.position
 FROM purchase_requisition_committee prc
@@ -209,7 +211,8 @@ ORDER BY prc.sequence]]>
 	<subDataset name="committee_detail3">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
-			<![CDATA[SELECT
+			<![CDATA[SELECT DISTINCT
+prc.sequence,
 prc.name,
 prc.position
 FROM purchase_requisition_committee prc
@@ -292,22 +295,24 @@ left join res_section rs on he.section_id = rs.id
 WHERE ru.id = pd.request_uid) as department,
 pd.objective,
 pd.amount_total,
-po.delivery_address as deliver_to,
+pd.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
 pd.doc_body as footer,
-po.name as rfq_number,
+(SELECT p.name FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed') as rfq_number,
 (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) FROM res_partner rp
 LEFT JOIN res_partner_title rpt
 ON rpt.id = rp.title
-WHERE rp.id = po.partner_id) as rfq_supplier,
+WHERE rp.id = po.partner_id AND po.state = 'confirmed') as rfq_supplier,
 (SELECT rp.taxbranch FROM res_partner rp
-WHERE rp.id = po.partner_id) as rfq_taxbranch,
-po.amount_total as rfq_amount_total,
+WHERE rp.id = po.partner_id AND po.state = 'confirmed') as rfq_taxbranch,
+(SELECT p.amount_total FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed') as rfq_amount_total,
 
 po.minimum_planned_date-DATE(now()) as minimum_planned_date,
 (SELECT p.amount_total_text_th FROM purchase_order p
-WHERE p.requisition_id = pd.id AND p.state = 'done'),
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed'),
 
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
@@ -391,6 +396,9 @@ LEFT JOIN purchase_price_range ppr
 ON ppr.id = pd.purchase_price_range_id
 LEFT JOIN purchase_order po
 ON po.requisition_id = pd.id AND po.state = 'confirmed'
+
+
+
 
 WHERE $X{IN, pd.id, PIDS}]]>
 	</queryString>
@@ -720,7 +728,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_SUM}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="58" y="0" width="280" height="21"/>
+								<reportElement x="58" y="0" width="177" height="21"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -986,10 +994,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[คณะกรรมการตรวจรับพัสดุ/การจ้าง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="27" width="186" height="100"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="27" width="186" height="100"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement lineSpacing="Single">
@@ -998,10 +1006,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="186" y="27" width="184" height="100"/>
+				<reportElement stretchType="RelativeToTallestObject" x="186" y="27" width="184" height="100"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement lineSpacing="Single">
@@ -1010,10 +1018,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="370" y="27" width="184" height="100"/>
+				<reportElement stretchType="RelativeToTallestObject" x="370" y="27" width="184" height="100"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement lineSpacing="Single">
@@ -1189,6 +1197,18 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</box>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="27" width="554" height="100"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement lineSpacing="Single">
+					<font fontName="TH SarabunPSK"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>

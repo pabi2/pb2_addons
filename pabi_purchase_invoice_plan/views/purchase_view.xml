@@ -14,7 +14,12 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                     <field name="by_fiscalyear" invisible="True"/>
-                    <field name="fiscal_year_id"/>
+                    <field name="fiscalyear_id"/>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_draft_invoices']" position="attributes">
+                    <attribute name="attrs">{'invisible':['|',('state', 'not in', ('approved')),
+                                                 '|',('invoice_method', '!=', 'invoice_plan'),
+                                                 '|',('plan_invoice_created','!=',True)]}</attribute>
                 </xpath>
             </field>
         </record>
