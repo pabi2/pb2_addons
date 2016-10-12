@@ -24,7 +24,7 @@
                 <xpath expr="//sheet/field[@name='account_id']" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
                         <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
-                            <field string="AR" name="total_ar_amount" widget="statinfo"/>
+                            <div><strong><field name="total_ap_amount" widget="monetary"/></strong><br/>AP</div>
                         </button>
                     </div>
                 </xpath>
@@ -40,7 +40,7 @@
                 <xpath expr="//sheet/h1" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
                         <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
-                            <field string="AP" name="total_ap_amount" widget="statinfo"/>
+                            <div><strong><field name="total_ar_amount" widget="monetary"/></strong><br/>AR</div>
                         </button>
                     </div>
                 </xpath>
@@ -53,6 +53,9 @@
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='number']" position="before">
+                    <field name="date_value"/>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="before">
                     <field name="invoices_text"/>
                 </xpath>
