@@ -294,10 +294,10 @@ class PurchaseVatReport(models.Model):
             COALESCE(SUM(atd.amount), 0.0) as tax_amount,
             atd.invoice_date as date,
             atd.invoice_number as number,
-            ait.base_code_id,
-            ait.tax_code_id,
+            coalesce(ait.base_code_id, avt.base_code_id) as base_code_id,
+            coalesce(ait.tax_code_id, avt.tax_code_id) as tax_code_id,
             atd.period_id,
-            ait.company_id,
+            coalesce(ait.company_id, avt.company_id) as company_id,
             p.name as partner_name,
             p.vat as tax_id,
             atd.tax_sequence_display as tax_sequence,
@@ -326,16 +326,9 @@ class PurchaseVatReport(models.Model):
 
     def _get_groupby(self):
         groupby_str = """
-            atd.id,
-            atd.invoice_date,
-            atd.invoice_number,
-            p.name,
-            p.vat,
-            p.taxbranch,
-            ait.base_code_id,
-            ait.tax_code_id,
-            atd.taxbranch_id,
-            ait.company_id
+          atd.id, atd.invoice_date, atd.invoice_number, p.name, p.vat,
+          p.taxbranch, ait.base_code_id, avt.base_code_id, ait.tax_code_id,
+          avt.tax_code_id, atd.taxbranch_id, ait.company_id, avt.company_id
         """
         return groupby_str
 
