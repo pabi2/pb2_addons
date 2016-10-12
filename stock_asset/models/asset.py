@@ -51,7 +51,7 @@ class StockMove(models.Model):
             #     [('prodlot_id', '=', move.lot_ids.id)], limit=1)
             # if (move.state == 'done' and not asset_ids and
             if (move.state == 'done' and
-                move.picking_id.state != 'done' and
+                # move.picking_id.state != 'done' and
                 move.picking_id.picking_type_code == 'incoming' and
                 (move.generate_asset is True or
                  move.product_id.financial_asset is True)):
