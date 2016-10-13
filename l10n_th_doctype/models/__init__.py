@@ -9,3 +9,4 @@ from . import ir_sequence
 from . import purchase
 from . import sale
 from . import hr_expense
+from . import stock

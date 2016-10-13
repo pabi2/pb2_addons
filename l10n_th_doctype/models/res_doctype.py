@@ -34,6 +34,10 @@ class ResDoctype(models.Model):
         # Expense
         ('employee_expense', 'Employee Expense'),
         ('employee_advance', 'Employee Advance'),
+        # Stock
+        ('incoming_shipment', 'Incoming Shipment'),
+        ('delivery_order', 'Delivery Order'),
+        ('internal_transfer', 'Internal Transfer'),
         ],
         string='Reference Document',
         readonly=True,
