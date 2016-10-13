@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+        <!--
+          * Work Acceptance
+          * Approval Report
+          * Stock Request
+          * Stock Transfer
+          * Stock Borrow
+        -->
+        <record id="doctype_work_acceptance" model="res.doctype" >
+            <field name="name">Work Acceptance</field>
+            <field name="sequence_id" ref="doctype_work_acceptance_seq"/>
+            <field name="refer_type">work_acceptance</field>
+        </record>
+        <record id="doctype_approval_report" model="res.doctype" >
+            <field name="name">Approval Report</field>
+            <field name="sequence_id" ref="doctype_approval_report_seq"/>
+            <field name="refer_type">approval_report</field>
+        </record>
+        <record id="doctype_stock_request" model="res.doctype" >
+            <field name="name">Stock Request</field>
+            <field name="sequence_id" ref="doctype_stock_request_seq"/>
+            <field name="refer_type">stock_request</field>
+        </record>
+        <record id="doctype_stock_transfer" model="res.doctype" >
+            <field name="name">Stock Transfer</field>
+            <field name="sequence_id" ref="doctype_stock_transfer_seq"/>
+            <field name="refer_type">stock_transfer</field>
+        </record>
+        <record id="doctype_stock_borrow" model="res.doctype" >
+            <field name="name">Stock Borrow</field>
+            <field name="sequence_id" ref="doctype_stock_borrow_seq"/>
+            <field name="refer_type">stock_borrow</field>
+        </record>
+
+    </data>
+</openerp>
