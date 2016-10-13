@@ -46,19 +46,13 @@ class StockMove(models.Model):
         Lot = self.env['stock.production.lot']
         result = super(StockMove, self).write(vals)
         for move in self:
-            asset_ids = []
-            # asset_ids = asset_obj.search(
-            #     [('prodlot_id', '=', move.lot_ids.id)], limit=1)
-            # if (move.state == 'done' and not asset_ids and
             if (move.state == 'done' and
-                # move.picking_id.state != 'done' and
                 move.picking_id.picking_type_code == 'incoming' and
                 (move.generate_asset is True or
                  move.product_id.financial_asset is True)):
                 #  Initialization
                 date = move.date
                 partner_id = False
-                purchase_value = 0
                 if move.purchase_line_id:
                     purchase_value = move.purchase_line_id.price_unit
                     date = move.purchase_line_id.date_planned
@@ -81,8 +75,6 @@ class StockMove(models.Model):
                     'partner_id': partner_id,
                     'product_id': move.product_id and
                     move.product_id.id or False,
-                    # 'prodlot_id': move.lot_ids and
-                    # move.lot_ids.id or False,
                     'move_id': move.id,
                     'picking_id': move.picking_id and
                     move.picking_id.id or False,
