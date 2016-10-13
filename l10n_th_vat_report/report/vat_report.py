@@ -34,7 +34,6 @@ class VatReportParser(report_sxw.rml_parse):
         return tax_lines
 
     def get_lines(self, record):
-        print record
         tax_details = []
         if record.tax_id.type_tax_use == 'sale':
             tax_details = self._get_tax_lines(record, 'sale.vat.report')
