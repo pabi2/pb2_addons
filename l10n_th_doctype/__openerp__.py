@@ -30,7 +30,7 @@ If Sequence is not specified, it will be using sequence of Journal as normal.
         'purchase_split_quote2order',
         'sale_split_quote2order',
         'hr_expense_advance_clearing',
-
+        'stock',
     ],
     "data": [
         "security/ir.model.access.csv",
