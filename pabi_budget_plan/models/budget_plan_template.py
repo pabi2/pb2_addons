@@ -7,6 +7,7 @@ import openerp.addons.decimal_precision as dp
 
 class BudgetPlanTemplate(ChartField, models.Model):
     _name = "budget.plan.template"
+    _inherit = ['mail.thread']
     _description = "Budget Plan Template"
 
     name = fields.Char(
@@ -68,6 +69,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
         required=True,
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
 
     @api.multi

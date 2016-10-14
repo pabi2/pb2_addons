@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 from .budget_plan_template import BudgetPlanCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
@@ -8,6 +9,7 @@ from openerp.addons.account_budget_activity.models.account_activity \
 class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherits = {'budget.plan.template': 'template_id'}
+    _inherit = ['mail.thread']
     _description = "Unit Based - Budget Plan"
 
     template_id = fields.Many2one(
@@ -41,6 +43,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     @api.multi
     def unlink(self):
         for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_('You can not delete non-draft records!'))
             rec.plan_line_ids.mapped('template_id').unlink()
         self.mapped('template_id').unlink()
         return super(BudgetPlanUnit, self).unlink()
