@@ -58,9 +58,10 @@ class BudgetPlanTemplate(ChartField, models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('submit', 'Submitted'),
+         ('accept', 'Accepted'),
          ('cancel', 'Cancelled'),
          ('reject', 'Rejected'),
-         ('approve', 'Approved')],
+         ('approve', 'Verified')],
         string='Status',
         default='draft',
         index=True,
@@ -254,6 +255,11 @@ class BudgetPlanCommon(object):
     @api.multi
     def button_reject(self):
         self.write({'state': 'reject'})
+        return True
+
+    @api.multi
+    def button_accept(self):
+        self.write({'state': 'accept'})
         return True
 
     @api.multi

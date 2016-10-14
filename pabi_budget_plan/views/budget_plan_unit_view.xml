@@ -9,11 +9,12 @@
                 <form string="Budget Plan">
                     <header>
                         <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Accept" name="button_accept" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" name="button_approve" states="accept" type="object" class="oe_highlight"/>
                         <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Reset to Draft" name="button_draft" states="cancel" type="object" />
+                        <button string="Reset to Draft" name="button_draft" states="cancel,accept" type="object" />
                         <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,reject,approve"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,accept,reject,approve"/>
                     </header>
                 	<sheet>
 	                    <div class="oe_title">
