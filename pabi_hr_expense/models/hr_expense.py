@@ -132,7 +132,7 @@ class HRExpense(models.Model):
                         exp.send_signal_to_pabiweb(signals[to_state])
         except Exception, e:
             self._cr.rollback()
-            raise ValidationError(e)
+            raise ValidationError(str(e))
         return res
 
     @api.multi
