@@ -27,11 +27,12 @@ To-Be:
     'category': 'Accounting',
     'website': 'http://www.ecosoft.co.th',
     'images': [],
-    'depends': ['account',
-                'account_voucher',
-                'account_invoice_cancel_hooks',
-                'account_voucher_cancel_hooks',
-                ],
+    'depends': [
+        'account',
+        'account_voucher',
+        'account_invoice_cancel_hooks',
+        'account_voucher_cancel_hooks',
+    ],
     'demo': [],
     'data': [
         'views/voucher_payment_receipt_view.xml',
