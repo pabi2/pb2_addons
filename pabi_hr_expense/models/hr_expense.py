@@ -203,7 +203,7 @@ class HRExpenseAdvanceDueHistory(models.Model):
     _order = 'write_date desc'
 
     expense_id = fields.Many2one(
-        'hr.expense',
+        'hr.expense.expense',
         string='Expense',
         ondelete='cascade',
         index=True,
@@ -232,7 +232,7 @@ class HRExpenseAttendeeEmployee(models.Model):
         default=10,
     )
     expense_id = fields.Many2one(
-        'hr.expense',
+        'hr.expense.expense',
         string='Expense',
         ondelete='cascade',
         index=True,
@@ -264,7 +264,7 @@ class HRExpenseAttendeeExternal(models.Model):
         default=10,
     )
     expense_id = fields.Many2one(
-        'hr.expense',
+        'hr.expense.expense',
         string='Expense',
         ondelete='cascade',
         index=True,
