@@ -24,9 +24,18 @@
                 <xpath expr="//sheet/field[@name='account_id']" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
                         <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
-                            <div><strong><field name="total_ap_amount" widget="monetary"/></strong><br/>AP</div>
+                            <div>
+                                <strong><field name="total_ap_amount" widget="monetary"/></strong><br/>AP</div>
                         </button>
                     </div>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="replace"/>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="before">
+                    <field name="reconcile" on_change="onchange_reconcile(reconcile, amount, amount_unreconciled, context)" groups="account.group_account_user"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="replace"/>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="before">
+                    <field name="reconcile" on_change="onchange_reconcile(reconcile, amount, amount_unreconciled, context)" groups="account.group_account_user"/>
                 </xpath>
             </field>
         </record>
@@ -40,9 +49,18 @@
                 <xpath expr="//sheet/h1" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
                         <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
-                            <div><strong><field name="total_ar_amount" widget="monetary"/></strong><br/>AR</div>
+                            <div>
+                                <strong><field name="total_ar_amount" widget="monetary"/></strong><br/>AR</div>
                         </button>
                     </div>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="replace"/>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="before">
+                    <field name="reconcile" on_change="onchange_reconcile(reconcile, amount, amount_unreconciled, context)" groups="account.group_account_user"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="replace"/>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="before">
+                    <field name="reconcile" on_change="onchange_reconcile(reconcile, amount, amount_unreconciled, context)"/>
                 </xpath>
             </field>
         </record>
