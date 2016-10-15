@@ -21,7 +21,6 @@ HR Expense Advance Clearing
         'account_invoice_type',
         "hr_expense_sequence",
         "hr_expense_auto_invoice",
-        'account_cancel_with_reversal',
     ],
     "data": [
         'security/ir.model.access.csv',

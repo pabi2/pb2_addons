@@ -127,7 +127,8 @@ class AccountVoucher(common_voucher, models.Model):
                         not voucher.recognize_vat_move_id.reversal_id:
                     raise UserError(
                         _('To Unreconcile this payment, you must reverse '
-                          'the Recognize VAT Entry first.'))
+                          'the Recognized VAT Entry first.'))
+        super(AccountVoucher, self).cancel_voucher()
 
     @api.model
     def _compute_writeoff_amount(self,

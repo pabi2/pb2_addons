@@ -38,15 +38,18 @@ class AccountMoveReversal(models.TransientModel):
         account_move_line_obj = self.env['account.move.line']
         period_obj = self.env['account.period']
         date = time.strftime('%Y-%m-%d')
-        ids = period_obj.find(dt=date)
-        period_id = ids and ids[0] or False
+        periods = period_obj.find(dt=date)
+        period_id = periods and periods[0].id or False
+        print move_ids
         # Getting move_line_ids of the voided documents.
-        self._cr.execute('select aml.id from account_move_line aml \
-                        join account_account aa on aa.id = aml.account_id \
-                        where aa.reconcile = true and aml.reconcile_id is null\
-                        and aml.move_id in %s', (tuple(move_ids), ))
+        self._cr.execute(
+            'select aml.id from account_move_line aml '
+            'join account_account aa on aa.id = aml.account_id '
+            'where aa.reconcile = true '
+            # 'and aml.reconcile_id is null '
+            'and aml.move_id in %s', (tuple(move_ids), ))
         move_line_ids = map(lambda x: x[0], self._cr.fetchall())
-
+        print move_line_ids
         move_line_ids = account_move_line_obj.browse(move_line_ids)
         line_dict = {}
         for line in move_line_ids:
