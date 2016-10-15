@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="l10n_th_doctype.view_res_doctype_tree"/>
             <field name="arch" type="xml">
                 <field name="implementation" position="after" >
-                    <field name="with_reversal" invisible="1" />
+                    <field name="with_reversal" readonly="1"/>
                     <field name="reversal_sequence_id" attrs="{'readonly': [('with_reversal', '=', False)]}" />
                 </field>
             </field>
