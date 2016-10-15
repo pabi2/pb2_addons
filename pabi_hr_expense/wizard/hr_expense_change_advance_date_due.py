@@ -6,7 +6,7 @@ class HRExpenseChangeAdvanceDateDue(models.TransientModel):
     _name = "hr.expense.change.advance.date.due"
 
     expense_id = fields.Many2one(
-        'hr.expense',
+        'hr.expense.expense',
         string='Expense',
         default=lambda self: self._context.get('active_id', False),
     )
