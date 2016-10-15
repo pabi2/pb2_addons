@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Account Cancel Extra',
+    'name': 'Account Cancel Reversal',
     'version': '1.0',
     'author': 'Ecosoft',
     'summary': 'Cancel Invoice / Voucher by create reversed journal entry',
@@ -34,8 +34,8 @@ To-Be:
                 ],
     'demo': [],
     'data': [
+        'views/voucher_payment_receipt_view.xml',
         'views/account_invoice_view.xml',
-        'views/voucher_payment_receipt_view.xml'
     ],
     'test': [
     ],

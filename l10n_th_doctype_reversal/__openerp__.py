@@ -6,7 +6,7 @@
     "category": "Accounting & Finance",
     "description": """
 
-Extension for case Cancel with Reversal (account_cancel_with_reversal)
+Extension for case Cancel with Reversal (account_cancel_reversal)
 
     """,
     "website": "https://ecosoft.co.th/",
