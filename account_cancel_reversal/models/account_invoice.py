@@ -24,7 +24,6 @@ class AccountInvoice(models.Model):
     def action_cancel(self):
         res = super(AccountInvoice, self).action_cancel()
         # First, set the invoices as cancelled and detach the move ids
-        reverse_move_id = False
         for inv in self:  # For each cancel invoice with internal_number
             move = inv.move_id
             if move:
@@ -34,7 +33,7 @@ class AccountInvoice(models.Model):
                 self.env['account.move'].\
                     _reconcile_voided_entry([move.id, rev_move.id])
                 rev_move.button_validate()
-                inv.cancel_move_id = reverse_move_id
+                inv.cancel_move_id = rev_move
         # For invoice from DO, reset invoice_state to 2binvoiced
         Picking = self.env['stock.picking']
         Move = self.env['stock.move']

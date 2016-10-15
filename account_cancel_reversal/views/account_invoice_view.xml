@@ -9,8 +9,8 @@
                 <button name="action_cancel_draft" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </button>
-                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group//field[@name='move_id']" position="after">
-                    <field name="cancel_move_id" attrs="{'invisible': [('cancel_move_id','=',False)]}"/>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id" />
                 </xpath>
             </field>
         </record>
@@ -22,6 +22,9 @@
                 <button name="action_cancel_draft" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </button>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id"/>
+                </xpath>
             </field>
         </record>
     </data>

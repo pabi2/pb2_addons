@@ -20,6 +20,7 @@ class AccountVoucher(models.Model):
         rev_move = move.copy({'name': move.name + '_VOID',
                               'ref': move.ref})
         rev_move._switch_dr_cr()
+        voucher.cancel_move_id = rev_move
         self.env['account.move'].\
             _reconcile_voided_entry([move.id, rev_move.id])
         return

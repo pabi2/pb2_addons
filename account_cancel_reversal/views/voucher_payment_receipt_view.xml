@@ -1,41 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_vendor_receipt_form_ext" model="ir.ui.view">
-            <field name="name">view.vendor.receipt.form.ext</field>
+        <record id="view_vendor_receipt_form" model="ir.ui.view">
+            <field name="name">account.voucher.receipt.form</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
             <field name="arch" type="xml">
-                <button name="action_cancel_draft" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </button>
-                <xpath expr='/form/sheet/notebook//page[@string="Journal Items"]/group' position="inside">
-                    <field name="move_id" invisible="1"/>
+                <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
-                <xpath expr='/form/sheet/notebook//page[@string="Journal Items"]' position="attributes">
-                    <attribute name="attrs">{'invisible': [('move_id','=',False)]}</attribute>
+                <xpath expr="//field[@name='audit']" position="after">
+                    <field name="cancel_move_id"/>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/group" position="inside">
-                    <field name="cancel_move_id" attrs="{'invisible': [('cancel_move_id','=',False)]}"/>
+                <xpath expr="//page[@string='Journal Items']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state','not in',('posted', 'cancel'))]}</attribute>
                 </xpath>
             </field>
         </record>
-        <record id="view_vendor_payment_form_ext" model="ir.ui.view">
-            <field name="name">view.vendor.payment.form.ext</field>
+
+        <record id="view_vendor_payment_form" model="ir.ui.view">
+            <field name="name">account.voucher.payment.form</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_payment_form"/>
             <field name="arch" type="xml">
-                <button name="action_cancel_draft" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </button>
-                <xpath expr='/form/sheet/notebook//page[@string="Journal Items"]/group' position="inside">
-                    <field name="move_id" invisible="1"/>
+                <xpath expr="//button[@name='action_cancel_draft']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
-                <xpath expr='/form/sheet/notebook//page[@string="Journal Items"]' position="attributes">
-                    <attribute name="attrs">{'invisible': [('move_id','=',False)]}</attribute>
+                <xpath expr="//field[@name='number']" position="after">
+                    <field name="cancel_move_id"/>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/group" position="inside">
-                    <field name="cancel_move_id" attrs="{'invisible': [('cancel_move_id','=',False)]}"/>
+                <xpath expr="//page[@string='Journal Items']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state','not in',('posted', 'cancel'))]}</attribute>
                 </xpath>
             </field>
         </record>
