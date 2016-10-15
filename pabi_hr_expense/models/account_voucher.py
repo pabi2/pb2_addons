@@ -25,7 +25,7 @@ class AccountVoucher(models.Model):
                                                     comment)
         except Exception, e:
             self._cr.rollback()
-            raise ValidationError(e)
+            raise ValidationError(str(e))
         return
 
     @api.multi
