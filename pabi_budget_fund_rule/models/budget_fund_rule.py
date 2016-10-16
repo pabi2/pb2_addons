@@ -120,7 +120,6 @@ class BudgetFundRule(models.Model):
 
     @api.onchange('template_id')
     def _onchange_template_id(self):
-        self.fund_rule_line_ids = False
         self.fund_rule_line_ids = []
         Line = self.env['budget.fund.rule.line']
         for line in self.template_id.fund_rule_line_ids:

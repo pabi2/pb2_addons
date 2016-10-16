@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="0.8264462809917354"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="18"/>
+	<style name="border_box">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<topPen lineWidth="0.5" lineStyle="Solid"/>
+			<leftPen lineWidth="0.5" lineStyle="Solid"/>
+			<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="due_days" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[due_days]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
++"/../../../pb2_pabi/pabi_hr_expense_report/pabi_dunning_letter/report/"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[/data/record]]>
+	</queryString>
+	<field name="expense_number" class="java.lang.String">
+		<fieldDescription><![CDATA[number]]></fieldDescription>
+	</field>
+	<field name="title" class="java.lang.String">
+		<fieldDescription><![CDATA[employee_id/title_id/name]]></fieldDescription>
+	</field>
+	<field name="first_name" class="java.lang.String">
+		<fieldDescription><![CDATA[employee_id/first_name]]></fieldDescription>
+	</field>
+	<field name="last_name" class="java.lang.String">
+		<fieldDescription><![CDATA[employee_id/last_name]]></fieldDescription>
+	</field>
+	<field name="date" class="java.util.Date">
+		<fieldDescription><![CDATA[date]]></fieldDescription>
+	</field>
+	<field name="date_due" class="java.util.Date">
+		<fieldDescription><![CDATA[date_due]]></fieldDescription>
+	</field>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="amount_to_clearing" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount_to_clearing]]></fieldDescription>
+	</field>
+	<field name="employee_code" class="java.lang.String">
+		<fieldDescription><![CDATA[employee_id/employee_code]]></fieldDescription>
+	</field>
+	<variable name="today" class="java.util.Date">
+		<variableExpression><![CDATA[new Date()]]></variableExpression>
+	</variable>
+	<group name="expense_number" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{expense_number}]]></groupExpression>
+	</group>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="260" splitType="Stretch">
+			<staticText>
+				<reportElement style="border_box" x="0" y="240" width="77" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เลขที่สัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="77" y="240" width="70" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วันที่]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="147" y="240" width="70" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วันครบกำหนด]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="217" y="240" width="198" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รายละเอียด]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="415" y="240" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนเงิน]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="134" width="313" height="14"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["เรียน " + $F{title}.toString()
++ " " + $F{first_name}.toString()
++ " " + $F{last_name}.toString()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="105" width="555" height="14">
+					<printWhenExpression><![CDATA[$P{due_days} != "-1"]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["เรื่อง จดหมายแจ้งวันครบกําหนดเงินยืม ก่อนวัน due " + $P{due_days} + " วัน"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="105" width="555" height="14">
+					<printWhenExpression><![CDATA[$P{due_days} == "-1"]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["เรื่อง จดหมายแจ้งวันครบกําหนดเงินยืมเลยกำหนด"]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="391" y="0" width="124" height="42"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="25" y="185" width="515" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ                                  ปรากฎว่าท่านมี"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="207" width="515" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["รายการเงินยืมทดรองจ่ายที ใกล้ครบกําหนดหักล้าง ดังต่อไปนี้"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="313" y="65" width="166" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="260" y="65" width="50" height="16"/>
+				<textElement textAlignment="Right" lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วันที่]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="288" y="134" width="240" height="14"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["รหัสพนักงาน " + $F{employee_code}.toString()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="283" y="185" width="50" height="16"/>
+				<textElement textAlignment="Right" lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วันที่]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="336" y="185" width="166" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="60" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="0" y="0" width="77" height="60"/>
+				<textElement textAlignment="Center" lineSpacing="Single" markup="none">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{expense_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="77" y="0" width="70" height="60"/>
+				<textElement textAlignment="Center" lineSpacing="Single" markup="none">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="147" y="0" width="70" height="60"/>
+				<textElement textAlignment="Center" lineSpacing="Single" markup="none">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="217" y="0" width="198" height="60"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="415" y="0" width="100" height="60"/>
+				<textElement textAlignment="Right" lineSpacing="Single" markup="none">
+					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_to_clearing}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="31" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToTallestObject" x="365" y="0" width="146" height="16"/>
+				<textElement textAlignment="Right" lineSpacing="Single" markup="none">
+					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_to_clearing}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="213" y="0" width="120" height="16"/>
+				<textElement textAlignment="Right" lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ยอดเงินยืมคงค้าง]]></text>
+			</staticText>
+			<line>
+				<reportElement x="428" y="16" width="83" height="1"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="421">
+			<textField>
+				<reportElement x="26" y="31" width="595" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ เพื่อหักล้างเงินยืมี"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="53" width="515" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["เพื่อหักล้างเงินยืม ของท่านโดยด่วนี้"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="113" width="515" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["หรือ Email นี้แล้วฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้ี้"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="25" y="91" width="651" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันทีในเอกสารี"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="313" y="175" width="317" height="16"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ฝ่ายการเงินและบัญชี สวทช."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="398" y="377" width="63" height="25"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["หน้า " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="377" width="76" height="25"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จาก " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
