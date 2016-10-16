@@ -16,6 +16,7 @@
                     <field name="voucher_id"/>
                     <group expand="0" string="Group By...">
                         <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                        <filter string="Payment Method" domain="[]" context="{'group_by':'journal_id'}"/>
                     </group>
                 </search>
             </field>

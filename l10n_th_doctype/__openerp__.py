@@ -10,12 +10,32 @@
 
 New menu, > Settings > Technical > Sequences & Identifiers > Doctype
 
-For, Customer Payment, Supplier Payment, Sales Receipt and Purchase Receipt.
-
 If Sequence is specified, document will be using this sequence instead of
 sequence of Journal. Journal's sequence will still be used for Journal Entries
 
 If Sequence is not specified, it will be using sequence of Journal as normal.
+
+List of Doctype
+
+* Sales Quotation
+* Purchase Quotation
+* Sales Order
+* Purchase Order
+* Sales Receipt
+* Purchase Receipt
+* Supplier Payment
+* Customer Payment
+* Customer Invoice
+* Customer Debitnote
+* Supplier Invoice
+* Supplier Debitnote
+* Customer Refund
+* Supplier Refund
+* Employee Expense
+* Employee Advance
+* Incoming Shipment
+* Delivery Order
+* Internal Transfer
 
     """,
     "website": "https://ecosoft.co.th/",

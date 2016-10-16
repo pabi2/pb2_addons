@@ -12,7 +12,6 @@ class PaymentExport(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
         default="/",
     )
     journal_id = fields.Many2one(
@@ -33,6 +32,8 @@ class PaymentExport(models.Model):
         'res.partner.bank',
         related='journal_id.bank_id',
         string='Bank Account',
+        store=True,
+        readonly=True,
     )
     is_cheque_lot = fields.Boolean(
         string='Is Cheque Lot Available',
