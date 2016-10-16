@@ -9,7 +9,8 @@
                 <form string="Task Form">
                     <group>
                         <group>
-                            <field name="input_file" required="True"/>
+                            <field name="input_file" filename="datas_fname" required="True"/>
+                            <field name="datas_fname" invisible="1"/>
                         </group>
                         <group/>
                     </group>
