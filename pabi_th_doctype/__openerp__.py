@@ -15,6 +15,7 @@ PABI2 Extension to l10n_th_doctype for,
 * Stock Request
 * Stock Transfer
 * Stock Borrow
+* Payment Export
 
     """,
     "website": "https://ecosoft.co.th/",
@@ -27,6 +28,7 @@ PABI2 Extension to l10n_th_doctype for,
         'pabi_purchase_work_acceptance',
         'stock_request',
         'pabi_procurement',
+        'payment_export',
     ],
     "data": [
         "data/ir_sequence_data.xml",

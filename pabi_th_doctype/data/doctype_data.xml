@@ -9,6 +9,7 @@
           * Stock Request
           * Stock Transfer
           * Stock Borrow
+          * Payment Export
         -->
         <record id="doctype_work_acceptance" model="res.doctype" >
             <field name="name">Work Acceptance</field>
@@ -34,6 +35,11 @@
             <field name="name">Stock Borrow</field>
             <field name="sequence_id" ref="doctype_stock_borrow_seq"/>
             <field name="refer_type">stock_borrow</field>
+        </record>
+        <record id="doctype_payment_export" model="res.doctype" >
+            <field name="name">Payment Export</field>
+            <field name="sequence_id" ref="doctype_payment_export_seq"/>
+            <field name="refer_type">payment_export</field>
         </record>
 
     </data>
