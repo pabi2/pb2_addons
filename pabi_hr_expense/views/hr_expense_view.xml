@@ -3,6 +3,8 @@
 <openerp>
 	<data>
 
+    <menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="100"/>
+
 		<!-- Expenses -->
 		<record id="view_expenses_form_no_create_delete" model="ir.ui.view">
 			<field name="name">hr.expense.form.no.create.delete</field>
