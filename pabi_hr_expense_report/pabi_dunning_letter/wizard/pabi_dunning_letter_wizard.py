@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class PABIDunnintLetterWizard(models.TransientModel):
@@ -65,7 +66,9 @@ class PABIDunnintLetterWizard(models.TransientModel):
         exp_ids = list(set(exp_ids))  # remove all False
         if False in exp_ids:
             exp_ids.remove(False)
-        if not self.print_pdf or not exp_ids:
+        if not exp_ids:
+            raise UserError(_('No dunning letter to print/email!'))
+        if not self.print_pdf:
             return {}
         data['parameters']['ids'] = exp_ids
         data['parameters']['due_days'] = self.due_days
