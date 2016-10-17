@@ -365,7 +365,7 @@ class HRExpense(models.Model):
         if ConfParam.get_param('pabiweb_active') != 'TRUE':
             return False
         url = ConfParam.get_param('pabiweb_exp_url')
-        username = self.user_valid.login
+        username = self.env.user.login
         password = ConfParam.get_param('pabiweb_password')
         connect_string = "http://%s:%s@%s" % (username, password, url)
         alfresco = xmlrpclib.ServerProxy(connect_string)

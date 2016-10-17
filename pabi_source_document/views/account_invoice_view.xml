@@ -23,7 +23,7 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='fiscal_position']" position="after" >
-                    <field name="source_document_id"/>
+                    <field name="source_document"/>
                 </xpath>
             </field>
         </record>
@@ -35,7 +35,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='supplier_invoice_number']" position="after" >
-                    <field name="source_document_id"/>
+                    <field name="source_document"/>
                 </xpath>
             </field>
         </record>

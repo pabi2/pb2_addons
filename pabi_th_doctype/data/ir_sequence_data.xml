@@ -7,6 +7,7 @@
           * Stock Request
           * Stock Transfer
           * Stock Borrow
+          * Payment Export
         -->
         # Work Acceptance
         <record id="doctype_work_acceptance_seq" model="ir.sequence">
@@ -57,6 +58,17 @@
             <field name="name">DOCTYPE: Stock Borrow</field>
             <field name="code"></field>
             <field name="prefix">SR%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Payment Export
+        <record id="doctype_payment_export_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Payment Export</field>
+            <field name="code"></field>
+            <field name="prefix">PE%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

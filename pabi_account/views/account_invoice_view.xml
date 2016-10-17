@@ -57,7 +57,7 @@
             <field name="arch" type="xml">
                 <!-- Will try to use super source document instead -->
                 <xpath expr="//field[@name='origin']" position="replace">
-                    <field name="source_document_id"/>
+                    <field name="source_document"/>
                 </xpath>
             </field>
         </record>
@@ -95,7 +95,7 @@
                             <field name="activity_id"/>
 
                             <field name="name"/>
-                            
+
                             <!-- Chart Fields -->
                             <field name="require_chartfield" invisible="1"/>
 

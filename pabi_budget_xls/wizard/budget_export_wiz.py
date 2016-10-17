@@ -75,6 +75,7 @@ class BudgetExportWizard(models.Model):
                    fill_type='solid')
 
             Non_CostControl_Sheet.add_data_validation(dv)
+            Non_CostControl_Sheet.cell(row=1, column=5, value=budget.id)
             Non_CostControl_Sheet.cell(row=1, column=2, value=budget.fiscalyear_id.name)
             Non_CostControl_Sheet.cell(row=2, column=2, value=budget.org_id.code)
             Non_CostControl_Sheet.cell(row=3, column=2, value=budget.section_id.code)
@@ -83,11 +84,12 @@ class BudgetExportWizard(models.Model):
             Non_CostControl_Sheet.cell(row=6, column=2, value=str(budget.planned_overall))
 
             row = 11
-            section_name = ''
+            section_name = budget.section_id.name
             protection = Protection(locked=False)
             line_start = row
             for line in budget.plan_line_ids:
-                section_name = line.section_id.name
+                if line.section_id:
+                    section_name = line.section_id.name
                 Non_CostControl_Sheet.cell(row=row, column=1, value='=B2').fill = redFill
                 Non_CostControl_Sheet.cell(row=row, column=1).border = border
                 Non_CostControl_Sheet.cell(row=row, column=2, value="=B3").fill = redFill
@@ -161,6 +163,8 @@ class BudgetExportWizard(models.Model):
                 Non_CostControl_Sheet.cell(row=row, column=25).border = border
                 Non_CostControl_Sheet.cell(row=row, column=25).fill = redFill
 
+                Non_CostControl_Sheet.cell(row=row, column=26, value=line.id)
+
                 row += 1
 
             to_row = row + self.editable_lines
@@ -226,7 +230,6 @@ class BudgetExportWizard(models.Model):
                 Non_CostControl_Sheet.cell(row=row, column=25).fill = redFill
 
                 row += 1
-
             Non_CostControl_Sheet.cell(row=row, column=9).value = 'Total'
             Non_CostControl_Sheet.cell(row=row, column=9).border = border
             Non_CostControl_Sheet.cell(row=row, column=9).fill = redFill
@@ -290,17 +293,34 @@ class BudgetExportWizard(models.Model):
 
         stream1 = cStringIO.StringIO()
         workbook.save(stream1)
-#         filename = '%s.xlsx' % (template_file.name)
         filename = '%s-%s-%s-%s.xlsx' % (budget.fiscalyear_id.name,
                                          budget.org_id.code,
                                          budget.section_id.code,
                                          template_file.name)
         self.env.cr.execute(""" DELETE FROM budget_xls_output """)
+
+        attachement_id = self.env['ir.attachment'].create({
+            'name': filename,
+            'datas': stream1.getvalue().encode('base64'),
+            'datas_fname': filename,
+            'res_model': 'budget.plan.unit',
+            'res_id': budget.id,
+        })
+
         attach_id = self.env['budget.xls.output'].create(
             {'name': filename,
              'xls_output': base64.encodestring(stream1.getvalue()),
              }
         )
+
+        self.env['budget.plan.history'].create({
+            'user_id': self.env.user.id,
+            'operation_date': fields.Datetime.now(),
+            'operation_type': 'export',
+            'plan_id': budget.id,
+            'attachement_id': attachement_id.id
+        })
+
         return attach_id
 
     @api.multi

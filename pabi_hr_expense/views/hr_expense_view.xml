@@ -34,7 +34,7 @@
 				</button>
 				<button name="validate" position="after">
 					<button type="object" name="action_recreate_invoice" string="Recreate Invoice" class="oe_highlight" states="invoice_except"/>
-					<button type="object" name="action_ignore_exception" string="Ignore Exception" class="oe_highlight" states="invoice_except"/>
+					<button type="object" name="action_ignore_exception" string="Ignore Exception" class="oe_highlight" states="invoice_except" invisible="1"/>
 				</button>
 				<field name="employee_id" position="after">
 					<field name="employee_section_id" readonly="1"/>
@@ -173,6 +173,7 @@
 				<!-- Invisible Columns -->
 				<xpath expr="//button[@name='%(hr_expense_cancel_reason.action_hr_expense_cancel)d']" position="attributes">
 					<attribute name="string">Reject</attribute>
+					<attribute name="states">confirm,accepted,invoice_except</attribute>
 				</xpath>
 			</field>
 		</record>

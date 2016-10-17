@@ -109,9 +109,39 @@ class AccountVoucher(models.Model):
                            'validate_date': fields.Date.today()})
         return result
 
+    @api.model
+    def create(self, vals):
+        voucher = super(AccountVoucher, self).create(vals)
+        # Delete all amount zero lines
+        zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
+        zero_lines.unlink()
+        return voucher
+
+    @api.multi
+    def write(self, vals):
+        res = super(AccountVoucher, self).write(vals)
+        # Delete all amount zero lines
+        for voucher in self:
+            zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
+            zero_lines.unlink()
+        return res
+
 
 class AccountVoucherLine(models.Model):
     _inherit = 'account.voucher.line'
+
+    select = fields.Boolean(
+        string='Select',
+        default=False,
+    )
+
+    @api.onchange('select')
+    def _onchange_select(self):
+        if self.select:
+            self.reconcile = True
+        else:
+            self.reconcile = False
+            self.amount = False
 
     @api.model
     def get_suppl_inv_taxbranch(self, move_line_id):

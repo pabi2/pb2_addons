@@ -22,6 +22,7 @@
         "pabi_chartfield",
         "account_move_line_doc_ref",
         "hr_expense_auto_invoice",
+        "pabi_source_document",
     ],
     "data": [
         "security/security_group.xml",

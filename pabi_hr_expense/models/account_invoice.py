@@ -56,14 +56,19 @@ class AccountInvoice(models.Model):
     def confirm_paid(self):
         expenses = self.env['hr.expense.expense'].search([('invoice_id',
                                                            'in', self._ids)])
-        history_obj = self.env['hr.expense.advance.due.history']
+        History = self.env['hr.expense.advance.due.history']
+        Voucher = self.env['account.voucher']
         for expense in expenses:
             if not expense.is_employee_advance:
                 continue
             date_due = False
-            # Case 1) buy_product, date_due = paid_date + 30 days
+            # Case 1) buy_product, date_due = date_value + 30 days
             if expense.advance_type == 'buy_product':
-                date_paid = expense.invoice_id.payment_ids[0].date
+                move_ids = \
+                    expense.invoice_id.payment_ids.mapped('move_id')._ids
+                vouchers = Voucher.search([('move_id', 'in', move_ids)],
+                                          order='date desc', limit=1)
+                date_paid = vouchers[0].date_value
                 date_due = (datetime.strptime(date_paid, '%Y-%m-%d') +
                             relativedelta(days=30))
             # Case 2) attend_seminar, date_due = arrive date + 30 days
@@ -75,7 +80,7 @@ class AccountInvoice(models.Model):
                 raise UserError(_('Can not calculate due date. '
                                   'No Advance Type vs Due Date Rule'))
             if date_due:
-                history_obj.create({
+                History.create({
                     'expense_id': expense.id,
                     'date_due': date_due.strftime('%Y-%m-%d'),
                 })
