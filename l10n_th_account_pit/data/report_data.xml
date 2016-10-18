@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		# PIT WHT Cert
+		<record id="report_pit_withholding_cert" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">print.pit.wht.cert.wizard</field>
+			<field name="name">Withholding Tax Certificate</field>
+			<field name="report_name">report_pit_withholding_cert</field>
+			<field name="report_rml">l10n_th_account_pit/report/pit_withholding_cert.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">2</field>
+		</record>
+
+		<record id="report_pit_withholding_cert_values" model="ir.values">
+			<field name="name">Withholding Tax Certificate</field>
+			<field name="model">print.pit.wht.cert.wizard</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pit_withholding_cert)"/>
+		</record>
+
+	</data>
+</openerp>

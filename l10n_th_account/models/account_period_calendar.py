@@ -3,6 +3,28 @@ from openerp import tools
 from openerp import models, fields
 
 
+class AccountCalendaryear(models.Model):
+    _name = 'account.calendaryear'
+    _description = 'Show period_id in calendar year name'
+    _auto = False
+
+    name = fields.Char(
+        string='Name',
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+    )
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+            select id, to_char(date_start, 'YYYY') as name,
+                id as fiscalyear_id
+            from account_fiscalyear
+        )""" % (self._table, ))
+
+
 class AccountPeriodCalendar(models.Model):
     _name = 'account.period.calendar'
     _description = 'Show period_id in calendar year name'

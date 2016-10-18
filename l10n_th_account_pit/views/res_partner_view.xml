@@ -10,6 +10,9 @@
             <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
             <field name="arch" type="xml">
                 <data>
+                    <xpath expr="//notebook/page[@name='thai_taxation']/group/group[@name='group2']" position="inside">
+                        <button name="%(action_print_pit_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', ('supplier', '!=', True), ('pit_line', '=', [])]}"/>
+                    </xpath>
                     <page name="thai_taxation" position="inside">
                         <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}">
                             <field name="pit_line">

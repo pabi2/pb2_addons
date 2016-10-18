@@ -159,8 +159,8 @@ class PrintWhtCertWizard(models.TransientModel):
     def _get_summary_by_type(self, column, ttype='all'):
         wht_lines = self.wht_line
         if ttype != 'all':
-            wht_lines = self.wht_line.filtered(lambda l:
-                                               l.wht_cert_income_type == ttype)
+            wht_lines = wht_lines.filtered(lambda l:
+                                           l.wht_cert_income_type == ttype)
         if column == 'base':
             return sum([x.base for x in wht_lines])
         if column == 'tax':

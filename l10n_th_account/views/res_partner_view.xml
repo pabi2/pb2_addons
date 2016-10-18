@@ -13,10 +13,10 @@
                     <page name="accounting" position="after">
                         <page name="thai_taxation" string="Thai Taxation" attrs="{'invisible': [('supplier', '=', False)]}">
                             <group>
-                                <group>
+                                <group name="group1">
                                     <field name="income_tax_form" />
                                 </group>
-                                <group>
+                                <group name="group2">
                                 </group>
                             </group>
                         </page>
