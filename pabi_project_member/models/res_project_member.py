@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class ResProject(models.Model):
@@ -34,3 +35,16 @@ class ResProjectMember(models.Model):
         string='Position',
         required=True,
     )
+
+    @api.one
+    @api.constrains('project_id', 'employee_id', 'project_position')
+    def _check_unique_project_manager(self):
+        self._cr.execute("""
+            select coalesce(count(*))
+            from res_project_member
+            where project_position = 'manager'
+            and project_id = %s
+        """, (self.project_id.id,))
+        count = self._cr.fetchone()[0]
+        if count > 1:
+            raise UserError(_('There are project with > 1 project manager'))
