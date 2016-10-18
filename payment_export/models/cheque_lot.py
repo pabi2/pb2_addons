@@ -77,10 +77,10 @@ class ChequeLot(models.Model):
     def _compute_remaining(self):
         Cheque = self.env['cheque.register']
         for lot in self:
-            registers = Cheque.search([('cheque_lot_id', '=', lot.id),
-                                       ('voucher_id', '=', False),
-                                       ('void', '=', False)], count=True)
-            lot.remaining = registers[0]
+            count = Cheque.search([('cheque_lot_id', '=', lot.id),
+                                   ('voucher_id', '=', False),
+                                   ('void', '=', False)], count=True)
+            lot.remaining = count
 
     @api.multi
     @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
