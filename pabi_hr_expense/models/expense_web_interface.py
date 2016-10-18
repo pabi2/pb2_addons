@@ -226,8 +226,7 @@ class HRExpense(models.Model):
                 data['employee_id.id'] = Employee.search(domain).id
                 del data['employee_code']
         # Attachment Links
-        ConfParam = self.env['ir.config_parameter']
-        file_prefix = ConfParam.get_param('pabiweb_file_prefix')
+        file_prefix = self.env.user.company_id.pabiweb_file_prefix
         if file_prefix[-1:] != '/':
             file_prefix += '/'
         if 'attachment_ids' in data_dict:
@@ -362,12 +361,13 @@ class HRExpense(models.Model):
     @api.model
     def _get_alfresco_connect(self):
         ConfParam = self.env['ir.config_parameter']
-        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if not pabiweb_active:
             return False
-        url = ConfParam.get_param('pabiweb_exp_url')
+        url = self.env.user.company_id.pabiweb_exp_url
         username = self.env.user.login
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://%s:%s@%s" % (username, password, url)
+        connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string)
         return alfresco
 

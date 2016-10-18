@@ -13,6 +13,7 @@
     "application": False,
     "installable": True,
     "depends": [
+        "pabi_web_config",
         "hr_expense_auto_invoice",
         "hr_expense_advance_clearing",
         "hr_expense_cancel_reason",
