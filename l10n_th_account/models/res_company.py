@@ -28,3 +28,7 @@ class ResCompany(models.Model):
         string='Recognize VAT Journal',
         domain=[('type', '=', 'general')],
     )
+    number_month_tax_addition = fields.Integer(
+        string='Number of months for additional Tax',
+        default=6,
+    )

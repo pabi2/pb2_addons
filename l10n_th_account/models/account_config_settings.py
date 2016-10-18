@@ -28,3 +28,7 @@ class AccountConfigSettings(models.TransientModel):
         string='Recognize VAT Journal',
         related="company_id.recognize_vat_journal_id",
     )
+    number_month_tax_addition = fields.Integer(
+        string='Number of months for additional Tax',
+        related="company_id.number_month_tax_addition",
+    )
