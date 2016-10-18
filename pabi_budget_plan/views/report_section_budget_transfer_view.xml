@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <template id="section_budget_transfer_template">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.internal_layout">
+                    <div class="page">
+                        <h2>
+                            <span>Section Budget Transfer: <t t-esc="o.name"/></span>
+                        </h2>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <strong>Fiscal Year:</strong>
+                                <span t-field="o.fiscalyear_id.name"/>
+                            </div>
+                            <div class="col-xs-6">
+                                <strong>Status:</strong>
+                                <span t-field="o.state"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <strong>Date Prepare:</strong>
+                                <span t-field="o.date_prepare"/>
+                            </div>
+                            <div class="col-xs-6">
+                                <strong>Preparer:</strong>
+                                <span t-field="o.preparer_user_id.name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <strong>Date Approve:</strong>
+                                <span t-field="o.date_approve"/>
+                            </div>
+                            <div class="col-xs-6">
+                                <strong>Approver:</strong>
+                                <span t-field="o.approver_user_id.name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <strong>Date Receive:</strong>
+                                <span t-field="o.date_receive"/>
+                            </div>
+                            <div class="col-xs-6">
+                                <strong>Receiver:</strong>
+                                <span t-field="o.receiver_user_id.name"/>
+                            </div>
+                        </div>
+                        
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>From Section</th>
+                                    <th>From Budget</th>
+                                    <th>From Budget Line</th>
+                                    <th>From Period</th>
+                                    <th>To Section</th>
+                                    <th>To Budget</th>
+                                    <th>To Budget Line</th>
+                                    <th>To Period</th>
+                                    <th class="text-right">Transferred Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.section_budget_transfer_line_ids" t-as="l">
+                                    <td>
+                                        <span><span t-field="l.from_section_id.code"/>[<span t-field="l.from_section_id.name_short"/>]</span>
+                                    </td>
+                                    <td>
+                                        <span t-field="l.from_budget_control_id.name"/>
+                                    </td>
+                                    <td>
+<!--                                        <span t-field="l.from_budget_control_line_id"/-->
+                                    </td>
+                                    <td>
+                                        <span t-field="l.from_period"/>
+                                    </td>
+                                    <td>
+                                        <span><span t-field="l.to_section_id.code"/>[<span t-field="l.to_section_id.name_short"/>]</span>
+                                    </td>
+                                    <td>
+                                        <span t-field="l.to_budget_control_id.name"/>
+                                    </td>
+                                    <td>
+<!--                                        <span t-field="l.to_budget_control_line_id"/-->
+                                    </td>
+                                    <td>
+                                        <span t-field="l.to_period"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="l.amount_to_transfer"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>

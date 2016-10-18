@@ -22,14 +22,13 @@
                             </h1>
                         </div>
                         <group>
-                            <group> 
+                            <group>
                                 <field name="fiscalyear_id" />
                             </group>
-                            <group>
-                            </group>
+                            <group/>
                        </group>
                         <group>
-                            <group> 
+                            <group>
                                 <field name="date_prepare" />
                                 <field name="date_approve" />
                                 <field name="date_receive" />
@@ -44,16 +43,21 @@
                             <page string="Section Transfer Lines">
                                 <field name="section_budget_transfer_line_ids">
                                     <tree string="Section Transfer Lines" editable="top">
-                                        <field name="from_section_id"/> 
+                                        <field name="from_section_id"/>
                                         <field name="from_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', from_section_id)]"/> 
                                         <field name="from_budget_control_line_id"  domain="[('budget_id', '=', from_budget_control_id)]"/> 
-                                        <field name="from_period_id" domain="[('date_stop', '&gt;', parent.date_prepare), ('fiscalyear_id', '&gt;', parent.fiscalyear_id)]"/> 
-                                        <field name="to_section_id"/> 
+                                        <field name="from_period"/>
+                                        <field name="amount_to_transfer"/>
+                                        <field name="to_section_id"/>
                                         <field name="to_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', to_section_id)]"/> 
                                         <field name="to_budget_control_line_id" domain="[('budget_id', '=', to_budget_control_id)]"/> 
-                                        <field name="to_period_id" domain="[('date_stop', '&gt;', parent.date_prepare), ('fiscalyear_id', '&gt;', parent.fiscalyear_id)]"/> 
+                                        <field name="to_period"/>
+                                        <field name="notes"/>
                                     </tree>
                                 </field>
+                                
+                                <separator string="Additional Information"/>
+                                <field name="notes" placeholder="Additional Information...."/>
                             </page>
                         </notebook>
                     </sheet>
@@ -61,7 +65,6 @@
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
-
                 </form>
             </field>
         </record>
