@@ -289,8 +289,7 @@ class PurchaseRequest(models.Model):
         attach_data = {}
         if 'attachment_ids' in data_dict:
             PRAttachment = self.env['ir.attachment']
-            ConfParam = self.env['ir.config_parameter']
-            file_prefix = ConfParam.get_param('pabiweb_file_prefix')
+            file_prefix = self.env.user.company_id.pabiweb_file_prefix
             attachment_tup = data_dict['attachment_ids']
             for att_rec in attachment_tup:
                 attach_data['name'] = att_rec['name']
