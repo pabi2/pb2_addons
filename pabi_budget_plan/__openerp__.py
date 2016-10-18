@@ -26,6 +26,7 @@
         'views/budget_fiscal_policy_view.xml',
         'views/invest_asset_plan_view.xml',
         'views/account_budget_view.xml',
+        'views/section_budget_transfer_view.xml',
     ],
     'demo': [
     ],

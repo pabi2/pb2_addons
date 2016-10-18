@@ -9,7 +9,7 @@ from openerp.addons.account_budget_activity.models.account_activity \
 class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherits = {'budget.plan.template': 'template_id'}
-    _inherit = ['mail.thread']
+#     _inherit = ['mail.thread']
     _description = "Unit Based - Budget Plan"
 
     template_id = fields.Many2one(
