@@ -1,0 +1,127 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* e3z_auth_cas
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20130219-002614\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-15 13:34+0000\n"
+"PO-Revision-Date: 2013-04-15 13:34+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: e3z_auth_cas
+#: model:ir.model,name:e3z_auth_cas.model_res_users
+msgid "Users"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: field:base.config.settings,cas_server_port:0
+msgid "CAS Server port"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: field:base.config.settings,cas_activated:0
+msgid "CAS authentication activated"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: field:res.users,cas_key:0
+msgid "CAS Key"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: model:ir.model,name:e3z_auth_cas.model_base_config_settings
+msgid "base.config.settings"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: view:base.config.settings:0
+msgid "CAS authentication"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: view:base.config.settings:0
+msgid "Check settings of CAS server"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: field:base.config.settings,cas_server:0
+msgid "CAS Server address"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: help:base.config.settings,cas_create_user:0
+msgid "Automatically create local user accounts for new users authenticating via CAS"
+msgstr ""
+
+#. module: e3z_auth_cas
+#: help:base.config.settings,cas_activated:0
+msgid "The CAS authentication only works if you are in a single database mode. You can launch the OpenERP Server with"
+"the option --db-filter=YOUR_DATABASE to do so."
+msgstr ""
+""
+
+#. module: e3z_auth_cas
+#: field:base.config.settings,cas_create_user:0
+msgid "Users created on the fly"
+msgstr ""
+
+#. module: project
+#: code:addons/e3z_auth_cas/res_config.py:0
+#, python-format
+msgid "Bad parameters\nThere seems to be an error in the configuration."
+msgstr ""
+
+#. module: project
+#: code:addons/e3z_auth_cas/res_config.py:0
+#, python-format
+msgid "Good parameters\nThe CAS server is well configured !"
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "CAS authentication in progress"
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "Invalid ticket, you will be redirected in a few seconds."
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "Invalid ticket"
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "The ticket is not valid, this page will be redirected in a few seconds. If the problem persist, please contact your administrator."
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "Wrong login, you have no account on OpenERP."
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "Wrong login"
+msgstr ""
+
+#. module: e3z_auth_cas
+#. openerp-web
+#: code:addons/e3z_auth_cas/static/src/js/auth_cas.js:0
+msgid "You must have an account on OpenERP in order to authenticate. Please contact your administrator."
+msgstr ""
