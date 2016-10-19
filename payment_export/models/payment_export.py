@@ -190,7 +190,8 @@ class PaymentExport(models.Model):
             dom.append(('id', 'not in', chequed_voucher_ids))
         else:  # Other cases, make sure it has not been exported before
             lines = ExportLine.search(
-                [('exported', '=', True),
+                [('use_export_line', '=', True),
+                 ('export_id.state', '=', 'done'),
                  ('export_id.date_value', '=', self.date_value)],
             )
             exported_voucher_ids = [x.voucher_id.id for x in lines]
@@ -234,8 +235,8 @@ class PaymentExport(models.Model):
                         ('export_id.state', '=', 'done')])
             if exported_lines:
                 vouchers = [x.voucher_id.number for x in exported_lines]
-                message = _('Following payment had been exported.\n%s\n'
-                            'Please remove continue.') % (', '.join(vouchers),)
+                message = _('Following payment had been exported.\n%s\nPlease '
+                            'remove to continue.') % (', '.join(vouchers),)
                 raise UserError(message)
             # Case Cheque only
             if export.is_cheque_lot:
