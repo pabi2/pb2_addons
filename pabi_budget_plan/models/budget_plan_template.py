@@ -234,6 +234,8 @@ class BudgetPlanCommon(object):
             res = rec.template_id.\
                 _get_chained_dimension(CHART_VIEW_FIELD[rec.chart_view])
             rec.write(res)
+            name = self.env['ir.sequence'].next_by_code('budget.plan')
+            rec.write({'name': name})
             for line in rec.plan_line_ids:
                 res = line.mapped('template_id').\
                     _get_chained_dimension(CHART_VIEW_FIELD[line.chart_view])

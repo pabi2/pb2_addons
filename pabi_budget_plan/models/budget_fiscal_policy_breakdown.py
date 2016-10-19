@@ -136,7 +136,10 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         sum_policy_amount = sum([l.policy_amount for l in self.line_ids])
         if self.policy_overall != sum_policy_amount:
             raise UserError(_('Overall policy amount is not full filled'))
+        name = self.env['ir.sequence'].\
+            next_by_code('fiscal.policy.breakdown.unit')
         self.write({
+            'name': name,
             'state': 'confirm',
             'validating_user_id': self._uid,
             'date_confirm': fields.Date.context_today(self),

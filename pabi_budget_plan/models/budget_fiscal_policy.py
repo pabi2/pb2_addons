@@ -280,7 +280,9 @@ class BudgetFiscalPolicy(models.Model):
 
     @api.multi
     def button_confirm(self):
+        name = self.env['ir.sequence'].next_by_code('fiscal.budget.policy')
         self.write({
+            'name': name,
             'state': 'confirm',
             'validating_user_id': self._uid,
             'date_confirm': fields.Date.context_today(self),

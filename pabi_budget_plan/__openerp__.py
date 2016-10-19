@@ -12,7 +12,9 @@
         'pabi_procurement',
     ],
     'data': [
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'data/sequence.xml',
         'wizard/cost_control_breakdown_wizard.xml',
         'wizard/convert_to_budget_control_wizard.xml',
         'wizard/asset_plan_to_budget_plan_wizard.xml',

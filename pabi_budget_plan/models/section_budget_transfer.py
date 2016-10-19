@@ -57,7 +57,7 @@ class SectionTransferUnit(models.Model):
          ('confirm', 'Confirmed'),
          ('approve', 'Approved'),
          ('cancel', 'Cancelled'),
-         ('transfer', 'Transferred'),],
+         ('transfer', 'Transferred')],
         string='Status',
         default='draft',
         index=True,
@@ -75,6 +75,21 @@ class SectionTransferUnit(models.Model):
     notes = fields.Text(
         string="Additional Information",
     )
+    total_transferred_amt = fields.Float(
+        string="Total Transferred Amount",
+        compute="_compute_total_transferred_amt",
+    )
+
+    @api.depends('section_budget_transfer_line_ids',
+                 'section_budget_transfer_line_ids.amount_to_transfer',
+                 'state')
+    def _compute_total_transferred_amt(self):
+        for record in self:
+            if record.state == 'transfer':
+                lines = record.section_budget_transfer_line_ids
+                total_amt = sum([i.amount_to_transfer
+                                 for i in lines])
+                record.total_transferred_amt = total_amt
 
     @api.multi
     def button_draft(self):
@@ -88,37 +103,58 @@ class SectionTransferUnit(models.Model):
 
     @api.multi
     def button_confirm(self):
-        self.write({'state': 'confirm'})
+        for record in self:
+            if not record.section_budget_transfer_line_ids:
+                raise UserError(
+                    _('You can not confirm without transfer lines!'))
+            name = self.env['ir.sequence'].\
+                next_by_code('section.budget.transfer')
+            record.write({'state': 'confirm',
+                          'name': name})
         return True
 
     @api.multi
     def button_approve(self):
         self.write({'state': 'approve',
                     'date_approve': fields.Date.today(),
-                    'approver_user_id': self._uid,})
+                    'approver_user_id': self._uid})
         return True
-    
+
     @api.multi
     def button_transfer(self):
         for record in self:
             for line in record.section_budget_transfer_line_ids:
                 if line.amount_to_transfer <= 0.0:
-                    raise UserError(_('Amount to transfer must be greater then zero!'))
+                    raise UserError(
+                        _('Amount to transfer must be greater then zero!'))
                 from_line = line.from_budget_control_line_id
                 from_line_period_str = 'm' + str(line.from_period)
-                from_line_amt = from_line.read([from_line_period_str])[0][from_line_period_str]
+                from_line_amt = from_line.\
+                    read([from_line_period_str])[0][from_line_period_str]
                 if line.amount_to_transfer > from_line_amt:
-                    raise UserError(_('Amount to transfer not be greater then original amount!'))
-                from_line.write({from_line_period_str: from_line_amt - line.amount_to_transfer})
-                
+                    raise UserError(
+                        _('Amount to transfer not be \
+                        greater then original amount!'))
+                deducted_amt = from_line_amt - line.amount_to_transfer
+                from_line.write({from_line_period_str: deducted_amt})
+
                 to_line_period_str = 'm' + str(line.to_period)
                 to_line = line.to_budget_control_line_id
-                to_line_amt = to_line.read([to_line_period_str])[0][to_line_period_str]
-                to_line.write({to_line_period_str : to_line_amt + line.amount_to_transfer})
+                to_line_amt = to_line.\
+                    read([to_line_period_str])[0][to_line_period_str]
+                new_amt = to_line_amt + line.amount_to_transfer
+                to_line.write({to_line_period_str: new_amt})
         self.write({'state': 'transfer',
                     'date_receive': fields.Date.today(),
-                    'receiver_user_id': self._uid,})
+                    'receiver_user_id': self._uid})
         return True
+
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_('You can not delete non-draft records!'))
+        return super(SectionTransferUnit, self).unlink()
 
 
 class SectionTransferUnitLine(models.Model):
@@ -130,7 +166,7 @@ class SectionTransferUnitLine(models.Model):
     def check_from_period(self):
         for line in self:
             if line.from_period < 1 or line.from_period > 12:
-                raise UserError(_('Please enter valid period between 1 to 12!'))
+                raise UserError(_('Period must be between 1 to 12!'))
 
     budget_transfer_unit_id = fields.Many2one(
         'section.budget.transfer',
@@ -200,14 +236,19 @@ class SectionTransferUnitLine(models.Model):
     def onchage_line_params(self):
         for record in self:
             if record.from_budget_control_line_id:
-                record.from_budget_control_id = record.from_budget_control_line_id.budget_id
-                record.from_section_id = record.from_budget_control_line_id.budget_id.section_id
+                record.from_budget_control_id =\
+                    record.from_budget_control_line_id.budget_id
+                record.from_section_id =\
+                    record.from_budget_control_line_id.budget_id.section_id
             elif record.from_budget_control_id:
-                record.from_section_id = record.from_budget_control_line_id.budget_id.section_id
+                record.from_section_id =\
+                    record.from_budget_control_line_id.budget_id.section_id
 
             if record.to_budget_control_line_id:
-                record.to_budget_control_id = record.to_budget_control_line_id.budget_id
-                record.to_section_id = record.to_budget_control_line_id.budget_id.section_id
+                record.to_budget_control_id =\
+                    record.to_budget_control_line_id.budget_id
+                record.to_section_id =\
+                    record.to_budget_control_line_id.budget_id.section_id
             elif record.from_budget_control_id:
-                record.to_section_id = record.to_budget_control_line_id.budget_id.section_id
-                
+                record.to_section_id =\
+                    record.to_budget_control_line_id.budget_id.section_id

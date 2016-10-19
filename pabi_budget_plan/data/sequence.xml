@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!--Budget Plan Sequence-->
+        <record id="budget_plan_sequence_type" model="ir.sequence.type">
+            <field name="name">Budget Plan</field>
+            <field name="code">budget.plan</field>
+        </record>
+        <record id="budget_plan_sequence" model="ir.sequence">
+            <field name="code">budget.plan</field>
+            <field name="name">Budget Plan</field>
+            <field name="prefix">PLAN-UNIT</field>
+            <field name="padding">5</field>
+        </record>
+        
+        <!--Fiscal Budget Policy Sequence-->
+        <record id="fiscal_budget_policy_sequence_type" model="ir.sequence.type">
+            <field name="name">Fiscal Budget Policy</field>
+            <field name="code">fiscal.budget.policy</field>
+        </record>
+        <record id="fiscal_budget_policy_sequence" model="ir.sequence">
+            <field name="code">fiscal.budget.policy</field>
+            <field name="name">Fiscal Budget Policy</field>
+            <field name="prefix">FBP</field>
+            <field name="padding">5</field>
+        </record>
+        
+        <!--Budget Breakdown Unit Sequence-->
+        <record id="budget_breakdown_unit_sequence_type" model="ir.sequence.type">
+            <field name="name">Budget Breakdown - Unit Based</field>
+            <field name="code">fiscal.policy.breakdown.unit</field>
+        </record>
+        <record id="budget_breakdown_unit_sequence" model="ir.sequence">
+            <field name="code">fiscal.policy.breakdown.unit</field>
+            <field name="name">Budget Breakdown - Unit Based</field>
+            <field name="prefix">BD-UNIT/</field>
+            <field name="padding">4</field>
+        </record>
+        
+        <!--Budget Control Unit Sequence-->
+        <record id="budget_control_unit_sequence_type" model="ir.sequence.type">
+            <field name="name">Budget Control - Unit Based</field>
+            <field name="code">budget.control.unit</field>
+        </record>
+        <record id="budget_control_unit_sequence" model="ir.sequence">
+            <field name="code">budget.control.unit</field>
+            <field name="name">Budget Control - Unit Based</field>
+            <field name="prefix">BC-UNIT/</field>
+            <field name="padding">4</field>
+        </record>
+        
+        <!--Section Budget Transfer Sequence-->
+        <record id="section_budget_transfer_sequence_type" model="ir.sequence.type">
+            <field name="name">Section Budget Transfer</field>
+            <field name="code">section.budget.transfer</field>
+        </record>
+        <record id="section_budget_transfer_sequence" model="ir.sequence">
+            <field name="code">section.budget.transfer</field>
+            <field name="name">Section Budget Transfer</field>
+            <field name="prefix">SBT/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</openerp>

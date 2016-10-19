@@ -55,8 +55,12 @@
                                         <field name="notes"/>
                                     </tree>
                                 </field>
-                                
-                                <separator string="Additional Information"/>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="total_transferred_amt"/>
+                                </group>
+                                <div class="oe_clear">
+                                    <label for="notes"/>
+                                </div>
                                 <field name="notes" placeholder="Additional Information...."/>
                             </page>
                         </notebook>

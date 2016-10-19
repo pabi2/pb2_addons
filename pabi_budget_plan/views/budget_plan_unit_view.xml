@@ -2,17 +2,40 @@
 <openerp>
     <data>
 
+        <record id="budget_plan_unit_accept_view" model="ir.ui.view">
+            <field name="name">budget.plan.unit.accept.form</field>
+            <field name="model">budget.plan.unit.accept</field>
+            <field name="arch" type="xml">
+                <form string="Accept Unit Based Plan">
+                    <p class="oe_grey">
+                        Accept the selected budget plan.
+                    </p>
+                    <footer>
+                        <button string="Accept Budget Plan" name="accept_budget_plan" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_budget_plan_unit_accept"
+            multi="True"
+            key2="client_action_multi" name="Accept Unit Based Plan"
+            res_model="budget.plan.unit.accept" src_model="budget.plan.unit"
+            view_mode="form" target="new" view_type="form" />
+        
         <record model="ir.ui.view" id="view_budget_plan_unit_form">
             <field name="name">view.budget.plan.unit.form</field>
             <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="button_accept" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Verify" name="button_approve" states="accept" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Reset to Draft" name="button_draft" states="cancel,accept" type="object" />
+                        <button string="Submit" groups="pabi_budget_plan.group_budget_user" name="button_submit" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_budget_plan.group_budget_manager" name="button_accept" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_budget_plan.group_budget_manager" name="button_approve" states="accept" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_budget_plan.group_budget_manager" name="button_reject" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" groups="pabi_budget_plan.group_budget_manager" name="button_draft" states="cancel,accept" type="object" />
                         <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,accept,reject,approve"/>
                     </header>
