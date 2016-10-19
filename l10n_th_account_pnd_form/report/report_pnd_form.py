@@ -114,7 +114,7 @@ class ReportPNDForm(models.Model):
                 and res_id = a.partner_id),
                 a.supplier_name) as supplier_name_th
         from (
-        select av.id,
+        select av.id, av.state,
             av.wht_sequence_display,
             av.number,
             av.date_value,
@@ -138,8 +138,10 @@ class ReportPNDForm(models.Model):
             pv.name as supplier_province,
             ts.zip as supplier_zip,
             co.name as supplier_country,
-            -sum(avt.base) as base_total,
-            -sum(avt.amount) as tax_total
+            case when av.state != 'cancel'
+                then -sum(avt.base) else 0.0 end as base_total,
+            case when av.state != 'cancel'
+                then -sum(avt.amount) else 0.0 end as tax_total
         from account_voucher av
             left outer join account_voucher_tax avt on avt.voucher_id = av.id
             left outer join res_partner rp on rp.id = av.partner_id
@@ -152,7 +154,7 @@ class ReportPNDForm(models.Model):
             left outer join res_country_province pv on pv.id = rp.province_id
             left outer join res_country co on co.id = rp.country_id
         where av.wht_sequence > 0
-        group by av.wht_sequence_display, av.number,
+        group by av.state, av.wht_sequence_display, av.number,
             av.date_value, av.income_tax_form, av.wht_period_id, av.id,
             av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name, rt.id, rt.name,
             emp.id, emp.first_name, emp.last_name, rp.street, rp.street2,
@@ -201,12 +203,16 @@ class ReportPNDFormLine(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         select min(avt.id) id,
+            av.state,
             avt.voucher_id,
             av.income_tax_form,
             ap.name as wht_period,
             av.date_value, at.amount * 100 as tax_percent,
             avt.wht_cert_income_type, avt.wht_cert_income_desc,
-            -sum(avt.base) as base, -sum(avt.amount) as tax
+            case when av.state != 'cancel'
+                then -sum(avt.base) else 0.0 end as base,
+            case when av.state != 'cancel'
+                then -sum(avt.amount) else 0.0 end as tax
         from account_voucher av join account_voucher_tax avt
             on avt.voucher_id = av.id and tax_code_type = 'wht'
             join account_tax at on at.id = avt.tax_id
@@ -214,5 +220,5 @@ class ReportPNDFormLine(models.Model):
         where av.wht_sequence > 0
         group by av.wht_period_id, av.income_tax_form, avt.voucher_id,
             ap.name, av.date_value, avt.wht_cert_income_type,
-            avt.wht_cert_income_desc, at.amount
+            avt.wht_cert_income_desc, at.amount, av.state
         )""" % (self._table, ))
