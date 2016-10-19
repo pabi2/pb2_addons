@@ -12,6 +12,7 @@ class AccountVoucher(models.Model):
         size=1000,
         compute='_compute_invoices_ref',
         string='Invoices',
+        store=True,
     )
     validate_user_id = fields.Many2one(
         'res.users',
@@ -57,9 +58,9 @@ class AccountVoucher(models.Model):
                 invoices = self.env['account.invoice'].browse(invoice_ids)
                 amount = sum([i.amount_total for i in invoices])
             if record.type == 'receipt':
-                record.total_ap_amount = amount
-            elif record.type == 'payment':
                 record.total_ar_amount = amount
+            elif record.type == 'payment':
+                record.total_ap_amount = amount
 
     @api.depends('line_ids')
     def _compute_invoices_ref(self):
@@ -94,23 +95,53 @@ class AccountVoucher(models.Model):
 
     @api.multi
     def proforma_voucher(self):
-        for voucher in self:
-            taxbranchs = []
-            for line in voucher.line_ids:
-                if line.amount or line.amount_wht or line.amount_retention:
-                    taxbranchs.append(line.supplier_invoice_taxbranch_id.id)
-            if len(list(set(taxbranchs))) > 1:
-                raise UserError(_('Mixing invoices of different '
-                                  'tax branch is not allowed!'))
+        # for voucher in self:
+        #     taxbranchs = []
+        #     for line in voucher.line_ids:
+        #         if line.amount or line.amount_wht or line.amount_retention:
+        #             taxbranchs.append(line.supplier_invoice_taxbranch_id.id)
+        #     if len(list(set(taxbranchs))) > 1:
+        #         raise UserError(_('Mixing invoices of different '
+        #                           'tax branch is not allowed!'))
         result = super(AccountVoucher, self).proforma_voucher()
         for voucher in self:
             voucher.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
         return result
 
+    @api.model
+    def create(self, vals):
+        voucher = super(AccountVoucher, self).create(vals)
+        # Delete all amount zero lines
+        zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
+        zero_lines.unlink()
+        return voucher
+
+    @api.multi
+    def write(self, vals):
+        res = super(AccountVoucher, self).write(vals)
+        # Delete all amount zero lines
+        for voucher in self:
+            zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
+            zero_lines.unlink()
+        return res
+
 
 class AccountVoucherLine(models.Model):
     _inherit = 'account.voucher.line'
+
+    select = fields.Boolean(
+        string='Select',
+        default=False,
+    )
+
+    @api.onchange('select')
+    def _onchange_select(self):
+        if self.select:
+            self.reconcile = True
+        else:
+            self.reconcile = False
+            self.amount = False
 
     @api.model
     def get_suppl_inv_taxbranch(self, move_line_id):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, fields
+from openerp import models, api, fields, _
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -43,7 +44,10 @@ class AccountInvoice(models.Model):
     @api.depends()
     def _compute_payment_count(self):
         for rec in self:
-            rec.payment_count = len(rec.payment_ids)
+            move_ids = [move_line.move_id.id for move_line in rec.payment_ids]
+            voucher_ids = self.env['account.voucher'].\
+                search([('move_id', 'in', move_ids)])._ids
+            rec.payment_count = len(voucher_ids)
 
     @api.multi
     def action_open_payments(self):
@@ -65,6 +69,9 @@ class AccountInvoice(models.Model):
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
+            # Not allow negative amount
+            if invoice.amount_total < 0.0:
+                raise UserError(_('Negative total amount not allowed!'))
         return result
 
     @api.model

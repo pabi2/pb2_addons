@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!--
+          * Work Acceptance
+          * Approval Report
+          * Stock Request
+          * Stock Transfer
+          * Stock Borrow
+          * Payment Export
+        -->
+        # Work Acceptance
+        <record id="doctype_work_acceptance_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Work Acceptance</field>
+            <field name="code"></field>
+            <field name="prefix">WA%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Approval Report
+        <record id="doctype_approval_report_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Approval Report</field>
+            <field name="code"></field>
+            <field name="prefix">PDR%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Stock Request
+        <record id="doctype_stock_request_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Stock Request</field>
+            <field name="code"></field>
+            <field name="prefix">SR%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Stock Transfer
+        <record id="doctype_stock_transfer_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Stock Transfer</field>
+            <field name="code"></field>
+            <field name="prefix">ST%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Stock Borrow
+        <record id="doctype_stock_borrow_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Stock Borrow</field>
+            <field name="code"></field>
+            <field name="prefix">SR%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Payment Export
+        <record id="doctype_payment_export_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Payment Export</field>
+            <field name="code"></field>
+            <field name="prefix">PE%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+    </data>
+</openerp>

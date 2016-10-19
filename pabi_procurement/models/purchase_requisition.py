@@ -281,8 +281,9 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def create_approval_no(self):
-        doc_no = self.env['ir.sequence'].get('approval.report'),
-        self.doc_no = doc_no[0]
+        for rec in self:
+            doc_no = self.env['ir.sequence'].get('approval.report'),
+            rec.doc_no = doc_no[0]
 
     @api.model
     def _prepare_committee_line(self, line, order_id):

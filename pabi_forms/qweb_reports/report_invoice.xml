@@ -71,6 +71,7 @@
                         <tr style="border-top: 1px solid;">
                             <th rowspan="2">Account</th>
                             <th rowspan="2">Name</th>
+                            <th rowspan="2">Partner</th>
                             <th colspan="2" class="text-center" >Amount (THB)</th>
                             <th rowspan="2">Org</th>
                             <th rowspan="2">Section</th>
@@ -87,6 +88,7 @@
                             <tr t-foreach="o.move_id.line_id" t-as="move_line" style="page-break-inside: avoid;">
                                 <td><span t-field="move_line.account_id.code"/></td>
                                 <td><span t-field="move_line.account_id.name"/></td>
+                                <td><span t-field="move_line.partner_id.name"/></td>
                                 <td>
                                     <t t-if="move_line.debit &gt; 0.0">
                                         <span t-field="move_line.debit"/>
@@ -112,7 +114,7 @@
                         <td colspan="5"></td>
                     </tr>
                 </table>
-                
+
                 <table class="table table-condensed" >
                     <tr style="border-top:hidden;">
                         <td><strong>Accounted by</strong></td>
