@@ -103,6 +103,12 @@ class ReportPNDForm(models.Model):
                 a.supplier_lastname) as supplier_lastname_th,
                 coalesce((select value
                 from ir_translation
+                where name = 'res.partner.title,name'
+                and type = 'model' and lang='th_TH'
+                and res_id = a.title_id),
+                a.title) as title_th,
+                coalesce((select value
+                from ir_translation
                 where name = 'res.partner,name'
                 and type = 'model' and lang='th_TH'
                 and res_id = a.partner_id),
@@ -119,6 +125,8 @@ class ReportPNDForm(models.Model):
             rp.taxbranch as supplier_branch,
             rp.id as partner_id,
             rp.name as supplier_name,
+            rt.id as title_id,
+            rt.name as title,
             emp.id as employee_id,
             emp.first_name as supplier_firstname,
             emp.last_name as supplier_lastname,
@@ -134,6 +142,7 @@ class ReportPNDForm(models.Model):
         from account_voucher av
             left outer join account_voucher_tax avt on avt.voucher_id = av.id
             left outer join res_partner rp on rp.id = av.partner_id
+            left outer join res_partner_title rt on rt.id = rp.title
             left outer join res_users ru on ru.partner_id = rp.id
             left outer join resource_resource rr on rr.user_id = ru.id
             left outer join hr_employee emp on emp.resource_id = rr.id
@@ -144,9 +153,9 @@ class ReportPNDForm(models.Model):
         where av.wht_sequence > 0
         group by av.wht_sequence_display,
             av.date_value, av.income_tax_form, av.wht_period_id, av.id,
-            av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name, emp.id,
-            emp.first_name, emp.last_name, rp.street, rp.street2, ts.name,
-            dt.name, pv.name, ts.zip, co.name
+            av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name, rt.id, rt.name,
+            emp.id, emp.first_name, emp.last_name, rp.street, rp.street2,
+            ts.name, dt.name, pv.name, ts.zip, co.name
         ) a
         order by a.wht_sequence_display
         )""" % (self._table, ))

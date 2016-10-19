@@ -45,8 +45,7 @@ class InvoiceVoucherTaxDetail(object):
     @api.multi
     def _assign_detail_tax_sequence(self):
         Period = self.env['account.period']
-        ConfParam = self.env['ir.config_parameter']
-        months = ConfParam.get_param('number_month_tax_addition')
+        months = self.env.user.company_id.number_month_tax_addition
         tax_months = months and int(months) or 6
         date_start, date_stop = self._get_valid_date_range(tax_months)
 

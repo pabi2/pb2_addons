@@ -20,6 +20,7 @@ selected, user won't be able to process shipment (will be blocked).
     'demo': [],
     'data': [
         'data/payment_term_data.xml',
+        'views/account_config.xml',
     ],
     'test': [
     ],

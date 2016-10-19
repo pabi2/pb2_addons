@@ -659,9 +659,10 @@ class AccountVoucher(common_voucher, models.Model):
         self._cr.execute("""
             select coalesce(max(wht_sequence), 0) + 1
             from account_voucher
-            where period_id = %s and income_tax_form = %s
+            where wht_period_id = %s and income_tax_form = %s
         """, (wht_period_id, income_tax_form))
-        return self._cr.fetchone()[0]
+        next_sequence = self._cr.fetchone()[0]
+        return next_sequence
 
 
 class AccountVoucherLine(common_voucher, models.Model):

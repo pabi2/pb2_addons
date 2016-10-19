@@ -9,12 +9,8 @@
             <field name="arch" type="xml">
                 <div name="account_config" position="inside">
                     <div>
-                        <label for="account_tax_difference"/>
-                        <field name="account_tax_difference" class="oe_inline"/>
-                    </div>
-                    <div>
-                        <label for="number_month_tax_addition"/>
-                        <field name="number_month_tax_addition" class="oe_inline"/>
+                        <label for="prepaid_account_id"/>
+                        <field name="prepaid_account_id" class="oe_inline"/>
                     </div>
                 </div>
             </field>

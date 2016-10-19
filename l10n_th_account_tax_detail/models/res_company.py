@@ -30,3 +30,7 @@ class ResCompany(models.Model):
         string='Tax Difference Account',
         domain=[('type', '!=', 'view')],
     )
+    number_month_tax_addition = fields.Integer(
+        string='Number of months for additional Tax',
+        default=6,
+    )

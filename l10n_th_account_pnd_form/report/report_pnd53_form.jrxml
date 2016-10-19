@@ -33,6 +33,8 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<field name="supplier_branch" class="java.lang.String"/>
 	<field name="partner_id" class="java.lang.Integer"/>
 	<field name="supplier_name" class="java.lang.String"/>
+	<field name="title_id" class="java.lang.Integer"/>
+	<field name="title" class="java.lang.String"/>
 	<field name="employee_id" class="java.lang.Integer"/>
 	<field name="supplier_firstname" class="java.lang.String"/>
 	<field name="supplier_lastname" class="java.lang.String"/>
@@ -47,6 +49,7 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<field name="tax_total" class="java.math.BigDecimal"/>
 	<field name="supplier_firstname_th" class="java.lang.String"/>
 	<field name="supplier_lastname_th" class="java.lang.String"/>
+	<field name="title_th" class="java.lang.String"/>
 	<field name="supplier_name_th" class="java.lang.String"/>
 	<variable name="supplier_address" class="java.lang.String">
 		<variableExpression><![CDATA[(new Scriptlet()).getAddress(
@@ -77,8 +80,8 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 			</image>
 		</band>
 	</background>
-	<title>
-		<band height="110" splitType="Stretch">
+	<pageHeader>
+		<band height="110">
 			<textField isBlankWhenNull="true">
 				<reportElement x="337" y="15" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
@@ -206,29 +209,29 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_branch}.length()==5?$P{company_branch}.substring(1,2):""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="716" y="21" width="22" height="25"/>
-				<textElement verticalAlignment="Bottom" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="686" y="18" width="39" height="34" forecolor="#000000"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="779" y="21" width="23" height="25"/>
-				<textElement verticalAlignment="Bottom" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+			<textField evaluationTime="Report">
+				<reportElement x="779" y="18" width="40" height="34" forecolor="#000000"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
-	</title>
+	</pageHeader>
 	<detail>
 		<band height="53" splitType="Stretch">
 			<textField>
-				<reportElement x="76" y="3" width="361" height="25"/>
+				<reportElement x="76" y="3" width="541" height="25"/>
 				<textElement verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name_th}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{title_th} == null ? $F{supplier_name_th} : $F{title_th} + " " + $F{supplier_name_th}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="171" y="-1" width="10" height="25"/>
