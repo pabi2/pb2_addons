@@ -116,6 +116,7 @@ class ReportPNDForm(models.Model):
         from (
         select av.id,
             av.wht_sequence_display,
+            av.number,
             av.date_value,
             av.income_tax_form,
             av.wht_period_id,
@@ -151,7 +152,7 @@ class ReportPNDForm(models.Model):
             left outer join res_country_province pv on pv.id = rp.province_id
             left outer join res_country co on co.id = rp.country_id
         where av.wht_sequence > 0
-        group by av.wht_sequence_display,
+        group by av.wht_sequence_display, av.number,
             av.date_value, av.income_tax_form, av.wht_period_id, av.id,
             av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name, rt.id, rt.name,
             emp.id, emp.first_name, emp.last_name, rp.street, rp.street2,
