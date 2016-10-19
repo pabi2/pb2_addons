@@ -1,10 +1,78 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, api, fields, _
+from openerp.exceptions import Warning as UserError
 
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
+        copy=False,
+    )
+    validate_date = fields.Date(
+        'Validate On',
+        readonly=True,
+        copy=False,
+    )
+    show_account = fields.Boolean(
+        string='Show account (hide product)',
+        default=False,
+        change_default=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]}
+    )
+    invoice_line_show_account = fields.One2many(
+        'account.invoice.line',
+        'invoice_id',
+        string='Invoice Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=True,
+        help="Used when user choose option Show Account instead of Product"
+    )
+    payment_count = fields.Integer(
+        string='Payment Count',
+        compute='_compute_payment_count',
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends()
+    def _compute_payment_count(self):
+        for rec in self:
+            move_ids = [move_line.move_id.id for move_line in rec.payment_ids]
+            voucher_ids = self.env['account.voucher'].\
+                search([('move_id', 'in', move_ids)])._ids
+            rec.payment_count = len(voucher_ids)
+
+    @api.multi
+    def action_open_payments(self):
+        self.ensure_one()
+        move_ids = self.payment_ids.mapped('move_id')._ids
+        Voucher = self.env['account.voucher']
+        voucher_ids = Voucher.search([('move_id', 'in', move_ids)])._ids
+        action_id = self.env.ref('account_voucher.action_vendor_payment')
+        if action_id:
+            action = action_id.read([])[0]
+            action['domain'] =\
+                "[('id','in', ["+','.join(map(str, voucher_ids))+"])]"
+            return action
+        return True
+
+    @api.multi
+    def invoice_validate(self):
+        result = super(AccountInvoice, self).invoice_validate()
+        for invoice in self:
+            invoice.write({'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.today()})
+            # Not allow negative amount
+            if invoice.amount_total < 0.0:
+                raise UserError(_('Negative total amount not allowed!'))
+        return result
 
     @api.model
     def line_get_convert(self, line, part, date):
@@ -12,6 +80,21 @@ class AccountInvoice(models.Model):
         res.update({
             'taxbranch_id': line.get('taxbranch_id', False),
         })
+        return res
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    @api.multi
+    def onchange_account_id(self, product_id, partner_id, inv_type,
+                            fposition_id, account_id):
+        res = super(AccountInvoiceLine, self).onchange_account_id(
+            product_id, partner_id, inv_type, fposition_id, account_id)
+        account = self.env['account.account'].browse(account_id)
+        if not res.get('value'):
+            res['value'] = {}
+        res['value'].update({'name': account.name})
         return res
 
 

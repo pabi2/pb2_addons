@@ -13,7 +13,7 @@
     "author": "Kitti U.",
     "license": "AGPL-3",
     "application": False,
-    "installable": False,  # Mark uninstallable for now.
+    "installable": True,  # Mark uninstallable for now.
     "depends": [
         "account_budget_activity",
         'web_widget_x2many_2d_matrix',
@@ -23,6 +23,7 @@
         'security/ir.model.access.csv',
         'wizard/budget_import_wiz_view.xml',
         'wizard/budget_export_wiz_view.xml',
+        'views/budget_plan_history_view.xml',
         "views/account_budget_view.xml",
         'views/output_xls_report.xml',
         'views/attachment_view.xml'

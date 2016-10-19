@@ -21,12 +21,16 @@
         "pabi_base",
         "pabi_chartfield",
         "account_move_line_doc_ref",
+        "hr_expense_auto_invoice",
+        "pabi_source_document",
     ],
     "data": [
         "security/security_group.xml",
         "security/ir.model.access.csv",
         "views/account_config.xml",
         "views/account_voucher_view.xml",
+        "views/account_invoice_view.xml",
         "views/voucher_payment_receipt_view.xml",
+        "views/account_invoice_view.xml",
     ],
 }

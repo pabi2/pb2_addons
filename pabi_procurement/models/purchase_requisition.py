@@ -281,8 +281,9 @@ class PurchaseRequisition(models.Model):
 
     @api.multi
     def create_approval_no(self):
-        doc_no = self.env['ir.sequence'].get('approval.report'),
-        self.doc_no = doc_no[0]
+        for rec in self:
+            doc_no = self.env['ir.sequence'].get('approval.report'),
+            rec.doc_no = doc_no[0]
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -633,9 +634,9 @@ class PurchaseRequisitionLine(models.Model):
         'Fiscal Year',
         readonly=True,
     )
-    product_id = fields.Many2one(
-        required=True,
-    )
+    # product_id = fields.Many2one(
+    #     required=True,
+    # )
 
     @api.multi
     def onchange_product_id(self, product_id, product_uom_id,
@@ -694,7 +695,4 @@ class PurchaseRequisitionCommittee(models.Model):
     committee_type_id = fields.Many2one(
         'purchase.committee.type',
         string='Type',
-    )
-    product_id = fields.Many2one(
-        required=True,
     )

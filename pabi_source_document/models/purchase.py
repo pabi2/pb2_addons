@@ -11,6 +11,8 @@ class PurchaseOrder(models.Model):
         if invoice_id:
             for purchase in self:
                 invoice = self.env['account.invoice'].browse(invoice_id)
-                invoice.write({'source_document_id': '%s,%s'
-                               % (self._model, purchase.id)})
+                invoice.write({
+                    'source_document_id': '%s,%s' % (self._model, purchase.id),
+                    'source_document': purchase.name,
+                })
         return invoice_id

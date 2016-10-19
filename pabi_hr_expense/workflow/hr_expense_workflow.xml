@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        
+
         <record id="act_invoice_except" model="workflow.activity">
             <field name="wkf_id" ref="hr_expense.wkf_expenses"/>
             <field name="name">invoice_except</field>
             <field name="kind">function</field>
             <field name="action">action_invoice_except()</field>
         </record>
-        
-        
+
+
         <record id="t17" model="workflow.transition">
             <field name="act_from" ref="hr_expense_auto_invoice.act_paid"/>
             <field name="act_to" ref="act_invoice_except"/>
             <field name="signal">invoice_except</field>
             <field name="group_id" ref="base.group_hr_user"/>
         </record>
-        
+
         <record id="t18" model="workflow.transition">
             <field name="act_from" ref="act_invoice_except"/>
             <field name="act_to" ref="hr_expense_auto_invoice.act_paid"/>
             <field name="signal">except_to_paid</field>
             <field name="group_id" ref="base.group_hr_user"/>
         </record>
-        
+
         <record id="t19" model="workflow.transition">
             <field name="act_from" ref="act_invoice_except"/>
             <field name="act_to" ref="hr_expense.act_done"/>
@@ -37,5 +37,13 @@
             <field name="signal">done_to_except</field>
             <field name="group_id" ref="base.group_hr_user"/>
         </record>
+
+        <record id="t21" model="workflow.transition">
+            <field name="act_from" ref="act_invoice_except"/>
+            <field name="act_to" ref="hr_expense.act_refused"/>
+            <field name="signal">refuse</field>
+            <field name="group_id" ref="base.group_hr_user"/>
+        </record>
+
     </data>
 </openerp>

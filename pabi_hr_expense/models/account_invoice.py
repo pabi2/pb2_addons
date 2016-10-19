@@ -15,10 +15,16 @@ class AccountInvoice(models.Model):
         copy=False,
         readonly=True,
     )
-    is_diff_expense_amount = fields.Boolean(
+    diff_expense_amount_flag = fields.Integer(
         string='Amount different from expense',
-        compute='_compute_is_diff_expense_amount',
+        compute='_compute_diff_expense_amount_flag',
         readonly=True,
+        default=0,
+        help="""
+        * Flat = 0 when amount invoice = amount expense\n
+        * Flag = 1 when amount invoice > amount expense.\n
+        * Flag = -1 when amount invoice < amount expense.
+        """
     )
     diff_expense_amount_reason = fields.Char(
         string='Amount Diff Reason',
@@ -29,45 +35,40 @@ class AccountInvoice(models.Model):
 
     @api.multi
     @api.depends('amount_total')
-    def _compute_is_diff_expense_amount(self):
+    def _compute_diff_expense_amount_flag(self):
         for rec in self:
-            rec.is_diff_expense_amount = False
             if rec.expense_id:
+                rec.diff_expense_amount_flag = 0
                 clear_amount = sum([x.price_subtotal < 0.0 and
                                     x.price_subtotal or 0.0
                                     for x in rec.invoice_line])
                 amount = rec.amount_total - clear_amount
-                if amount != rec.amount_expense_request:
-                    rec.is_diff_expense_amount = True
+                rec.diff_expense_amount_flag = \
+                    float_compare(amount, rec.amount_expense_request,
+                                  precision_digits=1)
 
-    @api.one
-    @api.constrains('amount_total')
-    def _check_amount_not_over_expense(self):
-        # For expense related invoice
-        # Positive line amount must not over total expense
-        if self.expense_id:
-            # Negative amount is advance clearing
-            clear_amount = sum([x.price_subtotal < 0.0 and
-                                x.price_subtotal or 0.0
-                                for x in self.invoice_line])
-            amount = self.amount_total - clear_amount
-            # 1 digit precision only to avoid error.
-            if float_compare(amount, self.expense_id.amount,
-                             precision_digits=1) == 1:
-                raise UserError(_('New amount over expense is not allowed!'))
+    @api.onchange('advance_expense_id')
+    def _onchange_advance_expense_id(self):
+        super(AccountInvoice, self)._onchange_advance_expense_id()
+        self.taxbranch_id = self.taxbranch_ids.id
 
     @api.multi
     def confirm_paid(self):
         expenses = self.env['hr.expense.expense'].search([('invoice_id',
                                                            'in', self._ids)])
-        history_obj = self.env['hr.expense.advance.due.history']
+        History = self.env['hr.expense.advance.due.history']
+        Voucher = self.env['account.voucher']
         for expense in expenses:
             if not expense.is_employee_advance:
                 continue
             date_due = False
-            # Case 1) buy_product, date_due = paid_date + 30 days
+            # Case 1) buy_product, date_due = date_value + 30 days
             if expense.advance_type == 'buy_product':
-                date_paid = expense.invoice_id.payment_ids[0].date
+                move_ids = \
+                    expense.invoice_id.payment_ids.mapped('move_id')._ids
+                vouchers = Voucher.search([('move_id', 'in', move_ids)],
+                                          order='date desc', limit=1)
+                date_paid = vouchers[0].date_value
                 date_due = (datetime.strptime(date_paid, '%Y-%m-%d') +
                             relativedelta(days=30))
             # Case 2) attend_seminar, date_due = arrive date + 30 days
@@ -79,7 +80,7 @@ class AccountInvoice(models.Model):
                 raise UserError(_('Can not calculate due date. '
                                   'No Advance Type vs Due Date Rule'))
             if date_due:
-                history_obj.create({
+                History.create({
                     'expense_id': expense.id,
                     'date_due': date_due.strftime('%Y-%m-%d'),
                 })
@@ -100,7 +101,10 @@ class AccountInvoice(models.Model):
     def action_move_create(self):
         result = super(AccountInvoice, self).action_move_create()
         for invoice in self:
-            if invoice.is_diff_expense_amount and \
+            if invoice.diff_expense_amount_flag == 1:
+                raise UserError(
+                    _('New amount over expense is not allowed!'))
+            if invoice.diff_expense_amount_flag == -1 and \
                     not invoice.diff_expense_amount_reason:
                 raise UserError(
                     _('Total amount is changed from Expense Request Amount.\n'

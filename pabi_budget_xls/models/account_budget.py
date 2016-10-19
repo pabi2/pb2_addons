@@ -8,6 +8,16 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_FIELDS, ChartField
 
 
+class BudgetPlan(models.Model):
+    _inherit = 'budget.plan.unit'
+
+    plan_history_line_ids = fields.One2many(
+        'budget.plan.history',
+        'plan_id',
+        string="Budget Plan History",
+    )
+
+
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
 

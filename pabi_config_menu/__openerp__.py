@@ -18,6 +18,11 @@ Menu or Purchase/Purchase
 * Purchase Order
 * Suppliers
 
+Mass Editing
+============
+
+* Edit Custom/Partner Flag in Partner window
+
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitit U.,",
@@ -32,5 +37,6 @@ Menu or Purchase/Purchase
     ],
     "data": [
         "data/menu_data.xml",
+        "data/res_partner_mass_editing_data.xml",
     ],
 }

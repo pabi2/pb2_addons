@@ -189,6 +189,13 @@ class PurchaseOrder(models.Model):
             quotation.state = 'cancel'
         return True
 
+    @api.model
+    def by_pass_delete(self, ids):
+        quotation = self.browse(ids)
+        for quote in quotation:
+            quote.unlink()
+        return { 'type': 'ir.actions.client', 'tag': 'reload', }
+
     @api.multi
     def wkf_validate_invoice_method(self):
         """ Change invoice method to 'or' when picking + service """
