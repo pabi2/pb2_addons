@@ -117,10 +117,10 @@ class PrintWhtCertWizard(models.TransientModel):
         """ Data to pass as parameter in iReport """
         data = {}
         TH = {'lang': 'th_TH'}
-        voucher = self.voucher_id
+        voucher = self.with_context(TH).voucher_id
         data['voucher_number'] = voucher.number
         data['date_value'] = voucher.date_value
-        company = self.env.user.company_id.partner_id
+        company = self.with_context(TH).env.user.company_id.partner_id
         supplier = voucher.partner_id
         if not company.vat or not supplier.vat:
             raise UserError(_('No Tax ID on Company or Supplier'))
