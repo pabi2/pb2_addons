@@ -111,10 +111,21 @@ class AccountVoucher(models.Model):
 
     @api.model
     def create(self, vals):
+        print vals
+        # DR
+        line_dr_ids = []
+        for line in vals.get('line_dr_ids', []):
+            if line[2]['amount'] > 0.0:
+                line_dr_ids.append(line)
+        vals.update({'line_dr_ids': line_dr_ids})
+        # CR
+        line_cr_ids = []
+        for line in vals.get('line_cr_ids', []):
+            if line[2]['amount'] > 0.0:
+                line_cr_ids.append(line)
+        vals.update({'line_cr_ids': line_cr_ids})
+        # --
         voucher = super(AccountVoucher, self).create(vals)
-        # Delete all amount zero lines
-        zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
-        zero_lines.unlink()
         return voucher
 
     @api.multi
