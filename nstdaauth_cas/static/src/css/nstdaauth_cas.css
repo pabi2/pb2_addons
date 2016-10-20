@@ -1,0 +1,12 @@
+.cas_check{
+    border-left: 1px solid #DDDDDD;
+    position: relative;
+    display: inline;
+    left: 10px;
+    margin: 10px;
+    top: 15px;
+}
+
+.openerp .oe_menu {
+    display: none;
+}

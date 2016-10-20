@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<menuitem id="menu_ir_action_nstda_ir_ui_menu_main" name='App Direct'/>
+		<menuitem id="menu_ir_action_nstda_ir_ui_menu_submain" name='Config' parent="menu_ir_action_nstda_ir_ui_menu_main"/>
+		
+		<record model="ir.ui.view" id="view_nstda_ir_ui_menu_tree">
+			<field name="name">ir.ui.menu.tree</field>
+			<field name="model">ir.ui.menu</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="App Direct" editable='bottom'>
+					<field name="app3digi" />
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+		
+		<record id="action_nstda_ir_ui_menue" model="ir.actions.act_window">
+			<field name="name">App Direct</field>
+			<field name="view_id" ref="view_nstda_ir_ui_menu_tree" />
+			<field name="domain">[('parent_id','=', False)]</field>
+			<field name="res_model">ir.ui.menu</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		
+		<menuitem name="App Direct" id="menu_nstda_ir_ui_menu"
+			sequence="10" parent="menu_ir_action_nstda_ir_ui_menu_submain"
+			action="action_nstda_ir_ui_menue" />
+		
+	</data>
+</openerp>
