@@ -37,9 +37,9 @@
                         <group>
                             <div>
                                 <button name="%(budget_import_wizard_action)d"
-                                   type="action" string="Import Plan" class="oe_highlight oe_inline"/> 
+                                   type="action" states="draft"  string="Import Plan" class="oe_highlight oe_inline"/> 
                                  <button name="%(budget_export_wizard_action)d"
-                                   type="action" string="Export Plan" class="oe_highlight oe_inline"/>
+                                   type="action" states="draft" string="Export Plan" class="oe_highlight oe_inline"/>
                             </div>
                             
                         </group>
