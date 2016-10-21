@@ -404,7 +404,7 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 				<textElement>
 					<font size="18"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Cancelled"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ยกเลิก"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -106,6 +106,11 @@ class AccountVoucher(common_voucher, models.Model):
         string='Auto recognize undue VAT',
         readonly=True,
     )
+    _sql_constraints = [
+        ('wht_seq_uunique',
+         'unique (wht_period_id, wht_sequence, income_tax_form)',
+         'WHT Sequence must be unique!'),
+    ]
 
     @api.multi
     @api.depends('wht_sequence')

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.tools import float_compare
 import datetime
 
 
@@ -163,7 +164,10 @@ class AccountPIT(models.Model):
         for rate in self.rate_ids:
             if i == 0 and rate.income_from != 0.0:
                 raise UserError(_('Income amount must start from 0.0'))
-            if i > 0 and rate.income_from != prev_income_to:
+            print rate.income_from
+            print prev_income_to
+            if i > 0 and \
+                    float_compare(rate.income_from, prev_income_to, 2) != 0:
                 raise UserError(
                     _('Discontinued income range!\n'
                       'Please make sure Income From = Previous Income To'))
