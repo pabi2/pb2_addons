@@ -4,8 +4,7 @@ from openerp import models, fields
 import time
 
 
-class account_voucher(models.Model):
-
+class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
 
     # Customer Payment

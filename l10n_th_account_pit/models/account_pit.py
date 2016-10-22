@@ -164,8 +164,6 @@ class AccountPIT(models.Model):
         for rate in self.rate_ids:
             if i == 0 and rate.income_from != 0.0:
                 raise UserError(_('Income amount must start from 0.0'))
-            print rate.income_from
-            print prev_income_to
             if i > 0 and \
                     float_compare(rate.income_from, prev_income_to, 2) != 0:
                 raise UserError(
