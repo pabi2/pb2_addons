@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pabi_work_acceptance" language="groovy" pageWidth="1303" pageHeight="595" orientation="Landscape" columnWidth="1263" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.1000000000000032"/>
-	<property name="ireport.x" value="733"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="1.9487171000000065"/>
+	<property name="ireport.x" value="791"/>
+	<property name="ireport.y" value="31"/>
 	<style name="THfont" isDefault="true" hAlign="Center" vAlign="Middle" lineSpacing="Single" isBlankWhenNull="true" fontSize="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 	<parameter name="operating_unit" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -81,7 +81,7 @@ AND order_month = $P{month}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font size="24" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ศูนย์  " + ($F{ou_code} == null ? "" : $F{ou_code})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ou_code}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="628" y="76" width="509" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -134,7 +134,7 @@ AND order_month = $P{month}]]>
 				<text><![CDATA[ผู้ขอซื้อ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="THfont" x="453" y="0" width="76" height="21"/>
+				<reportElement style="THfont" x="453" y="0" width="88" height="21"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -147,7 +147,7 @@ AND order_month = $P{month}]]>
 				<text><![CDATA[เลขที่ PO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="THfont" x="529" y="0" width="71" height="21"/>
+				<reportElement style="THfont" x="541" y="0" width="71" height="21"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -160,7 +160,7 @@ AND order_month = $P{month}]]>
 				<text><![CDATA[วันที่ PO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="THfont" x="600" y="0" width="94" height="21"/>
+				<reportElement style="THfont" x="612" y="0" width="82" height="21"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -264,17 +264,17 @@ AND order_month = $P{month}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="453" y="0" width="76" height="20"/>
+				<reportElement x="453" y="0" width="88" height="20"/>
 				<textElement lineSpacing="Single"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="529" y="0" width="71" height="20"/>
+				<reportElement x="541" y="0" width="71" height="20"/>
 				<textElement lineSpacing="Single"/>
 				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{po_date_order}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="600" y="0" width="94" height="20"/>
+				<reportElement x="617" y="0" width="77" height="20"/>
 				<textElement lineSpacing="Single"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{method}]]></textFieldExpression>
 			</textField>
@@ -340,7 +340,7 @@ AND order_month = $P{month}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="THfont" stretchType="RelativeToBandHeight" x="453" y="0" width="76" height="20"/>
+				<reportElement style="THfont" stretchType="RelativeToBandHeight" x="453" y="0" width="88" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -352,7 +352,7 @@ AND order_month = $P{month}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="THfont" stretchType="RelativeToBandHeight" x="529" y="0" width="71" height="20"/>
+				<reportElement style="THfont" stretchType="RelativeToBandHeight" x="541" y="0" width="71" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -364,7 +364,7 @@ AND order_month = $P{month}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="THfont" stretchType="RelativeToBandHeight" x="600" y="0" width="94" height="20"/>
+				<reportElement style="THfont" stretchType="RelativeToBandHeight" x="612" y="0" width="82" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
