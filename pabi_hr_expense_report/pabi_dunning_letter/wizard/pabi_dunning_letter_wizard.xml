@@ -8,6 +8,7 @@
                 <form string="Print Dunning Letter">
                     <group>
                         <group>
+                            <field name="date_print"/>
                             <field name="due_days"/>
                             <div colspan="2">
                                 <p>

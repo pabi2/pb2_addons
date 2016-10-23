@@ -281,7 +281,7 @@ class PurchaseWorkAcceptance(models.Model):
                     fine_per_day = (fine_rate*0.01) * \
                                    ((to_receive_qty * unit_price) + line_tax)
                     fine_per_day = 100.0 if 0 < fine_per_day < 100.0 \
-                    else fine_per_day
+                        else fine_per_day
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * overdue_day * fine_per_day
                 acceptance.total_fine_cal = total_fine

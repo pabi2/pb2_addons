@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_bank_form" model="ir.ui.view">
+            <field name="name">view.partner.bank.form</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <field name="acc_number" position="after">
+                    <field name="active" />
+                    <field name="default" />
+                </field>
+            </field>
+        </record>
+        <record id="view_partner_bank_tree" model="ir.ui.view">
+            <field name="name">view.partner.bank.tree</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="active" />
+                </field>
+            </field>
+        </record>
+
+        <record id="base.action_res_partner_bank_account_form" model="ir.actions.act_window">
+            <field name="context">{'active_test': False}</field>
+        </record>
+    </data>
+</openerp>

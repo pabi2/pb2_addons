@@ -8,6 +8,7 @@ def pabi_dunning_letter_parser(cr, uid, ids, data, context):
         'ids': data['parameters']['ids'],
         'parameters': {
             'due_days': data['parameters']['due_days'],
+            'date_print': data['parameters']['date_print'],
         }
     }
 
