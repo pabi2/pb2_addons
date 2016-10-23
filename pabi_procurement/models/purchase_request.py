@@ -11,7 +11,7 @@ class PurchaseRequest(models.Model):
         ('draft', 'Draft'),
         ('to_approve', 'To Accept'),
         ('approved', 'Accepted'),
-        ('rejected', 'Cancelled')
+        ('rejected', 'Rejected')
     ]
 
     @api.model

@@ -82,6 +82,7 @@
                     <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_manager" class="oe_highlight"/>
                     <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
                     <button name="print_requisition_with_condition" type="object" string="View PD"/>
+                    <button name="print_approval_report" type="object" string="View Approval Report"/>
                 </xpath>
                 <xpath expr="//button[@name='%(purchase_requisition.action_purchase_requisition_partner)d']" position="attributes">
                     <attribute name="attrs">{'invisible': [('state', 'not in', ('in_progress', 'done'))]}</attribute>
@@ -116,7 +117,8 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
                        position="after">
-                    <field name="fixed_asset"/>
+                    <field name="fixed_asset" invisible="1"/>
+                    <field name="is_green_product"/>
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
                     <field name="fiscalyear_id"/>
