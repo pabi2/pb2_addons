@@ -65,7 +65,7 @@ class PabiMonthlyWorkAcceptanceReport(models.Model):
                 po.name po_name,
                 po.date_order po_date_order,
                 pm.name method,
-                pd.description reason,
+                CONCAT((SELECT pt.name FROM purchase_type pt WHERE pt.id = pd.purchase_type_id),' ',pd.objective) reason,
                 po.amount_total,
                 rc.name currency,
                 CONCAT(COALESCE(rpt.name || ' ',''),rp.name) as supplier_name,

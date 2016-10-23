@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.357947691000002"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="245"/>
+	<property name="ireport.y" value="976"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -1078,7 +1078,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{rfq_null} == null? "-" : ' ']]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="71">
+		<band height="73">
 			<staticText>
 				<reportElement x="0" y="0" width="294" height="21"/>
 				<textElement lineSpacing="Single">
@@ -1096,6 +1096,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="77">
+						<jr:tableFooter height="6" rowSpan="1">
+							<box>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="1.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+						</jr:tableFooter>
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -1111,7 +1118,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[RFQ Number]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="table 3_TD" height="21" rowSpan="1">
+						<jr:detailCell style="table 3_TD" height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -1128,6 +1135,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="269">
+						<jr:tableFooter height="6" rowSpan="1">
+							<box>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="1.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+						</jr:tableFooter>
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -1143,7 +1157,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[ผู้เสนอราคา]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="table 3_TD" height="21" rowSpan="1">
+						<jr:detailCell style="table 3_TD" height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -1160,6 +1174,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="101">
+						<jr:tableFooter height="6" rowSpan="1">
+							<box>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="1.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+						</jr:tableFooter>
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -1182,7 +1203,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[(รวม VAT ถ้ามี)]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="table 3_TD" height="21" rowSpan="1">
+						<jr:detailCell style="table 3_TD" height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
@@ -1199,6 +1220,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="105">
+						<jr:tableFooter height="6" rowSpan="1">
+							<box>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="1.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+						</jr:tableFooter>
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -1221,7 +1249,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[ส่งมอบภายใน]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="table 3_TD" height="21" rowSpan="1">
+						<jr:detailCell style="table 3_TD" height="30" rowSpan="1">
 							<box>
 								<topPen lineWidth="0.0"/>
 								<leftPen lineWidth="1.0"/>
