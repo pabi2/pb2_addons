@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# © <YEAR(S)> <AUTHOR(S)>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
 from openerp import models, fields
 
 
@@ -19,7 +16,8 @@ class BudgetPlanHistory(models.Model):
     )
     operation_type = fields.Selection(
         [('import', 'Import'),
-         ('export', 'Export'),],
+         ('export', 'Export'),
+         ],
         string="Operation Type",
         readonly=False,
     )
@@ -33,4 +31,3 @@ class BudgetPlanHistory(models.Model):
         string="Attachment",
         readonly=False,
     )
-

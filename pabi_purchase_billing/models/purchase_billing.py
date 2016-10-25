@@ -164,3 +164,12 @@ class PurchaseBilling(models.Model):
                 raise ValidationError(
                     _('Cannot delete billing(s) which are already billed.'))
         return super(PurchaseBilling, self).unlink()
+
+    @api.multi
+    def action_open_invoice(self):
+        self.ensure_one()
+        action = self.env.ref('account.action_invoice_tree2')
+        result = action.read()[0]
+        dom = [('purchase_billing_id', '=', self.id)]
+        result.update({'domain': dom})
+        return result

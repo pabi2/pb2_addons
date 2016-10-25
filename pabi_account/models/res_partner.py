@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from lxml import etree
-from openerp.osv.orm import setup_modifiers
-from openerp import fields, models, api
+from openerp import fields, models
 
 
 class ResPartner(models.Model):

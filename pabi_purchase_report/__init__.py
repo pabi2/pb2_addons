@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import pabi_contract_detail
-import pabi_monthly_work_acceptance
-import pabi_purchase_summarize
-import pabi_supplier_evaluation
-import pabi_supplier_summarize
-import pabi_stock_card
-import pabi_stock_card_for_accounting
+from . import pabi_contract_detail
+from . import pabi_monthly_work_acceptance
+from . import pabi_purchase_summarize
+from . import pabi_supplier_evaluation
+from . import pabi_supplier_summarize
+from . import pabi_stock_card
+from . import pabi_stock_card_for_accounting

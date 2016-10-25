@@ -19,7 +19,7 @@ class PurchaseOrder(models.Model):
 
         installment = self._context.get('installment', False)
         if installment:
-            installment =\
+            installment = \
                 self.env['purchase.invoice.plan'].search(
                     [('installment', '=', installment),
                      ('order_id', '=', po_line.order_id.id),
