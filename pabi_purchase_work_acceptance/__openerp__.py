@@ -24,6 +24,7 @@ PABI2 - Purchase Work Acceptance
     "depends": [
         "stock",
         "pabi_procurement",
+        "purchase_cash_on_delivery",
     ],
     "data": [
         "security/ir.model.access.csv",
