@@ -11,7 +11,7 @@ class PurchaseRequest(models.Model):
         ('draft', 'Draft'),
         ('to_approve', 'To Accept'),
         ('approved', 'Accepted'),
-        ('rejected', 'Cancelled')
+        ('rejected', 'Rejected')
     ]
 
     @api.model
@@ -264,7 +264,7 @@ class PurchaseRequest(models.Model):
         if 'line_ids/fund_id.id' not in fields:
             new_data = []
             for data_line in data:
-                data_line = data_line +(u'NSTDA',)
+                data_line = data_line + (u'NSTDA',)
                 new_data.append(data_line)
             fields.append('line_ids/fund_id')
             return fields, new_data
@@ -379,14 +379,13 @@ class PurchaseRequestLine(models.Model):
         readonly=True,
     )
     state = fields.Selection(
-        selection=[
-            ('open', 'Open'),
-            ('close', 'Closed'),
-        ],
-         string='Status',
-         track_visibility='onchange',
-         required=True,
-         default='open',
+        [('open', 'Open'),
+         ('close', 'Closed'),
+         ],
+        string='Status',
+        track_visibility='onchange',
+        required=True,
+        default='open',
     )
 
     @api.one

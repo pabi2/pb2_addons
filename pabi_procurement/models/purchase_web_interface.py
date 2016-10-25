@@ -265,6 +265,7 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_requisition(self, requisition):
         User = self.env['res.users']
         Employee = self.env['hr.employee']
+        ConfParam = self.env['ir.config_parameter']
         users = User.search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."

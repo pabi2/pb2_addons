@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from openerp import fields, models, api, _
 from openerp.exceptions import Warning as UserError
 from openerp.tools import float_compare
@@ -194,7 +193,7 @@ class PurchaseOrder(models.Model):
         quotation = self.browse(ids)
         for quote in quotation:
             quote.unlink()
-        return { 'type': 'ir.actions.client', 'tag': 'reload', }
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def wkf_validate_invoice_method(self):

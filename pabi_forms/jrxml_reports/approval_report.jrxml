@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.1000000000000028"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="141"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -194,23 +194,76 @@
 		<parameter name="cfb_amount_total" class="java.lang.Number" isForPrompting="false"/>
 		<queryString>
 			<![CDATA[SELECT
-CASE po.fine_condition
-WHEN 'day' THEN po.fine_num_days
-WHEN 'date' THEN po.date_fine - po.date_contract_start
-WHEN 'month' THEN po.fine_num_months * 30
+count,
+CASE count
+WHEN 1 THEN
+CASE (SELECT p.fine_condition FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+WHEN 'day' THEN (SELECT p.fine_num_days FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+WHEN 'date' THEN (SELECT p.date_fine - p.date_contract_start FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+WHEN 'month' THEN (SELECT p.fine_num_months * 30 FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+END
+ELSE
+CASE state
+WHEN 'confirmed' THEN
+CASE (SELECT p.fine_condition FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'confirmed' )
+WHEN 'day' THEN (SELECT p.fine_num_days FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'confirmed' )
+WHEN 'date' THEN (SELECT p.date_fine - p.date_contract_start FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'confirmed' )
+WHEN 'month' THEN (SELECT p.fine_num_months * 30 FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'confirmed' )
+END
+WHEN 'done' THEN
+CASE (SELECT p.fine_condition FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'done' )
+WHEN 'day' THEN (SELECT p.fine_num_days FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'done' )
+WHEN 'date' THEN (SELECT p.date_fine - p.date_contract_start FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'done' )
+WHEN 'month' THEN (SELECT p.fine_num_months * 30 FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'done' )
+END
+ELSE
+CASE (SELECT p.fine_condition FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+WHEN 'day' THEN (SELECT p.fine_num_days FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+WHEN 'date' THEN (SELECT p.date_fine - p.date_contract_start FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+WHEN 'month' THEN (SELECT p.fine_num_months * 30 FROM purchase_order p WHERE p.id::text = split_part(po_id,',',1) )
+END
+END
 END da,
+name,
+corp,
+CASE state
+WHEN 'confirmed' THEN (SELECT p.amount_total FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'confirmed')
+WHEN 'done' THEN (SELECT p.amount_total FROM purchase_order p WHERE p.id::text = ANY (regexp_split_to_array(po_id,',')) AND p.state = 'done')
+ELSE (SELECT p.amount_total FROM purchase_order p WHERE p.id::varchar = split_part(po_id,',',1))
+END amount_total,
+po_id,
+state
+FROM
+(
+SELECT
+COUNT(*),
+string_agg(po.id::varchar,',') po_id,
+ou.name,
 CONCAT((COALESCE(rpt.name || ' ','')),rp.name) as corp,
-po.amount_total
+MAX(po.amount_total) amount_total,
+MIN(po.state) state
 FROM purchase_order po
 left join res_partner rp on po.partner_id = rp.id
 LEFT JOIN res_partner_title rpt ON rpt.id = rp.title
-WHERE po.requisition_id = $P{ids} AND order_type LIKE 'quotation']]>
+LEFT JOIN operating_unit ou ON po.operating_unit_id = ou.id
+WHERE po.requisition_id = $P{ids} AND order_type LIKE 'quotation' AND po.state != 'cancel'
+GROUP BY ou.name,CONCAT((COALESCE(rpt.name || ' ','')),rp.name)
+) as tmp
+
+
+]]>
 		</queryString>
+		<field name="count" class="java.lang.Long">
+			<fieldDescription><![CDATA[Repeat]]></fieldDescription>
+		</field>
 		<field name="da" class="java.lang.Integer"/>
+		<field name="name" class="java.lang.String"/>
 		<field name="corp" class="java.lang.String"/>
 		<field name="amount_total" class="java.math.BigDecimal">
 			<fieldDescription><![CDATA[Total]]></fieldDescription>
 		</field>
+		<field name="po_id" class="java.lang.String"/>
+		<field name="state" class="java.lang.String"/>
 		<variable name="COLUMN_SUM" class="java.lang.Integer" resetType="None" calculation="Count">
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>

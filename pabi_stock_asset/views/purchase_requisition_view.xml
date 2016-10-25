@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
+                       position="after">
+                    <field name="is_standard_asset"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

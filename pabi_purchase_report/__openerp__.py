@@ -10,6 +10,7 @@
     'depends': [
         'jasper_reports',
         'pabi_procurement',
+        'pabi_purchase_work_acceptance',
     ],
     'data': [
         'views/pabi_purchase_report_view.xml',

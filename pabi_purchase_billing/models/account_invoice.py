@@ -11,4 +11,6 @@ class AccountInvoice(models.Model):
         string='Billing Number',
         readonly=True,
         copy=False,
+        index=True,
+        ondelete='set null',
     )
