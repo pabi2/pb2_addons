@@ -318,11 +318,15 @@ class PurchaseVatReport(models.Model):
                 (avt.voucher_id = voucher.id)
             LEFT JOIN res_partner p ON
                 (atd.partner_id = p.id)
-            LEFT JOIN res_taxbranch t ON (atd.taxbranch_id = t.id)
-            WHERE ((invoice.state in ('open', 'paid')) OR
-                (voucher.state in ('posted')))
         """
         return from_str
+
+    def _get_where(self):
+        where_str = """
+            ((invoice.state in ('open', 'paid')) OR
+            (voucher.state in ('posted')))
+        """
+        return where_str
 
     def _get_groupby(self):
         groupby_str = """
@@ -342,12 +346,15 @@ class PurchaseVatReport(models.Model):
                 %s
             FROM
                 %s
+            WHERE
+                %s
             GROUP BY
                 %s
             ORDER BY
                 %s
         """ % (self._get_select(),
                self._get_from(),
+               self._get_where(),
                self._get_groupby(),
                self._get_orderby())
         return sql_query
