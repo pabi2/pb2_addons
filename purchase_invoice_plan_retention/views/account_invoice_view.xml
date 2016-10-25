@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
                     <field name="percent_retention" invisible="1"/>
+                    <field name="fixed_retention" invisible="1"/>
                     <field name="retention_type" invisible="1"/>
                 </xpath>
             </field>

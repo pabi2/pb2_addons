@@ -8,7 +8,8 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook//page[@string='Invoice Plan']//field[@name='use_deposit']" position="after">
                     <field name="use_retention"/>
-                    <field name="percent_retention" attrs="{'invisible': [('use_retention','=',False)]}"/>
+                    <field name="percent_retention" attrs="{'invisible': ['|', ('use_retention','=',False), ('retention_type','=','fixed')]}"/>
+                    <field name="fixed_retention" attrs="{'invisible': ['|', ('use_retention','=',False), ('retention_type','!=','fixed')]}"/>
                     <field name="retention_type" attrs="{'invisible': [('use_retention','=',False)]}"/>
                 </xpath>
             </field>

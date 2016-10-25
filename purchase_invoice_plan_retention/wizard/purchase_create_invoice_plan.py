@@ -13,9 +13,13 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     percent_retention = fields.Float(
         string='Percent',
     )
+    fixed_retention = fields.Float(
+        string='Fixed Amount',
+    )
     retention_type = fields.Selection(
-        [('before_vat', 'Before VAT'),
-         ('after_vat', 'After VAT')],
+        [('before_vat', 'Before VAT (%)'),
+         ('after_vat', 'After VAT (%)'),
+         ('fixed', 'Fixed Amount')],
         string='Type',
     )
 
@@ -37,6 +41,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order = self.env['purchase.order'].browse(self._context['active_id'])
         order.write({'use_retention': self.use_retention,
                      'percent_retention': self.percent_retention,
+                     'fixed_retention': self.fixed_retention,
                      'retention_type': self.retention_type})
 
 
