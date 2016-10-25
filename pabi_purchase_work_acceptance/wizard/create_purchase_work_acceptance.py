@@ -116,6 +116,9 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
 
     @api.model
     def is_acceptance_done(self, order):
+        #  immediate payment
+        if order.payment_term_id.id == 1:
+            return True
         OrderLine = self.env['purchase.order.line']
         completed_line = 0
         order_lines = OrderLine.search([
