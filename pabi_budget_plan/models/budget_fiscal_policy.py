@@ -17,9 +17,16 @@ class BudgetFiscalPolicy(models.Model):
     )
     version = fields.Float(
         string='Version',
-        defaul=0.1,
+        default=1.0,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+#         states={'draft': [('readonly', False)]},
+    )
+    latest_version = fields.Boolean(
+        string='Current',
+        readonly=True,
+        default=True,
+        # compute='_compute_latest_version',  TODO: determine version
+        help="Indicate latest revision of the same plan.",
     )
     active = fields.Boolean(
         string='Active',
@@ -196,6 +203,11 @@ class BudgetFiscalPolicy(models.Model):
         string='Investment Asset Breakdown Count',
         compute='_compute_breakdown_count',
     )
+    ref_policy_id = fields.Many2one(
+        'budget.fiscal.policy',
+        string="Policy Reference",
+        readonly=True,
+    )
 
     @api.multi
     def action_open_breakdown(self):
@@ -288,6 +300,50 @@ class BudgetFiscalPolicy(models.Model):
             'date_confirm': fields.Date.context_today(self),
         })
         return True
+
+    @api.multi
+    def button_new_revision(self):
+        self.ensure_one()
+        budget_policy = self.copy()
+        self.latest_version = False
+        budget_policy.latest_version = True
+        budget_policy.version = self.version + 1.0
+        budget_policy.ref_policy_id = self
+        # Copy Lines
+        budget_policy.unit_base_ids = self.unit_base_ids.copy()
+        budget_policy.project_base_ids = self.project_base_ids.copy()
+        budget_policy.personnel_costcenter_ids = self.personnel_costcenter_ids.copy()
+        budget_policy.invest_asset_ids = self.invest_asset_ids.copy()
+        budget_policy.invest_construction_ids = self.invest_construction_ids.copy()
+        action = self.env.ref('pabi_budget_plan.'
+                              'action_budget_fiscal_policy_view')
+        result = action.read()[0]
+        dom = [('id', '=', budget_policy.id)]
+        result.update({'domain': dom})
+        return result
+
+    @api.multi
+    def get_all_versions(self):
+        self.ensure_one()
+        fp_ids = []
+        if self.ref_policy_id:
+            fp = self.ref_policy_id
+            while fp:
+                fp_ids.append(fp.id)
+                fp = fp.ref_policy_id
+                
+        fp = self
+        while fp:
+            rfp = self.search([('ref_policy_id', '=', fp.id)])
+            if rfp:
+                fp_ids.append(rfp.id)
+            fp = rfp
+        action = self.env.ref('pabi_budget_plan.'
+                              'action_budget_fiscal_policy_view')
+        result = action.read()[0]
+        dom = [('id', 'in', fp_ids)]
+        result.update({'domain': dom})
+        return result
 
     # ======================== Prepare Budget Policy ==========================
 
@@ -386,6 +442,7 @@ class BudgetFiscalPolicy(models.Model):
                 'policy_overall': unit.policy_amount,
                 'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
                 'ref_budget_policy_id': self.id,
+                'version': unit.budget_policy_id.version,
             }
             breakdown = Breakdown.create(vals)
             plans = self.env['budget.plan.unit'].\
@@ -460,6 +517,10 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
         ondelete='cascade',
         index=True,
     )
+    budget_policy_version = fields.Float(
+        related="budget_policy_id.version",
+        string="Policy Version",
+    )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
         string='Budget View',
@@ -471,6 +532,8 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     )
     policy_amount = fields.Float(
         string='Policy Amount',
+        compute='_compute_policy_amount',
+        store=True,
     )
     policy_amount_v1 = fields.Float(
         string='Policy Amount Rev.1',
@@ -481,3 +544,48 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     policy_amount_v3 = fields.Float(
         string='Policy Amount Rev.3',
     )
+    policy_amount_v4 = fields.Float(
+        string='Policy Amount Rev.4',
+    )
+    policy_amount_v5 = fields.Float(
+        string='Policy Amount Rev.5',
+    )
+    policy_amount_v6 = fields.Float(
+        string='Policy Amount Rev.6',
+    )
+    policy_amount_v7 = fields.Float(
+        string='Policy Amount Rev.7',
+    )
+    policy_amount_v8 = fields.Float(
+        string='Policy Amount Rev.8',
+    )
+    policy_amount_v9 = fields.Float(
+        string='Policy Amount Rev.9',
+    )
+    policy_amount_v10 = fields.Float(
+        string='Policy Amount Rev.10',
+    )
+    policy_amount_v11 = fields.Float(
+        string='Policy Amount Rev.11',
+    )
+    policy_amount_v12 = fields.Float(
+        string='Policy Amount Rev.12',
+    )
+
+    @api.depends('policy_amount_v1',
+                 'policy_amount_v2',
+                 'policy_amount_v3',
+                 'policy_amount_v4',
+                 'policy_amount_v5',
+                 'policy_amount_v6',
+                 'policy_amount_v7',
+                 'policy_amount_v8',
+                 'policy_amount_v9',
+                 'policy_amount_v10',
+                 'policy_amount_v11',
+                 'policy_amount_v12')
+    def _compute_policy_amount(self):
+        for line in self:
+            version = line.budget_policy_version
+            field_policy_amt = 'policy_amount_v' + str(int(version))
+            line.policy_amount = sum(line.mapped(field_policy_amt))

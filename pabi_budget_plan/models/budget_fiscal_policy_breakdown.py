@@ -113,6 +113,19 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         string='Ref Budget Policy',
         readonly=True,
     )
+    version = fields.Float(
+        string='Version',
+        default=1.0,
+        readonly=True,
+#         states={'draft': [('readonly', False)]},
+    )
+    latest_version = fields.Boolean(
+        string='Current',
+        readonly=True,
+        default=True,
+        # compute='_compute_latest_version',  TODO: determine version
+        help="Indicate latest revision of the same plan.",
+    )
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -158,6 +171,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             active_id = line[data[self.chart_view][1]].id
             budget = self.env[model].convert_plan_to_budget_control(active_id)
             budget.policy_amount = line.policy_amount
+            budget.version = line.breakdown_id.version
             budget.prev_planned_amount = budget.planned_amount
 
 
