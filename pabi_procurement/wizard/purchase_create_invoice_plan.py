@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
-from openerp.tools.float_utils import float_round as round
+from openerp import models, api
 
 
 class PurchaseCreateInvoicePlan(models.TransientModel):

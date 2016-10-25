@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-import openerp
-import base64
-import time
-import re
 from openerp import api, fields, models, _
-import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
-from openerp.tools import float_compare
 
 
 class PurchaseRequisition(models.Model):
