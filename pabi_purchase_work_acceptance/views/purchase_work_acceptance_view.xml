@@ -50,13 +50,32 @@
                             <field name="balance_qty"/>
                             <field name="to_receive_qty"/>
                             <field name="product_uom"/>
+                            <field name="price_unit"/>
+                            <field name="tax_ids" widget="many2many_tags"/>
+                            <field name="price_subtotal"/>
                         </tree>
                     </field>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_untaxed" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="amount_total"/>
+                        </div>
+                        <field name="amount_total" nolabel="1"
+                               class="oe_subtotal_footer_separator" widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <div class="oe_clear"/>
                     <h2>Supplier Evaluation</h2>
-                    <group>
-                        <field name="eval_receiving" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
-                        <field name="eval_quality" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
-                        <field name="eval_service" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                    <group colspan="4">
+                        <group>
+                            <field name="eval_receiving" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                            <field name="eval_quality" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                            <field name="eval_service" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                        </group>
+                        <group/>
                     </group>
                     </sheet>
                 </form>

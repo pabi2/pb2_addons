@@ -218,6 +218,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'balance_qty': act_line.balance_qty,
                     'to_receive_qty': act_line.to_receive_qty,
                     'product_uom': act_line.product_uom.id,
+                    'product_uom': act_line.product_uom.id,
+                    'product_uom': act_line.product_uom.id,
                 }
                 lines.append([0, 0, line_vals])
         acceptance.acceptance_line_ids = lines
