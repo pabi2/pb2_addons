@@ -17,6 +17,7 @@ It stores very first origin document reference on invoice.
         'sale',
         'purchase',
         'hr_expense_auto_invoice',
+        'purchase_invoice_plan',
     ],
     "data": [
         'views/account_invoice_view.xml',
