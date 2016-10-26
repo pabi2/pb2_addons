@@ -10,7 +10,7 @@
                         <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
                         <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
                         <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
-                        <button string="New Revision" name="button_new_revision" states="confirm" type="object" class="oe_highlight"/>
+                        <button string="New Revision" name="button_new_revision" attrs="{'invisible': ['|', ('latest_version', '=', False), ('state', 'not in', ('confirm'))]}" type="object" class="oe_highlight"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel"/>
                     </header>
                     <sheet>
@@ -34,7 +34,6 @@
                             <group>    
                                 <field name="planned_overall" />
                                 <field name="policy_overall" />
-                                <field name="latest_version"/>
                                 <field name="ref_policy_id"/>
                             </group>
                             <group>

@@ -10,6 +10,7 @@
                 	<field name="prev_planned_amount" />  
                 	<field name="policy_amount" />       
                 	<field name="planned_amount" />       
+                	<field name="ref_budget_id"/>
                 </xpath>
                 <xpath expr="//button[@name='confirm']" position="attributes">
                     <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
@@ -28,6 +29,10 @@
                 </xpath>
                 <xpath expr="//button[@name='new_minor_revision']" position="attributes">
                     <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//div[@name='buttons']/button[1]" position="attributes">
+                    <attribute name="type">object</attribute>
+                    <attribute name="name">get_all_version</attribute>
                 </xpath>
             </field>
         </record>

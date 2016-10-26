@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 
@@ -112,7 +113,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     )
     ref_budget_policy_id = fields.Many2one(
         'budget.fiscal.policy',
-        string='Ref Budget Policy',
+        string='Previous Budget Policy Breakdown',
         readonly=True,
     )
     version = fields.Float(
@@ -131,6 +132,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         'budget.fiscal.policy.breakdown',
         string="Breakdown Reference",
         readonly=True,
+        copy=False,
     )
 
     @api.one
@@ -163,7 +165,17 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             'validating_user_id': self._uid,
             'date_confirm': fields.Date.context_today(self),
         })
+        self.ref_breakdown_id.button_cancel()
         return True
+
+    @api.multi
+    def unlink(self):
+        for policy in self:
+            if policy.state not in ('draft', 'cancel'):
+                raise ValidationError(
+                    _('Cannot delete policy breakdown(s) \
+                    which are already confirmed.'))
+        return super(BudgetFiscalPolicyBreakdown, self).unlink()
 
     @api.multi
     def get_all_versions(self):
@@ -206,6 +218,16 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             budget.policy_amount = line.policy_amount
             budget.version = line.breakdown_id.version
             budget.prev_planned_amount = budget.planned_amount
+            if line.breakdown_id.ref_breakdown_id:
+                previous_budget =\
+                    self.env['account.budget'].search(
+                        [('section_id', '=', line.section_id.id),
+                         ('chart_view', '=', self.chart_view),
+                         ('latest_version', '=', True),
+                         ('state', 'not in', ('draft', 'cancel'))],
+                        order='version desc').ids
+                if previous_budget:
+                    budget.ref_budget_id = previous_budget[0]
 
 
 class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
