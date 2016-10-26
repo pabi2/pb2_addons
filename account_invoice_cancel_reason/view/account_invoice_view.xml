@@ -5,7 +5,7 @@
         <record id="inovice_form" model="ir.ui.view">
             <field name="name">invoice.form</field>
             <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="inherit_id" ref="account_cancel.invoice_form_cancel_inherit"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='invoice_cancel']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -26,7 +26,7 @@
         <record id="invoice_supplier_form" model="ir.ui.view">
             <field name="name">account.invoice.supplier.form</field>
             <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="inherit_id" ref="account_cancel.invoice_supplier_cancel_form_inherit"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='invoice_cancel']" position="attributes">
                     <attribute name="invisible">True</attribute>
