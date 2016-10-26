@@ -12,8 +12,10 @@ class AccountVoucher(models.Model):
             for voucher in self:
                 if voucher.doctype_id.reversal_sequence_id:
                     sequence_id = voucher.doctype_id.reversal_sequence_id.id
-                    fiscalyear_id = voucher.period_id.fiscalyear_id.id
-                    voucher.cancel_move_id.name = self.\
-                        with_context(fiscalyear_id=fiscalyear_id).\
-                        env['ir.sequence'].next_by_id(sequence_id)
+                    fy_id = voucher.period_id.fiscalyear_id.id
+                    voucher.cancel_move_id.write({
+                        'name': self.with_context(fiscalyear_id=fy_id).
+                        env['ir.sequence'].next_by_id(sequence_id),
+                        'cancel_entry': True,
+                    })
         return res

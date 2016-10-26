@@ -22,5 +22,6 @@ Extension for case Cancel with Reversal (account_cancel_reversal)
         "data/ir_sequence_data.xml",
         "data/doctype_data.xml",
         "views/doctype_view.xml",
+        "views/account_view.xml",
     ],
 }

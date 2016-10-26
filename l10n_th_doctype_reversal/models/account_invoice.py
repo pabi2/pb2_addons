@@ -12,8 +12,10 @@ class AccountInvoice(models.Model):
             for invoice in self:
                 if invoice.doctype_id.reversal_sequence_id:
                     sequence_id = invoice.doctype_id.reversal_sequence_id.id
-                    fiscalyear_id = invoice.period_id.fiscalyear_id.id
-                    invoice.cancel_move_id.name = self.\
-                        with_context(fiscalyear_id=fiscalyear_id).\
-                        env['ir.sequence'].next_by_id(sequence_id)
+                    fy_id = invoice.period_id.fiscalyear_id.id
+                    invoice.cancel_move_id.write({
+                        'name': self.with_context(fiscalyear_id=fy_id).
+                        env['ir.sequence'].next_by_id(sequence_id),
+                        'cancel_entry': True,
+                    })
         return res
