@@ -7,6 +7,7 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
 
 class BudgetFiscalPolicy(models.Model):
     _name = 'budget.fiscal.policy'
+    _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
 
     name = fields.Char(
@@ -19,7 +20,6 @@ class BudgetFiscalPolicy(models.Model):
         string='Version',
         default=1.0,
         readonly=True,
-#         states={'draft': [('readonly', False)]},
     )
     latest_version = fields.Boolean(
         string='Current',
@@ -41,6 +41,7 @@ class BudgetFiscalPolicy(models.Model):
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
+        track_visibility='onchange',
     )
     creating_user_id = fields.Many2one(
         'res.users',
@@ -312,9 +313,11 @@ class BudgetFiscalPolicy(models.Model):
         # Copy Lines
         budget_policy.unit_base_ids = self.unit_base_ids.copy()
         budget_policy.project_base_ids = self.project_base_ids.copy()
-        budget_policy.personnel_costcenter_ids = self.personnel_costcenter_ids.copy()
+        budget_policy.personnel_costcenter_ids =\
+            self.personnel_costcenter_ids.copy()
         budget_policy.invest_asset_ids = self.invest_asset_ids.copy()
-        budget_policy.invest_construction_ids = self.invest_construction_ids.copy()
+        budget_policy.invest_construction_ids =\
+            self.invest_construction_ids.copy()
         action = self.env.ref('pabi_budget_plan.'
                               'action_budget_fiscal_policy_view')
         result = action.read()[0]
@@ -331,7 +334,6 @@ class BudgetFiscalPolicy(models.Model):
             while fp:
                 fp_ids.append(fp.id)
                 fp = fp.ref_policy_id
-                
         fp = self
         while fp:
             rfp = self.search([('ref_policy_id', '=', fp.id)])
@@ -434,6 +436,14 @@ class BudgetFiscalPolicy(models.Model):
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
         for unit in self.unit_base_ids:
+            ref_policy_id = unit.budget_policy_id.ref_policy_id
+            ref_policy_breakdown = False
+            if ref_policy_id:
+                ref_policy_breakdown = Breakdown.search(
+                    [('ref_budget_policy_id', '=', ref_policy_id.id),
+                     ('org_id', '=', unit.org_id.id)])
+                if ref_policy_breakdown:
+                    ref_policy_breakdown = ref_policy_breakdown.id
             vals = {  # TODO: Sequence Numbering ???
                 'name': unit.org_id.name,
                 'chart_view': unit.chart_view,
@@ -443,6 +453,7 @@ class BudgetFiscalPolicy(models.Model):
                 'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
                 'ref_budget_policy_id': self.id,
                 'version': unit.budget_policy_id.version,
+                'ref_breakdown_id': ref_policy_breakdown,
             }
             breakdown = Breakdown.create(vals)
             plans = self.env['budget.plan.unit'].\
