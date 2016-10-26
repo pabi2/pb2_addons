@@ -30,6 +30,7 @@ To-Be:
     'depends': [
         'account',
         'account_voucher',
+        'account_cancel',
         'account_invoice_cancel_hooks',
         'account_voucher_cancel_hooks',
     ],

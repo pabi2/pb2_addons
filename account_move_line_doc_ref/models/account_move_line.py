@@ -7,7 +7,7 @@ class AccountMoveLine(models.Model):
 
     doc_ref = fields.Char(
         string='Doc Ref',
-        copy=False,
+        copy=True,  # True for cancel reversal case
     )
     doc_id = fields.Reference(
         [('account.invoice', 'Invoice'),
@@ -18,4 +18,5 @@ class AccountMoveLine(models.Model):
          ('stock.picking', 'Picking')],
         string='Doc Ref',
         readonly=True,
+        copy=True,  # True for cancel reversal case
     )

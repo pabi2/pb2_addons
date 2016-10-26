@@ -8,8 +8,11 @@ class AccountMove(models.Model):
     @api.multi
     def _switch_dr_cr(self):
         self.ensure_one()
+        if self.state == 'posted':
+            self.button_cancel()
         for line in self.line_id:
             line.write({'credit': line.debit, 'debit': line.credit})
+        self.button_validate()
 
     @api.model
     def _reconcile_voided_entry(self, move_ids):
