@@ -16,6 +16,32 @@ class AccountInvoice(models.Model):
         string='Source Document Ref.',
         readonly=True,
     )
+    source_document_type = fields.Selection(
+        [('purchase', 'Purchase Order'),
+         ('sale', 'Sales Order'),
+         ('expense', 'Expense'),
+         ('advance', 'Advance')],
+        string='Source Document Type',
+        compute='_compute_source_document_type',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('source_document_id', 'reference')
+    def _compute_source_document_type(self):
+        for rec in self:
+            if rec.source_document_id:
+                if rec.source_document_id._name == 'purchase.order':
+                    rec.source_document_type = 'purchase'
+                if rec.source_document_id._name == 'sale.order':
+                    rec.source_document_type = 'sale'
+                if rec.source_document_id._name == 'hr.expense.expense':
+                    if rec.source_document_id.is_employee_advance:
+                        rec.source_document_type = 'advance'
+                    else:
+                        rec.source_document_type = 'expense'
+            else:
+                rec.source_document_type = False
 
     @api.model
     def _prepare_refund(self, invoice, date=None, period_id=None,

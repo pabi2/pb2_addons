@@ -56,8 +56,8 @@
             <field name="inherit_id" ref="account.invoice_tree"/>
             <field name="arch" type="xml">
                 <!-- Will try to use super source document instead -->
-                <xpath expr="//field[@name='origin']" position="replace">
-                    <field name="source_document"/>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
             </field>
         </record>
