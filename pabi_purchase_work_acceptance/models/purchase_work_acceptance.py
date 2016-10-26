@@ -428,6 +428,47 @@ class PurchaseWorkAcceptance(models.Model):
         copy=False,
         default='draft',
     )
+    amount_untaxed = fields.Float(
+        string='Untaxed Amount',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    amount_tax = fields.Float(
+        string='Taxes',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    amount_total = fields.Float(
+        string='Total',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+
+    @api.one
+    @api.depends(
+        'acceptance_line_ids.price_subtotal',
+        'acceptance_line_ids.tax_ids',
+    )
+    def _compute_amount(self):
+        amount_untaxed = 0.0
+        amount_tax = 0.0
+        for line in self.acceptance_line_ids:
+            taxes = line.tax_ids.compute_all(
+                line.price_unit,
+                line.to_receive_qty,
+                product=line.product_id
+            )
+            amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
+            amount_untaxed += taxes['total']
+        self.amount_untaxed = amount_untaxed
+        self.amount_tax = amount_tax
+        self.amount_total = amount_untaxed + amount_tax
 
     @api.multi
     def action_evaluate(self):
@@ -531,6 +572,33 @@ class PurchaseWorkAcceptanceLine(models.Model):
         'product.uom',
         string='UoM',
     )
+    price_unit = fields.Float(
+        string='Unit Price',
+    )
+    price_subtotal = fields.Float(
+        string='Sub Total',
+        compute="_compute_price_subtotal",
+        store=True,
+    )
+    tax_ids = fields.Many2many(
+        'account.tax',
+        'purchase_work_acceptance_taxes_rel',
+        'acceptance_line_id',
+        'tax_id',
+        string='Taxes',
+        readonly=False,
+    )
+    @api.multi
+    @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
+    def _compute_price_subtotal(self):
+        for rec in self:
+            taxes = rec.tax_ids.compute_all(rec.price_unit, rec.to_receive_qty,
+                                            product=rec.product_id)
+            rec.price_subtotal = taxes['total']
+            if rec.line_id:
+                po_currency = rec.line_id.order_id.currency_id
+                rec.price_subtotal = po_currency.round(rec.price_subtotal)
+
 
     @api.constrains('to_receive_qty')
     def _check_over_qty(self):

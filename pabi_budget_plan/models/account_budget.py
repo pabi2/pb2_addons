@@ -24,6 +24,8 @@ class AccountBudget(models.Model):
         for rec in self:
             if rec.planned_amount != rec.policy_amount:
                 raise UserError(_('New amount must equal to Policy Amount'))
+            name = self.env['ir.sequence'].next_by_code('budget.control.unit')
+            rec.write({'name': name})
         return super(AccountBudget, self).budget_confirm()
 
 

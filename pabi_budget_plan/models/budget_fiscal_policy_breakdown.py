@@ -7,6 +7,7 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
 
 class BudgetFiscalPolicyBreakdown(models.Model):
     _name = 'budget.fiscal.policy.breakdown'
+    _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
 
     name = fields.Char(
@@ -32,6 +33,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
+        track_visibility='onchange',
     )
     creating_user_id = fields.Many2one(
         'res.users',
@@ -113,6 +115,23 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         string='Ref Budget Policy',
         readonly=True,
     )
+    version = fields.Float(
+        string='Version',
+        default=1.0,
+        readonly=True,
+    )
+    latest_version = fields.Boolean(
+        string='Current',
+        readonly=True,
+        default=True,
+        # compute='_compute_latest_version',  TODO: determine version
+        help="Indicate latest revision of the same plan.",
+    )
+    ref_breakdown_id = fields.Many2one(
+        'budget.fiscal.policy.breakdown',
+        string="Breakdown Reference",
+        readonly=True,
+    )
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -136,12 +155,42 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         sum_policy_amount = sum([l.policy_amount for l in self.line_ids])
         if self.policy_overall != sum_policy_amount:
             raise UserError(_('Overall policy amount is not full filled'))
+        name = self.env['ir.sequence'].\
+            next_by_code('fiscal.policy.breakdown.unit')
         self.write({
+            'name': name,
             'state': 'confirm',
             'validating_user_id': self._uid,
             'date_confirm': fields.Date.context_today(self),
         })
         return True
+
+    @api.multi
+    def get_all_versions(self):
+        self.ensure_one()
+        breakdown_ids = []
+        if self.ref_breakdown_id:
+            breakdown = self.ref_breakdown_id
+            while breakdown:
+                breakdown_ids.append(breakdown.id)
+                breakdown = breakdown.ref_breakdown_id
+        breakdown = self
+        while breakdown:
+            ref_breakdown =\
+                self.search([('ref_breakdown_id', '=', breakdown.id)])
+            if ref_breakdown:
+                breakdown_ids.append(ref_breakdown.id)
+            breakdown = ref_breakdown
+        act = False
+        if self.chart_view == 'unit_base':
+            act = 'pabi_budget_plan.action_unit_base_policy_breakdown_view'
+        elif self.chart_view == 'invest_asset':
+            act = 'pabi_budget_plan.action_invest_asset_policy_breakdown_view'
+        action = self.env.ref(act)
+        result = action.read()[0]
+        dom = [('id', 'in', breakdown_ids)]
+        result.update({'domain': dom})
+        return result
 
     @api.multi
     def prepare_budget_control(self):
@@ -155,6 +204,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             active_id = line[data[self.chart_view][1]].id
             budget = self.env[model].convert_plan_to_budget_control(active_id)
             budget.policy_amount = line.policy_amount
+            budget.version = line.breakdown_id.version
             budget.prev_planned_amount = budget.planned_amount
 
 
