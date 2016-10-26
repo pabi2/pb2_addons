@@ -50,6 +50,12 @@
                         <field name="plan_history_line_ids" readonly="True"/>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='plan_line_ids']/tree/field[@name='activity_id']" position="after">
+                    <field name="unit"/>
+                    <field name="activity_unit_price"/> 
+                    <field name="activity_unit"/>
+                    <field name="total_budget"/>
+                </xpath>
             </field>
         </record>
      </data>

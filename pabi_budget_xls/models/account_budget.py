@@ -18,6 +18,30 @@ class BudgetPlan(models.Model):
     )
 
 
+class BudgetPlanLine(models.Model):
+    _inherit = 'budget.plan.unit.line'
+
+    activity_unit_price = fields.Float(
+        string="Unit Price",
+    )
+    activity_unit = fields.Float(
+        string="Activity Unit",
+    )
+    unit = fields.Float(
+        string="Unit",
+    )
+    total_budget = fields.Float(
+        string="Total Budget",
+        compute="_compute_total_budget",
+    )
+
+    @api.depends('unit',
+                 'activity_unit',
+                 'activity_unit_price')
+    def _compute_total_budget(self):
+        for line in self:
+            line.total_budget = line.unit * line.activity_unit * line.activity_unit_price
+
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
 
