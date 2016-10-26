@@ -62,8 +62,127 @@
             </field>
         </record>
 
-        # For Receivable side. User want to have a checkbox to show Account column.
-        <record id="invoice_form" model="ir.ui.view">
+        <record id="view_invoice_line_show_account_tree" model="ir.ui.view">
+            <field name="name">view_invoice_line_show_account_tree</field>
+            <field name="model">account.invoice.line</field>
+            <field name="arch" type="xml">
+
+                <tree string="Invoice lines" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="product_id" invisible="1"/>
+                    <field
+                        name="account_id"
+                        groups="account.group_account_user"
+                        domain="[('type', 'not in', ['view', 'consolidation', 'closed']), ('activity_ids', '=', activity_id and [activity_id] or False)]"
+                        on_change="onchange_account_id(product_id, parent.partner_id, parent.type, parent.fiscal_position,account_id)"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="account_analytic_id" invisible="1"/>
+
+                    <!-- Account Budget Activity -->
+                    <field name="activity_group_id"/>
+                    <field name="activity_id"/>
+
+                    <field name="name"/>
+
+                    <!-- Chart Fields -->
+                    <field name="require_chartfield" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1"/>
+                    <field name="tag_type_id" invisible="1"/>
+                    <field name="tag_id" invisible="1"/>
+
+                    <field name="functional_area_id" invisible="1"/>
+                    <field name="program_group_id" invisible="1"/>
+                    <field name="program_id" invisible="1"/>
+                    <field name="project_group_id" invisible="1"/>
+                    <field
+                        name="project_id"
+                        invisible="0"
+                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                      ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                      ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field name="org_id" invisible="1"/>
+                    <field name="sector_id" invisible="1"/>
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1"/>
+                    <field
+                        name="section_id"
+                        invisible="0"
+                        attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
+                      ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                      ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                    <field name="costcenter_id" invisible="1"/>
+                    <field name="taxbranch_id" invisible="1"/>
+
+                    <field
+                        name="invest_asset_id"
+                        invisible="0"
+                        attrs="{'required': [('section_id','=',False),('project_id','=',False),
+                      ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                      ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field
+                        name="invest_construction_phase_id"
+                        invisible="0"
+                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                      ('project_id','=',False),('personnel_costcenter_id','=',False),
+                      ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field
+                        name="personnel_costcenter_id"
+                        invisible="1"
+                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                      ('invest_construction_phase_id','=',False),('project_id','=',False),
+                      ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field name="fund_id" invisible="0"/>
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="0"/>
+
+                    <!-- -->
+
+                    <field name="quantity"/>
+                    <field name="uos_id" groups="product.group_uom" on_change="uos_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, parent.company_id, context)"/>
+                    <field name="price_unit"/>
+                    <field name="discount" groups="sale.group_discount_per_so_line"/>
+                    <field name="invoice_line_tax_id" widget="many2many_tags" context="{'type':parent.type}" domain="[('parent_id','=',False),('company_id', '=', parent.company_id)]"/>
+                    <field name="price_subtotal"/>
+                </tree>
+
+            </field>
+        </record>
+
+        # User want to have a checkbox to show Account column.
+
+        <record id="invoice_supplier_form_show_account" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field[@name='invoice_line']" position="before">
+                    <div>
+                        <field name="show_account"/>
+                        <label for="show_account" class="oe_inline"/>
+                    </div>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='invoice_line']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_account', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='invoice_line']" position="after">
+                    <field
+                        name="invoice_line_show_account"
+                        attrs="{'invisible': [('show_account', '=', False)]}"
+                        context="{'partner_id': partner_id, 'price_type': context.get('price_type') or False, 'type': type,
+                                  'tree_view_ref': 'pabi_account.view_invoice_line_show_account_tree'}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="invoice_form_show_account" model="ir.ui.view">
             <field name="name">invoice.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
@@ -78,92 +197,11 @@
                     <attribute name="attrs">{'invisible': [('show_account', '=', True)]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='invoice_line']" position="after">
-                    <field name="invoice_line_show_account" attrs="{'invisible': [('show_account', '=', False)]}" context="{'partner_id': partner_id, 'price_type': context.get('price_type') or False, 'type': type}">
-                        <tree string="Invoice lines" editable="bottom">
-                            <field name="sequence" widget="handle"/>
-                            <field name="product_id" invisible="1"/>
-                            <field
-                                name="account_id"
-                                groups="account.group_account_user"
-                                domain="[('type', 'not in', ['view', 'consolidation', 'closed']), ('activity_ids', '=', activity_id and [activity_id] or False)]"
-                                on_change="onchange_account_id(product_id, parent.partner_id, parent.type, parent.fiscal_position,account_id)"/>
-                            <field name="company_id" invisible="1"/>
-                            <field name="account_analytic_id" invisible="1"/>
-
-                            <!-- Account Budget Activity -->
-                            <field name="activity_group_id"/>
-                            <field name="activity_id"/>
-
-                            <field name="name"/>
-
-                            <!-- Chart Fields -->
-                            <field name="require_chartfield" invisible="1"/>
-
-                            <field name="spa_id" invisible="1"/>
-                            <field name="mission_id" invisible="1"/>
-                            <field name="tag_type_id" invisible="1"/>
-                            <field name="tag_id" invisible="1"/>
-
-                            <field name="functional_area_id" invisible="1"/>
-                            <field name="program_group_id" invisible="1"/>
-                            <field name="program_id" invisible="1"/>
-                            <field name="project_group_id" invisible="1"/>
-                            <field
-                                name="project_id"
-                                invisible="0"
-                                attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
-                                ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
-                                ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
-
-                            <field name="org_id" invisible="1"/>
-                            <field name="sector_id" invisible="1"/>
-                            <field name="subsector_id" invisible="1"/>
-                            <field name="division_id" invisible="1"/>
-                            <field
-                                name="section_id"
-                                invisible="0"
-                                attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
-                                ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
-                                ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
-                            <field name="costcenter_id" invisible="1"/>
-                            <field name="taxbranch_id" invisible="1"/>
-
-                            <field
-                                name="invest_asset_id"
-                                invisible="0"
-                                attrs="{'required': [('section_id','=',False),('project_id','=',False),
-                                ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
-                                ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
-
-                            <field name="invest_construction_id" invisible="1"/>
-                            <field
-                                name="invest_construction_phase_id"
-                                invisible="0"
-                                attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
-                                ('project_id','=',False),('personnel_costcenter_id','=',False),
-                                ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
-
-                            <field
-                                name="personnel_costcenter_id"
-                                invisible="1"
-                                attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
-                                ('invest_construction_phase_id','=',False),('project_id','=',False),
-                                ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
-
-                            <field name="fund_id" invisible="0"/>
-                            <field name="cost_control_type_id" invisible="1"/>
-                            <field name="cost_control_id" invisible="0"/>
-
-                            <!-- -->
-
-                            <field name="quantity"/>
-                            <field name="uos_id" groups="product.group_uom" on_change="uos_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, parent.company_id, context)"/>
-                            <field name="price_unit"/>
-                            <field name="discount" groups="sale.group_discount_per_so_line"/>
-                            <field name="invoice_line_tax_id" widget="many2many_tags" context="{'type':parent.type}" domain="[('parent_id','=',False),('company_id', '=', parent.company_id)]"/>
-                            <field name="price_subtotal"/>
-                        </tree>
-                    </field>
+                    <field
+                        name="invoice_line_show_account"
+                        attrs="{'invisible': [('show_account', '=', False)]}"
+                        context="{'partner_id': partner_id, 'price_type': context.get('price_type') or False, 'type': type,
+                                  'tree_view_ref': 'pabi_account.view_invoice_line_show_account_tree'}"/>
                 </xpath>
             </field>
         </record>
