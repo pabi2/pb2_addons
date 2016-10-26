@@ -6,18 +6,24 @@
     "category": "Accounting & Finance",
     "description": """
 
-This module do 2 things,
+When a PO is issues, there are possible 2 kind of retentions,
 
-1) On Customer Invoice,
+1) Contract Warranty Retention: where NSTDA, at the begin of a purchase
+(or a project), Customer Invoice of receivable type = Supplier Retention
+will be issued.
 
-* Adds new receivable type "Retention" in relation with a purcase order.
+2) Retention from PO's Supplier Invoice Plan: where retention is deduct
+from each supplier invoice.
 
-2) On Supplier invoice
+After time gone by, and it is time to return these retained money back to
+supplier, NSTDA by accountant, can create new Supplier Invoice and refer back
+to the PO and retrieve the above 2 kind of retentions.
 
-* Allow clearing the retention amount that related to a purchase order, both,
+A new checkbox and PO selection will display all Purchase Order which are,
 
-** Customer Invoice from (1)
-** Retaintion based on Invoice Plan feature
+* Belong to a Partner
+* Has amount retained, either in (1) or (2)
+* Has not been returned yet
 
     """,
     "website": "https://ecosoft.co.th/",
