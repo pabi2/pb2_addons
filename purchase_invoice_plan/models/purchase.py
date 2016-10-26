@@ -304,20 +304,15 @@ class PurchaseOrder(models.Model):
                          ('state', 'in', [False, 'cancel'])])
                     if blines:
                         if installment == 0:
-                            if blines.is_advance_installment:
+                            if blines.is_advance_installment or \
+                                    blines.is_deposit_installment:
                                 inv_id = self._create_deposit_invoice(
                                     blines.deposit_percent,
                                     blines.deposit_amount,
                                     blines.date_invoice,
                                     blines)
-                            elif blines.is_deposit_installment:
-                                inv_id = self._create_deposit_invoice(
-                                    blines.deposit_percent,
-                                    blines.deposit_amount,
-                                    blines.date_invoice,
-                                    blines)
+                                invoice_ids.append(inv_id)
                             blines.write({'ref_invoice_id': inv_id})
-                            invoice_ids.append(inv_id)
                             invoice = self.env['account.invoice'].\
                                 browse(inv_id)
                             invoice.write({
@@ -352,7 +347,14 @@ class PurchaseOrder(models.Model):
                                 order.compute_deposit_line(inv_id)
             else:
                 inv_id = super(PurchaseOrder, order).action_invoice_create()
+                invoice_ids.append(inv_id)
+            order._action_invoice_create_hook(invoice_ids)  # Special Hook
         return inv_id
+
+    @api.model
+    def _action_invoice_create_hook(self, invoice_ids):
+        # For Hook
+        return
 
     @api.model
     def _prepare_inv_line(self, account_id, order_line):

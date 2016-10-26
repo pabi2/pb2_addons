@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import date, datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from openerp import models, fields, api, _
@@ -227,13 +227,15 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     i.amount = 0
                 else:
                     i.amount = remaning_installment_amount
-                remaning_installment_amount = remaning_installment_amount - self.installment_amount
+                remaning_installment_amount = (remaning_installment_amount -
+                                               self.installment_amount)
                 new_val = i.amount / self.order_amount * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
                 last_line = i
             if last_line and remaning_installment_amount > 0:
-                last_line.amount = last_line.amount + remaning_installment_amount
+                last_line.amount = (last_line.amount +
+                                    remaning_installment_amount)
                 new_val = last_line.amount / self.order_amount * 100
                 if round(new_val, prec) != round(last_line.percent, prec):
                     last_line.percent = new_val
@@ -285,6 +287,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                   'installment_amount')
     def _onchange_installment_config(self):
         self._compute_installment_details()
+
 
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
     _name = 'purchase.create.invoice.plan.installment'
