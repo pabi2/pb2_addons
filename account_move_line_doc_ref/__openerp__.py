@@ -11,7 +11,7 @@ Account Move Line - Doc Ref
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': [
-        'account_reversal',
+        # 'account_reversal',
         'account_asset',
         'account_voucher',
         'account_bank_receipt',

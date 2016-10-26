@@ -6,14 +6,18 @@ from openerp.exceptions import ValidationError
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
-    is_advance_clearing = fields.Boolean(
-        string='Advance Clearing?',
-        copy=False,
-    )
+    # is_advance_clearing = fields.Boolean(
+    #     string='Advance Clearing?',
+    #     copy=False,
+    # )
     invoice_type = fields.Selection(
         selection_add=[
-            ('expense_advance_invoice', 'Employee Advance Invoice'),
-            ('advance_clearing_invoice', 'Advance Clearing Invoice'),
+            # Created from Normal Expense
+            ('expense_expense_invoice', 'For Employee Expense'),
+            # Created from Advance
+            ('expense_advance_invoice', 'For Employee Advance'),
+            # Created from Advance Clearing
+            ('advance_clearing_invoice', 'For Advance Clearing'),
         ],
     )
     advance_expense_id = fields.Many2one(

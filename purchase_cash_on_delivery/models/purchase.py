@@ -29,7 +29,7 @@ class PurchaseOrder(models.Model):
     def _validate_purchase_cod_fully_paid(self):
         cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
                                     'cash_on_delivery_payment_term')
-        # If not full
+        # If not fully paid
         for purchase in self:
             if purchase.invoice_method == 'order' and \
                     purchase.payment_term_id.id == cod_pay_term.id:
@@ -37,7 +37,7 @@ class PurchaseOrder(models.Model):
                     False in [x.state == 'paid' and True or False
                               for x in purchase.invoice_ids]:
                     raise UserError(
-                        _('For cash on delivery (COD), shipment is allowed '
+                        _('For cash on delivery (COD), tranfer is allowed '
                           'only when all invoice(s) are fully paid!'))
         return True
 

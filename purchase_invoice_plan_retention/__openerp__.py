@@ -12,6 +12,13 @@ amount into each invoice being created.
 The retention amount will then be deducted from the Total after tax amount of
 an invoice.
 
+3 Retention Type available,
+===========================
+
+1) Before VAT (%)
+2) After VAT (%)
+3) Fixed Amount
+
     """,
     'website': 'www.ecosoft.co.th',
     'depends': ['purchase_invoice_plan', 'l10n_th_account'],

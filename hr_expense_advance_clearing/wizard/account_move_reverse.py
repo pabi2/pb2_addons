@@ -26,8 +26,7 @@ class AccountMoveReversal(models.TransientModel):
             # not able to cancel invoice from paid state
             # so we made new transition for paid invoice to cancel invoice
             # if invoice.is_advance_clearing:
-            if invoice.invoice_type == 'advance_clearing_invoice':
-                invoice.signal_workflow('clearing_invoice_cancel')
-            elif invoice.invoice_type == 'expense_advance_invoice':
+            if invoice.invoice_type in ('advance_clearing_invoice',
+                                        'expense_advance_invoice'):
                 invoice.signal_workflow('clearing_invoice_cancel')
         return res

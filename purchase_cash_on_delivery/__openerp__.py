@@ -7,7 +7,14 @@
     'description': """
 
 New invoice method for purchase, Before Delivery, is added. If this option is
-selected, user won't be able to process shipment (will be blocked).
+selected, user won't be able to process shipment (will be blocked) until
+all invoice has been paid.
+
+When invoice is validated, account will be posted to prepaid account instead
+of normal product account.
+
+When each shipment is transferred, additional dr/cr will be posted to clear
+prepaid account with normal project account.
 
     """,
     'category': 'Purchase',

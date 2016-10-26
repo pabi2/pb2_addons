@@ -196,8 +196,9 @@ class HRExpenseExpense(models.Model):
             invoice = super(HRExpenseExpense, self).\
                 _create_supplier_invoice_from_expense(merge_line=False)
             self._create_negative_clearing_line(expense, invoice)
-            invoice.write({'is_advance_clearing': True,
-                           'invoice_type': 'advance_clearing_invoice'})
+            # invoice.write({'is_advance_clearing': True,
+            #                'invoice_type': 'advance_clearing_invoice'})
+            invoice.write({'invoice_type': 'advance_clearing_invoice'})
         elif expense.is_employee_advance:
             invoice = super(HRExpenseExpense, self).\
                 _create_supplier_invoice_from_expense(merge_line=True)
@@ -205,6 +206,7 @@ class HRExpenseExpense(models.Model):
         else:
             invoice = super(HRExpenseExpense, self).\
                 _create_supplier_invoice_from_expense(merge_line=False)
+            invoice.write({'invoice_type': 'expense_expense_invoice'})
         return invoice
 
     @api.model

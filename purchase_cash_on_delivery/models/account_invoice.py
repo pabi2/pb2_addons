@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoiceLine(models.Model):
@@ -12,5 +13,10 @@ class AccountInvoiceLine(models.Model):
                                     'cash_on_delivery_payment_term')
         if line.invoice_id.payment_term == cod_pay_term:
             prepaid_account_id = self.env.user.company_id.prepaid_account_id.id
-            res.update({'account_id': prepaid_account_id})
+            if prepaid_account_id:
+                res.update({'account_id': prepaid_account_id})
+            else:
+                raise ValidationError(
+                    _('No prepaid account has bee set for case '
+                      'Cash on Delivery!'))
         return res
