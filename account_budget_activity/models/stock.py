@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models
+from .account_activity import ActivityCommon
 
 
-class StockMove(models.Model):
+class StockMove(ActivityCommon, models.Model):
     _inherit = 'stock.move'
 
     @api.model
