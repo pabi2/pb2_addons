@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.tools import float_round as round
 from openerp.exceptions import ValidationError, Warning as UserError
 
 
