@@ -11,6 +11,7 @@ This module group the receivable for ease of use,
 * Advance Return
 * Loan Late Payment Penalty
 * Late Delivery Fine
+* Retention
 
 In future, there could be more.
     """,
@@ -23,6 +24,7 @@ In future, there could be more.
         "hr_expense_advance_clearing",
         "pabi_purchase_work_acceptance",
         "pabi_loan_receivable",
+        "pabi_account_retention",
     ],
     "data": [
         "views/account_invoice_view.xml",

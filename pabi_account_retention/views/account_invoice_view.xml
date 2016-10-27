@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position']" position="after">
+                    <field name="retention_purchase_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='supplier_invoice_number']" position="after">
+                    <label for="is_retention_return"/>
+                    <div>
+                        <field name="is_retention_return" class="oe_inline"/>
+                        <field name="retention_return_purchase_id" class="oe_inline"
+                            attrs="{'invisible': [('is_retention_return', '=', False)], 'required': [('is_retention_return', '=', True)]}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
