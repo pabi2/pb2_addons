@@ -11,3 +11,4 @@ from . import account_move_line
 from . import analytic
 from . import hr_expense
 from . import account
+from . import stock_account
