@@ -8,16 +8,16 @@
                 <form string="Fiscal Budget Policy">
                     <header>
                         <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
+                        <button name="prepare_fiscal_budget_policy" states="draft" type="object" string="Generate Budget Policy Lines" />
+                        <button string="Cancel" name="button_cancel" states="draft" type="object" />
                         <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
                         <button string="New Revision" name="button_new_revision" attrs="{'invisible': ['|', ('latest_version', '=', False), ('state', 'not in', ('confirm'))]}" type="object" class="oe_highlight"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
-                            <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" />
+                                <field name="name"/>
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
@@ -28,7 +28,6 @@
                             <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up"
                                 string="Latest"
                                 attrs="{'invisible': [('latest_version', '=', False)]}"/>
-                            <button name="prepare_fiscal_budget_policy" states="draft" type="object" string="Generate Budget Policy Lines" />
                         </div>
                         <group>
                             <group>    
@@ -37,7 +36,6 @@
                                 <field name="ref_policy_id"/>
                             </group>
                             <group>
-                                <field name="date" />
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration" />
                                 <div>
@@ -144,6 +142,18 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Other Info">
+                                <group>
+                                    <group>
+                                        <field name="creating_user_id"/>
+                                        <field name="validating_user_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="date"/>
+                                        <field name="date_confirm"/>
+                                    </group>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -179,7 +189,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_budget_fiscal_policy_view">
-            <field name="name">Fiscal Budget Policy</field>
+            <field name="name">Fiscal Budget Policies</field>
             <field name="res_model">budget.fiscal.policy</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -206,13 +216,13 @@
                 <form string="Fiscal Budget Policy">
                     <header>
                         <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
+                        <button name="prepare_budget_control" states="confirm" type="object" string="Generate Budget Control" />
+                        <button string="Cancel" name="button_cancel" states="draft" type="object" />
                         <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,budgeted"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
-                            <label for="name" class="oe_edit_only"/>
                             <h1>
                                 <field name="name" />
                             </h1>
@@ -225,7 +235,6 @@
                             <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up"
                                 string="Latest"
                                 attrs="{'invisible': [('latest_version', '=', False)]}"/>
-                            <button name="prepare_budget_control" states="confirm" type="object" string="Generate Budget Control" />
                         </div>
                         <group>
                             <group>    
@@ -236,7 +245,6 @@
                                 <field name="ref_breakdown_id"/>
                             </group>
                             <group>
-                                <field name="date" />
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration" />
                                 <div>
@@ -267,6 +275,20 @@
                                         <field name="policy_amount" sum="Policy Amount" />
                                     </tree>
                                 </field>
+                            </page>
+                            <page string="Other Info">
+                                <group>
+                                    <group>
+                                        <field name="creating_user_id"/>
+                                        <field name="validating_user_id"/>
+                                        <field name="budgeting_user_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="date"/>
+                                        <field name="date_confirm"/>
+                                        <field name="date_budget"/>
+                                    </group>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -314,13 +336,22 @@
            <field name="model">budget.fiscal.policy.breakdown</field>
            <field name="arch" type="xml">
                <search string="Fiscal Budget Policy">
+                    <field name="state"/>
+                    <field name="org_id"/>
+                    <field name="chart_view"/>
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Fiscal Budget Policy Breakdown"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Budget View" context="{'group_by':'chart_view'}"/>
+                    </group>
                 </search>
             </field>
         </record>
 
         <record model="ir.actions.act_window" id="action_unit_base_policy_breakdown_view">
-            <field name="name">Breakdown - Unit Based</field>
+            <field name="name">Breakdowns - Unit Based</field>
             <field name="res_model">budget.fiscal.policy.breakdown</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -339,7 +370,7 @@
             action="action_unit_base_policy_breakdown_view" sequence="10" />
 
         <record model="ir.actions.act_window" id="action_invest_asset_policy_breakdown_view">
-            <field name="name">Breakdown - Invest Asset</field>
+            <field name="name">Breakdowns - Invest Asset</field>
             <field name="res_model">budget.fiscal.policy.breakdown</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

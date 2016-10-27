@@ -15,7 +15,8 @@ class BudgetFiscalPolicy(models.Model):
         string='Name',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        default="/",
+        copy=False,
     )
     version = fields.Float(
         string='Version',
@@ -215,13 +216,20 @@ class BudgetFiscalPolicy(models.Model):
     @api.multi
     def action_open_breakdown(self):
         self.ensure_one()
+        Breakdown = self.env['budget.fiscal.policy.breakdown']
         act = False
+        domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                  ('ref_budget_policy_id', '=', self.id)]
         if self._context.get('chart_view') == 'unit_base':
             act = 'pabi_budget_plan.action_unit_base_policy_breakdown_view'
+            domain.append(('chart_view', '=', 'unit_base'))
         elif self._context.get('chart_view') == 'invest_asset':
             act = 'pabi_budget_plan.action_invest_asset_policy_breakdown_view'
+            domain.append(('chart_view', '=', 'invest_asset'))
+        Breakdown_ids = Breakdown.search(domain).ids
         action = self.env.ref(act)
         result = action.read()[0]
+        result.update({'domain': [('id', 'in', Breakdown_ids)]})
         return result
 
     @api.multi

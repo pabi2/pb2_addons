@@ -22,12 +22,15 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         'plan_id',
         string='Budget Plan Lines',
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     cost_control_ids = fields.One2many(
         'budget.plan.unit.cost.control',
         'plan_id',
         string='Cost Control',
         copy=True,
+        states={'draft': [('readonly', False)]},
     )
     planned_overall = fields.Float(
         string='Budget Plan',

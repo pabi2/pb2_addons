@@ -54,7 +54,7 @@ class AccountBudget(models.Model):
                 raise ValidationError(
                     _('Cannot delete budget(s)\
                     which are not in draft or cancelled.'))
-        return super(BudgetFiscalPolicyBreakdown, self).unlink()
+        return super(AccountBudget, self).unlink()
 
     @api.multi
     def get_all_version(self):

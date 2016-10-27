@@ -15,7 +15,8 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         string='Name',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        default='/',
+        copy=False,
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
@@ -31,6 +32,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('confirm', 'Confirmed'),
+         ('budgeted', 'Budgeted'),
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
@@ -45,7 +47,13 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     validating_user_id = fields.Many2one(
         'res.users',
         copy=False,
-        string='Validating User',
+        string='Confirming User',
+        readonly=True,
+    )
+    budgeting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Budgeting User',
         readonly=True,
     )
     date = fields.Date(
@@ -57,6 +65,11 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     )
     date_confirm = fields.Date(
         string='Confirmed Date',
+        copy=False,
+        readonly=True,
+    )
+    date_budget = fields.Date(
+        string='Budgeting Date',
         copy=False,
         readonly=True,
     )
@@ -228,6 +241,11 @@ class BudgetFiscalPolicyBreakdown(models.Model):
                         order='version desc').ids
                 if previous_budget:
                     budget.ref_budget_id = previous_budget[0]
+        self.write({
+            'state': 'budgeted',
+            'date_budget': fields.Date.context_today(self),
+            'budgeting_user_id': self._uid,
+        })
 
 
 class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
@@ -251,6 +269,7 @@ class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
         CHART_VIEW_LIST,
         string='Budget View',
         required=False,
+        readonly=True,
     )
     section_id = fields.Many2one(
         'res.section',
