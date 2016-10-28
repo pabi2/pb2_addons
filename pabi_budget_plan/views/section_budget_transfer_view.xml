@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_section_budget_transfer_form">
+            <field name="name">view.section.budget.transfer.form</field>
+            <field name="model">section.budget.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Section Budget Transfer">
+                    <header>
+                        <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="button_approve" states="confirm" type="object" class="oe_highlight"/>
+                        <button string="Transfer" name="button_transfer" states="approve" type="object" class="oe_highlight"/>
+                        <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
+                        <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,transfer,cancel"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="fiscalyear_id" />
+                            </group>
+                            <group/>
+                       </group>
+                        <group>
+                            <group>
+                                <field name="date_prepare" />
+                                <field name="date_approve" />
+                                <field name="date_receive" />
+                            </group>
+                            <group>
+                                <field name="preparer_user_id" />
+                                <field name="approver_user_id" />
+                                <field name="receiver_user_id"/>
+                            </group>
+                       </group>
+                        <notebook>
+                            <page string="Section Transfer Lines">
+                                <field name="section_budget_transfer_line_ids">
+                                    <tree string="Section Transfer Lines" editable="top">
+                                        <field name="from_section_id"/>
+                                        <field name="from_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', from_section_id)]"/> 
+                                        <field name="from_budget_control_line_id"  domain="[('budget_id', '=', from_budget_control_id)]"/> 
+                                        <field name="from_period"/>
+                                        <field name="amount_to_transfer"/>
+                                        <field name="to_section_id"/>
+                                        <field name="to_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', to_section_id)]"/> 
+                                        <field name="to_budget_control_line_id" domain="[('budget_id', '=', to_budget_control_id)]"/> 
+                                        <field name="to_period"/>
+                                        <field name="notes"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="total_transferred_amt"/>
+                                </group>
+                                <div class="oe_clear">
+                                    <label for="notes"/>
+                                </div>
+                                <field name="notes" placeholder="Additional Information...."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_section_budget_transfer_tree">
+            <field name="name">view.section.budget.transfer.tree</field>
+            <field name="model">section.budget.transfer</field>
+            <field name="arch" type="xml">
+               <tree string="Section Budget Transfer">
+                    <field name="name" />
+                    <field name="fiscalyear_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_section_budget_transfer_search" model="ir.ui.view">
+           <field name="name">view.section.budget.transfer.search</field>
+           <field name="model">section.budget.transfer</field>
+           <field name="arch" type="xml">
+               <search string="Section Budget Transfer">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Section Budget Transfer"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_section_budget_transfer">
+            <field name="name">Section Budget Transfer</field>
+            <field name="res_model">section.budget.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_section_budget_transfer_tree"/>
+            <field name="search_view_id" ref="view_section_budget_transfer_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new section budget transfer.
+              </p>
+            </field>
+        </record>
+
+        <menuitem parent="account_budget_activity.menu_action_account_budget_control"
+            id="menu_section_budget_transfer" 
+            action="action_section_budget_transfer" sequence="20" />
+    </data>
+</openerp>

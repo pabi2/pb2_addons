@@ -7,6 +7,7 @@ import openerp.addons.decimal_precision as dp
 
 class BudgetPlanTemplate(ChartField, models.Model):
     _name = "budget.plan.template"
+    _inherit = ['mail.thread']
     _description = "Budget Plan Template"
 
     name = fields.Char(
@@ -58,15 +59,17 @@ class BudgetPlanTemplate(ChartField, models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('submit', 'Submitted'),
+         ('accept', 'Accepted'),
          ('cancel', 'Cancelled'),
          ('reject', 'Rejected'),
-         ('approve', 'Approved')],
+         ('approve', 'Verified')],
         string='Status',
         default='draft',
         index=True,
         required=True,
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
 
     @api.multi
@@ -231,6 +234,8 @@ class BudgetPlanCommon(object):
             res = rec.template_id.\
                 _get_chained_dimension(CHART_VIEW_FIELD[rec.chart_view])
             rec.write(res)
+            name = self.env['ir.sequence'].next_by_code('budget.plan')
+            rec.write({'name': name})
             for line in rec.plan_line_ids:
                 res = line.mapped('template_id').\
                     _get_chained_dimension(CHART_VIEW_FIELD[line.chart_view])
@@ -254,6 +259,11 @@ class BudgetPlanCommon(object):
     @api.multi
     def button_reject(self):
         self.write({'state': 'reject'})
+        return True
+
+    @api.multi
+    def button_accept(self):
+        self.write({'state': 'accept'})
         return True
 
     @api.multi
