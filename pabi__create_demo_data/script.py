@@ -29,8 +29,8 @@ class PurchaseOrder(models.Model):
         # Case 3: PO17000169 -> CIV17000006
         purchase = env['purchase.order'].\
             search([('name', '=', 'PO17000169')], limit=1)
-        invoice = env['purchase.order'].\
-            search([('name', '=', 'CIV17000006')], limit=1)
+        invoice = env['account.invoice'].\
+            search([('number', '=', 'CIV17000006')], limit=1)
         l = 40
         i = 0
         while i < l:
