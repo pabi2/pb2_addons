@@ -10,11 +10,11 @@
                 <xpath expr="/form/sheet/group" position="after">
                 	<group>
                 		<group>
-                    		<field name="project_id" context="{'project_manager_emp_id': employee_id}"/>
-                    		<field name="fund_id" invisible="0"/>
+                        <field name="section_id" attrs="{'required': [('project_id', '=', False)]}" context="{'employee_id': employee_id}"/>
+                    		<field name="project_id" attrs="{'required': [('section_id', '=', False)]}" context="{'project_manager_emp_id': employee_id}"/>
                 		</group>
                 		<group>
-                    		<field name="section_id" context="{'employee_id': employee_id}"/>
+                        <field name="fund_id" required="1"/>
                 		</group>
                 	</group>
                 </xpath>

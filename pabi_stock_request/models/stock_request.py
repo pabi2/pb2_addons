@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, models, _
-from lxml import etree
-from openerp.osv.orm import setup_modifiers
+from openerp import api, models
+# from lxml import etree
+# from openerp.osv.orm import setup_modifiers
 
 
 class StockRequest(models.Model):
@@ -27,8 +27,7 @@ class StockRequest(models.Model):
         #     nodes = doc.xpath("//button[@name='action_verify']")
         #     for node in nodes:
         #         node.set('invisible', '1')
-                # setup_modifiers(
-                #     node, result['buttons'][node.attrib['name']])
+        #         setup_modifiers(node, result['buttons'][node.attrib['name']])
         #     nodes = doc.xpath("//button[@name='action_verify']")
         #     for node in nodes:
         #         node.set('invisible', '1')
