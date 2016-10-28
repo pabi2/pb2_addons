@@ -98,7 +98,6 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'tax_ids': taxes,
                     'price_unit': inv_line.price_unit,
                 }
-
                 items.append([0, 0, vals])
             break
         return items
