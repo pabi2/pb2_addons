@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <button name="action_cancel_draft" position="after">
+                        <field name="is_prepaid" invisible="1" />
+                        <button
+                            name="clear_prepaid"
+                            string="Clear Prepayment"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|', '|', ('state', 'not in', ['open', 'paid']), ('is_prepaid', '=', False), ('clear_prepaid_move_id', '!=', False)]}"/>
+                    </button> <!-- If  -->
+                    <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
+                        <field name="clear_prepaid_move_id" attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</openerp>

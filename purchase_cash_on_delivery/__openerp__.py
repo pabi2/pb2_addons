@@ -28,6 +28,7 @@ prepaid account with normal project account.
     'data': [
         'data/payment_term_data.xml',
         'views/account_config.xml',
+        'views/account_invoice_view.xml',
     ],
     'test': [
     ],
