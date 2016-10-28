@@ -13,16 +13,38 @@ class BudgetPlanTemplate(ChartField, models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        default="/",
+        copy=False,
     )
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
         default=lambda self: self._uid,
     )
+    submiting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Submitting User',
+    )
     validating_user_id = fields.Many2one(
         'res.users',
         copy=False,
         string='Validating User',
+    )
+    accepting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Accepting User',
+    )
+    validating_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Verifying User',
+    )
+    rejecting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Rejecting User',
     )
     date = fields.Date(
         string='Date',
@@ -35,7 +57,17 @@ class BudgetPlanTemplate(ChartField, models.Model):
         readonly=True,
     )
     date_approve = fields.Date(
-        string='Approved Date',
+        string='Verified Date',
+        copy=False,
+        readonly=True,
+    )
+    date_accept = fields.Date(
+        string='Accepted Date',
+        copy=False,
+        readonly=True,
+    )
+    date_reject = fields.Date(
+        string='Rejected Date',
         copy=False,
         readonly=True,
     )
@@ -243,6 +275,7 @@ class BudgetPlanCommon(object):
         self.write({
             'state': 'submit',
             'date_submit': fields.Date.context_today(self),
+            'submiting_user_id': self._uid,
         })
         return True
 
@@ -258,12 +291,20 @@ class BudgetPlanCommon(object):
 
     @api.multi
     def button_reject(self):
-        self.write({'state': 'reject'})
+        self.write({
+            'state': 'reject',
+            'date_reject': fields.Date.context_today(self),
+            'rejecting_user_id': self._uid,
+        })
         return True
 
     @api.multi
     def button_accept(self):
-        self.write({'state': 'accept'})
+        self.write({
+            'state': 'accept',
+            'date_accept': fields.Date.context_today(self),
+            'accepting_user_id': self._uid,
+        })
         return True
 
     @api.multi

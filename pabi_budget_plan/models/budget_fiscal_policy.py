@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 
@@ -9,12 +10,14 @@ class BudgetFiscalPolicy(models.Model):
     _name = 'budget.fiscal.policy'
     _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
+    _order = 'create_date desc'
 
     name = fields.Char(
         string='Name',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        default="/",
+        copy=False,
     )
     version = fields.Float(
         string='Version',
@@ -208,18 +211,26 @@ class BudgetFiscalPolicy(models.Model):
         'budget.fiscal.policy',
         string="Policy Reference",
         readonly=True,
+        copy=False,
     )
 
     @api.multi
     def action_open_breakdown(self):
         self.ensure_one()
+        Breakdown = self.env['budget.fiscal.policy.breakdown']
         act = False
+        domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                  ('ref_budget_policy_id', '=', self.id)]
         if self._context.get('chart_view') == 'unit_base':
             act = 'pabi_budget_plan.action_unit_base_policy_breakdown_view'
+            domain.append(('chart_view', '=', 'unit_base'))
         elif self._context.get('chart_view') == 'invest_asset':
             act = 'pabi_budget_plan.action_invest_asset_policy_breakdown_view'
+            domain.append(('chart_view', '=', 'invest_asset'))
+        Breakdown_ids = Breakdown.search(domain).ids
         action = self.env.ref(act)
         result = action.read()[0]
+        result.update({'domain': [('id', 'in', Breakdown_ids)]})
         return result
 
     @api.multi
@@ -293,13 +304,15 @@ class BudgetFiscalPolicy(models.Model):
 
     @api.multi
     def button_confirm(self):
-        name = self.env['ir.sequence'].next_by_code('fiscal.budget.policy')
-        self.write({
-            'name': name,
-            'state': 'confirm',
-            'validating_user_id': self._uid,
-            'date_confirm': fields.Date.context_today(self),
-        })
+        for policy in self:
+            name = self.env['ir.sequence'].next_by_code('fiscal.budget.policy')
+            policy.write({
+                'name': name,
+                'state': 'confirm',
+                'validating_user_id': self._uid,
+                'date_confirm': fields.Date.context_today(self),
+            })
+            policy.ref_policy_id.button_cancel()
         return True
 
     @api.multi
@@ -318,12 +331,21 @@ class BudgetFiscalPolicy(models.Model):
         budget_policy.invest_asset_ids = self.invest_asset_ids.copy()
         budget_policy.invest_construction_ids =\
             self.invest_construction_ids.copy()
+        budget_policy.name = '/'
         action = self.env.ref('pabi_budget_plan.'
                               'action_budget_fiscal_policy_view')
         result = action.read()[0]
         dom = [('id', '=', budget_policy.id)]
         result.update({'domain': dom})
         return result
+
+    @api.multi
+    def unlink(self):
+        for policy in self:
+            if policy.state not in ('draft', 'cancel'):
+                raise ValidationError(
+                    _('Cannot delete policies which are already confirmed.'))
+        return super(BudgetFiscalPolicy, self).unlink()
 
     @api.multi
     def get_all_versions(self):
