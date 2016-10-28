@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 
@@ -9,12 +10,14 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     _name = 'budget.fiscal.policy.breakdown'
     _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
+    _order = 'create_date desc'
 
     name = fields.Char(
         string='Name',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        default='/',
+        copy=False,
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
@@ -30,6 +33,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('confirm', 'Confirmed'),
+         ('budgeted', 'Budgeted'),
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
@@ -44,7 +48,13 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     validating_user_id = fields.Many2one(
         'res.users',
         copy=False,
-        string='Validating User',
+        string='Confirming User',
+        readonly=True,
+    )
+    budgeting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Budgeting User',
         readonly=True,
     )
     date = fields.Date(
@@ -56,6 +66,11 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     )
     date_confirm = fields.Date(
         string='Confirmed Date',
+        copy=False,
+        readonly=True,
+    )
+    date_budget = fields.Date(
+        string='Budgeting Date',
         copy=False,
         readonly=True,
     )
@@ -112,7 +127,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     )
     ref_budget_policy_id = fields.Many2one(
         'budget.fiscal.policy',
-        string='Ref Budget Policy',
+        string='Previous Budget Policy Breakdown',
         readonly=True,
     )
     version = fields.Float(
@@ -131,6 +146,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         'budget.fiscal.policy.breakdown',
         string="Breakdown Reference",
         readonly=True,
+        copy=False,
     )
 
     @api.one
@@ -163,7 +179,17 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             'validating_user_id': self._uid,
             'date_confirm': fields.Date.context_today(self),
         })
+        self.ref_breakdown_id.button_cancel()
         return True
+
+    @api.multi
+    def unlink(self):
+        for policy in self:
+            if policy.state not in ('draft', 'cancel'):
+                raise ValidationError(
+                    _('Cannot delete policy breakdown(s) \
+                    which are already confirmed.'))
+        return super(BudgetFiscalPolicyBreakdown, self).unlink()
 
     @api.multi
     def get_all_versions(self):
@@ -206,6 +232,22 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             budget.policy_amount = line.policy_amount
             budget.version = line.breakdown_id.version
             budget.prev_planned_amount = budget.planned_amount
+            budget.ref_breakdown_id = line.breakdown_id.id
+            if line.breakdown_id.ref_breakdown_id:
+                previous_budget =\
+                    self.env['account.budget'].search(
+                        [('section_id', '=', line.section_id.id),
+                         ('chart_view', '=', self.chart_view),
+                         ('latest_version', '=', True),
+                         ('state', 'not in', ('draft', 'cancel'))],
+                        order='version desc').ids
+                if previous_budget:
+                    budget.ref_budget_id = previous_budget[0]
+        self.write({
+            'state': 'budgeted',
+            'date_budget': fields.Date.context_today(self),
+            'budgeting_user_id': self._uid,
+        })
 
 
 class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
@@ -229,6 +271,7 @@ class BudgetFiscalPolicyBreakdownLine(ChartField, models.Model):
         CHART_VIEW_LIST,
         string='Budget View',
         required=False,
+        readonly=True,
     )
     section_id = fields.Many2one(
         'res.section',

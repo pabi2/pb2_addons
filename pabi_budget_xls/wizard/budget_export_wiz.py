@@ -125,9 +125,11 @@ class BudgetExportWizard(models.Model):
 
             NonCostCtrl_Sheet.add_data_validation(dv)
             NonCostCtrl_Sheet.cell(row=1, column=5, value=budget.id)
+            org = budget.org_id.code and\
+                    budget.org_id.code or budget.org_id.name_short
             NonCostCtrl_Sheet.cell(row=1, column=2,
                                    value=budget.fiscalyear_id.name)
-            NonCostCtrl_Sheet.cell(row=2, column=2, value=budget.org_id.code)
+            NonCostCtrl_Sheet.cell(row=2, column=2, value=org)
             NonCostCtrl_Sheet.cell(row=3, column=2,
                                    value=budget.section_id.code)
             NonCostCtrl_Sheet.cell(row=4, column=2, value=fields.Date.today())
@@ -145,6 +147,12 @@ class BudgetExportWizard(models.Model):
                 NonCostCtrl_Sheet.cell(row=row, column=2).value = "=B3"
                 NonCostCtrl_Sheet.cell(
                     row=row, column=3).value = line.section_id.name
+                NonCostCtrl_Sheet.cell(
+                    row=row, column=7).value = line.unit
+                NonCostCtrl_Sheet.cell(
+                    row=row, column=8).value = line.activity_unit_price
+                NonCostCtrl_Sheet.cell(
+                    row=row, column=9).value = line.activity_unit
                 dv.add(NonCostCtrl_Sheet.cell(row=row, column=4))
                 ag_name = line.activity_group_id.name
                 NonCostCtrl_Sheet.cell(row=row, column=4).value = ag_name

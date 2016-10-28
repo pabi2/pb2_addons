@@ -60,7 +60,9 @@ class BudgetImportWizard(models.Model):
 
             org = NonCostCtrl_Sheet.cell(row=2, column=2).value
             org_id =\
-                self.env['res.org'].search([('code', '=', tools.ustr(org))])
+                self.env['res.org'].search(['|',
+                                            ('code', '=', tools.ustr(org)),
+                                            ('name_short', '=', tools.ustr(org))])
             if org_id:
                 vals.update({'org_id': org_id.id})
 
@@ -94,6 +96,15 @@ class BudgetImportWizard(models.Model):
                     [('name', '=', tools.ustr(ag_group))])
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
+
+                unit = NonCostCtrl_Sheet.cell(row=row, column=7).value
+                act_unitprice = NonCostCtrl_Sheet.cell(row=row, column=8).value
+                activity_unit = NonCostCtrl_Sheet.cell(row=row, column=9).value
+                line_vals.update({
+                    'unit': unit,
+                    'activity_unit_price': act_unitprice,
+                    'activity_unit': activity_unit,
+                })
                 line_id = NonCostCtrl_Sheet.cell(row=row, column=26).value
                 p = 0
                 col = 11

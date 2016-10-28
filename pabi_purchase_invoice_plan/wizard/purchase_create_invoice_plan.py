@@ -13,6 +13,14 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         'account.fiscalyear',
         string='Fiscal Year',
     )
+    invoice_mode = fields.Selection(
+        [
+            ('change_price', 'As 1 Job (change price)'),
+            ('change_quantity', 'As Units (change quantity)'),
+        ],
+        default='change_price',
+    )
+
 
     @api.onchange('percent')
     def _onchange_percent(self):

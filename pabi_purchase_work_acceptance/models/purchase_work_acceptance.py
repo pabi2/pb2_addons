@@ -450,6 +450,22 @@ class PurchaseWorkAcceptance(models.Model):
         default=0.0,
     )
 
+    @api.multi
+    def write(self, vals):
+        res = super(PurchaseWorkAcceptance, self).write(vals)
+        self.change_invoice_detail()
+        return res
+
+    @api.model
+    def change_invoice_detail(self):
+        for wa in self:
+            for wa_line in wa.acceptance_line_ids:
+                if wa_line.inv_line_id.invoice_id and \
+                    wa_line.inv_line_id.invoice_id.state == 'draft':
+                    wa_line.inv_line_id.quantity = wa_line.to_receive_qty
+                    wa_line.inv_line_id.price_unit = wa_line.price_unit
+                    wa_line.inv_line_id.invoice_id.button_reset_taxes()
+
     @api.one
     @api.depends(
         'acceptance_line_ids.price_subtotal',
@@ -586,8 +602,9 @@ class PurchaseWorkAcceptanceLine(models.Model):
         'acceptance_line_id',
         'tax_id',
         string='Taxes',
-        readonly=False,
+        readonly=True,
     )
+
     @api.multi
     @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
@@ -598,7 +615,6 @@ class PurchaseWorkAcceptanceLine(models.Model):
             if rec.line_id:
                 po_currency = rec.line_id.order_id.currency_id
                 rec.price_subtotal = po_currency.round(rec.price_subtotal)
-
 
     @api.constrains('to_receive_qty')
     def _check_over_qty(self):
