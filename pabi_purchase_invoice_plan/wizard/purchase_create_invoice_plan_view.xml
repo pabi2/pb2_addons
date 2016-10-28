@@ -16,6 +16,9 @@
                 <xpath expr="//field[@name='installment_amount']" position="attributes">
                     <attribute name="context">{'from_installment_amount': 1}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='invoice_mode']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
             </field>
         </record>
 

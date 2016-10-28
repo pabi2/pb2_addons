@@ -11,6 +11,9 @@
                        position="after">
                     <field name="is_standard_asset"/>
                 </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
+                    <field name="is_standard_asset"/>
+                </xpath>
             </field>
         </record>
     </data>

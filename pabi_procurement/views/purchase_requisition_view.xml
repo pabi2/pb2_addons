@@ -55,6 +55,14 @@
                     <attribute name="states">rejected,in_progress</attribute>
                     <attribute name="string">Manually Correct</attribute>
                 </xpath>
+                <xpath expr="//field[@name='date_end']" position="replace"/>
+                <xpath expr="//field[@name='ordering_date']"
+                       position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="after">
+                    <field name="date_end" required="1"/>
+                </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
                     <field name="purchase_method_id"/>
@@ -107,10 +115,12 @@
                        position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
+                    <field name="is_green_product"/>
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
+                    <field name="is_green_product"/>
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
                     <field name="product_name"/>
@@ -118,7 +128,6 @@
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
                        position="after">
                     <field name="fixed_asset" invisible="1"/>
-                    <field name="is_green_product"/>
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
                     <field name="fiscalyear_id"/>
