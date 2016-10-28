@@ -6,6 +6,7 @@ from openerp.exceptions import Warning as UserError
 
 class AccountBudget(models.Model):
     _inherit = 'account.budget'
+    _order = 'create_date desc'
 
     prev_planned_amount = fields.Float(
         string='Planned Amount',
@@ -22,6 +23,12 @@ class AccountBudget(models.Model):
     ref_budget_id = fields.Many2one(
         'account.budget',
         string="Previous Budget",
+        copy=False,
+        readonly=True,
+    )
+    ref_breakdown_id = fields.Many2one(
+        'budget.fiscal.policy.breakdown',
+        string="Breakdown Reference",
         copy=False,
         readonly=True,
     )

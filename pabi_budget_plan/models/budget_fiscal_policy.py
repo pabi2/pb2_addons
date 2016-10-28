@@ -10,6 +10,7 @@ class BudgetFiscalPolicy(models.Model):
     _name = 'budget.fiscal.policy'
     _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
+    _order = 'create_date desc'
 
     name = fields.Char(
         string='Name',

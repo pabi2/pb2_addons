@@ -10,6 +10,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     _name = 'budget.fiscal.policy.breakdown'
     _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
+    _order = 'create_date desc'
 
     name = fields.Char(
         string='Name',
@@ -231,6 +232,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             budget.policy_amount = line.policy_amount
             budget.version = line.breakdown_id.version
             budget.prev_planned_amount = budget.planned_amount
+            budget.ref_breakdown_id = line.breakdown_id.id
             if line.breakdown_id.ref_breakdown_id:
                 previous_budget =\
                     self.env['account.budget'].search(

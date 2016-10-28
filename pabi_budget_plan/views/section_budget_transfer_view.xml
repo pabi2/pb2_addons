@@ -91,12 +91,18 @@
            <field name="arch" type="xml">
                <search string="Section Budget Transfer">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Section Budget Transfer"/>
+                    <field name="state"/>
+                    <field name="fiscalyear_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                    </group>
                 </search>
             </field>
         </record>
 
         <record model="ir.actions.act_window" id="action_section_budget_transfer">
-            <field name="name">Section Budget Transfer</field>
+            <field name="name">Section Budget Transfers</field>
             <field name="res_model">section.budget.transfer</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

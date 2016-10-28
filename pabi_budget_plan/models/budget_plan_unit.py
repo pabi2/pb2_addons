@@ -11,6 +11,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _inherits = {'budget.plan.template': 'template_id'}
 #     _inherit = ['mail.thread']
     _description = "Unit Based - Budget Plan"
+    _order = 'create_date desc'
 
     template_id = fields.Many2one(
         'budget.plan.template',
