@@ -16,7 +16,7 @@ class PurchaseOrder(models.Model):
         l = 40
         i = 0
         while i < l:
-            purchase.copy()
+            env['purchase.order'].copy(cr, SUPERUSER_ID, purchase.id, {})
             i += 1
         # Case 2: PO17000168
         purchase = env['purchase.order'].\
@@ -24,7 +24,7 @@ class PurchaseOrder(models.Model):
         l = 40
         i = 0
         while i < l:
-            purchase.copy()
+            env['purchase.order'].copy(cr, SUPERUSER_ID, purchase.id, {})
             i += 1
         # Case 3: PO17000169 -> CIV17000006
         purchase = env['purchase.order'].\
@@ -34,9 +34,11 @@ class PurchaseOrder(models.Model):
         l = 40
         i = 0
         while i < l:
-            new_purchase = purchase.copy()
-            new_invoice = invoice.copy()
-            new_invoice.retention_purchase_id = new_purchase
+            new_purchase = env['purchase.order'].copy(cr, SUPERUSER_ID,
+                                                      purchase.id, {})
+            new_invoice = env['account.invoice'].copy(cr, SUPERUSER_ID,
+                                                      invoice.id, {})
+            new_invoice.write({'retention_purchase_id': new_purchase.id})
             i += 1
         # Case 4: PO17000171
         purchase = env['purchase.order'].\
@@ -44,5 +46,6 @@ class PurchaseOrder(models.Model):
         l = 40
         i = 0
         while i < l:
-            purchase.copy()
+            new_purchase = env['purchase.order'].copy(cr, SUPERUSER_ID,
+                                                      purchase.id, {})
             i += 1
