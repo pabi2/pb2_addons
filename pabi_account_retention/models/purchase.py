@@ -23,10 +23,7 @@ class PurchaseOrder(models.Model):
                                     ('state', 'in', ['open', 'paid']),
                                     ('retention_purchase_id', '=', po.id)],
                                    count=True)
-            x = 1/0
             if count:
-                print '11111'
-                print count
                 po.has_supplier_retention = True
                 continue
             # 2) Retention from Supplier Invoice (invoice plan)
@@ -35,8 +32,6 @@ class PurchaseOrder(models.Model):
                                     ('purchase_ids', 'in', [po.id])],
                                    count=True)
             if count:
-                print '2222'
-                print count
                 po.has_supplier_retention = True
                 continue
             po.has_supplier_retention = False
