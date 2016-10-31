@@ -256,7 +256,7 @@ class BudgetExportWizard(models.Model):
             stream1 = cStringIO.StringIO()
             workbook.save(stream1)
             filename = '%s-%s-%s-%s.xlsx' % (budget.fiscalyear_id.name,
-                                             budget.org_id.code,
+                                             org,
                                              budget.section_id.code,
                                              template_file.name)
             self.env.cr.execute(""" DELETE FROM budget_xls_output """)

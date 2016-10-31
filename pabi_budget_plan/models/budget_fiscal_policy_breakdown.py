@@ -148,6 +148,20 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         readonly=True,
         copy=False,
     )
+    budget_control_count = fields.Integer(
+        compute="_count_budget_control",
+        string="Budget Controls",
+        readonly=True,
+        copy=False,
+    )
+
+    @api.depends()
+    def _count_budget_control(self):
+        for breakdown in self:
+            counts = \
+                self.env['account.budget'].search_count(
+                    [('ref_breakdown_id', '=', breakdown.id)])
+            breakdown.budget_control_count = counts
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -164,6 +178,19 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     def button_cancel(self):
         self.write({'state': 'cancel'})
         return True
+
+    @api.multi
+    def get_budget_controls(self):
+        self.ensure_one()
+        budget_controls =\
+            self.env['account.budget'].search(
+                [('ref_breakdown_id', '=', self.id)])
+        act = 'account_budget_activity.act_account_budget_view'
+        action = self.env.ref(act)
+        result = action.read()[0]
+        dom = [('id', 'in', budget_controls.ids)]
+        result.update({'domain': dom})
+        return result
 
     @api.multi
     def button_confirm(self):
@@ -233,13 +260,14 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             budget.version = line.breakdown_id.version
             budget.prev_planned_amount = budget.planned_amount
             budget.ref_breakdown_id = line.breakdown_id.id
-            if line.breakdown_id.ref_breakdown_id:
+            old_breakdown = line.breakdown_id.ref_breakdown_id
+            if old_breakdown:
                 previous_budget =\
                     self.env['account.budget'].search(
                         [('section_id', '=', line.section_id.id),
                          ('chart_view', '=', self.chart_view),
                          ('latest_version', '=', True),
-                         ('state', 'not in', ('draft', 'cancel'))],
+                         ('ref_breakdown_id', '=', old_breakdown.id)],
                         order='version desc').ids
                 if previous_budget:
                     budget.ref_budget_id = previous_budget[0]
