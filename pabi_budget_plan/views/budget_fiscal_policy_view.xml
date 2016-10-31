@@ -235,6 +235,10 @@
                             <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up"
                                 string="Latest"
                                 attrs="{'invisible': [('latest_version', '=', False)]}"/>
+                            <button class="oe_inline oe_stat_button" name="get_budget_controls" type="object" icon="fa-bookmark-o">
+                                <field name="budget_control_count" widget="statinfo"/>
+                            </button>
+
                         </div>
                         <group>
                             <group>    

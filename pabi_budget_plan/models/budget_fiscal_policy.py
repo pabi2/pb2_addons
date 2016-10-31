@@ -305,6 +305,8 @@ class BudgetFiscalPolicy(models.Model):
     @api.multi
     def button_confirm(self):
         for policy in self:
+            if not policy.line_ids:
+                raise UserError(_('Can not confirm without lines!'))
             name = self.env['ir.sequence'].next_by_code('fiscal.budget.policy')
             policy.write({
                 'name': name,
