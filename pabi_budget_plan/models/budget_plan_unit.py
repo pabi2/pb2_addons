@@ -22,7 +22,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         'budget.plan.unit.line',
         'plan_id',
         string='Budget Plan Lines',
-        copy=False,
+        copy=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
