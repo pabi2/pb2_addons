@@ -64,6 +64,7 @@ class PurchaseBilling(models.Model):
         string='Supplier Invoices',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=False,
     )
     amount_total = fields.Float(
         string='Total Amount',
