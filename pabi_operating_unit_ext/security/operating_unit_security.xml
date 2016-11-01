@@ -2,7 +2,7 @@
 <openerp>
 <data noupdate="0">
 
-	
+
     <!-- Set noupdate=False for all updating record -->
     <function model="ir.model.data" name="write" >
     	<function model="ir.model.data" name="search" eval="[[
@@ -29,27 +29,27 @@
     						'ir_rule_stock_picking_allowed_operating_units',
     						'ir_rule_sale_order_allowed_operating_units',
     						'ir_rule_sale_order_line_allowed_operating_units',
-    						
+
     			))
     	]]" />
         <value eval="{'noupdate': False}" />
     </function>
-	
+
 	<!-- operating_unit_comp_rule -->
     <record id="operating_unit.operating_unit_comp_rule"
             model="ir.rule">
         <field name="domain_force">['|', (user.access_all_operating_unit, '=', True), ('id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
-    
+
 	<!-- account_budget_activity_operating_unit -->
-    <record id="account_budget_activity_operating_unit.ir_rule_budget_allowed_operating_units"
+    <!--<record id="account_budget_activity_operating_unit.ir_rule_budget_allowed_operating_units"
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
     <record id="account_budget_activity_operating_unit.ir_rule_budget_line_allowed_operating_units"
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
-    </record>
+    </record>-->
 
 	<!-- account_operating_unit -->
     <record id="account_operating_unit.ir_rule_invoice_allowed_operating_units"
@@ -74,19 +74,19 @@
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- hr_expense_operating_unit -->
     <record id="hr_expense_operating_unit.ir_rule_hr_expense_allowed_operating_units"
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- procurement_operating_unit -->
     <record id="procurement_operating_unit.ir_rule_procurement_order_allowed_operating_units"
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('location_id.operating_unit_id','=',False),('location_id.operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- purchase_operating_unit -->
     <record id="purchase_operating_unit.ir_rule_purchase_order_allowed_operating_units"
             model="ir.rule">
@@ -96,7 +96,7 @@
             model="ir.rule">
         <field name="domain_force">['|', '|', '|', ('order_id.is_central_purchase', '=', True), (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- purchase_request_operating_unit -->
     <record id="purchase_request_operating_unit.ir_rule_purchase_request_allowed_operating_units"
             model="ir.rule">
@@ -106,7 +106,7 @@
             model="ir.rule">
         <field name="domain_force">['|', '|', '|', ('request_id.is_central_purchase', '=', True), (user.access_all_operating_unit, '=', True), ('request_id.operating_unit_id','=',False),('request_id.operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- purchase_requisition_operating_unit -->
     <record id="purchase_requisition_operating_unit.ir_rule_purchase_requisition_allowed_operating_units"
             model="ir.rule">
@@ -116,13 +116,13 @@
             model="ir.rule">
         <field name="domain_force">['|', '|', '|', ('requisition_id.is_central_purchase', '=', True), (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- purchase_work_acceptance_operating_unit -->
     <record id="purchase_work_acceptance_operating_unit.ir_rule_purchase_work_acceptance_allowed_operating_units"
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
- 
+
 	<!-- stock_operating_unit -->
     <record id="stock_operating_unit.ir_rule_stock_warehouse_allowed_operating_units"
             model="ir.rule">
@@ -145,7 +145,7 @@
             model="ir.rule">
         <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
-    
+
 	<!-- sale_operating_unit -->
     <record id="sale_operating_unit.ir_rule_sale_order_allowed_operating_units"
             model="ir.rule">

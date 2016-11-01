@@ -14,7 +14,7 @@
 
     """,
     "depends": [
-        "account_budget_activity_operating_unit",
+        # "account_budget_activity_operating_unit",
         "account_operating_unit",
         "account_voucher_operating_unit",
         "hr_expense_operating_unit",
