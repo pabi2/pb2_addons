@@ -5,6 +5,7 @@ from openerp.addons.pabi_chartfield.models.chartfield \
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
 
+
 class BudgetPlanTemplate(ChartField, models.Model):
     _name = "budget.plan.template"
     _inherit = 'mail.thread'
@@ -14,16 +15,24 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.constrains('fiscalyear_id', 'section_id')
     def _check_fiscalyear_section_unique(self):
         if self.fiscalyear_id and self.section_id:
-            budget_plans = self.search([('fiscalyear_id', '=', self.fiscalyear_id.id), ('section_id', '=', self.section_id.id), ('state', 'not in', ('cancel', 'reject'))])
+            budget_plans = self.search(
+                [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                 ('section_id', '=', self.section_id.id),
+                 ('state', 'not in', ('cancel', 'reject')),
+                 ])
             if budget_plans:
-                raise ValidationError(_('You can not have duplicate budget plan for same fiscalyear and section.'))
+                raise ValidationError(
+                    _('You can not have duplicate budget plan for '
+                      'same fiscalyear and section.'))
 
     @api.model
     def _default_fy(self):
         current_fiscalyear = self.env['account.period'].find().fiscalyear_id
-        next_fiscalyear = self.env['account.fiscalyear'].search([('date_start', '>', current_fiscalyear.date_stop)], limit=1)
+        next_fiscalyear = self.env['account.fiscalyear'].search(
+            [('date_start', '>', current_fiscalyear.date_stop)],
+            limit=1)
         return next_fiscalyear or False
-    
+
     name = fields.Char(
         string='Number',
         required=True,
@@ -114,8 +123,8 @@ class BudgetPlanTemplate(ChartField, models.Model):
          ('cancel', 'Cancelled'),
          ('reject', 'Rejected'),
          ('approve', 'Verified'),
-         ('accept_corp', 'Accepted')
-        ],
+         ('accept_corp', 'Accepted'),
+         ],
         string='Status',
         default='draft',
         index=True,
@@ -354,7 +363,6 @@ class BudgetPlanCommon(object):
             'state': 'accept',
         })
         return True
-
 
     @api.multi
     def button_back_verify(self):

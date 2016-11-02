@@ -85,6 +85,22 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
                                                     head_src_model,
                                                     line_src_model)
 
+    @api.multi  # Only Budget manager can Approve
+    def button_accept(self):
+        super(BudgetPlanUnit, self).button_accept()
+        # Budget Manager (dept head) and only budget in the same division
+        user = self.env.user
+        employee = user.partner_id.employee_id
+        for rec in self:
+            if user.has_group('pabi_budget_plan.group_budget_manager') and \
+                    employee.section_id.division_id == rec.division_id:
+                continue
+            else:
+                raise UserError(
+                    _('You can approve only budget plans in division %s.') %
+                    (employee.section_id.division_id.name,))
+        return True
+
 
 class BudgetPlanUnitLine(ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
