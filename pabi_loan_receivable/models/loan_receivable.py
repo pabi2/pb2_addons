@@ -16,7 +16,8 @@ class LoanBankMOU(models.Model):
         'res.partner.bank',
         string='Bank',
         required=True,
-        domain=[('partner_id', '!=', False)]
+        # domain=[('partner_id', '!=', False)],
+        help="Bank Account of the end customer",
     )
     max_installment = fields.Integer(
         string='Max Installment',
@@ -48,7 +49,6 @@ class LoanBankMOU(models.Model):
         'mou_id',
         string='Loan Agreements',
     )
-
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
     ]
@@ -84,8 +84,7 @@ class LoanCustomerAgreement(models.Model):
         'res.partner.bank',
         string='Bank',
         readonly=True,
-        domain="[('partner_id', '!=', False),"
-        "('bank', '=', mou_bank)]",
+        domain="[('partner_id', '!=', False), ('bank', '=', mou_bank)]",
         states={'draft': [('readonly', False)]},
         required=True,
     )
