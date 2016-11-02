@@ -125,7 +125,7 @@
             <field name="model">account.activity</field>
             <field name="arch" type="xml">
                 <search string="Activity">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Activity"/>
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('search_keywords','ilike',self)]" string="Activity"/>
                     <field name="activity_group_ids" filter_domain="[('activity_group_ids', 'child_of', self)]"/>
                 </search>
             </field>
@@ -137,8 +137,8 @@
             <field name="arch" type="xml">
                 <tree string="Activity">
                     <field name="name"/>
-                    <field name="activity_group_ids"/>
-                    <!--field name="account_id"/-->
+                    <field name="search_keywords"/>
+                    <field name="account_id" groups="account.group_account_user"/>
                 </tree>
             </field>
         </record>
@@ -166,6 +166,7 @@
                             <field name="activity_group_ids" required="1" widget="many2many_tags"/>
                             <field name="tag_ids" widget="many2many_tags"/>
                             <field name="active"/>
+                            <field name="search_keywords"/>
                         </group>
                     </group>
                     <notebook>

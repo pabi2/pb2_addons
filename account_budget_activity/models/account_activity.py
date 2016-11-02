@@ -117,6 +117,9 @@ class AccountActivity(models.Model):
         string='Active',
         default=True,
     )
+    search_keywords = fields.Text(
+        string='Search Keywords',
+    )
     _sql_constraints = [
         ('activity_uniq', 'unique(name, activity_group_id)',
          'Activity must be unique per group!'),
