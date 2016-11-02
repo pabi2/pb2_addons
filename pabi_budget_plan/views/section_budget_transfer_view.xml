@@ -44,12 +44,13 @@
                                 <field name="section_budget_transfer_line_ids">
                                     <tree string="Section Transfer Lines" editable="top">
                                         <field name="from_section_id"/>
-                                        <field name="from_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', from_section_id)]"/> 
+                                        <field name="from_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', from_section_id), ('latest_version', '=', True)]"/> 
                                         <field name="from_budget_control_line_id"  domain="[('budget_id', '=', from_budget_control_id)]"/> 
                                         <field name="from_period"/>
+                                        <field name="from_org_id"/>
                                         <field name="amount_to_transfer"/>
-                                        <field name="to_section_id"/>
-                                        <field name="to_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', to_section_id)]"/> 
+                                        <field name="to_section_id" domain="[('org_id', '=', from_org_id)]" />
+                                        <field name="to_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', to_section_id), ('latest_version', '=', True)]"/> 
                                         <field name="to_budget_control_line_id" domain="[('budget_id', '=', to_budget_control_id)]"/> 
                                         <field name="to_period"/>
                                         <field name="notes"/>
