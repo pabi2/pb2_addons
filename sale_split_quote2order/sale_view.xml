@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-    	
+
     	<record id="view_sales_order_filter" model="ir.ui.view">
             <field name="name">view.sales.order.filter</field>
             <field name="model">sale.order</field>
@@ -15,7 +15,7 @@
                 </filter>
             </field>
     	</record>
-    	
+
         <record id="view_order_form" model="ir.ui.view">
             <field name="name">view.order.form</field>
             <field name="model">sale.order</field>
@@ -54,10 +54,10 @@
                         <!-- end -->
                         <button name="invoice_cancel" states="invoice_except" string="Cancel Order" groups="base.group_user"/>
                         <button name="action_done" states="manual,progress" type="object" string="Force Done" confirm="Are you sure you want to force status to Done?" groups="base.group_user"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,progress,done" 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,progress,done"
                         		invisible="context.get('order_type', 'sale_order') == 'quotation'"
                         		statusbar_colors='{"invoice_except":"red","waiting_date":"blue"}'/>
-                	</header>              
+                	</header>
 					<!-- Header for Quotation -->
                     <header name="quotation" attrs="{'invisible': [('order_type','=','sale_order')]}" >
                         <!-- <button name="action_quotation_send" string="Send by Email" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>
@@ -69,13 +69,13 @@
                         <!--button name="copy_quotation" states="cancel" string="New Copy of Quotation" type="object"/-->
                         <button name="cancel" states="draft" string="Cancel Quotation" groups="base.group_user"/>
                         <field name="state2" widget="statusbar" statusbar_visible="draft,done" invisible="context.get('order_type', 'sale_order') == 'sale_order'"/>
-                	</header>      
+                	</header>
                 </xpath>
                 <field name="project_id" position="after">
                     <field name="order_type" />
-                    <field name="quote_id" attrs="{'invisible': [('order_type','=','quotation')]}" 
+                    <field name="quote_id" attrs="{'invisible': [('order_type','=','quotation')]}"
                     	context="{'search_default_my_sale_orders_filter': 1, 'order_type': 'quotation', 'hide_reports': ['sale.report_saleorder', 'nstda.msd.sale.order']}"/>
-                    <field name="order_id" attrs="{'invisible': [('order_type','=','sale_order')]}" 
+                    <field name="order_id" attrs="{'invisible': [('order_type','=','sale_order')]}"
                    		context="{'search_default_my_sale_orders_filter': 1, 'order_type': 'sale_order', 'hide_reports': ['sale.report_saleorder', 'nstda.msd.quotation']}"/>
                 </field>
                 <label string="Quotation " position="replace">
@@ -89,7 +89,7 @@
                 </xpath>
         	</field>
         </record>
-                	
+
         <!-- Split Quotation -->
         <record id="sale.action_quotations" model="ir.actions.act_window">
             <field name="context">{
@@ -105,6 +105,7 @@
                     'search_default_my_sale_orders_filter': 1,
                     'order_type': 'sale_order',
                     'hide_reports': ['sale.report_saleorder', 'nstda.msd.quotation'],
+                }
             </field>
             <field name="domain">[('order_type', '=', 'sale_order')]</field>
         </record>
