@@ -203,7 +203,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy"
             id="menu_budget_fiscal_policy_view"
-            groups="pabi_budget_plan.group_budget_manager"
+            groups="pabi_budget_plan.group_operating_unit_budget"
             action="action_budget_fiscal_policy_view" sequence="5" />
 
 
@@ -370,7 +370,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy"
             id="menu_unit_base_policy_breakdown_view"
-            groups="pabi_budget_plan.group_budget_user" 
+            groups="pabi_budget_plan.group_operating_unit_budget" 
             action="action_unit_base_policy_breakdown_view" sequence="10" />
 
         <record model="ir.actions.act_window" id="action_invest_asset_policy_breakdown_view">
@@ -390,6 +390,7 @@
         
         <menuitem parent="menu_action_budget_policy"
             id="menu_invest_asset_policy_breakdown_view"
+            groups="pabi_budget_plan.group_operating_unit_budget" 
             action="action_invest_asset_policy_breakdown_view" sequence="15" />
 
 
