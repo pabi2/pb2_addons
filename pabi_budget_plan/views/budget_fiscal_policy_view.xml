@@ -74,24 +74,24 @@
                                         </button>
                                       </group>
                                 </group>
-                                <field name="unit_base_ids" colspan="4" nolabel="1" >
+                                <field name="unit_base_ids" colspan="4" nolabel="1" > <!-- We have invisible="1" for 7-12 policy,if you want to have it you can reopen it by changing invisible="0" -->
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="org_id" />
                                         <field name="budget_policy_version" invisible="True"/>
                                         <field name="planned_amount" sum="Planned Amount" />
-                                        <field name="policy_amount" sum="Policy Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" invisible="1" />
                                         <field name="policy_amount_v1" attrs="{'readonly': [('budget_policy_version', '!=', 1.0)]}" sum="Policy Amount Rev.1" />
                                         <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
                                         <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
                                         <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.3" />
                                         <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.3" /> 
                                         <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v7" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v8" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v9" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v10" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v11" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v12" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.3" /> 
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.3" /> 
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.3" /> 
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.3" /> 
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.3" /> 
+                                        <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.3" />
                                     </tree>
                                 </field>
                             </page>
@@ -203,7 +203,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy"
             id="menu_budget_fiscal_policy_view"
-            groups="pabi_budget_plan.group_budget_manager"
+            groups="pabi_budget_plan.group_operating_unit_budget"
             action="action_budget_fiscal_policy_view" sequence="5" />
 
 
@@ -370,7 +370,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy"
             id="menu_unit_base_policy_breakdown_view"
-            groups="pabi_budget_plan.group_budget_user" 
+            groups="pabi_budget_plan.group_operating_unit_budget" 
             action="action_unit_base_policy_breakdown_view" sequence="10" />
 
         <record model="ir.actions.act_window" id="action_invest_asset_policy_breakdown_view">
@@ -390,6 +390,7 @@
         
         <menuitem parent="menu_action_budget_policy"
             id="menu_invest_asset_policy_breakdown_view"
+            groups="pabi_budget_plan.group_operating_unit_budget" 
             action="action_invest_asset_policy_breakdown_view" sequence="15" />
 
 

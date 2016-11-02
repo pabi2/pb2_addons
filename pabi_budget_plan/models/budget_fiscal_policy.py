@@ -326,7 +326,10 @@ class BudgetFiscalPolicy(models.Model):
         budget_policy.version = self.version + 1.0
         budget_policy.ref_policy_id = self
         # Copy Lines
-        budget_policy.unit_base_ids = self.unit_base_ids.copy()
+        unit_base_ids = self.unit_base_ids.copy(default={'budget_policy_id': budget_policy.id})
+        unit_base_ids.budget_policy_id = budget_policy.id
+        budget_policy.unit_base_ids = unit_base_ids
+        budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
         budget_policy.project_base_ids = self.project_base_ids.copy()
         budget_policy.personnel_costcenter_ids =\
             self.personnel_costcenter_ids.copy()
@@ -389,7 +392,7 @@ class BudgetFiscalPolicy(models.Model):
             select tmpl.chart_view, tmpl.program_id, bpp.planned_overall
             from budget_plan_project bpp
             join budget_plan_template tmpl on tmpl.id = bpp.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
         """
         self._cr.execute(_sql % (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
@@ -410,7 +413,7 @@ class BudgetFiscalPolicy(models.Model):
             sum(bpu.planned_overall) as planned_overall
             from budget_plan_unit bpu
             join budget_plan_template tmpl on tmpl.id = bpu.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
             group by tmpl.chart_view, tmpl.org_id
         """
         self._cr.execute(_sql % (self.fiscalyear_id.id,))
@@ -432,7 +435,7 @@ class BudgetFiscalPolicy(models.Model):
             sum(bpia.planned_overall) as planned_overall
             from budget_plan_invest_asset bpia
             join budget_plan_template tmpl on tmpl.id = bpia.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
             group by tmpl.chart_view
         """
         self._cr.execute(_sql % (self.fiscalyear_id.id,))
@@ -459,6 +462,14 @@ class BudgetFiscalPolicy(models.Model):
         self.ensure_one()
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+        domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                      ('ref_budget_policy_id', '=', self.id)]
+        Breakdown_search = Breakdown.search(
+                domain + [('chart_view', '=', 'unit_base'),
+                        ('state', '!=', 'cancel')
+                ])
+        if Breakdown_search:
+            raise UserError(_('Breakdowns already created.'))
         for unit in self.unit_base_ids:
             ref_policy_id = unit.budget_policy_id.ref_policy_id
             ref_policy_breakdown = False
