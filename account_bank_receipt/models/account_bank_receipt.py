@@ -33,6 +33,7 @@ class AccountBankReceipt(models.Model):
         domain=[('type', '=', 'bank'), ('intransit', '=', True)],
         required=True,
         states={'done': [('readonly', '=', True)]},
+        help="Show only journal of type Bank & Cash and Bank Intransit = True",
     )
     journal_default_account_id = fields.Many2one(
         'account.account',
@@ -81,6 +82,7 @@ class AccountBankReceipt(models.Model):
         string="Bank's Account Code",
         related='partner_bank_id.journal_id.default_debit_account_id',
         readonly=True,
+        help="Show debit account of Bank Account's Journal",
     )
     line_ids = fields.One2many(
         'account.move.line',
