@@ -37,6 +37,7 @@
         "security/operating_unit_security.xml",
         "views/res_users_view.xml",
         "views/operating_unit_view.xml",
+        "views/account_invoice_view.xml",
     ],
     "demo": [
     ],
