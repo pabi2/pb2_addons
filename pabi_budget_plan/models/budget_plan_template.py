@@ -104,7 +104,8 @@ class BudgetPlanTemplate(ChartField, models.Model):
         'res.division',
         string='Division',
         related="section_id.division_id",
-        required=False,
+        required=True,
+        readonly=True,
     )
     date_from = fields.Date(
         string='Start Date',
@@ -133,6 +134,8 @@ class BudgetPlanTemplate(ChartField, models.Model):
         copy=False,
         track_visibility='onchange',
     )
+    
+    org_id = fields.Many2one(related='section_id.org_id')
 
     @api.onchange('fiscalyear_id')
     def onchange_fiscalyear_id(self):
