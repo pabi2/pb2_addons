@@ -21,13 +21,7 @@ access_budget_fiscal_policy_breakdown_line_corp,access_budget_fiscal_policy_brea
 access_invest_asset_plan,access_invest_asset_plan,model_invest_asset_plan,pabi_budget_plan.group_budget_user,1,1,1,1
 access_invest_asset_plan_item,access_invest_asset_plan_item,model_invest_asset_plan_item,pabi_budget_plan.group_budget_user,1,1,1,1
 access_account_period_user,access_account_period_user,account.model_account_period,base.group_user,1,0,0,0
-<<<<<<< HEAD
 access_account_budget_emp,access_account_budget_emp,account_budget_activity.model_account_budget,base.group_user,1,0,0,0
 access_account_budget_line_emp,access_account_budget_line_emp,account_budget_activity.model_account_budget_line,base.group_user,1,0,0,0
 access_account_budget_user,access_account_budget_user,account_budget_activity.model_account_budget,pabi_budget_plan.group_budget_user,1,1,1,1
 access_account_budget_line_user,access_account_budget_line_user,account_budget_activity.model_account_budget_line,pabi_budget_plan.group_budget_user,1,1,1,1
-=======
-access_account_budget_user_right,access_account_budget,model_account_budget,pabi_budget_plan.group_budget_user,1,1,1,1
-access_account_budget_user_right_line,access_account_budget_line,model_account_budget_line,pabi_budget_plan.group_budget_user,1,1,1,1
-
->>>>>>> 08d23acac2bbd906649091ac97896914104299b3
