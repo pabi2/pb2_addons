@@ -207,6 +207,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'order_id': self.order_id.id,
             'supplier_invoice': '-',
             'date_invoice': self.date_receive,
+            'total_fine': 0,
         })
         acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
@@ -227,6 +228,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                 }
                 lines.append([0, 0, line_vals])
         acceptance.acceptance_line_ids = lines
+        acceptance._compute_total_fine()
         return acceptance
 
     @api.multi

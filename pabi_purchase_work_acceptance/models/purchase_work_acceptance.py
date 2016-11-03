@@ -183,6 +183,11 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
+            else:
+                acceptance.total_fine_cal = 0
+                acceptance.total_fine = 0
+                acceptance.fine_per_day = 0
+                acceptance.overdue_day = 0
 
     @api.model
     def _calculate_service_fine(self):
@@ -243,6 +248,11 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
+            else:
+                acceptance.total_fine_cal = 0
+                acceptance.total_fine = 0
+                acceptance.fine_per_day = 0
+                acceptance.overdue_day = 0
 
     @api.model
     def _calculate_normal_service_fine(self):
@@ -288,6 +298,11 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
+            else:
+                acceptance.total_fine_cal = 0
+                acceptance.total_fine = 0
+                acceptance.fine_per_day = 0
+                acceptance.overdue_day = 0
 
     @api.model
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
@@ -452,6 +467,7 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.multi
     def write(self, vals):
+        print vals
         res = super(PurchaseWorkAcceptance, self).write(vals)
         self.change_invoice_detail()
         return res
