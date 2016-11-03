@@ -350,9 +350,10 @@ class BudgetFiscalPolicy(models.Model):
         budget_policy.ref_policy_id = self
         # Copy Lines
         unit_base_ids = self.unit_base_ids.copy(default={'budget_policy_id': budget_policy.id})
-        unit_base_ids.budget_policy_id = budget_policy.id
+        for unit_base in unit_base_ids:
+            unit_base.budget_policy_id = budget_policy.id
         budget_policy.unit_base_ids = unit_base_ids
-        budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
+        #budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
         budget_policy.project_base_ids = self.project_base_ids.copy()
         budget_policy.personnel_costcenter_ids =\
             self.personnel_costcenter_ids.copy()
