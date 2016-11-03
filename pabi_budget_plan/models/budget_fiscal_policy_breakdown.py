@@ -169,13 +169,13 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         'res.company',
         string='Company',
         default=_get_company,
-        required=True,
+        readonly=True,
     )
     currency_id = fields.Many2one(
         'res.currency',
         string="Currency",
         default=_get_currency,
-        required=True,
+        readonly=True,
     )
 
     @api.depends()

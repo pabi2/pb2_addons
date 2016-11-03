@@ -98,8 +98,8 @@
                                     -
                                     <field name="date_to" class="oe_inline" readonly="1" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}" nolabel="1"/>
                                 </div>
-                                <field name="company_id" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}" groups="base.group_multi_company" />
-                                <field name="currency_id" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}" groups="base.group_multi_currency"/>
+                                <field name="company_id"  groups="base.group_multi_company" />
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                             </group>
                         </group>
                         <notebook>
