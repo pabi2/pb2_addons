@@ -40,7 +40,9 @@ class BudgetPlanLine(models.Model):
                  'activity_unit_price')
     def _compute_total_budget(self):
         for line in self:
-            line.total_budget = line.unit * line.activity_unit * line.activity_unit_price
+            line.total_budget =\
+                line.unit * line.activity_unit * line.activity_unit_price
+
 
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
