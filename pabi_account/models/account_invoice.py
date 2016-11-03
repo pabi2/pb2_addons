@@ -82,6 +82,13 @@ class AccountInvoice(models.Model):
         })
         return res
 
+    @api.multi
+    @api.constrains('amount_total')
+    def _check_seats_limit(self):
+        for rec in self:
+            if rec.amount_total < 0.0:
+                raise Warning(_('Negative Total Amount is not allowed!'))
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
