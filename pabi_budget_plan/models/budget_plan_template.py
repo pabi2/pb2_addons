@@ -15,7 +15,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.constrains('fiscalyear_id', 'section_id')
     def _check_fiscalyear_section_unique(self):
         if self.fiscalyear_id and self.section_id:
-            budget_plans = self.search(
+            budget_plans = self.env['budget.plan.unit'].search(
                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
                  ('section_id', '=', self.section_id.id),
                  ('state', 'not in', ('cancel', 'reject')),
