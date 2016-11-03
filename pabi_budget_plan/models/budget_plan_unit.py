@@ -125,18 +125,20 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
+        employee = self.env.user.partner_id.employee_id
         if self._context.get('my_org_plans', False):
-            args += [('org_id', '=', self.env.user.partner_id.employee_id.section_id.org_id.id)]
+            args += [('org_id', '=', employee.section_id.org_id.id)]
         if self._context.get('my_section_plans', False):
-            args += [('section_id', '=', self.env.user.partner_id.employee_id.section_id.id)]
+            args += [('section_id', '=', employee.section_id.id)]
         if self._context.get('my_division_plans', False):
-            args += [('division_id', '=', self.env.user.partner_id.employee_id.section_id.division_id.id)]
+            args += [('division_id', '=', employee.section_id.division_id.id)]
         if self._context.get('this_year_plans', False):
-            current_fiscalyear = self.env['account.period'].find().fiscalyear_id
+            current_period = self.env['account.period'].find()
+            current_fiscalyear = current_period.fiscalyear_id
             args += [('fiscalyear_id', '=', current_fiscalyear.id)]
         return super(BudgetPlanUnitLine, self).search(args, offset=offset,
-                                                  limit=limit, order=order,
-                                                  count=count)
+                                                      limit=limit, order=order,
+                                                      count=count)
 
     plan_id = fields.Many2one(
         'budget.plan.unit',
@@ -155,6 +157,19 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
         'budget.plan.line.template',
         required=True,
         ondelete='cascade',
+    )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('submit', 'Submitted'),
+         ('accept', 'Approved'),
+         ('cancel', 'Cancelled'),
+         ('reject', 'Rejected'),
+         ('approve', 'Verified'),
+         ('accept_corp', 'Accepted'),
+         ],
+        string='Status',
+        related='plan_id.state',
+        store=True,
     )
 
     @api.model

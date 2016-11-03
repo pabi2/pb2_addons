@@ -244,6 +244,7 @@
                     <filter string="My Section Lines" name="my_org_plans" context="{'my_section_plans': True}"/>
                     <filter string="My Division Lines" name="my_org_plans" context="{'my_division_plans': True}"/>
                     <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <filter domain="[('state','=','approve')]" string="Verified"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
                         <filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
@@ -252,6 +253,7 @@
                         <filter name="activity_id" string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
                         <filter name="cost_control_id" string="Cost Control" domain="[]" context="{'group_by':'cost_control_id'}"/>
                         <filter string="Fiscal Year" name="fiscalyear" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -283,7 +285,7 @@
                     <field name="m12" sum="Period 12"/>
 
                     <field name="planned_amount" sum="Planned Amount"/>
-
+                    <field name="state" invisible="1" />
                 </tree>
             </field>
         </record>
