@@ -2,6 +2,7 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from .budget_plan_template import BudgetPlanCommon
+from openerp import SUPERUSER_ID
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
@@ -111,6 +112,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         for rec in self:
             if user.has_group('pabi_budget_plan.group_budget_manager') and \
                     employee.section_id.division_id == rec.division_id:
+                continue
+            elif user.id == SUPERUSER_ID:
                 continue
             else:
                 raise UserError(
