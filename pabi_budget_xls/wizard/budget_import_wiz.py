@@ -11,7 +11,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
-class BudgetImportWizard(models.Model):
+class BudgetImportWizard(models.TransientModel):
     _name = 'budget.import.wizard'
 
     input_file = fields.Binary('Template')

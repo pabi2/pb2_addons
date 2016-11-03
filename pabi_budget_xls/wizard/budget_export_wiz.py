@@ -12,7 +12,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
-class BudgetExportWizard(models.Model):
+class BudgetExportWizard(models.TransientModel):
     _name = 'unit.budget.plan.export'
 
     attachment_id = fields.Many2one(
