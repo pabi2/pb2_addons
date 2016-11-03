@@ -146,6 +146,8 @@ class BudgetExportWizard(models.Model):
                 NonCostCtrl_Sheet.cell(
                     row=row, column=3).value = line.section_id.name
                 NonCostCtrl_Sheet.cell(
+                    row=row, column=5).value = line.description
+                NonCostCtrl_Sheet.cell(
                     row=row, column=7).value = line.unit
                 NonCostCtrl_Sheet.cell(
                     row=row, column=8).value = line.activity_unit_price

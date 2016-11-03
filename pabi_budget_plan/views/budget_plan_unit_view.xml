@@ -98,6 +98,8 @@
                                     -
                                     <field name="date_to" class="oe_inline" readonly="1" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                             </group>
                         </group>
                         <notebook>
@@ -110,7 +112,7 @@
 
                                         <field name="activity_group_id"/>
                                         <field name="activity_id"/>
-
+                                        <field name="description"/>
                                         <field name="cost_control_id"/>
 
                                         <field name="m0"/>
