@@ -233,6 +233,9 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
         digits_compute=dp.get_precision('Account'),
         store=True,
     )
+    description = fields.Char(
+        string="Description",
+    )
     # Set default for Fund
     fund_id = fields.Many2one(
         'res.fund',
