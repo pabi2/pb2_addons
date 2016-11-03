@@ -19,8 +19,8 @@ class BudgetPlanTemplate(ChartField, models.Model):
                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
                  ('section_id', '=', self.section_id.id),
                  ('state', 'not in', ('cancel', 'reject')),
-                 ])
-            if budget_plans:
+                 ]).ids
+            if len(budget_plans) > 1:
                 raise ValidationError(
                     _('You can not have duplicate budget plan for '
                       'same fiscalyear and section.'))
@@ -151,13 +151,13 @@ class BudgetPlanTemplate(ChartField, models.Model):
         'res.company',
         string='Company',
         default=_get_company,
-        required=True,
+        readonly=True,
     )
     currency_id = fields.Many2one(
         'res.currency',
         string="Currency",
         default=_get_currency,
-        required=True,
+        readonly=True,
     )
 
     @api.onchange('fiscalyear_id')

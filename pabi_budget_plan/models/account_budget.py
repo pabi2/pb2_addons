@@ -42,7 +42,10 @@ class AccountBudget(models.Model):
         'res.currency',
         string="Currency",
         default=_get_currency,
-        required=True,
+        readonly=True,
+    )
+    company_id = fields.Many2one(
+        readonly=True,
     )
 
     @api.one
