@@ -13,6 +13,21 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _description = "Unit Based - Budget Plan"
     _order = 'create_date desc'
 
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        if self._context.get('my_org_plans', False):
+            args += [('org_id', '=', self.env.user.partner_id.employee_id.section_id.org_id.id)]
+        if self._context.get('my_section_plans', False):
+            args += [('section_id', '=', self.env.user.partner_id.employee_id.section_id.id)]
+        if self._context.get('my_division_plans', False):
+            args += [('division_id', '=', self.env.user.partner_id.employee_id.section_id.division_id.id)]
+        if self._context.get('this_year_plans', False):
+            current_fiscalyear = self.env['account.period'].find().fiscalyear_id
+            args += [('fiscalyear_id', '=', current_fiscalyear.id)]
+        return super(BudgetPlanUnit, self).search(args, offset=offset,
+                                                  limit=limit, order=order,
+                                                  count=count)
+
     @api.onchange('fiscalyear_id')
     def onchange_fiscalyear_id(self):
         self.date_from = self.fiscalyear_id.date_start
@@ -107,6 +122,21 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
     _inherits = {'budget.plan.line.template': 'template_id'}
     _description = "Unit Based - Budget Plan Line"
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        if self._context.get('my_org_plans', False):
+            args += [('org_id', '=', self.env.user.partner_id.employee_id.section_id.org_id.id)]
+        if self._context.get('my_section_plans', False):
+            args += [('section_id', '=', self.env.user.partner_id.employee_id.section_id.id)]
+        if self._context.get('my_division_plans', False):
+            args += [('division_id', '=', self.env.user.partner_id.employee_id.section_id.division_id.id)]
+        if self._context.get('this_year_plans', False):
+            current_fiscalyear = self.env['account.period'].find().fiscalyear_id
+            args += [('fiscalyear_id', '=', current_fiscalyear.id)]
+        return super(BudgetPlanUnitLine, self).search(args, offset=offset,
+                                                  limit=limit, order=order,
+                                                  count=count)
 
     plan_id = fields.Many2one(
         'budget.plan.unit',
