@@ -61,7 +61,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         string='Budget Plan Lines',
         copy=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
         track_visibility='onchange',
     )
     cost_control_ids = fields.One2many(
