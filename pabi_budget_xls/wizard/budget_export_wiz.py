@@ -134,8 +134,6 @@ class BudgetExportWizard(models.Model):
                                    value=budget.section_id.code)
             NonCostCtrl_Sheet.cell(row=4, column=2, value=fields.Date.today())
             NonCostCtrl_Sheet.cell(row=5, column=2, value=self.env.user.name)
-            NonCostCtrl_Sheet.cell(row=6, column=2,
-                                   value=str(budget.planned_overall))
 
             row = 11
             section_name = budget.section_id.name
@@ -246,6 +244,9 @@ class BudgetExportWizard(models.Model):
                 row=row, column=22).value = '=SUM(V%s:V%s)' % params
             NonCostCtrl_Sheet.cell(
                 row=row, column=23).value = '=SUM(W%s:W%s)' % params
+
+            NonCostCtrl_Sheet.cell(
+                row=6, column=2).value = '=J%s' %(row)
 
             self._add_cell_border(NonCostCtrl_Sheet, row_start=row,
                                   row_end=row+1, col_start=9, col_end=23)
