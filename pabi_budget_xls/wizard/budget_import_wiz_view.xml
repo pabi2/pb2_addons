@@ -10,7 +10,7 @@
                     <group>
                         <group >
                             <field name="input_file" filename="datas_fname" required="True"/>
-                            <field name="datas_fname" invisible="0" readonly="1"/>
+                            <field name="datas_fname" invisible="1"/>
                         </group>
                         <group/>
                     </group>

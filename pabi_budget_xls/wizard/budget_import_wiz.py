@@ -51,7 +51,6 @@ class BudgetImportWizard(models.Model):
                 raise UserError(
                     _('Validation Error\n Please enter plan related file!')
                 )
-
             fiscal_year = NonCostCtrl_Sheet.cell(row=1, column=2).value
             fiscal_year_id = self.env['account.fiscalyear'].search(
                 [('name', '=', tools.ustr(fiscal_year))])
@@ -64,15 +63,16 @@ class BudgetImportWizard(models.Model):
                     ['|',
                      ('code', '=', tools.ustr(org)),
                      ('name_short', '=', tools.ustr(org))])
-            if org_id:
-                vals.update({'org_id': org_id.id})
+#             if org_id:
+#                 vals.update({'org_id': org_id.id})
 
             section = NonCostCtrl_Sheet.cell(row=3, column=2).value
             section_id = self.env['res.section'].search(
-                [('code', '=', tools.ustr(section))])
+                ['|',
+                 ('code', '=', tools.ustr(section)),
+                 ('name_short', '=', tools.ustr(org))])
             if section_id:
                 vals.update({'section_id': section_id.id})
-
             export_date = NonCostCtrl_Sheet.cell(row=4, column=2).value
             if export_date:
                 vals.update({'date': export_date})
@@ -89,7 +89,8 @@ class BudgetImportWizard(models.Model):
             for row in range(line_row, max_row):
                 line_vals = {}
                 line_vals.update({'section_id': section_id.id,
-                                  'plan_id': budget.id})
+                                  'plan_id': budget.id,
+                                  'org_id': org_id.id})
                 ag_group = NonCostCtrl_Sheet.cell(row=row, column=4).value
                 if not ag_group:
                     break
@@ -97,7 +98,7 @@ class BudgetImportWizard(models.Model):
                     [('name', '=', tools.ustr(ag_group))])
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
-
+                description = NonCostCtrl_Sheet.cell(row=row, column=5).value
                 unit = NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
                 act_unitprice\
                     = NonCostCtrl_Sheet.cell(row=row, column=8).value or 0.0
@@ -107,6 +108,7 @@ class BudgetImportWizard(models.Model):
                     'unit': unit,
                     'activity_unit_price': act_unitprice,
                     'activity_unit': activity_unit,
+                    'description': description,
                 })
                 total_act_budget = unit * act_unitprice * activity_unit
                 line_id = NonCostCtrl_Sheet.cell(row=row, column=26).value
@@ -115,7 +117,7 @@ class BudgetImportWizard(models.Model):
                 total_month_budget = 0.0
                 while p != 13:
                     val = NonCostCtrl_Sheet.cell(row=row, column=col).value
-                    if not isinstance(val, float):
+                    if val and not isinstance(val, long):
                         raise UserError(
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
@@ -130,7 +132,6 @@ class BudgetImportWizard(models.Model):
                     lines.update({int(line_id): line_vals})
                 else:
                     lines_to_create.append(line_vals)
-
                 if (total_act_budget - total_month_budget) != 0.0:
                     raise UserError(_('Please verify budget lines total!'))
             for line in budget.plan_line_ids:
