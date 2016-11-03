@@ -11,7 +11,7 @@
                         <group>
                             <field name="company_id"/>
                             <field name="calendar_period_id" />
-                            <field name="tax_id" domain="[('company_id', '=', company_id), ('is_wht', '=', False), ('is_undue', '=', False)]"/>
+                            <field name="tax_id" domain="[('company_id', '=', company_id), ('is_wht', '=', False), ('is_undue_tax', '=', False)]"/>
                             <field name="print_format"/>
                         </group>
                         <group>
