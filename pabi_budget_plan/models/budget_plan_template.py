@@ -33,6 +33,17 @@ class BudgetPlanTemplate(ChartField, models.Model):
         #    limit=1)
         return current_fiscalyear or False
 
+    @api.model
+    def _get_company(self):
+        company = self.env.user.company_id
+        return company
+
+    @api.model
+    def _get_currency(self):
+        company = self.env.user.company_id
+        currency = company.currency_id
+        return currency
+
     name = fields.Char(
         string='Number',
         required=True,
@@ -135,8 +146,19 @@ class BudgetPlanTemplate(ChartField, models.Model):
         copy=False,
         track_visibility='onchange',
     )
-
     org_id = fields.Many2one(related='section_id.org_id', store=True)
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=_get_company,
+        required=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=_get_currency,
+        required=True,
+    )
 
     @api.onchange('fiscalyear_id')
     def onchange_fiscalyear_id(self):

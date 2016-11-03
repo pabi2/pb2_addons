@@ -42,6 +42,8 @@
                                     <field name="date_from" class="oe_inline" /> -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                             </group>
                        </group>
                        <group>
@@ -255,6 +257,8 @@
                                     <field name="date_from" class="oe_inline" /> -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
+                                <field name="company_id" groups="base.group_multi_company" /> 
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                             </group>
                        </group>
                         <notebook>
