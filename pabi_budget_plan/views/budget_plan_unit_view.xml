@@ -194,14 +194,20 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
-                    <field name="section_id"/>
                     <field name="org_id"/>
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="chart_view"/>
                     <filter string="My Org Plans" name="my_org_plans" context="{'my_org_plans': True}"/>
                     <filter string="My Section Plans" name="my_org_plans" context="{'my_section_plans': True}"/>
                     <filter string="My Division Plans" name="my_org_plans" context="{'my_division_plans': True}"/>
                     <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','accept')]" string="Approved"/>
                     <filter domain="[('state','=','approve')]" string="Verified"/>
+                    <filter domain="[('state','=','accept_corp')]" string="Accepted"/>
                     <group expand="0" string="Group By">
                         <filter string="Org" context="{'group_by':'org_id'}"/>
                         <filter string="Division" context="{'group_by':'division_id'}"/>
@@ -237,14 +243,20 @@
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Lines">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan Lines"/>
-                    <field name="section_id"/>
                     <field name="org_id"/>
+                    <field name="division_id"/>
+                    <field name="section_id"/>
                     <field name="chart_view"/>
                     <filter string="My Org Lines" name="my_org_plans" context="{'my_org_plans': True}"/>
                     <filter string="My Section Lines" name="my_org_plans" context="{'my_section_plans': True}"/>
                     <filter string="My Division Lines" name="my_org_plans" context="{'my_division_plans': True}"/>
                     <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','accept')]" string="Approved"/>
                     <filter domain="[('state','=','approve')]" string="Verified"/>
+                    <filter domain="[('state','=','accept_corp')]" string="Accepted"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
                         <filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
