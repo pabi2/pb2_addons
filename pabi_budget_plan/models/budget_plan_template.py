@@ -15,12 +15,12 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.constrains('fiscalyear_id', 'section_id')
     def _check_fiscalyear_section_unique(self):
         if self.fiscalyear_id and self.section_id:
-            budget_plans = self.env['budget.plan.unit'].search(
+            budget_plans = self.env['budget.plan.unit'].search(#TODO should go this constraint to unit based!
                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
                  ('section_id', '=', self.section_id.id),
                  ('state', 'not in', ('cancel', 'reject')),
                  ])
-            if len(budget_plans) > 1:
+            if budget_plans:
                 raise ValidationError(
                     _('You can not have duplicate budget plan for '
                       'same fiscalyear and section.'))
