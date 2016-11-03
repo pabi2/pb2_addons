@@ -126,7 +126,7 @@ class BudgetExportWizard(models.Model):
             NonCostCtrl_Sheet.add_data_validation(dv)
             NonCostCtrl_Sheet.cell(row=1, column=5, value=budget.id)
             org = budget.org_id.code and\
-                    budget.org_id.code or budget.org_id.name_short
+                budget.org_id.code or budget.org_id.name_short
             NonCostCtrl_Sheet.cell(row=1, column=2,
                                    value=budget.fiscalyear_id.name)
             NonCostCtrl_Sheet.cell(row=2, column=2, value=org)
