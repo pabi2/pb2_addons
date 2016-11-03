@@ -2,7 +2,7 @@
 from openerp import models, fields
 
 
-class BudgetXlsOutput(models.Model):
+class BudgetXlsOutput(models.TransientModel):
 
     _name = 'budget.xls.output'
     _description = 'Wizard to store the Excel output'
