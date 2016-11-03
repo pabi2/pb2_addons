@@ -9,9 +9,31 @@ from openerp.addons.account_budget_activity.models.account_activity \
 class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherits = {'budget.plan.template': 'template_id'}
-#     _inherit = ['mail.thread']
+    _inherit = ['mail.thread']
     _description = "Unit Based - Budget Plan"
     _order = 'create_date desc'
+
+    @api.onchange('fiscalyear_id')
+    def onchange_fiscalyear_id(self):
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
+
+    @api.one
+    @api.depends('fiscalyear_id')
+    def _compute_date(self):
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
+
+    date_from = fields.Date(
+        string='Start Date',
+        compute='_compute_date',
+        store=True,
+    )
+    date_to = fields.Date(
+        string='End Date',
+        compute='_compute_date',
+        store=True,
+    )
 
     template_id = fields.Many2one(
         'budget.plan.template',
@@ -25,6 +47,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         copy=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     cost_control_ids = fields.One2many(
         'budget.plan.unit.cost.control',
@@ -32,9 +55,10 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         string='Cost Control',
         copy=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     planned_overall = fields.Float(
-        string='Budget Plan',
+        string='Total Budget Plan',
         compute='_compute_planned_overall',
         store=True,
     )
@@ -42,6 +66,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     @api.onchange('section_id')
     def _onchange_section_id(self):
         self.org_id = self.section_id.org_id
+        self.division_id = self.section_id.division_id
 
     # Call inherited methods
     @api.multi
@@ -60,6 +85,22 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         return self._convert_plan_to_budget_control(active_id,
                                                     head_src_model,
                                                     line_src_model)
+
+    @api.multi  # Only Budget manager can Approve
+    def button_accept(self):
+        super(BudgetPlanUnit, self).button_accept()
+        # Budget Manager (dept head) and only budget in the same division
+        user = self.env.user
+        employee = user.partner_id.employee_id
+        for rec in self:
+            if user.has_group('pabi_budget_plan.group_budget_manager') and \
+                    employee.section_id.division_id == rec.division_id:
+                continue
+            else:
+                raise UserError(
+                    _('You can approve only budget plans in division %s.') %
+                    (employee.section_id.division_id.name,))
+        return True
 
 
 class BudgetPlanUnitLine(ActivityCommon, models.Model):

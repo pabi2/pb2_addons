@@ -178,6 +178,11 @@ class SectionTransferUnitLine(models.Model):
         string='From Section',
         required=True,
     )
+    from_org_id = fields.Many2one(
+        'res.org',
+        string='From Org',
+        required=False,
+    )
     from_budget_control_id = fields.Many2one(
         'account.budget',
         string="From Budget Control",
@@ -230,9 +235,10 @@ class SectionTransferUnitLine(models.Model):
     )
 
     @api.onchange('from_budget_control_line_id',
-                  'from_budget_control_id',
+                  #'from_budget_control_id',
                   'to_budget_control_line_id',
-                  'to_budget_control_id')
+                  #'to_budget_control_id'
+                )
     def onchage_line_params(self):
         for record in self:
             if record.from_budget_control_line_id:
@@ -240,6 +246,8 @@ class SectionTransferUnitLine(models.Model):
                     record.from_budget_control_line_id.budget_id
                 record.from_section_id =\
                     record.from_budget_control_line_id.budget_id.section_id
+                record.from_org_id =\
+                    record.from_budget_control_line_id.budget_id.section_id.org_id
             elif record.from_budget_control_id:
                 record.from_section_id =\
                     record.from_budget_control_line_id.budget_id.section_id

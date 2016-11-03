@@ -15,7 +15,7 @@ class BudgetImportWizard(models.Model):
     _name = 'budget.import.wizard'
 
     input_file = fields.Binary('Template')
-    datas_fname = fields.Char('File Path')
+    datas_fname = fields.Char('Import File Name')
 
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):

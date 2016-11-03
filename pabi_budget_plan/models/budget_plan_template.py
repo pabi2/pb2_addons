@@ -1,17 +1,40 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartField, CHART_VIEW_FIELD
 import openerp.addons.decimal_precision as dp
+from openerp.exceptions import ValidationError
 
 
 class BudgetPlanTemplate(ChartField, models.Model):
     _name = "budget.plan.template"
-    _inherit = ['mail.thread']
+    _inherit = 'mail.thread'
     _description = "Budget Plan Template"
 
+    @api.one
+    @api.constrains('fiscalyear_id', 'section_id')
+    def _check_fiscalyear_section_unique(self):
+        if self.fiscalyear_id and self.section_id:
+            budget_plans = self.search(
+                [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                 ('section_id', '=', self.section_id.id),
+                 ('state', 'not in', ('cancel', 'reject')),
+                 ])
+            if len(budget_plans) > 1:
+                raise ValidationError(
+                    _('You can not have duplicate budget plan for '
+                      'same fiscalyear and section.'))
+
+    @api.model
+    def _default_fy(self):
+        current_fiscalyear = self.env['account.period'].find().fiscalyear_id
+        #next_fiscalyear = self.env['account.fiscalyear'].search(
+        #    [('date_start', '>', current_fiscalyear.date_stop)],
+        #    limit=1)
+        return current_fiscalyear or False
+
     name = fields.Char(
-        string='Name',
+        string='Number',
         required=True,
         default="/",
         copy=False,
@@ -75,26 +98,34 @@ class BudgetPlanTemplate(ChartField, models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
+        default=_default_fy,
+    )
+    division_id = fields.Many2one(
+        'res.division',
+        string='Division',
+        related="section_id.division_id",
+        required=True,
+        readonly=True,
     )
     date_from = fields.Date(
         string='Start Date',
         compute='_compute_date',
-        readonly=True,
         store=True,
     )
     date_to = fields.Date(
         string='End Date',
         compute='_compute_date',
-        readonly=True,
         store=True,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
          ('submit', 'Submitted'),
-         ('accept', 'Accepted'),
+         ('accept', 'Approved'),
          ('cancel', 'Cancelled'),
          ('reject', 'Rejected'),
-         ('approve', 'Verified')],
+         ('approve', 'Verified'),
+         ('accept_corp', 'Accepted'),
+         ],
         string='Status',
         default='draft',
         index=True,
@@ -103,13 +134,19 @@ class BudgetPlanTemplate(ChartField, models.Model):
         copy=False,
         track_visibility='onchange',
     )
+    
+    org_id = fields.Many2one(related='section_id.org_id')
 
-    @api.multi
+    @api.onchange('fiscalyear_id')
+    def onchange_fiscalyear_id(self):
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
+
+    @api.one
     @api.depends('fiscalyear_id')
     def _compute_date(self):
-        for rec in self:
-            rec.date_from = rec.fiscalyear_id.date_start
-            rec.date_to = rec.fiscalyear_id.date_stop
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
 
 
 class BudgetPlanLineTemplate(ChartField, models.Model):
@@ -313,5 +350,26 @@ class BudgetPlanCommon(object):
             'state': 'approve',
             'validating_user_id': self._uid,
             'date_approve': fields.Date.context_today(self),
+        })
+        return True
+
+    @api.multi
+    def button_accept_corp(self):
+        self.write({
+            'state': 'accept_corp',
+        })
+        return True
+
+    @api.multi
+    def button_back_approve(self):
+        self.write({
+            'state': 'accept',
+        })
+        return True
+
+    @api.multi
+    def button_back_verify(self):
+        self.write({
+            'state': 'approve',
         })
         return True

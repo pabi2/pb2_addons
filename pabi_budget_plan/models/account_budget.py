@@ -29,9 +29,21 @@ class AccountBudget(models.Model):
     ref_breakdown_id = fields.Many2one(
         'budget.fiscal.policy.breakdown',
         string="Breakdown Reference",
-        copy=False,
+        copy=True,
         readonly=True,
     )
+
+    @api.one
+    @api.constrains('fiscalyear_id', 'section_id')
+    def _check_fiscalyear_section_unique(self):
+        if self.fiscalyear_id and self.section_id:
+            budget = self.search([('version', '=', self.version),
+                            ('fiscalyear_id', '=', self.fiscalyear_id.id), 
+                            ('section_id', '=', self.section_id.id), 
+                            ('state', '!=', 'cancel'),
+                            ])
+            if len(budget) > 1:
+                raise ValidationError(_('You can not have duplicate budget control for same fiscalyear, section and version.'))
 
     @api.multi
     def budget_confirm(self):
