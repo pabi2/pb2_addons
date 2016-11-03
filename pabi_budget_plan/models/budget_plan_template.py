@@ -28,10 +28,10 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.model
     def _default_fy(self):
         current_fiscalyear = self.env['account.period'].find().fiscalyear_id
-        next_fiscalyear = self.env['account.fiscalyear'].search(
-            [('date_start', '>', current_fiscalyear.date_stop)],
-            limit=1)
-        return next_fiscalyear or False
+        #next_fiscalyear = self.env['account.fiscalyear'].search(
+        #    [('date_start', '>', current_fiscalyear.date_stop)],
+        #    limit=1)
+        return current_fiscalyear or False
 
     name = fields.Char(
         string='Number',
