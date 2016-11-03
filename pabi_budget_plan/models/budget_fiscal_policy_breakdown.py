@@ -12,6 +12,17 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     _description = 'Fiscal Year Budget Policy'
     _order = 'create_date desc'
 
+    @api.model
+    def _get_company(self):
+        company = self.env.user.company_id
+        return company
+
+    @api.model
+    def _get_currency(self):
+        company = self.env.user.company_id
+        currency = company.currency_id
+        return currency
+
     name = fields.Char(
         string='Name',
         required=True,
@@ -153,6 +164,18 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         string="Budget Controls",
         readonly=True,
         copy=False,
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=_get_company,
+        required=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=_get_currency,
+        required=True,
     )
 
     @api.depends()

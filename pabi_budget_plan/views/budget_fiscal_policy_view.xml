@@ -9,9 +9,9 @@
                     <header>
                         <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
                         <button name="prepare_fiscal_budget_policy" states="draft" type="object" string="Generate Budget Policy Lines" />
-                        <button string="Cancel" name="button_cancel" states="draft" type="object" />
-                        <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
                         <button string="New Revision" name="button_new_revision" attrs="{'invisible': ['|', ('latest_version', '=', False), ('state', 'not in', ('confirm'))]}" type="object" class="oe_highlight"/>
+                        <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
+                        <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
                     </header>
                     <sheet>
@@ -42,6 +42,8 @@
                                     <field name="date_from" class="oe_inline" /> -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                             </group>
                        </group>
                        <group>
@@ -255,6 +257,8 @@
                                     <field name="date_from" class="oe_inline" /> -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
+                                <field name="company_id" groups="base.group_multi_company" /> 
+                                <field name="currency_id" groups="base.group_multi_currency"/>
                             </group>
                        </group>
                         <notebook>

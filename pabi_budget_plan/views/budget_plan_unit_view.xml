@@ -84,20 +84,22 @@
                         </div>
                         <group>
                             <group>
-                                <field name="section_id" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
+                                <field name="section_id" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}" required="1"/>
                                 <field name="division_id" required="1"/>
                                 <field name="org_id" required="1" readonly="1"/>
                                 <field name="chart_view" required="1" readonly="1"/>
                                 <field name="planned_overall"/>
                             </group>
                             <group>
-                                <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="fiscalyear_id" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}"/>
+                                <label for="date_from" string="Duration" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}"/>
                                 <div>
                                     <field name="date_from" class="oe_inline" readonly="1"/>
                                     -
-                                    <field name="date_to" class="oe_inline" readonly="1" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+                                    <field name="date_to" class="oe_inline" readonly="1" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}" nolabel="1"/>
                                 </div>
+                                <field name="company_id" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}" groups="base.group_multi_company" />
+                                <field name="currency_id" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}" groups="base.group_multi_currency"/>
                             </group>
                         </group>
                         <notebook>
@@ -110,7 +112,7 @@
 
                                         <field name="activity_group_id"/>
                                         <field name="activity_id"/>
-
+                                        <field name="description"/>
                                         <field name="cost_control_id"/>
 
                                         <field name="m0"/>
@@ -132,7 +134,7 @@
                                 </field>
                             </page>
                             <page string="Cost Control">
-                                <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}">
                                     <tree string="Cost Control" editable="bottom">
                                         <field name="cost_control_id"/>
                                         <button name="%(action_add_cost_control_breakdown)d" type="action" string="Add Detail" icon="gtk-ok"/>
@@ -143,14 +145,14 @@
                             <page string="Other Info">
                                 <group>
                                     <group>
-                                        <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
-                                        <field name="submiting_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                        <field name="accepting_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                        <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                        <field name="rejecting_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                        <field name="creating_user_id" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                                        <field name="submiting_user_id" readonly="True" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}"/>
+                                        <field name="accepting_user_id" readonly="True" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}"/>
+                                        <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}"/>
+                                        <field name="rejecting_user_id" readonly="True" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}"/>
                                     </group>
                                     <group>
-                                        <field name="date" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                        <field name="date" attrs="{'readonly': [('state','not in',('draft', 'submit'))]}"/>
                                         <field name="date_submit"/>
                                         <field name="date_accept"/>
                                         <field name="date_approve"/>
