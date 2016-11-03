@@ -228,7 +228,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_budget_plan_unit_tree"/>
             <field name="search_view_id" ref="view_budget_plan_unit_search"/>
-            <field name="context">{'default_chart_view': 'unit_base', 'search_default_this_year_plans':1}</field>
+            <field name="context">{'default_chart_view': 'unit_base'}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a new budget preparation.
@@ -332,7 +332,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_budget_plan_unit_line_tree"/>
-            <field name="context">{'default_chart_view': 'unit_base', 'search_default_this_year_plans':1}</field>
+            <field name="context">{'default_chart_view': 'unit_base'}</field>
         </record>
 
         <menuitem parent="menu_action_budget_plan_unit" id="menu_act_budget_plan_unit_line_view" action="act_budget_plan_unit_line_view" sequence="20"/>
