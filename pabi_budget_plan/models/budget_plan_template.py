@@ -20,7 +20,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
                  ('section_id', '=', self.section_id.id),
                  ('state', 'not in', ('cancel', 'reject')),
                  ])
-            if budget_plans:
+            if len(budget_plans) > 1:
                 raise ValidationError(
                     _('You can not have duplicate budget plan for '
                       'same fiscalyear and section.'))
