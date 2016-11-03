@@ -66,6 +66,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     @api.onchange('section_id')
     def _onchange_section_id(self):
         self.org_id = self.section_id.org_id
+        self.division_id = self.section_id.division_id
 
     # Call inherited methods
     @api.multi
