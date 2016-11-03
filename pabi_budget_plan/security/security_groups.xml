@@ -35,19 +35,19 @@
         <record id="property_rule_budget_plan_budget_user" model="ir.rule">
             <field name="name">Budget User - Budget Plan Access</field>
             <field name="model_id" ref="model_budget_plan_unit"/>
-            <field name="domain_force">[('section_id.division_id','=',user.partner_id.employee_id.section_id.division_id)]</field>
+            <field name="domain_force">[('section_id.division_id','=',user.partner_id.employee_id.section_id.division_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_budget_plan.group_budget_user'))]"/>
         </record>
         <record id="property_rule_budget_plan_budget_manager" model="ir.rule">
             <field name="name">Budget Manager - Budget Plan Access</field>
             <field name="model_id" ref="model_budget_plan_unit"/>
-            <field name="domain_force">[('section_id','=',user.partner_id.employee_id.section_id)]</field>
+            <field name="domain_force">[('section_id','=',user.partner_id.employee_id.section_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_budget_plan.group_budget_manager'))]"/>
         </record>
         <record id="property_rule_budget_plan_budget_org" model="ir.rule">
             <field name="name">Budget Org Manager - Budget Plan Access</field>
             <field name="model_id" ref="model_budget_plan_unit"/>
-            <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id)]</field>
+            <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_budget_plan.group_operating_unit_budget'))]"/>
         </record>
         <record id="property_rule_budget_plan_budget_cooperate" model="ir.rule">
@@ -60,19 +60,19 @@
         <record id="property_rule_budget_plan_budget_user_line" model="ir.rule">
             <field name="name">Budget User - Budget Plan Line Access</field>
             <field name="model_id" ref="model_budget_plan_unit_line"/>
-            <field name="domain_force">[('section_id.division_id','=',user.partner_id.employee_id.section_id.division_id)]</field>
+            <field name="domain_force">[('section_id.division_id','=',user.partner_id.employee_id.section_id.division_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_budget_plan.group_budget_user'))]"/>
         </record>
         <record id="property_rule_budget_plan_budget_manager_line" model="ir.rule">
             <field name="name">Budget Manager - Budget Plan Line Access</field>
             <field name="model_id" ref="model_budget_plan_unit_line"/>
-            <field name="domain_force">[('section_id','=',user.partner_id.employee_id.section_id)]</field>
+            <field name="domain_force">[('section_id','=',user.partner_id.employee_id.section_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_budget_plan.group_budget_manager'))]"/>
         </record>
         <record id="property_rule_budget_plan_budget_org_line" model="ir.rule">
             <field name="name">Budget Org Manager - Budget Plan Line Access</field>
             <field name="model_id" ref="model_budget_plan_unit_line"/>
-            <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id)]</field>
+            <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_budget_plan.group_operating_unit_budget'))]"/>
         </record>
         <record id="property_rule_budget_plan_budget_cooperate_line" model="ir.rule">
