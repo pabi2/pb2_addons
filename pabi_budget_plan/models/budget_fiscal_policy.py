@@ -516,7 +516,7 @@ class BudgetFiscalPolicy(models.Model):
             }
             breakdown = Breakdown.create(vals)
             plans = self.env['budget.plan.unit'].\
-                search([('state', '=', 'approve'),
+                search([('state', '=', 'accept_corp'),
                         ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                         ('org_id', '=', breakdown.org_id.id)])
             for plan in plans:
