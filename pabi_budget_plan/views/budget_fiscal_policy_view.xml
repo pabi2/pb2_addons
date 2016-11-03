@@ -30,7 +30,7 @@
                                 attrs="{'invisible': [('latest_version', '=', False)]}"/>
                         </div>
                         <group>
-                            <group>    
+                            <group>
                                 <field name="planned_overall" />
                                 <field name="policy_overall" />
                                 <field name="ref_policy_id"/>
@@ -39,7 +39,7 @@
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration" />
                                 <div>
-                                    <field name="date_from" class="oe_inline" /> - 
+                                    <field name="date_from" class="oe_inline" /> -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
                             </group>
@@ -84,13 +84,13 @@
                                         <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
                                         <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
                                         <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.3" />
-                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.3" /> 
-                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.3" /> 
+                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.3" />
                                         <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.3" />
                                     </tree>
                                 </field>
@@ -203,7 +203,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy"
             id="menu_budget_fiscal_policy_view"
-            groups="pabi_budget_plan.group_operating_unit_budget"
+            groups="pabi_budget_plan.group_cooperate_budget"
             action="action_budget_fiscal_policy_view" sequence="5" />
 
 
@@ -241,7 +241,7 @@
 
                         </div>
                         <group>
-                            <group>    
+                            <group>
                                 <field name="org_id" />
                                 <field name="planned_overall" />
                                 <field name="policy_overall" />
@@ -252,14 +252,14 @@
                                 <field name="fiscalyear_id" />
                                 <label for="date_from" string="Duration" />
                                 <div>
-                                    <field name="date_from" class="oe_inline" /> - 
+                                    <field name="date_from" class="oe_inline" /> -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
                             </group>
                        </group>
                         <notebook>
                             <page string="Section Policy Amount">
-                                <field name="unit_base_ids" colspan="4" nolabel="1" 
+                                <field name="unit_base_ids" colspan="4" nolabel="1"
                                     attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="budget_plan_unit_id" />
@@ -269,7 +269,7 @@
                                         <field name="policy_amount" sum="Policy Amount" />
                                     </tree>
                                 </field>
-                                <field name="invest_asset_ids" colspan="4" nolabel="1" 
+                                <field name="invest_asset_ids" colspan="4" nolabel="1"
                                     attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="budget_plan_invest_asset_id" />
@@ -319,7 +319,7 @@
                 </tree>
             </field>
         </record>
-        
+
         <record model="ir.ui.view" id="view_invest_asset_policy_breakdown_tree">
             <field name="name">view.invest.asset.policy.breakdown.tree</field>
             <field name="model">budget.fiscal.policy.breakdown</field>
@@ -370,7 +370,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy"
             id="menu_unit_base_policy_breakdown_view"
-            groups="pabi_budget_plan.group_operating_unit_budget" 
+            groups="pabi_budget_plan.group_operating_unit_budget"
             action="action_unit_base_policy_breakdown_view" sequence="10" />
 
         <record model="ir.actions.act_window" id="action_invest_asset_policy_breakdown_view">
@@ -387,33 +387,33 @@
               </p>
             </field>
         </record>
-        
+
         <menuitem parent="menu_action_budget_policy"
             id="menu_invest_asset_policy_breakdown_view"
-            groups="pabi_budget_plan.group_operating_unit_budget" 
+            groups="pabi_budget_plan.group_operating_unit_budget"
             action="action_invest_asset_policy_breakdown_view" sequence="15" />
 
 
         <!-- Budget Plan Analysis -->
-        
+
         <record id="view_budget_plan_line_template_filter" model="ir.ui.view">
             <field name="name">budget.plan.line.template.filter</field>
             <field name="model">budget.plan.line.template</field>
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Analysis">
                     <group expand="0" string="Group By">
-                        
+
                         <filter string="SPA" context="{'group_by':'spa_id'}"/>
                         <filter string="Mission" context="{'group_by':'mission_id'}"/>
                         <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
                         <filter string="Tag" context="{'group_by':'tag_id'}"/>
-    
+
                         <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
                         <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
                         <filter string="Program" context="{'group_by':'program_id'}"/>
                         <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
                         <filter string="Project" context="{'group_by':'project_id'}"/>
-                        
+
                         <filter string="Org" context="{'group_by':'org_id'}"/>
                         <filter string="Sector" context="{'group_by':'sector_id'}"/>
                         <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
@@ -421,22 +421,22 @@
                         <filter string="Section" context="{'group_by':'section_id'}"/>
                         <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
                         <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
-    
+
                         <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
-                            
+
                         <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
                         <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
-    
+
                         <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
-    
+
                         <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
                         <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
-                                           
+
                        </group>
                </search>
             </field>
         </record>
-                
+
         <record model="ir.ui.view" id="view_budget_plan_line_template_tree">
             <field name="name">budget.plan.line.template.tree</field>
             <field name="model">budget.plan.line.template</field>
@@ -447,13 +447,13 @@
                     <field name="mission_id" invisible="1"/>
                     <field name="tag_type_id" invisible="1"/>
                     <field name="tag_id" invisible="1"/>
-                    
+
                     <field name="functional_area_id" invisible="1"/>
                     <field name="program_group_id" invisible="1"/>
                     <field name="program_id" invisible="1"/>
                     <field name="project_group_id" invisible="1"/>
                     <field name="project_id" invisible="1"/>
-                    
+
                     <field name="org_id" invisible="1"/>
                     <field name="sector_id" invisible="1"/>
                     <field name="subsector_id" invisible="1"/>
@@ -461,20 +461,20 @@
                     <field name="section_id" invisible="1"/>
                     <field name="costcenter_id" invisible="1"/>
                     <field name="taxbranch_id" invisible="1"/>
-                    
+
                     <field name="invest_asset_id" invisible="1"/>
-                        
+
                     <field name="invest_construction_id" invisible="1"/>
                     <field name="invest_construction_phase_id" invisible="1"/>
-            
+
                     <field name="personnel_costcenter_id" invisible="1"/>
-                    
+
                     <field name="cost_control_type_id" invisible="1"/>
                     <field name="cost_control_id" invisible="1"/>
-                    
+
                     <field name="chart_view" />
                     <field name="fiscalyear_id" />
-                    
+
                     <field name="m0" sum="Period 0" />
                     <field name="m1" sum="Period 1" />
                     <field name="m2" sum="Period 2" />
@@ -488,7 +488,7 @@
                     <field name="m10" sum="Period 10" />
                     <field name="m11" sum="Period 11" />
                     <field name="m12" sum="Period 12" />
-                    
+
                     <field name="planned_amount" sum="Planned Amount" />
 
                 </tree>
@@ -512,10 +512,8 @@
             <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_budget_plan_line_template_tree"/>
         </record>
-        
+
         <menuitem id="menu_act_budget_plan_line_template_view" action="act_budget_plan_line_template_view" parent="menu_action_budget_plan" sequence="60"/>
 
     </data>
 </openerp>
-
-
