@@ -12,7 +12,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
-class BudgetExportWizard(models.Model):
+class BudgetExportWizard(models.TransientModel):
     _name = 'unit.budget.plan.export'
 
     attachment_id = fields.Many2one(
@@ -83,6 +83,27 @@ class BudgetExportWizard(models.Model):
             stream = cStringIO.StringIO(exp_file)
             workbook = openpyxl.load_workbook(stream)
 
+            try:
+                SEC_Sheet = workbook.get_sheet_by_name('Section')
+                SEC_Sheet.protection.sheet = True
+            except:
+                pass
+            try:
+                AM_Sheet = workbook.get_sheet_by_name('Activity_MasterData')
+                AM_Sheet.protection.sheet = True
+            except:
+                pass
+            try:
+                ACM_Sheet = workbook.get_sheet_by_name('CostControl_MasterData')
+                ACM_Sheet.protection.sheet = True
+            except:
+                pass
+            try:
+                ACMc_Sheet = workbook.get_sheet_by_name('c_MasterData')
+                ACMc_Sheet.protection.sheet = True
+            except:
+                pass
+
             AG_Sheet = workbook.get_sheet_by_name('ActivityGroup_MasterData')
             AG_Sheet.protection.sheet = True
             activities = self.env['account.activity.group'].search([])
@@ -126,7 +147,7 @@ class BudgetExportWizard(models.Model):
             NonCostCtrl_Sheet.add_data_validation(dv)
             NonCostCtrl_Sheet.cell(row=1, column=5, value=budget.id)
             org = budget.org_id.code and\
-                    budget.org_id.code or budget.org_id.name_short
+                budget.org_id.code or budget.org_id.name_short
             NonCostCtrl_Sheet.cell(row=1, column=2,
                                    value=budget.fiscalyear_id.name)
             NonCostCtrl_Sheet.cell(row=2, column=2, value=org)
@@ -134,8 +155,6 @@ class BudgetExportWizard(models.Model):
                                    value=budget.section_id.code)
             NonCostCtrl_Sheet.cell(row=4, column=2, value=fields.Date.today())
             NonCostCtrl_Sheet.cell(row=5, column=2, value=self.env.user.name)
-            NonCostCtrl_Sheet.cell(row=6, column=2,
-                                   value=str(budget.planned_overall))
 
             row = 11
             section_name = budget.section_id.name
@@ -147,6 +166,8 @@ class BudgetExportWizard(models.Model):
                 NonCostCtrl_Sheet.cell(row=row, column=2).value = "=B3"
                 NonCostCtrl_Sheet.cell(
                     row=row, column=3).value = line.section_id.name
+                NonCostCtrl_Sheet.cell(
+                    row=row, column=5).value = line.description
                 NonCostCtrl_Sheet.cell(
                     row=row, column=7).value = line.unit
                 NonCostCtrl_Sheet.cell(
@@ -246,6 +267,9 @@ class BudgetExportWizard(models.Model):
                 row=row, column=22).value = '=SUM(V%s:V%s)' % params
             NonCostCtrl_Sheet.cell(
                 row=row, column=23).value = '=SUM(W%s:W%s)' % params
+
+            NonCostCtrl_Sheet.cell(
+                row=6, column=2).value = '=J%s' %(row)
 
             self._add_cell_border(NonCostCtrl_Sheet, row_start=row,
                                   row_end=row+1, col_start=9, col_end=23)

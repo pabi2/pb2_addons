@@ -15,11 +15,11 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.constrains('fiscalyear_id', 'section_id')
     def _check_fiscalyear_section_unique(self):
         if self.fiscalyear_id and self.section_id:
-            budget_plans = self.search(
+            budget_plans = self.env['budget.plan.unit'].search(#TODO should go this constraint to unit based!
                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
                  ('section_id', '=', self.section_id.id),
                  ('state', 'not in', ('cancel', 'reject')),
-                 ])
+                 ]).ids
             if len(budget_plans) > 1:
                 raise ValidationError(
                     _('You can not have duplicate budget plan for '
@@ -28,10 +28,21 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.model
     def _default_fy(self):
         current_fiscalyear = self.env['account.period'].find().fiscalyear_id
-        #next_fiscalyear = self.env['account.fiscalyear'].search(
+        # next_fiscalyear = self.env['account.fiscalyear'].search(
         #    [('date_start', '>', current_fiscalyear.date_stop)],
         #    limit=1)
         return current_fiscalyear or False
+
+    @api.model
+    def _get_company(self):
+        company = self.env.user.company_id
+        return company
+
+    @api.model
+    def _get_currency(self):
+        company = self.env.user.company_id
+        currency = company.currency_id
+        return currency
 
     name = fields.Char(
         string='Number',
@@ -106,6 +117,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
         related="section_id.division_id",
         required=True,
         readonly=True,
+        store=True
     )
     date_from = fields.Date(
         string='Start Date',
@@ -134,8 +146,19 @@ class BudgetPlanTemplate(ChartField, models.Model):
         copy=False,
         track_visibility='onchange',
     )
-    
-    org_id = fields.Many2one(related='section_id.org_id')
+    org_id = fields.Many2one(related='section_id.org_id', store=True)
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=_get_company,
+        readonly=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=_get_currency,
+        readonly=True,
+    )
 
     @api.onchange('fiscalyear_id')
     def onchange_fiscalyear_id(self):
@@ -232,6 +255,9 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
         compute='_compute_planned_amount',
         digits_compute=dp.get_precision('Account'),
         store=True,
+    )
+    description = fields.Char(
+        string="Description",
     )
     # Set default for Fund
     fund_id = fields.Many2one(

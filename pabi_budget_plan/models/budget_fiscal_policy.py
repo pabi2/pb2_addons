@@ -12,6 +12,17 @@ class BudgetFiscalPolicy(models.Model):
     _description = 'Fiscal Year Budget Policy'
     _order = 'create_date desc'
 
+    @api.model
+    def _get_company(self):
+        company = self.env.user.company_id
+        return company
+
+    @api.model
+    def _get_currency(self):
+        company = self.env.user.company_id
+        currency = company.currency_id
+        return currency
+
     name = fields.Char(
         string='Name',
         required=True,
@@ -213,6 +224,18 @@ class BudgetFiscalPolicy(models.Model):
         readonly=True,
         copy=False,
     )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=_get_company,
+        readonly=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=_get_currency,
+        readonly=True,
+    )
 
     @api.multi
     def action_open_breakdown(self):
@@ -327,9 +350,10 @@ class BudgetFiscalPolicy(models.Model):
         budget_policy.ref_policy_id = self
         # Copy Lines
         unit_base_ids = self.unit_base_ids.copy(default={'budget_policy_id': budget_policy.id})
-        unit_base_ids.budget_policy_id = budget_policy.id
+        for unit_base in unit_base_ids:
+            unit_base.budget_policy_id = budget_policy.id
         budget_policy.unit_base_ids = unit_base_ids
-        budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
+        #budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
         budget_policy.project_base_ids = self.project_base_ids.copy()
         budget_policy.personnel_costcenter_ids =\
             self.personnel_costcenter_ids.copy()
@@ -492,7 +516,7 @@ class BudgetFiscalPolicy(models.Model):
             }
             breakdown = Breakdown.create(vals)
             plans = self.env['budget.plan.unit'].\
-                search([('state', '=', 'approve'),
+                search([('state', '=', 'accept_corp'),
                         ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                         ('org_id', '=', breakdown.org_id.id)])
             for plan in plans:
