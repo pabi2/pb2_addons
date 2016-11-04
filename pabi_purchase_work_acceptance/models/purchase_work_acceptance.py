@@ -514,7 +514,7 @@ class PurchaseWorkAcceptance(models.Model):
             )
             for accpt in paid_accpts:
                 wa_total_payment += accpt.amount_total
-            if wa_total_payment+self.amount_total >= order.amount_total:
+            if wa_total_payment+self.amount_total > order.amount_total:
                 raise UserError(
                     _("""Can't evaluate this acceptance.
                          This WA's total amount is over PO's total amount.""")
