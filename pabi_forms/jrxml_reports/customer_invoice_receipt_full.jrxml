@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
-	<property name="ireport.zoom" value="1.1269722013523873"/>
-	<property name="ireport.x" value="17"/>
-	<property name="ireport.y" value="152"/>
+	<property name="ireport.zoom" value="0.9313819845887513"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -224,7 +224,7 @@ $F{amount_total_text_th}]]></variableExpression>
 		<band height="792">
 			<image>
 				<reportElement x="0" y="0" width="612" height="792"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "receipt.jpg"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA["/home/kittiu/hd/workspace/pabi2/pb2_pabi/pabi_forms/jrxml_reports/receipt.jpg"]]></imageExpression>
 			</image>
 		</band>
 	</background>
