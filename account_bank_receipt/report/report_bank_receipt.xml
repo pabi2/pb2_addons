@@ -35,7 +35,7 @@
 
                             <p>
                                 <b>Number of checks:</b>
-                                <span t-field="o.check_count"/></p>
+                                <span t-field="o.intransit_count"/></p>
 
                             <h3>List of checks:</h3>
 
@@ -50,7 +50,7 @@
                                 </thead>
                                 <tbody>
 
-                                    <t t-foreach="o.check_payment_ids" t-as="move_line">
+                                    <t t-foreach="o.bank_intransit_ids" t-as="move_line">
 
                                         <tr>
                                             <td><span t-field="move_line.date"/></td>

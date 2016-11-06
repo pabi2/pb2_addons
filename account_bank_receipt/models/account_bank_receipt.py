@@ -26,7 +26,8 @@ class AccountBankReceipt(models.Model):
     receipt_date = fields.Date(
         string='Receipt Date', required=True,
         states={'done': [('readonly', '=', True)]},
-        default=fields.Date.context_today)
+        default=fields.Date.context_today,
+    )
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
@@ -112,6 +113,9 @@ class AccountBankReceipt(models.Model):
         compute='_compute_bank_receipt',
         readonly=True,
         string="Reconcile",
+    )
+    note = fields.Text(
+        string='Notes',
     )
 
     @api.multi

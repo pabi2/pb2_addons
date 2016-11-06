@@ -57,6 +57,7 @@
                                     context="{'currency': currency_id,
                                         'journal_id': journal_id}" />
                         </group>
+                        <field name="note" />
                     </sheet>
                 </form>
             </field>
