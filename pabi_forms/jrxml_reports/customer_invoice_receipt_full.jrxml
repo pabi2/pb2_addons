@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="0.9313819845887513"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="576"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -48,7 +48,8 @@
 		</box>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA["W:\\pabi2_FIT\\pb2_pabi\\pabi_forms\\jrxml_reports\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir") +
+"/../../../pb2_pabi/pabi_forms/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -224,7 +225,7 @@ $F{amount_total_text_th}]]></variableExpression>
 		<band height="792">
 			<image>
 				<reportElement x="0" y="0" width="612" height="792"/>
-				<imageExpression class="java.lang.String"><![CDATA["/home/kittiu/hd/workspace/pabi2/pb2_pabi/pabi_forms/jrxml_reports/receipt.jpg"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"receipt.jpg"]]></imageExpression>
 			</image>
 		</band>
 	</background>
