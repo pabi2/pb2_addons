@@ -275,8 +275,9 @@ class HeaderTaxBranch(object):
             self.taxbranch_id = self.taxbranch_ids[0]
         if len(self.taxbranch_ids) > 1 and not self.taxbranch_id:
             self.taxbranch_id = False
-        if len(self.taxbranch_ids) == 0:
-            self.taxbranch_id = False
+        # For advance invoice, it is possible to have taxbranch_id this way
+        # if len(self.taxbranch_ids) == 0:
+        #     self.taxbranch_id = False
 
     @api.multi
     def write(self, vals):
