@@ -5,7 +5,8 @@
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;move_id/line_id&quot;]"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
++"/../../../pb2_pabi/pabi_forms/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
