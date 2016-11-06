@@ -83,6 +83,27 @@ class BudgetExportWizard(models.TransientModel):
             stream = cStringIO.StringIO(exp_file)
             workbook = openpyxl.load_workbook(stream)
 
+            try:
+                SEC_Sheet = workbook.get_sheet_by_name('Section')
+                SEC_Sheet.protection.sheet = True
+            except:
+                pass
+            try:
+                AM_Sheet = workbook.get_sheet_by_name('Activity_MasterData')
+                AM_Sheet.protection.sheet = True
+            except:
+                pass
+            try:
+                ACM_Sheet = workbook.get_sheet_by_name('CostControl_MasterData')
+                ACM_Sheet.protection.sheet = True
+            except:
+                pass
+            try:
+                ACMc_Sheet = workbook.get_sheet_by_name('c_MasterData')
+                ACMc_Sheet.protection.sheet = True
+            except:
+                pass
+
             AG_Sheet = workbook.get_sheet_by_name('ActivityGroup_MasterData')
             AG_Sheet.protection.sheet = True
             activities = self.env['account.activity.group'].search([])

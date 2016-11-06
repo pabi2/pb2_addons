@@ -467,7 +467,6 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.multi
     def write(self, vals):
-        print vals
         res = super(PurchaseWorkAcceptance, self).write(vals)
         self.change_invoice_detail()
         return res
@@ -503,12 +502,33 @@ class PurchaseWorkAcceptance(models.Model):
         self.amount_total = amount_untaxed + amount_tax
 
     @api.multi
+    def validate_amount_total_with_order(self):
+        if self.state == 'draft' and self.order_id.use_invoice_plan:
+            wa_total_payment = 0
+            order = self.order_id
+            paid_accpts = self.search(
+                [
+                    ('order_id', '=', order.id),
+                    ('state', 'in', ('evaluation', 'done')),
+                ]
+            )
+            for accpt in paid_accpts:
+                wa_total_payment += accpt.amount_total
+            if wa_total_payment+self.amount_total > order.amount_total:
+                raise UserError(
+                    _("""Can't evaluate this acceptance.
+                         This WA's total amount is over PO's total amount.""")
+                )
+
+
+    @api.multi
     def action_evaluate(self):
         self.ensure_one()
         if len(self.acceptance_line_ids) == 0:
             raise UserError(
                 _("Can't evaluate the acceptance with no line.")
             )
+        self.validate_amount_total_with_order()
         self.state = 'evaluation'
 
     @api.multi
