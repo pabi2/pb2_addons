@@ -275,8 +275,9 @@ class HeaderTaxBranch(object):
             self.taxbranch_id = self.taxbranch_ids[0]
         if len(self.taxbranch_ids) > 1 and not self.taxbranch_id:
             self.taxbranch_id = False
-        if len(self.taxbranch_ids) == 0:
-            self.taxbranch_id = False
+        # For advance invoice, it is possible to have taxbranch_id this way
+        # if len(self.taxbranch_ids) == 0:
+        #     self.taxbranch_id = False
 
     @api.multi
     def write(self, vals):
@@ -290,6 +291,12 @@ class HeaderTaxBranch(object):
 
 
 class ChartField(object):
+
+    @api.model
+    def _get_section_id(self):
+        if self._context.get('section_id', False):
+            return self.env['res.section'].browse(self._context.get('section_id'))
+        return self.env.user.partner_id.employee_id.section_id.id
 
     # Project Base
     spa_id = fields.Many2one(
@@ -378,8 +385,9 @@ class ChartField(object):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
-        default=lambda self: self.env['res.section'].
-        browse(self._context.get('section_id')),
+        default=_get_section_id,
+        #default=lambda self: self.env['res.section'].
+        #browse(self._context.get('section_id')),
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',

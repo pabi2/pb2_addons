@@ -8,9 +8,9 @@
             <field name="arch" type="xml">
                 <form string="Task Form">
                     <group>
-                        <group>
+                        <group >
                             <field name="input_file" filename="datas_fname" required="True"/>
-                            <field name="datas_fname" invisible="1"/>
+                            <field name="datas_fname" invisible="0" readonly="0"/>
                         </group>
                         <group/>
                     </group>

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountVoucher(models.Model):
@@ -35,6 +34,18 @@ class AccountVoucher(models.Model):
         string='Total AR',
         digits_compute=dp.get_precision('Account'),
     )
+
+    @api.multi
+    @api.constrains('date_value')
+    def _check_date_value_same_period(self):
+        for voucher in self:
+            if voucher.date_value:
+                Period = self.env['account.period']
+                period = Period.find(voucher.date_value)[:1]
+                if voucher.period_id != period:
+                    raise ValidationError(
+                        _('Value Date can not be in different '
+                          'period as its document!'))
 
     @api.model
     def _get_related_invoices(self):
@@ -133,7 +144,11 @@ class AccountVoucher(models.Model):
         res = super(AccountVoucher, self).write(vals)
         # Delete all amount zero lines
         for voucher in self:
+            # Voucher Line
             zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
+            zero_lines.unlink()
+            # Tax Line
+            zero_lines = voucher.tax_line.filtered(lambda l: not l.amount)
             zero_lines.unlink()
         return res
 

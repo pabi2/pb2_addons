@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_partner_property_form" model="ir.ui.view">
+            <field name="name">res.partner.property.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='bank_ids']/tree/field[@name='owner_name']" position="after">
+                    <field name="active"/>
+                    <field name="default"/>
+          					<button name="%(action_approve_bank_account)d" type="action" string="Approve Bank Account" icon="gtk-ok"/>
+                </xpath>
+                <xpath expr="//field[@name='bank_ids']" position="after">
+                    <separator string="Bank Account Change History" />
+                    <field name="bank_account_history_ids" >
+                        <tree editable="bottom" >
+                            <field name="partner_id" invisible="1" />
+                            <field name="bank_account" />
+                            <field name="write_uid" />
+                            <field name="write_date" />
+                            <field name="action" />
+                            <field name="note" />
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

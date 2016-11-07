@@ -1,25 +1,46 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 
 
 class BudgetFiscalPolicy(models.Model):
     _name = 'budget.fiscal.policy'
+    _inherit = ['mail.thread']
     _description = 'Fiscal Year Budget Policy'
+    _order = 'create_date desc'
+
+    @api.model
+    def _get_company(self):
+        company = self.env.user.company_id
+        return company
+
+    @api.model
+    def _get_currency(self):
+        company = self.env.user.company_id
+        currency = company.currency_id
+        return currency
 
     name = fields.Char(
         string='Name',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        default="/",
+        copy=False,
     )
     version = fields.Float(
         string='Version',
-        defaul=0.1,
+        default=1.0,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+    )
+    latest_version = fields.Boolean(
+        string='Current',
+        readonly=True,
+        default=True,
+        # compute='_compute_latest_version',  TODO: determine version
+        help="Indicate latest revision of the same plan.",
     )
     active = fields.Boolean(
         string='Active',
@@ -34,6 +55,7 @@ class BudgetFiscalPolicy(models.Model):
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
+        track_visibility='onchange',
     )
     creating_user_id = fields.Many2one(
         'res.users',
@@ -196,17 +218,42 @@ class BudgetFiscalPolicy(models.Model):
         string='Investment Asset Breakdown Count',
         compute='_compute_breakdown_count',
     )
+    ref_policy_id = fields.Many2one(
+        'budget.fiscal.policy',
+        string="Policy Reference",
+        readonly=True,
+        copy=False,
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=_get_company,
+        readonly=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=_get_currency,
+        readonly=True,
+    )
 
     @api.multi
     def action_open_breakdown(self):
         self.ensure_one()
+        Breakdown = self.env['budget.fiscal.policy.breakdown']
         act = False
+        domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                  ('ref_budget_policy_id', '=', self.id)]
         if self._context.get('chart_view') == 'unit_base':
             act = 'pabi_budget_plan.action_unit_base_policy_breakdown_view'
+            domain.append(('chart_view', '=', 'unit_base'))
         elif self._context.get('chart_view') == 'invest_asset':
             act = 'pabi_budget_plan.action_invest_asset_policy_breakdown_view'
+            domain.append(('chart_view', '=', 'invest_asset'))
+        Breakdown_ids = Breakdown.search(domain).ids
         action = self.env.ref(act)
         result = action.read()[0]
+        result.update({'domain': [('id', 'in', Breakdown_ids)]})
         return result
 
     @api.multi
@@ -280,12 +327,76 @@ class BudgetFiscalPolicy(models.Model):
 
     @api.multi
     def button_confirm(self):
-        self.write({
-            'state': 'confirm',
-            'validating_user_id': self._uid,
-            'date_confirm': fields.Date.context_today(self),
-        })
+        for policy in self:
+            if not policy.line_ids:
+                raise UserError(_('Can not confirm without lines!'))
+            name = self.env['ir.sequence'].next_by_code('fiscal.budget.policy')
+            policy.write({
+                'name': name,
+                'state': 'confirm',
+                'validating_user_id': self._uid,
+                'date_confirm': fields.Date.context_today(self),
+            })
+            policy.ref_policy_id.button_cancel()
         return True
+
+    @api.multi
+    def button_new_revision(self):
+        self.ensure_one()
+        budget_policy = self.copy()
+        self.latest_version = False
+        budget_policy.latest_version = True
+        budget_policy.version = self.version + 1.0
+        budget_policy.ref_policy_id = self
+        # Copy Lines
+        unit_base_ids = self.unit_base_ids.copy(default={'budget_policy_id': budget_policy.id})
+        for unit_base in unit_base_ids:
+            unit_base.budget_policy_id = budget_policy.id
+        budget_policy.unit_base_ids = unit_base_ids
+        #budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
+        budget_policy.project_base_ids = self.project_base_ids.copy()
+        budget_policy.personnel_costcenter_ids =\
+            self.personnel_costcenter_ids.copy()
+        budget_policy.invest_asset_ids = self.invest_asset_ids.copy()
+        budget_policy.invest_construction_ids =\
+            self.invest_construction_ids.copy()
+        budget_policy.name = '/'
+        action = self.env.ref('pabi_budget_plan.'
+                              'action_budget_fiscal_policy_view')
+        result = action.read()[0]
+        dom = [('id', '=', budget_policy.id)]
+        result.update({'domain': dom})
+        return result
+
+    @api.multi
+    def unlink(self):
+        for policy in self:
+            if policy.state not in ('draft', 'cancel'):
+                raise ValidationError(
+                    _('Cannot delete policies which are already confirmed.'))
+        return super(BudgetFiscalPolicy, self).unlink()
+
+    @api.multi
+    def get_all_versions(self):
+        self.ensure_one()
+        fp_ids = []
+        if self.ref_policy_id:
+            fp = self.ref_policy_id
+            while fp:
+                fp_ids.append(fp.id)
+                fp = fp.ref_policy_id
+        fp = self
+        while fp:
+            rfp = self.search([('ref_policy_id', '=', fp.id)])
+            if rfp:
+                fp_ids.append(rfp.id)
+            fp = rfp
+        action = self.env.ref('pabi_budget_plan.'
+                              'action_budget_fiscal_policy_view')
+        result = action.read()[0]
+        dom = [('id', 'in', fp_ids)]
+        result.update({'domain': dom})
+        return result
 
     # ======================== Prepare Budget Policy ==========================
 
@@ -305,7 +416,7 @@ class BudgetFiscalPolicy(models.Model):
             select tmpl.chart_view, tmpl.program_id, bpp.planned_overall
             from budget_plan_project bpp
             join budget_plan_template tmpl on tmpl.id = bpp.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
         """
         self._cr.execute(_sql % (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
@@ -326,7 +437,7 @@ class BudgetFiscalPolicy(models.Model):
             sum(bpu.planned_overall) as planned_overall
             from budget_plan_unit bpu
             join budget_plan_template tmpl on tmpl.id = bpu.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
             group by tmpl.chart_view, tmpl.org_id
         """
         self._cr.execute(_sql % (self.fiscalyear_id.id,))
@@ -348,7 +459,7 @@ class BudgetFiscalPolicy(models.Model):
             sum(bpia.planned_overall) as planned_overall
             from budget_plan_invest_asset bpia
             join budget_plan_template tmpl on tmpl.id = bpia.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
             group by tmpl.chart_view
         """
         self._cr.execute(_sql % (self.fiscalyear_id.id,))
@@ -375,7 +486,23 @@ class BudgetFiscalPolicy(models.Model):
         self.ensure_one()
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+        domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                      ('ref_budget_policy_id', '=', self.id)]
+        Breakdown_search = Breakdown.search(
+                domain + [('chart_view', '=', 'unit_base'),
+                        ('state', '!=', 'cancel')
+                ])
+        if Breakdown_search:
+            raise UserError(_('Breakdowns already created.'))
         for unit in self.unit_base_ids:
+            ref_policy_id = unit.budget_policy_id.ref_policy_id
+            ref_policy_breakdown = False
+            if ref_policy_id:
+                ref_policy_breakdown = Breakdown.search(
+                    [('ref_budget_policy_id', '=', ref_policy_id.id),
+                     ('org_id', '=', unit.org_id.id)])
+                if ref_policy_breakdown:
+                    ref_policy_breakdown = ref_policy_breakdown.id
             vals = {  # TODO: Sequence Numbering ???
                 'name': unit.org_id.name,
                 'chart_view': unit.chart_view,
@@ -384,10 +511,12 @@ class BudgetFiscalPolicy(models.Model):
                 'policy_overall': unit.policy_amount,
                 'fiscalyear_id': unit.budget_policy_id.fiscalyear_id.id,
                 'ref_budget_policy_id': self.id,
+                'version': unit.budget_policy_id.version,
+                'ref_breakdown_id': ref_policy_breakdown,
             }
             breakdown = Breakdown.create(vals)
             plans = self.env['budget.plan.unit'].\
-                search([('state', '=', 'approve'),
+                search([('state', '=', 'accept_corp'),
                         ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                         ('org_id', '=', breakdown.org_id.id)])
             for plan in plans:
@@ -458,6 +587,10 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
         ondelete='cascade',
         index=True,
     )
+    budget_policy_version = fields.Float(
+        related="budget_policy_id.version",
+        string="Policy Version",
+    )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
         string='Budget View',
@@ -469,6 +602,8 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     )
     policy_amount = fields.Float(
         string='Policy Amount',
+        compute='_compute_policy_amount',
+        store=True,
     )
     policy_amount_v1 = fields.Float(
         string='Policy Amount Rev.1',
@@ -479,3 +614,48 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     policy_amount_v3 = fields.Float(
         string='Policy Amount Rev.3',
     )
+    policy_amount_v4 = fields.Float(
+        string='Policy Amount Rev.4',
+    )
+    policy_amount_v5 = fields.Float(
+        string='Policy Amount Rev.5',
+    )
+    policy_amount_v6 = fields.Float(
+        string='Policy Amount Rev.6',
+    )
+    policy_amount_v7 = fields.Float(
+        string='Policy Amount Rev.7',
+    )
+    policy_amount_v8 = fields.Float(
+        string='Policy Amount Rev.8',
+    )
+    policy_amount_v9 = fields.Float(
+        string='Policy Amount Rev.9',
+    )
+    policy_amount_v10 = fields.Float(
+        string='Policy Amount Rev.10',
+    )
+    policy_amount_v11 = fields.Float(
+        string='Policy Amount Rev.11',
+    )
+    policy_amount_v12 = fields.Float(
+        string='Policy Amount Rev.12',
+    )
+
+    @api.depends('policy_amount_v1',
+                 'policy_amount_v2',
+                 'policy_amount_v3',
+                 'policy_amount_v4',
+                 'policy_amount_v5',
+                 'policy_amount_v6',
+                 'policy_amount_v7',
+                 'policy_amount_v8',
+                 'policy_amount_v9',
+                 'policy_amount_v10',
+                 'policy_amount_v11',
+                 'policy_amount_v12')
+    def _compute_policy_amount(self):
+        for line in self:
+            version = line.budget_policy_version
+            field_policy_amt = 'policy_amount_v' + str(int(version))
+            line.policy_amount = sum(line.mapped(field_policy_amt))

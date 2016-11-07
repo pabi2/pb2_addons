@@ -1,27 +1,84 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartField, CHART_VIEW_FIELD
 import openerp.addons.decimal_precision as dp
+from openerp.exceptions import ValidationError
 
 
 class BudgetPlanTemplate(ChartField, models.Model):
     _name = "budget.plan.template"
+    _inherit = 'mail.thread'
     _description = "Budget Plan Template"
 
+    @api.one
+    @api.constrains('fiscalyear_id', 'section_id')
+    def _check_fiscalyear_section_unique(self):
+        if self.fiscalyear_id and self.section_id:
+            budget_plans = self.env['budget.plan.unit'].search(#TODO should go this constraint to unit based!
+                [('fiscalyear_id', '=', self.fiscalyear_id.id),
+                 ('section_id', '=', self.section_id.id),
+                 ('state', 'not in', ('cancel', 'reject')),
+                 ]).ids
+            if len(budget_plans) > 1:
+                raise ValidationError(
+                    _('You can not have duplicate budget plan for '
+                      'same fiscalyear and section.'))
+
+    @api.model
+    def _default_fy(self):
+        current_fiscalyear = self.env['account.period'].find().fiscalyear_id
+        # next_fiscalyear = self.env['account.fiscalyear'].search(
+        #    [('date_start', '>', current_fiscalyear.date_stop)],
+        #    limit=1)
+        return current_fiscalyear or False
+
+    @api.model
+    def _get_company(self):
+        company = self.env.user.company_id
+        return company
+
+    @api.model
+    def _get_currency(self):
+        company = self.env.user.company_id
+        currency = company.currency_id
+        return currency
+
     name = fields.Char(
-        string='Name',
+        string='Number',
         required=True,
+        default="/",
+        copy=False,
     )
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
         default=lambda self: self._uid,
     )
+    submiting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Submitting User',
+    )
     validating_user_id = fields.Many2one(
         'res.users',
         copy=False,
         string='Validating User',
+    )
+    accepting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Accepting User',
+    )
+    validating_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Verifying User',
+    )
+    rejecting_user_id = fields.Many2one(
+        'res.users',
+        copy=False,
+        string='Rejecting User',
     )
     date = fields.Date(
         string='Date',
@@ -34,7 +91,17 @@ class BudgetPlanTemplate(ChartField, models.Model):
         readonly=True,
     )
     date_approve = fields.Date(
-        string='Approved Date',
+        string='Verified Date',
+        copy=False,
+        readonly=True,
+    )
+    date_accept = fields.Date(
+        string='Accepted Date',
+        copy=False,
+        readonly=True,
+    )
+    date_reject = fields.Date(
+        string='Rejected Date',
         copy=False,
         readonly=True,
     )
@@ -42,39 +109,67 @@ class BudgetPlanTemplate(ChartField, models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
+        default=_default_fy,
+    )
+    division_id = fields.Many2one(
+        'res.division',
+        string='Division',
+        related="section_id.division_id",
+        required=True,
+        readonly=True,
+        store=True
     )
     date_from = fields.Date(
         string='Start Date',
         compute='_compute_date',
-        readonly=True,
         store=True,
     )
     date_to = fields.Date(
         string='End Date',
         compute='_compute_date',
-        readonly=True,
         store=True,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
          ('submit', 'Submitted'),
+         ('accept', 'Approved'),
          ('cancel', 'Cancelled'),
          ('reject', 'Rejected'),
-         ('approve', 'Approved')],
+         ('approve', 'Verified'),
+         ('accept_corp', 'Accepted'),
+         ],
         string='Status',
         default='draft',
         index=True,
         required=True,
         readonly=True,
         copy=False,
+        track_visibility='onchange',
+    )
+    org_id = fields.Many2one(related='section_id.org_id', store=True)
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=_get_company,
+        readonly=True,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=_get_currency,
+        readonly=True,
     )
 
-    @api.multi
+    @api.onchange('fiscalyear_id')
+    def onchange_fiscalyear_id(self):
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
+
+    @api.one
     @api.depends('fiscalyear_id')
     def _compute_date(self):
-        for rec in self:
-            rec.date_from = rec.fiscalyear_id.date_start
-            rec.date_to = rec.fiscalyear_id.date_stop
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
 
 
 class BudgetPlanLineTemplate(ChartField, models.Model):
@@ -161,6 +256,9 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
         digits_compute=dp.get_precision('Account'),
         store=True,
     )
+    description = fields.Char(
+        string="Description",
+    )
     # Set default for Fund
     fund_id = fields.Many2one(
         'res.fund',
@@ -231,6 +329,8 @@ class BudgetPlanCommon(object):
             res = rec.template_id.\
                 _get_chained_dimension(CHART_VIEW_FIELD[rec.chart_view])
             rec.write(res)
+            name = self.env['ir.sequence'].next_by_code('budget.plan')
+            rec.write({'name': name})
             for line in rec.plan_line_ids:
                 res = line.mapped('template_id').\
                     _get_chained_dimension(CHART_VIEW_FIELD[line.chart_view])
@@ -238,6 +338,7 @@ class BudgetPlanCommon(object):
         self.write({
             'state': 'submit',
             'date_submit': fields.Date.context_today(self),
+            'submiting_user_id': self._uid,
         })
         return True
 
@@ -253,7 +354,20 @@ class BudgetPlanCommon(object):
 
     @api.multi
     def button_reject(self):
-        self.write({'state': 'reject'})
+        self.write({
+            'state': 'reject',
+            'date_reject': fields.Date.context_today(self),
+            'rejecting_user_id': self._uid,
+        })
+        return True
+
+    @api.multi
+    def button_accept(self):
+        self.write({
+            'state': 'accept',
+            'date_accept': fields.Date.context_today(self),
+            'accepting_user_id': self._uid,
+        })
         return True
 
     @api.multi
@@ -262,5 +376,26 @@ class BudgetPlanCommon(object):
             'state': 'approve',
             'validating_user_id': self._uid,
             'date_approve': fields.Date.context_today(self),
+        })
+        return True
+
+    @api.multi
+    def button_accept_corp(self):
+        self.write({
+            'state': 'accept_corp',
+        })
+        return True
+
+    @api.multi
+    def button_back_approve(self):
+        self.write({
+            'state': 'accept',
+        })
+        return True
+
+    @api.multi
+    def button_back_verify(self):
+        self.write({
+            'state': 'approve',
         })
         return True

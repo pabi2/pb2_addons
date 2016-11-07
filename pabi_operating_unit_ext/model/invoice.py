@@ -6,7 +6,7 @@ class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
     operating_unit_id = fields.Many2one(
-        required=True,
+        required=False,
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 

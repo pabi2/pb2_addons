@@ -3,7 +3,7 @@
 from openerp import models, fields, api
 
 
-class StockAsset(models.Model):
+class AccountAssetAsset(models.Model):
 
     _inherit = 'account.asset.asset'
 

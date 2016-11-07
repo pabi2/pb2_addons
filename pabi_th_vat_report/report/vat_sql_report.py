@@ -63,11 +63,15 @@ class PurchaseVatReport(models.Model):
 
     def _get_select(self):
         select_str = super(PurchaseVatReport, self)._get_select()
-        select_str =\
-            select_str + ', atd.taxbranch_id as taxbranch_id'
+        select_str += ', atd.taxbranch_id as taxbranch_id'
         return select_str
+
+    def _get_from(self):
+        from_str = super(PurchaseVatReport, self)._get_from()
+        from_str += ' LEFT JOIN res_taxbranch t ON (atd.taxbranch_id = t.id)'
+        return from_str
 
     def _get_groupby(self):
         voucher_groupby = super(PurchaseVatReport, self)._get_groupby()
-        voucher_groupby = voucher_groupby + ', atd.taxbranch_id'
+        voucher_groupby += ', atd.taxbranch_id'
         return voucher_groupby

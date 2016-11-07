@@ -82,6 +82,13 @@ class AccountInvoice(models.Model):
         })
         return res
 
+    @api.multi
+    @api.constrains('amount_total')
+    def _check_seats_limit(self):
+        for rec in self:
+            if rec.amount_total < 0.0:
+                raise Warning(_('Negative Total Amount is not allowed!'))
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
@@ -96,6 +103,25 @@ class AccountInvoiceLine(models.Model):
             res['value'] = {}
         res['value'].update({'name': account.name})
         return res
+
+    @api.multi
+    @api.depends('account_id')
+    def _compute_require_chartfield(self):
+        """ Overwrite for case Invoice only """
+        for rec in self:
+            if 'account_id' in rec and rec.account_id:
+                report_type = rec.account_id.user_type.report_type
+                rec.require_chartfield = report_type not in ('asset',
+                                                             'liability')
+            else:
+                rec.require_chartfield = True
+            if not rec.require_chartfield:
+                rec.section_id = False
+                rec.project_id = False
+                rec.personnel_costcenter_id = False
+                rec.invest_asset_id = False
+                rec.invest_construction_phase_id = False
+        return
 
 
 class AccountInvoiceTax(models.Model):

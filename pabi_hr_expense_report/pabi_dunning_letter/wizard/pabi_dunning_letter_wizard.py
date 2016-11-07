@@ -8,12 +8,17 @@ from openerp.exceptions import Warning as UserError
 class PABIDunnintLetterWizard(models.TransientModel):
     _name = 'pabi.dunning.letter.wizard'
 
+    date_print = fields.Date(
+        string='Print Date',
+        default=lambda self: fields.Date.context_today(self),
+        required=True,
+    )
     due_days = fields.Selection(
         [('10', '10 days to due date'),
          ('5', '5 days to due date'),
          ('0', 'On due date'),
          ('-1', 'Pass due date')],
-        string='Due',
+        string='Due (based on print date)',
         required=True,
     )
     print_pdf = fields.Boolean(
@@ -43,7 +48,7 @@ class PABIDunnintLetterWizard(models.TransientModel):
         self.dunning_list_ids = []
         Line = self.env['dunning.list']
         Expense = self.env['hr.expense.expense']
-        today = datetime.strptime(fields.Date.context_today(self),
+        today = datetime.strptime(self.date_print,
                                   '%Y-%m-%d').date()
         date_due = today + relativedelta(days=int(self.due_days))
         date_due = date_due.strftime('%Y-%m-%d')
@@ -72,6 +77,7 @@ class PABIDunnintLetterWizard(models.TransientModel):
             return {}
         data['parameters']['ids'] = exp_ids
         data['parameters']['due_days'] = self.due_days
+        data['parameters']['date_print'] = self.date_print
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,

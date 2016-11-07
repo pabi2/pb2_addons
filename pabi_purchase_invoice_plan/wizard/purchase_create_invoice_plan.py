@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import calendar
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
+from openerp.tools import float_round as round
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
@@ -14,6 +13,14 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         'account.fiscalyear',
         string='Fiscal Year',
     )
+    invoice_mode = fields.Selection(
+        [
+            ('change_price', 'As 1 Job (change price)'),
+            ('change_quantity', 'As Units (change quantity)'),
+        ],
+        default='change_price',
+    )
+
 
     @api.onchange('percent')
     def _onchange_percent(self):
@@ -103,7 +110,6 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         string='Purchase Order',
         default=_default_order,
     )
-
 
     @api.model
     def _get_po_line_fy(self, po):
@@ -215,7 +221,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                         installment_amt = self.installment_amount
                     else:
                         if l in line_of_fy.keys():
-                            installment_amt = line_by_fiscalyear[l] / line_of_fy[l]
+                            installment_amt = (line_by_fiscalyear[l] /
+                                               line_of_fy[l])
                         else:
                             installment_amt = self.installment_amount
                     if line_cnt == 1 or\
@@ -239,7 +246,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     i.fiscalyear_id = new_line_dict[i.installment][2]
 
                     fy_start_date = datetime.strptime(
-                        i.fiscalyear_id.date_start,"%Y-%m-%d")
+                        i.fiscalyear_id.date_start, "%Y-%m-%d")
                     date_str = str(fy_start_date.month) + '/' + \
                         str(installment_day) + '/' + str(fy_start_date.year)
                     i.date_invoice = datetime.strptime(date_str, '%m/%d/%Y')
@@ -297,7 +304,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     @api.model
     def _prepare_advance_deposit_line(self, order, install, advance, deposit):
         result = super(PurchaseCreateInvoicePlan, self).\
-                _prepare_advance_deposit_line(order, install, advance, deposit)
+            _prepare_advance_deposit_line(order, install, advance, deposit)
         if not self.by_fiscalyear:
             return result
         result.update({'fiscalyear_id': install.fiscalyear_id.id})

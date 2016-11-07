@@ -16,7 +16,8 @@ class LoanBankMOU(models.Model):
         'res.partner.bank',
         string='Bank',
         required=True,
-        domain=[('partner_id', '!=', False)]
+        # domain=[('partner_id', '!=', False)],
+        help="Bank Account of the end customer",
     )
     max_installment = fields.Integer(
         string='Max Installment',
@@ -48,7 +49,6 @@ class LoanBankMOU(models.Model):
         'mou_id',
         string='Loan Agreements',
     )
-
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
     ]
@@ -84,8 +84,7 @@ class LoanCustomerAgreement(models.Model):
         'res.partner.bank',
         string='Bank',
         readonly=True,
-        domain="[('partner_id', '!=', False),"
-        "('bank', '=', mou_bank)]",
+        domain="[('partner_id', '!=', False), ('bank', '=', mou_bank)]",
         states={'draft': [('readonly', False)]},
         required=True,
     )
@@ -210,6 +209,12 @@ class LoanCustomerAgreement(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='Operating Unit',
+        related='section_id.org_id.operating_unit_id',
+        readonly=True,
     )
     account_receivable_id = fields.Many2one(
         'account.account',
@@ -387,6 +392,7 @@ class LoanCustomerAgreement(models.Model):
             partner_bank_id=False, company_id=company_id)['value']
 
         return {
+            'operating_unit_id': loan.operating_unit_id.id,
             'origin': loan.name,
             'comment': False,
             'date_invoice': date_invoice,
@@ -444,6 +450,7 @@ class LoanCustomerAgreement(models.Model):
     @api.model
     def _prepare_order_header(self, loan, date_order):
         return {
+            'operating_unit_id': loan.operating_unit_id.id,
             'partner_id': loan.partner_id.id,
             'date_order': date_order,
             'client_order_ref': loan.name,

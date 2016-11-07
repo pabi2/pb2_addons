@@ -593,6 +593,12 @@ class PurchaseRequisition(models.Model):
         report_name = 'purchase.requisition_'+doc_type.name.lower()
         return self.env['report'].get_action(self, report_name)
 
+    @api.multi
+    def print_approval_report(self):
+        self.ensure_one()
+        report_name = 'purchase.requisition_summary'
+        return self.env['report'].get_action(self, report_name)
+
 
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
@@ -634,9 +640,9 @@ class PurchaseRequisitionLine(models.Model):
         'Fiscal Year',
         readonly=True,
     )
-    # product_id = fields.Many2one(
-    #     required=True,
-    # )
+    is_green_product = fields.Boolean(
+        string='Green Product',
+    )
 
     @api.multi
     def onchange_product_id(self, product_id, product_uom_id,

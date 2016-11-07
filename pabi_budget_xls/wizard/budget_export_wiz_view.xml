@@ -9,7 +9,7 @@
                 <form string="Export Budget Plan Form">
                     <group>
                         <group>
-                            <field name="attachment_id" domain="[('budget_template', '=', True)]" required="True"/>
+                            <field name="attachment_id" domain="[('budget_template', '=', True)]" widget="selection" required="True"/>
                         </group>
                         <group>
                             <field name="editable_lines"/>

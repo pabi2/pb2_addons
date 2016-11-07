@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+
+        <menuitem name="Budgeting" groups="pabi_budget_plan.group_budget_user"  id="account_budget_activity.menu_budgeting" sequence="51"/>
+
         <record id="account_budget_view_form" model="ir.ui.view" >
             <field name="name">account.budget.view.form</field>
             <field name="model">account.budget</field>
@@ -10,10 +13,68 @@
                 	<field name="prev_planned_amount" />  
                 	<field name="policy_amount" />       
                 	<field name="planned_amount" />       
+                	<field name="ref_budget_id"/>
+                	<field name="ref_breakdown_id"/>
+                	<field name="currency_id" groups="base.group_multi_currency"/>
+                </xpath>
+                <xpath expr="//button[@name='confirm']" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='validate']" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='done']" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='draft']" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='cancel']" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='new_minor_revision']" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+                <xpath expr="//div[@name='buttons']/button[1]" position="attributes">
+                    <attribute name="type">object</attribute>
+                    <attribute name="name">get_all_version</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="account_budget_view_tree" model="ir.ui.view" >
+            <field name="name">account.budget.view.tree</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
                 </xpath>
             </field>
         </record>
 
+        <record id="view_account_budget_line_tree" model="ir.ui.view" >
+            <field name="name">account.budget.line.tree</field>
+            <field name="model">account.budget.line</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_budget_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="unit_base_tree_view" model="ir.ui.view" >
+            <field name="name">unit.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.unit_base_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button" position="attributes">
+                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+        
     </data>
 </openerp>
 

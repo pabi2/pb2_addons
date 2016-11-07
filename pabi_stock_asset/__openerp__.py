@@ -19,11 +19,12 @@ PABI2 - Stock Asset
     "application": False,
     "installable": True,
     "depends": [
+        "purchase_requisition",
         "stock_asset",
     ],
     "data": [
-        # "views/product_view.xml",
         "views/asset_view.xml",
+        "views/purchase_requisition_view.xml",
         # "wizards/stock_transfer_details_view.xml",
     ],
 }

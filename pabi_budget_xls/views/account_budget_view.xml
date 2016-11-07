@@ -31,24 +31,22 @@
             <field name="model">budget.plan.unit</field>
             <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@name='buttons']" position="after">
-                    <group>
-                        <group/>
-                        <group>
-                            <div>
+                <button name="button_cancel" position="after">
+                                <button name="%(budget_export_wizard_action)d"
+                                   type="action" states="draft" string="Export Plan" class="oe_inline"/>
                                 <button name="%(budget_import_wizard_action)d"
-                                   type="action" string="Import Plan" class="oe_highlight oe_inline"/> 
-                                 <button name="%(budget_export_wizard_action)d"
-                                   type="action" string="Export Plan" class="oe_highlight oe_inline"/>
-                            </div>
-                            
-                        </group>
-                    </group>
-                </xpath>
+                                   type="action" states="draft"  string="Import Plan" class="oe_inline"/> 
+                </button>
                 <xpath expr="//page[last()]" position="after">
                     <page string="Budget Plan History">
                         <field name="plan_history_line_ids" readonly="True"/>
                     </page>
+                </xpath>
+                <xpath expr="//field[@name='plan_line_ids']/tree/field[@name='activity_id']" position="after">
+                    <field name="unit"/>
+                    <field name="activity_unit_price"/> 
+                    <field name="activity_unit"/>
+                    <field name="total_budget"/>
                 </xpath>
             </field>
         </record>
