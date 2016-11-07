@@ -8,6 +8,9 @@
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="l10n_th_fields.view_vendor_payment_form"/>
             <field name="arch" type="xml">
+                <field name="journal_id" position="before">
+                    <field name="payment_type" required="1"/>
+                </field>
                 <field name="date_value" position="attributes">
                     <attribute name="string">Value/Cheque Date</attribute>
                 </field>

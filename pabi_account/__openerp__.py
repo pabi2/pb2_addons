@@ -10,6 +10,7 @@
 * All WHT account post go to a selected tax branch
 * History of partner's bank account changes. Only user set in company config
   will have right to approve.
+* Payment Type (cheque, transfer)
 
     """,
     "website": "https://ecosoft.co.th/",

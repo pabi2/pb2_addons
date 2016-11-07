@@ -34,6 +34,13 @@ class AccountVoucher(models.Model):
         string='Total AR',
         digits_compute=dp.get_precision('Account'),
     )
+    payment_type = fields.Selection(
+        [('cheque', 'Cheque'),
+         ('transfer', 'Transfer'),
+         ],
+        string='Payment Type',
+        help="Specified Payment Type, can be used to screen Payment Method",
+    )
 
     @api.multi
     @api.constrains('date_value')

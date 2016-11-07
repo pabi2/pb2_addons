@@ -39,6 +39,13 @@ class AccountInvoice(models.Model):
         compute='_compute_payment_count',
         readonly=True,
     )
+    payment_type = fields.Selection(
+        [('cheque', 'Cheque'),
+         ('transfer', 'Transfer'),
+         ],
+        string='Payment Type',
+        help="Specified Payment Type, can be used to screen Payment Method",
+    )
 
     @api.multi
     @api.depends()
