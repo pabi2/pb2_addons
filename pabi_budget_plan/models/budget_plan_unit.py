@@ -3,6 +3,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from .budget_plan_template import BudgetPlanCommon
 from openerp import SUPERUSER_ID
+import openerp.addons.decimal_precision as dp
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
@@ -175,6 +176,10 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
         related='plan_id.state',
         store=True,
     )
+    breakdown_line_id = fields.Many2one(
+        'budget.plan.unit.cost.control.line',
+        string='Breakdown Cost Control Line ref.',
+    )
 
     @api.model
     def create(self, vals):
@@ -212,9 +217,128 @@ class BudgetPlanUnitCostControl(models.Model):
         'fk_costcontrol_id',
         string='Cost Control Detail',
     )
+    plan_cost_control_line_ids = fields.One2many(
+        'budget.plan.unit.cost.control.line',
+        'cost_control_line_id',
+        string="Cost Control Lines",
+        copy=False,
+    )
 
     @api.multi
     @api.depends('detail_ids')
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = sum([x.planned_amount for x in rec.detail_ids])
+#             rec.amount_total = sum([x.planned_amount for x in rec.detail_ids])
+            rec.amount_total = sum([x.planned_amount for x in rec.plan_cost_control_line_ids])
+
+class BudgetPlanUnitCostControlLine(models.Model):
+    _name = 'budget.plan.unit.cost.control.line'
+
+    cost_control_line_id = fields.Many2one(
+        'budget.plan.unit.cost.control',
+        string='Cost Control Line',
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+    )
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        domain="[('activity_group_ids', 'in', activity_group_id)]",
+    )
+    name = fields.Char(
+        string='Description',
+    )
+    m0 = fields.Float(
+        string='0',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m1 = fields.Float(
+        string='1',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m2 = fields.Float(
+        string='2',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m3 = fields.Float(
+        string='3',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m4 = fields.Float(
+        string='4',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m5 = fields.Float(
+        string='5',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m6 = fields.Float(
+        string='6',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m7 = fields.Float(
+        string='7',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m8 = fields.Float(
+        string='8',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m9 = fields.Float(
+        string='9',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m10 = fields.Float(
+        string='10',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m11 = fields.Float(
+        string='11',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m12 = fields.Float(
+        string='12',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+        compute='_compute_planned_amount',
+        digits_compute=dp.get_precision('Account'),
+        store=True,
+    )
+
+    @api.multi
+    def write(self, vals):
+        for record in self:
+            line_exist = self.env['budget.plan.unit.line'].search(
+                        [('breakdown_line_id', '=', record.id)])
+            if line_exist:
+                line_exist.write(vals)
+        return super(BudgetPlanUnitCostControlLine, self).write(vals)
+
+    @api.multi
+    @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
+                 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',)
+    def _compute_planned_amount(self):
+        for rec in self:
+            planned_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
+                                  rec.m5, rec.m6, rec.m7, rec.m8,
+                                  rec.m9, rec.m10, rec.m11, rec.m12
+                                  ])
+            rec.planned_amount = planned_amount + rec.m0  # from last year
+

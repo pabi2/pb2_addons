@@ -130,6 +130,7 @@
                                         <field name="m12"/>
 
                                         <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="breakdown_line_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>
