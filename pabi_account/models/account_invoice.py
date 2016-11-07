@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
+import ast
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -50,20 +50,6 @@ class AccountInvoice(models.Model):
             rec.payment_count = len(voucher_ids)
 
     @api.multi
-    def action_open_payments(self):
-        self.ensure_one()
-        move_ids = self.payment_ids.mapped('move_id')._ids
-        Voucher = self.env['account.voucher']
-        voucher_ids = Voucher.search([('move_id', 'in', move_ids)])._ids
-        action_id = self.env.ref('account_voucher.action_vendor_payment')
-        if action_id:
-            action = action_id.read([])[0]
-            action['domain'] =\
-                "[('id','in', ["+','.join(map(str, voucher_ids))+"])]"
-            return action
-        return True
-
-    @api.multi
     def invoice_validate(self):
         result = super(AccountInvoice, self).invoice_validate()
         for invoice in self:
@@ -88,6 +74,25 @@ class AccountInvoice(models.Model):
         for rec in self:
             if rec.amount_total < 0.0:
                 raise Warning(_('Negative Total Amount is not allowed!'))
+
+    @api.multi
+    def action_open_payments(self):
+        self.ensure_one()
+        move_ids = self.payment_ids.mapped('move_id')._ids
+        Voucher = self.env['account.voucher']
+        voucher_ids = Voucher.search([('move_id', 'in', move_ids)])._ids
+        action_id = self.env.ref('account_voucher.action_vendor_payment')
+        if not action_id:
+            raise ValidationError(_('No Action'))
+        action = action_id.read([])[0]
+        action['domain'] =\
+            "[('id','in', ["+','.join(map(str, voucher_ids))+"])]"
+        ctx = ast.literal_eval(action['context'])
+        ctx.update({
+            'filter_by_invoice_ids': self.ids  # account_move_line.search()
+        })
+        action['context'] = ctx
+        return action
 
 
 class AccountInvoiceLine(models.Model):

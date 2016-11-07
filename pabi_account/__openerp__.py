@@ -25,6 +25,7 @@
         "account_move_line_doc_ref",
         "hr_expense_auto_invoice",
         "pabi_source_document",
+        "account_invoice_create_payment",
     ],
     "data": [
         "security/security_group.xml",

@@ -29,7 +29,7 @@
                         </button>
                     </div>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
+                <!-- <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="before">
@@ -40,11 +40,11 @@
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="before">
                     <field name="select" groups="account.group_account_user"/>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
 
-        #Customer Payment
+        # Customer Payment
         <record model="ir.ui.view" id="view_vendor_receipt_form">
             <field name="name">account.voucher.receipt.form</field>
             <field name="model">account.voucher</field>
@@ -58,7 +58,7 @@
                         </button>
                     </div>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
+                <!-- <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="before">
@@ -69,7 +69,7 @@
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="before">
                     <field name="select" groups="account.group_account_user"/>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
 

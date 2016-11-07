@@ -6,3 +6,4 @@ from . import account_tax_detail
 from . import res_bank
 from . import res_partner
 from . import res_company
+from . import account
