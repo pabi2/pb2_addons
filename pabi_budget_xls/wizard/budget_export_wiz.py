@@ -11,6 +11,8 @@ from openpyxl.styles import PatternFill, Border,\
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
+SHEET_FORMULAS = {}
+
 
 class BudgetExportWizard(models.TransientModel):
     _name = 'unit.budget.plan.export'
@@ -68,6 +70,184 @@ class BudgetExportWizard(models.TransientModel):
         for row in range(row_start, row_end):
             for col in col_list:
                 sheet.cell(row=row, column=col).fill = greyFill
+
+    @api.model
+    def _update_costcontrol_masterdata(self, workbook):
+        costcontrols = self.env['cost.control'].search([])
+        ConstControl_MasterSheet = False
+        try:
+            ConstControl_MasterSheet = workbook.get_sheet_by_name('CostControl_MasterData')
+        except:
+            ConstControl_MasterSheet = workbook.create_sheet('CostControl_MasterData')
+        ConstControl_MasterSheet.protection.sheet = True
+        
+        bold_font = Font(bold=True, name='Arial', size=11)
+
+        ConstControl_MasterSheet.cell(row=1, column=1).value = 'Sequence'
+        ConstControl_MasterSheet.cell(row=1, column=2).value = 'Cost Control - English'
+        ConstControl_MasterSheet.cell(row=1, column=3).value = 'Cost Control - Thai'
+        ConstControl_MasterSheet.cell(row=1, column=1).font = bold_font
+        ConstControl_MasterSheet.cell(row=1, column=2).font = bold_font
+        ConstControl_MasterSheet.cell(row=1, column=3).font = bold_font
+
+        ag_row = 2
+        ag_count = 1
+        ag_length = 1
+        for ag in costcontrols:
+            ConstControl_MasterSheet.cell(row=ag_row, column=1, value=ag_count)
+            ConstControl_MasterSheet.cell(row=ag_row, column=2, value=ag.name)
+            ConstControl_MasterSheet.cell(row=ag_row, column=3, value=ag.name)
+            if len(ag.name) > ag_length:
+                ag_length = len(ag.name)
+            ag_row += 1
+            ag_count += 1
+
+        ConstControl_MasterSheet.column_dimensions['A'].width = 11
+        ConstControl_MasterSheet.column_dimensions['B'].width = ag_length
+        ConstControl_MasterSheet.column_dimensions['C'].width = ag_length
+
+        formula1 = "{0}!$C$2:$C$%s" % (ag_row)
+        CostControlList = DataValidation(
+            type="list",
+            formula1=formula1.format(
+                quote_sheetname('CostControl_MasterData')
+            )
+        )
+        SHEET_FORMULAS.update({'cost_control_formula': CostControlList})
+        return True
+
+    @api.model
+    def _update_costcontrol_sheet(self, workbook, budget):
+        ConstControl_Sheet = False
+        try:
+            ConstControl_Sheet = workbook.get_sheet_by_name('CostControl_1')
+            ConstControl_Sheet.protection.sheet = True
+        except:
+            pass
+        if ConstControl_Sheet:
+            greyFill = PatternFill(
+                start_color='D3D3D3',
+                end_color='D3D3D3',
+                fill_type='solid',
+            )
+            self._update_costcontrol_masterdata(workbook)
+            activity_ids = self.env['account.activity'].search([])
+            activities_list = [a.name for a in activity_ids]
+            activities = ','.join(activities_list)
+            act_dv = DataValidation(type="list", formula1=activities, allow_blank=True)
+            row = 1
+            for const_cntrl_line in budget.cost_control_ids:
+                ag_list_formula = SHEET_FORMULAS.get('ag_list', False)
+                ConstControl_Sheet.add_data_validation(ag_list_formula)
+                ConstControl_Sheet.add_data_validation(act_dv)
+                bold_font = Font(bold=True, name='Arial', size=11)
+                ConstControl_Sheet.cell(row=row, column=5, value=const_cntrl_line.id)
+                org = budget.org_id.code and\
+                    budget.org_id.code or budget.org_id.name_short
+                ConstControl_Sheet.cell(row=row, column=2,
+                                       value=budget.fiscalyear_id.name)
+                row += 1
+                ConstControl_Sheet.cell(row=row, column=2, value='')
+                row += 1
+                ConstControl_Sheet.cell(row=row, column=2, value='')
+                row += 1
+                ag_list_formula.add(ConstControl_Sheet.cell(row=row, column=2))
+                row += 1
+                ConstControl_Sheet.cell(row=row, column=2, value='')
+                self._make_cell_editable(sheet=ConstControl_Sheet,
+                         row_start=1,
+                         row_end=6,
+                         col_start=2,
+                         col_end=2,
+                         skip_cell=0)
+                row = row + 5
+                LineStart = row
+                for line in const_cntrl_line.plan_cost_control_line_ids:
+                    line_exist = self.env['budget.plan.unit.line'].search(
+                        [('breakdown_line_id', '=', line.id)])
+                    ConstControl_Sheet.cell(row=row, column=1, value=line.activity_id.name)
+                    ConstControl_Sheet.cell(row=row, column=2, value=line.name)
+                    ConstControl_Sheet.cell(row=row, column=3, value=line.name)
+                    ConstControl_Sheet.cell(row=row, column=4, value=line_exist.activity_unit)
+                    ConstControl_Sheet.cell(row=row, column=5, value=line_exist.activity_unit_price)
+                    ConstControl_Sheet.cell(row=row, column=6, value=line_exist.unit)
+                    eq = "=D%s*$E$%s*$F$%s" % (row, row, row)
+                    ConstControl_Sheet.cell(row=row, column=7, value=eq).fill = greyFill
+                    ConstControl_Sheet.cell(row=row, column=8, value=line.m0)
+                    ConstControl_Sheet.cell(row=row, column=9, value=line.m1)
+                    ConstControl_Sheet.cell(row=row, column=10, value=line.m2)
+                    ConstControl_Sheet.cell(row=row, column=11, value=line.m3)
+                    ConstControl_Sheet.cell(row=row, column=12, value=line.m4)
+                    ConstControl_Sheet.cell(row=row, column=13, value=line.m5)
+                    ConstControl_Sheet.cell(row=row, column=14, value=line.m6)
+                    ConstControl_Sheet.cell(row=row, column=15, value=line.m7)
+                    ConstControl_Sheet.cell(row=row, column=16, value=line.m8)
+                    ConstControl_Sheet.cell(row=row, column=17, value=line.m9)
+                    ConstControl_Sheet.cell(row=row, column=18, value=line.m10)
+                    ConstControl_Sheet.cell(row=row, column=19, value=line.m11)
+                    ConstControl_Sheet.cell(row=row, column=20, value=line.m12)
+                    ConstControl_Sheet.cell(row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
+                    row += 1
+                for line in range(self.editable_lines):
+                    act_dv.add(ConstControl_Sheet.cell(row=row, column=1))
+                    eq = "=D%s*$E$%s*$F$%s" % (row, row, row)
+                    ConstControl_Sheet.cell(row=row, column=7, value=eq).fill = greyFill
+                    ConstControl_Sheet.cell(row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
+                    row += 1
+                self._add_cell_border(ConstControl_Sheet,
+                      row_start=LineStart,
+                      row_end=row,
+                      col_start=1,
+                      col_end=21)
+
+                ConstControl_Sheet.cell(row=row, column=6, value='Total').fill = greyFill
+                ConstControl_Sheet.cell(row=row, column=6).font = bold_font
+                params = (LineStart, row-1)
+                ConstControl_Sheet.cell(
+                    row=row, column=9).value = '=SUM(I%s:I%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=10).value = '=SUM(J%s:J%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=11).value = '=SUM(K%s:K%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=12).value = '=SUM(L%s:L%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=13).value = '=SUM(M%s:M%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=14).value = '=SUM(N%s:N%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=15).value = '=SUM(O%s:O%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=16).value = '=SUM(P%s:P%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=17).value = '=SUM(Q%s:Q%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=18).value = '=SUM(R%s:R%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=19).value = '=SUM(S%s:S%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=20).value = '=SUM(T%s:T%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=21).value = '=SUM(U%s:U%s)' % params
+                row += 4
+                self._add_cell_border(ConstControl_Sheet,
+                      row_start=row-1,
+                      row_end=row,
+                      col_start=6,
+                      col_end=21)
+                self._make_cell_color_filled(sheet=ConstControl_Sheet,
+                             row_start=row-1,
+                             row_end=row,
+                             col_start=6,
+                             col_end=21,
+                             col_list=[])
+                self._make_cell_editable(sheet=ConstControl_Sheet,
+                         row_start=LineStart,
+                         row_end=row,
+                         col_start=1,
+                         col_end=21,
+                         skip_cell=10)
+        return True
 
     @api.multi
     def update_budget_xls(self, budget_ids, template_id=None):
@@ -134,17 +314,19 @@ class BudgetExportWizard(models.TransientModel):
             AG_Sheet.column_dimensions['C'].width = ag_length
 
             formula1 = "{0}!$C$2:$C$%s" % (ag_row)
-            dv = DataValidation(
+            ActGroupList = DataValidation(
                 type="list",
                 formula1=formula1.format(
                     quote_sheetname('ActivityGroup_MasterData')
                 )
             )
+            SHEET_FORMULAS.update({'ag_list': ActGroupList})
+            self._update_costcontrol_sheet(workbook, budget)
             NonCostCtrl_Sheet =\
                 workbook.get_sheet_by_name('Non_CostControl')
             NonCostCtrl_Sheet.protection.sheet = True
 
-            NonCostCtrl_Sheet.add_data_validation(dv)
+            NonCostCtrl_Sheet.add_data_validation(ActGroupList)
             NonCostCtrl_Sheet.cell(row=1, column=5, value=budget.id)
             org = budget.org_id.code and\
                 budget.org_id.code or budget.org_id.name_short
@@ -174,7 +356,7 @@ class BudgetExportWizard(models.TransientModel):
                     row=row, column=8).value = line.activity_unit_price
                 NonCostCtrl_Sheet.cell(
                     row=row, column=9).value = line.activity_unit
-                dv.add(NonCostCtrl_Sheet.cell(row=row, column=4))
+                ActGroupList.add(NonCostCtrl_Sheet.cell(row=row, column=4))
                 ag_name = line.activity_group_id.name
                 NonCostCtrl_Sheet.cell(row=row, column=4).value = ag_name
                 NonCostCtrl_Sheet.cell(
@@ -207,7 +389,7 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(row=r, column=2).value = "=B3"
                 NonCostCtrl_Sheet.cell(
                     row=r, column=3).value = section_name
-                dv.add(NonCostCtrl_Sheet.cell(row=r, column=4))
+                ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=4))
                 NonCostCtrl_Sheet.cell(
                     row=r, column=10).value = "=G%s*$H$%s*$I$%s" % (r, r, r)
                 NonCostCtrl_Sheet.cell(
@@ -279,7 +461,7 @@ class BudgetExportWizard(models.TransientModel):
 
             stream1 = cStringIO.StringIO()
             workbook.save(stream1)
-            filename = '%s-%s-%s-%s.xlsx' % (budget.fiscalyear_id.name,
+            filename = '%s-%s-%s-%s.xls' % (budget.fiscalyear_id.name,
                                              org,
                                              budget.section_id.code,
                                              template_file.name)

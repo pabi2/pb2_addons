@@ -99,6 +99,8 @@ class BudgetImportWizard(models.TransientModel):
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
                 description = NonCostCtrl_Sheet.cell(row=row, column=5).value
+                if description == '=FALSE()':
+                    description = ''
                 unit = NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
                 act_unitprice\
                     = NonCostCtrl_Sheet.cell(row=row, column=8).value or 0.0
