@@ -9,6 +9,7 @@
         'base',
         'res_partner_ext',
         'purchase_partner_invoice_method',
+        'stock_request',
     ],
     'installable': True,
     'auto_install': False,
