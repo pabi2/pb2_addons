@@ -265,8 +265,14 @@ class PurchaseContract(models.Model):
                     Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    ext_grp = Ext_group + Emp.org_id.name_short.lower()
-                    gid = self.env.ref(ext_grp)
+                    if Emp.org_id.name_short:
+                        ext_grp = Ext_group + Emp.org_id.name_short.lower()
+                        gid = self.env.ref(ext_grp)
+                    else:
+                        raise osv.except_osv(
+                             _(u'Error!!'),
+                             _("""You do not have permission to create.
+                                Please contact your system administrator."""))
                 return gid
             else:
                 raise osv.except_osv(
@@ -788,8 +794,14 @@ class PurchaseContract(models.Model):
                     Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    ext_grp = Ext_group + Emp.org_id.name_short.lower()
-                    gid = self.env.ref(ext_grp)
+                    if Emp.org_id.name_short:
+                        ext_grp = Ext_group + Emp.org_id.name_short.lower()
+                        gid = self.env.ref(ext_grp)
+                    else:
+                        raise osv.except_osv(
+                             _(u'Error!!'),
+                             _("""You do not have permission to create.
+                                Please contact your system administrator."""))
                 self.admin_org_groups_id = gid
             else:
                 self.admin_org_groups_id = False
