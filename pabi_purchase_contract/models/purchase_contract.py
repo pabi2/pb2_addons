@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-from lxml import etree
-from openerp.osv.orm import setup_modifiers
 from pytz import timezone
 from openerp import models, fields, api, _
 from openerp.osv import osv
@@ -303,10 +301,10 @@ class PurchaseContract(models.Model):
         RevNo = vals.get('poc_rev', 0)
         # New Contract (CENTRAL-2016-322-R1)
         if RevNo == 0:
-            self.env.cr.execute("SELECT Count(id) AS c"\
-                                " FROM purchase_contract"\
-                                " WHERE poc_org = %s"\
-                                " AND year = %s"\
+            self.env.cr.execute("SELECT Count(id) AS c"
+                                " FROM purchase_contract"
+                                " WHERE poc_org = %s"
+                                " AND year = %s"
                                 " AND poc_rev = 0",
                                 (str(Org.code),
                                  str(ActionDate.year)))
@@ -611,8 +609,7 @@ class PurchaseContract(models.Model):
     @api.v7
     def action_button_verify_doc_v7(self, cr, uid, ids, context=None):
         Employees = self.pool.get("hr.employee")
-        Emp = Employees.search([['user_id', '=', self._uid]],
-                                limit=1)
+        Emp = Employees.search([['user_id', '=', self._uid]], limit=1)
         verify_date = datetime.datetime.now(timezone('UTC'))
         if Emp:
             return self.write(cr,
@@ -701,16 +698,16 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def action_button_reversion(self):
-        self.env.cr.execute("SELECT Count(id) AS c"\
-                            " FROM purchase_contract"\
-                            " WHERE poc_code = '%s'"\
+        self.env.cr.execute("SELECT Count(id) AS c"
+                            " FROM purchase_contract"
+                            " WHERE poc_code = '%s'"
                             " AND state = '%s'",
                             (str(self.poc_code), GENERATE))
         ctnGenerate = self.env.cr.fetchone()
         CountPOGenerate = ctnGenerate and ctnGenerate[0] or 0
         if CountPOGenerate == 0:
-            self.env.cr.execute("SELECT Count(id) AS c"\
-                                " FROM purchase_contract"\
+            self.env.cr.execute("SELECT Count(id) AS c"
+                                " FROM purchase_contract"
                                 " WHERE poc_code = '%s'",
                                 (str(self.poc_code)))
             datas = self.env.cr.fetchone()

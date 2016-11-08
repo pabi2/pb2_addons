@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="purchase_order_form">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_invoice_plan.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook" position="before">
+                    <div attrs="{'invisible': [('use_invoice_plan', '=', False)]}">
+                        <field name="by_fiscalyear"/>
+                        <label for="by_fiscalyear"/>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+                    <field name="by_fiscalyear" invisible="True"/>
+                    <field name="fiscalyear_id"/>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_draft_invoices']" position="attributes">
+                    <attribute name="attrs">{'invisible':['|',('state', 'not in', ('approved')),
+                                                 '|',('invoice_method', '!=', 'invoice_plan'),
+                                                 '|',('plan_invoice_created','!=',True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

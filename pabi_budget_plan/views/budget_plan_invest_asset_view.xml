@@ -112,7 +112,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_budget_plan_invest_asset_view">
-            <field name="name">Budget Plan</field>
+            <field name="name">Budget Plans</field>
             <field name="res_model">budget.plan.invest.asset</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

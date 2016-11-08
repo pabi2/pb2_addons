@@ -10,6 +10,40 @@ import ast
 class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     _inherit = "purchase.request.line.make.purchase.requisition"
 
+    # def _requisition_filter(self):
+    #     requisition_ref = ()
+    #     pr_lines = self.item_ids.line_id
+    #     for pr_line in pr_lines:
+    #         if pr_line.request_id.request_ref_id and \
+    #            pr_line.request_id.request_ref_id not in requisition_ref:
+    #                 request_lines = self.env['purchase.request.line'].search(
+    #                     [
+    #                         (
+    #                             'request_id',
+    #                             'in',
+    #                             (pr_line.request_id.request_ref_id.id,)
+    #                         )
+    #                     ]
+    #                 )
+    #                 cfb_lines = self.env['purchase.requisition.line'].search(
+    #                     [
+    #                         (
+    #                             'purchase_request_lines',
+    #                             'in',
+    #                             request_lines._ids
+    #                         )
+    #                     ]
+    #                 )
+    #                 for cfb_line in cfb_lines:
+    #                     requisition_ref.append(cfb_line.requisition_id.id)
+    #     if len(requisition_ref) > 0:
+    #         domain = [
+    #             ('state', '=', 'draft'),
+    #             ('id', 'in', requisition_ref)
+    #         ]
+    #     # res['domain'] = domain
+    #     return domain
+
     @api.model
     def _get_requisition_line_search_domain(self, requisition, item):
         res = super(PurchaseRequestLineMakePurchaseRequisition, self).\
@@ -118,30 +152,21 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         return True
 
     @api.model
-    def _requisition_filter(self, pr_lines):
-        pr_ref = []
-        domain = []
-        for pr_line in pr_lines:
-            if pr_line.request_id.request_ref_id and \
-               pr_line.request_id.request_ref_id not in pr_ref:
-                    pr_ref.append(pr_line.request_id.request_ref_id.id)
-        if len(pr_ref) > 0:
-            domain = {
-                'requisition_id': [
-                    ('request_ids', 'in', pr_ref)
-                ]
-            }
-        return {'domain': domain}
-
-    @api.model
     def default_get(self, fields):
-        res = super(PurchaseRequestLineMakePurchaseRequisition,
-                    self).default_get(fields)
         request_line_obj = self.env['purchase.request.line']
-        request_line_ids = self.env.context['active_ids'] or []
+        request_line_ids = self._context.get('active_ids', [])
+        add_context = self._context.copy()
+        for line in request_line_obj.browse(request_line_ids):
+            if line.request_id.is_central_purchase:
+                user_ou_id = self.env['res.users'].\
+                    operating_unit_default_get(self._uid)
+                is_central = user_ou_id
+                add_context['is_central'] = is_central
+                break
+        res = super(PurchaseRequestLineMakePurchaseRequisition,
+                    self.with_context(add_context)).default_get(fields)
         pr_lines = request_line_obj.browse(request_line_ids)
         self._check_line_reference(pr_lines)
-        self._requisition_filter(pr_lines)
         return res
 
     @api.model
@@ -259,6 +284,14 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                 raise exceptions.Warning(
                     _('You have to select lines '
                       'from the same picking type.'))
+            elif line.request_id.is_central_purchase:
+                Warehouse = self.env['stock.warehouse']
+                warehouses = Warehouse.search([
+                    ('operating_unit_id', '=', self.operating_unit_id.id)
+                ])
+                for warehouse in warehouses:
+                    picking_type_id = warehouse.in_type_id.id
+                    break
             else:
                 picking_type_id = line_picking_type.id
 
@@ -343,3 +376,15 @@ class PurchaseRequestLineMakePurchaseRequisitionItem(models.TransientModel):
     date_required = fields.Date(
         string='Request Date',
     )
+
+    @api.onchange('product_id', 'product_uom_id')
+    def onchange_product_id(self):
+        if self.product_id:
+            name = self.product_id.name
+            if self.product_id.code:
+                name = '[%s] %s' % (name, self.product_id.code)
+            if self.product_id.description_purchase:
+                name += '\n' + self.product_id.description_purchase
+            self.product_uom_id = self.product_id.uom_id.id
+            # self.product_qty = 1
+            self.name = name

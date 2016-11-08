@@ -126,8 +126,7 @@ class PurchaseRequisition(models.Model):
             if af_info['action'] == 'C1':  # approve
                 att_file = []
                 try:
-                    ConfParam = self.env['ir.config_parameter']
-                    file_prefix = ConfParam.get_param('pabiweb_file_prefix')
+                    file_prefix = self.env.user.company_id.pabiweb_file_prefix
                     attachments = {
                         'res_id': requisition.id,
                         'res_model': 'purchase.requisition',
@@ -225,10 +224,10 @@ class PurchaseWebInterface(models.Model):
     @api.model
     def send_pbweb_requisition_test(self):
         ConfParam = self.env['ir.config_parameter']
-        url = ConfParam.get_param('pabiweb_url')
+        url = self.env.user.company_id.pabiweb_pcm_url
         username = ConfParam.get_param('pabiweb_username')
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://%s:%s@%s" % (username, password, url)
+        connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         doc = self.encode_base64('PR_2015011901.pdf')
         att1 = self.encode_base64('PR_2015011901.pdf')
@@ -266,18 +265,19 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_requisition(self, requisition):
         User = self.env['res.users']
         Employee = self.env['hr.employee']
+        ConfParam = self.env['ir.config_parameter']
         users = User.search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
-        ConfParam = self.env['ir.config_parameter']
-        file_prefix = ConfParam.get_param('pabiweb_file_prefix')
-        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+        file_prefix = self.env.user.company_id.pabiweb_file_prefix
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if not pabiweb_active:
             return False
         Attachment = self.env['ir.attachment']
-        url = ConfParam.get_param('pabiweb_url')
+        url = self.env.user.company_id.pabiweb_pcm_url
         username = users.login
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://%s:%s@%s" % (username, password, url)
+        connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
@@ -346,11 +346,12 @@ class PurchaseWebInterface(models.Model):
     @api.model
     def send_pbweb_action_request_test(self, request_name, action, user_name):
         ConfParam = self.env['ir.config_parameter']
-        url = ConfParam.get_param('pabiweb_url')
-        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+        url = self.env.user.company_id.pabiweb_pcm_url
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if not pabiweb_active:
             return False
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://%s:%s@%s" % (user_name, password, url)
+        connect_string = url % (user_name, password)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         if action == "accept":
             send_act = "C2"
@@ -366,13 +367,14 @@ class PurchaseWebInterface(models.Model):
     @api.model
     def send_pbweb_requisition_cancel(self, requisition):
         ConfParam = self.env['ir.config_parameter']
-        if ConfParam.get_param('pabiweb_active') != 'TRUE' or \
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if not pabiweb_active or \
                 not requisition.reject_reason_txt:
             return False
-        url = ConfParam.get_param('pabiweb_url')
+        url = self.env.user.company_id.pabiweb_pcm_url
         username = self.env.user.login
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://%s:%s@%s" % (username, password, url)
+        connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         send_act = "3"
         comment = requisition.cancel_reason_txt or ''
@@ -393,12 +395,13 @@ class PurchaseWebInterface(models.Model):
     @api.model
     def send_pbweb_action_request(self, request, action):
         ConfParam = self.env['ir.config_parameter']
-        if ConfParam.get_param('pabiweb_active') != 'TRUE':
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if not pabiweb_active:
             return False
-        url = ConfParam.get_param('pabiweb_url')
+        url = self.env.user.company_id.pabiweb_pcm_url
         username = self.env.user.login
         password = ConfParam.get_param('pabiweb_password')
-        connect_string = "http://%s:%s@%s" % (username, password, url)
+        connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         if action == "accept":
             send_act = "C2"

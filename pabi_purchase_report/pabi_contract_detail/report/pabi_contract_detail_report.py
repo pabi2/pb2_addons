@@ -32,6 +32,8 @@ class PabiContractDetailReport(models.Model):
             rc.name as currency,
             swh.name as destination,
             pm.name as purchase_method,
+            pm.id as purchase_method_id,
+            pcht.id as purchase_type_id,
             pcon.start_date as date_start,
             pcon.end_date as date_end,
             max(pip.installment) as plan_count
@@ -40,6 +42,7 @@ class PabiContractDetailReport(models.Model):
             left join res_currency rc on rc.id = po.currency_id
             left join purchase_invoice_plan pip on pip.order_id = po.id
             left join purchase_requisition cfb on cfb.id = po.requisition_id
+            left join purchase_type pcht on pcht.id = cfb.purchase_type_id
             left join purchase_method pm on pm.id = cfb.purchase_method_id
             left join purchase_contract pcon on pcon.poc_code = po.name
             left join stock_picking_type spt on spt.id = po.picking_type_id
@@ -59,6 +62,8 @@ class PabiContractDetailReport(models.Model):
             rc.name,
             swh.name,
             pm.name,
+            pm.id,
+            pcht.id,
             pcon.name,
             pcon.start_date,
             pcon.end_date

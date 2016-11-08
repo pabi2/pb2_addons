@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountBudget(models.Model):
@@ -152,11 +152,13 @@ class AccountBudget(models.Model):
                'message': False}
         Budget = self.env['account.budget']
         budget_level_info = Budget.get_fiscal_and_budget_level(doc_date)
+        if False in budget_level_info.values():
+            raise ValidationError(_('Budget level is not set!'))
         fiscal_id = budget_level_info['fiscal_id']
         # Check for all budget types
         for budget_type in dict(Budget.BUDGET_LEVEL_TYPE).keys():
             if budget_type not in budget_level_info:
-                raise UserError(_('Budget level is not set!'))
+                raise ValidationError(_('Budget level is not set!'))
             budget_level = budget_level_info[budget_type]
             sel_fields = [budget_level]
             if budget_level == 'fund_id':

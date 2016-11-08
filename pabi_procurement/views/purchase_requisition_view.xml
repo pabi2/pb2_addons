@@ -55,6 +55,14 @@
                     <attribute name="states">rejected,in_progress</attribute>
                     <attribute name="string">Manually Correct</attribute>
                 </xpath>
+                <xpath expr="//field[@name='date_end']" position="replace"/>
+                <xpath expr="//field[@name='ordering_date']"
+                       position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="after">
+                    <field name="date_end" required="1"/>
+                </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
                     <field name="purchase_method_id"/>
@@ -82,6 +90,7 @@
                     <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_manager" class="oe_highlight"/>
                     <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
                     <button name="print_requisition_with_condition" type="object" string="View PD"/>
+                    <button name="print_approval_report" type="object" string="View Approval Report"/>
                 </xpath>
                 <xpath expr="//button[@name='%(purchase_requisition.action_purchase_requisition_partner)d']" position="attributes">
                     <attribute name="attrs">{'invisible': [('state', 'not in', ('in_progress', 'done'))]}</attribute>
@@ -89,31 +98,36 @@
                 <xpath expr="//button[@name='open_rfq']" position="after">
                     <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
                 </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="attributes">
+                    <attribute name="String">Bidding Date</attribute>
+                </xpath>
                 <xpath expr="//button[@name='purchase_approve']" position="replace">
-                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-ok" confirm="Approve this RfQ?"/>
+                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-go-forward" confirm="Approve this RfQ?"/>
                 </xpath>
                 <xpath expr="//button[@name='purchase_confirm']" position="attributes">
                     <attribute name="confirm">Confirm this RfQ?</attribute>
                 </xpath>
                 <xpath expr="//button[@name='purchase_cancel']" position="replace">
                     <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
-
+                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
+                    <field name="is_green_product"/>
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
+                    <field name="is_green_product"/>
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
                     <field name="product_name"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
                        position="after">
-                    <field name="fixed_asset"/>
+                    <field name="fixed_asset" invisible="1"/>
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
                     <field name="fiscalyear_id"/>

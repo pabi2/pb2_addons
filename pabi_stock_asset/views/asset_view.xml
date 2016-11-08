@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_owner_asset_form" >
+            <field name="name">account.asset.asset.form</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_asset_form"/>
+            <field name="arch" type="xml">
+                <notebook colspan="4">
+                    <page string="Owner">
+                        <group>
+                            <group>
+                                <field name="owner_id" />
+                                <field name="section_id" />
+                                <field name="org_id" />
+                                <field name="location_id" />
+                                <field name="room" />
+                            </group>
+                            <group />
+                        </group>
+                    </page>
+                </notebook>
+                 <notebook colspan="4">
+                    <page string="Product Information">
+                        <group>
+                            <group>
+                                <field name="serial_number" />
+                                <field name="warranty" />
+                                <field name="warranty_start_date" />
+                                <field name="warranty_expire_date" />
+                            </group>
+                            <group />
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+    </data>
+</openerp>

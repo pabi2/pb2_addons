@@ -21,6 +21,7 @@ class CostControlBreakdown(models.TransientModel):
         res['breakdown_line_ids'] = []
         for line in costcontrol.detail_ids:
             vals = {
+                'activity_group_id': line.activity_group_id.id,
                 'activity_id': line.activity_id.id,
                 'cost_control_id': line.cost_control_id.id,
                 'm0': line.m0,
@@ -54,7 +55,7 @@ class CostControlBreakdown(models.TransientModel):
                     'plan_id': costcontrol.plan_id.id,
                     'fk_costcontrol_id': costcontrol.id,
                     'section_id': costcontrol.plan_id.section_id.id,
-                    'activity_group_id': line.activity_id.activity_group_id.id,
+                    'activity_group_id': line.activity_group_id.id,
                     'activity_id': line.activity_id.id,
                     'cost_control_id': costcontrol.cost_control_id.id,
                     'm0': line.m0,
@@ -87,9 +88,14 @@ class CostControlBreakdownLine(models.TransientModel):
         index=True,
         required=True,
     )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+    )
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
+        domain="[('activity_group_ids', 'in', activity_group_id)]",
     )
     name = fields.Char(
         string='Description',

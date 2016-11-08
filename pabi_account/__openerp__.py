@@ -8,6 +8,8 @@
 
 * Account posting by selected tax branch
 * All WHT account post go to a selected tax branch
+* History of partner's bank account changes. Only user set in company config
+  will have right to approve.
 
     """,
     "website": "https://ecosoft.co.th/",
@@ -21,12 +23,20 @@
         "pabi_base",
         "pabi_chartfield",
         "account_move_line_doc_ref",
+        "hr_expense_auto_invoice",
+        "pabi_source_document",
     ],
     "data": [
         "security/security_group.xml",
         "security/ir.model.access.csv",
+        "wizard/approve_bank_account_wizard.xml",
         "views/account_config.xml",
         "views/account_voucher_view.xml",
+        "views/account_invoice_view.xml",
         "views/voucher_payment_receipt_view.xml",
+        "views/account_invoice_view.xml",
+        "views/res_bank_view.xml",
+        "views/res_partner_view.xml",
+        "views/res_company_view.xml",
     ],
 }

@@ -25,6 +25,22 @@ class PurchaseOrder(HeaderTaxBranch, models.Model):
         res._set_header_taxbranch_id()
         return res
 
+    @api.model
+    def _action_invoice_create_hook(self, invoice_ids):
+        # Special for invoice plan, where advance is created w/o taxbranch
+        # We will use other invoice's taxbranch for it
+        super(PurchaseOrder, self)._action_invoice_create_hook(invoice_ids)
+        invoices = self.env['account.invoice'].browse(invoice_ids)
+        no_taxbranch_invs = invoices.filtered(lambda i: not i.taxbranch_id)
+        if no_taxbranch_invs:
+            taxbranch_ids = list(set([x.taxbranch_id.id for x in invoices]))
+            if False in taxbranch_ids:
+                taxbranch_ids.remove(False)
+            for inv in no_taxbranch_invs:
+                if taxbranch_ids:
+                    inv.write({'taxbranch_id': taxbranch_ids[0]})
+        return
+
 
 class PurchaseOrderLine(ChartFieldAction, models.Model):
     _inherit = 'purchase.order.line'

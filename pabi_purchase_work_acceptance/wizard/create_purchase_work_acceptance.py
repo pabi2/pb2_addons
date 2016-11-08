@@ -86,6 +86,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             for inv_line in plan.ref_invoice_id.invoice_line:
                 if not inv_line.product_id.id:
                     continue
+                taxes = [(4, tax.id) for tax in inv_line.invoice_line_tax_id]
                 vals = {
                     'line_id': inv_line.purchase_line_id.id,
                     'product_id': inv_line.product_id.id,
@@ -94,6 +95,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'to_receive_qty': inv_line.quantity,
                     'product_uom': inv_line.uos_id.id,
                     'inv_line_id': inv_line.id,
+                    'tax_ids': taxes,
+                    'price_unit': inv_line.price_unit,
                 }
                 items.append([0, 0, vals])
             break
@@ -116,6 +119,10 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
 
     @api.model
     def is_acceptance_done(self, order):
+        #  immediate payment
+        if order.payment_term_id.id == 1 or order.payment_term_id.name == \
+                'Cash on Delivery':
+            return True
         OrderLine = self.env['purchase.order.line']
         completed_line = 0
         order_lines = OrderLine.search([
@@ -198,6 +205,9 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'date_contract_end': self.date_contract_end,
             'date_receive': self.date_receive,
             'order_id': self.order_id.id,
+            'supplier_invoice': '-',
+            'date_invoice': self.date_receive,
+            'total_fine': 0,
         })
         acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
@@ -205,6 +215,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             lines = items
         else:
             for act_line in self.acceptance_line_ids:
+                taxes = [(4, tax.id) for tax in act_line.line_id.taxes_id]
                 line_vals = {
                     'line_id': act_line.line_id.id,
                     'name': act_line.name,
@@ -212,9 +223,12 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'balance_qty': act_line.balance_qty,
                     'to_receive_qty': act_line.to_receive_qty,
                     'product_uom': act_line.product_uom.id,
+                    'tax_ids': taxes,
+                    'price_unit': act_line.line_id.price_unit,
                 }
                 lines.append([0, 0, line_vals])
         acceptance.acceptance_line_ids = lines
+        acceptance._compute_total_fine()
         return acceptance
 
     @api.multi

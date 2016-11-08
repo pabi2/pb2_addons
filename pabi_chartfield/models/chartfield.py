@@ -115,6 +115,7 @@ CHART_STRUCTURE = \
         'cost_control_id': {
             'cost_control_type_id': {},
         },
+        'fund_id': {}
     }
 
 
@@ -159,7 +160,6 @@ CHART_FIELDS = [
     ('program_id', ['project_base']),
     ('project_group_id', ['project_base']),
     ('project_id', ['project_base']),
-    ('fund_id', ['project_base']),
     # Unit Based
     ('org_id', ['unit_base',
                 'project_base',
@@ -203,6 +203,12 @@ CHART_FIELDS = [
                          'project_base',
                          'personnel',
                          ]),
+    ('fund_id', ['unit_base',
+                 'project_base',
+                 'personnel',
+                 'invest_asset',
+                 'invest_construction',
+                 ]),
     ]
 
 
@@ -269,8 +275,9 @@ class HeaderTaxBranch(object):
             self.taxbranch_id = self.taxbranch_ids[0]
         if len(self.taxbranch_ids) > 1 and not self.taxbranch_id:
             self.taxbranch_id = False
-        if len(self.taxbranch_ids) == 0:
-            self.taxbranch_id = False
+        # For advance invoice, it is possible to have taxbranch_id this way
+        # if len(self.taxbranch_ids) == 0:
+        #     self.taxbranch_id = False
 
     @api.multi
     def write(self, vals):
@@ -284,6 +291,12 @@ class HeaderTaxBranch(object):
 
 
 class ChartField(object):
+
+    @api.model
+    def _get_section_id(self):
+        if self._context.get('section_id', False):
+            return self.env['res.section'].browse(self._context.get('section_id'))
+        return self.env.user.partner_id.employee_id.section_id.id
 
     # Project Base
     spa_id = fields.Many2one(
@@ -343,7 +356,6 @@ class ChartField(object):
     fund_id = fields.Many2one(
         'res.fund',
         string='Fund',
-        required=True,  # Required
     )
     # Unit Base
     org_id = fields.Many2one(
@@ -373,8 +385,9 @@ class ChartField(object):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
-        default=lambda self: self.env['res.section'].
-        browse(self._context.get('section_id')),
+        default=_get_section_id,
+        #default=lambda self: self.env['res.section'].
+        #browse(self._context.get('section_id')),
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',

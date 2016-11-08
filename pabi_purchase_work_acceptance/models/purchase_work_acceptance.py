@@ -183,6 +183,11 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
+            else:
+                acceptance.total_fine_cal = 0
+                acceptance.total_fine = 0
+                acceptance.fine_per_day = 0
+                acceptance.overdue_day = 0
 
     @api.model
     def _calculate_service_fine(self):
@@ -243,6 +248,11 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
+            else:
+                acceptance.total_fine_cal = 0
+                acceptance.total_fine = 0
+                acceptance.fine_per_day = 0
+                acceptance.overdue_day = 0
 
     @api.model
     def _calculate_normal_service_fine(self):
@@ -281,13 +291,18 @@ class PurchaseWorkAcceptance(models.Model):
                     fine_per_day = (fine_rate*0.01) * \
                                    ((to_receive_qty * unit_price) + line_tax)
                     fine_per_day = 100.0 if 0 < fine_per_day < 100.0 \
-                    else fine_per_day
+                        else fine_per_day
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * overdue_day * fine_per_day
                 acceptance.total_fine_cal = total_fine
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * overdue_day
+            else:
+                acceptance.total_fine_cal = 0
+                acceptance.total_fine = 0
+                acceptance.fine_per_day = 0
+                acceptance.overdue_day = 0
 
     @api.model
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
@@ -428,6 +443,83 @@ class PurchaseWorkAcceptance(models.Model):
         copy=False,
         default='draft',
     )
+    amount_untaxed = fields.Float(
+        string='Untaxed Amount',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    amount_tax = fields.Float(
+        string='Taxes',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    amount_total = fields.Float(
+        string='Total',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+
+    @api.multi
+    def write(self, vals):
+        res = super(PurchaseWorkAcceptance, self).write(vals)
+        self.change_invoice_detail()
+        return res
+
+    @api.model
+    def change_invoice_detail(self):
+        for wa in self:
+            for wa_line in wa.acceptance_line_ids:
+                if wa_line.inv_line_id.invoice_id and \
+                    wa_line.inv_line_id.invoice_id.state == 'draft':
+                    wa_line.inv_line_id.quantity = wa_line.to_receive_qty
+                    wa_line.inv_line_id.price_unit = wa_line.price_unit
+                    wa_line.inv_line_id.invoice_id.button_reset_taxes()
+
+    @api.one
+    @api.depends(
+        'acceptance_line_ids.price_subtotal',
+        'acceptance_line_ids.tax_ids',
+    )
+    def _compute_amount(self):
+        amount_untaxed = 0.0
+        amount_tax = 0.0
+        for line in self.acceptance_line_ids:
+            taxes = line.tax_ids.compute_all(
+                line.price_unit,
+                line.to_receive_qty,
+                product=line.product_id
+            )
+            amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
+            amount_untaxed += taxes['total']
+        self.amount_untaxed = amount_untaxed
+        self.amount_tax = amount_tax
+        self.amount_total = amount_untaxed + amount_tax
+
+    @api.multi
+    def validate_amount_total_with_order(self):
+        if self.state == 'draft' and self.order_id.use_invoice_plan:
+            wa_total_payment = 0
+            order = self.order_id
+            paid_accpts = self.search(
+                [
+                    ('order_id', '=', order.id),
+                    ('state', 'in', ('evaluation', 'done')),
+                ]
+            )
+            for accpt in paid_accpts:
+                wa_total_payment += accpt.amount_total
+            if wa_total_payment+self.amount_total > order.amount_total:
+                raise UserError(
+                    _("""Can't evaluate this acceptance.
+                         This WA's total amount is over PO's total amount.""")
+                )
+
 
     @api.multi
     def action_evaluate(self):
@@ -436,6 +528,7 @@ class PurchaseWorkAcceptance(models.Model):
             raise UserError(
                 _("Can't evaluate the acceptance with no line.")
             )
+        self.validate_amount_total_with_order()
         self.state = 'evaluation'
 
     @api.multi
@@ -531,6 +624,33 @@ class PurchaseWorkAcceptanceLine(models.Model):
         'product.uom',
         string='UoM',
     )
+    price_unit = fields.Float(
+        string='Unit Price',
+    )
+    price_subtotal = fields.Float(
+        string='Sub Total',
+        compute="_compute_price_subtotal",
+        store=True,
+    )
+    tax_ids = fields.Many2many(
+        'account.tax',
+        'purchase_work_acceptance_taxes_rel',
+        'acceptance_line_id',
+        'tax_id',
+        string='Taxes',
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
+    def _compute_price_subtotal(self):
+        for rec in self:
+            taxes = rec.tax_ids.compute_all(rec.price_unit, rec.to_receive_qty,
+                                            product=rec.product_id)
+            rec.price_subtotal = taxes['total']
+            if rec.line_id:
+                po_currency = rec.line_id.order_id.currency_id
+                rec.price_subtotal = po_currency.round(rec.price_subtotal)
 
     @api.constrains('to_receive_qty')
     def _check_over_qty(self):

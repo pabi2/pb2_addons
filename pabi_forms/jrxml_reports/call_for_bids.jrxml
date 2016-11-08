@@ -163,7 +163,7 @@ pr.amount_total,
 pr.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
-pd.doc_footer as footer,
+pd.doc_body as footer,
 po.name as rfq_number,
 (SELECT rp.name FROM res_partner rp
 WHERE rp.id = po.partner_id) as rfq_supplier,

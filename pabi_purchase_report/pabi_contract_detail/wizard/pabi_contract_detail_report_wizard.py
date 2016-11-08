@@ -27,13 +27,15 @@ class PabiContractDetailReportWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
-        report_name = self.format == 'pdf' and 'pabi_contract_detail_report' or \
+        report_name = self.format == 'pdf' and \
+            'pabi_contract_detail_report' or \
             'pabi_contract_detail_report_xls'
+        # datestring = fields.Date.context_today(self)
         # For SQL, we search simply pass params
-        data['parameters']['purchase_type'] = self.purchase_type_id.id
-        data['parameters']['purchase_method'] = self.purchase_method_id.id
-        data['parameters']['date_from'] = self.date_from
-        data['parameters']['date_to'] = self.date_to
+        data['parameters']['purchase_type'] = self.purchase_type_id.id or 0
+        data['parameters']['purchase_method'] = self.purchase_method_id.id or 0
+        data['parameters']['date_from'] = self.date_from or 'Null'
+        data['parameters']['date_to'] = self.date_to or 'Null'
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,

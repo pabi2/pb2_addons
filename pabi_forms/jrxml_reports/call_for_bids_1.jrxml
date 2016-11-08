@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.1000000000000225"/>
+	<property name="ireport.zoom" value="1.2100000000000253"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="110"/>
+	<property name="ireport.y" value="176"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -89,11 +89,20 @@
 			<parameterDescription><![CDATA[]]></parameterDescription>
 		</parameter>
 		<queryString>
-			<![CDATA[SELECT TRIM(pdl.product_name) product_name,
-SUM(pdl.price_unit) price_unit,
+			<![CDATA[SELECT MIN(id) id,
+TRIM(product_name) product_name,
+price_unit,
+SUBSTRING(string_agg(pr_no,',') FROM 1 for 10) pr_no,
+SUM(product_qty) product_qty,
+SUM(price_subtotal) price_subtotal,
+unit
+FROM
+(SELECT pdl.id,
+pdl.product_name product_name,
+pdl.price_unit price_unit,
 pr.name pr_no,
-SUM(pdl.product_qty) product_qty,
-SUM(pdl.price_subtotal) price_subtotal,
+pdl.product_qty product_qty,
+pdl.price_subtotal price_subtotal,
 pu.name unit
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_request_purchase_requisition_line_rel prpd
@@ -104,11 +113,12 @@ LEFT JOIN purchase_request pr
 ON pr.id = prl.request_id
 left join product_uom pu on pdl.product_uom_id = pu.id
 WHERE pdl.requisition_id = $P{ids}
-GROUP BY TRIM(pdl.product_name),pr.name,pu.name]]>
+ORDER BY pdl.id ASC) as t
+GROUP BY TRIM(product_name),unit,price_unit
+ORDER BY id]]>
 		</queryString>
-		<field name="product_name" class="java.lang.String">
-			<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
-		</field>
+		<field name="id" class="java.lang.Integer"/>
+		<field name="product_name" class="java.lang.String"/>
 		<field name="price_unit" class="java.lang.Double">
 			<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
 		</field>
@@ -162,15 +172,13 @@ ON approved_name.id = approved.partner_id
 
 WHERE pd.id = $P{ids}]]>
 		</queryString>
-		<field name="requested_by" class="java.lang.String">
-			<fieldDescription><![CDATA[Requested by]]></fieldDescription>
-		</field>
+		<field name="requested_by" class="java.lang.String"/>
 		<field name="create_date" class="java.sql.Timestamp">
 			<fieldDescription><![CDATA[Created on]]></fieldDescription>
 		</field>
 		<field name="approver" class="java.lang.String"/>
 		<field name="date_approve" class="java.sql.Date">
-			<fieldDescription><![CDATA[Date Approved]]></fieldDescription>
+			<fieldDescription><![CDATA[Approved Date]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="committee">
@@ -208,7 +216,7 @@ left join purchase_requisition pd on pd.id = po.requisition_id
 LEFT JOIN res_partner_title rpt
 ON rpt.id = rp.title
 WHERE po.requisition_id = $P{ids}
-AND po.order_type LIKE 'quotation' AND po.state NOT LIKE 'cancel']]>
+AND po.order_type LIKE 'quotation']]>
 		</queryString>
 		<field name="rfq_number" class="java.lang.String"/>
 		<field name="supplier_name" class="java.lang.String"/>
@@ -216,7 +224,7 @@ AND po.order_type LIKE 'quotation' AND po.state NOT LIKE 'cancel']]>
 			<fieldDescription><![CDATA[Total]]></fieldDescription>
 		</field>
 		<field name="fine_num_days" class="java.lang.Integer">
-			<fieldDescription><![CDATA[No. of Days]]></fieldDescription>
+			<fieldDescription><![CDATA[Delivery Within (Days)]]></fieldDescription>
 		</field>
 		<field name="date_fine" class="java.sql.Date">
 			<fieldDescription><![CDATA[Fine Date]]></fieldDescription>
@@ -295,22 +303,24 @@ left join res_section rs on he.section_id = rs.id
 WHERE ru.id = pd.request_uid) as department,
 pd.objective,
 pd.amount_total,
-po.delivery_address as deliver_to,
+pd.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
-pd.doc_footer as footer,
-po.name as rfq_number,
+pd.doc_body as footer,
+(SELECT p.name FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed') as rfq_number,
 (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) FROM res_partner rp
 LEFT JOIN res_partner_title rpt
 ON rpt.id = rp.title
-WHERE rp.id = po.partner_id) as rfq_supplier,
+WHERE rp.id = po.partner_id AND po.state = 'confirmed') as rfq_supplier,
 (SELECT rp.taxbranch FROM res_partner rp
-WHERE rp.id = po.partner_id) as rfq_taxbranch,
-po.amount_total as rfq_amount_total,
+WHERE rp.id = po.partner_id AND po.state = 'confirmed') as rfq_taxbranch,
+(SELECT p.amount_total FROM purchase_order p
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed') as rfq_amount_total,
 
 po.minimum_planned_date-DATE(now()) as minimum_planned_date,
 (SELECT p.amount_total_text_th FROM purchase_order p
-WHERE p.requisition_id = pd.id AND p.state = 'done'),
+WHERE p.requisition_id = pd.id AND p.state = 'confirmed'),
 
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
@@ -394,6 +404,9 @@ LEFT JOIN purchase_price_range ppr
 ON ppr.id = pd.purchase_price_range_id
 LEFT JOIN purchase_order po
 ON po.requisition_id = pd.id AND po.state = 'confirmed'
+
+
+
 
 WHERE $X{IN, pd.id, PIDS}]]>
 	</queryString>
