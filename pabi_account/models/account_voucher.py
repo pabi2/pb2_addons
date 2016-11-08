@@ -41,6 +41,16 @@ class AccountVoucher(models.Model):
         string='Payment Type',
         help="Specified Payment Type, can be used to screen Payment Method",
     )
+    supplier_bank_id = fields.Many2one(
+        'res.partner.bank',
+        string='Supplier Bank Account',
+        domain="[('partner_id', '=', partner_id)]",
+    )
+    supplier_bank_branch = fields.Char(
+        string='Supplier Bank Branch',
+        related='supplier_bank_id.branch_cheque',
+        readonly=True,
+    )
 
     @api.multi
     @api.constrains('date_value')

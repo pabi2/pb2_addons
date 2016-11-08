@@ -2,6 +2,21 @@
 <openerp>
     <data>
 
+              <!-- Supplier Payment -->
+              <record model="ir.ui.view" id="view_vendor_payment_form">
+                  <field name="name">account.voucher.payment.form</field>
+                  <field name="model">account.voucher</field>
+                  <field name="inherit_id"
+                         ref="account_voucher.view_vendor_payment_form"/>
+                  <field name="arch" type="xml">
+                      <field name="journal_id" position="after">
+                          <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                      </field>
+                      <field name="writeoff_acc_id" position="after">
+                          <field name="writeoff_operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                      </field>
+                  </field>
+              </record>
         #Supplier Payment
         <record model="ir.ui.view" id="view_vendor_payment_form">
             <field name="name">account.voucher.payment.form</field>
@@ -10,6 +25,10 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="before">
                     <field name="payment_type" required="1"/>
+                </field>
+                <field name="journal_id" position="after">
+                    <field name="supplier_bank_id" />
+                    <field name="supplier_bank_branch" />
                 </field>
                 <field name="date_value" position="attributes">
                     <attribute name="string">Value/Cheque Date</attribute>
