@@ -145,11 +145,34 @@ class PurchaseOrder(models.Model):
         self.dummy_quote_id = self.id
 
     @api.model
+    def check_over_requisition_limit(self):
+        if self.state not in ('done', 'cancel'):
+            po_total_payment = 0
+            confirmed_rfqs = self.search(
+                [
+                    ('requisition_id', '=', self.requisition_id.id),
+                    ('state', '=', 'done'),
+                ]
+            )
+            for rfq in confirmed_rfqs:
+                po_total_payment += rfq.amount_total
+            over_rate = (self.requisition_id.amount_total * 10) / 100
+            cfb_total_amount = self.requisition_id.amount_total + over_rate
+            if po_total_payment + self.amount_total > cfb_total_amount:
+                raise UserError(
+                    _("""Can't evaluate this acceptance.
+                         This RfQ total amount is over than
+                         call for bids total amount.""")
+                )
+        return True
+
+    @api.model
     def _check_request_for_quotation(self):
         if self.requisition_id.purchase_method_id.require_rfq:
             raise UserError(
                 _("Can't convert to order. Have to wait for PD approval.")
             )
+        self.check_over_requisition_limit()
         return True
 
     @api.model
@@ -368,12 +391,6 @@ class PurchaseOrder(models.Model):
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
-
-    fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        'Fiscal Year',
-        readonly=True,
-    )
 
     @api.multi
     def unlink(self):
