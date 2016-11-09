@@ -18,6 +18,7 @@ the invoice date and due date be set for all selected documents.
     "installable": True,
     "depends": [
         "pabi_purchase_work_acceptance",
+        "pabi_forms",
     ],
     "data": [
         "security/ir.model.access.csv",
