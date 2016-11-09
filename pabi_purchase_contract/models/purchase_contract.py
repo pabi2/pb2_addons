@@ -256,13 +256,21 @@ class PurchaseContract(models.Model):
             Emp = Employees.search(
                 [['user_id', '=', self._uid]], limit=1)
             gid = False
-            grp = self.env.ref('base.group_pabi_purchase_contract_user')
-            if Emp and grp.id in self.env.user.groups_id.mapped('id'):
-                if Emp.org_id.code == 'CT':
+            if Emp and self.env.ref(
+                'base.group_pabi_purchase_contract_user').id in \
+                self.env.user.groups_id.mapped('id'):
+                if Emp.org_id.name_short == 'CT' or \
+                    Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    gid = self.env.ref(Ext_group +
-                                       Emp.org_id.org_shortname_en.lower())
+                    if Emp.org_id.name_short:
+                        ext_grp = Ext_group + Emp.org_id.name_short.lower()
+                        gid = self.env.ref(ext_grp)
+                    else:
+                        raise osv.except_osv(
+                             _(u'Error!!'),
+                             _("""You do not have permission to create.
+                                Please contact your system administrator."""))
                 return gid
             else:
                 raise osv.except_osv(
@@ -776,13 +784,21 @@ class PurchaseContract(models.Model):
             Emp = Employees.search(
                 [['user_id', '=', self._uid]], limit=1)
             gid = False
-            grp = self.env.ref('base.group_pabi_purchase_contract_user')
-            if Emp and grp.id in self.env.user.groups_id.mapped('id'):
-                if Emp.org_id.code == 'CT':
+            if Emp and self.env.ref(
+                'base.group_pabi_purchase_contract_user').id in \
+                self.env.user.groups_id.mapped('id'):
+                if Emp.org_id.name_short == 'CT' or \
+                    Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
-                    gid = self.env.ref(Ext_group +
-                                       Emp.org_id.org_shortname_en.lower())
+                    if Emp.org_id.name_short:
+                        ext_grp = Ext_group + Emp.org_id.name_short.lower()
+                        gid = self.env.ref(ext_grp)
+                    else:
+                        raise osv.except_osv(
+                             _(u'Error!!'),
+                             _("""You do not have permission to create.
+                                Please contact your system administrator."""))
                 self.admin_org_groups_id = gid
             else:
                 self.admin_org_groups_id = False
