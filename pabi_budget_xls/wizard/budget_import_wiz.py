@@ -17,6 +17,78 @@ class BudgetImportWizard(models.TransientModel):
     input_file = fields.Binary('Template')
     datas_fname = fields.Char('Import File Name')
 
+    @api.model
+    def _update_cost_control_lines(self, workbook, budget):
+        CostCtrl_Sheet = workbook.get_sheet_by_name('CostControl_1')
+        max_row = CostCtrl_Sheet.max_row
+        costcontrol = CostCtrl_Sheet.cell(row=6, column=2).value
+        costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
+        activity_group = CostCtrl_Sheet.cell(row=5, column=2).value
+        activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
+        costcontrol_vals = {'plan_id' : budget.id,
+                     'cost_control_id': costcontrol_id.id}
+        costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+        line_row = 11
+        lines = {}
+        lines_to_create = []
+        line_ids=False
+        for row in range(line_row, max_row):
+            line_vals = {'activity_group_id': activity_group_id.id,
+                         'cost_control_line_id': costcontrol_line.id}
+            activity = CostCtrl_Sheet.cell(row=row, column=1).value
+            if activity:
+                activity_id = self.env['account.activity'].search([('name', '=', tools.ustr(activity))])
+                line_vals.update({'activity_id': activity_id.id})
+            name = CostCtrl_Sheet.cell(row=row, column=2).value
+            if name:
+                line_vals.update({'name': tools.ustr(name)})
+            
+            act_unit = CostCtrl_Sheet.cell(row=row, column=4).value
+            if not act_unit:
+                continue
+            
+            m1 = CostCtrl_Sheet.cell(row=row, column=9).value
+            if m1:
+                line_vals.update({'m1': m1})
+            m2 = CostCtrl_Sheet.cell(row=row, column=10).value
+            if m2:
+                line_vals.update({'m2': m2})
+            m3 = CostCtrl_Sheet.cell(row=row, column=11).value
+            if m3:
+                line_vals.update({'m3': m3})
+            m4 = CostCtrl_Sheet.cell(row=row, column=12).value
+            if m4:
+                line_vals.update({'m4': m4})
+            m5 = CostCtrl_Sheet.cell(row=row, column=13).value
+            if m5:
+                line_vals.update({'m5': m5})
+            m6 = CostCtrl_Sheet.cell(row=row, column=14).value
+            if m6:
+                line_vals.update({'m6': m6})
+            m7 = CostCtrl_Sheet.cell(row=row, column=15).value
+            if m7:
+                line_vals.update({'m7': m7})
+            m8 = CostCtrl_Sheet.cell(row=row, column=16).value
+            if m8:
+                line_vals.update({'m8': m8})
+            m9 = CostCtrl_Sheet.cell(row=row, column=17).value
+            if m9:
+                line_vals.update({'m9': m9})
+            m10 = CostCtrl_Sheet.cell(row=row, column=18).value
+            if m10:
+                line_vals.update({'m10': m10})
+            m11 = CostCtrl_Sheet.cell(row=row, column=19).value
+            if m11:
+                line_vals.update({'m11': m11})
+            m12 = CostCtrl_Sheet.cell(row=row, column=20).value
+            if m12:
+                line_vals.update({'m12': m12})
+            cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
+            if not line_ids:
+                line_ids = cc_line
+            else:
+                line_ids += cc_line
+
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
         if not template:
@@ -41,6 +113,7 @@ class BudgetImportWizard(models.TransientModel):
             if budget.state != 'draft':
                 raise UserError(
                     _('You can update budget plan only in draft state!'))
+
 
             NonCostCtrl_Sheet = workbook.get_sheet_by_name('Non_CostControl')
             max_row = NonCostCtrl_Sheet.max_row
@@ -83,6 +156,8 @@ class BudgetImportWizard(models.TransientModel):
             if section_id:
                 vals.update({'creating_user_id': responsible_by_id.id})
 
+
+            self._update_cost_control_lines(workbook, budget)
             line_row = 11
             lines = {}
             lines_to_create = []
