@@ -103,7 +103,7 @@ class AccountActivity(models.Model):
     account_id = fields.Many2one(
         'account.account',
         string='Account',
-        required=True,
+        required=False,
         domain=[('type', '!=', 'view')],
         help="This account has higher priority to group activities's account",
     )

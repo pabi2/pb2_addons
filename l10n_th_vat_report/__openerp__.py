@@ -14,6 +14,7 @@ Thai Vat Report
         'account',
         'l10n_th_account',
         'l10n_th_account_tax_detail',
+        'pabi_account',  # TODO: remove for generic case
     ],
     "data": [
         "wizard/output_xls.xml",

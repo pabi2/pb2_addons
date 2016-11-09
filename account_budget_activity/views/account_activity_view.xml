@@ -160,7 +160,7 @@
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="account_id"/>
+                            <field name="account_id" required="1"/>
                         </group>
                         <group>
                             <field name="activity_group_ids" required="1" widget="many2many_tags"/>
