@@ -114,6 +114,9 @@ class HRExpense(models.Model):
         string='Reason purchase bypass procurement',
         readonly=True,
     )
+    remark = fields.Text(
+        string='Note for Advance',
+    )
 
     @api.multi
     def write(self, vals):

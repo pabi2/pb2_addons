@@ -121,6 +121,13 @@
 						</field>
 					</page>
 				</notebook>
+
+				<xpath expr="/form/sheet/notebook/page/group/div" position="after">
+					<div>
+						<separator string="Notes"/>
+						<field name="note" placeholder="Free Notes"/>
+					</div>
+				</xpath>
 			</field>
 		</record>
 
