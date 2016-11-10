@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="wizard_cost_control_breakdown" model="ir.ui.view">
+            <field name="name">wizard.cost.control.breakdown</field>
+            <field name="model">cost.control.breakdown</field>
+            <field name="inherit_id" ref="pabi_budget_plan.wizard_cost_control_breakdown"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/field/tree/field[@name='activity_group_id']" position="before">
+                    <field name="charge_type"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
