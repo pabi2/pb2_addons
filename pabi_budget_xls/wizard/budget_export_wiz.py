@@ -8,6 +8,7 @@ from openpyxl.utils import quote_sheetname
 from openpyxl.styles import PatternFill, Border,\
     Side, Protection, Font, Alignment
 
+from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from docutils.nodes import row
@@ -74,6 +75,56 @@ class BudgetExportWizard(models.TransientModel):
         for row in range(row_start, row_end):
             for col in col_list:
                 sheet.cell(row=row, column=col).fill = greyFill
+    
+    @api.model
+    def _update_activity_masterdata(self, workbook):
+        activity_ids = self.env['account.activity'].search([])
+        activities_list = [tools.ustr(a.name) for a in activity_ids]
+        activities = ','.join(activities_list)
+        act_dv = DataValidation(type="list", formula1=activities)
+        
+        Activity_MasterSheet = False
+        try:
+            Activity_MasterSheet = workbook.get_sheet_by_name('Activity_MasterData')
+        except:
+            Activity_MasterSheet = workbook.create_sheet('Activity_MasterData')
+        Activity_MasterSheet.protection.sheet = True
+        
+        bold_font = Font(bold=True, name='Arial', size=11)
+
+        Activity_MasterSheet.cell(row=1, column=1).value = 'Sequence'
+        Activity_MasterSheet.cell(row=1, column=2).value = 'Activity - English'
+        Activity_MasterSheet.cell(row=1, column=3).value = 'Activity - Thai'
+        Activity_MasterSheet.cell(row=1, column=1).font = bold_font
+        Activity_MasterSheet.cell(row=1, column=2).font = bold_font
+        Activity_MasterSheet.cell(row=1, column=3).font = bold_font
+
+        ag_row = 2
+        ag_count = 1
+        ag_length = 1
+        for ag in activity_ids:
+            Activity_MasterSheet.cell(row=ag_row, column=1, value=ag_count)
+            Activity_MasterSheet.cell(row=ag_row, column=2, value=ag.name)
+            Activity_MasterSheet.cell(row=ag_row, column=3, value=ag.name)
+            if len(ag.name) > ag_length:
+                ag_length = len(ag.name)
+            ag_row += 1
+            ag_count += 1
+
+
+        Activity_MasterSheet.column_dimensions['A'].width = 11
+        Activity_MasterSheet.column_dimensions['B'].width = ag_length
+        Activity_MasterSheet.column_dimensions['C'].width = ag_length
+
+        formula1 = "{0}!$C$2:$C$%s" % (ag_row)
+        ActivityList = DataValidation(
+            type="list",
+            formula1=formula1.format(
+                quote_sheetname('Activity_MasterData')
+            )
+        )
+        SHEET_FORMULAS.update({'activity_formula': ActivityList})
+        return True
 
     @api.model
     def _update_costcontrol_masterdata(self, workbook):
@@ -193,10 +244,9 @@ class BudgetExportWizard(models.TransientModel):
         
         if ConstControl_Sheet:
             self._update_costcontrol_masterdata(workbook)
-            activity_ids = self.env['account.activity'].search([])
-            activities_list = [a.name for a in activity_ids]
-            activities = ','.join(activities_list)
-            act_dv = DataValidation(type="list", formula1=activities, allow_blank=True)
+            self._update_activity_masterdata(workbook)
+
+            act_dv = SHEET_FORMULAS.get('activity_formula', False)
             row = 1
             ConstControl_Sheet.cell(row=row, column=2,
                                        value=budget.fiscalyear_id.name)
@@ -295,6 +345,7 @@ class BudgetExportWizard(models.TransientModel):
                 row += 1
                 ConstControl_Sheet.cell(row=row, column=1, value='Activity Group').font = bold_font
                 ag_list_formula.add(ConstControl_Sheet.cell(row=row, column=2))
+                ag_row = row
                 row += 1
                 ConstControl_Sheet.cell(row=row, column=1, value='Cost Control').font = bold_font
                 costcontrol_formula = SHEET_FORMULAS.get('cost_control_formula', False)
@@ -322,6 +373,9 @@ class BudgetExportWizard(models.TransientModel):
                 for line in const_cntrl_line.plan_cost_control_line_ids:
                     line_exist = self.env['budget.plan.unit.line'].search(
                         [('breakdown_line_id', '=', line.id)])
+                    
+                    if ag_row:
+                        ConstControl_Sheet.cell(row=ag_row, column=2, value=line.activity_group_id.name)
                     act_dv.add(ConstControl_Sheet.cell(row=row, column=1))
                     ConstControl_Sheet.cell(row=row, column=1, value=line.activity_id.name)
                     ConstControl_Sheet.cell(row=row, column=2, value=line.name)

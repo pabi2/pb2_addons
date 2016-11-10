@@ -21,17 +21,25 @@ class BudgetImportWizard(models.TransientModel):
     def _update_cost_control_lines(self, workbook, budget):
         CostCtrl_Sheet = workbook.get_sheet_by_name('CostControl_1')
         max_row = CostCtrl_Sheet.max_row
-        costcontrol = CostCtrl_Sheet.cell(row=6, column=2).value
+        costcontrol = CostCtrl_Sheet.cell(row=7, column=2).value
         costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
-        activity_group = CostCtrl_Sheet.cell(row=5, column=2).value
+        activity_group = CostCtrl_Sheet.cell(row=6, column=2).value
         activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
         costcontrol_vals = {'plan_id' : budget.id,
                      'cost_control_id': costcontrol_id.id}
-        costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
-        line_row = 11
+
+        costcontrol_line_id =  CostCtrl_Sheet.cell(row=7, column=5).value
+        costcontrol_line = False
+        if costcontrol_line_id:
+            costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
+        if not costcontrol_line:
+            costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+        line_row = 12
         lines = {}
         lines_to_create = []
+        lines_to_write = []
         line_ids=False
+
         for row in range(line_row, max_row):
             line_vals = {'activity_group_id': activity_group_id.id,
                          'cost_control_line_id': costcontrol_line.id}
@@ -42,11 +50,11 @@ class BudgetImportWizard(models.TransientModel):
             name = CostCtrl_Sheet.cell(row=row, column=2).value
             if name:
                 line_vals.update({'name': tools.ustr(name)})
-            
+
             act_unit = CostCtrl_Sheet.cell(row=row, column=4).value
             if not act_unit:
                 continue
-            
+
             m1 = CostCtrl_Sheet.cell(row=row, column=9).value
             if m1:
                 line_vals.update({'m1': m1})
@@ -83,11 +91,19 @@ class BudgetImportWizard(models.TransientModel):
             m12 = CostCtrl_Sheet.cell(row=row, column=20).value
             if m12:
                 line_vals.update({'m12': m12})
-            cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
-            if not line_ids:
-                line_ids = cc_line
+            line_id = CostCtrl_Sheet.cell(row=row, column=22).value
+            if line_id:
+                line_id = int(line_id)
+                existing_line = self.env['budget.plan.unit.cost.control.line'].browse(line_id)
+                existing_line.write(line_vals)
+                lines_to_write.append(existing_line.id)
             else:
-                line_ids += cc_line
+                cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
+                lines_to_create.append(cc_line.id)
+                if not line_ids:
+                    line_ids = cc_line
+                else:
+                    line_ids += cc_line
 
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
