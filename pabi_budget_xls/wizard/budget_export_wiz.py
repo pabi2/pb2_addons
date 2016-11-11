@@ -182,49 +182,49 @@ class BudgetExportWizard(models.TransientModel):
             sheet.cell(row=row, column=2).alignment = center_align
             sheet.cell(row=row, column=3, value='เหตุผลและ').font = bold_font
             sheet.cell(row=row, column=3).alignment = center_align
-            sheet.cell(row=row, column=4, value='Calculate').font = bold_font
-            sheet.cell(row=row, column=4).alignment = center_align
-            sheet.merge_cells(start_row=row,start_column=4,end_row=row,end_column=8)
-            sheet.cell(row=row, column=9, value='แผนค่าใช้จ่าย ปีงบประมาณปี 2016').font = bold_font
-            sheet.cell(row=row, column=9).alignment = center_align
-            sheet.merge_cells(start_row=row,start_column=9,end_row=row,end_column=21)
+            sheet.cell(row=row, column=5, value='Calculate').font = bold_font
+            sheet.cell(row=row, column=5).alignment = center_align
+            sheet.merge_cells(start_row=row,start_column=5,end_row=row,end_column=9)
+            sheet.cell(row=row, column=10, value='แผนค่าใช้จ่าย ปีงบประมาณปี 2016').font = bold_font
+            sheet.cell(row=row, column=10).alignment = center_align
+            sheet.merge_cells(start_row=row,start_column=10,end_row=row,end_column=22)
             
             
             row += 1
             sheet.cell(row=row, column=1, value='').font = bold_font
             sheet.cell(row=row, column=2, value='').font = bold_font
             sheet.cell(row=row, column=3, value='ความจำเป็น').font = bold_font
-            sheet.cell(row=row, column=4, value='คน/หน่วย').font = bold_font
-            sheet.cell(row=row, column=5, value='@').font = bold_font
-            sheet.cell(row=row, column=6, value='ครั้ง').font = bold_font
-            sheet.cell(row=row, column=7, value='จำนวนเงิน').font = bold_font
-            sheet.cell(row=row, column=9, value='ต.ค.').font = bold_font
-            sheet.cell(row=row, column=10, value='พ.ย.').font = bold_font
-            sheet.cell(row=row, column=11, value='ธ.ค.').font = bold_font
-            sheet.cell(row=row, column=12, value='ม.ค.').font = bold_font
-            sheet.cell(row=row, column=13, value='ก.พ.').font = bold_font
-            sheet.cell(row=row, column=14, value='มี.ค.').font = bold_font
-            sheet.cell(row=row, column=15, value='เม.ย.').font = bold_font
-            sheet.cell(row=row, column=16, value='พ.ค.').font = bold_font
-            sheet.cell(row=row, column=17, value='มิ.ย.').font = bold_font
-            sheet.cell(row=row, column=18, value='ก.ค.').font = bold_font
-            sheet.cell(row=row, column=19, value='ส.ค.').font = bold_font
-            sheet.cell(row=row, column=20, value='ก.ย.').font = bold_font
-            sheet.cell(row=row, column=21, value='รวม').font = bold_font
+            sheet.cell(row=row, column=5, value='คน/หน่วย').font = bold_font
+            sheet.cell(row=row, column=6, value='@').font = bold_font
+            sheet.cell(row=row, column=7, value='ครั้ง').font = bold_font
+            sheet.cell(row=row, column=8, value='จำนวนเงิน').font = bold_font
+            sheet.cell(row=row, column=10, value='ต.ค.').font = bold_font
+            sheet.cell(row=row, column=11, value='พ.ย.').font = bold_font
+            sheet.cell(row=row, column=12, value='ธ.ค.').font = bold_font
+            sheet.cell(row=row, column=13, value='ม.ค.').font = bold_font
+            sheet.cell(row=row, column=14, value='ก.พ.').font = bold_font
+            sheet.cell(row=row, column=15, value='มี.ค.').font = bold_font
+            sheet.cell(row=row, column=16, value='เม.ย.').font = bold_font
+            sheet.cell(row=row, column=17, value='พ.ค.').font = bold_font
+            sheet.cell(row=row, column=18, value='มิ.ย.').font = bold_font
+            sheet.cell(row=row, column=19, value='ก.ค.').font = bold_font
+            sheet.cell(row=row, column=20, value='ส.ค.').font = bold_font
+            sheet.cell(row=row, column=21, value='ก.ย.').font = bold_font
+            sheet.cell(row=row, column=22, value='รวม').font = bold_font
             
-            for i in range(1, 22):
+            for i in range(1, 23):
                 sheet.cell(row=row, column=i).alignment = center_align
                 
             self._add_cell_border(sheet,
                   row_start=row-1,
                   row_end=row+1,
                   col_start=1,
-                  col_end=21)
+                  col_end=22)
             self.with_context(color='94BDD7')._make_cell_color_filled(sheet=sheet,
                                      row_start=row-1,
                                      row_end=row+1,
                                      col_start=1,
-                                     col_end=21,
+                                     col_end=22,
                                      col_list=[])
             row += 1
             return row
@@ -262,6 +262,7 @@ class BudgetExportWizard(models.TransientModel):
                 ConstControl_Sheet.add_data_validation(ag_list_formula)
                 ConstControl_Sheet.add_data_validation(act_dv)
                 bold_font = Font(bold=True, name='Arial', size=11)
+                row += 1
                 ConstControl_Sheet.cell(row=row, column=1, value='Activity Group').font = bold_font
                 ag_list_formula.add(ConstControl_Sheet.cell(row=row, column=2))
                 row += 1
@@ -275,26 +276,32 @@ class BudgetExportWizard(models.TransientModel):
                          col_start=2,
                          col_end=2,
                          skip_cell=0)
+                self.with_context(color='94BDD7')._make_cell_color_filled(sheet=ConstControl_Sheet,
+                         row_start=1,
+                         row_end=8,
+                         col_start=2,
+                         col_end=2,
+                         col_list=[])
                 row = row+3
                 row = generate_line_header(ConstControl_Sheet, row)
                 LineStart = row
             
                 for line in range(self.editable_lines):
                     act_dv.add(ConstControl_Sheet.cell(row=row, column=1))
-                    eq = "=D%s*$E$%s*$F$%s" % (row, row, row)
-                    ConstControl_Sheet.cell(row=row, column=7, value=eq).fill = greyFill
-                    ConstControl_Sheet.cell(row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
+                    eq = "=E%s*$F$%s*$G$%s" % (row, row, row)
+                    ConstControl_Sheet.cell(row=row, column=8, value=eq).fill = greyFill
+                    ConstControl_Sheet.cell(row=row, column=22, value="=SUM(I%s:$U$%s)" % (row, row))
                     row += 1
                 self._add_cell_border(ConstControl_Sheet,
                       row_start=LineStart,
                       row_end=row,
                       col_start=1,
-                      col_end=21)
-                ConstControl_Sheet.cell(row=row, column=6, value='Total').fill = greyFill
-                ConstControl_Sheet.cell(row=row, column=6).font = bold_font
+                      col_end=22)
+                ConstControl_Sheet.cell(row=row, column=7, value='Total').fill = greyFill
+                ConstControl_Sheet.cell(row=row, column=7).font = bold_font
                 params = (LineStart, row-1)
                 ConstControl_Sheet.cell(
-                    row=row, column=9).value = '=SUM(I%s:I%s)' % params
+                    row=row, column=8).value = '=SUM(H%s:H%s)' % params
                 ConstControl_Sheet.cell(
                     row=row, column=10).value = '=SUM(J%s:J%s)' % params
                 ConstControl_Sheet.cell(
@@ -319,16 +326,18 @@ class BudgetExportWizard(models.TransientModel):
                     row=row, column=20).value = '=SUM(T%s:T%s)' % params
                 ConstControl_Sheet.cell(
                     row=row, column=21).value = '=SUM(U%s:U%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=22).value = '=SUM(V%s:V%s)' % params
                 self._add_cell_border(ConstControl_Sheet,
                       row_start=row,
                       row_end=row+1,
-                      col_start=6,
-                      col_end=21)
+                      col_start=7,
+                      col_end=22)
                 self._make_cell_color_filled(sheet=ConstControl_Sheet,
                              row_start=row,
                              row_end=row+1,
-                             col_start=6,
-                             col_end=21,
+                             col_start=7,
+                             col_end=22,
                              col_list=[])
                 self._make_cell_editable(sheet=ConstControl_Sheet,
                          row_start=LineStart,
@@ -380,43 +389,43 @@ class BudgetExportWizard(models.TransientModel):
                     ConstControl_Sheet.cell(row=row, column=1, value=line.activity_id.name)
                     ConstControl_Sheet.cell(row=row, column=2, value=line.name)
                     ConstControl_Sheet.cell(row=row, column=3, value=line.name)
-                    ConstControl_Sheet.cell(row=row, column=4, value=line_exist.activity_unit)
-                    ConstControl_Sheet.cell(row=row, column=5, value=line_exist.activity_unit_price)
-                    ConstControl_Sheet.cell(row=row, column=6, value=line_exist.unit)
-                    eq = "=D%s*$E$%s*$F$%s" % (row, row, row)
-                    ConstControl_Sheet.cell(row=row, column=7, value=eq).fill = greyFill
-                    ConstControl_Sheet.cell(row=row, column=8, value=line.m0)
-                    ConstControl_Sheet.cell(row=row, column=9, value=line.m1)
-                    ConstControl_Sheet.cell(row=row, column=10, value=line.m2)
-                    ConstControl_Sheet.cell(row=row, column=11, value=line.m3)
-                    ConstControl_Sheet.cell(row=row, column=12, value=line.m4)
-                    ConstControl_Sheet.cell(row=row, column=13, value=line.m5)
-                    ConstControl_Sheet.cell(row=row, column=14, value=line.m6)
-                    ConstControl_Sheet.cell(row=row, column=15, value=line.m7)
-                    ConstControl_Sheet.cell(row=row, column=16, value=line.m8)
-                    ConstControl_Sheet.cell(row=row, column=17, value=line.m9)
-                    ConstControl_Sheet.cell(row=row, column=18, value=line.m10)
-                    ConstControl_Sheet.cell(row=row, column=19, value=line.m11)
-                    ConstControl_Sheet.cell(row=row, column=20, value=line.m12)
-                    ConstControl_Sheet.cell(row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
-                    ConstControl_Sheet.cell(row=row, column=22, value=line.id)
+                    ConstControl_Sheet.cell(row=row, column=5, value=line_exist.activity_unit)
+                    ConstControl_Sheet.cell(row=row, column=6, value=line_exist.activity_unit_price)
+                    ConstControl_Sheet.cell(row=row, column=7, value=line_exist.unit)
+                    eq = "=E%s*$F$%s*$G$%s" % (row, row, row)
+                    ConstControl_Sheet.cell(row=row, column=8, value=eq).fill = greyFill
+                    ConstControl_Sheet.cell(row=row, column=9, value=line.m0)
+                    ConstControl_Sheet.cell(row=row, column=10, value=line.m1)
+                    ConstControl_Sheet.cell(row=row, column=11, value=line.m2)
+                    ConstControl_Sheet.cell(row=row, column=12, value=line.m3)
+                    ConstControl_Sheet.cell(row=row, column=13, value=line.m4)
+                    ConstControl_Sheet.cell(row=row, column=14, value=line.m5)
+                    ConstControl_Sheet.cell(row=row, column=15, value=line.m6)
+                    ConstControl_Sheet.cell(row=row, column=16, value=line.m7)
+                    ConstControl_Sheet.cell(row=row, column=17, value=line.m8)
+                    ConstControl_Sheet.cell(row=row, column=18, value=line.m9)
+                    ConstControl_Sheet.cell(row=row, column=19, value=line.m10)
+                    ConstControl_Sheet.cell(row=row, column=20, value=line.m11)
+                    ConstControl_Sheet.cell(row=row, column=21, value=line.m12)
+                    ConstControl_Sheet.cell(row=row, column=22, value="=SUM(I%s:$U$%s)" % (row, row))
+                    ConstControl_Sheet.cell(row=row, column=23, value=line.id)
                     row += 1
                 for line in range(self.editable_lines):
                     act_dv.add(ConstControl_Sheet.cell(row=row, column=1))
-                    eq = "=D%s*$E$%s*$F$%s" % (row, row, row)
-                    ConstControl_Sheet.cell(row=row, column=7, value=eq).fill = greyFill
-                    ConstControl_Sheet.cell(row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
+                    eq = "=E%s*$F$%s*$G$%s" % (row, row, row)
+                    ConstControl_Sheet.cell(row=row, column=8, value=eq).fill = greyFill
+                    ConstControl_Sheet.cell(row=row, column=22, value="=SUM(I%s:$U$%s)" % (row, row))
                     row += 1
                 self._add_cell_border(ConstControl_Sheet,
                       row_start=LineStart,
                       row_end=row,
                       col_start=1,
-                      col_end=21)
-                ConstControl_Sheet.cell(row=row, column=6, value='Total').fill = greyFill
-                ConstControl_Sheet.cell(row=row, column=6).font = bold_font
+                      col_end=22)
+                ConstControl_Sheet.cell(row=row, column=7, value='Total').fill = greyFill
+                ConstControl_Sheet.cell(row=row, column=7).font = bold_font
                 params = (LineStart, row-1)
                 ConstControl_Sheet.cell(
-                    row=row, column=9).value = '=SUM(I%s:I%s)' % params
+                    row=row, column=8).value = '=SUM(H%s:H%s)' % params
                 ConstControl_Sheet.cell(
                     row=row, column=10).value = '=SUM(J%s:J%s)' % params
                 ConstControl_Sheet.cell(
@@ -441,22 +450,24 @@ class BudgetExportWizard(models.TransientModel):
                     row=row, column=20).value = '=SUM(T%s:T%s)' % params
                 ConstControl_Sheet.cell(
                     row=row, column=21).value = '=SUM(U%s:U%s)' % params
+                ConstControl_Sheet.cell(
+                    row=row, column=22).value = '=SUM(V%s:V%s)' % params
                 self._add_cell_border(ConstControl_Sheet,
                       row_start=row,
                       row_end=row+1,
-                      col_start=6,
-                      col_end=21)
+                      col_start=7,
+                      col_end=22)
                 self._make_cell_color_filled(sheet=ConstControl_Sheet,
                              row_start=row,
                              row_end=row+1,
-                             col_start=6,
-                             col_end=21,
+                             col_start=7,
+                             col_end=22,
                              col_list=[])
                 self._make_cell_editable(sheet=ConstControl_Sheet,
                          row_start=LineStart,
                          row_end=row,
                          col_start=1,
-                         col_end=21,
+                         col_end=22,
                          skip_cell=10)
                 row += 2
         return True
@@ -554,6 +565,8 @@ class BudgetExportWizard(models.TransientModel):
             section_name = budget.section_id.name
             LineStart = row
             for line in budget.plan_line_ids:
+                if line.breakdown_line_id:
+                    continue
                 if line.section_id:
                     section_name = line.section_id.name
                 NonCostCtrl_Sheet.cell(row=row, column=1).value = '=B2'

@@ -21,89 +21,166 @@ class BudgetImportWizard(models.TransientModel):
     def _update_cost_control_lines(self, workbook, budget):
         CostCtrl_Sheet = workbook.get_sheet_by_name('CostControl_1')
         max_row = CostCtrl_Sheet.max_row
-        costcontrol = CostCtrl_Sheet.cell(row=7, column=2).value
-        costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
-        activity_group = CostCtrl_Sheet.cell(row=6, column=2).value
-        activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
-        costcontrol_vals = {'plan_id' : budget.id,
-                     'cost_control_id': costcontrol_id.id}
+        last_row = False
+        while not last_row:
+            first_row = 6
+            head_line = first_row
+            while head_line < max_row+1:
+                costcontrol_vals = {'plan_id': budget.id}
+                activity_group = CostCtrl_Sheet.cell(row=head_line, column=2).value
+                if activity_group:
+                    activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
+                head_line += 1
+                costcontrol = CostCtrl_Sheet.cell(row=head_line, column=2).value
+                costcontrol_line_id = CostCtrl_Sheet.cell(row=head_line, column=5).value
 
-        costcontrol_line_id =  CostCtrl_Sheet.cell(row=7, column=5).value
-        costcontrol_line = False
-        if costcontrol_line_id:
-            costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
-        if not costcontrol_line:
-            costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
-        line_row = 12
-        lines = {}
-        lines_to_create = []
-        lines_to_write = []
-        line_ids=False
+                if not costcontrol and not activity_group and not costcontrol_line_id:
+                    head_line += 1
+                    continue
 
-        for row in range(line_row, max_row):
-            line_vals = {'activity_group_id': activity_group_id.id,
-                         'cost_control_line_id': costcontrol_line.id}
-            activity = CostCtrl_Sheet.cell(row=row, column=1).value
-            if activity:
-                activity_id = self.env['account.activity'].search([('name', '=', tools.ustr(activity))])
-                line_vals.update({'activity_id': activity_id.id})
-            name = CostCtrl_Sheet.cell(row=row, column=2).value
-            if name:
-                line_vals.update({'name': tools.ustr(name)})
-
-            act_unit = CostCtrl_Sheet.cell(row=row, column=4).value
-            if not act_unit:
-                continue
-
-            m1 = CostCtrl_Sheet.cell(row=row, column=9).value
-            if m1:
-                line_vals.update({'m1': m1})
-            m2 = CostCtrl_Sheet.cell(row=row, column=10).value
-            if m2:
-                line_vals.update({'m2': m2})
-            m3 = CostCtrl_Sheet.cell(row=row, column=11).value
-            if m3:
-                line_vals.update({'m3': m3})
-            m4 = CostCtrl_Sheet.cell(row=row, column=12).value
-            if m4:
-                line_vals.update({'m4': m4})
-            m5 = CostCtrl_Sheet.cell(row=row, column=13).value
-            if m5:
-                line_vals.update({'m5': m5})
-            m6 = CostCtrl_Sheet.cell(row=row, column=14).value
-            if m6:
-                line_vals.update({'m6': m6})
-            m7 = CostCtrl_Sheet.cell(row=row, column=15).value
-            if m7:
-                line_vals.update({'m7': m7})
-            m8 = CostCtrl_Sheet.cell(row=row, column=16).value
-            if m8:
-                line_vals.update({'m8': m8})
-            m9 = CostCtrl_Sheet.cell(row=row, column=17).value
-            if m9:
-                line_vals.update({'m9': m9})
-            m10 = CostCtrl_Sheet.cell(row=row, column=18).value
-            if m10:
-                line_vals.update({'m10': m10})
-            m11 = CostCtrl_Sheet.cell(row=row, column=19).value
-            if m11:
-                line_vals.update({'m11': m11})
-            m12 = CostCtrl_Sheet.cell(row=row, column=20).value
-            if m12:
-                line_vals.update({'m12': m12})
-            line_id = CostCtrl_Sheet.cell(row=row, column=22).value
-            if line_id:
-                line_id = int(line_id)
-                existing_line = self.env['budget.plan.unit.cost.control.line'].browse(line_id)
-                existing_line.write(line_vals)
-                lines_to_write.append(existing_line.id)
-            else:
-                cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
-                lines_to_create.append(cc_line.id)
-                if not line_ids:
-                    line_ids = cc_line
+                if costcontrol:
+                    costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
+                    costcontrol_vals.update({'cost_control_id': costcontrol_id.id})
                 else:
-                    line_ids += cc_line
+                    raise UserError(_('Please select valid costcontrol!'))
+                
+                costcontrol_line = False
+                if costcontrol_line_id:
+                    costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
+                if not costcontrol_line:
+                    costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+
+                if head_line == max_row:
+                    last_row = True
+                    break
+                head_line += 5
+                if head_line > max_row:
+                    head_line -= 5
+                line_row = head_line
+                ids = []
+                calculate_vals = {}
+                for row in range(line_row, line_row+10):
+                    if row >= max_row:
+                        last_row = True
+                        continue
+                    
+                    line_vals = {
+                        'activity_group_id': activity_group_id.id,
+                        'cost_control_line_id': costcontrol_line.id,
+                    }
+                    activity = CostCtrl_Sheet.cell(row=row, column=1).value
+                    if activity:
+                        activity_id = self.env['account.activity'].search([('name', '=', tools.ustr(activity))])
+                        line_vals.update({'activity_id': activity_id.id})
+
+                    name = CostCtrl_Sheet.cell(row=row, column=2).value
+                    if name:
+                        line_vals.update({'name': tools.ustr(name)})
+                        calculate_vals.update({'description': tools.ustr(name)})
+
+                    unit = CostCtrl_Sheet.cell(row=row, column=5).value
+                    if not unit:
+                        break
+                    calculate_vals.update({'unit': unit})
+
+                    activity_unit_price = CostCtrl_Sheet.cell(row=row, column=6).value
+                    if activity_unit_price:
+                        calculate_vals.update({'activity_unit_price': activity_unit_price})
+
+                    activity_unit = CostCtrl_Sheet.cell(row=row, column=7).value
+                    if activity_unit:
+                        calculate_vals.update({'activity_unit': activity_unit})
+
+                    m1 = CostCtrl_Sheet.cell(row=row, column=10).value
+                    if m1:
+                        line_vals.update({'m1': m1})
+                    m2 = CostCtrl_Sheet.cell(row=row, column=11).value
+                    if m2:
+                        line_vals.update({'m2': m2})
+                    m3 = CostCtrl_Sheet.cell(row=row, column=12).value
+                    if m3:
+                        line_vals.update({'m3': m3})
+                    m4 = CostCtrl_Sheet.cell(row=row, column=13).value
+                    if m4:
+                        line_vals.update({'m4': m4})
+                    m5 = CostCtrl_Sheet.cell(row=row, column=14).value
+                    if m5:
+                        line_vals.update({'m5': m5})
+                    m6 = CostCtrl_Sheet.cell(row=row, column=15).value
+                    if m6:
+                        line_vals.update({'m6': m6})
+                    m7 = CostCtrl_Sheet.cell(row=row, column=16).value
+                    if m7:
+                        line_vals.update({'m7': m7})
+                    m8 = CostCtrl_Sheet.cell(row=row, column=17).value
+                    if m8:
+                        line_vals.update({'m8': m8})
+                    m9 = CostCtrl_Sheet.cell(row=row, column=18).value
+                    if m9:
+                        line_vals.update({'m9': m9})
+                    m10 = CostCtrl_Sheet.cell(row=row, column=19).value
+                    if m10:
+                        line_vals.update({'m10': m10})
+                    m11 = CostCtrl_Sheet.cell(row=row, column=20).value
+                    if m11:
+                        line_vals.update({'m11': m11})
+                    m12 = CostCtrl_Sheet.cell(row=row, column=21).value
+                    if m12:
+                        line_vals.update({'m12': m12})
+
+                    line_id = CostCtrl_Sheet.cell(row=row, column=23).value
+                    if line_id:
+                        vals = {}
+                        existing_line = self.env['budget.plan.unit.cost.control.line'].search([('id', '=', int(line_id))])
+                        if existing_line:
+                            existing_line.write(line_vals)
+                            vals.update(line_vals)
+                            vals.update(calculate_vals)
+                            line_exist = self.env['budget.plan.unit.line'].search(
+                                [('plan_id', '=', costcontrol_line.plan_id.id),
+                                 ('breakdown_line_id', '=', existing_line.id)])
+                            if line_exist:
+                                line_exist.write(vals)
+                                ids.append(line_exist.id)
+                            else:
+                                create_vals = {
+                                    'breakdown_line_id': existing_line.id,
+                                    'plan_id': costcontrol_line.plan_id.id,
+                                    'fk_costcontrol_id': costcontrol_line.id,
+                                    'section_id': costcontrol_line.plan_id.section_id.id,
+                                    'cost_control_id': costcontrol_line.cost_control_id.id,
+                                }
+                                create_vals.update(vals)
+                                new_id = self.env['budget.plan.unit.line'].create(create_vals).id
+                                ids.append(new_id)
+                    else:
+                        vals = {}
+                        cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
+                        vals.update(line_vals)
+                        vals.update(calculate_vals)
+                        line_exist = self.env['budget.plan.unit.line'].search(
+                            [('plan_id', '=', costcontrol_line.plan_id.id),
+                             ('breakdown_line_id', '=', cc_line.id)])
+                        if line_exist:
+                            line_exist.write(vals)
+                            ids.append(line_exist.id)
+                        else:
+                            create_vals = {
+                                'breakdown_line_id': cc_line.id,
+                                'plan_id': costcontrol_line.plan_id.id,
+                                'fk_costcontrol_id': costcontrol_line.id,
+                                'section_id': costcontrol_line.plan_id.section_id.id,
+                                'cost_control_id': costcontrol_line.cost_control_id.id,
+                            }
+                            create_vals.update(vals)
+                            new_id = self.env['budget.plan.unit.line'].create(create_vals).id
+                            ids.append(new_id)
+                    head_line += 1
+                costcontrol_line.write({'detail_ids': [(6, 0, ids)]})
+            if last_row:
+                continue
+            last_row = True
+        return True
 
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
@@ -129,7 +206,6 @@ class BudgetImportWizard(models.TransientModel):
             if budget.state != 'draft':
                 raise UserError(
                     _('You can update budget plan only in draft state!'))
-
 
             NonCostCtrl_Sheet = workbook.get_sheet_by_name('Non_CostControl')
             max_row = NonCostCtrl_Sheet.max_row
@@ -173,7 +249,6 @@ class BudgetImportWizard(models.TransientModel):
                 vals.update({'creating_user_id': responsible_by_id.id})
 
 
-            self._update_cost_control_lines(workbook, budget)
             line_row = 11
             lines = {}
             lines_to_create = []
@@ -247,7 +322,8 @@ class BudgetImportWizard(models.TransientModel):
                 'plan_id': budget.id,
                 'attachement_id': attachement_id.id
             })
-            return {}
+            cost_control_data = self._update_cost_control_lines(workbook, budget)
+        return {}
 
     @api.multi
     def import_budget(self):
