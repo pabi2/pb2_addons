@@ -115,7 +115,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
         'res.division',
         string='Division',
         related="section_id.division_id",
-        required=True,
+        # required=True,
         readonly=True,
         store=True
     )

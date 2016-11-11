@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <field name="pay_to" position="replace">
+                    <label for="pay_to"/>
+                    <div>
+                        <div>
+                            <field name="pay_to" class="oe_inline"/>
+                        </div>
+                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                            <label for="internal_section_id" string="S:"/>
+                            <field name="internal_section_id" attrs="{'required': [('pay_to', '=', 'internal')]}" class="oe_inline"/>
+                        </div>
+                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                            <label for="activity_id" string="A:"/>
+                            <field name="activity_id" attrs="{'required': [('pay_to', '=', 'internal')]}" class="oe_inline"/>
+                        </div>
+                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                            <label for="activity_group_id" string="AG:"/>
+                            <field name="activity_group_id" class="oe_inline"/>
+                        </div>
+                    </div>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
