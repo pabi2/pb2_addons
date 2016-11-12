@@ -15,6 +15,7 @@ class PurchaseOrder(models.Model):
         })
         return
 
+# As invoice plan is installed, do it in the HOOK is more efficient.
 # @api.multi
 # def action_invoice_create(self):
 #     invoice_id = super(PurchaseOrder, self).action_invoice_create()
