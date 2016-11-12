@@ -8,38 +8,87 @@ from lxml import etree
 class AccountBudget(ChartField, models.Model):
     _inherit = 'account.budget'
 
-    budget_line_unit_base = fields.One2many(
+    budget_revenue_line_unit_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_project_base = fields.One2many(
+    budget_expense_line_unit_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_personnel = fields.One2many(
+    # --
+    budget_revenue_line_project_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_invest_asset = fields.One2many(
+    budget_expense_line_project_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_invest_construction = fields.One2many(
+    # --
+    budget_revenue_line_personnel = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_expense_line_personnel = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    # --
+    budget_revenue_line_invest_asset = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_expense_line_invest_asset = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    # --
+    budget_revenue_line_invest_construction = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_expense_line_invest_construction = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
@@ -84,15 +133,20 @@ class AccountBudget(ChartField, models.Model):
                             toolbar=toolbar, submenu=submenu)
         FIELD_RELATION = {
             'unit_base': ['section_id',
-                          'budget_line_unit_base'],
+                          'budget_revenue_line_unit_base',
+                          'budget_expense_line_unit_base'],
             'project_base': ['program_id',
-                             'budget_line_project_base'],
+                             'budget_revenue_line_project_base',
+                             'budget_expense_line_project_base'],
             'personnel': ['personnel_costcenter_id',
-                          'budget_line_personnel'],
+                          'budget_revenue_line_personnel',
+                          'budget_expense_line_personnel'],
             'invest_asset': ['org_id',
-                             'budget_line_invest_asset'],
+                             'budget_revenue_line_invest_asset',
+                             'budget_expense_line_invest_asset'],
             'invest_construction': ['org_id',
-                                    'budget_line_invest_construction'],
+                                    'budget_revenue_line_invest_construction',
+                                    'budget_expense_line_invest_construction'],
         }
         if self._context.get('default_chart_view', '') and view_type == 'form':
             budget_type = self._context['default_chart_view']
@@ -108,8 +162,12 @@ class AccountBudget(ChartField, models.Model):
                         continue
                     node.getparent().remove(node)
 
-                line_field_name = FIELD_RELATION[key][1]
-                node_lines = doc.xpath("//field[@name='%s']" % line_field_name)
+                revenue_line_field_name = FIELD_RELATION[key][1]
+                expense_line_field_name = FIELD_RELATION[key][2]
+                node_lines = doc.xpath("//field[@name='%s']" %
+                                       revenue_line_field_name)
+                node_lines += doc.xpath("//field[@name='%s']" %
+                                        expense_line_field_name)
                 for node_line in node_lines:
                     node_line.getparent().remove(node_line)
 

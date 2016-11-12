@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">view.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group[last()]" position="inside">
+                    <field name="taxbranch_id" attrs="{'required': [('len_taxbranch', '>', 0)]}"/>
+                    <field name="taxbranch_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="len_taxbranch" invisible="1"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_id']" position="after">
+
+                    <field name="require_chartfield" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1"/>
+                    <field name="tag_type_id" invisible="1"/>
+                    <field name="tag_id" invisible="1"/>
+
+                    <field name="functional_area_id" invisible="1"/>
+                    <field name="program_group_id" invisible="1"/>
+                    <field name="program_id" invisible="1"/>
+                    <field name="project_group_id" invisible="1"/>
+                    <field
+                        name="project_id"
+                        invisible="0"
+                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field name="org_id" invisible="1"/>
+                    <field name="sector_id" invisible="1"/>
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1"/>
+                    <field
+                        name="section_id"
+                        invisible="0"
+                        attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
+                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                    <field name="costcenter_id" invisible="1"/>
+                    <field name="taxbranch_id" invisible="1"/>
+
+                    <field
+                        name="invest_asset_id"
+                        invisible="0"
+                        attrs="{'required': [('section_id','=',False),('project_id','=',False),
+                        ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field
+                        name="invest_construction_phase_id"
+                        invisible="0"
+                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                        ('project_id','=',False),('personnel_costcenter_id','=',False),
+                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field
+                        name="personnel_costcenter_id"
+                        invisible="1"
+                        attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                        ('invest_construction_phase_id','=',False),('project_id','=',False),
+                        ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+
+                    <field name="fund_id" invisible="0"/>
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="0"/>
+
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
