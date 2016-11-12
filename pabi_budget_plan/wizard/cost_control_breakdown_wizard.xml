@@ -10,9 +10,31 @@
             <field name="model">cost.control.breakdown</field>
             <field name="arch" type="xml">
                 <form string="Cost Control Breakdown">
+                    <field name="cost_control_line_id" invisible="1"/>
                     <p class="oe_grey">Detail activities of this cost control</p>
-                    <field name="breakdown_line_ids">
+                    <field name="breakdown_line_ids" invisible="1">
                         <tree editable="bottom">
+                            <field name="activity_group_id"/>
+                            <field name="activity_id"/>
+                            <field name="name"/>
+                            <field name="m1"/>
+                            <field name="m2"/>
+                            <field name="m3"/>
+                            <field name="m4"/>
+                            <field name="m5"/>
+                            <field name="m6"/>
+                            <field name="m7"/>
+                            <field name="m8"/>
+                            <field name="m9"/>
+                            <field name="m10"/>
+                            <field name="m11"/>
+                            <field name="m12"/>
+                            <field name="planned_amount" sum="Planned Amount"/>
+                        </tree>
+                    </field>
+                    <field name="breakdown_costcontrol_line_ids" context="{'default_cost_control_line_id': cost_control_line_id}" widget="one2many_list">
+                        <tree editable="bottom">
+                            <field name="cost_control_line_id" invisible="True"/>
                             <field name="activity_group_id"/>
                             <field name="activity_id"/>
                             <field name="name"/>
