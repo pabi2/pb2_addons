@@ -179,7 +179,7 @@ class sale_order(models.Model):
             if amount:
                 advance_label = 'Advance'
                 company = self.env.user.company_id
-                account_id = company.company.account_deposit_customer.id
+                account_id = company.account_deposit_customer.id
                 name = _("%s of %s %%") % (advance_label, percent)
                 # create the invoice
                 inv_line_values = {
@@ -228,6 +228,7 @@ class sale_order(models.Model):
             raise except_orm(
                 _('Warning'),
                 _("Mix order and order with invoice plan is not allowed!"))
+        invoice_ids = []
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
             if order.use_invoice_plan:
@@ -246,6 +247,7 @@ class sale_order(models.Model):
                                 blines[0].deposit_percent,
                                 blines[0].deposit_amount,
                                 blines[0].date_invoice)
+                            invoice_ids.append(inv_id)
                             blines.write({'ref_invoice_id': inv_id})
                         else:
                             percent_dict = {}
@@ -263,11 +265,19 @@ class sale_order(models.Model):
                                     grouped=grouped,
                                     states=states,
                                     date_invoice=date_invoice)
+                            invoice_ids.append(inv_id)
                             blines.write({'ref_invoice_id': inv_id})
             else:
                 inv_id = super(sale_order, order).action_invoice_create(
                     grouped=grouped, states=states, date_invoice=date_invoice)
+                invoice_ids.append(inv_id)
+            order._action_invoice_create_hook(invoice_ids)  # Special Hook
         return inv_id
+
+    @api.model
+    def _action_invoice_create_hook(self, invoice_ids):
+        # For Hook
+        return
 
     @api.model
     def _make_invoice(self, order, lines):

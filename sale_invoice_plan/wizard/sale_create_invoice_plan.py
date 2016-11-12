@@ -47,7 +47,7 @@ class sale_create_invoice_plan(models.TransientModel):
     @api.model
     def _check_deposit_account(self):
         company = self.env.user.company_id
-        account_id = company.company.account_deposit_customer.id
+        account_id = company.account_deposit_customer.id
         if not account_id:
             raise except_orm(
                 _('Configuration Error!'),
