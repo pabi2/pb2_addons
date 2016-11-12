@@ -9,7 +9,6 @@
             <field name="arch" type="xml">
                 <xpath expr="/search/group" position="inside">
                     <filter string="Charge Type" context="{'group_by':'charge_type'}"/>
-                    <filter string="Budget Method" context="{'group_by':'budget_method'}"/>
                 </xpath>
             </field>
         </record>
@@ -19,156 +18,19 @@
             <field name="model">budget.plan.unit.line</field>
             <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_line_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="/tree/field[@name='activity_group_id']" position="before">
+                <xpath expr="/tree/field[@name='budget_method']" position="after">
                     <field name="charge_type"/>
-                    <field name="budget_method"/>
                 </xpath>
             </field>
         </record>
 
-        <record id="view_budget_plan_unit_form" model="ir.ui.view">
-            <field name="name">view.budget.plan.unit.form</field>
-            <field name="model">budget.plan.unit</field>
-            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_form"/>
+        <record id="view_budget_plan_unit_line_tree_inside" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.line.tree.inside</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_line_tree_inside"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/group/group/field[@name='planned_overall']" position="before">
-                    <field name="planned_revenue"/>
-                    <field name="planned_expense"/>
-                </xpath>
-                <!-- use new fields, plan_revenue_line_ids and plan_expense_line_ids instead-->
-                <xpath expr="/form/sheet/notebook/page[@string='Budget Control']" position="before">
-                    <!-- Summary of AG -->
-                    <page string="Summary">
-                        <separator string="Planned Revenue"/>
-                        <field name="plan_summary_revenue_line_ids" colspan="4" nolabel="1">
-                            <tree>
-                                <field name="activity_group_id"/>
-                                <field name="budget_method"/>
-
-                                <field name="m0" sum="M0"/>
-                                <field name="m1" sum="M1"/>
-                                <field name="m2" sum="M2"/>
-                                <field name="m3" sum="M3"/>
-                                <field name="m4" sum="M4"/>
-                                <field name="m5" sum="M5"/>
-                                <field name="m6" sum="M6"/>
-                                <field name="m7" sum="M7"/>
-                                <field name="m8" sum="M8"/>
-                                <field name="m9" sum="M9"/>
-                                <field name="m10" sum="M10"/>
-                                <field name="m11" sum="M11"/>
-                                <field name="m12" sum="M12"/>
-
-                                <field name="planned_amount" sum="Planned Amount"/>
-                            </tree>
-                        </field>
-                        <separator string="Planned Expense"/>
-                        <field name="plan_summary_expense_line_ids" colspan="4" nolabel="1">
-                            <tree>
-                                <field name="activity_group_id"/>
-                                <field name="budget_method"/>
-
-                                <field name="m0" sum="M0"/>
-                                <field name="m1" sum="M1"/>
-                                <field name="m2" sum="M2"/>
-                                <field name="m3" sum="M3"/>
-                                <field name="m4" sum="M4"/>
-                                <field name="m5" sum="M5"/>
-                                <field name="m6" sum="M6"/>
-                                <field name="m7" sum="M7"/>
-                                <field name="m8" sum="M8"/>
-                                <field name="m9" sum="M9"/>
-                                <field name="m10" sum="M10"/>
-                                <field name="m11" sum="M11"/>
-                                <field name="m12" sum="M12"/>
-
-                                <field name="planned_amount" sum="Planned Amount"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <!-- REVENUE tab -->
-                    <page string="Revenue">
-                        <!-- Add default budget_method -->
-                        <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'revenue'}">
-                            <!-- Revenue -->
-
-                            <tree string="Budget Lines" editable="bottom">
-
-                                <field name="section_id"/>
-                                <field name="fund_id" required="1"/>
-
-                                <!-- New for IC/EC, REV/EXP -->
-                                <field name="charge_type" invisible="0"/>
-                                <field name="budget_method" invisible="0"/>
-                                <!-- -->
-
-                                <field name="activity_group_id"/>
-                                <field name="activity_id"/>
-                                <field name="description"/>
-                                <field name="cost_control_id"/>
-
-                                <field name="m0"/>
-                                <field name="m1"/>
-                                <field name="m2"/>
-                                <field name="m3"/>
-                                <field name="m4"/>
-                                <field name="m5"/>
-                                <field name="m6"/>
-                                <field name="m7"/>
-                                <field name="m8"/>
-                                <field name="m9"/>
-                                <field name="m10"/>
-                                <field name="m11"/>
-                                <field name="m12"/>
-
-                                <field name="planned_amount" sum="Planned Amount"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <!-- EXPENSE tab -->
-                    <page string="Expense">
-                        <!-- Add default budget_method -->
-
-                        <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'expense'}">
-                            <!-- Expense -->
-                            <tree string="Budget Lines" editable="bottom">
-
-                                <field name="section_id"/>
-                                <field name="fund_id" required="1"/>
-
-                                <!-- New for IC/EC, REV/EXP -->
-                                <field name="charge_type" invisible="0"/>
-                                <field name="budget_method" invisible="0"/>
-                                <!-- -->
-
-                                <field name="activity_group_id"/>
-                                <field name="activity_id"/>
-                                <field name="description"/>
-                                <field name="cost_control_id"/>
-
-                                <field name="m0"/>
-                                <field name="m1"/>
-                                <field name="m2"/>
-                                <field name="m3"/>
-                                <field name="m4"/>
-                                <field name="m5"/>
-                                <field name="m6"/>
-                                <field name="m7"/>
-                                <field name="m8"/>
-                                <field name="m9"/>
-                                <field name="m10"/>
-                                <field name="m11"/>
-                                <field name="m12"/>
-
-                                <field name="planned_amount" sum="Planned Amount"/>
-                            </tree>
-                        </field>
-                    </page>
-                </xpath>
-
-                <!-- Invisible the existing one -->
-                <xpath expr="/form/sheet/notebook/page[@string='Budget Control']" position="attributes">
-                    <attribute name="invisible">True</attribute>
+                <xpath expr="/tree/field[@name='budget_method']" position="after">
+                    <field name="charge_type" invisible="0"/>
                 </xpath>
             </field>
         </record>

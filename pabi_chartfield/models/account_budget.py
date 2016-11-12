@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, fields, models
-from .chartfield import CHART_VIEW_FIELD, ChartField
+from .chartfield import CHART_VIEW_FIELD, CHART_FIELDS, ChartField
 from lxml import etree
 
 
@@ -189,6 +189,26 @@ class AccountBudgetLine(ChartField, models.Model):
         readonly=True,
         help="Special field to store Asset Item information",
     )
+    display_name = fields.Char(
+        string='Display Name',
+        readonly=True,
+        compute='_compute_display_name',
+    )
+
+    @api.multi
+    @api.depends()
+    def _compute_display_name(self):
+        for rec in self:
+            if rec.activity_id:
+                rec.display_name = rec.activity_id.name
+                continue
+            if rec.activity_group_id:
+                rec.display_name = rec.activity_group_id.name
+                continue
+            for chartfield in CHART_FIELDS:
+                if rec[chartfield[0]]:
+                    rec.display_name = rec[chartfield[0]].name
+                    break
 
     # === Project Base ===
     @api.onchange('program_id')

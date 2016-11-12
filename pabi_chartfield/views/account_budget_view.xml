@@ -64,6 +64,7 @@
             <field name="model">account.budget.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" />
 
                     <field name="spa_id" invisible="1"/>
                     <field name="mission_id" invisible="1" />
@@ -85,10 +86,10 @@
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
 
-                    <field name="invest_asset_id" invisible="0" />
+                    <field name="invest_asset_id" invisible="1" />
                     <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
-                    <field name="invest_construction_phase_id" invisible="0" />
+                    <field name="invest_construction_phase_id" invisible="1" />
 
                     <field name="personnel_costcenter_id" invisible="1" />
                     <field name="cost_control_type_id" invisible="1"/>
@@ -96,7 +97,7 @@
 
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="0"/>
-                    <field name="activity_id" invisible="0"/>
+                    <field name="activity_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
@@ -126,6 +127,7 @@
             <field name="model">account.budget.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" />
 
                     <field name="spa_id" invisible="1"/>
                     <field name="mission_id" invisible="1" />
@@ -147,10 +149,10 @@
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
 
-                    <field name="invest_asset_id" invisible="0" />
+                    <field name="invest_asset_id" invisible="1" />
                     <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
-                    <field name="invest_construction_phase_id" invisible="0" />
+                    <field name="invest_construction_phase_id" invisible="1" />
 
                     <field name="personnel_costcenter_id" invisible="1" />
                     <field name="cost_control_type_id" invisible="1"/>
@@ -158,7 +160,7 @@
 
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="0"/>
-                    <field name="activity_id" invisible="0"/>
+                    <field name="activity_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
@@ -188,6 +190,8 @@
             <field name="model">account.budget.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" />
+
                     <field name="spa_id" invisible="1"/>
                     <field name="mission_id" invisible="1" />
                     <field name="tag_type_id" invisible="1" />
@@ -206,16 +210,16 @@
                     <field name="section_id" invisible="1" />
                     <field name="costcenter_id" invisible="1" />
                     <field name="taxbranch_id" invisible="1" />
-                    <field name="invest_asset_id" invisible="0" />
+                    <field name="invest_asset_id" invisible="1" />
                     <field name="item_id" widget="many2one_clickable" invisible="1" />
                     <field name="invest_construction_id" invisible="1"/>
-                    <field name="invest_construction_phase_id" invisible="0" />
-                    <field name="personnel_costcenter_id" invisible="1" />
+                    <field name="invest_construction_phase_id" invisible="1" />
+                    <field name="personnel_costcenter_id" invisible="0" />
                     <field name="cost_control_type_id" invisible="1"/>
                     <field name="cost_control_id" invisible="1" />
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="0"/>
-                    <field name="activity_id" invisible="0"/>
+                    <field name="activity_id" invisible="0"  domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
@@ -243,6 +247,8 @@
             <field name="model">account.budget.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" />
+
                     <field name="spa_id" invisible="1"/>
                     <field name="mission_id" invisible="1" />
                     <field name="tag_type_id" invisible="1" />
@@ -266,14 +272,14 @@
                     <field name="invest_asset_id" invisible="0" />
                     <field name="item_id" widget="many2one_clickable" invisible="0" />
                     <field name="invest_construction_id" invisible="1"/>
-                    <field name="invest_construction_phase_id" invisible="0" />
+                    <field name="invest_construction_phase_id" invisible="1" />
 
                     <field name="personnel_costcenter_id" invisible="1" />
                     <field name="cost_control_type_id" invisible="1"/>
                     <field name="cost_control_id" invisible="1" />
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="1"/>
-                    <field name="activity_id" invisible="1"/>
+                    <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
@@ -301,6 +307,7 @@
             <field name="model">account.budget.line</field>
             <field name="arch" type="xml">
                 <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" />
 
                     <field name="spa_id" invisible="1"/>
                     <field name="mission_id" invisible="1" />
@@ -335,7 +342,7 @@
 
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="1"/>
-                    <field name="activity_id" invisible="1"/>
+                    <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"

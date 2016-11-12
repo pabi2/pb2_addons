@@ -15,7 +15,8 @@ class BudgetPlanTemplate(ChartField, models.Model):
     @api.constrains('fiscalyear_id', 'section_id')
     def _check_fiscalyear_section_unique(self):
         if self.fiscalyear_id and self.section_id:
-            budget_plans = self.env['budget.plan.unit'].search(#TODO should go this constraint to unit based!
+            budget_plans = self.env['budget.plan.unit'].search(
+                # TODO should go this constraint to unit based!
                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
                  ('section_id', '=', self.section_id.id),
                  ('state', 'not in', ('cancel', 'reject')),
@@ -146,7 +147,11 @@ class BudgetPlanTemplate(ChartField, models.Model):
         copy=False,
         track_visibility='onchange',
     )
-    org_id = fields.Many2one(related='section_id.org_id', store=True)
+    org_id = fields.Many2one(
+        string='Org',
+        related='section_id.org_id',
+        store=True,
+    )
     company_id = fields.Many2one(
         'res.company',
         string='Company',
@@ -177,6 +182,15 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
     _name = "budget.plan.line.template"
     _description = "Budget Line"
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        required=True,
+        default='expense',
+        help="Specify whether the budget plan line is of Revenue or Expense. "
+        "Revenue is for Unit Based only."
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
@@ -281,11 +295,16 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
 class BudgetPlanCommon(object):
 
     @api.multi
-    @api.depends('plan_line_ids')
+    @api.depends('plan_line_ids',
+                 'plan_revenue_line_ids',
+                 'plan_expense_line_ids')
     def _compute_planned_overall(self):
         for rec in self:
-            planned_amounts = rec.plan_line_ids.mapped('planned_amount')
-            rec.planned_overall = sum(planned_amounts)
+            amounts = rec.plan_revenue_line_ids.mapped('planned_amount')
+            rec.planned_revenue = sum(amounts)
+            amounts = rec.plan_expense_line_ids.mapped('planned_amount')
+            rec.planned_expense = sum(amounts)
+            rec.planned_overall = rec.planned_revenue - rec.planned_expense
 
     @api.model
     def _prepare_copy_fields(self, source_model, target_model):

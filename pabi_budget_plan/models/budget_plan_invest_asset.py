@@ -15,21 +15,73 @@ class BudgetPlanInvestAsset(BudgetPlanCommon, models.Model):
         required=True,
         ondelete='cascade',
     )
-    plan_line_ids = fields.One2many(
-        'budget.plan.invest.asset.line',
-        'plan_id',
-        string='Budget Plan Lines',
-        copy=False,
-    )
-    planned_overall = fields.Float(
-        string='Budget Plan',
-        compute='_compute_planned_overall',
-        store=True,
-    )
     asset_plan_id = fields.Many2one(
         'invest.asset.plan',
         string='Invest Asset Plan',
         readonly=True,
+    )
+    plan_line_ids = fields.One2many(
+        'budget.plan.invest.asset.line',
+        'plan_id',
+        string='Budget Plan Lines',
+        copy=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_revenue_line_ids = fields.One2many(
+        'budget.plan.invest.asset.line',
+        'plan_id',
+        string='Revenue Plan Lines',
+        copy=True,
+        readonly=True,
+        domain=[('budget_method', '=', 'revenue')],  # Have domain
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_expense_line_ids = fields.One2many(
+        'budget.plan.invest.asset.line',
+        'plan_id',
+        string='Expense Plan Lines',
+        copy=True,
+        readonly=True,
+        domain=[('budget_method', '=', 'expense')],  # Have domain
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    # plan_summary_revenue_line_ids = fields.One2many(
+    #     'budget.plan.unit.summary',
+    #     'plan_id',
+    #     string='Summary by Activity Group',
+    #     domain=[('budget_method', '=', 'revenue')],
+    #     readonly=True,
+    #     help="Summary by Activity Group View",
+    # )
+    # plan_summary_expense_line_ids = fields.One2many(
+    #     'budget.plan.unit.summary',
+    #     'plan_id',
+    #     string='Summary by Activity Group',
+    #     domain=[('budget_method', '=', 'expense')],
+    #     readonly=True,
+    #     help="Summary by Activity Group View",
+    # )
+    planned_revenue = fields.Float(
+        string='Total Revenue Plan',
+        compute='_compute_planned_overall',
+        store=True,
+    )
+    planned_expense = fields.Float(
+        string='Total Expense Plan',
+        compute='_compute_planned_overall',
+        store=True,
+    )
+    planned_overall = fields.Float(
+        string='Total Planned',
+        compute='_compute_planned_overall',
+        store=True,
     )
 
     # Call inherited methods
