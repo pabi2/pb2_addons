@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from . import sale
 from . import purchase
 from . import purchase_requisition
 from . import purchase_request
@@ -12,3 +12,4 @@ from . import analytic
 from . import hr_expense
 from . import account
 from . import stock_account
+from . import procurement

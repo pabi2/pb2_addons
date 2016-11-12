@@ -6,8 +6,10 @@
          <field name="model">budget.consume.report</field>
          <field name="arch" type="xml">
              <graph string="Budget Consume" type="pivot">
+                 <field name="budget_method" type="row"/>
                  <field name="activity_group_id" type="row"/>
                  <field name="date" type="col"/>
+                 <field name="amount_so_commit" type="measure"/>
                  <field name="amount_pr_commit" type="measure"/>
                  <field name="amount_po_commit" type="measure"/>
                  <field name="amount_exp_commit" type="measure"/>
@@ -22,14 +24,16 @@
          <field name="model">budget.consume.report</field>
          <field name="arch" type="xml">
              <tree string="Budget Consume" >
-             	 <field name="doc_ref" invisible="0"/>
-             	 <field name="doc_id" invisible="1"/>
-             	 <field name="product_id" />
+                 <field name="budget_method" />
+               	 <field name="doc_ref" invisible="0"/>
+               	 <field name="doc_id" invisible="1"/>
+               	 <field name="product_id" />
                  <field name="activity_group_id" />
                  <field name="activity_id" />
                  <field name="user_id" />
                  <field name="fiscalyear_id" />
                  <field name="date" />
+                 <field name="amount_so_commit" />
                  <field name="amount_pr_commit" />
                  <field name="amount_po_commit" />
                  <field name="amount_exp_commit" />
@@ -45,6 +49,7 @@
         <field name="arch" type="xml">
             <search string="Budget Consume">
                 <group expand="1" string="Group By">
+                    <filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
                     <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
                     <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
                     <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>

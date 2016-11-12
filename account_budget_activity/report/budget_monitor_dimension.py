@@ -5,7 +5,13 @@ from openerp import tools
 
 class MonitorView(models.AbstractModel):
     _name = 'monitor.view'
+    _order = 'budget_method desc'
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
@@ -17,6 +23,10 @@ class MonitorView(models.AbstractModel):
     )
     released_amount = fields.Float(
         string='Released Amount',
+        readonly=True,
+    )
+    amount_so_commit = fields.Float(
+        string='SO Commitment',
         readonly=True,
     )
     amount_pr_commit = fields.Float(
@@ -42,10 +52,12 @@ class MonitorView(models.AbstractModel):
 
     _monitor_view_tempalte = """
         CREATE or REPLACE VIEW %s as (
-            select min(id) as id, fiscalyear_id,
+            select min(id) as id,
+                budget_method, fiscalyear_id,
                 %s,
                 sum(planned_amount) planned_amount,
                 sum(released_amount) released_amount,
+                sum(amount_so_commit) amount_so_commit,
                 sum(amount_pr_commit) amount_pr_commit,
                 sum(amount_po_commit) amount_po_commit,
                 sum(amount_exp_commit) amount_exp_commit,
@@ -53,7 +65,7 @@ class MonitorView(models.AbstractModel):
                 sum(amount_balance) amount_balance
             from budget_monitor_report
             where %s
-            group by fiscalyear_id, %s
+            group by budget_method, fiscalyear_id, %s
         )
     """
 

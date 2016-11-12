@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-    
+
         <record id="view_account_analytic_journal_form" model="ir.ui.view" >
             <field name="name">view.account.analytic.journal.form</field>
             <field name="model">account.analytic.journal</field>
@@ -9,11 +9,12 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='type']" position="after">
                 	<field name="budget_commit_type" />
-                </xpath> 
+                  <field name="budget_method" />
+                </xpath>
             </field>
-        </record>   
-        
-        
+        </record>
+
+
         <record id="view_account_analytic_account_form" model="ir.ui.view" >
             <field name="name">view.account.analytic.account.form</field>
             <field name="model">account.analytic.account</field>
@@ -29,9 +30,9 @@
 		                    <field name="activity_id" />
                 		</group>
                 	</group>
-                </xpath> 
+                </xpath>
             </field>
-        </record>         
+        </record>
 
         <record id="view_account_analytic_account_tree" model="ir.ui.view">
             <field name="name">account.analytic.account.tree</field>
@@ -58,7 +59,7 @@
                 </xpath>
             </field>
         </record>
-        
+
 
         <record id="view_account_analytic_line_form" model="ir.ui.view" >
             <field name="name">view.account.analytic.line.form</field>
@@ -69,9 +70,9 @@
                 	<group name="doc_ref" string="Doc Ref">
                			<field name="doc_id" />
                 	</group>
-                </xpath> 
+                </xpath>
             </field>
-        </record>   
+        </record>
         <record id="view_account_analytic_line_tree" model="ir.ui.view" >
             <field name="name">view.account.analytic.line.tree</field>
             <field name="model">account.analytic.line</field>
@@ -83,7 +84,7 @@
               		<field name="activity_id" invisible="1"/>
                 </xpath>
             </field>
-        </record>     
+        </record>
 
         <record id="view_account_analytic_line_filter" model="ir.ui.view">
             <field name="name">view.account.analytic.line.filter</field>
@@ -95,7 +96,7 @@
                     <filter string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
                 </xpath>
             </field>
-        </record>        
-            
+        </record>
+
 	</data>
 </openerp>

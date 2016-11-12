@@ -90,6 +90,16 @@ class AccountJournal(models.Model):
         string='Commit Budget',
         default=False,
     )
+    so_commitment_analytic_journal_id = fields.Many2one(
+        'account.analytic.journal',
+        string='Analytic Journal for SO Commitments',
+        domain=[('type', '=', 'general')]
+    )
+    so_commitment_account_id = fields.Many2one(
+        'account.account',
+        string='Account for SO Commitment',
+        domain=[('type', '!=', 'view')]
+    )
     pr_commitment_analytic_journal_id = fields.Many2one(
         'account.analytic.journal',
         string='Analytic Journal for PR Commitments',

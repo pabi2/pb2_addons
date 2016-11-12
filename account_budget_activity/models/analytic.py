@@ -7,11 +7,18 @@ class AccountAnalyticJournal(models.Model):
     _inherit = 'account.analytic.journal'
 
     budget_commit_type = fields.Selection(
-        [('pr_commit', 'PR Commitment'),
+        [('so_commit', 'SO Commitment'),
+         ('pr_commit', 'PR Commitment'),
          ('po_commit', 'PO Commitment'),
          ('exp_commit', 'Expense Commitment'),
          ('actual', 'Actual'),
-         ]
+         ],
+        string='Budget Commit Type',
+    )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
     )
 
     def init(self, cr):
@@ -19,14 +26,37 @@ class AccountAnalyticJournal(models.Model):
         cr.execute("""
             update account_analytic_journal
             set budget_commit_type = 'actual'
+            where id in (select res_id from ir_model_data
+                where module = 'account'
+                and name in ('exp', 'analytic_journal_sale'))
+        """)
+        # Update budget_method = Reveue
+        cr.execute("""
+            update account_analytic_journal
+            set budget_method = 'revenue'
             where id = (select res_id from ir_model_data
-                where module = 'account' and name = 'exp')
+                where module = 'account'
+                and name = 'analytic_journal_sale')
+        """)
+        # Update budget_method = Expense
+        cr.execute("""
+            update account_analytic_journal
+            set budget_method = 'expense'
+            where id = (select res_id from ir_model_data
+                where module = 'account'
+                and name = 'exp')
         """)
 
 
 class AccountAnalyticLine(models.Model):
     _inherit = 'account.analytic.line'
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        required=True,
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',

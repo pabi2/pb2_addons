@@ -12,7 +12,7 @@ class HRExpenseExpese(models.Model):
     pay_to = fields.Selection(
         [('employee', 'Employee'),
          ('supplier', 'Supplier')],
-        string='Pay to',
+        string='Pay Type',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},

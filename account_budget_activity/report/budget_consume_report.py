@@ -7,6 +7,11 @@ class BudgetConsumeReport(models.Model):
     _name = 'budget.consume.report'
     _auto = False
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
     user_id = fields.Many2one(
         'res.users',
         string='User',
@@ -31,6 +36,9 @@ class BudgetConsumeReport(models.Model):
     )
     amount = fields.Float(
         string='Total',
+    )
+    amount_so_commit = fields.Float(
+        string='SO Commitment',
     )
     amount_pr_commit = fields.Float(
         string='PR Commitment',
@@ -62,15 +70,26 @@ class BudgetConsumeReport(models.Model):
             select aal.id, aal.user_id, aal.date, aal.fiscalyear_id,
                 aal.doc_ref, aal.doc_id,
                 -- Amount
-                amount as amount,
+                case when aaj.budget_method = 'expense' then -amount
+                    else amount end as amount,
+                -- Budget Method
+                aaj.budget_method,
+                -- Type
+                case when aaj.budget_commit_type = 'so_commit'
+                    then aal.amount end as amount_so_commit,
                 case when aaj.budget_commit_type = 'pr_commit'
-                    then aal.amount end as amount_pr_commit,
+                    then - aal.amount end as amount_pr_commit,
                 case when aaj.budget_commit_type = 'po_commit'
-                    then aal.amount end as amount_po_commit,
+                    then - aal.amount end as amount_po_commit,
                 case when aaj.budget_commit_type = 'exp_commit'
-                    then aal.amount end as amount_exp_commit,
+                    then - aal.amount end as amount_exp_commit,
                 case when aaj.budget_commit_type = 'actual'
-                    then aal.amount end as amount_actual,
+                        and aaj.budget_method = 'expense'
+                        then - aal.amount
+                    when aaj.budget_commit_type = 'actual'
+                        and aaj.budget_method = 'expense'
+                        then aal.amount end
+                    as amount_actual,
                 -- Dimensions
                 %s
             from account_analytic_line aal

@@ -53,6 +53,18 @@ class AccountActivityGroup(models.Model):
         string='Activity Group Monitor',
         help="Plan vs actual per fiscal year for activity group"
     )
+    monitor_revenue_ids = fields.One2many(
+        'account.activity.group.monitor.view',
+        'activity_group_id',
+        string='Activity Group Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'account.activity.group.monitor.view',
+        'activity_group_id',
+        string='Activity Group Monitor',
+        domain=[('budget_method', '=', 'expense')],
+    )
     _sql_constraints = [
         ('activity_uniq', 'unique(name)',
          'Activity Group must be unique!'),
@@ -112,6 +124,18 @@ class AccountActivity(models.Model):
         'activity_id',
         string='Activity Monitor',
         help="Plan vs actual per fiscal year for activity"
+    )
+    monitor_revenue_ids = fields.One2many(
+        'account.activity.monitor.view',
+        'activity_id',
+        string='Activity Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'account.activity.monitor.view',
+        'activity_id',
+        string='Activity Monitor',
+        domain=[('budget_method', '=', 'expense')],
     )
     active = fields.Boolean(
         string='Active',

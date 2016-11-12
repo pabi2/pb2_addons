@@ -7,6 +7,11 @@ class BudgetPlanReport(models.Model):
     _name = 'budget.plan.report'
     _auto = False
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
     user_id = fields.Many2one(
         'res.users',
         string='User',
@@ -86,8 +91,8 @@ class BudgetPlanReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            select abl.id, ab.creating_user_id as user_id, abl.fiscalyear_id,
-                ab.name as doc_ref, ab.id as budget_id,
+            select abl.id, abl.budget_method, ab.creating_user_id as user_id,
+                abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
                 -- Amount
                 m0,
                 m1, m2, m3, m4, m5, m6, m7, m8,

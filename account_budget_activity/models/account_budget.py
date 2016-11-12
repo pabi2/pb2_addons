@@ -75,6 +75,22 @@ class AccountBudget(models.Model):
         states={'done': [('readonly', True)]},
         copy=True,
     )
+    budget_revenue_line_ids = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        states={'done': [('readonly', True)]},
+        domain=[('budget_method', '=', 'revenue')],
+        copy=True,
+    )
+    budget_expense_line_ids = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        states={'done': [('readonly', True)]},
+        domain=[('budget_method', '=', 'expense')],
+        copy=True,
+    )
     company_id = fields.Many2one(
         'res.company',
         string='Company',
@@ -140,6 +156,8 @@ class AccountBudget(models.Model):
                                   'for this fiscal year'))
             budget_level = fiscal.budget_level_ids.\
                 filtered(lambda x: x.type == budget_type)[0].budget_level
+            if not budget_level:
+                raise UserError(_('Budget Level is not setup properly'))
             count = len(self.env['account.budget.line'].search(
                 [('budget_id', '=', budget.id), (budget_level, '=', False)]))
             if count:
@@ -352,6 +370,13 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     _name = "account.budget.line"
     _description = "Budget Line"
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        required=True,
+        default='expense',
+    )
     budget_id = fields.Many2one(
         'account.budget',
         string='Budget',
