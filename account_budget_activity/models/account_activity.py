@@ -95,6 +95,13 @@ class AccountActivity(models.Model):
     _name = 'account.activity'
     _description = 'Activity'
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        default='expense',
+        required=True,
+    )
     activity_group_ids = fields.Many2many(
         'account.activity.group',
         'activity_group_activity_rel',
@@ -190,7 +197,6 @@ class ActivityCommon(object):
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
-        domain="[('activity_group_ids', 'in', [activity_group_id or 0])]",
     )
 
     @api.model

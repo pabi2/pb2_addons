@@ -9,10 +9,10 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="before">
                     <field name="activity_group_id" required="0" invisible="0"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'expense')]"/>
                 </xpath>
             </field>
         </record>
-    	
+
     </data>
 </openerp>
