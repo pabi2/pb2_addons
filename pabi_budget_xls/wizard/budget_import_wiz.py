@@ -28,16 +28,18 @@ class BudgetImportWizard(models.TransientModel):
             while head_line < max_row+1:
                 costcontrol_vals = {'plan_id': budget.id}
                 activity_group = CostCtrl_Sheet.cell(row=head_line, column=2).value
+                activity_group_id = False
                 if activity_group:
                     activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
                 head_line += 1
                 costcontrol = CostCtrl_Sheet.cell(row=head_line, column=2).value
-                costcontrol_line_id = CostCtrl_Sheet.cell(row=head_line, column=5).value
+                costcontrol_line_id = CostCtrl_Sheet.cell(row=head_line, column=23).value
+                if not costcontrol and not activity_group_id:
+                    break
 
                 if not costcontrol and not activity_group and not costcontrol_line_id:
                     head_line += 1
                     continue
-
                 if costcontrol:
                     costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
                     costcontrol_vals.update({'cost_control_id': costcontrol_id.id})
@@ -56,6 +58,11 @@ class BudgetImportWizard(models.TransientModel):
                 head_line += 5
                 if head_line > max_row:
                     head_line -= 5
+                
+                a = CostCtrl_Sheet.cell(row=head_line, column=1).value
+                b = CostCtrl_Sheet.cell(row=head_line, column=2).value
+                if not a and not b:
+                    head_line += 1
                 line_row = head_line
                 ids = []
                 calculate_vals = {}
@@ -63,7 +70,7 @@ class BudgetImportWizard(models.TransientModel):
                     if row >= max_row:
                         last_row = True
                         continue
-                    
+
                     line_vals = {
                         'activity_group_id': activity_group_id.id,
                         'cost_control_line_id': costcontrol_line.id,
@@ -81,52 +88,129 @@ class BudgetImportWizard(models.TransientModel):
                     unit = CostCtrl_Sheet.cell(row=row, column=5).value
                     if not unit:
                         break
+                    if unit and not isinstance(unit, long):
+                        raise UserError(
+                            _('Please insert float value on\
+                             row: %s - column: %s') % (row, 5))
                     calculate_vals.update({'unit': unit})
 
                     activity_unit_price = CostCtrl_Sheet.cell(row=row, column=6).value
                     if activity_unit_price:
+                        if activity_unit_price and not isinstance(activity_unit_price, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 6))
                         calculate_vals.update({'activity_unit_price': activity_unit_price})
 
                     activity_unit = CostCtrl_Sheet.cell(row=row, column=7).value
                     if activity_unit:
+                        if activity_unit and not isinstance(activity_unit, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 7))
                         calculate_vals.update({'activity_unit': activity_unit})
 
+                    total_act_budget = unit * act_unitprice * activity_unit
+                    total_month_budget = 0.0
                     m1 = CostCtrl_Sheet.cell(row=row, column=10).value
                     if m1:
+                        if m1 and not isinstance(m1, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 10))
                         line_vals.update({'m1': m1})
+                        total_month_budget += m1
                     m2 = CostCtrl_Sheet.cell(row=row, column=11).value
                     if m2:
+                        if m2 and not isinstance(m2, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 11))
                         line_vals.update({'m2': m2})
+                        total_month_budget += m2
                     m3 = CostCtrl_Sheet.cell(row=row, column=12).value
                     if m3:
+                        if m3 and not isinstance(m3, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 12))
                         line_vals.update({'m3': m3})
+                        total_month_budget += m3
                     m4 = CostCtrl_Sheet.cell(row=row, column=13).value
                     if m4:
+                        if m4 and not isinstance(m4, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 13))
                         line_vals.update({'m4': m4})
+                        total_month_budget += m4
                     m5 = CostCtrl_Sheet.cell(row=row, column=14).value
                     if m5:
+                        if m5 and not isinstance(m5, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 14))
                         line_vals.update({'m5': m5})
+                        total_month_budget += m5
                     m6 = CostCtrl_Sheet.cell(row=row, column=15).value
                     if m6:
+                        if m6 and not isinstance(m6, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 15))
                         line_vals.update({'m6': m6})
+                        total_month_budget += m6
                     m7 = CostCtrl_Sheet.cell(row=row, column=16).value
                     if m7:
+                        if m7 and not isinstance(m7, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 16))
                         line_vals.update({'m7': m7})
+                        total_month_budget += m7
                     m8 = CostCtrl_Sheet.cell(row=row, column=17).value
                     if m8:
+                        if m8 and not isinstance(m8, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 17))
                         line_vals.update({'m8': m8})
+                        total_month_budget += m8
                     m9 = CostCtrl_Sheet.cell(row=row, column=18).value
                     if m9:
+                        if m9 and not isinstance(m9, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 18))
                         line_vals.update({'m9': m9})
+                        total_month_budget += m9
                     m10 = CostCtrl_Sheet.cell(row=row, column=19).value
                     if m10:
+                        if m10 and not isinstance(m10, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 19))
                         line_vals.update({'m10': m10})
+                        total_month_budget += m10
                     m11 = CostCtrl_Sheet.cell(row=row, column=20).value
                     if m11:
+                        if m11 and not isinstance(m11, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 20))
                         line_vals.update({'m11': m11})
+                        total_month_budget += m11
                     m12 = CostCtrl_Sheet.cell(row=row, column=21).value
                     if m12:
+                        if m12 and not isinstance(m12, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, 21))
                         line_vals.update({'m12': m12})
+                        total_month_budget += m12
+
+                    if (total_act_budget - total_month_budget) != 0.0:
+                        raise UserError(_('Please verify budget lines total!'))
 
                     line_id = CostCtrl_Sheet.cell(row=row, column=23).value
                     if line_id:
@@ -173,7 +257,8 @@ class BudgetImportWizard(models.TransientModel):
                                 'cost_control_id': costcontrol_line.cost_control_id.id,
                             }
                             create_vals.update(vals)
-                            new_id = self.env['budget.plan.unit.line'].create(create_vals).id
+                            new_id = self.env['budget.plan.unit.line'].create(create_vals)
+                            new_id = new_id.id
                             ids.append(new_id)
                     head_line += 1
                 costcontrol_line.write({'detail_ids': [(6, 0, ids)]})
@@ -248,7 +333,6 @@ class BudgetImportWizard(models.TransientModel):
             if section_id:
                 vals.update({'creating_user_id': responsible_by_id.id})
 
-
             line_row = 11
             lines = {}
             lines_to_create = []
@@ -257,21 +341,21 @@ class BudgetImportWizard(models.TransientModel):
                 line_vals.update({'section_id': section_id.id,
                                   'plan_id': budget.id,
                                   'org_id': org_id.id})
-                ag_group = NonCostCtrl_Sheet.cell(row=row, column=4).value
+                ag_group = NonCostCtrl_Sheet.cell(row=row, column=2).value
                 if not ag_group:
                     break
                 ag_group_id = self.env['account.activity.group'].search(
                     [('name', '=', tools.ustr(ag_group))])
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
-                description = NonCostCtrl_Sheet.cell(row=row, column=5).value
+                description = NonCostCtrl_Sheet.cell(row=row, column=3).value
                 if description == '=FALSE()':
                     description = ''
-                unit = NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
+                unit = NonCostCtrl_Sheet.cell(row=row, column=5).value or 0.0
                 act_unitprice\
-                    = NonCostCtrl_Sheet.cell(row=row, column=8).value or 0.0
+                    = NonCostCtrl_Sheet.cell(row=row, column=6).value or 0.0
                 activity_unit =\
-                    NonCostCtrl_Sheet.cell(row=row, column=9).value or 0.0
+                    NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
                 line_vals.update({
                     'unit': unit,
                     'activity_unit_price': act_unitprice,
@@ -279,9 +363,9 @@ class BudgetImportWizard(models.TransientModel):
                     'description': description,
                 })
                 total_act_budget = unit * act_unitprice * activity_unit
-                line_id = NonCostCtrl_Sheet.cell(row=row, column=26).value
+                line_id = NonCostCtrl_Sheet.cell(row=row, column=24).value
                 p = 0
-                col = 11
+                col = 9
                 total_month_budget = 0.0
                 while p != 13:
                     val = NonCostCtrl_Sheet.cell(row=row, column=col).value
@@ -292,7 +376,7 @@ class BudgetImportWizard(models.TransientModel):
                     if val:
                         total_month_budget += val
                     line_vals.update({'m' + str(p): val})
-                    if col == 23:
+                    if col == 21:
                         break
                     col += 1
                     p += 1
