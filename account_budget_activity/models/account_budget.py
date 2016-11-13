@@ -118,26 +118,56 @@ class AccountBudget(models.Model):
         string='Fiscal Year',
         required=True,
     )
-    planned_amount = fields.Float(
-        string='Planned Amount',
-        compute='_compute_amount',
-        digits_compute=dp.get_precision('Account'),
-    )
+    # planned_amount = fields.Float(
+    #     string='Planned Amount',
+    #     compute='_compute_amount',
+    #     digits_compute=dp.get_precision('Account'),
+    # )
     released_amount = fields.Float(
         string='Released Amount',
         compute='_compute_amount',
         digits_compute=dp.get_precision('Account'),
     )
+    budgeted_revenue = fields.Float(
+        string='Total Revenue Budget',
+        compute='_compute_budgeted_overall',
+        store=True,
+        help="All Revenue",
+    )
+    budgeted_expense = fields.Float(
+        string='Total Expense Budget',
+        compute='_compute_budgeted_overall',
+        store=True,
+        help="All Expense",
+    )
+    budgeted_overall = fields.Float(
+        string='Total Budgeted',
+        compute='_compute_budgeted_overall',
+        store=True,
+        help="All Revenue - All Expense",
+    )
+
+    @api.multi
+    @api.depends('budget_line_ids',
+                 'budget_revenue_line_ids',
+                 'budget_expense_line_ids')
+    def _compute_budgeted_overall(self):
+        for rec in self:
+            amounts = rec.budget_revenue_line_ids.mapped('planned_amount')
+            rec.budgeted_revenue = sum(amounts)
+            amounts = rec.budget_expense_line_ids.mapped('planned_amount')
+            rec.budgeted_expense = sum(amounts)
+            rec.budgeted_overall = rec.budgeted_revenue - rec.budgeted_expense
 
     @api.multi
     def _compute_amount(self):
         for budget in self:
-            planned_amount = 0.0
+            # planned_amount = 0.0
             released_amount = 0.0
             for line in budget.budget_line_ids:
-                planned_amount += line.planned_amount
+                # planned_amount += line.planned_amount
                 released_amount += line.released_amount
-            budget.planned_amount = planned_amount
+            # budget.planned_amount = planned_amount
             budget.released_amount = released_amount
 
     @api.one

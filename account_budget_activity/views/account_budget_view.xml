@@ -69,6 +69,9 @@
                             <group>
                                 <field name="creating_user_id" attrs="{'readonly':[('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
                                 <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="budgeted_revenue" />
+                                <field name="budgeted_expense" />
+                                <field name="budgeted_overall" />
                             </group>
                             <group>
                                 <field name="fiscalyear_id"/>
@@ -107,7 +110,6 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <button name="%(action_budget_release_wizard)d" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
-                    <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
                     <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                     <field name="creating_user_id"/>
@@ -169,6 +171,7 @@
             <field name="arch" type="xml">
                 <tree string="Budget Lines">
                     <!--field name="analytic_account_id" groups="analytic.group_analytic_accounting"/-->
+                    <field name="budget_method" />
                     <field name="budget_id" invisible="1"/>
                     <field name="fiscalyear_id"/>
                     <button name="%(action_budget_release_wizard)d" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>

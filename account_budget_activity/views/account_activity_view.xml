@@ -62,7 +62,6 @@
                             <separator string="Revenue" />
                             <field name="monitor_revenue_ids">
                                 <tree string="Monitor" editable="bottom">
-                                    <field name="activity_group_id" invisible="1"/>
                                     <field name="fiscalyear_id"/>
                                     <field name="planned_amount"/>
                                     <field name="released_amount"/>
@@ -74,7 +73,6 @@
                             <separator string="Expense" />
                             <field name="monitor_expense_ids">
                                 <tree string="Monitor" editable="bottom">
-                                    <field name="activity_group_id" invisible="1"/>
                                     <field name="fiscalyear_id"/>
                                     <field name="planned_amount"/>
                                     <field name="released_amount"/>
@@ -188,7 +186,6 @@
                             <separator string="Revenue" />
                             <field name="monitor_revenue_ids">
                                 <tree string="Monitor" editable="bottom">
-                                    <field name="activity_id" invisible="1"/>
                                     <field name="fiscalyear_id"/>
                                     <field name="planned_amount"/>
                                     <field name="released_amount"/>
@@ -200,7 +197,6 @@
                             <separator string="Expense" />
                             <field name="monitor_expense_ids">
                                 <tree string="Monitor" editable="bottom">
-                                    <field name="activity_id" invisible="1"/>
                                     <field name="fiscalyear_id"/>
                                     <field name="planned_amount"/>
                                     <field name="released_amount"/>

@@ -51,12 +51,13 @@ class AccountAnalyticJournal(models.Model):
 class AccountAnalyticLine(models.Model):
     _inherit = 'account.analytic.line'
 
-    budget_method = fields.Selection(
-        [('revenue', 'Revenue'),
-         ('expense', 'Expense')],
-        string='Budget Method',
-        required=True,
-    )
+    # We don't need, as it can be found from analytic.account.journal
+    # budget_method = fields.Selection(
+    #     [('revenue', 'Revenue'),
+    #      ('expense', 'Expense')],
+    #     string='Budget Method',
+    #     required=True,
+    # )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
