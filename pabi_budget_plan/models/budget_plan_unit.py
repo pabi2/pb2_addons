@@ -16,32 +16,6 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _description = "Unit Based - Budget Plan"
     _order = 'create_date desc'
 
-    @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
-        if self._context.get('my_org_plans', False):
-            args += [('org_id', '=', self.env.user.partner_id.employee_id.section_id.org_id.id)]
-        if self._context.get('my_section_plans', False):
-            args += [('section_id', '=', self.env.user.partner_id.employee_id.section_id.id)]
-        if self._context.get('my_division_plans', False):
-            args += [('division_id', '=', self.env.user.partner_id.employee_id.section_id.division_id.id)]
-        if self._context.get('this_year_plans', False):
-            current_fiscalyear = self.env['account.period'].find().fiscalyear_id
-            args += [('fiscalyear_id', '=', current_fiscalyear.id)]
-        return super(BudgetPlanUnit, self).search(args, offset=offset,
-                                                  limit=limit, order=order,
-                                                  count=count)
-
-    @api.onchange('fiscalyear_id')
-    def onchange_fiscalyear_id(self):
-        self.date_from = self.fiscalyear_id.date_start
-        self.date_to = self.fiscalyear_id.date_stop
-
-    @api.one
-    @api.depends('fiscalyear_id')
-    def _compute_date(self):
-        self.date_from = self.fiscalyear_id.date_start
-        self.date_to = self.fiscalyear_id.date_stop
-
     date_from = fields.Date(
         string='Start Date',
         compute='_compute_date',
@@ -117,17 +91,60 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         string='Total Revenue Plan',
         compute='_compute_planned_overall',
         store=True,
+        help="All Revenue",
     )
     planned_expense = fields.Float(
         string='Total Expense Plan',
         compute='_compute_planned_overall',
         store=True,
+        help="All Expense",
     )
     planned_overall = fields.Float(
         string='Total Planned',
         compute='_compute_planned_overall',
         store=True,
+        help="All Revenue - All Expense",
     )
+
+    @api.multi
+    @api.depends('plan_line_ids',
+                 'plan_revenue_line_ids',
+                 'plan_expense_line_ids')
+    def _compute_planned_overall(self):
+        for rec in self:
+            amounts = rec.plan_revenue_line_ids.mapped('planned_amount')
+            rec.planned_revenue = sum(amounts)
+            amounts = rec.plan_expense_line_ids.mapped('planned_amount')
+            rec.planned_expense = sum(amounts)
+            rec.planned_overall = rec.planned_revenue - rec.planned_expense
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        section = self.env.user.partner_id.employee_id.section_id
+        if self._context.get('my_org_plans', False):
+            args += [('org_id', '=', section.org_id.id)]
+        if self._context.get('my_section_plans', False):
+            args += [('section_id', '=', section.id)]
+        if self._context.get('my_division_plans', False):
+            args += [('division_id', '=', section.division_id.id)]
+        if self._context.get('this_year_plans', False):
+            current_fiscalyear = \
+                self.env['account.period'].find().fiscalyear_id
+            args += [('fiscalyear_id', '=', current_fiscalyear.id)]
+        return super(BudgetPlanUnit, self).search(args, offset=offset,
+                                                  limit=limit, order=order,
+                                                  count=count)
+
+    @api.onchange('fiscalyear_id')
+    def onchange_fiscalyear_id(self):
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
+
+    @api.one
+    @api.depends('fiscalyear_id')
+    def _compute_date(self):
+        self.date_from = self.fiscalyear_id.date_start
+        self.date_to = self.fiscalyear_id.date_stop
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

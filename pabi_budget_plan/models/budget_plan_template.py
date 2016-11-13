@@ -294,18 +294,6 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
 
 class BudgetPlanCommon(object):
 
-    @api.multi
-    @api.depends('plan_line_ids',
-                 'plan_revenue_line_ids',
-                 'plan_expense_line_ids')
-    def _compute_planned_overall(self):
-        for rec in self:
-            amounts = rec.plan_revenue_line_ids.mapped('planned_amount')
-            rec.planned_revenue = sum(amounts)
-            amounts = rec.plan_expense_line_ids.mapped('planned_amount')
-            rec.planned_expense = sum(amounts)
-            rec.planned_overall = rec.planned_revenue - rec.planned_expense
-
     @api.model
     def _prepare_copy_fields(self, source_model, target_model):
         src_fields = [f for f, _x in source_model._fields.iteritems()]
@@ -333,6 +321,7 @@ class BudgetPlanCommon(object):
         for key in header_fields:
             vals.update({key: (hasattr(plan[key], '__iter__') and
                                plan[key].id or plan[key])})
+        print vals
         budget = head_trg_model.create(vals)
         for line in plan.plan_line_ids:
             for key in line_fields:

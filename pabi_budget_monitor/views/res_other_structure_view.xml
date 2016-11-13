@@ -10,25 +10,36 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
-	                    <page string="Budget Monitor">
-		                    <field name="monitor_ids">
-				                <tree string="Monitor" editable="bottom">
-		                    		<field name="personnel_costcenter_id" invisible="1"/>
-		                    		<field name="fiscalyear_id" />
-		                    		<field name="planned_amount" />
-		                    		<field name="released_amount" />
-		                    		<field name="amount_pr_commit" />
-		                    		<field name="amount_po_commit" />
-		                    		<field name="amount_exp_commit" />
-		                    		<field name="amount_actual" />
-		                    		<field name="amount_balance" />
-				                </tree>
-		                	</field>
-	                	</page>
+                    <page string="Budget Monitor">
+                        <separator string="Revenue" />
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Expense" />
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
                 	</notebook>
                 </xpath>
             </field>
-        </record>    
+        </record>
 
     	# Invest Asset
         <record id="view_res_invest_asset_form" model="ir.ui.view" >
@@ -38,25 +49,36 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
-	                    <page string="Budget Monitor">
-		                    <field name="monitor_ids">
-				                <tree string="Monitor" editable="bottom">
-		                    		<field name="invest_asset_id" invisible="1"/>
-		                    		<field name="fiscalyear_id" />
-		                    		<field name="planned_amount" />
-		                    		<field name="released_amount" />
-		                    		<field name="amount_pr_commit" />
-		                    		<field name="amount_po_commit" />
-		                    		<field name="amount_exp_commit" />
-		                    		<field name="amount_actual" />
-		                    		<field name="amount_balance" />
-				                </tree>
-		                	</field>
-	                	</page>
+                    <page string="Budget Monitor">
+                        <separator string="Revenue" />
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Expense" />
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
                 	</notebook>
                 </xpath>
             </field>
-        </record>    
+        </record>
 
     	# Invest Construction
         <record id="view_res_invest_construction_form" model="ir.ui.view" >
@@ -66,25 +88,36 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
-	                    <page string="Budget Monitor">
-		                    <field name="monitor_ids">
-				                <tree string="Monitor" editable="bottom">
-		                    		<field name="invest_construction_id" invisible="1"/>
-		                    		<field name="fiscalyear_id" />
-		                    		<field name="planned_amount" />
-		                    		<field name="released_amount" />
-		                    		<field name="amount_pr_commit" />
-		                    		<field name="amount_po_commit" />
-		                    		<field name="amount_exp_commit" />
-		                    		<field name="amount_actual" />
-		                    		<field name="amount_balance" />
-				                </tree>
-		                	</field>
-	                	</page>
+                    <page string="Budget Monitor">
+                        <separator string="Revenue" />
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Expense" />
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
                 	</notebook>
                 </xpath>
             </field>
-        </record>    
+        </record>
 
     	# Cost Control
         <record id="view_cost_control_form" model="ir.ui.view" >
@@ -94,25 +127,36 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
-	                    <page string="Budget Monitor">
-		                    <field name="monitor_ids">
-				                <tree string="Monitor" editable="bottom">
-		                    		<field name="cost_control_id" invisible="1"/>
-		                    		<field name="fiscalyear_id" />
-		                    		<field name="planned_amount" />
-		                    		<field name="released_amount" />
-		                    		<field name="amount_pr_commit" />
-		                    		<field name="amount_po_commit" />
-		                    		<field name="amount_exp_commit" />
-		                    		<field name="amount_actual" />
-		                    		<field name="amount_balance" />
-				                </tree>
-		                	</field>
-	                	</page>
+                    <page string="Budget Monitor">
+                        <separator string="Revenue" />
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Expense" />
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
                 	</notebook>
                 </xpath>
             </field>
-        </record>    
+        </record>
 
     	# Cost Control Type
         <record id="view_cost_control_type_form" model="ir.ui.view" >
@@ -122,25 +166,36 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[last()]" position="after">
                     <notebook>
-	                    <page string="Budget Monitor">
-		                    <field name="monitor_ids">
-				                <tree string="Monitor" editable="bottom">
-		                    		<field name="cost_control_type_id" invisible="1"/>
-		                    		<field name="fiscalyear_id" />
-		                    		<field name="planned_amount" />
-		                    		<field name="released_amount" />
-		                    		<field name="amount_pr_commit" />
-		                    		<field name="amount_po_commit" />
-		                    		<field name="amount_exp_commit" />
-		                    		<field name="amount_actual" />
-		                    		<field name="amount_balance" />
-				                </tree>
-		                	</field>
-	                	</page>
+                    <page string="Budget Monitor">
+                        <separator string="Revenue" />
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Expense" />
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
                 	</notebook>
                 </xpath>
             </field>
-        </record>    
-        	
+        </record>
+
 	</data>
 </openerp>

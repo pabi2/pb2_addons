@@ -14,6 +14,7 @@
         'wizard/cost_control_breakdown_wizard.xml',
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',
+        'views/account_budget_view.xml',
     ],
     'demo': [
     ],

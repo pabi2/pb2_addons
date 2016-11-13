@@ -9,6 +9,16 @@ class CostControl(models.Model):
         'res.cost.control.monitor.view', 'cost_control_id',
         string='Cost Control Monitor',
     )
+    monitor_revenue_ids = fields.One2many(
+        'res.cost.control.monitor.view', 'cost_control_id',
+        string='Controlenter Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'res.cost.control.monitor.view', 'cost_control_id',
+        string='Cost Control Monitor',
+        domain=[('budget_method', '=', 'expense')],
+    )
 
 
 class CostControlType(models.Model):
@@ -17,6 +27,16 @@ class CostControlType(models.Model):
     monitor_ids = fields.One2many(
         'res.cost.control.type.monitor.view', 'cost_control_type_id',
         string='Cost Control Type Monitor',
+    )
+    monitor_revenue_ids = fields.One2many(
+        'res.cost.control.type.monitor.view', 'cost_control_type_id',
+        string='Cost Control Type Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'res.cost.control.type.monitor.view', 'cost_control_type_id',
+        string='Cost Control Type Monitor',
+        domain=[('budget_method', '=', 'expense')],
     )
 
 
@@ -27,6 +47,16 @@ class ResPersonnelCostcenter(models.Model):
         'res.personnel.costcenter.monitor.view', 'personnel_costcenter_id',
         string='Personnel Budget Monitor',
     )
+    monitor_revenue_ids = fields.One2many(
+        'res.personnel.costcenter.monitor.view', 'personnel_costcenter_id',
+        string='Personnel Budget Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'res.personnel.costcenter.monitor.view', 'personnel_costcenter_id',
+        string='Personnel Budget Monitor',
+        domain=[('budget_method', '=', 'expense')],
+    )
 
 
 class ResInvestAsset(models.Model):
@@ -36,6 +66,16 @@ class ResInvestAsset(models.Model):
         'res.invest.asset.monitor.view', 'invest_asset_id',
         string='Investment Asset Monitor',
     )
+    monitor_revenue_ids = fields.One2many(
+        'res.invest.asset.monitor.view', 'invest_asset_id',
+        string='Investment Asset Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'res.invest.asset.monitor.view', 'invest_asset_id',
+        string='Investment Asset Monitor',
+        domain=[('budget_method', '=', 'expense')],
+    )
 
 
 class ResInvestConstruction(models.Model):
@@ -44,4 +84,14 @@ class ResInvestConstruction(models.Model):
     monitor_ids = fields.One2many(
         'res.invest.construction.monitor.view', 'invest_construction_id',
         string='Investment Construction Monitor',
+    )
+    monitor_revenue_ids = fields.One2many(
+        'res.invest.construction.monitor.view', 'invest_construction_id',
+        string='Investment Construction Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'res.invest.construction.monitor.view', 'invest_construction_id',
+        string='Investment Construction Monitor',
+        domain=[('budget_method', '=', 'expense')],
     )

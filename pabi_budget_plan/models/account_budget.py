@@ -22,10 +22,10 @@ class AccountBudget(models.Model):
         string='Policy Amount',
         readonly=False,  # TODO: change back to True
     )
-    planned_amount = fields.Float(
-        string='Current Amount',  # Existing field, change label only
-        help="Current Planned Amount",
-    )
+    # planned_amount = fields.Float(
+    #     string='Current Amount',  # Existing field, change label only
+    #     help="Current Planned Amount",
+    # )
     ref_budget_id = fields.Many2one(
         'account.budget',
         string="Previous Budget",
@@ -52,19 +52,27 @@ class AccountBudget(models.Model):
     @api.constrains('fiscalyear_id', 'section_id')
     def _check_fiscalyear_section_unique(self):
         if self.fiscalyear_id and self.section_id:
-            budget = self.search([('version', '=', self.version),
-                            ('fiscalyear_id', '=', self.fiscalyear_id.id), 
-                            ('section_id', '=', self.section_id.id), 
-                            ('state', '!=', 'cancel'),
-                            ])
+            budget = self.search(
+                [('version', '=', self.version),
+                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
+                 ('section_id', '=', self.section_id.id),
+                 ('state', '!=', 'cancel'), ])
             if len(budget) > 1:
-                raise ValidationError(_('You can not have duplicate budget control for same fiscalyear, section and version.'))
+                raise ValidationError(
+                    _('You can not have duplicate budget control for '
+                      'same fiscalyear, section and version.'))
+
+    @api.model
+    def _check_amount_with_policy(self):
+        if self.budgeted_expense != self.policy_amount:
+            raise UserError(
+                _('New Budgeted Expense must equal to Policy Amount'))
+        return True
 
     @api.multi
     def budget_confirm(self):
         for rec in self:
-            if rec.planned_amount != rec.policy_amount:
-                raise UserError(_('New amount must equal to Policy Amount'))
+            rec._check_amount_with_policy()
             name = self.env['ir.sequence'].next_by_code('budget.control.unit')
             rec.write({'name': name})
             rec.ref_budget_id.budget_cancel()
