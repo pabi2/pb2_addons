@@ -15,6 +15,7 @@
         'purchase_requisition',
         'purchase_request',
         'stock_request',
+        # 'account_model_generate_hook',
     ],
     'data': [
         'security/security.xml',

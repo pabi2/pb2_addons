@@ -40,12 +40,6 @@ class HRExpense(models.Model):
                 rec.activity_id.activity_group_ids[0] or False
 
     @api.model
-    def _is_create_invoice(self):
-        if self.pay_to == 'internal':  # Do not create invoice for IC
-            return False
-        return True
-
-    @api.model
     def _is_valid_for_invoice(self):
         res = super(HRExpense, self)._is_valid_for_invoice()
         if self.pay_to == 'internal':  # Do not create invoice for IC
