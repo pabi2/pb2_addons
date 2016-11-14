@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_model_line_form" model="ir.ui.view">
+            <field name="name">account.model.line.form</field>
+            <field name="model">account.model.line</field>
+            <field name="inherit_id" ref="account.view_model_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='account_analytic_id']" position="after">
+                    <field name="activity_group_id"/>
+                    <field name="section_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_model_line_tree" model="ir.ui.view">
+            <field name="name">account.model.line.tree</field>
+            <field name="model">account.model.line</field>
+            <field name="inherit_id" ref="account.view_model_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='account_analytic_id']" position="after">
+                    <field name="activity_group_id"/>
+                    <field name="section_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
