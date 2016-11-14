@@ -19,5 +19,6 @@
     ],
     "data": [
         "views/purchase_view.xml",
+        "views/hr_expense_view.xml",
     ],
 }

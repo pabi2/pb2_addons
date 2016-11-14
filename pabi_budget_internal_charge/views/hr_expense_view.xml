@@ -28,7 +28,7 @@
                 </field>
             </field>
         </record>
-        <record id="view_expenses_form" model="ir.ui.view">
+        <record id="view_expenses_form2" model="ir.ui.view">
             <field name="name">view.expenses.form</field>
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="pabi_hr_expense.view_expenses_form"/>
@@ -36,6 +36,16 @@
                 <field name="receive_method" position="attributes">
                     <attribute name="attrs">{'invisible': [('pay_to', '=', 'internal')]}</attribute>
                 </field>
+            </field>
+        </record>
+        <record id="view_expenses_form3" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <button name="confirm" position="after" >
+                    <button name="internal_charge" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '!=', 'internal')]}" string="Create Internal Charge" type="workflow" class="oe_highlight"/>
+                </button>
             </field>
         </record>
     </data>
