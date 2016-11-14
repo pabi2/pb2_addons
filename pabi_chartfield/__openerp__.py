@@ -15,6 +15,7 @@
         'purchase_requisition',
         'purchase_request',
         'stock_request',
+        # 'account_model_generate_hook',
     ],
     'data': [
         'security/security.xml',
@@ -33,6 +34,7 @@
         'views/purchase_requisition_view.xml',
         'views/purchase_request_line_make_purchase_requisition_view.xml',
         'views/stock_request_view.xml',
+        'views/account_view.xml',
     ],
     'demo': [
     ],

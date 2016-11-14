@@ -14,5 +14,6 @@ from . import purchase_request_line_make_purchase_requisition
 from . import res_config
 from . import stock
 from . import stock_request  # IN PROGRESS
+from . import account
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
