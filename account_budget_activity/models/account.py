@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
+from .account_activity import ActivityCommon
 
 
 class AccountFiscalyear(models.Model):
@@ -141,3 +142,27 @@ class AccountAccount(models.Model):
         string='Activities',
         readonly=True,
     )
+
+
+class AccountModelLine(ActivityCommon, models.Model):
+    _inherit = 'account.model.line'
+
+    @api.model
+    def create(self, vals):
+        line = super(AccountModelLine, self).create(vals)
+        Analytic = self.env['account.analytic.account']
+        line.analytic_account_id = \
+            Analytic.create_matched_analytic(line)
+        return line
+
+    @api.multi
+    def write(self, vals):
+        res = super(AccountModelLine, self).write(vals)
+        if self.env.context.get('MyModelLoopBreaker'):
+            return res
+        self = self.with_context(MyModelLoopBreaker=True)
+        for line in self:
+            Analytic = self.env['account.analytic.account']
+            line.analytic_account_id = \
+                Analytic.create_matched_analytic(line)
+        return res

@@ -155,11 +155,13 @@ class AccountAnalyticAccount(models.Model):
     @api.model
     def get_matched_analytic(self, rec):
         domain = self.get_analytic_search_domain(rec)
+        if rec._name == 'account.model.line':  # From Recurring Models
+            domain.append(('type', '=', 'normal'))
         if rec.product_id:
             domain.append(('type', '=', 'product'))
         elif rec.activity_id:
             domain.append(('type', '=', 'activity'))
-        else:
+        else:  # Last possible type, from Purchase Request
             domain.append(('type', '=', 'pr_product'))
         analytics = self.env['account.analytic.account'].search(domain)
         if analytics:
@@ -176,6 +178,8 @@ class AccountAnalyticAccount(models.Model):
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account']
         domain = self.get_analytic_search_domain(rec)
+        if rec._name == 'account.model.line':
+            domain.append(('type', '=', 'normal'))
         if rec.product_id:
             domain.append(('type', '=', 'product'))
         elif rec.activity_id:
@@ -190,7 +194,8 @@ class AccountAnalyticAccount(models.Model):
                             ('name' in rec and rec.name) or
                             ('product_name' in rec and rec.product_name) or
                             False)
-            vals['type'] = ((rec.product_id and 'product') or
+            vals['type'] = ((rec._name == 'account.model.line' and 'normal') or
+                            (rec.product_id and 'product') or
                             (rec.activity_id and 'activity') or
                             'pr_product')
             return Analytic.create(vals)
