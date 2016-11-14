@@ -48,6 +48,11 @@ class WkfCmdBossSpecailLevel(models.Model):
         string='Level',
         required=True,
     )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        required=True,
+    )
 
 
 class WkfCmdSectionAssign(models.Model):
