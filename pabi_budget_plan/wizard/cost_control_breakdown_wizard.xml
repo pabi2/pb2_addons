@@ -38,6 +38,10 @@
                             <field name="activity_group_id"/>
                             <field name="activity_id"/>
                             <field name="name"/>
+                            <field name="activity_unit_price"/>
+                            <field name="activity_unit"/>
+                            <field name="unit"/>
+                            <field name="total_budget"/>
                             <field name="m1"/>
                             <field name="m2"/>
                             <field name="m3"/>

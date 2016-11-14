@@ -173,59 +173,7 @@ class BudgetExportWizard(models.TransientModel):
     def _update_costcontrol_sheet(self, workbook, budget):
         center_align = Alignment(horizontal='center')
         protection = Protection(locked=False)
-        
-        def generate_line_header(sheet, row):
-            sheet.cell(row=row, column=1, value='Activity').font = bold_font
-            sheet.cell(row=row, column=1).alignment = center_align
-            sheet.cell(row=row, column=2, value='Description').font = bold_font
-            sheet.cell(row=row, column=2).alignment = center_align
-            sheet.cell(row=row, column=3, value='เหตุผลและ').font = bold_font
-            sheet.cell(row=row, column=3).alignment = center_align
-            sheet.cell(row=row, column=5, value='Calculate').font = bold_font
-            sheet.cell(row=row, column=5).alignment = center_align
-            sheet.merge_cells(start_row=row,start_column=5,end_row=row,end_column=9)
-            sheet.cell(row=row, column=10, value='แผนค่าใช้จ่าย ปีงบประมาณปี 2016').font = bold_font
-            sheet.cell(row=row, column=10).alignment = center_align
-            sheet.merge_cells(start_row=row,start_column=10,end_row=row,end_column=22)
 
-            row += 1
-            sheet.cell(row=row, column=1, value='').font = bold_font
-            sheet.cell(row=row, column=2, value='').font = bold_font
-            sheet.cell(row=row, column=3, value='ความจำเป็น').font = bold_font
-            sheet.cell(row=row, column=5, value='คน/หน่วย').font = bold_font
-            sheet.cell(row=row, column=6, value='@').font = bold_font
-            sheet.cell(row=row, column=7, value='ครั้ง').font = bold_font
-            sheet.cell(row=row, column=8, value='จำนวนเงิน').font = bold_font
-            sheet.cell(row=row, column=10, value='ต.ค.').font = bold_font
-            sheet.cell(row=row, column=11, value='พ.ย.').font = bold_font
-            sheet.cell(row=row, column=12, value='ธ.ค.').font = bold_font
-            sheet.cell(row=row, column=13, value='ม.ค.').font = bold_font
-            sheet.cell(row=row, column=14, value='ก.พ.').font = bold_font
-            sheet.cell(row=row, column=15, value='มี.ค.').font = bold_font
-            sheet.cell(row=row, column=16, value='เม.ย.').font = bold_font
-            sheet.cell(row=row, column=17, value='พ.ค.').font = bold_font
-            sheet.cell(row=row, column=18, value='มิ.ย.').font = bold_font
-            sheet.cell(row=row, column=19, value='ก.ค.').font = bold_font
-            sheet.cell(row=row, column=20, value='ส.ค.').font = bold_font
-            sheet.cell(row=row, column=21, value='ก.ย.').font = bold_font
-            sheet.cell(row=row, column=22, value='รวม').font = bold_font
-
-            for i in range(1, 23):
-                sheet.cell(row=row, column=i).alignment = center_align
-
-            self._add_cell_border(sheet,
-                  row_start=row-1,
-                  row_end=row+1,
-                  col_start=1,
-                  col_end=22)
-            self.with_context(color='94BDD7')._make_cell_color_filled(sheet=sheet,
-                                     row_start=row-1,
-                                     row_end=row+1,
-                                     col_start=1,
-                                     col_end=22,
-                                     col_list=[])
-            row += 1
-            return row
         ConstControl_Sheet = False
         try:
             ConstControl_Sheet = workbook.get_sheet_by_name('CostControl_1')
@@ -285,8 +233,6 @@ class BudgetExportWizard(models.TransientModel):
                     cc_f_row += cc_row_gap
                 if const_cntrl_line.plan_cost_control_line_ids:
                     for line in const_cntrl_line.plan_cost_control_line_ids:
-                        line_exist = self.env['budget.plan.unit.line'].search(
-                        [('breakdown_line_id', '=', line.id)])
                         col = 1
                         if line.activity_group_id:
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_group_id.name
@@ -298,16 +244,16 @@ class BudgetExportWizard(models.TransientModel):
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.name
                         col += 1
                         col += 1
-                        if line_exist.activity_unit:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line_exist.activity_unit
+                        if line.activity_unit:
+                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_unit
 
                         col += 1
-                        if line_exist.activity_unit_price:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line_exist.activity_unit_price
+                        if line.activity_unit_price:
+                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_unit_price
 
                         col += 1
-                        if line_exist.unit:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line_exist.unit
+                        if line.unit:
+                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.unit
                         col += 1
                         col += 1
                         ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m1

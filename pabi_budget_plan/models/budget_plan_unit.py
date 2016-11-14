@@ -408,6 +408,27 @@ class BudgetPlanUnitCostControlLine(models.Model):
         digits_compute=dp.get_precision('Account'),
         store=True,
     )
+    activity_unit_price = fields.Float(
+        string="Unit Price",
+    )
+    activity_unit = fields.Float(
+        string="Activity Unit",
+    )
+    unit = fields.Float(
+        string="Unit",
+    )
+    total_budget = fields.Float(
+        string="Total Budget",
+        compute="_compute_total_budget",
+    )
+
+    @api.depends('unit',
+                 'activity_unit',
+                 'activity_unit_price')
+    def _compute_total_budget(self):
+        for line in self:
+            line.total_budget =\
+                line.unit * line.activity_unit * line.activity_unit_price
 
     @api.multi
     def write(self, vals):
