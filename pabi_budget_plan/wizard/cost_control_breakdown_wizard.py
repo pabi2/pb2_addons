@@ -37,6 +37,9 @@ class CostControlBreakdown(models.TransientModel):
         vals = {
             'activity_group_id': line.activity_group_id.id,
             'activity_id': line.activity_id.id,
+            'activity_unit_price': line.activity_unit_price,
+            'activity_unit': line.activity_unit,
+            'unit': line.unit,
             'm0': line.m0,
             'm1': line.m1,
             'm2': line.m2,

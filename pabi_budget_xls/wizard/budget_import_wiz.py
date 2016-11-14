@@ -75,6 +75,7 @@ class BudgetImportWizard(models.TransientModel):
                         _('Please insert float value on\
                          row: %s - column: %s') % (row, 5))
                 calculate_vals.update({'unit': unit})
+                line_vals.update({'unit': unit})
                 col += 1
 
                 activity_unit_price = CostCtrl_Sheet.cell(row=row, column=col).value
@@ -84,6 +85,7 @@ class BudgetImportWizard(models.TransientModel):
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
                     calculate_vals.update({'activity_unit_price': activity_unit_price})
+                    line_vals.update({'activity_unit_price': activity_unit_price})
                 col += 1
                 activity_unit = CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_unit:
@@ -92,6 +94,7 @@ class BudgetImportWizard(models.TransientModel):
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
                     calculate_vals.update({'activity_unit': activity_unit})
+                    line_vals.update({'activity_unit': activity_unit})
 
                 total_act_budget = unit * activity_unit_price * activity_unit
 
@@ -124,8 +127,7 @@ class BudgetImportWizard(models.TransientModel):
                         cc_line.write(line_vals)
                 else:
                     cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
-                    
-                    
+
                 if cc_line:
                     plan_line_vals = {}
                     line_exist = self.env['budget.plan.unit.line'].search(
@@ -133,7 +135,7 @@ class BudgetImportWizard(models.TransientModel):
                          ('breakdown_line_id', '=', cc_line.id)])
                     plan_line_vals.update(line_vals)
                     plan_line_vals.update(calculate_vals)
-                    
+
                     if line_exist:
                         line_exist.write(plan_line_vals)
                         ids.append(line_exist.id)
