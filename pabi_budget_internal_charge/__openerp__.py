@@ -9,12 +9,14 @@
     'depends': [
         'hr_expense_auto_invoice',
         'pabi_budget_plan',
+        'pabi_hr_expense',
     ],
     'data': [
         'wizard/cost_control_breakdown_wizard.xml',
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',
         'views/account_budget_view.xml',
+        'workflow/hr_expense_workflow.xml',
     ],
     'demo': [
     ],
