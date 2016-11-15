@@ -199,7 +199,6 @@ class BudgetExportWizard(models.TransientModel):
             ConstControl_Sheet.add_data_validation(act_dv)
             org = budget.org_id.code and\
                 budget.org_id.code or budget.org_id.name_short
-                
             section = budget.section_id.code and\
                 budget.section_id.code or budget.section_id.name_short
 
