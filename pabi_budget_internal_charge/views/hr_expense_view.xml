@@ -11,6 +11,7 @@
                     <div>
                         <div>
                             <field name="pay_to" class="oe_inline"/>
+                            <field name="journal_id" class="oe_inline" attrs="{'invisible': [('pay_to', '!=', 'internal')], 'readonly': [('pay_to', '!=', 'internal')], 'required': [('pay_to', '=', 'internal')]}"/>
                         </div>
                         <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
                             <label for="internal_section_id" string="S:"/>
@@ -43,9 +44,14 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
+                <button name="confirm" position="attributes" >
+                    <attribute name="states">False</attribute>
+                    <attribute name="attrs" >{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '=', 'internal')]}</attribute>
+                </button>
                 <button name="confirm" position="after" >
                     <button name="internal_charge" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '!=', 'internal')]}" string="Create Internal Charge" type="workflow" class="oe_highlight"/>
                 </button>
+                <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="replace" />
             </field>
         </record>
     </data>
