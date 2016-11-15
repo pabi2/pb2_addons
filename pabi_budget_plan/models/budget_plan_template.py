@@ -11,20 +11,67 @@ class BudgetPlanTemplate(ChartField, models.Model):
     _inherit = 'mail.thread'
     _description = "Budget Plan Template"
 
-    @api.one
-    @api.constrains('fiscalyear_id', 'section_id')
-    def _check_fiscalyear_section_unique(self):
-        if self.fiscalyear_id and self.section_id:
+    @api.model
+    def create(self, vals):
+        if vals.get('fiscalyear_id', False) and vals.get('section_id', False):
+            fiscalyear_id = vals['fiscalyear_id']
+            section_id = vals['section_id']
             budget_plans = self.env['budget.plan.unit'].search(
                 # TODO should go this constraint to unit based!
-                [('fiscalyear_id', '=', self.fiscalyear_id.id),
-                 ('section_id', '=', self.section_id.id),
+                [('fiscalyear_id', '=', fiscalyear_id),
+                 ('section_id', '=', section_id),
+                 ('state', 'not in', ('cancel', 'reject')),
+                 ]).ids
+            if len(budget_plans) > 0:
+                raise ValidationError(
+                    _('You can not have duplicate budget plan for '
+                      'same fiscalyear and section.'))
+        return super(BudgetPlanTemplate, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        for record in self:
+            fiscalyear_id = False
+            if vals.get('fiscalyear_id', False):
+                fiscalyear_id = vals['fiscalyear_id']
+            else:
+                fiscalyear_id = record.fiscalyear_id.id
+
+            section_id = False
+            if vals.get('section_id', False):
+                section_id = vals['section_id']
+            else:
+                section_id = record.section_id.id
+
+        if section_id and fiscalyear_id:
+            budget_plans = self.env['budget.plan.unit'].search(
+                # TODO should go this constraint to unit based!
+                [('fiscalyear_id', '=', fiscalyear_id),
+                 ('section_id', '=', section_id),
                  ('state', 'not in', ('cancel', 'reject')),
                  ]).ids
             if len(budget_plans) > 1:
                 raise ValidationError(
                     _('You can not have duplicate budget plan for '
                       'same fiscalyear and section.'))
+        return super(BudgetPlanTemplate, self).write(vals)
+
+#     @api.one
+#     @api.constrains('fiscalyear_id', 'section_id')
+#     def _check_fiscalyear_section_unique(self):
+#         print "ffffffffffffffffffffffffffffffffffffffffffffffff"
+#         if self.fiscalyear_id and self.section_id:
+#             budget_plans = self.env['budget.plan.unit'].search(
+#                 # TODO should go this constraint to unit based!
+#                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
+#                  ('section_id', '=', self.section_id.id),
+#                  ('state', 'not in', ('cancel', 'reject')),
+#                  ]).ids
+#             print "budget_plans:::::::::::::::::::::::::",budget_plans
+#             if len(budget_plans) > 0:
+#                 raise ValidationError(
+#                     _('You can not have duplicate budget plan for '
+#                       'same fiscalyear and section.'))
 
     @api.model
     def _default_fy(self):
