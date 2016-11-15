@@ -85,13 +85,13 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Revenue">
-                                <field name="budget_revenue_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
-                                    context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'default_budget_method': 'revenue'}"/>
-                            </page>
                             <page string="Expense">
                                 <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view'}"/>
+                            </page>
+                            <page string="Revenue">
+                                <field name="budget_revenue_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
+                                    context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'default_budget_method': 'revenue'}"/>
                             </page>
                         </notebook>
                     </sheet>

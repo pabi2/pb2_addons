@@ -59,17 +59,6 @@
                             </field>
                         </page>
                         <page string="Budget Monitor">
-                            <separator string="Revenue" />
-                            <field name="monitor_revenue_ids">
-                                <tree string="Monitor" editable="bottom">
-                                    <field name="fiscalyear_id"/>
-                                    <field name="planned_amount"/>
-                                    <field name="released_amount"/>
-                                    <field name="amount_so_commit"/>
-                                    <field name="amount_actual"/>
-                                    <field name="amount_balance"/>
-                                </tree>
-                            </field>
                             <separator string="Expense" />
                             <field name="monitor_expense_ids">
                                 <tree string="Monitor" editable="bottom">
@@ -79,6 +68,17 @@
                                     <field name="amount_pr_commit"/>
                                     <field name="amount_po_commit"/>
                                     <field name="amount_exp_commit"/>
+                                    <field name="amount_actual"/>
+                                    <field name="amount_balance"/>
+                                </tree>
+                            </field>
+                            <separator string="Revenue" />
+                            <field name="monitor_revenue_ids">
+                                <tree string="Monitor" editable="bottom">
+                                    <field name="fiscalyear_id"/>
+                                    <field name="planned_amount"/>
+                                    <field name="released_amount"/>
+                                    <field name="amount_so_commit"/>
                                     <field name="amount_actual"/>
                                     <field name="amount_balance"/>
                                 </tree>
@@ -183,17 +183,6 @@
                     </group>
                     <notebook>
                         <page string="Budget Monitor">
-                            <separator string="Revenue" />
-                            <field name="monitor_revenue_ids">
-                                <tree string="Monitor" editable="bottom">
-                                    <field name="fiscalyear_id"/>
-                                    <field name="planned_amount"/>
-                                    <field name="released_amount"/>
-                                    <field name="amount_so_commit"/>
-                                    <field name="amount_actual"/>
-                                    <field name="amount_balance"/>
-                                </tree>
-                            </field>
                             <separator string="Expense" />
                             <field name="monitor_expense_ids">
                                 <tree string="Monitor" editable="bottom">
@@ -203,6 +192,17 @@
                                     <field name="amount_pr_commit"/>
                                     <field name="amount_po_commit"/>
                                     <field name="amount_exp_commit"/>
+                                    <field name="amount_actual"/>
+                                    <field name="amount_balance"/>
+                                </tree>
+                            </field>
+                            <separator string="Revenue" />
+                            <field name="monitor_revenue_ids">
+                                <tree string="Monitor" editable="bottom">
+                                    <field name="fiscalyear_id"/>
+                                    <field name="planned_amount"/>
+                                    <field name="released_amount"/>
+                                    <field name="amount_so_commit"/>
                                     <field name="amount_actual"/>
                                     <field name="amount_balance"/>
                                 </tree>
