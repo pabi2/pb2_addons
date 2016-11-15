@@ -44,10 +44,10 @@ class BudgetImportWizard(models.TransientModel):
                 costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
 
             line_start = cc_row + 5
-            line_vals = {'cost_control_line_id': costcontrol_line.id}
             calculate_vals = {}
             ids = []
             for row in range(line_start, line_start+10):
+                line_vals = {'cost_control_line_id': costcontrol_line.id}
                 col = 1
                 col += 1
                 col += 1
@@ -77,6 +77,8 @@ class BudgetImportWizard(models.TransientModel):
                     raise UserError(
                         _('Please insert float value on\
                          row: %s - column: %s') % (row, 5))
+                if not unit:
+                    unit = 0.0
                 calculate_vals.update({'unit': unit})
                 line_vals.update({'unit': unit})
                 col += 1
@@ -87,8 +89,10 @@ class BudgetImportWizard(models.TransientModel):
                         raise UserError(
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
-                    calculate_vals.update({'activity_unit_price': activity_unit_price})
-                    line_vals.update({'activity_unit_price': activity_unit_price})
+                else:
+                    activity_unit_price = 0.0
+                calculate_vals.update({'activity_unit_price': activity_unit_price})
+                line_vals.update({'activity_unit_price': activity_unit_price})
                 col += 1
                 activity_unit = CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_unit:
@@ -96,11 +100,11 @@ class BudgetImportWizard(models.TransientModel):
                         raise UserError(
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
-                    calculate_vals.update({'activity_unit': activity_unit})
-                    line_vals.update({'activity_unit': activity_unit})
-
+                else:
+                    activity_unit = 0.0
+                calculate_vals.update({'activity_unit': activity_unit})
+                line_vals.update({'activity_unit': activity_unit})
                 total_act_budget = unit * activity_unit_price * activity_unit
-
                 col += 1
                 col += 1
                 col += 1
