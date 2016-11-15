@@ -230,6 +230,7 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
     template_id = fields.Many2one(
         'budget.plan.line.template',
         required=True,
+        index=True,
         ondelete='cascade',
     )
     state = fields.Selection(
@@ -328,6 +329,8 @@ class BudgetPlanUnitCostControlLine(models.Model):
     cost_control_line_id = fields.Many2one(
         'budget.plan.unit.cost.control',
         string='Cost Control Line',
+        index=True,
+        ondelete='cascade',
     )
     activity_group_id = fields.Many2one(
         'account.activity.group',
