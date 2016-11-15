@@ -37,7 +37,7 @@ class BudgetImportWizard(models.TransientModel):
                 continue
 
             costcontrol_line = False
-            costcontrol_line_id = CostCtrl_Sheet.cell(row=cc_row, column=3).value
+            costcontrol_line_id = CostCtrl_Sheet.cell(row=cc_row, column=27).value
             if costcontrol_line_id:
                 costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
             if not costcontrol_line:
