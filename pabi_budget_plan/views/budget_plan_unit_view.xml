@@ -115,7 +115,7 @@
                                 <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
                             <page string="Revenue">
-                                <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
+                                <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
                             <page string="Cost Control">
                                 <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}">
