@@ -186,6 +186,7 @@ class BudgetExportWizard(models.TransientModel):
             end_color='D3D3D3',
             fill_type='solid',
         )
+        Whitefont = Font(color='FFFFFF')
         if ConstControl_Sheet:
             self._update_costcontrol_masterdata(workbook)
             self._update_activity_masterdata(workbook)
@@ -198,10 +199,9 @@ class BudgetExportWizard(models.TransientModel):
             ConstControl_Sheet.add_data_validation(act_dv)
             org = budget.org_id.code and\
                 budget.org_id.code or budget.org_id.name_short
-                
             section = budget.section_id.code and\
                 budget.section_id.code or budget.section_id.name_short
-            
+
             row = 1
             ConstControl_Sheet.cell(row=row, column=2,
                                        value=budget.fiscalyear_id.name)
@@ -237,7 +237,8 @@ class BudgetExportWizard(models.TransientModel):
             cc_row_gap = 18
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
-                ConstControl_Sheet.cell(row=cc_f_row, column=3).value = const_cntrl_line.id
+                ConstControl_Sheet.cell(row=cc_f_row, column=27).value = const_cntrl_line.id
+                ConstControl_Sheet.cell(row=cc_f_row, column=27).font = Whitefont
                 if const_cntrl_line.cost_control_id:
                     ConstControl_Sheet.cell(row=cc_f_row, column=2).value = const_cntrl_line.cost_control_id.name
                     cc_f_row += cc_row_gap
@@ -296,6 +297,7 @@ class BudgetExportWizard(models.TransientModel):
                         ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m12
                         col += 3
                         ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.id
+                        ConstControl_Sheet.cell(row=line_f_row, column=col).font = Whitefont
                         line_f_row += 1
         return True
 
