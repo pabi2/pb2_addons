@@ -55,7 +55,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         string='Revenue Plan Lines',
         copy=True,
         readonly=True,
-        domain=[('budget_method', '=', 'revenue')],  # Have domain
+        domain=[('budget_method', '=', 'revenue'),
+                ('cost_control_id', '=', False)],  # Have domain
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
         track_visibility='onchange',
@@ -66,7 +67,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         string='Expense Plan Lines',
         copy=True,
         readonly=True,
-        domain=[('budget_method', '=', 'expense')],  # Have domain
+        domain=[('budget_method', '=', 'expense'),
+                ('cost_control_id', '=', False)],  # Have domain
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
         track_visibility='onchange',

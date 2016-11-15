@@ -199,7 +199,7 @@
                     <field name="total_budget"/>
 
                     <field name="description"/>
-                    <field name="cost_control_id"/>
+                    <field name="cost_control_id" invisible="1"/>
 
                     <field name="m0"/>
                     <field name="m1"/>
