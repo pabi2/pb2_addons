@@ -190,7 +190,7 @@
                     <field name="section_id"/>
                     <field name="fund_id" required="1"/>
 
-                    <field name="activity_group_id"/>
+                    <field name="activity_group_id" domain="[('budget_method', '=', budget_method)]"/>
                     <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
 
                     <field name="unit"/>

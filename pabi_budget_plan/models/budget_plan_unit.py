@@ -114,9 +114,11 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
                  'plan_expense_line_ids')
     def _compute_planned_overall(self):
         for rec in self:
-            amounts = rec.plan_revenue_line_ids.mapped('planned_amount')
+            amounts = \
+                rec.plan_summary_revenue_line_ids.mapped('planned_amount')
             rec.planned_revenue = sum(amounts)
-            amounts = rec.plan_expense_line_ids.mapped('planned_amount')
+            amounts = \
+                rec.plan_summary_expense_line_ids.mapped('planned_amount')
             rec.planned_expense = sum(amounts)
             rec.planned_overall = rec.planned_revenue - rec.planned_expense
 
