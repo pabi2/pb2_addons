@@ -42,6 +42,7 @@
                         <group>
                             <field name="name"/>
                             <field name="description"/>
+                            <field name="budget_method" />
                         </group>
                         <group>
                             <field name="parent_id"/>

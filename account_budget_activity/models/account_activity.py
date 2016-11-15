@@ -11,6 +11,13 @@ class AccountActivityGroup(models.Model):
     _parent_order = 'name'
     _order = 'parent_left'
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        default='expense',
+        required=True,
+    )
     name = fields.Char(
         string='Activity Group',
         required=True,
@@ -99,7 +106,7 @@ class AccountActivity(models.Model):
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],
         string='Budget Method',
-        default='expense',
+        compute='_compute_budget_method',
         required=True,
     )
     activity_group_ids = fields.Many2many(
@@ -166,13 +173,24 @@ class AccountActivity(models.Model):
 #                               activity.name or '-')))
 #         return result
 
-#     @api.one
-#     @api.constrains('account_id')
-#     def _check_account_id(self):
-#         if not self.account_id and not self.activity_group_id.account_id:
-#             raise UserError(
-#                 _('Please select account for activity in group %s!' %
-#                   (self.activity_group_id.name,)))
+    @api.multi
+    @api.constrains('activity_group_ids')
+    def _check_account_id(self):
+        for rec in self:
+            m = list(set([x.budget_method for x in rec.activity_group_ids]))
+            if False in m:
+                m.remove(False)
+            if len(m) > 1:
+                raise ValidationError(
+                    _('All Activity Groups of this Activity '
+                      'must use same Budget Method'))
+
+    @api.multi
+    @api.depends('activity_group_ids')
+    def _compute_budget_method(self):
+        for rec in self:
+            rec.budget_method = rec.activity_group_ids and \
+                rec.activity_group_ids[0].budget_method or 'epxpense'
 
 
 class AccountActivityTag(models.Model):
