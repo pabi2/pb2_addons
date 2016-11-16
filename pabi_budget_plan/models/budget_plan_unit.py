@@ -110,8 +110,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
 
     @api.multi
     @api.depends('plan_line_ids',
-                 'plan_revenue_line_ids',
-                 'plan_expense_line_ids')
+                 'cost_control_ids',
+                 'cost_control_ids.detail_ids')
     def _compute_planned_overall(self):
         for rec in self:
             amounts = \
