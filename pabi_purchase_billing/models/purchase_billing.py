@@ -2,6 +2,9 @@
 
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
+import datetime
+import re
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseBilling(models.Model):
@@ -80,6 +83,26 @@ class PurchaseBilling(models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Billing Number must be unique!'),
     ]
+
+    @api.constrains('date_due')
+    def _validate_date_due(self):
+        day = datetime.datetime.strptime(self.date_due, '%Y-%m-%d').date().day
+        date_list = []
+        date_due_setting = self.env.user.company_id.date_due_day
+        regex = r"\d{1,2}"
+        matches = re.findall(regex, date_due_setting)
+        for match in matches:
+            if 0 < int(match) < 29 and int(match) not in date_list:
+                date_list.append(int(match))
+            else:
+                raise UserError(
+                    _("""Wrong due date configuration.
+                         Please check the due date setting.""")
+                )
+        if day not in date_list:
+            raise UserError(
+                _("""You specified wrong due date.""")
+            )
 
     @api.one
     @api.depends('supplier_invoice_ids')
