@@ -76,7 +76,7 @@
                             <th rowspan="2">Org</th>
                             <th rowspan="2">Section</th>
                             <th rowspan="2">Project</th>
-                            <th rowspan="2">Cost Control</th>
+                            <th rowspan="2">Job Order</th>
                         </tr>
                         <tr style="border-top:hidden;">
                             <th>Dr.</th>

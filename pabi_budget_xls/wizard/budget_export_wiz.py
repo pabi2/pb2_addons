@@ -137,8 +137,8 @@ class BudgetExportWizard(models.TransientModel):
         bold_font = Font(bold=True, name='Arial', size=11)
 
         ConstControl_MasterSheet.cell(row=1, column=1).value = 'Sequence'
-        ConstControl_MasterSheet.cell(row=1, column=2).value = 'Cost Control - English'
-        ConstControl_MasterSheet.cell(row=1, column=3).value = 'Cost Control - Thai'
+        ConstControl_MasterSheet.cell(row=1, column=2).value = 'Job Order - English'
+        ConstControl_MasterSheet.cell(row=1, column=3).value = 'Job Order - Thai'
         ConstControl_MasterSheet.cell(row=1, column=1).font = bold_font
         ConstControl_MasterSheet.cell(row=1, column=2).font = bold_font
         ConstControl_MasterSheet.cell(row=1, column=3).font = bold_font

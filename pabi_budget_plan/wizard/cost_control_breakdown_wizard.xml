@@ -9,9 +9,9 @@
             <field name="name">wizard.cost.control.breakdown</field>
             <field name="model">cost.control.breakdown</field>
             <field name="arch" type="xml">
-                <form string="Cost Control Breakdown">
+                <form string="Job Order Breakdown">
                     <field name="cost_control_line_id" invisible="1"/>
-                    <p class="oe_grey">Detail activities of this cost control</p>
+                    <p class="oe_grey">Detail activities of this Job Order</p>
                     <field name="breakdown_line_ids" invisible="1">
                         <tree editable="bottom">
                             <field name="activity_group_id"/>
@@ -67,7 +67,7 @@
         </record>
 
         <record id="action_add_cost_control_breakdown" model="ir.actions.act_window">
-            <field name="name">Cost Control Breakdown</field>
+            <field name="name">Job Order Breakdown</field>
             <field name="res_model">cost.control.breakdown</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>

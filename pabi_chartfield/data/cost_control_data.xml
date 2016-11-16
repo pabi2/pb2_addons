@@ -2,7 +2,7 @@
 <openerp>
     <data noupdate="1">
 
-        <!-- Cost Control Type -->
+        <!-- Job Order Type -->
         <record id="cost_control_nstda_course" model="cost.control.type">
             <field name="name">NSTDA Course</field>
             <field name="description">Course or Seminar organized by NSTDA</field>

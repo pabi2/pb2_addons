@@ -34,7 +34,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     cost_control_ids = fields.One2many(
         'budget.plan.unit.cost.control',
         'plan_id',
-        string='Cost Control',
+        string='Job Order',
         copy=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
@@ -223,7 +223,7 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
     )
     fk_costcontrol_id = fields.Many2one(
         'budget.plan.unit.cost.control',
-        string='FK Cost Control',
+        string='FK Job Order',
         ondelete='cascade',
         index=True,
     )
@@ -248,7 +248,7 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
     )
     breakdown_line_id = fields.Many2one(
         'budget.plan.unit.cost.control.line',
-        string='Breakdown Cost Control Line ref.',
+        string='Breakdown Job Order Line ref.',
     )
     activity_unit_price = fields.Float(
         string="Unit Price",
@@ -297,7 +297,7 @@ class BudgetPlanUnitCostControl(models.Model):
     )
     cost_control_id = fields.Many2one(
         'cost.control',
-        string='Cost Control',
+        string='Job Order',
     )
     amount_total = fields.Float(
         string='Total Amount',
@@ -306,12 +306,12 @@ class BudgetPlanUnitCostControl(models.Model):
     detail_ids = fields.One2many(
         'budget.plan.unit.line',
         'fk_costcontrol_id',
-        string='Cost Control Detail',
+        string='Job Order Detail',
     )
     plan_cost_control_line_ids = fields.One2many(
         'budget.plan.unit.cost.control.line',
         'cost_control_line_id',
-        string="Cost Control Lines",
+        string="Job Order Lines",
         copy=False,
     )
 
@@ -328,7 +328,7 @@ class BudgetPlanUnitCostControlLine(models.Model):
 
     cost_control_line_id = fields.Many2one(
         'budget.plan.unit.cost.control',
-        string='Cost Control Line',
+        string='Job Order Line',
         index=True,
         ondelete='cascade',
     )

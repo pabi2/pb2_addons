@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        # Cost Control Type
+        # Job Order Type
         <record id="view_cost_control_type_tree" model="ir.ui.view">
             <field name="name">view.cost.control.type.tree</field>
             <field name="model">cost.control.type</field>
             <field name="arch" type="xml">
-                <tree string="Cost Control Type">
+                <tree string="Job Order Type">
                     <field name="name"/>
                     <field name="code"/>
                     <field name="description" />
@@ -18,7 +18,7 @@
             <field name="name">view.cost.control.type.form</field>
             <field name="model">cost.control.type</field>
             <field name="arch" type="xml">
-                <form string="Cost Control Type">
+                <form string="Job Order Type">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" class="oe_inline" placeholder="Name"/>
@@ -36,24 +36,24 @@
         </record>        
 
         <record id="action_cost_control_type" model="ir.actions.act_window">
-            <field name="name">Cost Control Type</field>
+            <field name="name">Job Order Type</field>
             <field name="res_model">cost.control.type</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_cost_control_type_tree"/>
         </record>
         
-        <menuitem name="Cost Control Type"
+        <menuitem name="Job Order Type"
             id="menu_cost_control_type" 
             action="action_cost_control_type" 
             parent="pabi_base.menu_open_dimension" 
             sequence="9"/>
         
-        # Cost Control
+        # Job Order
         <record id="view_cost_control_tree" model="ir.ui.view">
             <field name="name">view.cost.control.tree</field>
             <field name="model">cost.control</field>
             <field name="arch" type="xml">
-                <tree string="Cost Control">
+                <tree string="Job Order">
                     <field name="cost_control_type_id"/>
                     <field name="name"/>
                     <field name="code" />
@@ -66,7 +66,7 @@
             <field name="name">view.cost.control.form</field>
             <field name="model">cost.control</field>
             <field name="arch" type="xml">
-                <form string="Cost Control">
+                <form string="Job Order">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" class="oe_inline" placeholder="Name"/>
@@ -85,13 +85,13 @@
         </record>        
 
         <record id="action_cost_control" model="ir.actions.act_window">
-            <field name="name">Cost Control</field>
+            <field name="name">Job Order</field>
             <field name="res_model">cost.control</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_cost_control_tree"/>
         </record>
         
-        <menuitem name="Cost Control"
+        <menuitem name="Job Order"
             id="menu_cost_control" 
             action="action_cost_control" 
             parent="pabi_base.menu_open_dimension" 

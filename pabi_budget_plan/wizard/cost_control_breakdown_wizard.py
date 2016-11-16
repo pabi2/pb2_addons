@@ -17,7 +17,7 @@ class CostControlBreakdown(models.TransientModel):
     )
     cost_control_line_id = fields.Many2one(
         'budget.plan.unit.cost.control',
-        string='Cost Control Line',
+        string='Job Order Line',
         readonly=True,
     )
 
@@ -93,7 +93,7 @@ class CostControlBreakdownLine(models.TransientModel):
 
     breakdown_id = fields.Many2one(
         'cost.control.breakdown',
-        string='Cost Control Breakdown',
+        string='Job Order Breakdown',
         ondelete='cascade',
         index=True,
         required=True,

@@ -433,8 +433,8 @@
 
                         <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
 
-                        <filter string="Cost Control Type" context="{'group_by':'cost_control_type_id'}"/>
-                        <filter string="Cost Control" context="{'group_by':'cost_control_id'}"/>
+                        <filter string="Job Order Type" context="{'group_by':'cost_control_type_id'}"/>
+                        <filter string="Job Order" context="{'group_by':'cost_control_id'}"/>
 
                        </group>
                </search>
