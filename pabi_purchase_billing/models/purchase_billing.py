@@ -87,13 +87,22 @@ class PurchaseBilling(models.Model):
     @api.constrains('date_due')
     def _validate_date_due(self):
         day = datetime.datetime.strptime(self.date_due, '%Y-%m-%d').date().day
+        check_day = datetime.datetime.\
+            strptime(self.date_due, '%Y-%m-%d').date()
         date_list = []
+        THHoliday = self.env['thai.holiday']
         date_due_setting = self.env.user.company_id.date_due_day
         regex = r"\d{1,2}"
         matches = re.findall(regex, date_due_setting)
         for match in matches:
-            if 0 < int(match) < 29 and int(match) not in date_list:
-                date_list.append(int(match))
+            check = check_day.replace(day=int(match))
+            check = datetime.datetime.strftime(check, "%Y-%m-%d")
+            check_string = THHoliday.find_next_working_day(check)
+            final_check_day = datetime.datetime.\
+                strptime(check_string, '%Y-%m-%d').date().day
+            if 0 < int(final_check_day) < 29 and int(final_check_day) \
+                    not in date_list:
+                date_list.append(int(final_check_day))
             else:
                 raise UserError(
                     _("""Wrong due date configuration.
@@ -101,7 +110,9 @@ class PurchaseBilling(models.Model):
                 )
         if day not in date_list:
             raise UserError(
-                _("""You specified wrong due date.""")
+                _("""You specified wrong due date.
+                     It has to be in %s
+                """ % (date_list,))
             )
 
     @api.one
