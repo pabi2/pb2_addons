@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="internal_charge_journal" model="account.journal">
+            <field name="name">Internal Charge</field>
+            <field name="code">INC</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="analytic_journal_id" eval="ref('account.exp')" />
+        </record>
+
+    </data>
+</openerp>

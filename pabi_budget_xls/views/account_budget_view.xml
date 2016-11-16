@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
 <openerp>
     <data>
-        
+
         <!--record id="account_budget_prepare_view_form" model="ir.ui.view" >
             <field name="name">account.budget.prepare.view.form</field>
             <field name="model">account.budget.prepare</field>
@@ -15,17 +15,17 @@
                         <group>
                             <div>
                                 <button name="%(budget_import_wizard_action)d"
-                                   type="action" string="Import to Excel" class="oe_highlight oe_inline"/> 
+                                   type="action" string="Import to Excel" class="oe_highlight oe_inline"/>
                                  <button name="%(budget_export_wizard_action)d"
                                    type="action" string="Export to Excel" class="oe_highlight oe_inline"/>
                             </div>
-                            
+
                         </group>
                     </group>
                 </xpath>
             </field>
         </record-->
-        
+
         <record id="view_budget_plan_unit_form" model="ir.ui.view" >
             <field name="name">view.budget.plan.unit.form</field>
             <field name="model">budget.plan.unit</field>
@@ -35,18 +35,12 @@
                                 <button name="%(budget_export_wizard_action)d"
                                    type="action" states="draft" string="Export Plan" class="oe_inline"/>
                                 <button name="%(budget_import_wizard_action)d"
-                                   type="action" states="draft"  string="Import Plan" class="oe_inline"/> 
+                                   type="action" states="draft"  string="Import Plan" class="oe_inline"/>
                 </button>
                 <xpath expr="//page[last()]" position="after">
                     <page string="Budget Plan History">
                         <field name="plan_history_line_ids" readonly="True"/>
                     </page>
-                </xpath>
-                <xpath expr="//field[@name='plan_line_ids']/tree/field[@name='activity_id']" position="after">
-                    <field name="unit"/>
-                    <field name="activity_unit_price"/> 
-                    <field name="activity_unit"/>
-                    <field name="total_budget"/>
                 </xpath>
             </field>
         </record>

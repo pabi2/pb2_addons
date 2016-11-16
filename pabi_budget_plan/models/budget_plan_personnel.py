@@ -8,6 +8,7 @@ from openerp.addons.account_budget_activity.models.account_activity \
 class BudgetPlanPersonnel(BudgetPlanCommon, models.Model):
     _name = 'budget.plan.personnel'
     _inherits = {'budget.plan.template': 'template_id'}
+    _inherit = ['mail.thread']
     _description = "Personnel Budget - Budget Plan"
 
     template_id = fields.Many2one(
@@ -15,17 +16,97 @@ class BudgetPlanPersonnel(BudgetPlanCommon, models.Model):
         required=True,
         ondelete='cascade',
     )
+    # TEMP
     plan_line_ids = fields.One2many(
         'budget.plan.personnel.line',
         'plan_id',
         string='Budget Plan Lines',
-        copy=False,
+        copy=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
     )
-    planned_overall = fields.Float(
-        string='Budget Plan',
+    plan_revenue_line_ids = fields.One2many(
+        'budget.plan.personnel.line',
+        'plan_id',
+        string='Revenue Plan Lines',
+        copy=True,
+        readonly=True,
+        domain=[('budget_method', '=', 'revenue')],  # Have domain
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_expense_line_ids = fields.One2many(
+        'budget.plan.personnel.line',
+        'plan_id',
+        string='Expense Plan Lines',
+        copy=True,
+        readonly=True,
+        domain=[('budget_method', '=', 'expense')],  # Have domain
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    # plan_summary_revenue_line_ids = fields.One2many(
+    #     'budget.plan.personnel.summary',
+    #     'plan_id',
+    #     string='Summary by Activity Group',
+    #     domain=[('budget_method', '=', 'revenue')],
+    #     readonly=True,
+    #     help="Summary by Activity Group View",
+    # )
+    # plan_summary_expense_line_ids = fields.One2many(
+    #     'budget.plan.personnel.summary',
+    #     'plan_id',
+    #     string='Summary by Activity Group',
+    #     domain=[('budget_method', '=', 'expense')],
+    #     readonly=True,
+    #     help="Summary by Activity Group View",
+    # )
+    planned_revenue = fields.Float(
+        string='Total Revenue Plan',
         compute='_compute_planned_overall',
         store=True,
+        help="All Revenue",
     )
+    planned_expense = fields.Float(
+        string='Total Expense Plan',
+        compute='_compute_planned_overall',
+        store=True,
+        help="All Expense",
+    )
+    planned_overall = fields.Float(
+        string='Total Planned',
+        compute='_compute_planned_overall',
+        store=True,
+        help="All Revenue - All Expense",
+    )
+
+    @api.multi
+    @api.depends('plan_line_ids',
+                 'plan_revenue_line_ids',
+                 'plan_expense_line_ids')
+    def _compute_planned_overall(self):
+        for rec in self:
+            amounts = rec.plan_revenue_line_ids.mapped('planned_amount')
+            rec.planned_revenue = sum(amounts)
+            amounts = rec.plan_expense_line_ids.mapped('planned_amount')
+            rec.planned_expense = sum(amounts)
+            rec.planned_overall = rec.planned_revenue - rec.planned_expense
+
+    @api.multi
+    @api.depends('plan_line_ids',
+                 'plan_revenue_line_ids',
+                 'plan_expense_line_ids')
+    def _compute_planned_overall(self):
+        for rec in self:
+            amounts = rec.plan_revenue_line_ids.mapped('planned_amount')
+            rec.planned_revenue = sum(amounts)
+            amounts = rec.plan_expense_line_ids.mapped('planned_amount')
+            rec.planned_expense = sum(amounts)
+            rec.planned_overall = rec.planned_revenue - rec.planned_expense
 
     @api.onchange('personnel_costcenter_id')
     def _onchange_personnel_costcenter_id(self):

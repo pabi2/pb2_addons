@@ -1,45 +1,94 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, fields, models
-from .chartfield import CHART_VIEW_FIELD, ChartField
+from .chartfield import CHART_VIEW_FIELD, CHART_FIELDS, ChartField
 from lxml import etree
 
 
 class AccountBudget(ChartField, models.Model):
     _inherit = 'account.budget'
 
-    budget_line_unit_base = fields.One2many(
+    budget_revenue_line_unit_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_project_base = fields.One2many(
+    budget_expense_line_unit_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_personnel = fields.One2many(
+    # --
+    budget_revenue_line_project_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_invest_asset = fields.One2many(
+    budget_expense_line_project_base = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_line_invest_construction = fields.One2many(
+    # --
+    budget_revenue_line_personnel = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_expense_line_personnel = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    # --
+    budget_revenue_line_invest_asset = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_expense_line_invest_asset = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    # --
+    budget_revenue_line_invest_construction = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'revenue')],
+        states={'done': [('readonly', True)]},
+        copy=True,
+    )
+    budget_expense_line_invest_construction = fields.One2many(
+        'account.budget.line',
+        'budget_id',
+        string='Budget Lines',
+        domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
         copy=True,
     )
@@ -84,15 +133,20 @@ class AccountBudget(ChartField, models.Model):
                             toolbar=toolbar, submenu=submenu)
         FIELD_RELATION = {
             'unit_base': ['section_id',
-                          'budget_line_unit_base'],
+                          'budget_revenue_line_unit_base',
+                          'budget_expense_line_unit_base'],
             'project_base': ['program_id',
-                             'budget_line_project_base'],
+                             'budget_revenue_line_project_base',
+                             'budget_expense_line_project_base'],
             'personnel': ['personnel_costcenter_id',
-                          'budget_line_personnel'],
+                          'budget_revenue_line_personnel',
+                          'budget_expense_line_personnel'],
             'invest_asset': ['org_id',
-                             'budget_line_invest_asset'],
+                             'budget_revenue_line_invest_asset',
+                             'budget_expense_line_invest_asset'],
             'invest_construction': ['org_id',
-                                    'budget_line_invest_construction'],
+                                    'budget_revenue_line_invest_construction',
+                                    'budget_expense_line_invest_construction'],
         }
         if self._context.get('default_chart_view', '') and view_type == 'form':
             budget_type = self._context['default_chart_view']
@@ -108,8 +162,12 @@ class AccountBudget(ChartField, models.Model):
                         continue
                     node.getparent().remove(node)
 
-                line_field_name = FIELD_RELATION[key][1]
-                node_lines = doc.xpath("//field[@name='%s']" % line_field_name)
+                revenue_line_field_name = FIELD_RELATION[key][1]
+                expense_line_field_name = FIELD_RELATION[key][2]
+                node_lines = doc.xpath("//field[@name='%s']" %
+                                       revenue_line_field_name)
+                node_lines += doc.xpath("//field[@name='%s']" %
+                                        expense_line_field_name)
                 for node_line in node_lines:
                     node_line.getparent().remove(node_line)
 
@@ -131,6 +189,26 @@ class AccountBudgetLine(ChartField, models.Model):
         readonly=True,
         help="Special field to store Asset Item information",
     )
+    display_name = fields.Char(
+        string='Display Name',
+        readonly=True,
+        compute='_compute_display_name',
+    )
+
+    @api.multi
+    @api.depends()
+    def _compute_display_name(self):
+        for rec in self:
+            if rec.activity_id:
+                rec.display_name = rec.activity_id.name
+                continue
+            if rec.activity_group_id:
+                rec.display_name = rec.activity_group_id.name
+                continue
+            for chartfield in CHART_FIELDS:
+                if rec[chartfield[0]]:
+                    rec.display_name = rec[chartfield[0]].name
+                    break
 
     # === Project Base ===
     @api.onchange('program_id')

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 from .budget_plan_template import BudgetPlanCommon
 from openerp import SUPERUSER_ID
+import openerp.addons.decimal_precision as dp
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
@@ -14,16 +16,124 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     _description = "Unit Based - Budget Plan"
     _order = 'create_date desc'
 
+    date_from = fields.Date(
+        string='Start Date',
+        compute='_compute_date',
+        store=True,
+    )
+    date_to = fields.Date(
+        string='End Date',
+        compute='_compute_date',
+        store=True,
+    )
+    template_id = fields.Many2one(
+        'budget.plan.template',
+        required=True,
+        ondelete='cascade',
+    )
+    cost_control_ids = fields.One2many(
+        'budget.plan.unit.cost.control',
+        'plan_id',
+        string='Cost Control',
+        copy=True,
+        states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_line_ids = fields.One2many(
+        'budget.plan.unit.line',
+        'plan_id',
+        string='Budget Plan Lines',
+        copy=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_revenue_line_ids = fields.One2many(
+        'budget.plan.unit.line',
+        'plan_id',
+        string='Revenue Plan Lines',
+        copy=True,
+        readonly=True,
+        domain=[('budget_method', '=', 'revenue'),
+                ('cost_control_id', '=', False)],  # Have domain
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_expense_line_ids = fields.One2many(
+        'budget.plan.unit.line',
+        'plan_id',
+        string='Expense Plan Lines',
+        copy=True,
+        readonly=True,
+        domain=[('budget_method', '=', 'expense'),
+                ('cost_control_id', '=', False)],  # Have domain
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        track_visibility='onchange',
+    )
+    plan_summary_revenue_line_ids = fields.One2many(
+        'budget.plan.unit.summary',
+        'plan_id',
+        string='Summary by Activity Group',
+        domain=[('budget_method', '=', 'revenue')],
+        readonly=True,
+        help="Summary by Activity Group View",
+    )
+    plan_summary_expense_line_ids = fields.One2many(
+        'budget.plan.unit.summary',
+        'plan_id',
+        string='Summary by Activity Group',
+        domain=[('budget_method', '=', 'expense')],
+        readonly=True,
+        help="Summary by Activity Group View",
+    )
+    planned_revenue = fields.Float(
+        string='Total Revenue Plan',
+        compute='_compute_planned_overall',
+        store=True,
+        help="All Revenue",
+    )
+    planned_expense = fields.Float(
+        string='Total Expense Plan',
+        compute='_compute_planned_overall',
+        store=True,
+        help="All Expense",
+    )
+    planned_overall = fields.Float(
+        string='Total Planned',
+        compute='_compute_planned_overall',
+        store=True,
+        help="All Revenue - All Expense",
+    )
+
+    @api.multi
+    @api.depends('plan_line_ids',
+                 'cost_control_ids',
+                 'cost_control_ids.detail_ids')
+    def _compute_planned_overall(self):
+        for rec in self:
+            amounts = \
+                rec.plan_summary_revenue_line_ids.mapped('planned_amount')
+            rec.planned_revenue = sum(amounts)
+            amounts = \
+                rec.plan_summary_expense_line_ids.mapped('planned_amount')
+            rec.planned_expense = sum(amounts)
+            rec.planned_overall = rec.planned_revenue - rec.planned_expense
+
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
+        section = self.env.user.partner_id.employee_id.section_id
         if self._context.get('my_org_plans', False):
-            args += [('org_id', '=', self.env.user.partner_id.employee_id.section_id.org_id.id)]
+            args += [('org_id', '=', section.org_id.id)]
         if self._context.get('my_section_plans', False):
-            args += [('section_id', '=', self.env.user.partner_id.employee_id.section_id.id)]
+            args += [('section_id', '=', section.id)]
         if self._context.get('my_division_plans', False):
-            args += [('division_id', '=', self.env.user.partner_id.employee_id.section_id.division_id.id)]
+            args += [('division_id', '=', section.division_id.id)]
         if self._context.get('this_year_plans', False):
-            current_fiscalyear = self.env['account.period'].find().fiscalyear_id
+            current_fiscalyear = \
+                self.env['account.period'].find().fiscalyear_id
             args += [('fiscalyear_id', '=', current_fiscalyear.id)]
         return super(BudgetPlanUnit, self).search(args, offset=offset,
                                                   limit=limit, order=order,
@@ -39,46 +149,6 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     def _compute_date(self):
         self.date_from = self.fiscalyear_id.date_start
         self.date_to = self.fiscalyear_id.date_stop
-
-    date_from = fields.Date(
-        string='Start Date',
-        compute='_compute_date',
-        store=True,
-    )
-    date_to = fields.Date(
-        string='End Date',
-        compute='_compute_date',
-        store=True,
-    )
-
-    template_id = fields.Many2one(
-        'budget.plan.template',
-        required=True,
-        ondelete='cascade',
-    )
-    plan_line_ids = fields.One2many(
-        'budget.plan.unit.line',
-        'plan_id',
-        string='Budget Plan Lines',
-        copy=True,
-        readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
-        track_visibility='onchange',
-    )
-    cost_control_ids = fields.One2many(
-        'budget.plan.unit.cost.control',
-        'plan_id',
-        string='Cost Control',
-        copy=True,
-        states={'draft': [('readonly', False)]},
-        track_visibility='onchange',
-    )
-    planned_overall = fields.Float(
-        string='Total Budget Plan',
-        compute='_compute_planned_overall',
-        store=True,
-    )
 
     @api.onchange('section_id')
     def _onchange_section_id(self):
@@ -160,6 +230,7 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
     template_id = fields.Many2one(
         'budget.plan.line.template',
         required=True,
+        index=True,
         ondelete='cascade',
     )
     state = fields.Selection(
@@ -175,6 +246,31 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
         related='plan_id.state',
         store=True,
     )
+    breakdown_line_id = fields.Many2one(
+        'budget.plan.unit.cost.control.line',
+        string='Breakdown Cost Control Line ref.',
+    )
+    activity_unit_price = fields.Float(
+        string="Unit Price",
+    )
+    activity_unit = fields.Float(
+        string="Activity Unit",
+    )
+    unit = fields.Float(
+        string="Unit",
+    )
+    total_budget = fields.Float(
+        string="Total Budget",
+        compute="_compute_total_budget",
+    )
+
+    @api.depends('unit',
+                 'activity_unit',
+                 'activity_unit_price')
+    def _compute_total_budget(self):
+        for line in self:
+            line.total_budget =\
+                line.unit * line.activity_unit * line.activity_unit_price
 
     @api.model
     def create(self, vals):
@@ -212,9 +308,226 @@ class BudgetPlanUnitCostControl(models.Model):
         'fk_costcontrol_id',
         string='Cost Control Detail',
     )
+    plan_cost_control_line_ids = fields.One2many(
+        'budget.plan.unit.cost.control.line',
+        'cost_control_line_id',
+        string="Cost Control Lines",
+        copy=False,
+    )
 
     @api.multi
     @api.depends('detail_ids')
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = sum([x.planned_amount for x in rec.detail_ids])
+            rec.amount_total = \
+                sum([x.planned_amount for x in rec.plan_cost_control_line_ids])
+
+
+class BudgetPlanUnitCostControlLine(models.Model):
+    _name = 'budget.plan.unit.cost.control.line'
+
+    cost_control_line_id = fields.Many2one(
+        'budget.plan.unit.cost.control',
+        string='Cost Control Line',
+        index=True,
+        ondelete='cascade',
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+    )
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        domain="[('activity_group_ids', 'in', activity_group_id)]",
+    )
+    name = fields.Char(
+        string='Description',
+    )
+    m0 = fields.Float(
+        string='0',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m1 = fields.Float(
+        string='1',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m2 = fields.Float(
+        string='2',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m3 = fields.Float(
+        string='3',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m4 = fields.Float(
+        string='4',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m5 = fields.Float(
+        string='5',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m6 = fields.Float(
+        string='6',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m7 = fields.Float(
+        string='7',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m8 = fields.Float(
+        string='8',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m9 = fields.Float(
+        string='9',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m10 = fields.Float(
+        string='10',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m11 = fields.Float(
+        string='11',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    m12 = fields.Float(
+        string='12',
+        required=False,
+        digits_compute=dp.get_precision('Account'),
+    )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+        compute='_compute_planned_amount',
+        digits_compute=dp.get_precision('Account'),
+        store=True,
+    )
+    activity_unit_price = fields.Float(
+        string="Unit Price",
+    )
+    activity_unit = fields.Float(
+        string="Activity Unit",
+    )
+    unit = fields.Float(
+        string="Unit",
+    )
+    total_budget = fields.Float(
+        string="Total Budget",
+        compute="_compute_total_budget",
+    )
+
+    @api.depends('unit',
+                 'activity_unit',
+                 'activity_unit_price')
+    def _compute_total_budget(self):
+        for line in self:
+            line.total_budget =\
+                line.unit * line.activity_unit * line.activity_unit_price
+
+    @api.multi
+    def write(self, vals):
+        for record in self:
+            line_exist = self.env['budget.plan.unit.line'].search(
+                        [('breakdown_line_id', '=', record.id)])
+            if line_exist:
+                line_exist.write(vals)
+        return super(BudgetPlanUnitCostControlLine, self).write(vals)
+
+    @api.multi
+    @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
+                 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',)
+    def _compute_planned_amount(self):
+        for rec in self:
+            planned_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
+                                  rec.m5, rec.m6, rec.m7, rec.m8,
+                                  rec.m9, rec.m10, rec.m11, rec.m12
+                                  ])
+            rec.planned_amount = planned_amount + rec.m0  # from last year
+
+
+class BudgetPlanUnitSummary(models.Model):
+    _name = 'budget.plan.unit.summary'
+    _auto = False
+    _order = 'budget_method desc, activity_group_id'
+
+    plan_id = fields.Many2one(
+        'budget.plan.unit',
+        string='Budget Plan',
+    )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+    )
+    m0 = fields.Float(
+        string='0',
+    )
+    m1 = fields.Float(
+        string='1',
+    )
+    m2 = fields.Float(
+        string='2',
+    )
+    m3 = fields.Float(
+        string='3',
+    )
+    m4 = fields.Float(
+        string='4',
+    )
+    m5 = fields.Float(
+        string='5',
+    )
+    m6 = fields.Float(
+        string='6',
+    )
+    m7 = fields.Float(
+        string='7',
+    )
+    m8 = fields.Float(
+        string='8',
+    )
+    m9 = fields.Float(
+        string='9',
+    )
+    m10 = fields.Float(
+        string='10',
+    )
+    m11 = fields.Float(
+        string='11',
+    )
+    m12 = fields.Float(
+        string='12',
+    )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+    )
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+            select min(l.id) id, plan_id, activity_group_id, t.budget_method,
+            sum(m0) m0, sum(m1) m1, sum(m2) m2, sum(m3) m3, sum(m4) m4,
+            sum(m5) m5, sum(m6) m6, sum(m7) m7, sum(m8) m8, sum(m9) m9,
+            sum(m10) m10, sum(m11) m11, sum(m12) m12,
+            sum(planned_amount) planned_amount
+            from budget_plan_unit_line l
+            join budget_plan_line_template t on l.template_id = t.id
+            group by plan_id, activity_group_id, t.budget_method
+        )""" % (self._table, ))

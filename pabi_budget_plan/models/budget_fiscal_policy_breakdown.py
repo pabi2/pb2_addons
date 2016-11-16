@@ -281,7 +281,8 @@ class BudgetFiscalPolicyBreakdown(models.Model):
             budget = self.env[model].convert_plan_to_budget_control(active_id)
             budget.policy_amount = line.policy_amount
             budget.version = line.breakdown_id.version
-            budget.prev_planned_amount = budget.planned_amount
+            # budget.prev_planned_amount = budget.planned_amount
+            budget.prev_planned_amount = budget.budgeted_expense_external
             budget.ref_breakdown_id = line.breakdown_id.id
             old_breakdown = line.breakdown_id.ref_breakdown_id
             if old_breakdown:

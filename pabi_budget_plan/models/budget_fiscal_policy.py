@@ -349,11 +349,12 @@ class BudgetFiscalPolicy(models.Model):
         budget_policy.version = self.version + 1.0
         budget_policy.ref_policy_id = self
         # Copy Lines
-        unit_base_ids = self.unit_base_ids.copy(default={'budget_policy_id': budget_policy.id})
+        unit_base_ids = self.unit_base_ids.copy(
+            default={'budget_policy_id': budget_policy.id})
         for unit_base in unit_base_ids:
             unit_base.budget_policy_id = budget_policy.id
         budget_policy.unit_base_ids = unit_base_ids
-        #budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
+        # budget_policy.unit_base_ids.budget_policy_id = budget_policy.id
         budget_policy.project_base_ids = self.project_base_ids.copy()
         budget_policy.personnel_costcenter_ids =\
             self.personnel_costcenter_ids.copy()
@@ -409,65 +410,80 @@ class BudgetFiscalPolicy(models.Model):
         self._prepare_invest_asset_budget_policy()
 
     @api.model
-    def _prepare_project_budget_policy(self):
-        self.ensure_one()
-        # Projects
-        _sql = """
-            select tmpl.chart_view, tmpl.program_id, bpp.planned_overall
+    def _get_project_budget_policy_sql(self):
+        sql = """
+            select tmpl.chart_view, tmpl.program_id, bpp.planned_expense
             from budget_plan_project bpp
             join budget_plan_template tmpl on tmpl.id = bpp.template_id
             where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
         """
-        self._cr.execute(_sql % (self.fiscalyear_id.id,))
+        return sql
+
+    @api.model
+    def _prepare_project_budget_policy(self):
+        self.ensure_one()
+        # Projects
+        self._cr.execute(self._get_project_budget_policy_sql() %
+                         (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
         lines = []
         for r in res:
             vals = {'chart_view': r['chart_view'],
                     'program_id': r['program_id'],
-                    'planned_amount': r['planned_overall']}
+                    'planned_amount': r['planned_expense']}
             lines.append((0, 0, vals))
         self.write({'project_base_ids': lines})
 
-    @api.multi
-    def _prepare_unit_budget_policy(self):
-        self.ensure_one()
-        # Unit Base, group by Org
-        _sql = """
+    @api.model
+    def _get_unit_budget_policy_sql(self):
+        sql = """
             select tmpl.chart_view, tmpl.org_id,
-            sum(bpu.planned_overall) as planned_overall
+            sum(bpu.planned_expense) as planned_expense
             from budget_plan_unit bpu
             join budget_plan_template tmpl on tmpl.id = bpu.template_id
             where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
             group by tmpl.chart_view, tmpl.org_id
         """
-        self._cr.execute(_sql % (self.fiscalyear_id.id,))
+        return sql
+
+    @api.multi
+    def _prepare_unit_budget_policy(self):
+        self.ensure_one()
+        # Unit Base, group by Org
+        self._cr.execute(self._get_unit_budget_policy_sql() %
+                         (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
         lines = []
         for r in res:
             vals = {'chart_view': r['chart_view'],
                     'org_id': r['org_id'],
-                    'planned_amount': r['planned_overall']}
+                    'planned_amount': r['planned_expense']}
             lines.append((0, 0, vals))
         self.write({'unit_base_ids': lines})
 
     @api.model
-    def _prepare_invest_asset_budget_policy(self):
-        self.ensure_one()
-        # Investment Asset, group by Org
-        _sql = """
+    def _get_invest_asset_budget_policy_sql(self):
+        sql = """
             select tmpl.chart_view,
-            sum(bpia.planned_overall) as planned_overall
+            sum(bpia.planned_expense) as planned_expense
             from budget_plan_invest_asset bpia
             join budget_plan_template tmpl on tmpl.id = bpia.template_id
             where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
             group by tmpl.chart_view
         """
-        self._cr.execute(_sql % (self.fiscalyear_id.id,))
+        return sql
+
+    @api.model
+    def _prepare_invest_asset_budget_policy(self):
+        self.ensure_one()
+        # Investment Asset, group by Org
+        self._cr.execute(self._get_invest_asset_budget_policy_sql() %
+                         (self.fiscalyear_id.id,))
         res = self._cr.dictfetchall()
         lines = []
         for r in res:
             vals = {'chart_view': r['chart_view'],
-                    'planned_amount': r['planned_overall']}
+                    'planned_amount': r['planned_expense']}
             lines.append((0, 0, vals))
         self.write({'invest_asset_ids': lines})
 
@@ -481,17 +497,35 @@ class BudgetFiscalPolicy(models.Model):
         self.create_unit_budget_policy_breakdown()
         self.create_invest_asset_budget_policy_breakdown()
 
+    @api.model
+    def _prepare_breakdown_line(self, structure, plan, breakdown):
+        vals = {
+            'breakdown_id': breakdown.id,
+            'chart_view': plan.chart_view,
+            'planned_amount': plan.planned_expense,  # Only Expense
+            'policy_amount': 0.0,
+        }
+        if structure == 'invest_asset':
+            vals.update({'budget_plan_invest_asset_id': plan.id,
+                         'org_id': plan.org_id.id})
+        elif structure == 'unit':
+            vals.update({'budget_plan_unit_id': plan.id,
+                         'section_id': plan.section_id.id})
+        else:
+            raise ValidationError(
+                _("Structure must be in ('unit', 'invest_asset') only!"))
+        return vals
+
     @api.multi
     def create_unit_budget_policy_breakdown(self):
         self.ensure_one()
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
         domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
-                      ('ref_budget_policy_id', '=', self.id)]
+                  ('ref_budget_policy_id', '=', self.id)]
         Breakdown_search = Breakdown.search(
                 domain + [('chart_view', '=', 'unit_base'),
-                        ('state', '!=', 'cancel')
-                ])
+                          ('state', '!=', 'cancel')])
         if Breakdown_search:
             raise UserError(_('Breakdowns already created.'))
         for unit in self.unit_base_ids:
@@ -520,14 +554,8 @@ class BudgetFiscalPolicy(models.Model):
                         ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                         ('org_id', '=', breakdown.org_id.id)])
             for plan in plans:
-                vals = {
-                    'breakdown_id': breakdown.id,
-                    'budget_plan_unit_id': plan.id,
-                    'chart_view': plan.chart_view,
-                    'section_id': plan.section_id.id,
-                    'planned_amount': plan.planned_overall,
-                    'policy_amount': 0.0,
-                }
+                vals = self._prepare_breakdown_line('unit',
+                                                    plan, breakdown)
                 BreakdownLine.create(vals)
             # Upon creation of breakdown, ensure data integrity
             sum_planned_amount = sum([l.planned_amount
@@ -558,14 +586,8 @@ class BudgetFiscalPolicy(models.Model):
                 search([('state', '=', 'approve'),
                         ('fiscalyear_id', '=', breakdown.fiscalyear_id.id)])
             for plan in plans:
-                vals = {
-                    'breakdown_id': breakdown.id,
-                    'budget_plan_invest_asset_id': plan.id,
-                    'chart_view': plan.chart_view,
-                    'org_id': plan.org_id.id,
-                    'planned_amount': plan.planned_overall,
-                    'policy_amount': 0.0,
-                }
+                vals = self._prepare_breakdown_line('invest_asset',
+                                                    plan, breakdown)
                 BreakdownLine.create(vals)
             # Upon creation of breakdown, ensure data integrity
             sum_planned_amount = sum([l.planned_amount

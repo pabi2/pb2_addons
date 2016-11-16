@@ -11,19 +11,67 @@ class BudgetPlanTemplate(ChartField, models.Model):
     _inherit = 'mail.thread'
     _description = "Budget Plan Template"
 
-    @api.one
-    @api.constrains('fiscalyear_id', 'section_id')
-    def _check_fiscalyear_section_unique(self):
-        if self.fiscalyear_id and self.section_id:
-            budget_plans = self.env['budget.plan.unit'].search(#TODO should go this constraint to unit based!
-                [('fiscalyear_id', '=', self.fiscalyear_id.id),
-                 ('section_id', '=', self.section_id.id),
+    @api.model
+    def create(self, vals):
+        if vals.get('fiscalyear_id', False) and vals.get('section_id', False):
+            fiscalyear_id = vals['fiscalyear_id']
+            section_id = vals['section_id']
+            budget_plans = self.env['budget.plan.unit'].search(
+                # TODO should go this constraint to unit based!
+                [('fiscalyear_id', '=', fiscalyear_id),
+                 ('section_id', '=', section_id),
+                 ('state', 'not in', ('cancel', 'reject')),
+                 ]).ids
+            if len(budget_plans) > 0:
+                raise ValidationError(
+                    _('You can not have duplicate budget plan for '
+                      'same fiscalyear and section.'))
+        return super(BudgetPlanTemplate, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        for record in self:
+            fiscalyear_id = False
+            if vals.get('fiscalyear_id', False):
+                fiscalyear_id = vals['fiscalyear_id']
+            else:
+                fiscalyear_id = record.fiscalyear_id.id
+
+            section_id = False
+            if vals.get('section_id', False):
+                section_id = vals['section_id']
+            else:
+                section_id = record.section_id.id
+
+        if section_id and fiscalyear_id:
+            budget_plans = self.env['budget.plan.unit'].search(
+                # TODO should go this constraint to unit based!
+                [('fiscalyear_id', '=', fiscalyear_id),
+                 ('section_id', '=', section_id),
                  ('state', 'not in', ('cancel', 'reject')),
                  ]).ids
             if len(budget_plans) > 1:
                 raise ValidationError(
                     _('You can not have duplicate budget plan for '
                       'same fiscalyear and section.'))
+        return super(BudgetPlanTemplate, self).write(vals)
+
+#     @api.one
+#     @api.constrains('fiscalyear_id', 'section_id')
+#     def _check_fiscalyear_section_unique(self):
+#         print "ffffffffffffffffffffffffffffffffffffffffffffffff"
+#         if self.fiscalyear_id and self.section_id:
+#             budget_plans = self.env['budget.plan.unit'].search(
+#                 # TODO should go this constraint to unit based!
+#                 [('fiscalyear_id', '=', self.fiscalyear_id.id),
+#                  ('section_id', '=', self.section_id.id),
+#                  ('state', 'not in', ('cancel', 'reject')),
+#                  ]).ids
+#             print "budget_plans:::::::::::::::::::::::::",budget_plans
+#             if len(budget_plans) > 0:
+#                 raise ValidationError(
+#                     _('You can not have duplicate budget plan for '
+#                       'same fiscalyear and section.'))
 
     @api.model
     def _default_fy(self):
@@ -115,7 +163,7 @@ class BudgetPlanTemplate(ChartField, models.Model):
         'res.division',
         string='Division',
         related="section_id.division_id",
-        required=True,
+        # required=True,
         readonly=True,
         store=True
     )
@@ -146,7 +194,11 @@ class BudgetPlanTemplate(ChartField, models.Model):
         copy=False,
         track_visibility='onchange',
     )
-    org_id = fields.Many2one(related='section_id.org_id', store=True)
+    org_id = fields.Many2one(
+        string='Org',
+        related='section_id.org_id',
+        store=True,
+    )
     company_id = fields.Many2one(
         'res.company',
         string='Company',
@@ -177,6 +229,15 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
     _name = "budget.plan.line.template"
     _description = "Budget Line"
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        required=True,
+        default='expense',
+        help="Specify whether the budget plan line is of Revenue or Expense. "
+        "Revenue is for Unit Based only."
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
@@ -280,13 +341,6 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
 
 class BudgetPlanCommon(object):
 
-    @api.multi
-    @api.depends('plan_line_ids')
-    def _compute_planned_overall(self):
-        for rec in self:
-            planned_amounts = rec.plan_line_ids.mapped('planned_amount')
-            rec.planned_overall = sum(planned_amounts)
-
     @api.model
     def _prepare_copy_fields(self, source_model, target_model):
         src_fields = [f for f, _x in source_model._fields.iteritems()]
@@ -314,6 +368,7 @@ class BudgetPlanCommon(object):
         for key in header_fields:
             vals.update({key: (hasattr(plan[key], '__iter__') and
                                plan[key].id or plan[key])})
+        print vals
         budget = head_trg_model.create(vals)
         for line in plan.plan_line_ids:
             for key in line_fields:

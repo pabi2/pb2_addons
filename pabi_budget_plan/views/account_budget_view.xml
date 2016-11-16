@@ -10,9 +10,8 @@
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/group//field[@name='company_id']" position="after">
-                	<field name="prev_planned_amount" />  
+                	<field name="prev_planned_amount" />
                 	<field name="policy_amount" />       
-                	<field name="planned_amount" />       
                 	<field name="ref_budget_id"/>
                 	<field name="ref_breakdown_id"/>
                 	<field name="currency_id" groups="base.group_multi_currency"/>
@@ -41,7 +40,7 @@
                 </xpath>
             </field>
         </record>
-        
+
         <record id="account_budget_view_tree" model="ir.ui.view" >
             <field name="name">account.budget.view.tree</field>
             <field name="model">account.budget</field>
@@ -63,7 +62,7 @@
                 </xpath>
             </field>
         </record>
-        
+
         <record id="unit_base_tree_view" model="ir.ui.view" >
             <field name="name">unit.base.tree.view</field>
             <field name="model">account.budget.line</field>
@@ -74,8 +73,6 @@
                 </xpath>
             </field>
         </record>
-        
+
     </data>
 </openerp>
-
-

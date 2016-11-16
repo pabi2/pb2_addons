@@ -17,6 +17,151 @@ class BudgetImportWizard(models.TransientModel):
     input_file = fields.Binary('Template')
     datas_fname = fields.Char('Import File Name')
 
+    @api.model
+    def _update_cost_control_lines(self, workbook, budget):
+        CostCtrl_Sheet = workbook.get_sheet_by_name('CostControl_1')
+        max_row = CostCtrl_Sheet.max_row
+
+        cc_row = 8
+        for row in range(cc_row, max_row):
+            costcontrol_vals = {'plan_id': budget.id}
+            costcontrol = CostCtrl_Sheet.cell(row=cc_row, column=2).value
+            if costcontrol:
+                costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
+                if costcontrol_id:
+                    costcontrol_vals.update({'cost_control_id': costcontrol_id.id})
+                else:
+                    raise UserError(_('Please select valid cost-control!'))
+            else:
+                cc_row += 18
+                continue
+
+            costcontrol_line = False
+            costcontrol_line_id = CostCtrl_Sheet.cell(row=cc_row, column=27).value
+            if costcontrol_line_id:
+                costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
+            if not costcontrol_line:
+                costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+
+            line_start = cc_row + 5
+            calculate_vals = {}
+            ids = []
+            for row in range(line_start, line_start+10):
+                line_vals = {'cost_control_line_id': costcontrol_line.id}
+                col = 1
+                col += 1
+                col += 1
+                col += 1
+                activity_group = CostCtrl_Sheet.cell(row=row, column=col).value
+                if activity_group:
+                    activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
+                    line_vals.update({'activity_group_id': activity_group_id.id})
+                else:
+                    continue
+                col += 1
+                activity = CostCtrl_Sheet.cell(row=row, column=col).value
+                if activity:
+                    activity_id = self.env['account.activity'].search([('name', '=', tools.ustr(activity))])
+                    line_vals.update({'activity_id': activity_id.id})
+                col += 1
+
+                name = CostCtrl_Sheet.cell(row=row, column=col).value
+                if name:
+                    line_vals.update({'name': tools.ustr(name)})
+                    calculate_vals.update({'description': tools.ustr(name)})
+                col += 1
+                col += 1
+
+                unit = CostCtrl_Sheet.cell(row=row, column=col).value
+                if unit and not isinstance(unit, long):
+                    raise UserError(
+                        _('Please insert float value on\
+                         row: %s - column: %s') % (row, 5))
+                if not unit:
+                    unit = 0.0
+                calculate_vals.update({'unit': unit})
+                line_vals.update({'unit': unit})
+                col += 1
+
+                activity_unit_price = CostCtrl_Sheet.cell(row=row, column=col).value
+                if activity_unit_price:
+                    if activity_unit_price and not isinstance(activity_unit_price, long):
+                        raise UserError(
+                            _('Please insert float value on\
+                             row: %s - column: %s') % (row, col))
+                else:
+                    activity_unit_price = 0.0
+                calculate_vals.update({'activity_unit_price': activity_unit_price})
+                line_vals.update({'activity_unit_price': activity_unit_price})
+                col += 1
+                activity_unit = CostCtrl_Sheet.cell(row=row, column=col).value
+                if activity_unit:
+                    if activity_unit and not isinstance(activity_unit, long):
+                        raise UserError(
+                            _('Please insert float value on\
+                             row: %s - column: %s') % (row, col))
+                else:
+                    activity_unit = 0.0
+                calculate_vals.update({'activity_unit': activity_unit})
+                line_vals.update({'activity_unit': activity_unit})
+                total_act_budget = unit * activity_unit_price * activity_unit
+                col += 1
+                col += 1
+                col += 1
+                m_col = col
+                cnt = 1
+                total_month_budget = 0
+                for c in range(m_col, m_col+12):
+                    val = CostCtrl_Sheet.cell(row=row, column=c).value
+                    m_field = 'm'+str(cnt)
+                    if val:
+                        if val and not isinstance(val, long):
+                            raise UserError(
+                                _('Please insert float value on\
+                                 row: %s - column: %s') % (row, col))
+                        total_month_budget += val
+                        line_vals.update({m_field : val})
+                    cnt += 1
+                    col += 1
+                col += 1
+                col += 1
+                if (total_act_budget - total_month_budget) != 0.0:
+                    raise UserError(_('Please verify budget lines total!'))
+                line_id = CostCtrl_Sheet.cell(row=row, column=col).value
+                cc_line = False
+                if line_id:
+                    cc_line = self.env['budget.plan.unit.cost.control.line'].search([('id', '=', int(line_id))])
+                    if cc_line:
+                        cc_line.write(line_vals)
+                else:
+                    cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
+
+                if cc_line:
+                    plan_line_vals = {}
+                    line_exist = self.env['budget.plan.unit.line'].search(
+                        [('plan_id', '=', costcontrol_line.plan_id.id),
+                         ('breakdown_line_id', '=', cc_line.id)])
+                    plan_line_vals.update(line_vals)
+                    plan_line_vals.update(calculate_vals)
+
+                    if line_exist:
+                        line_exist.write(plan_line_vals)
+                        ids.append(line_exist.id)
+                    else:
+                        create_vals = {
+                            'breakdown_line_id': cc_line.id,
+                            'plan_id': costcontrol_line.plan_id.id,
+                            'fk_costcontrol_id': costcontrol_line.id,
+                            'section_id': costcontrol_line.plan_id.section_id.id,
+                            'cost_control_id': costcontrol_line.cost_control_id.id,
+                        }
+                        create_vals.update(plan_line_vals)
+                        new_id = self.env['budget.plan.unit.line'].create(create_vals).id
+                        ids.append(new_id)
+            cc_row += 18
+            costcontrol_line.write({'detail_ids': [(6, 0, ids)]})
+        return True
+
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
         if not template:
@@ -99,6 +244,8 @@ class BudgetImportWizard(models.TransientModel):
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
                 description = NonCostCtrl_Sheet.cell(row=row, column=5).value
+                if description == '=FALSE()':
+                    description = ''
                 unit = NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
                 act_unitprice\
                     = NonCostCtrl_Sheet.cell(row=row, column=8).value or 0.0
@@ -112,8 +259,8 @@ class BudgetImportWizard(models.TransientModel):
                 })
                 total_act_budget = unit * act_unitprice * activity_unit
                 line_id = NonCostCtrl_Sheet.cell(row=row, column=26).value
-                p = 0
-                col = 11
+                p = 1
+                col = 12
                 total_month_budget = 0.0
                 while p != 13:
                     val = NonCostCtrl_Sheet.cell(row=row, column=col).value
@@ -154,7 +301,8 @@ class BudgetImportWizard(models.TransientModel):
                 'plan_id': budget.id,
                 'attachement_id': attachement_id.id
             })
-            return {}
+            cost_control_data = self._update_cost_control_lines(workbook, budget)
+        return {}
 
     @api.multi
     def import_budget(self):

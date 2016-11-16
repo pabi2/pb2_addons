@@ -11,70 +11,80 @@ class CostControlBreakdown(models.TransientModel):
         'breakdown_id',
         string='Breakdown Lines',
     )
+    breakdown_costcontrol_line_ids = fields.Many2many(
+        'budget.plan.unit.cost.control.line',
+        string='Breakdown Lines',
+    )
+    cost_control_line_id = fields.Many2one(
+        'budget.plan.unit.cost.control',
+        string='Cost Control Line',
+        readonly=True,
+    )
 
     @api.model
     def default_get(self, fields):
         res = super(CostControlBreakdown, self).default_get(fields)
-        active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
-        costcontrol = self.env[active_model].browse(active_id)
-        res['breakdown_line_ids'] = []
-        for line in costcontrol.detail_ids:
-            vals = {
-                'activity_group_id': line.activity_group_id.id,
-                'activity_id': line.activity_id.id,
-                'cost_control_id': line.cost_control_id.id,
-                'm0': line.m0,
-                'm1': line.m1,
-                'm2': line.m2,
-                'm3': line.m3,
-                'm4': line.m4,
-                'm5': line.m5,
-                'm6': line.m6,
-                'm7': line.m7,
-                'm8': line.m8,
-                'm9': line.m9,
-                'm10': line.m10,
-                'm11': line.m11,
-                'm12': line.m12,
-            }
-            res['breakdown_line_ids'].append((0, 0, vals))
+        res['breakdown_costcontrol_line_ids'] = []
+        line_ids = self.env['budget.plan.unit.cost.control.line'].search(
+            [('cost_control_line_id', '=', active_id)])
+        res['breakdown_costcontrol_line_ids'] = tuple(line_ids.ids)
+        res['cost_control_line_id'] = active_id
         return res
+
+    @api.model
+    def _prepare_breakdown_line_dict(self, line):
+        vals = {
+            'activity_group_id': line.activity_group_id.id,
+            'activity_id': line.activity_id.id,
+            'activity_unit_price': line.activity_unit_price,
+            'activity_unit': line.activity_unit,
+            'unit': line.unit,
+            'm0': line.m0,
+            'm1': line.m1,
+            'm2': line.m2,
+            'm3': line.m3,
+            'm4': line.m4,
+            'm5': line.m5,
+            'm6': line.m6,
+            'm7': line.m7,
+            'm8': line.m8,
+            'm9': line.m9,
+            'm10': line.m10,
+            'm11': line.m11,
+            'm12': line.m12,
+        }
+        return vals
 
     @api.multi
     def submit_cost_control_breakdown(self):
-        self.ensure_one()
-        active_id = self.env.context.get('active_id', False)
-        active_model = self._context.get('active_model')
-        costcontrol = self.env[active_model].browse(active_id)
-        if costcontrol:
-            costcontrol.detail_ids.unlink()
-            ids = []
-            for line in self.breakdown_line_ids:
-                vals = {
-                    'plan_id': costcontrol.plan_id.id,
-                    'fk_costcontrol_id': costcontrol.id,
-                    'section_id': costcontrol.plan_id.section_id.id,
-                    'activity_group_id': line.activity_group_id.id,
-                    'activity_id': line.activity_id.id,
-                    'cost_control_id': costcontrol.cost_control_id.id,
-                    'm0': line.m0,
-                    'm1': line.m1,
-                    'm2': line.m2,
-                    'm3': line.m3,
-                    'm4': line.m4,
-                    'm5': line.m5,
-                    'm6': line.m6,
-                    'm7': line.m7,
-                    'm8': line.m8,
-                    'm9': line.m9,
-                    'm10': line.m10,
-                    'm11': line.m11,
-                    'm12': line.m12,
-                }
-                new_id = self.env['budget.plan.unit.line'].create(vals).id
-                ids.append(new_id)
-            costcontrol.write({'detail_ids': [(6, 0, ids)]})
+        for record in self:
+            active_id = self.env.context.get('active_id', False)
+            active_model = self._context.get('active_model')
+            costcontrol = self.env[active_model].browse(active_id)
+            if costcontrol:
+                ids = []
+                for line in record.breakdown_costcontrol_line_ids:
+                    vals = self._prepare_breakdown_line_dict(line)
+                    line_exist = self.env['budget.plan.unit.line'].search(
+                        [('plan_id', '=', costcontrol.plan_id.id),
+                         ('breakdown_line_id', '=', line.id)])
+                    if line_exist:
+                        line_exist.write(vals)
+                        ids.append(line_exist.id)
+                    else:
+                        create_vals = {
+                            'breakdown_line_id': line.id,
+                            'plan_id': costcontrol.plan_id.id,
+                            'fk_costcontrol_id': costcontrol.id,
+                            'section_id': costcontrol.plan_id.section_id.id,
+                            'cost_control_id': costcontrol.cost_control_id.id,
+                        }
+                        create_vals.update(vals)
+                        new_id = self.env['budget.plan.unit.line'].\
+                            create(create_vals).id
+                        ids.append(new_id)
+                costcontrol.write({'detail_ids': [(6, 0, ids)]})
         return True
 
 
