@@ -117,9 +117,9 @@
                             <page string="Revenue">
                                 <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
-                            <page string="Cost Control">
+                            <page string="Job Order">
                                 <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}">
-                                    <tree string="Cost Control" editable="bottom">
+                                    <tree string="Job Order" editable="bottom">
                                         <field name="cost_control_id"/>
                                         <button name="%(action_add_cost_control_breakdown)d" type="action" string="Add Detail" icon="gtk-ok"/>
                                         <field name="amount_total" sum="Total Amount"/>
@@ -319,7 +319,7 @@
                         <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
                         <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
                         <filter name="activity_id" string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
-                        <filter name="cost_control_id" string="Cost Control" domain="[]" context="{'group_by':'cost_control_id'}"/>
+                        <filter name="cost_control_id" string="Job Order" domain="[]" context="{'group_by':'cost_control_id'}"/>
                         <filter string="Fiscal Year" name="fiscalyear" context="{'group_by':'fiscalyear_id'}"/>
                         <filter string="Status" context="{'group_by':'state'}"/>
                     </group>

@@ -215,7 +215,7 @@ CHART_FIELDS = [
 # Extra non-binding chartfield (similar to activity)
 class CostControlType(ResCommon, models.Model):
     _name = 'cost.control.type'
-    _description = 'Cost Control Type'
+    _description = 'Job Order Type'
 
     description = fields.Text(
         string='Description',
@@ -224,14 +224,14 @@ class CostControlType(ResCommon, models.Model):
 
 class CostControl(ResCommon, models.Model):
     _name = 'cost.control'
-    _description = 'Cost Control'
+    _description = 'Job Order'
 
     description = fields.Text(
         string='Description',
     )
     cost_control_type_id = fields.Many2one(
         'cost.control.type',
-        string='Cost Control Type',
+        string='Job Order Type',
         required=True,
     )
 
@@ -429,13 +429,13 @@ class ChartField(object):
     # Non Binding Dimension
     cost_control_id = fields.Many2one(
         'cost.control',
-        string='Cost Control',
+        string='Job Order',
         default=lambda self: self.env['cost.control'].
         browse(self._context.get('cost_control_id')),
     )
     cost_control_type_id = fields.Many2one(
         'cost.control.type',
-        string='Cost Control Type',
+        string='Job Order Type',
         default=lambda self: self.env['cost.control.type'].
         browse(self._context.get('cost_control_type_id')),
     )

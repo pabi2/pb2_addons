@@ -119,7 +119,7 @@
             </field>
         </record>
 
-    	# Cost Control
+    	# Job Order
         <record id="view_cost_control_form" model="ir.ui.view" >
             <field name="name">view.cost.control.form</field>
             <field name="model">cost.control</field>
@@ -158,7 +158,7 @@
             </field>
         </record>
 
-    	# Cost Control Type
+    	# Job Order Type
         <record id="view_cost_control_type_form" model="ir.ui.view" >
             <field name="name">view.cost.control.type.form</field>
             <field name="model">cost.control.type</field>

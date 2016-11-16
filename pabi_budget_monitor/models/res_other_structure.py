@@ -7,7 +7,7 @@ class CostControl(models.Model):
 
     monitor_ids = fields.One2many(
         'res.cost.control.monitor.view', 'cost_control_id',
-        string='Cost Control Monitor',
+        string='Job Order Monitor',
     )
     monitor_revenue_ids = fields.One2many(
         'res.cost.control.monitor.view', 'cost_control_id',
@@ -16,7 +16,7 @@ class CostControl(models.Model):
     )
     monitor_expense_ids = fields.One2many(
         'res.cost.control.monitor.view', 'cost_control_id',
-        string='Cost Control Monitor',
+        string='Job Order Monitor',
         domain=[('budget_method', '=', 'expense')],
     )
 
@@ -26,16 +26,16 @@ class CostControlType(models.Model):
 
     monitor_ids = fields.One2many(
         'res.cost.control.type.monitor.view', 'cost_control_type_id',
-        string='Cost Control Type Monitor',
+        string='Job Order Type Monitor',
     )
     monitor_revenue_ids = fields.One2many(
         'res.cost.control.type.monitor.view', 'cost_control_type_id',
-        string='Cost Control Type Monitor',
+        string='Job Order Type Monitor',
         domain=[('budget_method', '=', 'revenue')],
     )
     monitor_expense_ids = fields.One2many(
         'res.cost.control.type.monitor.view', 'cost_control_type_id',
-        string='Cost Control Type Monitor',
+        string='Job Order Type Monitor',
         domain=[('budget_method', '=', 'expense')],
     )
 

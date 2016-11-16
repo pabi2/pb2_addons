@@ -250,7 +250,7 @@ class ResInvestConstructionMonitorView(models.Model):
         self._create_monitor_view(cr, self._dimension)
 
 
-# ------------------ Cost Control ------------------
+# ------------------ Job Order ------------------
 class ResCostControlMonitorView(models.Model):
     _name = 'res.cost.control.monitor.view'
     _inherit = 'monitor.view'
@@ -258,7 +258,7 @@ class ResCostControlMonitorView(models.Model):
     _dimension = 'cost_control_id'
 
     cost_control_id = fields.Many2one(
-        'cost.control', 'Cost Control', readonly=True)
+        'cost.control', 'Job Order', readonly=True)
 
     def init(self, cr):
         self._create_monitor_view(cr, self._dimension)
@@ -271,7 +271,7 @@ class ResCostControlTypeMonitorView(models.Model):
     _dimension = 'cost_control_type_id'
 
     cost_control_type_id = fields.Many2one(
-        'cost.control', 'Cost Control Type', readonly=True)
+        'cost.control', 'Job Order Type', readonly=True)
 
     def init(self, cr):
         self._create_monitor_view(cr, self._dimension)

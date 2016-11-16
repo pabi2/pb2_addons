@@ -137,8 +137,8 @@ class BudgetExportWizard(models.TransientModel):
         bold_font = Font(bold=True, name='Arial', size=11)
 
         ConstControl_MasterSheet.cell(row=1, column=1).value = 'Sequence'
-        ConstControl_MasterSheet.cell(row=1, column=2).value = 'Cost Control - English'
-        ConstControl_MasterSheet.cell(row=1, column=3).value = 'Cost Control - Thai'
+        ConstControl_MasterSheet.cell(row=1, column=2).value = 'Job Order - English'
+        ConstControl_MasterSheet.cell(row=1, column=3).value = 'Job Order - Thai'
         ConstControl_MasterSheet.cell(row=1, column=1).font = bold_font
         ConstControl_MasterSheet.cell(row=1, column=2).font = bold_font
         ConstControl_MasterSheet.cell(row=1, column=3).font = bold_font
@@ -228,7 +228,7 @@ class BudgetExportWizard(models.TransientModel):
             for r in range(1, 11):
                 for rr in range(ag_first_column, ag_first_column+10):
                     ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=4))
-                    act_dv.add(ConstControl_Sheet.cell(row=rr, column=5))
+#                     act_dv.add(ConstControl_Sheet.cell(row=rr, column=5))
                     ConstControl_Sheet.cell(row=rr, column=3, value=budget.section_id.name)
                     ag_first_column += 1
                 ag_first_column = ag_first_column+row_gap
@@ -252,9 +252,9 @@ class BudgetExportWizard(models.TransientModel):
                         col += 1
                         if line.activity_group_id:
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_group_id.name
-                        col += 1
-                        if line.activity_id:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_id.name
+#                         col += 1
+#                         if line.activity_id:
+#                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_id.name
                         col += 1
                         if line.name:
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.name
