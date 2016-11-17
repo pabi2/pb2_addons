@@ -505,5 +505,28 @@
 			<field name="key2" eval="'client_print_multi'"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_receipt_voucher)"/>
 		</record>
+
+		<!-- KV VOucher -->
+		<record id="kv_voucher" model="ir.actions.report.xml">
+			<field name="string">KV Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.invoice</field>
+			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="name">KV Voucher</field>
+			<field name="report_name">kv.voucher</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/kv_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="kv_voucher_values" model="ir.values">
+			<field name="name">KV Voucher</field>
+			<field name="model">account.invoice</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(kv_voucher)"/>
+		</record>
 	</data>
 </openerp>
