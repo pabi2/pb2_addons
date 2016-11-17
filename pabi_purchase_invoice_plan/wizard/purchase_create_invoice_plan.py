@@ -110,6 +110,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         string='Purchase Order',
         default=_default_order,
     )
+    advance_rounding = fields.Boolean(
+        string="Advance Rounding?",
+    )
 
     @api.model
     def _get_po_line_fy(self, po):
