@@ -2,12 +2,38 @@
 <openerp>
     <data noupdate="1">
 
-        <record id="internal_charge_journal" model="account.journal">
-            <field name="name">Internal Charge</field>
-            <field name="code">INC</field>
+        # Internal Charge Revenue
+        <record model="ir.sequence" id="seq_rev_ic_journal">
+            <field name="name">Revenue: Internal Charge</field>
+            <field name="code"></field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">JIR%(fy)s/</field>
+        </record>
+        <record id="rev_ic_journal" model="account.journal">
+            <field name="name">Revenue: Internal Charge</field>
+            <field name="code">JIR</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="analytic_journal_id" eval="ref('account.analytic_journal_sale')" />
+            <field name="sequence_id" eval="ref('pabi_budget_internal_charge.seq_rev_ic_journal')" />
+            <field name="entry_posted" >True</field>
+        </record>
+
+        # Internal Charge Expense
+        <record model="ir.sequence" id="seq_exp_ic_journal">
+            <field name="name">Expense: Internal Charge</field>
+            <field name="code"></field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">JIE%(fy)s/</field>
+        </record>
+        <record id="exp_ic_journal" model="account.journal">
+            <field name="name">Expense: Internal Charge</field>
+            <field name="code">JIE</field>
             <field name="type">general</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="analytic_journal_id" eval="ref('account.exp')" />
+            <field name="sequence_id" eval="ref('pabi_budget_internal_charge.seq_exp_ic_journal')" />
+            <field name="entry_posted" >True</field>
         </record>
 
     </data>
