@@ -107,6 +107,7 @@ class AccountActivity(models.Model):
          ('expense', 'Expense')],
         string='Budget Method',
         compute='_compute_budget_method',
+        store=True,
         required=True,
     )
     activity_group_ids = fields.Many2many(
@@ -186,7 +187,7 @@ class AccountActivity(models.Model):
                       'must use same Budget Method'))
 
     @api.multi
-    @api.depends('activity_group_ids')
+    @api.depends('activity_group_ids', 'activity_group_ids.budget_method')
     def _compute_budget_method(self):
         for rec in self:
             rec.budget_method = rec.activity_group_ids and \

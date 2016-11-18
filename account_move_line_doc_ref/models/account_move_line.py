@@ -15,7 +15,9 @@ class AccountMoveLine(models.Model):
          ('account.voucher', 'Voucher'),
          ('account.asset.asset', 'Asset'),
          ('account.bank.receipt', 'Bank Receipt'),
-         ('stock.picking', 'Picking')],
+         ('stock.picking', 'Picking'),
+         ('hr.expense.expense', 'Expense'),  # Not being used yet.
+         ],
         string='Doc Ref',
         readonly=True,
         copy=True,  # True for cancel reversal case
