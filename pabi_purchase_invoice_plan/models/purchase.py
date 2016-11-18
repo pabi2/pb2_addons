@@ -13,7 +13,7 @@ class PurchaseOrder(models.Model):
         states={'draft': [('readonly', False)]},
     )
     advance_rounding = fields.Boolean(
-        string="Advance Rounding?",
+        string="Advance Rounding",
         readonly=True,
     )
 
@@ -22,31 +22,31 @@ class PurchaseOrder(models.Model):
         # For Hook
         res = super(PurchaseOrder, self).\
             _action_invoice_create_hook(invoice_ids)
-        if self.advance_rounding and self.invoice_method == 'invoice_plan':
-            domain = [('id', 'in', invoice_ids),
-                      ('is_advance', '=', False)]
-            invoices = self.env['account.invoice'].search(domain,
-                                                          order='date_invoice')
+        if self.use_advance and self.advance_rounding and \
+                self.invoice_method == 'invoice_plan':
+            adv_invoice = self.env['account.invoice'].\
+                search([('id', 'in', invoice_ids), ('is_advance', '=', True)])
+            adv_amount = adv_invoice[0].invoice_line[0].price_unit
+            invoices = self.env['account.invoice'].\
+                search([('id', 'in', invoice_ids), ('is_advance', '=', False)],
+                       order='date_invoice')
             if invoices:
                 total_invoices = len(invoices.ids)
-                qty_diff = 0.0
+                adv_accum = 0.0
                 count = 1
                 for invoice in invoices:
                     if count < total_invoices:
                         for line in invoice.invoice_line:
                             price_subtotal_frac, price_subtotal_whole =\
                                 math.modf(line.price_subtotal)
-                            if price_subtotal_frac and line.price_subtotal < 0:
-                                if price_subtotal_whole != 0:
-                                    qty_to_minus =\
-                                        price_subtotal_frac / line.price_unit
-                                    new_qty = line.quantity - qty_to_minus
-                                    line.quantity = new_qty
-                                    qty_diff += qty_to_minus
+                            if line.price_subtotal < 0:
+                                if price_subtotal_frac:  # change
+                                    line.price_unit = price_subtotal_whole
+                                adv_accum += price_subtotal_whole
                     if count == total_invoices:
-                        for l in invoice.invoice_line:
-                            if l.price_subtotal < 0:
-                                l.quantity = l.quantity + qty_diff
+                        for line in invoice.invoice_line:
+                            if line.price_subtotal < 0:
+                                line.price_unit = -(adv_amount + adv_accum)
                     count += 1
         return res
 

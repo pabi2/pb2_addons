@@ -110,7 +110,11 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         default=_default_order,
     )
     advance_rounding = fields.Boolean(
-        string="Advance Rounding?",
+        string="Advance Rounding",
+        default=True,
+        help="When advance is deducted from each invoice with some decimal "
+        "points, it will rounded and keep those residual to the last invoice "
+        "advance deduction."
     )
 
     @api.model

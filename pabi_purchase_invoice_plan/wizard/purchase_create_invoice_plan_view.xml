@@ -11,7 +11,7 @@
                     <field name="po_id" invisible="1" readonly="1"/>
                 </xpath>
                 <xpath expr="//field[@name='use_advance']" position="after">
-                    <field name="advance_rounding" attrs="{'invisible': [('use_advance', '=', False)]}"/>
+                    <field name="advance_rounding" attrs="{'invisible': [('use_advance', '=', False)]}" />
                 </xpath>
                 <xpath expr="//field[@name='installment_ids']/tree/field[@name='date_invoice']" position="before">
                     <field name="fiscalyear_id"/>
