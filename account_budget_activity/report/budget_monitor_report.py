@@ -65,14 +65,29 @@ class BudgetMonitorReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product'
+    )
+    product_activity_id = fields.Many2one(
+        'product.activity',
+        string='Product/Activity'
+    )
 
     def _get_sql_view(self):
         sql_view = """
-            select row_number() over (order by doc_ref) as id, * from
+            select row_number() over (order by doc_ref) as id,
+            budget_method, user_id, fiscalyear_id, doc_ref, doc_id,
+            planned_amount, released_amount, amount_so_commit,
+            amount_pr_commit, amount_po_commit, amount_exp_commit,
+            amount_actual, amount_balance,
+            coalesce(pa1.id, pa2.id) as product_activity_id,
+            %s
+            from
             (select budget_method, user_id, fiscalyear_id, doc_ref,
             'account.budget,' || budget_id as doc_id,
             planned_amount, released_amount,
-             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
+            0.0 as amount_so_commit, 0.0 as amount_pr_commit,
             0.0 as amount_po_commit, 0.0 as amount_exp_commit,
             0.0 as amount_actual, released_amount as amount_balance,
             -- Dimensions
@@ -90,11 +105,19 @@ class BudgetMonitorReport(models.Model):
             -- Dimensions
             %s
             from budget_consume_report) a
-        """ % (self._get_dimension(), self._get_dimension(),)
+            -- Join for product.activity
+            left outer join product_activity pa1
+            on pa1.temp_activity_id = a.activity_id
+            left outer join product_activity pa2
+            on pa2.temp_product_id = a.product_id
+        """ % (self._get_dimension(),
+               self._get_dimension(),
+               self._get_dimension(),
+               )
         return sql_view
 
     def _get_dimension(self):
-        return 'activity_group_id, activity_id'
+        return 'activity_group_id, activity_id, product_id'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

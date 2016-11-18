@@ -80,6 +80,10 @@ class BudgetPlanReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+    )
     state = fields.Selection(
         [('draft', 'Draft'),
          ('cancel', 'Cancelled'),
@@ -106,7 +110,7 @@ class BudgetPlanReport(models.Model):
         return sql_view
 
     def _get_dimension(self):
-        return 'abl.activity_group_id, abl.activity_id'
+        return 'abl.activity_group_id, abl.activity_id, null product_id'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

@@ -30,7 +30,7 @@
                     <field name="doc_ref" invisible="0"/>
                     <field name="doc_id" invisible="1"/>
                     <field name="activity_group_id"/>
-                    <field name="activity_id"/>
+                    <field name="product_activity_id"/>
                     <field name="user_id"/>
                     <field name="fiscalyear_id"/>
                     <field name="planned_amount"/>
@@ -55,6 +55,8 @@
                         <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
                         <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
                         <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+                        <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
+                        <filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                     </group>
                 </search>
@@ -69,7 +71,6 @@
             <field name="context">{}</field>
             <field name="search_view_id" ref="view_budget_monitor_report_search"/>
             <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
-
         </record>
 
         <menuitem action="action_budget_monitor_report" id="menu_action_budget_monitor_report" parent="menu_action_budget_report" sequence="3"/>
