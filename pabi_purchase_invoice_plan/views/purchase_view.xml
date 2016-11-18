@@ -16,6 +16,9 @@
                     <field name="by_fiscalyear" invisible="True"/>
                     <field name="fiscalyear_id"/>
                 </xpath>
+                <xpath expr="//field[@name='use_advance']" position="after">
+                    <field name="advance_rounding" attrs="{'invisible': [('use_advance', '=', False)]}"/>
+                </xpath>
                 <xpath expr="//button[@name='action_cancel_draft_invoices']" position="attributes">
                     <attribute name="attrs">{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
