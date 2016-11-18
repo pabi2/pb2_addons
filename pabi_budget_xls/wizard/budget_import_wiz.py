@@ -58,11 +58,6 @@ class BudgetImportWizard(models.TransientModel):
                     line_vals.update({'activity_group_id': activity_group_id.id})
                 else:
                     continue
-#                 col += 1
-#                 activity = CostCtrl_Sheet.cell(row=row, column=col).value
-#                 if activity:
-#                     activity_id = self.env['account.activity'].search([('name', '=', tools.ustr(activity))])
-#                     line_vals.update({'activity_id': activity_id.id})
                 col += 1
 
                 name = CostCtrl_Sheet.cell(row=row, column=col).value

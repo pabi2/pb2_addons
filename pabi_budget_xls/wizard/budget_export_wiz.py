@@ -80,7 +80,6 @@ class BudgetExportWizard(models.TransientModel):
         activity_ids = self.env['account.activity'].search([])
         activities_list = [tools.ustr(a.name) for a in activity_ids]
         activities = ','.join(activities_list)
-        act_dv = DataValidation(type="list", formula1=activities)
 
         Activity_MasterSheet = False
         try:
@@ -189,14 +188,10 @@ class BudgetExportWizard(models.TransientModel):
         Whitefont = Font(color='FFFFFF')
         if ConstControl_Sheet:
             self._update_costcontrol_masterdata(workbook)
-            self._update_activity_masterdata(workbook)
-
-            act_dv = SHEET_FORMULAS.get('activity_formula', False)
             ag_list_formula = SHEET_FORMULAS.get('ag_list', False)
             costcontrol_formula = SHEET_FORMULAS.get('cost_control_formula', False)
             ConstControl_Sheet.add_data_validation(costcontrol_formula)
             ConstControl_Sheet.add_data_validation(ag_list_formula)
-            ConstControl_Sheet.add_data_validation(act_dv)
             org = budget.org_id.code and\
                 budget.org_id.code or budget.org_id.name_short
             section = budget.section_id.code and\
@@ -228,7 +223,6 @@ class BudgetExportWizard(models.TransientModel):
             for r in range(1, 11):
                 for rr in range(ag_first_column, ag_first_column+10):
                     ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=4))
-#                     act_dv.add(ConstControl_Sheet.cell(row=rr, column=5))
                     ConstControl_Sheet.cell(row=rr, column=3, value=budget.section_id.name)
                     ag_first_column += 1
                 ag_first_column = ag_first_column+row_gap
@@ -252,9 +246,6 @@ class BudgetExportWizard(models.TransientModel):
                         col += 1
                         if line.activity_group_id:
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_group_id.name
-#                         col += 1
-#                         if line.activity_id:
-#                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_id.name
                         col += 1
                         if line.name:
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.name
