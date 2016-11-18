@@ -253,14 +253,11 @@ class PurchaseOrder(models.Model):
                 for preline in advance.invoice_line:
                     ratio = (order.amount_untaxed and
                              (invoice.amount_untaxed /
-                              order.amount_untaxed) or
-                             1.0)
+                              order.amount_untaxed) or 1.0)
                     inv_line = preline.copy(
                         {'invoice_id': inv_id,
-                         'price_unit': -1 *
-                            preline.price_unit})
-                    inv_line.quantity = \
-                        inv_line.quantity * ratio
+                         'price_unit': -preline.price_unit * ratio})
+                    inv_line.quantity = 1.0
         invoice.button_compute()
         return True
 
