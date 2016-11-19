@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, models
+from openerp import api, models, fields
 # from lxml import etree
 # from openerp.osv.orm import setup_modifiers
 
@@ -45,3 +45,26 @@ class StockRequest(models.Model):
         #             node, result['buttons'][node.attrib['name']])
         # result['arch'] = etree.tostring(doc)
         return result
+
+    # @api.multi
+    # @api.depends()
+    # def filter_receive_uid(self):
+    #     print self
+    #     for rec in self:
+    #         user_ids = []
+    #         dest_ou_id = rec.operating_unit_id.id
+    #         User = rec.env['res.users']
+    #         uids = User.search([])
+    #         if not dest_ou_id:
+    #             return []
+    #         for uid in uids:
+    #             if dest_ou_id.id in uid.operating_unit_default_get(uid.id):
+    #                 user_ids.append(uid.id)
+    #
+    #         return {
+    #             'domain': {
+    #                 'receive_emp_id': [
+    #                     ('user_id', 'in', user_ids),
+    #                 ]
+    #             }
+    #         }
