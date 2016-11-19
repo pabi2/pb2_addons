@@ -32,6 +32,7 @@
         "security/security_group.xml",
         "security/ir.model.access.csv",
         "wizard/approve_bank_account_wizard.xml",
+        "views/account_view.xml",
         "views/account_config.xml",
         "views/account_voucher_view.xml",
         "views/account_invoice_view.xml",
