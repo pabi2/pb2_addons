@@ -137,16 +137,20 @@ class AccountInvoiceLine(models.Model):
 
     @api.multi
     def write(self, values):
-        for rec in self:
-            self._cr.execute("""
-                SELECT id FROM account_invoice_line WHERE id=%d
-            """ % (rec.id))
-            res = self._cr.fetchone()
-            if not res:
-                if len(self.ids) > 1:
-                    self.ids.remove(rec.id)
-                else:
-                    return True
+        self._cr.execute("""
+            SELECT id FROM account_invoice_line WHERE id in %s
+        """, (tuple(self.ids), ))
+        res = self._cr.fetchall()
+        line_ids = []
+        if res:
+            line_ids = [l[0] for l in res]
+        if len(self.ids) != len(line_ids):
+            missed_ids = list(set(self.ids) - set(line_ids))
+            if len(self.ids) > 1:
+                for i in missed_ids:
+                    self.ids.remove(i)
+            else:
+                return True
         return super(AccountInvoiceLine, self).write(values)
 
 
