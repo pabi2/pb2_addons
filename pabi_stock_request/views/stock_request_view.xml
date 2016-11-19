@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <record model="ir.ui.view" id="view_stock_request_tree" >
+            <field name="name">view.stock.request.tree</field>
+            <field name="model">stock.request</field>
+            <field name="inherit_id" ref="stock_request.view_stock_request_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="after">
+                    <field name="receive_emp_id"/>
+                </xpath>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_stock_request_form" >
             <field name="name">stock.picking.form</field>
             <field name="model">stock.request</field>

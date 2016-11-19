@@ -11,66 +11,66 @@
                 <!--</xpath>-->
             <!--</field>-->
         <!--</record>-->
-        <record model="ir.ui.view" id="view_template_property_form" >
-            <field name="name">product.template.stock.property.form.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="stock_account.view_template_property_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//group[@groups='stock_account.group_inventory_valuation']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="product_product_template_form_view" >
-            <field name="name">product.template.stock.property.form.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='standard_price']" position="attributes">
-                    <attribute name="readonly">1</attribute>
-                </xpath>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="product_template_form_view" >
-            <field name="name">product.template.form.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="account.product_template_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='property_account_income']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='property_account_expense']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='categ_id']" position="replace"/>
-                <xpath expr="//label[@string='Internal Category']" position="replace"/>
-                <xpath expr="//field[@name='standard_price']" position="after">
-                    <field name="categ_id"/>
-                </xpath>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="stock_view_template_property_form" >
-            <field name="name">product.template.stock.property.form.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="stock.view_template_property_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//group[@name='status']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//group[@string='Storage Location']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//group[@string='Counter-Part Locations Properties']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//group[@name='lot']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//group[@name='weight']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-            </field>
-        </record>
+        <!--<record model="ir.ui.view" id="view_template_property_form" >-->
+            <!--<field name="name">product.template.stock.property.form.inherit</field>-->
+            <!--<field name="model">product.template</field>-->
+            <!--<field name="inherit_id" ref="stock_account.view_template_property_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//group[@groups='stock_account.group_inventory_valuation']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record model="ir.ui.view" id="product_product_template_form_view" >-->
+            <!--<field name="name">product.template.stock.property.form.inherit</field>-->
+            <!--<field name="model">product.template</field>-->
+            <!--<field name="inherit_id" ref="product.product_template_form_view"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//field[@name='standard_price']" position="attributes">-->
+                    <!--<attribute name="readonly">1</attribute>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record model="ir.ui.view" id="product_template_form_view" >-->
+            <!--<field name="name">product.template.form.inherit</field>-->
+            <!--<field name="model">product.template</field>-->
+            <!--<field name="inherit_id" ref="account.product_template_form_view"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//field[@name='property_account_income']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//field[@name='property_account_expense']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//field[@name='categ_id']" position="replace"/>-->
+                <!--<xpath expr="//label[@string='Internal Category']" position="replace"/>-->
+                <!--<xpath expr="//field[@name='standard_price']" position="after">-->
+                    <!--<field name="categ_id"/>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record model="ir.ui.view" id="stock_view_template_property_form" >-->
+            <!--<field name="name">product.template.stock.property.form.inherit</field>-->
+            <!--<field name="model">product.template</field>-->
+            <!--<field name="inherit_id" ref="stock.view_template_property_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//group[@name='status']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//group[@string='Storage Location']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//group[@string='Counter-Part Locations Properties']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//group[@name='lot']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//group[@name='weight']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
         <record model="ir.ui.view" id="product_template_tree_view" >
             <field name="name">product.template.product.tree</field>
             <field name="model">product.template</field>
