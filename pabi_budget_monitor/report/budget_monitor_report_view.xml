@@ -30,9 +30,13 @@
         	<xpath expr="//search" position="replace">
             	<search string="Budget Monitor">
 	                <group expand="1" string="Group By">
-	                    <filter string="Document" name="groupby_doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
-	                    <filter string="Activity Group" name="groupby_activity_group" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
-	                    <filter string="Activity" name="groupby_activity" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+											<filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
+											<filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
+											<filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
+											<filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+											<filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
+											<filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
+											<filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
 	                    <separator/>
 	                    <filter string="Functional Area" name="groupby_functional_area" context="{'group_by':'functional_area_id'}"/>
 	                    <filter string="Program Group" name="groupby_program_group" context="{'group_by':'program_group_id'}"/>
@@ -49,7 +53,7 @@
                 </search>
             </xpath>
         </field>
-    </record>    
+    </record>
 
 </data>
 </openerp>

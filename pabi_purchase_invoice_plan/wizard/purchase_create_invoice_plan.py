@@ -21,7 +21,6 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         default='change_price',
     )
 
-
     @api.onchange('percent')
     def _onchange_percent(self):
         if not self.plan_id.by_fiscalyear or\
@@ -109,6 +108,13 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         'purchase.order',
         string='Purchase Order',
         default=_default_order,
+    )
+    advance_rounding = fields.Boolean(
+        string="Advance Rounding",
+        default=True,
+        help="When advance is deducted from each invoice with some decimal "
+        "points, it will rounded and keep those residual to the last invoice "
+        "advance deduction."
     )
 
     @api.model
@@ -259,6 +265,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     @api.one
     def do_create_purchase_invoice_plan(self):
         if not self.by_fiscalyear:
+            order =\
+                self.env['purchase.order'].browse(self._context['active_id'])
+            order.advance_rounding = self.advance_rounding
             return super(PurchaseCreateInvoicePlan,
                          self).do_create_purchase_invoice_plan()
         self._validate_installment_date_range()
@@ -290,6 +299,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         order.invoice_plan_ids = lines
         order.use_advance = self.use_advance
         order.use_deposit = self.use_deposit
+        order.advance_rounding = self.advance_rounding
         order.invoice_mode = self.invoice_mode
 
     @api.model
