@@ -29,14 +29,28 @@ class AccountTaxDetail(models.Model):
                 rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
 
     @api.model
-    def _get_next_sequence(self, period_id):
-        # Sequence run by Tax Branch
-        if not self.taxbranch_id:
-            raise ValidationError(_("Invoice has no NSTDA's Tax Branch!"))
-        self._cr.execute("""
-            select coalesce(max(tax_sequence), 0) + 1
-            from account_tax_detail
-            where period_id = %s
-            and taxbranch_id = %s
-        """, (period_id, self.taxbranch_id.id))
-        return self._cr.fetchone()[0]
+    def _get_seq_search_domain(self, period):
+        domain = super(AccountTaxDetail, self)._get_seq_search_domain(period)
+        domain += [('taxbranch_id', '=', self.taxbranch_id.id)]
+        return domain
+
+    @api.model
+    def _get_seq_name(self, period):
+        name = 'TaxDetail-%s-%s' % (self.taxbranch_id.code, period.code)
+        return name
+
+    @api.model
+    def _prepare_taxdetail_seq(self, period, sequence):
+        vals = super(AccountTaxDetail, self)._prepare_taxdetail_seq(period,
+                                                                    sequence)
+        vals.update({'taxbranch_id': self.taxbranch_id.id})
+        return vals
+
+
+class AccountTaxDetailSequence(models.Model):
+    _inherit = 'account.tax.detail.sequence'
+
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Taxbranch',
+    )
