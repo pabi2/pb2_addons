@@ -36,7 +36,6 @@ PABI2 - Procurement Module
         "purchase_cancel_reason",
         "purchase_partial_invoicing",
         "purchase_partner_invoice_method",
-        "purchase_cash_on_delivery",
         "l10n_th_thai_holidays",
         "l10n_th_amount_text_ext",
         "res_partner_ext",
