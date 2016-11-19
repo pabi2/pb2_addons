@@ -135,6 +135,20 @@ class AccountInvoiceLine(models.Model):
                 rec.invest_construction_phase_id = False
         return
 
+    @api.multi
+    def write(self, values):
+        for rec in self:
+            self._cr.execute("""
+                SELECT id FROM account_invoice_line WHERE id=%d
+            """ % (rec.id))
+            res = self._cr.fetchone()
+            if not res:
+                if len(self.ids) > 1:
+                    self.ids.remove(rec.id)
+                else:
+                    return True
+        return super(AccountInvoiceLine, self).write(values)
+
 
 class AccountInvoiceTax(models.Model):
     _inherit = "account.invoice.tax"
