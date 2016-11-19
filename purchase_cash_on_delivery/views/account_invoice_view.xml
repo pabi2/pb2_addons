@@ -9,14 +9,17 @@
             <field name="arch" type="xml">
                 <data>
                     <button name="action_cancel_draft" position="after">
-                        <field name="is_prepaid" invisible="1" />
                         <button
                             name="clear_prepaid"
                             string="Clear Prepayment"
                             type="object"
                             class="oe_highlight"
-                            attrs="{'invisible': ['|', '|', ('state', 'not in', ['open', 'paid']), ('is_prepaid', '=', False), ('clear_prepaid_move_id', '!=', False)]}"/>
+                            context="{'is_clear_prepaid': True}"
+                            attrs="{'invisible': ['|', '|', ('state', 'not in', ['paid']), ('is_prepaid', '=', False), ('clear_prepaid_move_id', '!=', False)]}"/>
                     </button> <!-- If  -->
+                    <field name="journal_id" position="after" >
+                        <field name="is_prepaid" />
+                    </field>
                     <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
                         <field name="clear_prepaid_move_id" attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}"/>
                     </xpath>

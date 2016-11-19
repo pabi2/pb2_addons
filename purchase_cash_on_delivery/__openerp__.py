@@ -23,11 +23,12 @@ prepaid account with normal project account.
     'depends': [
         'purchase',
         'account',
+        'account_invoice_action_move_create_hook',
     ],
     'demo': [],
     'data': [
+        'data/account_data.xml',
         'data/payment_term_data.xml',
-        'views/account_config.xml',
         'views/account_invoice_view.xml',
     ],
     'test': [

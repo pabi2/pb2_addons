@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Clear Prepaid Journal
+        <record model="ir.sequence" id="seq_clear_prepaid_journal">
+            <field name="name">Clear Prepaid</field>
+            <field name="code"></field>
+            <field name="padding" eval="6"/>
+            <field name="prefix">TP%(fy)s/</field>
+        </record>
+        <record id="clear_prepaid_journal" model="account.journal">
+            <field name="name">Clear Prepaid</field>
+            <field name="code">TP</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="analytic_journal_id" eval="ref('account.exp')" />
+            <field name="sequence_id" eval="ref('purchase_cash_on_delivery.seq_clear_prepaid_journal')" />
+            <field name="entry_posted" >True</field>
+        </record>
+
+    </data>
+</openerp>
