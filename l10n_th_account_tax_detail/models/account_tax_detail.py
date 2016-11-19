@@ -54,7 +54,7 @@ class InvoiceVoucherTaxDetail(object):
             if doc.type not in ('in_refund', 'in_invoice', 'payment'):
                 continue
             date_doc = self._get_date_document(doc)
-            period_id = Period.find(date_doc)[:1].id
+            period = Period.find(date_doc)[:1]
             for tax in doc.tax_line:
                 # Skip if Undue Tax
                 if tax.tax_code_type != 'normal':
@@ -63,15 +63,15 @@ class InvoiceVoucherTaxDetail(object):
                     invoice_date = datetime.strptime(detail.invoice_date,
                                                      '%Y-%m-%d').date()
                     if date_start <= invoice_date <= date_stop:
-                        next_seq = detail._get_next_sequence(period_id)
+                        next_seq = detail._get_next_sequence(period)
                         detail.write({'tax_sequence': next_seq,
-                                      'period_id': period_id,
+                                      'period_id': period.id,
                                       })
                     else:
-                        add_period_id = Period.find(detail.invoice_date)[:1].id
-                        next_seq = detail._get_next_sequence(add_period_id)
+                        add_period = Period.find(detail.invoice_date)[:1]
+                        next_seq = detail._get_next_sequence(add_period)
                         detail.write({'tax_sequence': next_seq,
-                                      'period_id': add_period_id,
+                                      'period_id': add_period.id,
                                       'addition': True,
                                       })
 
@@ -137,17 +137,64 @@ class AccountTaxDetail(models.Model):
         for rec in self:
             if rec.period_id and rec.tax_sequence:
                 date_start = rec.period_id.date_start
-                mo = datetime.strptime(date_start,
-                                                '%Y-%m-%d').date().month
+                mo = datetime.strptime(date_start, '%Y-%m-%d').date().month
                 month = '{:02d}'.format(mo)
                 sequence = '{:04d}'.format(rec.tax_sequence)
                 rec.tax_sequence_display = '%s/%s' % (month, sequence)
 
     @api.model
-    def _get_next_sequence(self, period_id):
-        self._cr.execute("""
-            select coalesce(max(tax_sequence), 0) + 1
-            from account_tax_detail
-            where period_id = %s
-        """, (period_id,))
-        return self._cr.fetchone()[0]
+    def _get_seq_search_domain(self, period):
+        domain = [('period_id', '=', period.id)]
+        return domain
+
+    @api.model
+    def _get_next_sequence(self, period):
+        Sequence = self.env['ir.sequence']
+        TaxDetailSequence = self.env['account.tax.detail.sequence']
+        domain = self._get_seq_search_domain(period)
+        seq = TaxDetailSequence.search(domain, limit=1)
+        if not seq:
+            seq = self._create_sequence(period)
+        return int(Sequence.next_by_id(seq.sequence_id.id))
+
+    @api.model
+    def _get_seq_name(self, period):
+        name = 'TaxDetail-%s' % (period.code,)
+        return name
+
+    @api.model
+    def _prepare_taxdetail_seq(self, period, new_sequence):
+        vals = {
+            'period_id': period.id,
+            'sequence_id': new_sequence.id,
+        }
+        return vals
+
+    @api.model
+    def _create_sequence(self, period):
+        seq_vals = {'name': self._get_seq_name(period),
+                    'implementation': 'no_gap'}
+        new_sequence = self.env['ir.sequence'].create(seq_vals)
+        vals = self._prepare_taxdetail_seq(period, new_sequence)
+        return self.env['account.tax.detail.sequence'].create(vals)
+
+
+class AccountTaxDetailSequence(models.Model):
+    _name = 'account.tax.detail.sequence'
+    _description = 'Keep track of Tax Detail sequences'
+    _rec_name = 'period_id'
+
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+    )
+    sequence_id = fields.Many2one(
+        'ir.sequence',
+        string='Sequence',
+        ondelete='restrict',
+    )
+    number_next_actual = fields.Integer(
+        string='Next Number',
+        related='sequence_id.number_next_actual',
+        readonly=True,
+    )
