@@ -81,6 +81,9 @@ class AccountInvoice(models.Model):
                 _copy_fields = list(set(_fields) - set(_no_copy_fields))
                 for f in _copy_fields:
                     return_line[f] = advance_line[f]
+                return_line['name'] = \
+                    (u'รับคืนเงินยืมทดรองจ่ายของ AV เลขที่ %s' %
+                     (self.advance_expense_id.number,))
                 self.invoice_line += return_line
 
     @api.model
