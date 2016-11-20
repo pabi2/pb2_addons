@@ -79,7 +79,8 @@ class AccountInvoice(models.Model):
             penalty_line.product_id = product
             penalty_line.account_id = self.\
                 _get_account_id_from_product(product, self.fiscal_position)
-            penalty_line.name = product.name
+            penalty_line.name = (u'%s WA เลขที่ %s' %
+                                 (product.name, acceptance.name,))
             penalty_line.quantity = 1.0
             penalty_line.price_unit = amount_penalty
             self.invoice_line += penalty_line
