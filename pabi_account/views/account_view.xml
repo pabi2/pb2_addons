@@ -7,9 +7,9 @@
             <field name="model">account.period</field>
             <field name="inherit_id" ref="l10n_th_account_tax_detail.view_account_period_form"/>
             <field name="arch" type="xml">
-                <field name="sequence_id" position="before">
+                <xpath expr="//field[@name='taxdetail_sequence_ids']/tree/field[@name='sequence_id']" position="before">
                     <field name="taxbranch_id" />
-                </field>
+                </xpath>
             </field>
         </record>
 

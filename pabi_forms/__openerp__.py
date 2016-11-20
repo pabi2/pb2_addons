@@ -10,6 +10,8 @@
         'l10n_th_amount_text_ext',
         'l10n_th_fields',
         'pabi_account',
+        'purchase_invoice_line_percentage',
+        'purchase_invoice_plan',
     ],
     'data': [
         "jasper_data.xml",

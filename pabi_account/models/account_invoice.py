@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import ast
 from openerp import models, api, fields, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -104,6 +104,9 @@ class AccountInvoice(models.Model):
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
+            # Not allow negative amount
+            if invoice.amount_total < 0.0:
+                raise UserError(_('Negative total amount not allowed!'))
         return result
 
     @api.model
@@ -114,12 +117,17 @@ class AccountInvoice(models.Model):
         })
         return res
 
-    @api.multi
-    @api.constrains('amount_total')
-    def _check_seats_limit(self):
-        for rec in self:
-            if rec.amount_total < 0.0:
-                raise Warning(_('Negative Total Amount is not allowed!'))
+    # We can't really use constraint, need to check on validate
+    # When an invoice is saved, finally it is not negative, but beginning it
+    # could be
+    # --
+    # @api.multi
+    # @api.constrains('amount_total')
+    # def _check_amount_total(self):
+    #     for rec in self:
+    #         print rec.amount_total
+    #         if rec.amount_total < 0.0:
+    #             raise Warning(_('Negative Total Amount is not allowed!'))
 
     @api.multi
     def action_open_payments(self):
