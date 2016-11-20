@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import ast
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -104,9 +104,6 @@ class AccountInvoice(models.Model):
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
-            # # Not allow negative amount
-            # if invoice.amount_total < 0.0:
-            #     raise UserError(_('Negative total amount not allowed!'))
         return result
 
     @api.model
