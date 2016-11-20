@@ -46,6 +46,48 @@ class AccountInvoice(models.Model):
         string='Payment Type',
         help="Specified Payment Type, can be used to screen Payment Method",
     )
+    currency_rate = fields.Float(
+        string='Currency Rate',
+        compute='_compute_currency_rate',
+        store=True,
+    )
+    doc_ref = fields.Char(
+        string='Reference Doc',
+        compute='_compute_doc_ref',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('tax_line',
+                 'tax_line.detail_ids',
+                 'tax_line.detail_ids.invoice_number')
+    def _compute_doc_ref(self):
+        for rec in self:
+            header_text = ''
+            for tax in rec.tax_line:
+                for detail in tax.detail_ids:
+                    if not header_text:
+                        header_text = detail.invoice_number
+                    else:
+                        header_text = (header_text + ',' +
+                                       detail.invoice_number)
+                    rec.doc_ref = header_text
+
+    @api.multi
+    @api.depends('currency_id')
+    def _compute_currency_rate(self):
+        for rec in self:
+            company = rec.company_id
+            context = self._context.copy()
+            ctx_date = rec.date_invoice
+            if not ctx_date:
+                ctx_date = fields.Date.today()
+            context.update({'date': ctx_date})
+            # get rate of company currency to current invoice currency
+            rate = self.env['res.currency'].\
+                with_context(context)._get_conversion_rate(company.currency_id,
+                                                           rec.currency_id)
+            rec.currency_rate = rate
 
     @api.multi
     @api.depends()
