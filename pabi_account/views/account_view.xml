@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_period_form" model="ir.ui.view">
+            <field name="name">view.account.period.form</field>
+            <field name="model">account.period</field>
+            <field name="inherit_id" ref="l10n_th_account_tax_detail.view_account_period_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='taxdetail_sequence_ids']/tree/field[@name='sequence_id']" position="before">
+                    <field name="taxbranch_id" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

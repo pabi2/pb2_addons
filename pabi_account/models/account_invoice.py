@@ -46,6 +46,48 @@ class AccountInvoice(models.Model):
         string='Payment Type',
         help="Specified Payment Type, can be used to screen Payment Method",
     )
+    currency_rate = fields.Float(
+        string='Currency Rate',
+        compute='_compute_currency_rate',
+        store=True,
+    )
+    doc_ref = fields.Char(
+        string='Reference Doc',
+        compute='_compute_doc_ref',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('tax_line',
+                 'tax_line.detail_ids',
+                 'tax_line.detail_ids.invoice_number')
+    def _compute_doc_ref(self):
+        for rec in self:
+            header_text = ''
+            for tax in rec.tax_line:
+                for detail in tax.detail_ids:
+                    if not header_text:
+                        header_text = detail.invoice_number
+                    else:
+                        header_text = (header_text + ',' +
+                                       detail.invoice_number)
+                    rec.doc_ref = header_text
+
+    @api.multi
+    @api.depends('currency_id')
+    def _compute_currency_rate(self):
+        for rec in self:
+            company = rec.company_id
+            context = self._context.copy()
+            ctx_date = rec.date_invoice
+            if not ctx_date:
+                ctx_date = fields.Date.today()
+            context.update({'date': ctx_date})
+            # get rate of company currency to current invoice currency
+            rate = self.env['res.currency'].\
+                with_context(context)._get_conversion_rate(company.currency_id,
+                                                           rec.currency_id)
+            rec.currency_rate = rate
 
     @api.multi
     @api.depends()
@@ -62,9 +104,9 @@ class AccountInvoice(models.Model):
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
-            # # Not allow negative amount
-            # if invoice.amount_total < 0.0:
-            #     raise UserError(_('Negative total amount not allowed!'))
+            # Not allow negative amount
+            if invoice.amount_total < 0.0:
+                raise UserError(_('Negative total amount not allowed!'))
         return result
 
     @api.model
@@ -75,12 +117,17 @@ class AccountInvoice(models.Model):
         })
         return res
 
-    @api.multi
-    @api.constrains('amount_total')
-    def _check_seats_limit(self):
-        for rec in self:
-            if rec.amount_total < 0.0:
-                raise Warning(_('Negative Total Amount is not allowed!'))
+    # We can't really use constraint, need to check on validate
+    # When an invoice is saved, finally it is not negative, but beginning it
+    # could be
+    # --
+    # @api.multi
+    # @api.constrains('amount_total')
+    # def _check_amount_total(self):
+    #     for rec in self:
+    #         print rec.amount_total
+    #         if rec.amount_total < 0.0:
+    #             raise Warning(_('Negative Total Amount is not allowed!'))
 
     @api.multi
     def action_open_payments(self):
@@ -134,6 +181,25 @@ class AccountInvoiceLine(models.Model):
                 rec.invest_asset_id = False
                 rec.invest_construction_phase_id = False
         return
+
+    @api.multi
+    def write(self, values):
+        if self.ids:
+            self._cr.execute("""
+                SELECT id FROM account_invoice_line WHERE id in %s
+            """, (tuple(self.ids), ))
+            res = self._cr.fetchall()
+            line_ids = []
+            if res:
+                line_ids = [l[0] for l in res]
+            if len(self.ids) != len(line_ids):
+                missed_ids = list(set(self.ids) - set(line_ids))
+                if len(self.ids) > 1:
+                    for i in missed_ids:
+                        self.ids.remove(i)
+                else:
+                    return True
+        return super(AccountInvoiceLine, self).write(values)
 
 
 class AccountInvoiceTax(models.Model):
