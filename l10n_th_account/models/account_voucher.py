@@ -7,8 +7,12 @@ import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
-WHT_CERT_INCOME_TYPE = [('1', '1'), ('2', '2'), ('3', '3'),
-                        ('5', '5'), ('6', '6')]
+WHT_CERT_INCOME_TYPE = [('1', 'เงินเดือน ค่าจ้าง ฯลฯ 40 (1)'),
+                        ('2', 'เบี้ยประชุม ประเมินผล ฯลฯ 40(2)'),
+                        ('3', 'ค่าลิขสิทธิ์ ฯลฯ 40(3)'),
+                        ('5', 'เงินรางวัล ค่าเช่า ค่าโฆษณา ฯลฯ'),
+                        ('6', 'ธุรกิจพาณิชย์ เกษตร อื่นๆ')]
+
 TAX_PAYER = [('withholding', 'Withholding'),
              ('paid_one_time', 'Paid One Time')]
 
@@ -53,21 +57,21 @@ class AccountVoucher(common_voucher, models.Model):
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines (Normal)',
-        readonly=False,
+        readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'normal')],
     )
     tax_line_undue = fields.One2many(
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines (Undue)',
-        readonly=False,
+        readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'undue')],
     )
     tax_line_wht = fields.One2many(
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines (Withholding)',
-        readonly=False,
+        readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'wht')],
     )
     income_tax_form = fields.Selection(
@@ -94,6 +98,7 @@ class AccountVoucher(common_voucher, models.Model):
     tax_payer = fields.Selection(
         TAX_PAYER,
         string='Tax Payer',
+        readonly=True, states={'draft': [('readonly', False)]},
     )
     recognize_vat_move_id = fields.Many2one(
         'account.move',
@@ -732,7 +737,6 @@ class WithholdingTaxSequence(models.Model):
         related='sequence_id.number_next_actual',
         readonly=True,
     )
-
 
 
 class AccountVoucherLine(common_voucher, models.Model):

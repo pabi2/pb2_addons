@@ -60,6 +60,7 @@ class PrintWhtCertWizard(models.TransientModel):
     tax_payer = fields.Selection(
         TAX_PAYER,
         string='Tax Payer',
+        default='withholding',
         required=True,
     )
 
@@ -203,6 +204,7 @@ class WhtCertTaxLine(models.TransientModel):
     voucher_tax_id = fields.Many2one(
         'account.voucher.tax',
         string='Voucher Tax Line',
+        readonly=True,
     )
     invoice_id = fields.Many2one(
         'account.invoice',
@@ -227,3 +229,11 @@ class WhtCertTaxLine(models.TransientModel):
         string='Tax Amount',
         readonly=True,
     )
+
+    @api.onchange('wht_cert_income_type')
+    def _onchange_wht_cert_income_type(self):
+        if self.wht_cert_income_type:
+            select_dict = dict(WHT_CERT_INCOME_TYPE)
+            self.wht_cert_income_desc = select_dict[self.wht_cert_income_type]
+        else:
+            self.wht_cert_income_desc = False

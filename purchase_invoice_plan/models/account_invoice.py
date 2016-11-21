@@ -9,6 +9,6 @@ class AccountInvoice(models.Model):
         'purchase.invoice.plan',
         'ref_invoice_id',
         string='Invoice Plan',
-        copy=True,
+        copy=False,
         readonly=True,
     )
