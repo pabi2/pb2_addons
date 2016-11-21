@@ -46,25 +46,17 @@ class StockRequest(models.Model):
         # result['arch'] = etree.tostring(doc)
         return result
 
-    # @api.multi
-    # @api.depends()
-    # def filter_receive_uid(self):
-    #     print self
-    #     for rec in self:
-    #         user_ids = []
-    #         dest_ou_id = rec.operating_unit_id.id
-    #         User = rec.env['res.users']
-    #         uids = User.search([])
-    #         if not dest_ou_id:
-    #             return []
-    #         for uid in uids:
-    #             if dest_ou_id.id in uid.operating_unit_default_get(uid.id):
-    #                 user_ids.append(uid.id)
-    #
-    #         return {
-    #             'domain': {
-    #                 'receive_emp_id': [
-    #                     ('user_id', 'in', user_ids),
-    #                 ]
-    #             }
-    #         }
+    @api.onchange('picking_type_id')
+    def _onchange_picking_type_id(self):
+        dest_ou_id = self.picking_type_id.warehouse_id.operating_unit_id.id
+        User = self.env['res.users']
+        users = User.search([('operating_unit_ids', 'in', dest_ou_id)])
+        if not dest_ou_id:
+            return []
+        return {
+            'domain': {
+                'receive_emp_id': [
+                    ('user_id', 'in', users._ids),
+                ]
+            }
+        }
