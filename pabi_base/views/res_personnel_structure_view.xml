@@ -53,6 +53,11 @@
             <field name="arch" type="xml">
                 <search string="Personnel Budget">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]" string="Code"/>
+                    <field name="name_short" filter_domain="[('name_short','ilike',self)]" string="Short Name"/>
+                    <group expand="0" string="Group By">
+                        <filter name="section_id" string="Section" context="{'group_by':'section_id'}"/>
+                    </group>
                 </search>
             </field>
         </record>

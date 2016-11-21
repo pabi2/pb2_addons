@@ -45,6 +45,8 @@
             <field name="arch" type="xml">
                 <search string="Functional Area">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]" string="Code"/>
+                    <field name="name_short" filter_domain="[('name_short','ilike',self)]" string="Short Name"/>
                 </search>
             </field>
         </record>
@@ -106,6 +108,8 @@
             <field name="arch" type="xml">
                 <search string="Program Group">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]" string="Code"/>
+                    <field name="name_short" filter_domain="[('name_short','ilike',self)]" string="Short Name"/>
                     <group expand="0" string="Group By">
                         <filter name="functional_area_id" string="Functional Area" context="{'group_by':'functional_area_id'}"/>
                     </group>
@@ -175,6 +179,8 @@
             <field name="arch" type="xml">
                 <search string="Program">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]" string="Code"/>
+                    <field name="name_short" filter_domain="[('name_short','ilike',self)]" string="Short Name"/>
                     <group expand="0" string="Group By">
                         <filter name="program_group_id" string="Program Group" context="{'group_by':'program_group_id'}"/>
                         <filter name="functional_area_id" string="Functional Area" context="{'group_by':'functional_area_id'}"/>
@@ -243,6 +249,8 @@
             <field name="arch" type="xml">
                 <search string="Project">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]" string="Code"/>
+                    <field name="name_short" filter_domain="[('name_short','ilike',self)]" string="Short Name"/>
                     <group expand="1" string="Group By">
                         <filter string="Functional Area" name="functional_area_id" context="{'group_by':'functional_area_id'}"/>
                         <filter string="Program Group" name="program_group_id" context="{'group_by':'program_group_id'}"/>
@@ -331,6 +339,8 @@
             <field name="arch" type="xml">
                 <search string="Project">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]" string="Code"/>
+                    <field name="name_short" filter_domain="[('name_short','ilike',self)]" string="Short Name"/>
                     <group expand="1" string="Group By">
                         <filter string="Mission" name="mission_id" context="{'group_by':'mission_id'}"/>
                         <filter string="Functional Area" name="functional_area_id" context="{'group_by':'functional_area_id'}"/>
