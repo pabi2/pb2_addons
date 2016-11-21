@@ -191,7 +191,7 @@ class AccountActivity(models.Model):
     def _compute_budget_method(self):
         for rec in self:
             rec.budget_method = rec.activity_group_ids and \
-                rec.activity_group_ids[0].budget_method or 'epxpense'
+                rec.activity_group_ids[0].budget_method or 'expense'
 
 
 class AccountActivityTag(models.Model):
