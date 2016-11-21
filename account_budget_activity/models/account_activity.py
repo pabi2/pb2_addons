@@ -108,7 +108,6 @@ class AccountActivity(models.Model):
         string='Budget Method',
         compute='_compute_budget_method',
         store=True,
-        required=True,
     )
     activity_group_ids = fields.Many2many(
         'account.activity.group',
