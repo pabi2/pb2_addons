@@ -193,7 +193,7 @@ class LoanCustomerAgreement(models.Model):
         compute='_compute_invoice_count',
     )
     fy_penalty_rate = fields.Float(
-        string='Penalty (%) / Year',
+        string='Penalty Rate / Year',
         default=0.0,
     )
     days_grace_period = fields.Integer(

@@ -146,6 +146,7 @@ class AccountInvoice(models.Model):
             'filter_by_invoice_ids': self.ids  # account_move_line.search()
         })
         action['context'] = ctx
+        print ctx
         return action
 
 
