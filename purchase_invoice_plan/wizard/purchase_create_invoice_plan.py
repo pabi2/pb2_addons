@@ -145,9 +145,11 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                                                                install)
                     lines.append(line_data)
         order.invoice_plan_ids = lines
-        order.use_advance = self.use_advance
-        order.use_deposit = self.use_deposit
-        order.invoice_mode = self.invoice_mode
+        order.write({'use_advance': self.use_advance,
+                     'use_deposit': self.use_deposit,
+                     'invoice_mode': self.invoice_mode,
+                     'num_installment': self.num_installment,
+                     })
 
     @api.model
     def _prepare_advance_line(self, order, install):

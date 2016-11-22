@@ -59,6 +59,10 @@ class PurchaseOrder(models.Model):
         compute='_compute_plan_invoice_created',
         string='Invoice Amount'
     )
+    num_installment = fields.Integer(
+        string='Number of Installment',
+        default=0,
+    )
 
     @api.one
     @api.depends('invoice_ids.state')
