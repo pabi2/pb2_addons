@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kv_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="141"/>
+	<property name="ireport.y" value="136"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;move_ids&quot;]"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -22,6 +22,9 @@
 	<field name="partner_name" class="java.lang.String">
 		<fieldDescription><![CDATA[move_ids/partner_id/name]]></fieldDescription>
 	</field>
+	<field name="partner_code" class="java.lang.String">
+		<fieldDescription><![CDATA[move_ids/partner_id/search_key]]></fieldDescription>
+	</field>
 	<field name="short_name" class="java.lang.String">
 		<fieldDescription><![CDATA[move_ids/org_id/name_short]]></fieldDescription>
 	</field>
@@ -34,32 +37,29 @@
 	<field name="Code-code4" class="java.lang.String">
 		<fieldDescription><![CDATA[[move_ids/cost_control_id/code]]></fieldDescription>
 	</field>
-	<field name="Invoice_Date-date_invoice" class="java.lang.String">
-		<fieldDescription><![CDATA[Invoice_Date-date_invoice]]></fieldDescription>
+	<field name="Invoice_Date-date_invoice" class="java.util.Date">
+		<fieldDescription><![CDATA[date_invoice]]></fieldDescription>
 	</field>
 	<field name="Currency-name" class="java.lang.String">
-		<fieldDescription><![CDATA[Currency-currency_id/Currency-name]]></fieldDescription>
+		<fieldDescription><![CDATA[currency_id/name]]></fieldDescription>
 	</field>
 	<field name="Source_Document-origin" class="java.lang.String">
-		<fieldDescription><![CDATA[Source_Document-origin]]></fieldDescription>
+		<fieldDescription><![CDATA[origin]]></fieldDescription>
 	</field>
-	<field name="Date-date" class="java.lang.String">
-		<fieldDescription><![CDATA[Journal_Entry-move_id/Date-date]]></fieldDescription>
+	<field name="Date-date" class="java.util.Date">
+		<fieldDescription><![CDATA[move_id/date]]></fieldDescription>
 	</field>
 	<field name="Period_Name-name" class="java.lang.String">
-		<fieldDescription><![CDATA[Force_Period-period_id/Period_Name-name]]></fieldDescription>
+		<fieldDescription><![CDATA[period_id/name]]></fieldDescription>
 	</field>
 	<field name="Number-number" class="java.lang.String">
-		<fieldDescription><![CDATA[Number-number]]></fieldDescription>
-	</field>
-	<field name="Number-name" class="java.lang.String">
-		<fieldDescription><![CDATA[Cancel_Journal_Entry-cancel_move_id/Number-name]]></fieldDescription>
+		<fieldDescription><![CDATA[number]]></fieldDescription>
 	</field>
 	<field name="Additional_Information-comment" class="java.lang.String">
-		<fieldDescription><![CDATA[Additional_Information-comment]]></fieldDescription>
+		<fieldDescription><![CDATA[comment]]></fieldDescription>
 	</field>
 	<field name="Total-amount_total" class="java.lang.Number">
-		<fieldDescription><![CDATA[Total-amount_total]]></fieldDescription>
+		<fieldDescription><![CDATA[amount_total]]></fieldDescription>
 	</field>
 	<field name="Credit-credit" class="java.lang.Number">
 		<fieldDescription><![CDATA[move_ids/credit]]></fieldDescription>
@@ -93,13 +93,13 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="212" splitType="Stretch">
+		<band height="214" splitType="Stretch">
 			<staticText>
-				<reportElement x="1" y="58" width="125" height="20"/>
+				<reportElement x="1" y="58" width="194" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Reference Doc :]]></text>
+				<text><![CDATA[Supplier Invoice Number :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="200" y="38" width="56" height="20"/>
@@ -134,7 +134,7 @@
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Doc. No.:]]></text>
+				<text><![CDATA[Doc. No. :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="200" y="18" width="119" height="20"/>
@@ -157,13 +157,6 @@
 				</textElement>
 				<text><![CDATA[Doc. Date :]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="394" y="78" width="152" height="20"/>
-				<textElement>
-					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[Reversed Doc. No. :]]></text>
-			</staticText>
 			<line>
 				<reportElement x="0" y="112" width="555" height="1"/>
 			</line>
@@ -178,73 +171,73 @@
 				<reportElement x="0" y="155" width="555" height="1"/>
 			</line>
 			<staticText>
-				<reportElement x="1" y="192" width="71" height="20"/>
+				<reportElement x="47" y="192" width="71" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Account]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="249" y="192" width="59" height="20"/>
+				<reportElement x="283" y="192" width="43" height="20"/>
 				<textElement textAlignment="Right">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Cr]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="195" y="192" width="54" height="20"/>
+				<reportElement x="247" y="192" width="54" height="20"/>
 				<textElement textAlignment="Right">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Dr]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="308" y="192" width="59" height="20"/>
+				<reportElement x="326" y="192" width="59" height="20"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="367" y="192" width="59" height="20"/>
+				<reportElement x="385" y="192" width="59" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Section]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="497" y="192" width="60" height="20"/>
+				<reportElement x="515" y="192" width="60" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Job Order]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="427" y="192" width="59" height="20"/>
+				<reportElement x="445" y="192" width="59" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Project]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="56" y="192" width="65" height="20"/>
+				<reportElement x="91" y="192" width="65" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="154" y="192" width="59" height="20"/>
+				<reportElement x="215" y="192" width="59" height="20"/>
 				<textElement>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Partner]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="211" width="555" height="1"/>
+				<reportElement x="0" y="212" width="555" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="40" y="39" width="100" height="20"/>
+				<reportElement x="43" y="39" width="100" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -257,19 +250,19 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Source_Document-origin}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yy" isBlankWhenNull="true">
 				<reportElement x="258" y="19" width="100" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Date-date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{Date-date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="439" y="20" width="100" height="20"/>
+				<reportElement x="441" y="18" width="100" height="20"/>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[KV]]></text>
+				<text><![CDATA[K V]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="443" y="39" width="100" height="20"/>
@@ -279,18 +272,11 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Period_Name-name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="431" y="59" width="100" height="20"/>
+				<reportElement x="435" y="59" width="100" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Number-number}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="473" y="80" width="97" height="20"/>
-				<textElement lineSpacing="Single">
-					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Number-name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="30" y="118" width="501" height="20"/>
@@ -316,12 +302,12 @@
 				</textElement>
 				<text><![CDATA[Amount :]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="MM/dd/yyyy" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yy" isBlankWhenNull="true">
 				<reportElement x="40" y="18" width="109" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Invoice_Date-date_invoice}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{Invoice_Date-date_invoice}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 				<reportElement x="225" y="39" width="100" height="20"/>
@@ -331,32 +317,51 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{currency_rate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="66" y="59" width="100" height="20"/>
+				<reportElement x="105" y="60" width="100" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_ref}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="192" width="79" height="19"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Tax Branch]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="164" y="193" width="93" height="19"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Partner Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="172" y="0" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[move_ids/partner_id/code]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="23" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="247" y="0" width="61" height="17"/>
+				<reportElement x="283" y="0" width="43" height="17"/>
 				<textElement textAlignment="Right" lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{Credit-credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="196" y="0" width="51" height="17"/>
+				<reportElement x="250" y="0" width="51" height="17"/>
 				<textElement textAlignment="Right" lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{Debit-debit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="0" width="71" height="20"/>
+				<reportElement x="48" y="0" width="71" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -369,46 +374,53 @@
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="154" y="1" width="59" height="20"/>
+				<reportElement x="216" y="1" width="65" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="308" y="1" width="59" height="16"/>
+				<reportElement x="326" y="1" width="59" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{short_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="367" y="1" width="59" height="16"/>
+				<reportElement x="385" y="1" width="59" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{section_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="427" y="0" width="59" height="20"/>
+				<reportElement x="445" y="0" width="59" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="497" y="1" width="55" height="16"/>
+				<reportElement x="515" y="1" width="55" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Code-code4}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="56" y="0" width="93" height="20"/>
+				<reportElement x="92" y="0" width="67" height="20"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{account_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="164" y="-3" width="100" height="20"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_code}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
