@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import ast
 from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError, ValidationError
 
