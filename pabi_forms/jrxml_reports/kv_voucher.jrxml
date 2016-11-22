@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kv_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.1269722013523735"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;move_ids&quot;]"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
@@ -398,6 +398,7 @@ Branch]]></text>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{credit} > 0 || $F{debit} > 0]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="271" y="3" width="86" height="15"/>
 				<textElement textAlignment="Right" lineSpacing="Single">
