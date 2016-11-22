@@ -7,6 +7,7 @@
     'website': 'http://ecosoft.co.th',
     'depends': [
         'jasper_reports',
+        'hr',
         'l10n_th_amount_text_ext',
         'l10n_th_fields',
         'pabi_account',
