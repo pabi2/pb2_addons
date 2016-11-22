@@ -262,13 +262,13 @@ class HRExpense(models.Model):
                 self._cr.execute("""
                     update hr_expense_expense
                     set create_uid = %s, write_uid = %s where id = %s
-                """, (employee.id, employee.id, expense_id))
+                """, (employee.user_id.id, employee.user_id.id, expense_id))
                 self._cr.execute("""
                     update auditlog_log
                     set user_id = %s where res_id = %s
                     and model_id = (select id from ir_model
                                     where model = 'hr.expense.expense')
-                """, (employee.id, expense_id))
+                """, (employee.user_id.id, expense_id))
                 # --
             self._cr.commit()
         except Exception, e:
