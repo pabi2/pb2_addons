@@ -142,6 +142,16 @@
             </field>
         </record>
         
+        <record id="view_res_taxbranch_search" model="ir.ui.view">
+            <field name="name">view.res.taxbranch.search</field>
+            <field name="model">res.taxbranch</field>
+            <field name="arch" type="xml">
+                <search string="Tax Branch">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+        
         <record id="action_res_taxbranch" model="ir.actions.act_window">
             <field name="name">Tax Branch</field>
             <field name="res_model">res.taxbranch</field>

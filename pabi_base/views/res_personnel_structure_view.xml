@@ -52,7 +52,10 @@
             <field name="model">res.personnel.costcenter</field>
             <field name="arch" type="xml">
                 <search string="Personnel Budget">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                        <filter name="section_id" string="Section" context="{'group_by':'section_id'}"/>
+                    </group>
                 </search>
             </field>
         </record>

@@ -44,7 +44,7 @@
             <field name="model">res.functional.area</field>
             <field name="arch" type="xml">
                 <search string="Functional Area">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                 </search>
             </field>
         </record>
@@ -105,7 +105,7 @@
             <field name="model">res.program.group</field>
             <field name="arch" type="xml">
                 <search string="Program Group">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                     <group expand="0" string="Group By">
                         <filter name="functional_area_id" string="Functional Area" context="{'group_by':'functional_area_id'}"/>
                     </group>
@@ -174,7 +174,7 @@
             <field name="model">res.program</field>
             <field name="arch" type="xml">
                 <search string="Program">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                     <group expand="0" string="Group By">
                         <filter name="program_group_id" string="Program Group" context="{'group_by':'program_group_id'}"/>
                         <filter name="functional_area_id" string="Functional Area" context="{'group_by':'functional_area_id'}"/>
@@ -242,7 +242,7 @@
             <field name="model">res.project.group</field>
             <field name="arch" type="xml">
                 <search string="Project">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                     <group expand="1" string="Group By">
                         <filter string="Functional Area" name="functional_area_id" context="{'group_by':'functional_area_id'}"/>
                         <filter string="Program Group" name="program_group_id" context="{'group_by':'program_group_id'}"/>
@@ -330,7 +330,7 @@
             <field name="model">res.project</field>
             <field name="arch" type="xml">
                 <search string="Project">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                     <group expand="1" string="Group By">
                         <filter string="Mission" name="mission_id" context="{'group_by':'mission_id'}"/>
                         <filter string="Functional Area" name="functional_area_id" context="{'group_by':'functional_area_id'}"/>

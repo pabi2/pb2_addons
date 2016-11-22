@@ -55,7 +55,12 @@
             <field name="model">res.invest.asset</field>
             <field name="arch" type="xml">
                 <search string="Investment Asset">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                        <filter name="invest_asset_categ_id" string="Investment Asset Category" context="{'group_by':'invest_asset_categ_id'}"/>
+                        <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/> 
+                        <filter name="costcenter_id" string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                    </group>
                  </search>
             </field>
         </record>
@@ -112,7 +117,7 @@
             <field name="model">res.invest.asset.category</field>
             <field name="arch" type="xml">
                 <search string="Investment Asset Category">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                  </search>
             </field>
         </record>
@@ -177,7 +182,11 @@
             <field name="model">res.invest.construction</field>
             <field name="arch" type="xml">
                 <search string="Investment Construction">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                        <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/> 
+                        <filter name="costcenter_id" string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                    </group>
                  </search>
             </field>
         </record>
