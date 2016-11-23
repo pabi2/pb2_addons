@@ -28,43 +28,43 @@ class BudgetPlanReport(models.Model):
         string='Budget Document',
     )
     m0 = fields.Float(
-        string='0',
+        string='<',
     )
     m1 = fields.Float(
-        string='1',
+        string='Oct',
     )
     m2 = fields.Float(
-        string='2',
+        string='Nov',
     )
     m3 = fields.Float(
-        string='3',
+        string='Dec',
     )
     m4 = fields.Float(
-        string='4',
+        string='Jan',
     )
     m5 = fields.Float(
-        string='5',
+        string='Feb',
     )
     m6 = fields.Float(
-        string='6',
+        string='Mar',
     )
     m7 = fields.Float(
-        string='7',
+        string='Apr',
     )
     m8 = fields.Float(
-        string='8',
+        string='May',
     )
     m9 = fields.Float(
-        string='9',
+        string='Jun',
     )
     m10 = fields.Float(
-        string='10',
+        string='Jul',
     )
     m11 = fields.Float(
-        string='11',
+        string='Aug',
     )
     m12 = fields.Float(
-        string='12',
+        string='Sep',
     )
     planned_amount = fields.Float(
         string='Planned Amount',
