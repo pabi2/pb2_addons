@@ -388,8 +388,9 @@ class BudgetExportWizard(models.TransientModel):
                 ActGroupList.add(NonCostCtrl_Sheet.cell(row=row, column=1))
                 ag_name = line.activity_group_id.name
                 NonCostCtrl_Sheet.cell(row=row, column=1).value = ag_name
-                NonCostCtrl_Sheet.cell(
-                    row=row, column=2).value = line.description
+                if line.description:
+                    NonCostCtrl_Sheet.cell(
+                        row=row, column=2).value = line.description
                 NonCostCtrl_Sheet.cell(
                     row=row, column=4).value = line.unit
                 NonCostCtrl_Sheet.cell(
