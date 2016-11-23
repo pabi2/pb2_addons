@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name=" pv_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="OPENERP_RELATIONS" value="[&quot;line_dr_ids&quot;]"/>
+	<queryString language="xPath">
+		<![CDATA[/data/record]]>
+	</queryString>
+	<field name="Clearing_Doc" class="java.lang.String">
+		<fieldDescription><![CDATA[line_dr_ids/move_line_id/invoice/number]]></fieldDescription>
+	</field>
+	<field name="Amount" class="java.lang.Number">
+		<fieldDescription><![CDATA[line_dr_ids/move_line_id/invoice/amount_total]]></fieldDescription>
+	</field>
+	<field name="Doc_date" class="java.util.Date">
+		<fieldDescription><![CDATA[/data/record/date]]></fieldDescription>
+	</field>
+	<field name="Currency" class="java.lang.String">
+		<fieldDescription><![CDATA[currency_id/name]]></fieldDescription>
+	</field>
+	<field name="Header_text" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="Paid_to" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/title/name]]></fieldDescription>
+	</field>
+	<field name="Fiscal_year" class="java.lang.String">
+		<fieldDescription><![CDATA[period_id/fiscalyear_id/code]]></fieldDescription>
+	</field>
+	<field name="Doc_number" class="java.lang.String">
+		<fieldDescription><![CDATA[number]]></fieldDescription>
+	</field>
+	<field name="Reversed_Doc_No" class="java.lang.String">
+		<fieldDescription><![CDATA[cancel_move_id/name]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="258" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="34" width="553" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[PAYMENT VOUCHER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="80" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Doc Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="98" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Currency :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="134" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Doc Header Text :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="116" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Reference Doc : ???]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="152" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Paid To :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="186" y="98" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Rate : ???]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="186" y="80" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Posting Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="98" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Fiscal Year/Doc No.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="59" width="64" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="34" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="80" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Doc Type :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="116" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Doc No. :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="134" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Reversed Doc No.:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="60" y="80" width="100" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{Doc_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="98" width="100" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Currency}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="134" width="100" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Header_text}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="54" y="152" width="100" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Paid_to}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="262" y="80" width="100" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{Doc_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="486" y="98" width="91" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Fiscal_year}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="434" y="116" width="100" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Doc_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="475" y="134" width="80" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Reversed_Doc_No}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="177" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="178" width="54" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Text:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="19" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="3" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Clearing Doc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="262" y="3" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="18" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Clearing_Doc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="262" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{Amount}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="0" y="21" width="555" height="1"/>
+				<graphicElement>
+					<pen lineColor="#909090"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>
