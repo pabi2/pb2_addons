@@ -39,17 +39,28 @@ class AccountVoucher(models.Model):
          ('transfer', 'Transfer'),
          ],
         string='Payment Type',
+        readonly=True, states={'draft': [('readonly', False)]},
         help="Specified Payment Type, can be used to screen Payment Method",
     )
     supplier_bank_id = fields.Many2one(
         'res.partner.bank',
         string='Supplier Bank Account',
         domain="[('partner_id', '=', partner_id)]",
+        readonly=True, states={'draft': [('readonly', False)]},
     )
     supplier_bank_branch = fields.Char(
         string='Supplier Bank Branch',
         related='supplier_bank_id.branch_cheque',
         readonly=True,
+    )
+    narration = fields.Text(
+        readonly=False,
+    )
+    operating_unit_id = fields.Many2one(
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    writeoff_operating_unit_id = fields.Many2one(
+        readonly=True, states={'draft': [('readonly', False)]},
     )
 
     @api.multi

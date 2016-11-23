@@ -6,7 +6,7 @@ class AccountBankReceipt(models.Model):
     _inherit = 'account.bank.receipt'
 
     doctype_id = fields.Many2one(
-        'account.bank.receipt',
+        'res.doctype',
         string='Doctype',
         compute='_compute_doctype',
         store=True,

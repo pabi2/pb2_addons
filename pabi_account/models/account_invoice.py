@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import ast
 from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError, ValidationError
 
@@ -141,11 +140,6 @@ class AccountInvoice(models.Model):
         action = action_id.read([])[0]
         action['domain'] =\
             "[('id','in', ["+','.join(map(str, voucher_ids))+"])]"
-        ctx = ast.literal_eval(action['context'])
-        ctx.update({
-            'filter_by_invoice_ids': self.ids  # account_move_line.search()
-        })
-        action['context'] = ctx
         return action
 
 

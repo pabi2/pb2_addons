@@ -235,15 +235,15 @@ class CostControl(ResCommon, models.Model):
         required=True,
     )
 
-    @api.multi
-    def name_get(self):
-        result = []
-        for cc in self:
-            result.append(
-                (cc.id,
-                 "%s / %s" % (cc.cost_control_type_id.name or '-',
-                              cc.name or '-')))
-        return result
+    # @api.multi
+    # def name_get(self):
+    #     result = []
+    #     for cc in self:
+    #         result.append(
+    #             (cc.id,
+    #              "%s / %s" % (cc.cost_control_type_id.name or '-',
+    #                           cc.name or '-')))
+    #     return result
 
 
 class HeaderTaxBranch(object):

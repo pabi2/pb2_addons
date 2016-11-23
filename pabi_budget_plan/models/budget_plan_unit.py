@@ -345,67 +345,67 @@ class BudgetPlanUnitCostControlLine(models.Model):
         string='Description',
     )
     m0 = fields.Float(
-        string='0',
+        string='<',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m1 = fields.Float(
-        string='1',
+        string='Oct',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m2 = fields.Float(
-        string='2',
+        string='Nov',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m3 = fields.Float(
-        string='3',
+        string='Dec',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m4 = fields.Float(
-        string='4',
+        string='Jan',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m5 = fields.Float(
-        string='5',
+        string='Feb',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m6 = fields.Float(
-        string='6',
+        string='Mar',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m7 = fields.Float(
-        string='7',
+        string='Apr',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m8 = fields.Float(
-        string='8',
+        string='May',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m9 = fields.Float(
-        string='9',
+        string='Jun',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m10 = fields.Float(
-        string='10',
+        string='Jul',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m11 = fields.Float(
-        string='11',
+        string='Aug',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
     m12 = fields.Float(
-        string='12',
+        string='Sep',
         required=False,
         digits_compute=dp.get_precision('Account'),
     )
@@ -477,43 +477,43 @@ class BudgetPlanUnitSummary(models.Model):
         string='Activity Group',
     )
     m0 = fields.Float(
-        string='0',
+        string='<',
     )
     m1 = fields.Float(
-        string='1',
+        string='Oct',
     )
     m2 = fields.Float(
-        string='2',
+        string='Nov',
     )
     m3 = fields.Float(
-        string='3',
+        string='Dec',
     )
     m4 = fields.Float(
-        string='4',
+        string='Jan',
     )
     m5 = fields.Float(
-        string='5',
+        string='Feb',
     )
     m6 = fields.Float(
-        string='6',
+        string='Mar',
     )
     m7 = fields.Float(
-        string='7',
+        string='Apr',
     )
     m8 = fields.Float(
-        string='8',
+        string='May',
     )
     m9 = fields.Float(
-        string='9',
+        string='Jun',
     )
     m10 = fields.Float(
-        string='10',
+        string='July',
     )
     m11 = fields.Float(
-        string='11',
+        string='Aug',
     )
     m12 = fields.Float(
-        string='12',
+        string='Sep',
     )
     planned_amount = fields.Float(
         string='Planned Amount',

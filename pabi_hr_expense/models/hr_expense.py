@@ -8,15 +8,31 @@ class HRExpense(models.Model):
     _inherit = 'hr.expense.expense'
     _order = "id"
 
+    # editable only on draft state
+    employee_id = fields.Many2one(
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    name = fields.Char(
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    currency_id = fields.Many2one(
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    operating_unit_id = fields.Many2one(
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    # --
     apweb_ref_url = fields.Char(
         string='PABI Web Ref.',
         readonly=True, states={'draft': [('readonly', False)]},
     )
     date = fields.Date(
         string='Approved Date',
+        readonly=True, states={'draft': [('readonly', False)]},
     )
     user_valid = fields.Many2one(
         string='Accepted By',
+        readonly=True, states={'draft': [('readonly', False)]},
     )
     date_back = fields.Date(
         string='Back from seminar',
@@ -71,18 +87,21 @@ class HRExpense(models.Model):
         'expense_id',
         string='Attendee / Employee',
         copy=True,
+        readonly=True, states={'draft': [('readonly', False)]},
     )
     attendee_external_ids = fields.One2many(
         'hr.expense.attendee.external',
         'expense_id',
         string='Attendee / External',
         copy=True,
+        readonly=True, states={'draft': [('readonly', False)]},
     )
     project_id = fields.Many2one(
         'res.project',
         string='Project',
         compute='_compute_project_section',
         store=True,
+        readonly=True,
         help="Show project, only if all lines use the same project",
     )
     employee_section_id = fields.Many2one(  # Section of Employee, for Security
@@ -90,6 +109,7 @@ class HRExpense(models.Model):
         string='Section',
         related='employee_id.section_id',
         store=True,
+        readonly=True,
         help="Employee Section to be used for security purposes."
         "User in group Expense Officer (restrict) will see only his sections",
     )
@@ -99,16 +119,19 @@ class HRExpense(models.Model):
         compute='_compute_project_section',
         store=True,
         help="Show section, only if all lines use the same section",
+        readonly=True,
     )
     project_code = fields.Char(
         string='Project',
         related='project_id.code',
         store=True,
+        readonly=True,
     )
     section_code = fields.Char(
         string='Section',
         related='section_id.code',
         store=True,
+        readonly=True,
     )
     reason_bypass_procure = fields.Char(
         string='Reason purchase bypass procurement',
