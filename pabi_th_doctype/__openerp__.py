@@ -16,6 +16,7 @@ PABI2 Extension to l10n_th_doctype for,
 * Stock Transfer
 * Stock Borrow
 * Payment Export
+* Bank Receipt
 
     """,
     "website": "https://ecosoft.co.th/",
