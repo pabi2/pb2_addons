@@ -37,10 +37,14 @@ class HRExpense(models.Model):
     rev_ic_journal_id = fields.Many2one(
         'account.journal',
         string='Revenue Internal Charge Journal',
+        compute='_compute_internal_charge_journal',
+        store=True,
     )
     exp_ic_journal_id = fields.Many2one(
         'account.journal',
         string='Expense Internal Charge Journal',
+        compute='_compute_internal_charge_journal',
+        store=True,
     )
     rev_ic_move_id = fields.Many2one(
         'account.move',
@@ -63,15 +67,18 @@ class HRExpense(models.Model):
     def _onchange_internal_section_id(self):
         self.internal_project_id = False
 
-    @api.onchange('pay_to')
-    def _onchange_pay_to(self):
-        self.journal_id = False  # We will never use this journal
-        if self.pay_to == 'internal':
-            self.journal_id = False
-            self.rev_ic_journal_id = \
-                self.env.ref('pabi_budget_internal_charge.rev_ic_journal')
-            self.exp_ic_journal_id = \
-                self.env.ref('pabi_budget_internal_charge.exp_ic_journal')
+    @api.multi
+    @api.depends('pay_to')
+    def _compute_internal_charge_journal(self):
+        for rec in self:
+            if rec.pay_to == 'internal':
+                rec.rev_ic_journal_id = \
+                    rec.env.ref('pabi_budget_internal_charge.rev_ic_journal')
+                rec.exp_ic_journal_id = \
+                    rec.env.ref('pabi_budget_internal_charge.exp_ic_journal')
+            else:
+                rec.rev_ic_journal_id = False
+                rec.exp_ic_journal_id = False
 
     @api.one
     @api.constrains('pay_to')
