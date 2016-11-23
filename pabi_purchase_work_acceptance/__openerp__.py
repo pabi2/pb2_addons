@@ -34,8 +34,7 @@ PABI2 - Purchase Work Acceptance
         "views/purchase_work_acceptance_view.xml",
         "views/stock_view.xml",
         "views/account_invoice_view.xml",
-        "data/ir.sequence.type.csv",
-        "data/ir.sequence.csv",
+        "data/pabi_work_acceptance_sequence.xml",
     ],
 }
 
