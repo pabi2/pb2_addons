@@ -72,11 +72,9 @@ class AccountTaxWizard(models.TransientModel):
                 'tax_sequence': line.tax_sequence,
                 'addition': line.addition,
             }
-            # Supplier Invoice only, invoice number is manually keyed
             if active_model == 'account.invoice.tax':
                 if doc.type in ('in_invoice', 'in_refund'):
                     vals['invoice_number'] = (line.invoice_number or
-                                              doc.supplier_invoice_number or
                                               False)
             else:
                 if doc.type in ('payment'):
