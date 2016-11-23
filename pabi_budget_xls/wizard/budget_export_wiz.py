@@ -363,6 +363,10 @@ class BudgetExportWizard(models.TransientModel):
                 workbook.get_sheet_by_name('Non_CostControl')
             NonCostCtrl_Sheet.protection.sheet = True
 
+            decimal_type_validation = DataValidation(type="decimal",
+                operator="greaterThanOrEqual",
+                formula1=0)
+            NonCostCtrl_Sheet.add_data_validation(decimal_type_validation)
             NonCostCtrl_Sheet.add_data_validation(ActGroupList)
             NonCostCtrl_Sheet.cell(row=1, column=5, value=budget.id)
             org = budget.org_id.code and\
@@ -393,11 +397,15 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(
                     row=row, column=6).value = line.activity_unit
                  
+                for cl in range(4, 7):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
+                    NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
+                 
                 NonCostCtrl_Sheet.cell(
                     row=row, column=7).value = "=D%s*$E$%s*$F$%s" % (row,
                                                                       row,
                                                                       row)
- 
+                NonCostCtrl_Sheet.cell(row=row, column=7).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=9).value = line.m1
                 NonCostCtrl_Sheet.cell(row=row, column=10).value = line.m2
                 NonCostCtrl_Sheet.cell(row=row, column=11).value = line.m3
@@ -410,22 +418,43 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(row=row, column=18).value = line.m10
                 NonCostCtrl_Sheet.cell(row=row, column=19).value = line.m11
                 NonCostCtrl_Sheet.cell(row=row, column=20).value = line.m12
+
+                for cl in range(8, 21):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
+                    NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=21, value="=SUM(I%s:T%s)" % (row, row))
+                    row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
                 NonCostCtrl_Sheet.cell(
                     row=row, column=22, value="=G%s-U%s" % (row, row))
+                NonCostCtrl_Sheet.cell(row=row, column=21).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=row, column=22).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=23).value = line.id
                 row += 1
  
             to_row = row + self.editable_lines
             for r in range(row, to_row):
                 ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=1))
+
+                for cl in range(4, 7):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=r, column=cl))
+                    NonCostCtrl_Sheet.cell(row=r, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
                     row=r, column=7).value = "=D%s*$E$%s*$F$%s" % (r, r, r)
+
+                for cl in range(8, 21):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=r, column=cl))
+                    NonCostCtrl_Sheet.cell(row=r, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
-                    row=r, column=21, value="=SUM(I%s:T%s)" % (r, r))
+                    row=r, column=21, value="=SUM(I%s:$T$%s)" % (r, r))
                 NonCostCtrl_Sheet.cell(
                     row=r, column=22, value="=G%s-U%s" % (r, r))
+
+                NonCostCtrl_Sheet.cell(row=r, column=21).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=r, column=22).number_format = '#,##0.00'
+
                 row += 1
                 r += 1
  
@@ -479,6 +508,9 @@ class BudgetExportWizard(models.TransientModel):
                 row=row, column=19).value = '=SUM(S%s:S%s)' % params
             NonCostCtrl_Sheet.cell(
                 row=row, column=20).value = '=SUM(T%s:T%s)' % params
+
+            for cl in range(7, 21):
+                NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
 
             NonCostCtrl_Sheet.cell(
                 row=6, column=2).value = '=J%s' %(row)
