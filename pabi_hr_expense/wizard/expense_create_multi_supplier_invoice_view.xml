@@ -6,27 +6,25 @@
             <field name="model">expense.create.multi.supplier.invoice</field>
             <field name="arch" type="xml">
                 <form>
-                	<p class="oe_grey">
-                		Each supplier invoice will be created for each person in the supplier list.\n
-                		You can add / remove person in the list.
-                	</p>
+                    <p class="oe_grey">
+                        Each supplier invoice will be created for each person in the supplier list.\n You can add / remove person in the list.
+                    </p>
                     <h2 class="oe_right">
-                    	<label string="Expense Amount:" />
-                    	<field name="amount_untaxed" class="oe_inline"/>
+                        <label string="Expense Amount:"/>
+                        <field name="amount_untaxed" class="oe_inline"/>
                     </h2>
-                    <field name="multi_supplier_invoice_line" >
+                    <field name="multi_supplier_invoice_line">
                         <tree string="Multi Supplier Lines" editable="bottom">
-                            <field name="employee_id" invisible="1"/> 
-                            <field name="partner_id"/> 
+                            <field name="employee_id" invisible="1"/>
+                            <field name="partner_id"/>
                             <field name="partner_name"/>
-							<field name="amount" required="True" sum="Total Amount"/>
+                            <field name="amount" required="True" sum="Total Amount"/>
                         </tree>
                     </field>
                     <footer>
-                        <button name="create_multi_supplier_invoices" string="Create" type="object"
-                            class="oe_highlight" />
+                        <button name="create_multi_supplier_invoices" string="Create Supplier Invoices" type="object" class="oe_highlight"/>
                         or
-                        <button string="Cancel" class="oe_link" special="cancel" />
+                        <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                 </form>
             </field>
