@@ -27,9 +27,6 @@ class BudgetPlanReport(models.Model):
         'account.budget',
         string='Budget Document',
     )
-    m0 = fields.Float(
-        string='<',
-    )
     m1 = fields.Float(
         string='Oct',
     )
@@ -98,7 +95,6 @@ class BudgetPlanReport(models.Model):
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
                 -- Amount
-                m0,
                 m1, m2, m3, m4, m5, m6, m7, m8,
                 m9, m10, m11, m12, abl.planned_amount, abl.released_amount,
                 abl.budget_state as state,

@@ -429,11 +429,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
-    m0 = fields.Float(
-        string='<',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
-    )
     m1 = fields.Float(
         string='Oct',
         required=False,
@@ -571,7 +566,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                                   rec.m5, rec.m6, rec.m7, rec.m8,
                                   rec.m9, rec.m10, rec.m11, rec.m12
                                   ])
-            rec.planned_amount = planned_amount + rec.m0  # from last year
+            rec.planned_amount = planned_amount  # from last year
 
     @api.multi
     @api.depends('r1', 'r2', 'r3', 'r4', 'r5', 'r6',
@@ -585,7 +580,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                                    (rec.m9 * rec.r9), (rec.m10 * rec.r10),
                                    (rec.m11 * rec.r11), (rec.m12 * rec.r12),
                                    ])
-            rec.released_amount = released_amount + rec.m0  # from last year
+            rec.released_amount = released_amount  # from last year
 
     @api.multi
     def release_budget_line(self, release_result):
