@@ -1,2 +1,0 @@
-id,name,prefix,padding,code
-base.ir_sequence_wa_1,Purchase Work Acceptance Sequence,"WA%(y)s",6,purchase.work.acceptance

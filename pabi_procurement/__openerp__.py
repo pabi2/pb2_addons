@@ -61,8 +61,7 @@ PABI2 - Procurement Module
         "workflow/purchase_requisition_workflow.xml",
         "workflow/purchase_workflow.xml",
         "data/pabiweb_config_parameter.xml",
-        "data/ir.sequence.type.csv",
-        "data/ir.sequence.csv",
+        "data/pabi_purchase_sequence.xml",
     ],
 }
 
