@@ -97,7 +97,7 @@ class PurchaseBilling(models.Model):
         for match in matches:
             check = check_day.replace(day=int(match))
             check = datetime.datetime.strftime(check, "%Y-%m-%d")
-            check_string = THHoliday.find_next_working_day(check)
+            check_string = THHoliday.find_previous_working_day(check)
             final_check_day = datetime.datetime.\
                 strptime(check_string, '%Y-%m-%d').date().day
             if 0 < int(final_check_day) < 29 and int(final_check_day) \
