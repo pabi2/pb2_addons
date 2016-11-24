@@ -18,6 +18,16 @@ SHEET_FORMULAS = {}
 class BudgetExportWizard(models.TransientModel):
     _name = 'unit.budget.plan.export'
 
+    @api.model
+    def _default_export_committed_budget(self):
+        active_ids = self._context.get('active_ids', [])
+        line_ids =\
+            self.env['budget.plan.unit.summary'].\
+                search_count([('plan_id', 'in', active_ids)])
+        if line_ids > 1:
+            return False
+        return True
+
     attachment_id = fields.Many2one(
         'ir.attachment',
         string='Template Plan',
@@ -26,6 +36,10 @@ class BudgetExportWizard(models.TransientModel):
         string='Additional Budget lines',
         required=True,
         default=10,
+    )
+    export_committed_budget = fields.Boolean(
+        string="Export Committed Budget?",
+        default=_default_export_committed_budget,
     )
 
     @api.model
@@ -286,6 +300,21 @@ class BudgetExportWizard(models.TransientModel):
                         line_f_row += 1
         return True
 
+    @api.model
+    def _compute_previous_year_amount(self, budget):
+        current_fy = budget.fiscalyear_id
+        previous_fy = self.env['account.fiscalyear'].search([('date_stop', '<', current_fy.date_start)], order='date_stop', limit=1)
+        if previous_fy:
+            report_domain = [('fiscalyear_id', '=', previous_fy.id),
+                             ('section_id', '=', budget.section_id.id),
+                             ('org_id', '=', budget.org_id.id),
+                             ('division_id', '=', budget.division_id.id),
+                             ]
+            report_lines = self.env['budget.monitor.report'].search(report_domain)
+            for line in report_lines:
+                total_commited_amt = line.amount_exp_commit + line.amount_po_commit + line.amount_pr_commit
+        return []
+
     @api.multi
     def update_budget_xls(self, budget_ids, template_id=None):
         if not template_id:
@@ -362,7 +391,7 @@ class BudgetExportWizard(models.TransientModel):
             NonCostCtrl_Sheet =\
                 workbook.get_sheet_by_name('Non_CostControl')
             NonCostCtrl_Sheet.protection.sheet = True
-
+            self._compute_previous_year_amount(budget)
             decimal_type_validation = DataValidation(type="decimal",
                 operator="greaterThanOrEqual",
                 formula1=0)
