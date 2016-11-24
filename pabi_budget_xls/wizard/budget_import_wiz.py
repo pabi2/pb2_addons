@@ -37,7 +37,7 @@ class BudgetImportWizard(models.TransientModel):
                 continue
 
             costcontrol_line = False
-            costcontrol_line_id = CostCtrl_Sheet.cell(row=cc_row, column=27).value
+            costcontrol_line_id = CostCtrl_Sheet.cell(row=cc_row, column=23).value
             if costcontrol_line_id:
                 costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
             if not costcontrol_line:
@@ -49,9 +49,6 @@ class BudgetImportWizard(models.TransientModel):
             for row in range(line_start, line_start+10):
                 line_vals = {'cost_control_line_id': costcontrol_line.id}
                 col = 1
-                col += 1
-                col += 1
-                col += 1
                 activity_group = CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_group:
                     activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
@@ -231,21 +228,21 @@ class BudgetImportWizard(models.TransientModel):
                 line_vals.update({'section_id': section_id.id,
                                   'plan_id': budget.id,
                                   'org_id': org_id.id})
-                ag_group = NonCostCtrl_Sheet.cell(row=row, column=4).value
+                ag_group = NonCostCtrl_Sheet.cell(row=row, column=1).value
                 if not ag_group:
                     break
                 ag_group_id = self.env['account.activity.group'].search(
                     [('name', '=', tools.ustr(ag_group))])
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
-                description = NonCostCtrl_Sheet.cell(row=row, column=5).value
+                description = NonCostCtrl_Sheet.cell(row=row, column=2).value
                 if description == '=FALSE()':
                     description = ''
-                unit = NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
+                unit = NonCostCtrl_Sheet.cell(row=row, column=4).value or 0.0
                 act_unitprice\
-                    = NonCostCtrl_Sheet.cell(row=row, column=8).value or 0.0
+                    = NonCostCtrl_Sheet.cell(row=row, column=5).value or 0.0
                 activity_unit =\
-                    NonCostCtrl_Sheet.cell(row=row, column=9).value or 0.0
+                    NonCostCtrl_Sheet.cell(row=row, column=6).value or 0.0
                 line_vals.update({
                     'unit': unit,
                     'activity_unit_price': act_unitprice,
@@ -255,7 +252,7 @@ class BudgetImportWizard(models.TransientModel):
                 total_act_budget = unit * act_unitprice * activity_unit
                 line_id = NonCostCtrl_Sheet.cell(row=row, column=26).value
                 p = 1
-                col = 12
+                col = 9
                 total_month_budget = 0.0
                 while p != 13:
                     val = NonCostCtrl_Sheet.cell(row=row, column=col).value
@@ -266,7 +263,7 @@ class BudgetImportWizard(models.TransientModel):
                     if val:
                         total_month_budget += val
                     line_vals.update({'m' + str(p): val})
-                    if col == 23:
+                    if col == 20:
                         break
                     col += 1
                     p += 1

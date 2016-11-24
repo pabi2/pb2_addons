@@ -222,8 +222,7 @@ class BudgetExportWizard(models.TransientModel):
             row_gap = 8
             for r in range(1, 11):
                 for rr in range(ag_first_column, ag_first_column+10):
-                    ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=4))
-                    ConstControl_Sheet.cell(row=rr, column=3, value=budget.section_id.name)
+                    ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=1))
                     ag_first_column += 1
                 ag_first_column = ag_first_column+row_gap
  
@@ -231,19 +230,14 @@ class BudgetExportWizard(models.TransientModel):
             cc_row_gap = 18
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
-                ConstControl_Sheet.cell(row=cc_f_row, column=27).value = const_cntrl_line.id
-                ConstControl_Sheet.cell(row=cc_f_row, column=27).font = Whitefont
+                ConstControl_Sheet.cell(row=cc_f_row, column=23).value = const_cntrl_line.id
+                ConstControl_Sheet.cell(row=cc_f_row, column=23).font = Whitefont
                 if const_cntrl_line.cost_control_id:
                     ConstControl_Sheet.cell(row=cc_f_row, column=2).value = const_cntrl_line.cost_control_id.name
                     cc_f_row += cc_row_gap
                 if const_cntrl_line.plan_cost_control_line_ids:
                     for line in const_cntrl_line.plan_cost_control_line_ids:
                         col = 1
-                        col += 1
-                        col += 1
-                        if budget.section_id:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = budget.section_id.name
-                        col += 1
                         if line.activity_group_id:
                             ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_group_id.name
                         col += 1
@@ -369,6 +363,10 @@ class BudgetExportWizard(models.TransientModel):
                 workbook.get_sheet_by_name('Non_CostControl')
             NonCostCtrl_Sheet.protection.sheet = True
 
+            decimal_type_validation = DataValidation(type="decimal",
+                operator="greaterThanOrEqual",
+                formula1=0)
+            NonCostCtrl_Sheet.add_data_validation(decimal_type_validation)
             NonCostCtrl_Sheet.add_data_validation(ActGroupList)
             NonCostCtrl_Sheet.cell(row=1, column=5, value=budget.id)
             org = budget.org_id.code and\
@@ -387,82 +385,108 @@ class BudgetExportWizard(models.TransientModel):
             for line in budget.plan_line_ids:
                 if line.breakdown_line_id:
                     continue
-                NonCostCtrl_Sheet.cell(row=row, column=1).value = '=B2'
-                NonCostCtrl_Sheet.cell(row=row, column=2).value = '=B3'
-                NonCostCtrl_Sheet.cell(row=row, column=3).value = budget.section_id.name
-                ActGroupList.add(NonCostCtrl_Sheet.cell(row=row, column=4))
+                ActGroupList.add(NonCostCtrl_Sheet.cell(row=row, column=1))
                 ag_name = line.activity_group_id.name
-                NonCostCtrl_Sheet.cell(row=row, column=4).value = ag_name
+                NonCostCtrl_Sheet.cell(row=row, column=1).value = ag_name
+                if line.description:
+                    NonCostCtrl_Sheet.cell(
+                        row=row, column=2).value = line.description
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=5).value = line.description
+                    row=row, column=4).value = line.unit
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=7).value = line.unit
+                    row=row, column=5).value = line.activity_unit_price
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=8).value = line.activity_unit_price
-                NonCostCtrl_Sheet.cell(
-                    row=row, column=9).value = line.activity_unit
+                    row=row, column=6).value = line.activity_unit
+                 
+                for cl in range(4, 7):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
+                    NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
                  
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=10).value = "=G%s*$H$%s*$I$%s" % (row,
+                    row=row, column=7).value = "=D%s*$E$%s*$F$%s" % (row,
                                                                       row,
                                                                       row)
- 
-                NonCostCtrl_Sheet.cell(row=row, column=12).value = line.m1
-                NonCostCtrl_Sheet.cell(row=row, column=13).value = line.m2
-                NonCostCtrl_Sheet.cell(row=row, column=14).value = line.m3
-                NonCostCtrl_Sheet.cell(row=row, column=15).value = line.m4
-                NonCostCtrl_Sheet.cell(row=row, column=16).value = line.m5
-                NonCostCtrl_Sheet.cell(row=row, column=17).value = line.m6
-                NonCostCtrl_Sheet.cell(row=row, column=18).value = line.m7
-                NonCostCtrl_Sheet.cell(row=row, column=19).value = line.m8
-                NonCostCtrl_Sheet.cell(row=row, column=20).value = line.m9
-                NonCostCtrl_Sheet.cell(row=row, column=21).value = line.m10
-                NonCostCtrl_Sheet.cell(row=row, column=22).value = line.m11
-                NonCostCtrl_Sheet.cell(row=row, column=23).value = line.m12
+                NonCostCtrl_Sheet.cell(row=row, column=7).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=row, column=9).value = line.m1
+                NonCostCtrl_Sheet.cell(row=row, column=10).value = line.m2
+                NonCostCtrl_Sheet.cell(row=row, column=11).value = line.m3
+                NonCostCtrl_Sheet.cell(row=row, column=12).value = line.m4
+                NonCostCtrl_Sheet.cell(row=row, column=13).value = line.m5
+                NonCostCtrl_Sheet.cell(row=row, column=14).value = line.m6
+                NonCostCtrl_Sheet.cell(row=row, column=15).value = line.m7
+                NonCostCtrl_Sheet.cell(row=row, column=16).value = line.m8
+                NonCostCtrl_Sheet.cell(row=row, column=17).value = line.m9
+                NonCostCtrl_Sheet.cell(row=row, column=18).value = line.m10
+                NonCostCtrl_Sheet.cell(row=row, column=19).value = line.m11
+                NonCostCtrl_Sheet.cell(row=row, column=20).value = line.m12
+
+                for cl in range(8, 21):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
+                    NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=24, value="=SUM(L%s:W%s)" % (row, row))
+                    row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=25, value="=J%s-X%s" % (row, row))
-                NonCostCtrl_Sheet.cell(row=row, column=26).value = line.id
+                    row=row, column=22, value="=G%s-U%s" % (row, row))
+                NonCostCtrl_Sheet.cell(row=row, column=21).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=row, column=22).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=row, column=23).value = line.id
                 row += 1
  
             to_row = row + self.editable_lines
             for r in range(row, to_row):
-                NonCostCtrl_Sheet.cell(row=r, column=1).value = "=B2"
-                NonCostCtrl_Sheet.cell(row=r, column=2).value = "=B3"
-                NonCostCtrl_Sheet.cell(row=r, column=3).value = budget.section_id.name
-                ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=4))
+                ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=1))
+
+                for cl in range(4, 7):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=r, column=cl))
+                    NonCostCtrl_Sheet.cell(row=r, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
-                    row=r, column=10).value = "=G%s*$H$%s*$I$%s" % (r, r, r)
+                    row=r, column=7).value = "=D%s*$E$%s*$F$%s" % (r, r, r)
+
+                for cl in range(8, 21):
+                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=r, column=cl))
+                    NonCostCtrl_Sheet.cell(row=r, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
-                    row=r, column=24, value="=SUM(L%s:W%s)" % (r, r))
+                    row=r, column=21, value="=SUM(I%s:$T$%s)" % (r, r))
                 NonCostCtrl_Sheet.cell(
-                    row=r, column=25, value="=J%s-X%s" % (r, r))
+                    row=r, column=22, value="=G%s-U%s" % (r, r))
+
+                NonCostCtrl_Sheet.cell(row=r, column=21).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=r, column=22).number_format = '#,##0.00'
+
                 row += 1
                 r += 1
  
-            column_to_fill = [1,2,3,10, 11, 24, 25]
+            column_to_fill = [7, 8, 21, 22]
             self._add_cell_border(NonCostCtrl_Sheet,
                                   row_start=LineStart,
                                   row_end=row,
                                   col_start=1,
-                                  col_end=25)
+                                  col_end=22)
             self._make_cell_editable(sheet=NonCostCtrl_Sheet,
                                      row_start=LineStart,
                                      row_end=row,
-                                     col_start=4,
-                                     col_end=23,
-                                     skip_cell=10)
+                                     col_start=1,
+                                     col_end=20,
+                                     skip_cell=7)
             self._make_cell_color_filled(sheet=NonCostCtrl_Sheet,
                                          row_start=LineStart,
                                          row_end=row,
                                          col_start=1,
-                                         col_end=3,
+                                         col_end=1,
                                          col_list=column_to_fill)
  
-            NonCostCtrl_Sheet.cell(row=row, column=9).value = 'Total'
-            NonCostCtrl_Sheet.cell(row=row, column=9).font = bold_font
+            NonCostCtrl_Sheet.cell(row=row, column=6).value = 'Total'
+            NonCostCtrl_Sheet.cell(row=row, column=6).font = bold_font
             params = (LineStart, row-1)
+            NonCostCtrl_Sheet.cell(
+                row=row, column=7).value = '=SUM(G%s:G%s)' % params
+            NonCostCtrl_Sheet.cell(
+                row=row, column=8).value = '=SUM(H%s:H%s)' % params
+            NonCostCtrl_Sheet.cell(
+                row=row, column=9).value = '=SUM(I%s:I%s)' % params
             NonCostCtrl_Sheet.cell(
                 row=row, column=10).value = '=SUM(J%s:J%s)' % params
             NonCostCtrl_Sheet.cell(
@@ -485,25 +509,22 @@ class BudgetExportWizard(models.TransientModel):
                 row=row, column=19).value = '=SUM(S%s:S%s)' % params
             NonCostCtrl_Sheet.cell(
                 row=row, column=20).value = '=SUM(T%s:T%s)' % params
-            NonCostCtrl_Sheet.cell(
-                row=row, column=21).value = '=SUM(U%s:U%s)' % params
-            NonCostCtrl_Sheet.cell(
-                row=row, column=22).value = '=SUM(V%s:V%s)' % params
-            NonCostCtrl_Sheet.cell(
-                row=row, column=23).value = '=SUM(W%s:W%s)' % params
+
+            for cl in range(7, 21):
+                NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
 
             NonCostCtrl_Sheet.cell(
                 row=6, column=2).value = '=J%s' %(row)
  
             self._add_cell_border(NonCostCtrl_Sheet, row_start=row,
-                                  row_end=row+1, col_start=9, col_end=23)
+                                  row_end=row+1, col_start=6, col_end=20)
             self._make_cell_color_filled(sheet=NonCostCtrl_Sheet,
                                          row_start=row, row_end=row+1,
-                                         col_start=9, col_end=23, col_list=[])
+                                         col_start=6, col_end=20, col_list=[])
 
             stream1 = cStringIO.StringIO()
             workbook.save(stream1)
-            filename = '%s-%s-%s-%s.xls' % (budget.fiscalyear_id.name,
+            filename = '%s-%s-%s-%s.xlsx' % (budget.fiscalyear_id.name,
                                              org,
                                              budget.section_id.code,
                                              template_file.name)
