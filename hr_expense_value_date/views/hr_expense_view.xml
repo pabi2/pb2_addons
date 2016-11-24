@@ -15,6 +15,7 @@
                             <field name="invoice_id"/>
                             <field name="date_value"/>
                             <field name="amount"/>
+                            <field name="reason"/>
                         </tree>
                     </field>
                 </xpath>

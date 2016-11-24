@@ -20,6 +20,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/hr_expense_view.xml',
+        'views/account_voucher_view.xml',
         'wizard/change_value_date_wizard_view.xml',
     ],
     'auto_install': False,
