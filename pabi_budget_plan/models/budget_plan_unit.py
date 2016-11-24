@@ -344,11 +344,6 @@ class BudgetPlanUnitCostControlLine(models.Model):
     name = fields.Char(
         string='Description',
     )
-    m0 = fields.Float(
-        string='<',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
-    )
     m1 = fields.Float(
         string='Oct',
         required=False,
@@ -455,7 +450,7 @@ class BudgetPlanUnitCostControlLine(models.Model):
                                   rec.m5, rec.m6, rec.m7, rec.m8,
                                   rec.m9, rec.m10, rec.m11, rec.m12
                                   ])
-            rec.planned_amount = planned_amount + rec.m0  # from last year
+            rec.planned_amount = planned_amount  # from last year
 
 
 class BudgetPlanUnitSummary(models.Model):
@@ -475,9 +470,6 @@ class BudgetPlanUnitSummary(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-    )
-    m0 = fields.Float(
-        string='<',
     )
     m1 = fields.Float(
         string='Oct',
@@ -523,7 +515,7 @@ class BudgetPlanUnitSummary(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
             select min(l.id) id, plan_id, activity_group_id, t.budget_method,
-            sum(m0) m0, sum(m1) m1, sum(m2) m2, sum(m3) m3, sum(m4) m4,
+            sum(m1) m1, sum(m2) m2, sum(m3) m3, sum(m4) m4,
             sum(m5) m5, sum(m6) m6, sum(m7) m7, sum(m8) m8, sum(m9) m9,
             sum(m10) m10, sum(m11) m11, sum(m12) m12,
             sum(planned_amount) planned_amount

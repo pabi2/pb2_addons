@@ -59,19 +59,18 @@
 										<field name="fund_id" required="1" />
 										<field name="item_id" widget="many2one_clickable" />
 										
-										<field name="m0" />
-										<field name="m1" />
-										<field name="m2" />
-										<field name="m3" />
-										<field name="m4" />
-										<field name="m5" />
-										<field name="m6" />
-										<field name="m7" />
-										<field name="m8" />
-										<field name="m9" />
-										<field name="m10" />
-										<field name="m11" />
-										<field name="m12" />
+										<field name="m1" sum="m1"/>
+										<field name="m2" sum="m2"/>
+										<field name="m3" sum="m3"/>
+										<field name="m4" sum="m4"/>
+										<field name="m5" sum="m5"/>
+										<field name="m6" sum="m6"/>
+										<field name="m7" sum="m7"/>
+										<field name="m8" sum="m8"/>
+										<field name="m9" sum="m9"/>
+										<field name="m10" sum="m10"/>
+										<field name="m11" sum="m11"/>
+										<field name="m12" sum="m12"/>
 										
 										<field name="planned_amount" sum="Planned Amount" />
 	                                </tree>
@@ -161,7 +160,6 @@
 					<field name="invest_asset_id" />
 					<field name="fund_id" />
 					
-					<field name="m0" sum="Period 0" />
 					<field name="m1" sum="Period 1" />
 					<field name="m2" sum="Period 2" />
 					<field name="m3" sum="Period 3" />
