@@ -46,9 +46,9 @@ class DateValueHistory(models.Model):
                  'expense_id', 'expense_id.number')
     def _compute_name(self):
         for record in self:
-            record.name = record.voucher_id.number + '-' + \
-                record.invoice_id.number + '-' + \
-                record.expense_id.number
+            record.name = '%s-%s-%s' % (record.voucher_id.number or '_',
+                                        record.invoice_id.number or '_',
+                                        record.expense_id.number or '_')
 
 
 class HRExpenseExpense(models.Model):

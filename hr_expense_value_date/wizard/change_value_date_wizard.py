@@ -29,7 +29,7 @@ class ChangeDateValue(models.TransientModel):
                 voucher.date_value = self.date_value
                 for line in voucher.line_ids:
                     invoice = line.move_line_id.invoice
-                    if invoice and invoice.expense_id:
+                    if invoice:
                         self.env['date.value.history'].create({
                             'voucher_id': voucher.id,
                             'invoice_id': invoice.id,
