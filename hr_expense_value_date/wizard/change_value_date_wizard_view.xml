@@ -22,7 +22,9 @@
                     <group>
                         <field name="date_value" />
                     </group>
-                    <group/>
+                    <group>
+                        <field name="reason"/>
+                    </group>
                 </group>
                 <footer>
                     <button name="action_change_date_value"
