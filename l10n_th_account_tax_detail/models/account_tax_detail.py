@@ -44,8 +44,6 @@ class InvoiceVoucherTaxDetail(object):
     @api.multi
     def _check_tax_detail_info(self):
         for doc in self:
-            # if doc.type not in ('in_refund', 'in_invoice', 'payment'):
-            #     continue
             for tax in doc.tax_line:
                 if tax.tax_code_type != 'normal':
                     continue
@@ -85,9 +83,11 @@ class InvoiceVoucherTaxDetail(object):
         date_start, date_stop = self._get_valid_date_range(tax_months)
 
         for doc in self:
-            # # Skip if not Purchase side
-            # if doc.type not in ('in_refund', 'in_invoice', 'payment'):
-            #     continue
+            # Doc Type
+            doc_type = 'sale'
+            if doc.type in ('in_refund', 'in_invoice', 'payment'):
+                doc_type = 'purchase'
+            # --
             date_doc = self._get_date_document(doc)
             period = Period.find(date_doc)[:1]
             for tax in doc.tax_line:
@@ -98,16 +98,18 @@ class InvoiceVoucherTaxDetail(object):
                     invoice_date = datetime.strptime(detail.invoice_date,
                                                      '%Y-%m-%d').date()
                     if date_start <= invoice_date <= date_stop:
-                        next_seq = detail._get_next_sequence(doc.type,
+                        next_seq = detail._get_next_sequence(doc_type,
                                                              period)
-                        detail.write({'tax_sequence': next_seq,
+                        detail.write({'doc_type': doc_type,
+                                      'tax_sequence': next_seq,
                                       'period_id': period.id,
                                       })
                     else:
                         add_period = Period.find(detail.invoice_date)[:1]
-                        next_seq = detail._get_next_sequence(doc.type,
+                        next_seq = detail._get_next_sequence(doc_type,
                                                              add_period)
-                        detail.write({'tax_sequence': next_seq,
+                        detail.write({'doc_type': doc_type,
+                                      'tax_sequence': next_seq,
                                       'period_id': add_period.id,
                                       'addition': True,
                                       })
@@ -116,6 +118,12 @@ class InvoiceVoucherTaxDetail(object):
 class AccountTaxDetail(models.Model):
     _name = 'account.tax.detail'
 
+    doc_type = fields.Selection(
+        [('sale', 'Sales'),
+         ('purchase', 'Purchase')],
+        string='Document Type',
+        readonly=True,
+    )
     invoice_tax_id = fields.Many2one(
         'account.invoice.tax',
         ondelete='cascade',
@@ -163,7 +171,7 @@ class AccountTaxDetail(models.Model):
     )
 
     _sql_constraints = [
-        ('tax_sequence_uniq', 'unique(tax_sequence, period_id)',
+        ('tax_sequence_uniq', 'unique(doc_type, tax_sequence, period_id)',
             'Tax Detail Sequence has been used by other user, '
             'please validate document again'),
     ]
@@ -237,12 +245,8 @@ class AccountTaxDetailSequence(models.Model):
     _rec_name = 'period_id'
 
     doc_type = fields.Selection(
-        [('in_invoice', 'Supplier Invoice'),
-         ('in_refund', 'Supplier Refund'),
-         ('payment', 'Supplier Payment'),
-         ('out_invoice', 'Customer Invoice'),
-         ('out_refund', 'Customer Refund'),
-         ('receipt', 'Customer Payment')],
+        [('sale', 'Sales'),
+         ('purchase', 'Purchase')],
         string='Document Type',
         readonly=True,
     )
