@@ -40,7 +40,6 @@ class CostControlBreakdown(models.TransientModel):
             'activity_unit_price': line.activity_unit_price,
             'activity_unit': line.activity_unit,
             'unit': line.unit,
-            'm0': line.m0,
             'm1': line.m1,
             'm2': line.m2,
             'm3': line.m3,
@@ -109,11 +108,6 @@ class CostControlBreakdownLine(models.TransientModel):
     )
     name = fields.Char(
         string='Description',
-    )
-    m0 = fields.Float(
-        string='<',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m1 = fields.Float(
         string='Oct',
@@ -191,4 +185,4 @@ class CostControlBreakdownLine(models.TransientModel):
                                   rec.m5, rec.m6, rec.m7, rec.m8,
                                   rec.m9, rec.m10, rec.m11, rec.m12
                                   ])
-            rec.planned_amount = planned_amount + rec.m0  # from last year
+            rec.planned_amount = planned_amount  # from last year

@@ -18,6 +18,16 @@ SHEET_FORMULAS = {}
 class BudgetExportWizard(models.TransientModel):
     _name = 'unit.budget.plan.export'
 
+    @api.model
+    def _default_export_committed_budget(self):
+        active_ids = self._context.get('active_ids', [])
+        line_ids =\
+            self.env['budget.plan.unit.summary'].\
+                search_count([('plan_id', 'in', active_ids)])
+        if line_ids > 1:
+            return False
+        return True
+
     attachment_id = fields.Many2one(
         'ir.attachment',
         string='Template Plan',
@@ -26,6 +36,10 @@ class BudgetExportWizard(models.TransientModel):
         string='Additional Budget lines',
         required=True,
         default=10,
+    )
+    export_committed_budget = fields.Boolean(
+        string="Export Committed Budget?",
+        default=_default_export_committed_budget,
     )
 
     @api.model
@@ -74,63 +88,15 @@ class BudgetExportWizard(models.TransientModel):
         for row in range(row_start, row_end):
             for col in col_list:
                 sheet.cell(row=row, column=col).fill = greyFill
-    
-    @api.model
-    def _update_activity_masterdata(self, workbook):
-        activity_ids = self.env['account.activity'].search([])
-        activities_list = [tools.ustr(a.name) for a in activity_ids]
-        activities = ','.join(activities_list)
-
-        Activity_MasterSheet = False
-        try:
-            Activity_MasterSheet = workbook.get_sheet_by_name('Activity_MasterData')
-        except:
-            Activity_MasterSheet = workbook.create_sheet('Activity_MasterData')
-        Activity_MasterSheet.protection.sheet = True
-
-        bold_font = Font(bold=True, name='Arial', size=11)
-
-        Activity_MasterSheet.cell(row=1, column=1).value = 'Sequence'
-        Activity_MasterSheet.cell(row=1, column=2).value = 'Activity - English'
-        Activity_MasterSheet.cell(row=1, column=3).value = 'Activity - Thai'
-        Activity_MasterSheet.cell(row=1, column=1).font = bold_font
-        Activity_MasterSheet.cell(row=1, column=2).font = bold_font
-        Activity_MasterSheet.cell(row=1, column=3).font = bold_font
-
-        ag_row = 2
-        ag_count = 1
-        ag_length = 1
-        for ag in activity_ids:
-            Activity_MasterSheet.cell(row=ag_row, column=1, value=ag_count)
-            Activity_MasterSheet.cell(row=ag_row, column=2, value=ag.name)
-            Activity_MasterSheet.cell(row=ag_row, column=3, value=ag.name)
-            if len(ag.name) > ag_length:
-                ag_length = len(ag.name)
-            ag_row += 1
-            ag_count += 1
-
-        Activity_MasterSheet.column_dimensions['A'].width = 11
-        Activity_MasterSheet.column_dimensions['B'].width = ag_length
-        Activity_MasterSheet.column_dimensions['C'].width = ag_length
-
-        formula1 = "{0}!$C$2:$C$%s" % (ag_row)
-        ActivityList = DataValidation(
-            type="list",
-            formula1=formula1.format(
-                quote_sheetname('Activity_MasterData')
-            )
-        )
-        SHEET_FORMULAS.update({'activity_formula': ActivityList})
-        return True
 
     @api.model
     def _update_costcontrol_masterdata(self, workbook):
         costcontrols = self.env['cost.control'].search([])
         ConstControl_MasterSheet = False
         try:
-            ConstControl_MasterSheet = workbook.get_sheet_by_name('CostControl_MasterData')
+            ConstControl_MasterSheet = workbook.get_sheet_by_name('master_job_order')
         except:
-            ConstControl_MasterSheet = workbook.create_sheet('CostControl_MasterData')
+            ConstControl_MasterSheet = workbook.create_sheet('master_job_order')
         ConstControl_MasterSheet.protection.sheet = True
         
         bold_font = Font(bold=True, name='Arial', size=11)
@@ -162,20 +128,20 @@ class BudgetExportWizard(models.TransientModel):
         CostControlList = DataValidation(
             type="list",
             formula1=formula1.format(
-                quote_sheetname('CostControl_MasterData')
+                quote_sheetname('master_job_order')
             )
         )
         SHEET_FORMULAS.update({'cost_control_formula': CostControlList})
         return True
 
     @api.model
-    def _update_costcontrol_sheet(self, workbook, budget):
+    def _update_costcontrol_sheet(self, workbook, budget, job_order_lines):
         center_align = Alignment(horizontal='center')
         protection = Protection(locked=False)
 
         ConstControl_Sheet = False
         try:
-            ConstControl_Sheet = workbook.get_sheet_by_name('CostControl_1')
+            ConstControl_Sheet = workbook.get_sheet_by_name('JobOrder')
 #             ConstControl_Sheet.protection.sheet = True
         except:
             pass
@@ -228,6 +194,25 @@ class BudgetExportWizard(models.TransientModel):
  
             cc_f_row = 8
             cc_row_gap = 18
+
+            cc_fi_row = 8
+            if job_order_lines:
+                for jb in job_order_lines:
+                    line_fi_row = cc_fi_row + 5
+                    costcontrol = self.env['cost.control'].browse(jb)
+                    ConstControl_Sheet.cell(row=cc_fi_row, column=2).value = costcontrol.name
+                    cc_fi_row += cc_row_gap
+                    if job_order_lines[jb]:
+                        for ag in job_order_lines[jb]:
+                            col = 1
+                            amt = job_order_lines[jb][ag]
+                            if ag:
+                                ag_name = self.env['account.activity.group'].browse(ag).name
+                                ConstControl_Sheet.cell(row=line_fi_row, column=col).value = ag_name
+                            col += 7
+                            ConstControl_Sheet.cell(row=line_fi_row, column=col).value = amt
+                            line_fi_row += 1
+
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
                 ConstControl_Sheet.cell(row=cc_f_row, column=23).value = const_cntrl_line.id
@@ -286,6 +271,51 @@ class BudgetExportWizard(models.TransientModel):
                         line_f_row += 1
         return True
 
+    @api.model
+    def _compute_previous_year_amount(self, budget):
+        current_fy = budget.fiscalyear_id
+        previous_fy = self.env['account.fiscalyear'].search([('date_stop', '<', current_fy.date_start)], order='date_stop', limit=1)
+        job_order_lines = {}
+        non_job_order_lines = {}
+        if not self.export_committed_budget or not previous_fy:
+            return job_order_lines,non_job_order_lines
+        if previous_fy:
+            report_domain = [('fiscalyear_id', '=', previous_fy.id),
+                             ('section_id', '=', budget.section_id.id),
+                             ('org_id', '=', budget.org_id.id),
+                             ('division_id', '=', budget.division_id.id),
+                             ]
+            report_lines = self.env['budget.monitor.report'].search(report_domain)
+            for line in report_lines:
+                total_commited_amt = line.amount_exp_commit + line.amount_po_commit + line.amount_pr_commit
+                if total_commited_amt == 0.0:
+                    continue
+                if line.cost_control_id:
+                    if line.cost_control_id.id not in job_order_lines:
+                        job_order_lines[line.cost_control_id.id] = {}
+                    if line.activity_group_id:
+                        if line.activity_group_id.id not in job_order_lines[line.cost_control_id.id]:
+                            job_order_lines[line.cost_control_id.id].update({line.activity_group_id.id : total_commited_amt})
+                        else:
+                            job_order_lines[line.cost_control_id.id][line.activity_group_id.id] += total_commited_amt
+                    else:
+                        if False not in job_order_lines[line.cost_control_id.id]:
+                            job_order_lines[line.cost_control_id.id].update({False : total_commited_amt})
+                        else:
+                            job_order_lines[line.cost_control_id.id][False] += total_commited_amt
+                else:
+                    if line.activity_group_id:
+                        if line.activity_group_id.id not in non_job_order_lines:
+                            non_job_order_lines[line.activity_group_id.id] = total_commited_amt
+                        else:
+                            non_job_order_lines[line.activity_group_id.id] += total_commited_amt
+                    else:
+                        if False not in non_job_order_lines:
+                            non_job_order_lines[False] = total_commited_amt
+                        else:
+                            non_job_order_lines[False] += total_commited_amt
+        return job_order_lines,non_job_order_lines
+
     @api.multi
     def update_budget_xls(self, budget_ids, template_id=None):
         if not template_id:
@@ -301,17 +331,12 @@ class BudgetExportWizard(models.TransientModel):
             workbook = openpyxl.load_workbook(stream)
 
             try:
-                SEC_Sheet = workbook.get_sheet_by_name('Section')
+                SEC_Sheet = workbook.get_sheet_by_name('master_section')
                 SEC_Sheet.protection.sheet = True
             except:
                 pass
             try:
-                AM_Sheet = workbook.get_sheet_by_name('Activity_MasterData')
-                AM_Sheet.protection.sheet = True
-            except:
-                pass
-            try:
-                ACM_Sheet = workbook.get_sheet_by_name('CostControl_MasterData')
+                ACM_Sheet = workbook.get_sheet_by_name('master_job_order')
                 ACM_Sheet.protection.sheet = True
             except:
                 pass
@@ -321,7 +346,7 @@ class BudgetExportWizard(models.TransientModel):
             except:
                 pass
 
-            AG_Sheet = workbook.get_sheet_by_name('ActivityGroup_MasterData')
+            AG_Sheet = workbook.get_sheet_by_name('master_activity_group')
             AG_Sheet.protection.sheet = True
             activities = self.env['account.activity.group'].search([])
 
@@ -354,15 +379,15 @@ class BudgetExportWizard(models.TransientModel):
             ActGroupList = DataValidation(
                 type="list",
                 formula1=formula1.format(
-                    quote_sheetname('ActivityGroup_MasterData')
+                    quote_sheetname('master_activity_group')
                 )
             )
             SHEET_FORMULAS.update({'ag_list': ActGroupList})
-            self._update_costcontrol_sheet(workbook, budget)
             NonCostCtrl_Sheet =\
-                workbook.get_sheet_by_name('Non_CostControl')
+                workbook.get_sheet_by_name('Non_jobOrder')
             NonCostCtrl_Sheet.protection.sheet = True
-
+            job_order_lines,non_job_order_lines = self._compute_previous_year_amount(budget)
+            self._update_costcontrol_sheet(workbook, budget, job_order_lines)
             decimal_type_validation = DataValidation(type="decimal",
                 operator="greaterThanOrEqual",
                 formula1=0)
@@ -434,6 +459,7 @@ class BudgetExportWizard(models.TransientModel):
                 row += 1
  
             to_row = row + self.editable_lines
+            linetofill = row
             for r in range(row, to_row):
                 ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=1))
 
@@ -458,6 +484,17 @@ class BudgetExportWizard(models.TransientModel):
 
                 row += 1
                 r += 1
+
+            if non_job_order_lines:
+                r = linetofill
+                for ag in non_job_order_lines:
+                    if ag:
+                        ag_name = self.env['account.activity.group'].browse(ag).name
+                        NonCostCtrl_Sheet.cell(row=r, column=1).value = ag_name
+                        NonCostCtrl_Sheet.cell(row=r, column=8).value = non_job_order_lines[ag]
+                    else:
+                        NonCostCtrl_Sheet.cell(row=r, column=8).value = non_job_order_lines[ag]
+                    r += 1
  
             column_to_fill = [7, 8, 21, 22]
             self._add_cell_border(NonCostCtrl_Sheet,

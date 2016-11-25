@@ -17,18 +17,18 @@
                             <field name="activity_group_id"/>
                             <field name="activity_id"/>
                             <field name="name"/>
-                            <field name="m1"/>
-                            <field name="m2"/>
-                            <field name="m3"/>
-                            <field name="m4"/>
-                            <field name="m5"/>
-                            <field name="m6"/>
-                            <field name="m7"/>
-                            <field name="m8"/>
-                            <field name="m9"/>
-                            <field name="m10"/>
-                            <field name="m11"/>
-                            <field name="m12"/>
+                            <field name="m1" sum="m1"/>
+                            <field name="m2" sum="m2"/>
+                            <field name="m3" sum="m3"/>
+                            <field name="m4" sum="m4"/>
+                            <field name="m5" sum="m5"/>
+                            <field name="m6" sum="m6"/>
+                            <field name="m7" sum="m7"/>
+                            <field name="m8" sum="m8"/>
+                            <field name="m9" sum="m9"/>
+                            <field name="m10" sum="m10"/>
+                            <field name="m11" sum="m11"/>
+                            <field name="m12" sum="m12"/>
                             <field name="planned_amount" sum="Planned Amount"/>
                         </tree>
                     </field>
@@ -42,18 +42,18 @@
                             <field name="activity_unit"/>
                             <field name="unit"/>
                             <field name="total_budget"/>
-                            <field name="m1"/>
-                            <field name="m2"/>
-                            <field name="m3"/>
-                            <field name="m4"/>
-                            <field name="m5"/>
-                            <field name="m6"/>
-                            <field name="m7"/>
-                            <field name="m8"/>
-                            <field name="m9"/>
-                            <field name="m10"/>
-                            <field name="m11"/>
-                            <field name="m12"/>
+                            <field name="m1" sum="m1"/>
+                            <field name="m2" sum="m2"/>
+                            <field name="m3" sum="m3"/>
+                            <field name="m4" sum="m4"/>
+                            <field name="m5" sum="m5"/>
+                            <field name="m6" sum="m6"/>
+                            <field name="m7" sum="m7"/>
+                            <field name="m8" sum="m8"/>
+                            <field name="m9" sum="m9"/>
+                            <field name="m10" sum="m10"/>
+                            <field name="m11" sum="m11"/>
+                            <field name="m12" sum="m12"/>
                             <field name="planned_amount" sum="Planned Amount"/>
                         </tree>
                     </field>

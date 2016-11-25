@@ -246,11 +246,6 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
     name = fields.Char(
         string='Description',
     )
-    m0 = fields.Float(
-        string='<',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
-    )
     m1 = fields.Float(
         string='Oct',
         required=False,
@@ -336,7 +331,7 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
                                   rec.m5, rec.m6, rec.m7, rec.m8,
                                   rec.m9, rec.m10, rec.m11, rec.m12
                                   ])
-            rec.planned_amount = planned_amount + rec.m0  # from last year
+            rec.planned_amount = planned_amount  # from last year
 
 
 class BudgetPlanCommon(object):
