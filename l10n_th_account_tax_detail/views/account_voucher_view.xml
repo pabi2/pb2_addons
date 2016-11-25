@@ -5,18 +5,18 @@
         <record id="voucher_tax_tree_view" model="ir.ui.view">
             <field name="name">voucher.tax.tree.view</field>
             <field name="model">account.voucher.tax</field>
-            <field name="inherit_id" ref="l10n_th_account.voucher_tax_tree_view"/>
+            <field name="inherit_id" ref="l10n_th_account.voucher_tax_supplier_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='factor_tax']" position="after" >
                     <field name="tax_code_type" invisible="1" />
                     <field name="manual" />
                     <button name="%(action_tax_detail)d" string="Tax Invoice Detail"
-                         type="action" icon="gtk-justify-fill" 
+                         type="action" icon="gtk-justify-fill"
                          attrs="{'invisible': [('tax_code_type', '!=', 'normal')]}"/>
                  </xpath>
             </field>
         </record>
-        
+
         <record id="view_vendor_receipt_dialog_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.receipt.dialog.form.ext</field>
             <field name="model">account.voucher</field>
@@ -30,8 +30,8 @@
                     </xpath>
                 </data>
             </field>
-        </record>    
-    
+        </record>
+
 
     </data>
 </openerp>

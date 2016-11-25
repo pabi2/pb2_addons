@@ -104,15 +104,12 @@ class AccountTaxWizard(models.TransientModel):
         InvoiceTax = self.env['account.invoice.tax']
         TaxDetail = self.env['account.tax.detail']
         for line in self.detail_ids:
-            vals = {
-                'invoice_tax_id': self.invoice_tax_id.id,
-                'voucher_tax_id': self.voucher_tax_id.id,
-                'partner_id': line.partner_id.id,
-                'invoice_number': line.invoice_number,
-                'invoice_date': line.invoice_date,
-                'base': line.base,
-                'amount': line.amount,
-            }
+            vals = TaxDetail._prepare_tax_detail(self.invoice_tax_id.id,
+                                                 self.voucher_tax_id.id,
+                                                 line.partner_id.id,
+                                                 line.invoice_number,
+                                                 line.invoice_date,
+                                                 line.base, line.amount)
             if line.tax_detail_id:
                 line.tax_detail_id.write(vals)
             else:
