@@ -62,6 +62,27 @@ class AccountVoucher(models.Model):
     writeoff_operating_unit_id = fields.Many2one(
         readonly=True, states={'draft': [('readonly', False)]},
     )
+    currency_rate = fields.Float(
+        string='Currency Rate',
+        compute='_compute_currency_rate',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('currency_id')
+    def _compute_currency_rate(self):
+        for rec in self:
+            company = rec.company_id
+            context = self._context.copy()
+            ctx_date = rec.date
+            if not ctx_date:
+                ctx_date = fields.Date.today()
+            context.update({'date': ctx_date})
+            # get rate of company currency to current invoice currency
+            rate = self.env['res.currency'].\
+                with_context(context)._get_conversion_rate(company.currency_id,
+                                                           rec.currency_id)
+            rec.currency_rate = rate
 
     @api.multi
     @api.constrains('date_value')
