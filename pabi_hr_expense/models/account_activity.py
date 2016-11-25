@@ -19,7 +19,7 @@ class AccountActivityGroup(models.Model):
     wf_emotion_section_ids = fields.Many2many(
         'res.section',
         'wf_emotion_activity_group_section_rel',
-        'section_id', 'activity_group_id',
+        'activity_group_id', 'section_id',
         string='Usable by Sections',
         help="Only these sections can use activity group with emotion workflow"
     )
