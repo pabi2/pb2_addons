@@ -29,20 +29,22 @@ class AccountTaxDetail(models.Model):
                 rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
 
     @api.model
-    def _get_seq_search_domain(self, period):
-        domain = super(AccountTaxDetail, self)._get_seq_search_domain(period)
+    def _get_seq_search_domain(self, doc_type, period):
+        domain = super(AccountTaxDetail, self).\
+            _get_seq_search_domain(doc_type, period)
         domain += [('taxbranch_id', '=', self.taxbranch_id.id)]
         return domain
 
     @api.model
-    def _get_seq_name(self, period):
-        name = 'TaxDetail-%s-%s' % (self.taxbranch_id.code, period.code)
+    def _get_seq_name(self, doc_type, period):
+        name = 'TaxDetail-%s-%s-%s' % (doc_type, self.taxbranch_id.code,
+                                       period.code)
         return name
 
     @api.model
-    def _prepare_taxdetail_seq(self, period, sequence):
-        vals = super(AccountTaxDetail, self)._prepare_taxdetail_seq(period,
-                                                                    sequence)
+    def _prepare_taxdetail_seq(self, doc_type, period, sequence):
+        vals = super(AccountTaxDetail, self).\
+            _prepare_taxdetail_seq(doc_type, period, sequence)
         vals.update({'taxbranch_id': self.taxbranch_id.id})
         return vals
 
