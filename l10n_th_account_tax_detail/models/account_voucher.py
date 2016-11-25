@@ -13,6 +13,7 @@ class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
         if self.type == 'receipt' or \
                 self.env.user.company_id.auto_recognize_vat or \
                 self._context.get('recognize_vat', False):
+            self._compute_sales_tax_detail()
             self._check_tax_detail_info()
             self._assign_detail_tax_sequence()
         return result
@@ -34,8 +35,9 @@ class AccountVoucherTax(models.Model):
     @api.model
     def create(self, vals):
         voucher_tax = super(AccountVoucherTax, self).create(vals)
-        detail = self._prepare_voucher_tax_detail(voucher_tax)
-        self.env['account.tax.detail'].create(detail)
+        if voucher_tax.tax_code_type == 'normal':
+            detail = self._prepare_voucher_tax_detail(voucher_tax)
+            self.env['account.tax.detail'].create(detail)
         return voucher_tax
 
     @api.model

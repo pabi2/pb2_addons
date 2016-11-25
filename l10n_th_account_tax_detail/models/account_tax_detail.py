@@ -8,10 +8,44 @@ from openerp.exceptions import ValidationError, Warning as UserError
 class InvoiceVoucherTaxDetail(object):
 
     @api.multi
+    def _compute_sales_tax_detail(self):
+        TaxDetail = self.env['account.tax.detail']
+        for doc in self:
+            if doc.type in ('in_refund', 'in_invoice', 'payment'):
+                continue
+            # Auto create tax detail for Sales Cycle only
+            for tax in doc.tax_line:
+                if tax.tax_code_type != 'normal':
+                    continue
+                invoice_tax_id = False
+                voucher_tax_id = False
+                doc_date = False
+                domain = []
+                if doc._name == 'account.invoice':
+                    invoice_tax_id = tax.id
+                    doc_date = doc.date_invoice
+                    domain = [('invoice_tax_id', '=', tax.id)]
+                if doc._name == 'account.voucher':
+                    voucher_tax_id = tax.id
+                    doc_date = doc.date
+                    domain = [('voucher_tax_id', '=', tax.id)]
+                vals = TaxDetail._prepare_tax_detail(invoice_tax_id,
+                                                     voucher_tax_id,
+                                                     doc.partner_id.id,
+                                                     doc.number,
+                                                     doc_date,
+                                                     tax.base, tax.amount)
+                detail = TaxDetail.search(domain)
+                if detail:
+                    detail.write(vals)
+                else:
+                    TaxDetail.create(vals)
+
+    @api.multi
     def _check_tax_detail_info(self):
         for doc in self:
-            if doc.type not in ('in_refund', 'in_invoice', 'payment'):
-                continue
+            # if doc.type not in ('in_refund', 'in_invoice', 'payment'):
+            #     continue
             for tax in doc.tax_line:
                 if tax.tax_code_type != 'normal':
                     continue
@@ -35,9 +69,10 @@ class InvoiceVoucherTaxDetail(object):
     @api.model
     def _get_date_document(self, doc):
         # Get document date, either invoice or voucher
-        if doc.type in ('in_refund', 'in_invoice'):
+        if doc.type in ('in_refund', 'in_invoice',
+                        'out_refund', 'out_invoice'):
             return doc.date_invoice
-        elif doc.type in ('payment'):
+        elif doc.type in ('payment', 'receipt'):
             return doc.date
         else:
             raise ValidationError(_('Invalid Document Type!'))
@@ -50,9 +85,9 @@ class InvoiceVoucherTaxDetail(object):
         date_start, date_stop = self._get_valid_date_range(tax_months)
 
         for doc in self:
-            # Skip if not Purchase side
-            if doc.type not in ('in_refund', 'in_invoice', 'payment'):
-                continue
+            # # Skip if not Purchase side
+            # if doc.type not in ('in_refund', 'in_invoice', 'payment'):
+            #     continue
             date_doc = self._get_date_document(doc)
             period = Period.find(date_doc)[:1]
             for tax in doc.tax_line:
@@ -63,13 +98,15 @@ class InvoiceVoucherTaxDetail(object):
                     invoice_date = datetime.strptime(detail.invoice_date,
                                                      '%Y-%m-%d').date()
                     if date_start <= invoice_date <= date_stop:
-                        next_seq = detail._get_next_sequence(period)
+                        next_seq = detail._get_next_sequence(doc.type,
+                                                             period)
                         detail.write({'tax_sequence': next_seq,
                                       'period_id': period.id,
                                       })
                     else:
                         add_period = Period.find(detail.invoice_date)[:1]
-                        next_seq = detail._get_next_sequence(add_period)
+                        next_seq = detail._get_next_sequence(doc.type,
+                                                             add_period)
                         detail.write({'tax_sequence': next_seq,
                                       'period_id': add_period.id,
                                       'addition': True,
@@ -131,6 +168,20 @@ class AccountTaxDetail(models.Model):
             'please validate document again'),
     ]
 
+    @api.model
+    def _prepare_tax_detail(self, invoice_tax_id, voucher_tax_id, partner_id,
+                            invoice_number, invoice_date, base, amount):
+        vals = {
+            'invoice_tax_id': invoice_tax_id,
+            'voucher_tax_id': voucher_tax_id,
+            'partner_id': partner_id,
+            'invoice_number': invoice_number,
+            'invoice_date': invoice_date,
+            'base': base,
+            'amount': amount,
+        }
+        return vals
+
     @api.multi
     @api.depends('tax_sequence')
     def _compute_tax_sequence_display(self):
@@ -143,39 +194,40 @@ class AccountTaxDetail(models.Model):
                 rec.tax_sequence_display = '%s/%s' % (month, sequence)
 
     @api.model
-    def _get_seq_search_domain(self, period):
-        domain = [('period_id', '=', period.id)]
+    def _get_seq_search_domain(self, doc_type, period):
+        domain = [('doc_type', '=', doc_type), ('period_id', '=', period.id)]
         return domain
 
     @api.model
-    def _get_next_sequence(self, period):
+    def _get_next_sequence(self, doc_type, period):
         Sequence = self.env['ir.sequence']
         TaxDetailSequence = self.env['account.tax.detail.sequence']
-        domain = self._get_seq_search_domain(period)
+        domain = self._get_seq_search_domain(doc_type, period)
         seq = TaxDetailSequence.search(domain, limit=1)
         if not seq:
-            seq = self._create_sequence(period)
+            seq = self._create_sequence(doc_type, period)
         return int(Sequence.next_by_id(seq.sequence_id.id))
 
     @api.model
-    def _get_seq_name(self, period):
-        name = 'TaxDetail-%s' % (period.code,)
+    def _get_seq_name(self, doc_type, period):
+        name = 'TaxDetail-%s-%s' % (doc_type, period.code,)
         return name
 
     @api.model
-    def _prepare_taxdetail_seq(self, period, new_sequence):
+    def _prepare_taxdetail_seq(self, doc_type, period, new_sequence):
         vals = {
+            'doc_type': doc_type,
             'period_id': period.id,
             'sequence_id': new_sequence.id,
         }
         return vals
 
     @api.model
-    def _create_sequence(self, period):
-        seq_vals = {'name': self._get_seq_name(period),
+    def _create_sequence(self, doc_type, period):
+        seq_vals = {'name': self._get_seq_name(doc_type, period),
                     'implementation': 'no_gap'}
         new_sequence = self.env['ir.sequence'].create(seq_vals)
-        vals = self._prepare_taxdetail_seq(period, new_sequence)
+        vals = self._prepare_taxdetail_seq(doc_type, period, new_sequence)
         return self.env['account.tax.detail.sequence'].create(vals)
 
 
@@ -184,9 +236,20 @@ class AccountTaxDetailSequence(models.Model):
     _description = 'Keep track of Tax Detail sequences'
     _rec_name = 'period_id'
 
+    doc_type = fields.Selection(
+        [('in_invoice', 'Supplier Invoice'),
+         ('in_refund', 'Supplier Refund'),
+         ('payment', 'Supplier Payment'),
+         ('out_invoice', 'Customer Invoice'),
+         ('out_refund', 'Customer Refund'),
+         ('receipt', 'Customer Payment')],
+        string='Document Type',
+        readonly=True,
+    )
     period_id = fields.Many2one(
         'account.period',
         string='Period',
+        readonly=True,
     )
     sequence_id = fields.Many2one(
         'ir.sequence',

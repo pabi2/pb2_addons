@@ -12,8 +12,9 @@ class AccountInvoice(InvoiceVoucherTaxDetail, models.Model):
         return res
 
     @api.multi
-    def action_move_create(self):
-        result = super(AccountInvoice, self).action_move_create()
+    def action_number(self):
+        result = super(AccountInvoice, self).action_number()
+        self._compute_sales_tax_detail()
         self._check_tax_detail_info()
         self._assign_detail_tax_sequence()
         return result
@@ -35,8 +36,9 @@ class AccountInvoiceTax(models.Model):
     @api.model
     def create(self, vals):
         invoice_tax = super(AccountInvoiceTax, self).create(vals)
-        detail = self._prepare_invoice_tax_detail(invoice_tax)
-        self.env['account.tax.detail'].create(detail)
+        if invoice_tax.tax_code_type == 'normal':
+            detail = self._prepare_invoice_tax_detail(invoice_tax)
+            self.env['account.tax.detail'].create(detail)
         return invoice_tax
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
