@@ -529,6 +529,29 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(kv_voucher)"/>
 		</record>
 
+		<!-- PV Voucher -->
+        <record id="pv_voucher" model="ir.actions.report.xml">
+            <field name="string">PV Voucher</field>
+            <field name="auto">True</field>
+            <field name="model">account.voucher</field>
+            <field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+            <field name="name">PV Voucher</field>
+            <field name="report_name">pv.voucher</field>
+            <field name="report_rml">pabi_forms/jrxml_reports/pv_voucher.jrxml</field>
+            <field name="menu">True</field>
+            <field name="header">False</field>
+            <field name="jasper_report">True</field>
+            <field name="jasper_output">pdf</field>
+            <field name="copies">1</field>
+        </record>
+
+        <record id="pv_voucher_values" model="ir.values">
+            <field name="name">PV Voucher</field>
+            <field name="model">account.voucher</field>
+            <field name="key2" eval="'client_print_multi'"/>
+            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pv_voucher)"/>
+        </record>
+
 		<!-- หนังสือรับรองการหักเงินประกันผลงาน (supplier retention form)-->
 		<record id="supplier_retention_form" model="ir.actions.report.xml">
 			<field name="string">หนังสือรับรองการหักเงินประกันผลงาน</field>
