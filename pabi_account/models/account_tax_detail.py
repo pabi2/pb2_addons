@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, fields, api
 
 
 class AccountTaxDetail(models.Model):
@@ -14,7 +13,8 @@ class AccountTaxDetail(models.Model):
         store=True,
     )
     _sql_constraints = [
-        ('tax_sequence_uniq', 'unique(tax_sequence, period_id, taxbranch_id)',
+        ('tax_sequence_uniq',
+         'unique(doc_type, tax_sequence, period_id, taxbranch_id)',
          'Tax Detail Sequence has been used by other user, '
          'please validate document again'),
     ]
