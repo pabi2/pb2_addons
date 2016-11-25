@@ -21,10 +21,9 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _default_export_committed_budget(self):
         active_ids = self._context.get('active_ids', [])
-        line_ids =\
-            self.env['budget.plan.unit.summary'].\
-                search_count([('plan_id', 'in', active_ids)])
-        if line_ids > 1:
+        lines = self.env['budget.plan.unit.summary'].\
+            search([('plan_id', 'in', active_ids)], count=True)
+        if lines > 0:
             return False
         return True
 
@@ -98,7 +97,7 @@ class BudgetExportWizard(models.TransientModel):
         except:
             ConstControl_MasterSheet = workbook.create_sheet('master_job_order')
         ConstControl_MasterSheet.protection.sheet = True
-        
+
         bold_font = Font(bold=True, name='Arial', size=11)
 
         ConstControl_MasterSheet.cell(row=1, column=1).value = 'Sequence'
@@ -183,7 +182,7 @@ class BudgetExportWizard(models.TransientModel):
             for r in range(1, 11):
                 costcontrol_formula.add(ConstControl_Sheet.cell(row=cost_cntrl_first_column, column=2))
                 cost_cntrl_first_column = cost_cntrl_first_column + row_gap
- 
+
             ag_first_column = 13
             row_gap = 8
             for r in range(1, 11):
@@ -191,7 +190,7 @@ class BudgetExportWizard(models.TransientModel):
                     ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=1))
                     ag_first_column += 1
                 ag_first_column = ag_first_column+row_gap
- 
+
             cc_f_row = 8
             cc_row_gap = 18
 
@@ -422,11 +421,11 @@ class BudgetExportWizard(models.TransientModel):
                     row=row, column=5).value = line.activity_unit_price
                 NonCostCtrl_Sheet.cell(
                     row=row, column=6).value = line.activity_unit
-                 
+
                 for cl in range(4, 7):
                     decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
                     NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
-                 
+
                 NonCostCtrl_Sheet.cell(
                     row=row, column=7).value = "=D%s*$E$%s*$F$%s" % (row,
                                                                       row,
@@ -457,7 +456,7 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(row=row, column=22).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=23).value = line.id
                 row += 1
- 
+
             to_row = row + self.editable_lines
             linetofill = row
             for r in range(row, to_row):
@@ -495,7 +494,7 @@ class BudgetExportWizard(models.TransientModel):
                     else:
                         NonCostCtrl_Sheet.cell(row=r, column=8).value = non_job_order_lines[ag]
                     r += 1
- 
+
             column_to_fill = [7, 8, 21, 22]
             self._add_cell_border(NonCostCtrl_Sheet,
                                   row_start=LineStart,
@@ -514,7 +513,7 @@ class BudgetExportWizard(models.TransientModel):
                                          col_start=1,
                                          col_end=1,
                                          col_list=column_to_fill)
- 
+
             NonCostCtrl_Sheet.cell(row=row, column=6).value = 'Total'
             NonCostCtrl_Sheet.cell(row=row, column=6).font = bold_font
             params = (LineStart, row-1)
@@ -552,7 +551,7 @@ class BudgetExportWizard(models.TransientModel):
 
             NonCostCtrl_Sheet.cell(
                 row=6, column=2).value = '=J%s' %(row)
- 
+
             self._add_cell_border(NonCostCtrl_Sheet, row_start=row,
                                   row_end=row+1, col_start=6, col_end=20)
             self._make_cell_color_filled(sheet=NonCostCtrl_Sheet,

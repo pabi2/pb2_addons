@@ -193,7 +193,7 @@ class BudgetImportWizard(models.TransientModel):
             bg_id = NonCostCtrl_Sheet.cell(row=1, column=5).value
             if budget.id != bg_id:
                 raise UserError(
-                    _('Validation Error\n Please enter plan related file!')
+                    _('Please import the correct file for this plan')
                 )
             fiscal_year = NonCostCtrl_Sheet.cell(row=1, column=2).value
             fiscal_year_id = self.env['account.fiscalyear'].search(
