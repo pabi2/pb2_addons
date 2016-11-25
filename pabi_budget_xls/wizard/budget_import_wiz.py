@@ -19,7 +19,7 @@ class BudgetImportWizard(models.TransientModel):
 
     @api.model
     def _update_cost_control_lines(self, workbook, budget):
-        CostCtrl_Sheet = workbook.get_sheet_by_name('CostControl_1')
+        CostCtrl_Sheet = workbook.get_sheet_by_name('JobOrder')
         max_row = CostCtrl_Sheet.max_row
 
         cc_row = 8
@@ -179,7 +179,7 @@ class BudgetImportWizard(models.TransientModel):
                 raise UserError(
                     _('You can update budget plan only in draft state!'))
 
-            NonCostCtrl_Sheet = workbook.get_sheet_by_name('Non_CostControl')
+            NonCostCtrl_Sheet = workbook.get_sheet_by_name('Non_jobOrder')
             max_row = NonCostCtrl_Sheet.max_row
             vals = {}
 

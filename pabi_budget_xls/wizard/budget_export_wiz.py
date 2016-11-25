@@ -88,63 +88,15 @@ class BudgetExportWizard(models.TransientModel):
         for row in range(row_start, row_end):
             for col in col_list:
                 sheet.cell(row=row, column=col).fill = greyFill
-    
-    @api.model
-    def _update_activity_masterdata(self, workbook):
-        activity_ids = self.env['account.activity'].search([])
-        activities_list = [tools.ustr(a.name) for a in activity_ids]
-        activities = ','.join(activities_list)
-
-        Activity_MasterSheet = False
-        try:
-            Activity_MasterSheet = workbook.get_sheet_by_name('Activity_MasterData')
-        except:
-            Activity_MasterSheet = workbook.create_sheet('Activity_MasterData')
-        Activity_MasterSheet.protection.sheet = True
-
-        bold_font = Font(bold=True, name='Arial', size=11)
-
-        Activity_MasterSheet.cell(row=1, column=1).value = 'Sequence'
-        Activity_MasterSheet.cell(row=1, column=2).value = 'Activity - English'
-        Activity_MasterSheet.cell(row=1, column=3).value = 'Activity - Thai'
-        Activity_MasterSheet.cell(row=1, column=1).font = bold_font
-        Activity_MasterSheet.cell(row=1, column=2).font = bold_font
-        Activity_MasterSheet.cell(row=1, column=3).font = bold_font
-
-        ag_row = 2
-        ag_count = 1
-        ag_length = 1
-        for ag in activity_ids:
-            Activity_MasterSheet.cell(row=ag_row, column=1, value=ag_count)
-            Activity_MasterSheet.cell(row=ag_row, column=2, value=ag.name)
-            Activity_MasterSheet.cell(row=ag_row, column=3, value=ag.name)
-            if len(ag.name) > ag_length:
-                ag_length = len(ag.name)
-            ag_row += 1
-            ag_count += 1
-
-        Activity_MasterSheet.column_dimensions['A'].width = 11
-        Activity_MasterSheet.column_dimensions['B'].width = ag_length
-        Activity_MasterSheet.column_dimensions['C'].width = ag_length
-
-        formula1 = "{0}!$C$2:$C$%s" % (ag_row)
-        ActivityList = DataValidation(
-            type="list",
-            formula1=formula1.format(
-                quote_sheetname('Activity_MasterData')
-            )
-        )
-        SHEET_FORMULAS.update({'activity_formula': ActivityList})
-        return True
 
     @api.model
     def _update_costcontrol_masterdata(self, workbook):
         costcontrols = self.env['cost.control'].search([])
         ConstControl_MasterSheet = False
         try:
-            ConstControl_MasterSheet = workbook.get_sheet_by_name('CostControl_MasterData')
+            ConstControl_MasterSheet = workbook.get_sheet_by_name('master_job_order')
         except:
-            ConstControl_MasterSheet = workbook.create_sheet('CostControl_MasterData')
+            ConstControl_MasterSheet = workbook.create_sheet('master_job_order')
         ConstControl_MasterSheet.protection.sheet = True
         
         bold_font = Font(bold=True, name='Arial', size=11)
@@ -176,7 +128,7 @@ class BudgetExportWizard(models.TransientModel):
         CostControlList = DataValidation(
             type="list",
             formula1=formula1.format(
-                quote_sheetname('CostControl_MasterData')
+                quote_sheetname('master_job_order')
             )
         )
         SHEET_FORMULAS.update({'cost_control_formula': CostControlList})
@@ -189,7 +141,7 @@ class BudgetExportWizard(models.TransientModel):
 
         ConstControl_Sheet = False
         try:
-            ConstControl_Sheet = workbook.get_sheet_by_name('CostControl_1')
+            ConstControl_Sheet = workbook.get_sheet_by_name('JobOrder')
 #             ConstControl_Sheet.protection.sheet = True
         except:
             pass
@@ -379,17 +331,12 @@ class BudgetExportWizard(models.TransientModel):
             workbook = openpyxl.load_workbook(stream)
 
             try:
-                SEC_Sheet = workbook.get_sheet_by_name('Section')
+                SEC_Sheet = workbook.get_sheet_by_name('master_section')
                 SEC_Sheet.protection.sheet = True
             except:
                 pass
             try:
-                AM_Sheet = workbook.get_sheet_by_name('Activity_MasterData')
-                AM_Sheet.protection.sheet = True
-            except:
-                pass
-            try:
-                ACM_Sheet = workbook.get_sheet_by_name('CostControl_MasterData')
+                ACM_Sheet = workbook.get_sheet_by_name('master_job_order')
                 ACM_Sheet.protection.sheet = True
             except:
                 pass
@@ -399,7 +346,7 @@ class BudgetExportWizard(models.TransientModel):
             except:
                 pass
 
-            AG_Sheet = workbook.get_sheet_by_name('ActivityGroup_MasterData')
+            AG_Sheet = workbook.get_sheet_by_name('master_activity_group')
             AG_Sheet.protection.sheet = True
             activities = self.env['account.activity.group'].search([])
 
@@ -432,12 +379,12 @@ class BudgetExportWizard(models.TransientModel):
             ActGroupList = DataValidation(
                 type="list",
                 formula1=formula1.format(
-                    quote_sheetname('ActivityGroup_MasterData')
+                    quote_sheetname('master_activity_group')
                 )
             )
             SHEET_FORMULAS.update({'ag_list': ActGroupList})
             NonCostCtrl_Sheet =\
-                workbook.get_sheet_by_name('Non_CostControl')
+                workbook.get_sheet_by_name('Non_jobOrder')
             NonCostCtrl_Sheet.protection.sheet = True
             job_order_lines,non_job_order_lines = self._compute_previous_year_amount(budget)
             self._update_costcontrol_sheet(workbook, budget, job_order_lines)
