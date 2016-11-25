@@ -183,7 +183,7 @@ class BudgetExportWizard(models.TransientModel):
         return True
 
     @api.model
-    def _update_costcontrol_sheet(self, workbook, budget):
+    def _update_costcontrol_sheet(self, workbook, budget, job_order_lines):
         center_align = Alignment(horizontal='center')
         protection = Protection(locked=False)
 
@@ -242,6 +242,25 @@ class BudgetExportWizard(models.TransientModel):
  
             cc_f_row = 8
             cc_row_gap = 18
+
+            cc_fi_row = 8
+            if job_order_lines:
+                for jb in job_order_lines:
+                    line_fi_row = cc_fi_row + 5
+                    costcontrol = self.env['cost.control'].browse(jb)
+                    ConstControl_Sheet.cell(row=cc_fi_row, column=2).value = costcontrol.name
+                    cc_fi_row += cc_row_gap
+                    if job_order_lines[jb]:
+                        for ag in job_order_lines[jb]:
+                            col = 1
+                            amt = job_order_lines[jb][ag]
+                            if ag:
+                                ag_name = self.env['account.activity.group'].browse(ag).name
+                                ConstControl_Sheet.cell(row=line_fi_row, column=col).value = ag_name
+                            col += 7
+                            ConstControl_Sheet.cell(row=line_fi_row, column=col).value = amt
+                            line_fi_row += 1
+
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
                 ConstControl_Sheet.cell(row=cc_f_row, column=23).value = const_cntrl_line.id
@@ -304,6 +323,10 @@ class BudgetExportWizard(models.TransientModel):
     def _compute_previous_year_amount(self, budget):
         current_fy = budget.fiscalyear_id
         previous_fy = self.env['account.fiscalyear'].search([('date_stop', '<', current_fy.date_start)], order='date_stop', limit=1)
+        job_order_lines = {}
+        non_job_order_lines = {}
+        if not self.export_committed_budget or not previous_fy:
+            return job_order_lines,non_job_order_lines
         if previous_fy:
             report_domain = [('fiscalyear_id', '=', previous_fy.id),
                              ('section_id', '=', budget.section_id.id),
@@ -313,7 +336,33 @@ class BudgetExportWizard(models.TransientModel):
             report_lines = self.env['budget.monitor.report'].search(report_domain)
             for line in report_lines:
                 total_commited_amt = line.amount_exp_commit + line.amount_po_commit + line.amount_pr_commit
-        return []
+                if total_commited_amt == 0.0:
+                    continue
+                if line.cost_control_id:
+                    if line.cost_control_id.id not in job_order_lines:
+                        job_order_lines[line.cost_control_id.id] = {}
+                    if line.activity_group_id:
+                        if line.activity_group_id.id not in job_order_lines[line.cost_control_id.id]:
+                            job_order_lines[line.cost_control_id.id].update({line.activity_group_id.id : total_commited_amt})
+                        else:
+                            job_order_lines[line.cost_control_id.id][line.activity_group_id.id] += total_commited_amt
+                    else:
+                        if False not in job_order_lines[line.cost_control_id.id]:
+                            job_order_lines[line.cost_control_id.id].update({False : total_commited_amt})
+                        else:
+                            job_order_lines[line.cost_control_id.id][False] += total_commited_amt
+                else:
+                    if line.activity_group_id:
+                        if line.activity_group_id.id not in non_job_order_lines:
+                            non_job_order_lines[line.activity_group_id.id] = total_commited_amt
+                        else:
+                            non_job_order_lines[line.activity_group_id.id] += total_commited_amt
+                    else:
+                        if False not in non_job_order_lines:
+                            non_job_order_lines[False] = total_commited_amt
+                        else:
+                            non_job_order_lines[False] += total_commited_amt
+        return job_order_lines,non_job_order_lines
 
     @api.multi
     def update_budget_xls(self, budget_ids, template_id=None):
@@ -387,11 +436,11 @@ class BudgetExportWizard(models.TransientModel):
                 )
             )
             SHEET_FORMULAS.update({'ag_list': ActGroupList})
-            self._update_costcontrol_sheet(workbook, budget)
             NonCostCtrl_Sheet =\
                 workbook.get_sheet_by_name('Non_CostControl')
             NonCostCtrl_Sheet.protection.sheet = True
-            self._compute_previous_year_amount(budget)
+            job_order_lines,non_job_order_lines = self._compute_previous_year_amount(budget)
+            self._update_costcontrol_sheet(workbook, budget, job_order_lines)
             decimal_type_validation = DataValidation(type="decimal",
                 operator="greaterThanOrEqual",
                 formula1=0)
@@ -463,6 +512,7 @@ class BudgetExportWizard(models.TransientModel):
                 row += 1
  
             to_row = row + self.editable_lines
+            linetofill = row
             for r in range(row, to_row):
                 ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=1))
 
@@ -487,6 +537,17 @@ class BudgetExportWizard(models.TransientModel):
 
                 row += 1
                 r += 1
+
+            if non_job_order_lines:
+                r = linetofill
+                for ag in non_job_order_lines:
+                    if ag:
+                        ag_name = self.env['account.activity.group'].browse(ag).name
+                        NonCostCtrl_Sheet.cell(row=r, column=1).value = ag_name
+                        NonCostCtrl_Sheet.cell(row=r, column=8).value = non_job_order_lines[ag]
+                    else:
+                        NonCostCtrl_Sheet.cell(row=r, column=8).value = non_job_order_lines[ag]
+                    r += 1
  
             column_to_fill = [7, 8, 21, 22]
             self._add_cell_border(NonCostCtrl_Sheet,
