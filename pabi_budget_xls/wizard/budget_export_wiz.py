@@ -33,9 +33,9 @@ class BudgetExportWizard(models.TransientModel):
         string='Template Plan',
     )
     editable_lines = fields.Integer(
-        string='Additional Budget lines',
+        string='Additional Budget lines(Non JobOrder)',
         required=True,
-        default=10,
+        default=50,
     )
     export_committed_budget = fields.Boolean(
         string="Export Committed Budget?",
@@ -179,7 +179,7 @@ class BudgetExportWizard(models.TransientModel):
 
             ag_column_list = []
             cost_cntrl_first_column = 8
-            row_gap = 18
+            row_gap = 28
             for r in range(1, 11):
                 costcontrol_formula.add(ConstControl_Sheet.cell(row=cost_cntrl_first_column, column=2))
                 cost_cntrl_first_column = cost_cntrl_first_column + row_gap
@@ -187,13 +187,13 @@ class BudgetExportWizard(models.TransientModel):
             ag_first_column = 13
             row_gap = 8
             for r in range(1, 11):
-                for rr in range(ag_first_column, ag_first_column+10):
+                for rr in range(ag_first_column, ag_first_column+20):
                     ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=1))
                     ag_first_column += 1
                 ag_first_column = ag_first_column+row_gap
  
             cc_f_row = 8
-            cc_row_gap = 18
+            cc_row_gap = 28
 
             cc_fi_row = 8
             if job_order_lines:
@@ -452,7 +452,7 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(
                     row=row, column=21, value="=SUM(I%s:$T$%s)" % (row, row))
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=22, value="=G%s-U%s" % (row, row))
+                    row=row, column=22, value="=G%s-$U$%s" % (row, row))
                 NonCostCtrl_Sheet.cell(row=row, column=21).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=22).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=23).value = line.id
@@ -477,7 +477,7 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(
                     row=r, column=21, value="=SUM(I%s:$T$%s)" % (r, r))
                 NonCostCtrl_Sheet.cell(
-                    row=r, column=22, value="=G%s-U%s" % (r, r))
+                    row=r, column=22, value="=G%s-$U$%s" % (r, r))
 
                 NonCostCtrl_Sheet.cell(row=r, column=21).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=r, column=22).number_format = '#,##0.00'

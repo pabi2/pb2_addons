@@ -33,7 +33,7 @@ class BudgetImportWizard(models.TransientModel):
                 else:
                     raise UserError(_('Please select valid cost-control!'))
             else:
-                cc_row += 18
+                cc_row += 28
                 continue
 
             costcontrol_line = False
@@ -46,7 +46,7 @@ class BudgetImportWizard(models.TransientModel):
             line_start = cc_row + 5
             calculate_vals = {}
             ids = []
-            for row in range(line_start, line_start+10):
+            for row in range(line_start, line_start+20):
                 line_vals = {'cost_control_line_id': costcontrol_line.id}
                 col = 1
                 activity_group = CostCtrl_Sheet.cell(row=row, column=col).value
