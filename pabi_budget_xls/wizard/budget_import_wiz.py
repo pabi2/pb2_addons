@@ -36,12 +36,13 @@ class BudgetImportWizard(models.TransientModel):
                 cc_row += 28
                 continue
 
-            costcontrol_line = False
-            costcontrol_line_id = CostCtrl_Sheet.cell(row=cc_row, column=23).value
-            if costcontrol_line_id:
-                costcontrol_line = self.env['budget.plan.unit.cost.control'].search([('id', '=', int(costcontrol_line_id))])
-            if not costcontrol_line:
-                costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+            existing_costcontrol_lines =\
+                self.env['budget.plan.unit.cost.control'].search(
+                    [('plan_id','=' ,budget.id),
+                     ('cost_control_id', '=', costcontrol_id.id)])
+            if existing_costcontrol_lines:
+                existing_costcontrol_lines.unlink()
+            costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
 
             line_start = cc_row + 5
             calculate_vals = {}
@@ -119,38 +120,22 @@ class BudgetImportWizard(models.TransientModel):
                 col += 1
                 if (total_act_budget - total_month_budget) != 0.0:
                     raise UserError(_('Please verify budget lines total!'))
-                line_id = CostCtrl_Sheet.cell(row=row, column=col).value
-                cc_line = False
-                if line_id:
-                    cc_line = self.env['budget.plan.unit.cost.control.line'].search([('id', '=', int(line_id))])
-                    if cc_line:
-                        cc_line.write(line_vals)
-                else:
-                    cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
-
+                cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
                 if cc_line:
                     plan_line_vals = {}
-                    line_exist = self.env['budget.plan.unit.line'].search(
-                        [('plan_id', '=', costcontrol_line.plan_id.id),
-                         ('breakdown_line_id', '=', cc_line.id)])
                     plan_line_vals.update(line_vals)
                     plan_line_vals.update(calculate_vals)
-
-                    if line_exist:
-                        line_exist.write(plan_line_vals)
-                        ids.append(line_exist.id)
-                    else:
-                        create_vals = {
-                            'breakdown_line_id': cc_line.id,
-                            'plan_id': costcontrol_line.plan_id.id,
-                            'fk_costcontrol_id': costcontrol_line.id,
-                            'section_id': costcontrol_line.plan_id.section_id.id,
-                            'cost_control_id': costcontrol_line.cost_control_id.id,
-                        }
-                        create_vals.update(plan_line_vals)
-                        new_id = self.env['budget.plan.unit.line'].create(create_vals).id
-                        ids.append(new_id)
-            cc_row += 18
+                    create_vals = {
+                        'breakdown_line_id': cc_line.id,
+                        'plan_id': costcontrol_line.plan_id.id,
+                        'fk_costcontrol_id': costcontrol_line.id,
+                        'section_id': costcontrol_line.plan_id.section_id.id,
+                        'cost_control_id': costcontrol_line.cost_control_id.id,
+                    }
+                    create_vals.update(plan_line_vals)
+                    new_id = self.env['budget.plan.unit.line'].create(create_vals).id
+                    ids.append(new_id)
+            cc_row += 28
             costcontrol_line.write({'detail_ids': [(6, 0, ids)]})
         return True
 
@@ -226,9 +211,11 @@ class BudgetImportWizard(models.TransientModel):
                 [('name', '=', tools.ustr(responsible_by))])
             if section_id:
                 vals.update({'creating_user_id': responsible_by_id.id})
-
+            existing_lines = self.env['budget.plan.unit.line'].\
+                search([('plan_id', '=', budget.id)])
+            if existing_lines:
+                existing_lines.unlink()
             line_row = 11
-            lines = {}
             lines_to_create = []
             for row in range(line_row, max_row):
                 line_vals = {}
@@ -257,7 +244,6 @@ class BudgetImportWizard(models.TransientModel):
                     'description': description,
                 })
                 total_act_budget = unit * act_unitprice * activity_unit
-                line_id = NonCostCtrl_Sheet.cell(row=row, column=26).value
                 p = 1
                 col = 9
                 total_month_budget = 0.0
@@ -274,15 +260,7 @@ class BudgetImportWizard(models.TransientModel):
                         break
                     col += 1
                     p += 1
-                if line_id:
-                    lines.update({int(line_id): line_vals})
-                else:
-                    lines_to_create.append(line_vals)
-                if (total_act_budget - total_month_budget) != 0.0:
-                    raise UserError(_('Please verify budget lines total!'))
-            for line in budget.plan_line_ids:
-                if lines.get(line.id, False):
-                    line.write(lines[line.id])
+                lines_to_create.append(line_vals)
             for line in lines_to_create:
                 self.env['budget.plan.unit.line'].create(line)
             budget.write(vals)
