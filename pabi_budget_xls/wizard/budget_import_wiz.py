@@ -31,7 +31,7 @@ class BudgetImportWizard(models.TransientModel):
                 if costcontrol_id:
                     costcontrol_vals.update({'cost_control_id': costcontrol_id.id})
                 else:
-                    raise UserError(_('Please select valid cost-control!'))
+                    raise UserError(_('Please select valid Job Order!'))
             else:
                 cc_row += 28
                 continue
