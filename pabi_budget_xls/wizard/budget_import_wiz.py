@@ -50,6 +50,14 @@ class BudgetImportWizard(models.TransientModel):
             for row in range(line_start, line_start+20):
                 line_vals = {'cost_control_line_id': costcontrol_line.id}
                 col = 1
+                charge_type = CostCtrl_Sheet.cell(row=row, column=col).value
+                if charge_type:
+                    if str(charge_type) == 'External':
+                        line_vals.update({'charge_type': 'external'})
+                    else:
+                        line_vals.update({'charge_type': 'internal'})
+
+                col += 1
                 activity_group = CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_group:
                     activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
@@ -141,6 +149,61 @@ class BudgetImportWizard(models.TransientModel):
 
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
+        
+        def _compute_line_vals(NonCostCtrl_Sheet, common_line_vals):
+            line_row = 11
+            lines_to_create = []
+            max_row = NonCostCtrl_Sheet.max_row
+            for row in range(line_row, max_row):
+                line_vals = {}
+                line_vals.update(common_line_vals)
+                charge_type = NonCostCtrl_Sheet.cell(row=row, column=1).value
+                if charge_type:
+                    if str(charge_type) == 'External':
+                        line_vals.update({'charge_type': 'external'})
+                    else:
+                        line_vals.update({'charge_type': 'internal'})
+                ag_group = NonCostCtrl_Sheet.cell(row=row, column=2).value
+                if not ag_group:
+                    break
+                ag_group_id = self.env['account.activity.group'].search(
+                    [('name', '=', tools.ustr(ag_group))])
+                if ag_group_id:
+                    line_vals.update({'activity_group_id': ag_group_id.id})
+                description = NonCostCtrl_Sheet.cell(row=row, column=3).value
+                if description == '=FALSE()':
+                    description = ''
+                unit = NonCostCtrl_Sheet.cell(row=row, column=5).value or 0.0
+                act_unitprice\
+                    = NonCostCtrl_Sheet.cell(row=row, column=6).value or 0.0
+                activity_unit =\
+                    NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
+                line_vals.update({
+                    'unit': unit,
+                    'activity_unit_price': act_unitprice,
+                    'activity_unit': activity_unit,
+                    'description': description,
+                })
+                total_act_budget = unit * act_unitprice * activity_unit
+                p = 1
+                col = 10
+                total_month_budget = 0.0
+                while p != 13:
+                    val = NonCostCtrl_Sheet.cell(row=row, column=col).value
+                    if val and not isinstance(val, long):
+                        raise UserError(
+                            _('Please insert float value on\
+                             row: %s - column: %s') % (row, col))
+                    if val:
+                        total_month_budget += val
+                    line_vals.update({'m' + str(p): val})
+                    if col == 21:
+                        break
+                    col += 1
+                    p += 1
+                lines_to_create.append(line_vals)
+            return lines_to_create
+
         if not template:
             raise UserError(_('Please add .xlsx template.'))
         if not budget_ids:
@@ -165,22 +228,21 @@ class BudgetImportWizard(models.TransientModel):
                 raise UserError(
                     _('You can update budget plan only in draft state!'))
 
-            NonCostCtrl_Sheet = workbook.get_sheet_by_name('Non_jobOrder')
-            max_row = NonCostCtrl_Sheet.max_row
+            Non_JobOrder_Expense = workbook.get_sheet_by_name('Non_JobOrder_Expense')
             vals = {}
 
-            bg_id = NonCostCtrl_Sheet.cell(row=1, column=5).value
+            bg_id = Non_JobOrder_Expense.cell(row=1, column=5).value
             if budget.id != bg_id:
                 raise UserError(
                     _('Please import the correct file for this plan')
                 )
-            fiscal_year = NonCostCtrl_Sheet.cell(row=1, column=2).value
+            fiscal_year = Non_JobOrder_Expense.cell(row=1, column=2).value
             fiscal_year_id = self.env['account.fiscalyear'].search(
                 [('name', '=', tools.ustr(fiscal_year))])
             if fiscal_year_id:
                 vals.update({'fiscalyear_id': fiscal_year_id.id})
 
-            org = NonCostCtrl_Sheet.cell(row=2, column=2).value
+            org = Non_JobOrder_Expense.cell(row=2, column=2).value
             org_id =\
                 self.env['res.org'].search(
                     ['|',
@@ -189,18 +251,18 @@ class BudgetImportWizard(models.TransientModel):
 #             if org_id:
 #                 vals.update({'org_id': org_id.id})
 
-            section = NonCostCtrl_Sheet.cell(row=3, column=2).value
+            section = Non_JobOrder_Expense.cell(row=3, column=2).value
             section_id = self.env['res.section'].search(
                 ['|',
                  ('code', '=', tools.ustr(section)),
                  ('name_short', '=', tools.ustr(org))])
             if section_id:
                 vals.update({'section_id': section_id.id})
-            export_date = NonCostCtrl_Sheet.cell(row=4, column=2).value
+            export_date = Non_JobOrder_Expense.cell(row=4, column=2).value
             if export_date:
                 vals.update({'date': export_date})
 
-            responsible_by = NonCostCtrl_Sheet.cell(row=5, column=2).value
+            responsible_by = Non_JobOrder_Expense.cell(row=5, column=2).value
             responsible_by_id = self.env['res.users'].search(
                 [('name', '=', tools.ustr(responsible_by))])
             if section_id:
@@ -209,52 +271,21 @@ class BudgetImportWizard(models.TransientModel):
                 search([('plan_id', '=', budget.id)])
             if existing_lines:
                 existing_lines.unlink()
-            line_row = 11
-            lines_to_create = []
-            for row in range(line_row, max_row):
-                line_vals = {}
-                line_vals.update({'section_id': section_id.id,
-                                  'plan_id': budget.id,
-                                  'org_id': org_id.id})
-                ag_group = NonCostCtrl_Sheet.cell(row=row, column=1).value
-                if not ag_group:
-                    break
-                ag_group_id = self.env['account.activity.group'].search(
-                    [('name', '=', tools.ustr(ag_group))])
-                if ag_group_id:
-                    line_vals.update({'activity_group_id': ag_group_id.id})
-                description = NonCostCtrl_Sheet.cell(row=row, column=2).value
-                if description == '=FALSE()':
-                    description = ''
-                unit = NonCostCtrl_Sheet.cell(row=row, column=4).value or 0.0
-                act_unitprice\
-                    = NonCostCtrl_Sheet.cell(row=row, column=5).value or 0.0
-                activity_unit =\
-                    NonCostCtrl_Sheet.cell(row=row, column=6).value or 0.0
-                line_vals.update({
-                    'unit': unit,
-                    'activity_unit_price': act_unitprice,
-                    'activity_unit': activity_unit,
-                    'description': description,
-                })
-                total_act_budget = unit * act_unitprice * activity_unit
-                p = 1
-                col = 9
-                total_month_budget = 0.0
-                while p != 13:
-                    val = NonCostCtrl_Sheet.cell(row=row, column=col).value
-                    if val and not isinstance(val, long):
-                        raise UserError(
-                            _('Please insert float value on\
-                             row: %s - column: %s') % (row, col))
-                    if val:
-                        total_month_budget += val
-                    line_vals.update({'m' + str(p): val})
-                    if col == 20:
-                        break
-                    col += 1
-                    p += 1
-                lines_to_create.append(line_vals)
+            common_line_vals = {
+                'section_id': section_id.id,
+                'plan_id': budget.id,
+                'org_id': org_id.id,
+                'budget_method': 'expense',
+            }
+            expense_lines_to_create = _compute_line_vals(Non_JobOrder_Expense,
+                                                         common_line_vals=common_line_vals)
+            common_line_vals['budget_method'] = 'revenue'
+            Non_JobOrder_Revenue = workbook.get_sheet_by_name('Non_JobOrder_Revenue')
+            
+            revenue_lines_to_create = _compute_line_vals(Non_JobOrder_Revenue,
+                                                         common_line_vals=common_line_vals)
+            lines_to_create = expense_lines_to_create + revenue_lines_to_create
+
             for line in lines_to_create:
                 self.env['budget.plan.unit.line'].create(line)
             budget.write(vals)
