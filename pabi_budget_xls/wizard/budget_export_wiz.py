@@ -22,8 +22,8 @@ class BudgetExportWizard(models.TransientModel):
     def _default_export_committed_budget(self):
         active_ids = self._context.get('active_ids', [])
         lines = self.env['budget.plan.unit.summary'].\
-            search([('plan_id', 'in', active_ids)], count=True)
-        if lines > 0:
+            search([('plan_id', 'in', active_ids)], count=True).ids
+        if len(lines) > 0:
             return False
         return True
 
@@ -165,7 +165,6 @@ class BudgetExportWizard(models.TransientModel):
             row = 1
             ConstControl_Sheet.cell(row=row, column=2,
                                        value=budget.fiscalyear_id.name)
-            ConstControl_Sheet.cell(row=row, column=5, value=budget.id)
             row += 1
             ConstControl_Sheet.cell(row=row, column=2, value=org)
             row += 1
@@ -214,8 +213,6 @@ class BudgetExportWizard(models.TransientModel):
 
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
-                ConstControl_Sheet.cell(row=cc_f_row, column=23).value = const_cntrl_line.id
-                ConstControl_Sheet.cell(row=cc_f_row, column=23).font = Whitefont
                 if const_cntrl_line.cost_control_id:
                     ConstControl_Sheet.cell(row=cc_f_row, column=2).value = const_cntrl_line.cost_control_id.name
                     cc_f_row += cc_row_gap
@@ -265,8 +262,6 @@ class BudgetExportWizard(models.TransientModel):
                         col += 1
                         ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m12
                         col += 3
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.id
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).font = Whitefont
                         line_f_row += 1
         return True
 
@@ -454,7 +449,6 @@ class BudgetExportWizard(models.TransientModel):
                     row=row, column=22, value="=G%s-$U$%s" % (row, row))
                 NonCostCtrl_Sheet.cell(row=row, column=21).number_format = '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=22).number_format = '#,##0.00'
-                NonCostCtrl_Sheet.cell(row=row, column=23).value = line.id
                 row += 1
 
             to_row = row + self.editable_lines
