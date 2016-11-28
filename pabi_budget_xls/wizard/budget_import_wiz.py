@@ -160,12 +160,6 @@ class BudgetImportWizard(models.TransientModel):
             raise UserError(_('Wrong file format. Please enter .xlsx file.'))
         budgets = self.env['budget.plan.unit'].browse(budget_ids)
         for budget in budgets:
-            export_history = self.env['budget.plan.history'].search(
-                [('plan_id', '=', budget.id)],
-                order='id desc',
-                limit=1)
-            if export_history and export_history.operation_type == 'import':
-                raise UserError(_('Please export first to get latest changes in sheet!'))
 
             if budget.state != 'draft':
                 raise UserError(
