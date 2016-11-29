@@ -178,9 +178,9 @@ class AccountAnalyticAccount(models.Model):
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account']
         domain = self.get_analytic_search_domain(rec)
-        if rec._name == 'account.model.line':
+        if rec._name == 'account.model.line':  # Creating from Recurring Entry
             domain.append(('type', '=', 'normal'))
-        if rec.product_id:
+        elif rec.product_id:
             domain.append(('type', '=', 'product'))
         elif rec.activity_id:
             domain.append(('type', '=', 'activity'))
