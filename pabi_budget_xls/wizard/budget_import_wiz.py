@@ -27,7 +27,9 @@ class BudgetImportWizard(models.TransientModel):
             costcontrol_vals = {'plan_id': budget.id}
             costcontrol = CostCtrl_Sheet.cell(row=cc_row, column=2).value
             if costcontrol:
-                costcontrol_id =  self.env['cost.control'].search([('name', '=', tools.ustr(costcontrol))])
+                costcontrol_id = self.env['cost.control'].search(
+                    [('name', '=', tools.ustr(costcontrol))]
+                )
                 if costcontrol_id:
                     costcontrol_vals.update({'cost_control_id': costcontrol_id.id})
                 else:
@@ -42,7 +44,8 @@ class BudgetImportWizard(models.TransientModel):
                      ('cost_control_id', '=', costcontrol_id.id)])
             if existing_costcontrol_lines:
                 existing_costcontrol_lines.unlink()
-            costcontrol_line = self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+            costcontrol_line =\
+                self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
 
             line_start = cc_row + 5
             calculate_vals = {}
@@ -60,7 +63,9 @@ class BudgetImportWizard(models.TransientModel):
                 col += 1
                 activity_group = CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_group:
-                    activity_group_id =  self.env['account.activity.group'].search([('name', '=', tools.ustr(activity_group))])
+                    activity_group_id = \
+                        self.env['account.activity.group'].search(
+                            [('name', '=', tools.ustr(activity_group))])
                     line_vals.update({'activity_group_id': activity_group_id.id})
                 else:
                     continue
@@ -86,7 +91,8 @@ class BudgetImportWizard(models.TransientModel):
 
                 activity_unit_price = CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_unit_price:
-                    if activity_unit_price and not isinstance(activity_unit_price, long):
+                    if activity_unit_price and not isinstance(activity_unit_price,
+                                                              long):
                         raise UserError(
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))

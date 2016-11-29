@@ -291,26 +291,34 @@ class BudgetExportWizard(models.TransientModel):
                              ('section_id', '=', budget.section_id.id),
                              ('org_id', '=', budget.org_id.id),
                              ('division_id', '=', budget.division_id.id),
-                             ('budget_method', '=', budget_method)
-                             ]
+                             ('budget_method', '=', budget_method)]
             report_lines = self.env['budget.monitor.report'].search(report_domain)
             for line in report_lines:
-                total_commited_amt = line.amount_exp_commit + line.amount_po_commit + line.amount_pr_commit
+                total_commited_amt =\
+                    line.amount_exp_commit +\
+                    line.amount_po_commit +\
+                    line.amount_pr_commit
                 if total_commited_amt == 0.0:
                     continue
                 if line.cost_control_id:
                     if line.cost_control_id.id not in job_order_lines:
                         job_order_lines[line.cost_control_id.id] = {}
                     if line.activity_group_id:
-                        if line.activity_group_id.id not in job_order_lines[line.cost_control_id.id]:
-                            job_order_lines[line.cost_control_id.id].update({line.activity_group_id.id : total_commited_amt})
+                        if line.activity_group_id.id not in\
+                            job_order_lines[line.cost_control_id.id]:
+                            job_order_lines[line.cost_control_id.id].\
+                                update({line.activity_group_id.id :
+                                        total_commited_amt})
                         else:
-                            job_order_lines[line.cost_control_id.id][line.activity_group_id.id] += total_commited_amt
+                            job_order_lines[line.cost_control_id.id]\
+                                [line.activity_group_id.id] += total_commited_amt
                     else:
                         if False not in job_order_lines[line.cost_control_id.id]:
-                            job_order_lines[line.cost_control_id.id].update({False : total_commited_amt})
+                            job_order_lines[line.cost_control_id.id].\
+                                update({False : total_commited_amt})
                         else:
-                            job_order_lines[line.cost_control_id.id][False] += total_commited_amt
+                            job_order_lines[line.cost_control_id.id]\
+                                [False] += total_commited_amt
                 else:
                     if line.activity_group_id:
                         if line.activity_group_id.id not in non_job_order_lines:
@@ -332,8 +340,8 @@ class BudgetExportWizard(models.TransientModel):
         bold_font = Font(bold=True, name='Arial', size=11)
         ActGroupList =  SHEET_FORMULAS.get('ag_list', False)
         ChargeType =  SHEET_FORMULAS.get('charge_type', False)
-        job_order_lines,non_job_order_lines = self._compute_previous_year_amount(budget, budget_method)
-        
+        job_order_lines,non_job_order_lines =\
+            self._compute_previous_year_amount(budget, budget_method)
         decimal_type_validation = DataValidation(type="decimal",
             operator="greaterThanOrEqual",
             formula1=0)
