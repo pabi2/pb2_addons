@@ -38,7 +38,7 @@ class BudgetExportWizard(models.TransientModel):
     )
     export_committed_budget = fields.Boolean(
         string="Export Committed Budget?",
-#         default=_default_export_committed_budget,
+        default=_default_export_committed_budget,
     )
 
     @api.model
