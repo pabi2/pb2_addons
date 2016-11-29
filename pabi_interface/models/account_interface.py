@@ -2,9 +2,6 @@
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
-from openerp.addons.account_budget_activity.models.account_activity import \
-    ActivityCommon
-from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
 
 class AccountInterface(models.Model):
@@ -83,6 +80,7 @@ class AccountInterface(models.Model):
         move_ids = []
         AccountMove = self.env['account.move']
         AccountMoveLine = self.env['account.move.line']
+        Analytic = self.env['account.analytic.account']
         Period = self.env['account.period']
         for interface in self:
             move_date = interface.line_ids[0].date
@@ -102,7 +100,7 @@ class AccountInterface(models.Model):
             })
             move_ids.append(move.id)
             for line in interface.line_ids:
-                val = {
+                vals = {
                     'move_id': move.id,
                     'journal_id': interface.journal_id.id,
                     'period_id': period_id,
@@ -115,15 +113,32 @@ class AccountInterface(models.Model):
                     'partner_id': line.partner_id.id,
                     'date': line.date,
                     'date_maturity': line.date_maturity,   # Payment Due Date
+                    # Dimensions
+                    'activity_group_id': line.activity_group_id.id,
+                    'activity_id': line.activity_id.id,
+                    'product_id': line.product_id.id,
+                    'section_id': line.section_id.id,
+                    'project_id': line.project_id.id,
                 }
-                AccountMoveLine.with_context(ctx).create(val)
+
+                move_line = AccountMoveLine.with_context(ctx).create(vals)
+                # Update dimension & analytic
+                move_line.update_related_dimension(vals)
+                analytic_account = Analytic.create_matched_analytic(move_line)
+                move_line.analytic_account_id = analytic_account.id
+                # --
+                if analytic_account and \
+                        not interface.journal_id.analytic_journal_id:
+                    raise ValidationError(
+                        _("You have to define an analytic journal on the "
+                          "'%s' journal!") % (interface.journal_id.name,))
             interface.move_id = move.id
         # Post all at once
         AccountMove.browse(move_ids).post()
         return move_ids
 
 
-class AccountInterfaceLine(ChartField, ActivityCommon, models.Model):
+class AccountInterfaceLine(models.Model):
     _name = 'account.interface.line'
     _order = 'sequence'
 

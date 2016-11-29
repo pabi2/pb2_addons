@@ -3,6 +3,8 @@
 from openerp import api, models, fields, _
 from openerp.addons.pabi_base.models.res_common import ResCommon
 from openerp.exceptions import ValidationError
+from openerp.addons.account_budget_activity.models.account_activity import \
+    ActivityCommon
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                           (mission)
@@ -292,12 +294,6 @@ class HeaderTaxBranch(object):
 
 class ChartField(object):
 
-    @api.model
-    def _get_section_id(self):
-        if self._context.get('section_id', False):
-            return self.env['res.section'].browse(self._context.get('section_id'))
-        return self.env.user.partner_id.employee_id.section_id.id
-
     # Project Base
     spa_id = fields.Many2one(
         'res.spa',
@@ -385,9 +381,8 @@ class ChartField(object):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
-        default=_get_section_id,
-        #default=lambda self: self.env['res.section'].
-        #browse(self._context.get('section_id')),
+        default=lambda self: self.env['res.section'].
+        browse(self._context.get('section_id')),
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
@@ -571,6 +566,25 @@ class ChartField(object):
                 self.personnel_costcenter_id = False
             self.fund_id = self._get_default_fund()
 
+    @api.multi
+    def update_related_dimension(self, vals):
+        # Find selected dimension that is in CHART_SELECT list
+        selects = list(set(CHART_SELECT) & set(vals.keys()))
+        if selects:
+            selects = dict([(x, vals[x]) for x in selects])
+            selects_no = {k: v for k, v in selects.items() if not v}
+            selects_yes = {k: v for k, v in selects.items() if v}
+            # update value = false first, the sequence is important
+            res = {}
+            for field, _dummy in selects_no.items():
+                res.update(self._get_chained_dimension(field, clear=True))
+            # res.update({'chart_view': self._get_chart_view(selects_yes)})
+            for field, _dummy in selects_yes.items():
+                if field in res:
+                    res.pop(field)
+                res.update(self._get_chained_dimension(field))
+            self.with_context(MyModelLoopBreaker=True).write(res)
+
 
 class ChartFieldAction(ChartField):
     """ Chartfield + Onchange for Document Transaction
@@ -638,35 +652,3 @@ class ChartFieldAction(ChartField):
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
         return res
-
-#     @api.model
-#     def _get_chart_view(self, selects_yes):
-#         # update chart_view
-#         chart_view = False
-#         keys = list(set(selects_yes.keys()) & set(CHART_VIEW_FIELD.values()))
-#         assert len(keys) <= 1, 'Only 1 chart_view allowed!'
-#         if selects_yes.keys():
-#             selected_field = selects_yes.keys()[0]
-#             for k, v in CHART_VIEW_FIELD.items():
-#                 if v == selected_field:
-#                     chart_view = k
-#         return chart_view
-
-    @api.multi
-    def update_related_dimension(self, vals):
-        # Find selected dimension that is in CHART_SELECT list
-        selects = list(set(CHART_SELECT) & set(vals.keys()))
-        if selects:
-            selects = dict([(x, vals[x]) for x in selects])
-            selects_no = {k: v for k, v in selects.items() if not v}
-            selects_yes = {k: v for k, v in selects.items() if v}
-            # update value = false first, the sequence is important
-            res = {}
-            for field, _dummy in selects_no.items():
-                res.update(self._get_chained_dimension(field, clear=True))
-            # res.update({'chart_view': self._get_chart_view(selects_yes)})
-            for field, _dummy in selects_yes.items():
-                if field in res:
-                    res.pop(field)
-                res.update(self._get_chained_dimension(field))
-            self.with_context(MyModelLoopBreaker=True).write(res)

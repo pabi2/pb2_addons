@@ -23,7 +23,7 @@ This moudule provide standard interface in generice way.
         "data/system_origin_data.xml",
         "security/security_group.xml",
         "security/ir.model.access.csv",
-        "views/system_origin_view.xml",
         "views/account_interface_view.xml",
+        "views/system_origin_view.xml",
     ],
 }
