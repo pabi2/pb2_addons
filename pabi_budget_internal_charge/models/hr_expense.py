@@ -205,7 +205,6 @@ class HRExpense(models.Model):
                 'credit': False,
                 'account_id': rev_journal.default_debit_account_id.id
             })
-            print rev_dr_vals
             AccountMoveLine.with_context(ctx).create(rev_dr_vals)
             temp_exp_line.unlink()
 
