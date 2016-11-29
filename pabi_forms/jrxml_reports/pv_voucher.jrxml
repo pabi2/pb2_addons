@@ -101,6 +101,7 @@
 	</background>
 	<pageHeader>
 		<band height="351" splitType="Stretch">
+            <printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 			<staticText>
 				<reportElement x="2" y="17" width="553" height="28"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
