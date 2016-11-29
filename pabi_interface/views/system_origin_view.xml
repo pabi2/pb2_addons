@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # System
+        <record id="view_system_origin_tree" model="ir.ui.view">
+            <field name="name">view.system.origin.tree</field>
+            <field name="model">system.origin</field>
+            <field name="arch" type="xml">
+                <tree string="System Origin" create="0" editable="1" delete="0">
+                    <field name="name" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_system_origin_form" model="ir.ui.view">
+            <field name="name">view.system.origin.form</field>
+            <field name="model">system.origin</field>
+            <field name="arch" type="xml">
+                <form string="System Origin">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_system_origin_search" model="ir.ui.view">
+            <field name="name">view.system.origin.search</field>
+            <field name="model">system.origin</field>
+            <field name="arch" type="xml">
+                <search string="System Origin">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_system_origin" model="ir.actions.act_window">
+            <field name="name">System Origin</field>
+            <field name="res_model">system.origin</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_system_origin_tree"/>
+        </record>
+
+        <menuitem name="System Origins" id="menu_system_origin" action="action_system_origin" parent="menu_account_interface" sequence="1"/>
+    </data>
+</openerp>
