@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem name="Interface" id="menu_account_interface" parent="account.menu_finance" groups="pabi_interface.group_interface_user" sequence="20"/>
+
+        <!-- Account Interface -->
+        <record id="view_interface_line_tree" model="ir.ui.view">
+            <field name="name">account.interface.line.tree</field>
+            <field name="model">account.interface.line</field>
+            <field name="arch" type="xml">
+                <tree string="Journal Entry Model Line" editable="bottom">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="account_id" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation'), ('company_id', '=', parent.company_id)]"/>
+                    <field name="partner_id"/>
+                    <field name="activity_group_id" />
+                    <field name="activity_id" />
+                    <field name="product_id" />
+                    <field name="section_id" />
+                    <field name="project_id" />
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="date"/>
+                    <field name="date_maturity"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_interface_form" model="ir.ui.view">
+            <field name="name">account.interface.form</field>
+            <field name="model">account.interface</field>
+            <field name="arch" type="xml">
+                <form string="Journal Entry Model">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="system_origin_id"/>
+                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="journal_id" />
+                            <field name="move_id" />
+                        </group>
+                    </group>
+
+                    <field name="line_ids" widget="one2many_list"/>
+                    <separator string="Legend"/>
+                    <field name="legend"/>
+                    <button name="create_entry" string="Create entries" type="object" icon="gtk-execute"/>
+                </form>
+            </field>
+        </record>
+        <record id="view_interface_tree" model="ir.ui.view">
+            <field name="name">account.interface.tree</field>
+            <field name="model">account.interface</field>
+            <field name="arch" type="xml">
+                <tree string="Journal Entry Model">
+                    <field name="name"/>
+                    <field name="journal_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_interface_search" model="ir.ui.view">
+            <field name="name">account.interface.search</field>
+            <field name="model">account.interface</field>
+            <field name="arch" type="xml">
+                <search string="Journal Entry Model">
+                    <field name="name" string="Journal Entry Model"/>
+                    <filter string="Sale" icon="terp-camera_test" domain="[('journal_id.type', '=', 'sale')]"/>
+                    <filter string="Purchase" icon="terp-purchase" domain="[('journal_id.type', '=', 'purchase')]"/>
+                    <field name="journal_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'journal_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_interface_form" model="ir.actions.act_window">
+            <field name="name">Recurring Models</field>
+            <field name="res_model">account.interface</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_interface_search"/>
+        </record>
+        <menuitem action="action_interface_form" name="Models" id="menu_action_interface_form" sequence="5" parent="menu_account_interface"/>
+    </data>
+</openerp>
