@@ -3,6 +3,7 @@ from datetime import datetime
 from dateutil import relativedelta
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError, Warning as UserError
+from openerp import SUPERUSER_ID
 
 
 class InvoiceVoucherTaxDetail(object):
@@ -134,6 +135,11 @@ class AccountTaxDetail(models.Model):
         ondelete='cascade',
         index=True,
     )
+    tax_id = fields.Many2one(
+        'account.tax',
+        ondelete='cascade',
+        readonly=True,
+    )
     tax_sequence = fields.Integer(
         string='Sequence',
         readonly=True,
@@ -176,6 +182,36 @@ class AccountTaxDetail(models.Model):
             'please validate document again'),
     ]
 
+    def init(self, cr):
+        # This is a helper to guess "old" tax_id from tax_code
+        TaxDetail = self.pool['account.tax.detail']
+        tax_detail_ids = TaxDetail.search(cr, SUPERUSER_ID,
+                                          [('tax_id', '=', False)])
+        if tax_detail_ids:
+            tax_details = TaxDetail.browse(cr, SUPERUSER_ID, tax_detail_ids)
+            for tax_detail in tax_details:
+                tax_code = ((tax_detail.invoice_tax_id and
+                             tax_detail.invoice_tax_id.tax_code_id) or
+                            (tax_detail.voucher_tax_id and
+                             tax_detail.voucher_tax_id.tax_code_id) or
+                            False)
+                tax_id = self._get_tax_id(cr, SUPERUSER_ID, tax_code, False)
+                TaxDetail.write(cr, SUPERUSER_ID, [tax_detail.id],
+                                {'tax_id': tax_id})
+
+    @api.model
+    def _get_tax_id(self, tax_code, validate=True):
+        if not tax_code:
+            raise ValidationError(_('No tax code found!'))
+        tax = self.env['account.tax'].search([('tax_code_id', '=',
+                                               tax_code.id)])
+        if validate:
+            if len(tax) != 1:
+                raise ValidationError(
+                    _("Invalid tax setup for '%s'\n"
+                      "(1 tax != 1 tax code)") % (tax_code.name,))
+        return tax[0].id
+
     @api.model
     def _prepare_tax_detail(self, invoice_tax_id, voucher_tax_id, partner_id,
                             invoice_number, invoice_date, base, amount):
@@ -188,6 +224,10 @@ class AccountTaxDetail(models.Model):
             'base': base,
             'amount': amount,
         }
+        model = invoice_tax_id and \
+            'account.invoice.tax' or 'account.voucher.tax'
+        tax_code = self.env[model].browse(invoice_tax_id).tax_code_id
+        vals.update({'tax_id': self._get_tax_id(tax_code)})
         return vals
 
     @api.multi
