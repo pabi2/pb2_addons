@@ -195,6 +195,8 @@ class AccountTaxDetail(models.Model):
                             (tax_detail.voucher_tax_id and
                              tax_detail.voucher_tax_id.tax_code_id) or
                             False)
+                if not tax_code:
+                    continue
                 tax_id = self._get_tax_id(cr, SUPERUSER_ID, tax_code, False)
                 TaxDetail.write(cr, SUPERUSER_ID, [tax_detail.id],
                                 {'tax_id': tax_id})
@@ -226,7 +228,8 @@ class AccountTaxDetail(models.Model):
         }
         model = invoice_tax_id and \
             'account.invoice.tax' or 'account.voucher.tax'
-        tax_code = self.env[model].browse(invoice_tax_id).tax_code_id
+        doc_tax_id = invoice_tax_id or voucher_tax_id
+        tax_code = self.env[model].browse(doc_tax_id).tax_code_id
         vals.update({'tax_id': self._get_tax_id(tax_code)})
         return vals
 
