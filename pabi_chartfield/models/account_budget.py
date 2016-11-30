@@ -92,6 +92,23 @@ class AccountBudget(ChartField, models.Model):
         states={'done': [('readonly', True)]},
         copy=True,
     )
+    budget_summary_expense_line_ids = fields.One2many(
+        'budget.unit.summary',
+        'budget_id',
+        string='Summary by Activity Group',
+        readonly=True,
+        domain=[('budget_method', '=', 'expense')],
+        help="Summary by Activity Group View",
+    )
+    budget_summary_revenue_line_ids = fields.One2many(
+        'budget.unit.summary',
+        'budget_id',
+        string='Summary by Activity Group',
+        readonly=True,
+        domain=[('budget_method', '=', 'revenue')],
+        help="Summary by Activity Group View",
+    )
+ 
 
     @api.multi
     def budget_validate(self):

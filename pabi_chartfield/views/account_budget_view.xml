@@ -2,6 +2,31 @@
 <openerp>
     <data>
 
+        <record id="unit_base_budget_summary_tree_view" model="ir.ui.view">
+            <field name="name">budget.unit.summary.view</field>
+            <field name="model">budget.unit.summary</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Summary Lines" editable="bottom">
+                    <field name="budget_method" invisible="True"/>
+                    <field name="activity_group_id" />
+                    <field name="m1" sum="m1"/>
+                    <field name="m2" sum="m2"/>
+                    <field name="m3" sum="m3"/>
+                    <field name="m4" sum="m4"/>
+                    <field name="m5" sum="m5"/>
+                    <field name="m6" sum="m6"/>
+                    <field name="m7" sum="m7"/>
+                    <field name="m8" sum="m8"/>
+                    <field name="m9" sum="m9"/>
+                    <field name="m10" sum="m10"/>
+                    <field name="m11" sum="m11"/>
+                    <field name="m12" sum="m12"/>
+                    <field name="planned_amount" sum="planned_amount"/>
+                </tree>
+            </field>
+        </record>
+        
+        
         <record id="account_budget_view_form" model="ir.ui.view" >
             <field name="name">account.budget.view.form</field>
             <field name="model">account.budget</field>
@@ -65,6 +90,19 @@
                             context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
                                       'org_id': org_id,
                                       'default_budget_method': 'expense'}" />
+                </xpath>
+                <xpath expr="//page[1]" position="before">
+                    <page string="Summary">
+                        <separator string="Budgeted Expense"/>
+                        <field name="budget_summary_expense_line_ids"
+                                colspan="4" nolabel="1"
+                                context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
+                        <separator string="Budgeted Revenue"/>
+                        <field name="budget_summary_revenue_line_ids"
+                                colspan="4" nolabel="1"
+                                context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
+                                    
+                    </page>
                 </xpath>
             </field>
         </record>
