@@ -9,6 +9,10 @@ class HRExpense(models.Model):
     pay_to = fields.Selection(
         selection_add=[('internal', 'Internal Charge')],
     )
+    internal_charge = fields.Boolean(
+        string='IC',
+        compute='_compute_internal_charge',
+    )
     internal_section_id = fields.Many2one(
         'res.section',
         string='Internal Section',
@@ -18,19 +22,6 @@ class HRExpense(models.Model):
     internal_project_id = fields.Many2one(
         'res.project',
         string='Internal Project',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-        compute='_compute_activity_group_id',
-        readonly=True,
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
-        domain=[('budget_method', '=', 'revenue')],
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -58,6 +49,28 @@ class HRExpense(models.Model):
         readonly=True,
         copy=False,
     )
+
+    @api.one
+    @api.constrains('pay_to', 'line_ids')
+    def _check_internal_charge_activity(self):
+        ic = list(set(self.line_ids.mapped('activity_id.internal_charge')))
+        if ic:
+            if len(ic) > 1:
+                raise ValidationError(
+                    _('Not all activity are in same type of charge!'))
+            if ic[0] != (self.internal_charge):
+                if self.internal_charge:
+                    raise ValidationError(
+                        _('Not all activities are internal charge!'))
+                else:
+                    raise ValidationError(
+                        _('Not all activities are external charge!'))
+
+    @api.multi
+    @api.depends('pay_to')
+    def _compute_internal_charge(self):
+        for rec in self:
+            rec.internal_charge = rec.pay_to == 'internal'
 
     @api.onchange('internal_project_id')
     def _onchange_internal_project_id(self):
@@ -99,13 +112,6 @@ class HRExpense(models.Model):
                 if not line.section_id and not line.project_id:
                     raise ValidationError(
                         _('No Project/Section selected on expense line'))
-
-    @api.multi
-    @api.depends('activity_id')
-    def _compute_activity_group_id(self):
-        for rec in self:
-            rec.activity_group_id = rec.activity_id.activity_group_ids and \
-                rec.activity_id.activity_group_ids[0] or False
 
     @api.model
     def _is_valid_for_invoice(self):
