@@ -259,3 +259,27 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
         'project_id', 'fund_id',
         string='Funds',
     )
+    prototype_ids = fields.One2many(
+        'res.project.prototype',
+        'project_id',
+        string='Prototypes',
+    )
+
+
+class ResProjectPrototype(models.Model):
+    _name = 'res.project.prototype'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    code = fields.Char(
+        string='Code',
+        required=False,
+    )
+    prototype_type = fields.Selection(
+        [('research', 'Research'),
+         ('deliver', 'Deliver')],
+        string='Prototype Type',
+        required=True,
+    )
