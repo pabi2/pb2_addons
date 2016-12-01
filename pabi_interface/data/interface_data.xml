@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Systems
+        <record model="interface.system" id="system_pabi2">
+            <field name="name">PABI2</field>
+            <field name="description">Default system. All transaction created within will be set with this system</field>
+        </record>
+
+        # Actions
+        <record model="interface.action" id="action_invoice_entry">
+            <field name="name">Create Invoice JE</field>
+            <field name="description">Create journal entry for customer invoice and supplier invoice</field>
+            <field name="journal_id"  model="account.journal" search="[('type', '=', 'sale')]" />
+        </record>
+        <record model="interface.action" id="action_payment_entry">
+            <field name="name">Create Payment JE</field>
+            <field name="description">Create journal entry for customer payment and supplier payment</field>
+        </record>
+    </data>
+</openerp>

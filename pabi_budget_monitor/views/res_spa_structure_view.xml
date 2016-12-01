@@ -2,16 +2,15 @@
 <openerp>
     <data>
 
-    	# SPA
-        <record id="view_res_spa_form" model="ir.ui.view" >
+        # SPA
+        <record id="view_res_spa_form" model="ir.ui.view">
             <field name="name">view.res.spa.form</field>
             <field name="model">res.spa</field>
             <field name="inherit_id" ref="pabi_base.view_res_spa_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -24,7 +23,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -36,21 +35,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Mission
-        <record id="view_res_mission_form" model="ir.ui.view" >
+        # Mission
+        <record id="view_res_mission_form" model="ir.ui.view">
             <field name="name">view.res.mission.form</field>
             <field name="model">res.mission</field>
             <field name="inherit_id" ref="pabi_base.view_res_mission_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -63,7 +60,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -75,21 +72,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Tag Type
-        <record id="view_res_tag_type_form" model="ir.ui.view" >
+        # Tag Type
+        <record id="view_res_tag_type_form" model="ir.ui.view">
             <field name="name">view.res.tag.type.form</field>
             <field name="model">res.tag.type</field>
             <field name="inherit_id" ref="pabi_base.view_res_tag_type_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -102,7 +97,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -114,21 +109,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Tag
-        <record id="view_res_tag_form" model="ir.ui.view" >
+        # Tag
+        <record id="view_res_tag_form" model="ir.ui.view">
             <field name="name">view.res.tag.form</field>
             <field name="model">res.tag</field>
             <field name="inherit_id" ref="pabi_base.view_res_tag_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -141,7 +134,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -153,21 +146,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Functional Area
-        <record id="view_res_functional_area_form" model="ir.ui.view" >
+        # Functional Area
+        <record id="view_res_functional_area_form" model="ir.ui.view">
             <field name="name">view.res.functional.area.form</field>
             <field name="model">res.functional.area</field>
             <field name="inherit_id" ref="pabi_base.view_res_functional_area_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -180,7 +171,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -192,21 +183,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Program Group
-        <record id="view_res_program_group_form" model="ir.ui.view" >
+        # Program Group
+        <record id="view_res_program_group_form" model="ir.ui.view">
             <field name="name">view.res.program.group.form</field>
             <field name="model">res.program.group</field>
             <field name="inherit_id" ref="pabi_base.view_res_program_group_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -219,7 +208,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -231,21 +220,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Program
-        <record id="view_res_program_form" model="ir.ui.view" >
+        # Program
+        <record id="view_res_program_form" model="ir.ui.view">
             <field name="name">view.res.program.form</field>
             <field name="model">res.program</field>
             <field name="inherit_id" ref="pabi_base.view_res_program_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -258,7 +245,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -270,21 +257,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Project Group
-        <record id="view_res_project_group_form" model="ir.ui.view" >
+        # Project Group
+        <record id="view_res_project_group_form" model="ir.ui.view">
             <field name="name">view.res.project.group.form</field>
             <field name="model">res.project.group</field>
             <field name="inherit_id" ref="pabi_base.view_res_project_group_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -297,7 +282,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -309,21 +294,19 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
 
-    	# Project
-        <record id="view_res_project_form" model="ir.ui.view" >
+        # Project
+        <record id="view_res_project_form" model="ir.ui.view">
             <field name="name">view.res.project.form</field>
             <field name="model">res.project</field>
             <field name="inherit_id" ref="pabi_base.view_res_project_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
-                        <separator string="Expense" />
+                        <separator string="Expense"/>
                         <field name="monitor_expense_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -336,7 +319,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                        <separator string="Revenue" />
+                        <separator string="Revenue"/>
                         <field name="monitor_revenue_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fiscalyear_id"/>
@@ -348,9 +331,8 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>
-	</data>
+    </data>
 </openerp>

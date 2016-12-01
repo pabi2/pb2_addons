@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
-from . import system_origin
+from . import interface_config
 from . import account
-from . import account_interface
+from . import interface_account
