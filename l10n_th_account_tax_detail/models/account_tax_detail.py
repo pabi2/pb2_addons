@@ -57,15 +57,6 @@ class InvoiceVoucherTaxDetail(object):
         return True
 
     @api.model
-    def _get_valid_date_range(self, months):
-        Period = self.env['account.period']
-        period = Period.find(fields.Date.context_today(self))[:1]
-        date_stop = datetime.strptime(period.date_stop, '%Y-%m-%d').date()
-        date_start = datetime.strptime(period.date_start, '%Y-%m-%d').date()
-        date_start = date_start + relativedelta.relativedelta(months=-months+1)
-        return date_start, date_stop
-
-    @api.model
     def _get_date_document(self, doc):
         # Get document date, either invoice or voucher
         if doc.type in ('in_refund', 'in_invoice',
@@ -78,42 +69,14 @@ class InvoiceVoucherTaxDetail(object):
 
     @api.multi
     def _assign_detail_tax_sequence(self):
-        Period = self.env['account.period']
-        months = self.env.user.company_id.number_month_tax_addition
-        tax_months = months and int(months) or 6
-        date_start, date_stop = self._get_valid_date_range(tax_months)
-
         for doc in self:
-            # Doc Type
-            doc_type = 'sale'
-            if doc.type in ('in_refund', 'in_invoice', 'payment'):
-                doc_type = 'purchase'
-            # --
             date_doc = self._get_date_document(doc)
-            period = Period.find(date_doc)[:1]
             for tax in doc.tax_line:
                 # Skip if Undue Tax
                 if tax.tax_code_type != 'normal':
                     continue
                 for detail in tax.detail_ids:
-                    invoice_date = datetime.strptime(detail.invoice_date,
-                                                     '%Y-%m-%d').date()
-                    if date_start <= invoice_date <= date_stop:
-                        next_seq = detail._get_next_sequence(doc_type,
-                                                             period)
-                        detail.write({'doc_type': doc_type,
-                                      'tax_sequence': next_seq,
-                                      'period_id': period.id,
-                                      })
-                    else:
-                        add_period = Period.find(detail.invoice_date)[:1]
-                        next_seq = detail._get_next_sequence(doc_type,
-                                                             add_period)
-                        detail.write({'doc_type': doc_type,
-                                      'tax_sequence': next_seq,
-                                      'period_id': add_period.id,
-                                      'addition': True,
-                                      })
+                    detail._set_next_sequence(date_doc)
 
 
 class AccountTaxDetail(models.Model):
@@ -124,6 +87,7 @@ class AccountTaxDetail(models.Model):
          ('purchase', 'Purchase')],
         string='Document Type',
         readonly=True,
+        required=True,
     )
     invoice_tax_id = fields.Many2one(
         'account.invoice.tax',
@@ -202,6 +166,36 @@ class AccountTaxDetail(models.Model):
                                 {'tax_id': tax_id})
 
     @api.model
+    def _get_valid_date_range(self, months):
+        Period = self.env['account.period']
+        period = Period.find(fields.Date.context_today(self))[:1]
+        date_stop = datetime.strptime(period.date_stop, '%Y-%m-%d').date()
+        date_start = datetime.strptime(period.date_start, '%Y-%m-%d').date()
+        date_start = date_start + relativedelta.relativedelta(months=-months+1)
+        return date_start, date_stop
+
+    @api.model
+    def _set_next_sequence(self, date_doc=None):
+        months = self.env.user.company_id.number_month_tax_addition
+        tax_months = months and int(months) or 6
+        date_start, date_stop = self._get_valid_date_range(tax_months)
+        period = self.env['account.period'].find(date_doc)[:1]
+        invoice_date = datetime.strptime(self.invoice_date,
+                                         '%Y-%m-%d').date()
+        if date_start <= invoice_date <= date_stop:
+            next_seq = self._get_next_sequence(period)
+            self.write({'tax_sequence': next_seq,
+                        'period_id': period.id,
+                        })
+        else:
+            add_period = self.env['account.period'].find(self.invoice_date)[:1]
+            next_seq = self._get_next_sequence(add_period)
+            self.write({'tax_sequence': next_seq,
+                        'period_id': add_period.id,
+                        'addition': True,
+                        })
+
+    @api.model
     def _get_tax_id(self, tax_code, validate=True):
         if not tax_code:
             raise ValidationError(_('No tax code found!'))
@@ -215,8 +209,9 @@ class AccountTaxDetail(models.Model):
         return tax[0].id
 
     @api.model
-    def _prepare_tax_detail(self, invoice_tax_id, voucher_tax_id, partner_id,
-                            invoice_number, invoice_date, base, amount):
+    def _prepare_tax_detail_dict(self, invoice_tax_id, voucher_tax_id,
+                                 partner_id, invoice_number,
+                                 invoice_date, base, amount):
         vals = {
             'invoice_tax_id': invoice_tax_id,
             'voucher_tax_id': voucher_tax_id,
@@ -226,6 +221,14 @@ class AccountTaxDetail(models.Model):
             'base': base,
             'amount': amount,
         }
+        return vals
+
+    @api.model
+    def _prepare_tax_detail(self, invoice_tax_id, voucher_tax_id, partner_id,
+                            invoice_number, invoice_date, base, amount):
+        vals = self._prepare_tax_detail_dict(invoice_tax_id, voucher_tax_id,
+                                             partner_id, invoice_number,
+                                             invoice_date, base, amount)
         model = invoice_tax_id and \
             'account.invoice.tax' or 'account.voucher.tax'
         doc_tax_id = invoice_tax_id or voucher_tax_id
@@ -250,13 +253,13 @@ class AccountTaxDetail(models.Model):
         return domain
 
     @api.model
-    def _get_next_sequence(self, doc_type, period):
+    def _get_next_sequence(self, period):
         Sequence = self.env['ir.sequence']
         TaxDetailSequence = self.env['account.tax.detail.sequence']
-        domain = self._get_seq_search_domain(doc_type, period)
+        domain = self._get_seq_search_domain(self.doc_type, period)
         seq = TaxDetailSequence.search(domain, limit=1)
         if not seq:
-            seq = self._create_sequence(doc_type, period)
+            seq = self._create_sequence(self.doc_type, period)
         return int(Sequence.next_by_id(seq.sequence_id.id))
 
     @api.model

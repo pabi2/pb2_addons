@@ -57,6 +57,8 @@ class AccountTaxWizard(models.TransientModel):
         res['amount'] = tax.amount
         res['detail_ids'] = []
         for line in tax.detail_ids:
+            print line.base
+            print tax.base
             partner = line.partner_id or doc.partner_id
             vals = {
                 'tax_detail_id': line.id,

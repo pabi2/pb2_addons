@@ -30,7 +30,10 @@ class AccountVoucherTax(models.Model):
 
     @api.model
     def _prepare_voucher_tax_detail(self, voucher_tax):
-        return {'voucher_tax_id': voucher_tax.id}
+        ttype = voucher_tax.voucher_id.type
+        doc_type = ttype == 'receipt' and 'sale' or 'purchase'
+        return {'doc_type': doc_type,
+                'voucher_tax_id': voucher_tax.id}
 
     @api.model
     def create(self, vals):
