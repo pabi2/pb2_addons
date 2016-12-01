@@ -34,6 +34,7 @@
                             <field name="active"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -93,6 +94,7 @@
                         </group>
                         <group></group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -154,6 +156,7 @@
                             <field name="org_id"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -217,6 +220,7 @@
                             <field name="sector_id"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -360,6 +364,7 @@
                             <field name="active"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>

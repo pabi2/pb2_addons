@@ -35,6 +35,7 @@
                             <field name="tag_id"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -96,6 +97,7 @@
                             <field name="tag_id"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -165,6 +167,7 @@
                             <field name="tag_id"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -233,6 +236,7 @@
                             <field name="tag_id"/>
                         </group>
                     </group>
+                    <notebook></notebook>
                 </form>
             </field>
         </record>
@@ -323,9 +327,9 @@
                         <page string="Prototypes">
                             <field name="prototype_ids" nolabel="1">
                                 <tree editable="bottom">
-                                    <field name="name" />
-                                    <field name="code" />
-                                    <field name="prototype_type" />
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="prototype_type"/>
                                 </tree>
                             </field>
                         </page>
