@@ -269,6 +269,11 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
 class ResProjectPrototype(models.Model):
     _name = 'res.project.prototype'
 
+    project_id = fields.Many2one(
+        string='Project',
+        index=True,
+        ondelete='restrict',
+    )
     name = fields.Char(
         string='Name',
         required=True,
