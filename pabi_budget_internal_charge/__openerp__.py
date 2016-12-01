@@ -17,6 +17,7 @@
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',
         'views/account_budget_view.xml',
+        'views/account_activity_view.xml',
         'workflow/hr_expense_workflow.xml',
     ],
     'demo': [
