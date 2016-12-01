@@ -320,8 +320,7 @@
             <field name="model">res.project</field>
             <field name="inherit_id" ref="pabi_base.view_res_project_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[last()]" position="after">
-                    <notebook>
+                <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
                         <separator string="Expense" />
                         <field name="monitor_expense_ids">
@@ -348,7 +347,6 @@
                             </tree>
                         </field>
                     </page>
-                	</notebook>
                 </xpath>
             </field>
         </record>

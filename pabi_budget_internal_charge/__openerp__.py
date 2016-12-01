@@ -8,6 +8,7 @@
     'version': '0.1.0',
     'depends': [
         'hr_expense_auto_invoice',
+        'account_budget_activity',
         'pabi_budget_plan',
         'pabi_hr_expense',
     ],
