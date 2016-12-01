@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="internal_charge"/>
+                    <field name="inrev_activity_id" attrs="{'invisible': ['|', ('internal_charge', '=', False), ('budget_method', '!=', 'expense')]}"/>
                 </xpath>
             </field>
         </record>

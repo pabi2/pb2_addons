@@ -11,3 +11,7 @@ class AccountActivity(models.Model):
         help="For external internal charge, it will refer "
         "to income side internal charge",
     )
+    inrev_activity_id = fields.Many2one(
+        'account.activity',
+        string='Internal Revenue Activity'
+    )
