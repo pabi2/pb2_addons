@@ -108,7 +108,14 @@ class AccountBudget(ChartField, models.Model):
         domain=[('budget_method', '=', 'revenue')],
         help="Summary by Activity Group View",
     )
- 
+    cost_control_ids = fields.One2many(
+        'budget.unit.job.order',
+        'budget_id',
+        string='Job Order',
+        copy=True,
+        states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
+    )
 
     @api.multi
     def budget_validate(self):
@@ -210,6 +217,10 @@ class AccountBudgetLine(ChartField, models.Model):
         string='Display Name',
         readonly=True,
         compute='_compute_display_name',
+    )
+    breakdown_line_id = fields.Many2one(
+        'budget.unit.job.order.line',
+        string='Breakdown Job Order Line ref.',
     )
 
     @api.multi
