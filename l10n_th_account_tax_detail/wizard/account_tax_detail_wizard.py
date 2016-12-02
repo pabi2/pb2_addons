@@ -56,9 +56,10 @@ class AccountTaxWizard(models.TransientModel):
         res['base'] = tax.base
         res['amount'] = tax.amount
         res['detail_ids'] = []
+        # For refund, show negative number
+        sign = doc.journal_id.type in ('sale_refund', 'purchase_refund') \
+            and -1 or 1
         for line in tax.detail_ids:
-            print line.base
-            print tax.base
             partner = line.partner_id or doc.partner_id
             vals = {
                 'tax_detail_id': line.id,
@@ -69,8 +70,8 @@ class AccountTaxWizard(models.TransientModel):
                 'invoice_date': (line.invoice_date or
                                  date_doc or
                                  False),
-                'base': line.base or tax.base or False,
-                'amount': line.amount or tax.amount or False,
+                'base': line.base or (sign * tax.base) or False,
+                'amount': line.amount or (sign * tax.amount) or False,
                 'tax_sequence': line.tax_sequence,
                 'addition': line.addition,
             }
@@ -88,10 +89,10 @@ class AccountTaxWizard(models.TransientModel):
     def save_tax_detail(self):
         self.ensure_one()
         active_model = self._context.get('active_model')
-        if active_model == 'account.invoice.tax':
-            self.invoice_tax_id.detail_ids.unlink()
-        elif active_model == 'account.voucher.tax':
-            self.voucher_tax_id.detail_ids.unlink()
+        # if active_model == 'account.invoice.tax':
+        #     self.invoice_tax_id.detail_ids.unlink()
+        # elif active_model == 'account.voucher.tax':
+        #     self.voucher_tax_id.detail_ids.unlink()
         doc = False
         date_doc = False
         line_tax = False
@@ -106,8 +107,11 @@ class AccountTaxWizard(models.TransientModel):
         InvoiceTax = self.env['account.invoice.tax']
         TaxDetail = self.env['account.tax.detail']
         for line in self.detail_ids:
+            doc_type = doc.type in ('out_invoice', 'out_refund', 'receipt') \
+                and 'sale' or 'purchase'
             vals = TaxDetail._prepare_tax_detail(self.invoice_tax_id.id,
                                                  self.voucher_tax_id.id,
+                                                 doc_type,
                                                  line.partner_id.id,
                                                  line.invoice_number,
                                                  line.invoice_date,
@@ -129,10 +133,11 @@ class AccountTaxWizard(models.TransientModel):
                                               doc.company_id.id,
                                               date_doc,
                                               )['value']['tax_amount']
-        line_tax.write({'base': sum_base,
-                        'amount': sum_amount,
-                        'base_amount': base_amount,
-                        'tax_amount': tax_amount,
+        # use abs() when write to cover refund case when wizard show (-)
+        line_tax.write({'base': abs(sum_base),
+                        'amount': abs(sum_amount),
+                        'base_amount': abs(base_amount),
+                        'tax_amount': abs(tax_amount),
                         })
         # Update Supplier Invoice Number
         if active_model == 'account.invoice.tax':

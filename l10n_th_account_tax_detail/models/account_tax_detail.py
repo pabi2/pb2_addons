@@ -30,12 +30,15 @@ class InvoiceVoucherTaxDetail(object):
                     voucher_tax_id = tax.id
                     doc_date = doc.date
                     domain = [('voucher_tax_id', '=', tax.id)]
+                sign = doc.type in ('sale_refund') and -1 or 1
                 vals = TaxDetail._prepare_tax_detail(invoice_tax_id,
                                                      voucher_tax_id,
+                                                     'sale',
                                                      doc.partner_id.id,
                                                      doc.number,
                                                      doc_date,
-                                                     tax.base, tax.amount)
+                                                     sign * tax.base,
+                                                     sign * tax.amount)
                 detail = TaxDetail.search(domain)
                 if detail:
                     detail.write(vals)
@@ -210,11 +213,12 @@ class AccountTaxDetail(models.Model):
 
     @api.model
     def _prepare_tax_detail_dict(self, invoice_tax_id, voucher_tax_id,
-                                 partner_id, invoice_number,
+                                 doc_type, partner_id, invoice_number,
                                  invoice_date, base, amount):
         vals = {
             'invoice_tax_id': invoice_tax_id,
             'voucher_tax_id': voucher_tax_id,
+            'doc_type': doc_type,
             'partner_id': partner_id,
             'invoice_number': invoice_number,
             'invoice_date': invoice_date,
@@ -224,11 +228,12 @@ class AccountTaxDetail(models.Model):
         return vals
 
     @api.model
-    def _prepare_tax_detail(self, invoice_tax_id, voucher_tax_id, partner_id,
-                            invoice_number, invoice_date, base, amount):
-        vals = self._prepare_tax_detail_dict(invoice_tax_id, voucher_tax_id,
-                                             partner_id, invoice_number,
-                                             invoice_date, base, amount)
+    def _prepare_tax_detail(
+            self, invoice_tax_id, voucher_tax_id, doc_type,
+            partner_id, invoice_number, invoice_date, base, amount):
+        vals = self._prepare_tax_detail_dict(
+            invoice_tax_id, voucher_tax_id, doc_type,
+            partner_id, invoice_number, invoice_date, base, amount)
         model = invoice_tax_id and \
             'account.invoice.tax' or 'account.voucher.tax'
         doc_tax_id = invoice_tax_id or voucher_tax_id
