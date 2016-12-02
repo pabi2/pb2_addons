@@ -854,7 +854,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{schedule_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{schedule_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="328" y="48" width="192" height="21"/>
@@ -926,7 +926,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{create_date}]]></textFieldExpression>
+								<textFieldExpression class="java.util.Date"><![CDATA[$F{create_date}]]></textFieldExpression>
 							</textField>
 							<staticText>
 								<reportElement x="0" y="16" width="123" height="21"/>
@@ -979,7 +979,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{date_approve}]]></textFieldExpression>
+								<textFieldExpression class="java.util.Date"><![CDATA[$F{date_approve}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="278" height="21"/>
