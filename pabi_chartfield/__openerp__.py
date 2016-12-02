@@ -23,6 +23,7 @@
         'views/res_config_view.xml',
         'data/cost_control_data.xml',
         'name_search/ir.model.csv',
+        'wizard/cost_control_breakdown_wizard.xml',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
         'views/analytic_view.xml',
