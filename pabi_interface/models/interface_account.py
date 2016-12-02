@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import ValidationError, except_orm
+from openerp.exceptions import ValidationError
 
 
 class InterfaceAccountEntry(models.Model):
@@ -218,14 +218,15 @@ class InterfaceAccountEntry(models.Model):
         ctx.update({'company_id': self.company_id.id})
         periods = Period.find(dt=move_date)
         period_id = periods and periods[0].id or False
+        journal = self.journal_id
         ctx.update({
-            'journal_id': self.journal_id.id,
+            'journal_id': journal.id,
             'period_id': period_id,
         })
         move = AccountMove.create({
             'ref': self.name,
             'period_id': period_id,
-            'journal_id': self.journal_id.id,
+            'journal_id': journal.id,
             'date': move_date,
         })
         # Prepare Move Line
@@ -234,7 +235,7 @@ class InterfaceAccountEntry(models.Model):
                 'ref': self.name,
                 'operating_unit_id': line.operating_unit_id.id,
                 'move_id': move.id,
-                'journal_id': self.journal_id.id,
+                'journal_id': journal.id,
                 'period_id': period_id,
                 # Line Info
                 'name': line.name,
@@ -257,19 +258,19 @@ class InterfaceAccountEntry(models.Model):
             analytic_account = Analytic.create_matched_analytic(move_line)
             move_line.analytic_account_id = analytic_account.id
             # --
-            if analytic_account and not self.journal_id.analytic_journal_id:
+            if analytic_account and not journal.analytic_journal_id:
                 raise ValidationError(
                     _("You have to define an analytic journal on the "
-                      "'%s' journal!") % (self.journal_id.name,))
+                      "'%s' journal!") % (journal.name,))
 
             # For Tax Line, also add to account_tax_detail
             if line.tax_id:
                 tax_dict = TaxDetail._prepare_tax_detail_dict(
                     False, False,  # No invoice_tax_id, voucher_tax_id
+                    self._get_doc_type(journal),
                     line.partner_id.id, line.tax_invoice_number,
                     line.date, line.tax_base_amount, line.debit or line.credit)
                 tax_dict['tax_id'] = line.tax_id.id
-                # tax_dict['doc_type'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
                 detail = TaxDetail.create(tax_dict)
                 detail._set_next_sequence()
             # --
@@ -278,6 +279,19 @@ class InterfaceAccountEntry(models.Model):
                     'state': 'done'})
         return move
 
+    @api.model
+    def _get_doc_type(self, journal):
+        doc_type = False  # Determine doctype based on journal type
+        if journal.type in ('sale', 'sale_refund', 'sale_debitnote'):
+            doc_type = 'sale'
+        elif journal.type in \
+                ('purchase', 'purchase_refund', 'purchase_debitnote'):
+            doc_type = 'purchase'
+        else:
+            raise ValidationError(
+                _("The selected journal type is not supported: %s") %
+                (journal.name,))
+        return doc_type
 
 class InterfaceAccountEntryLine(models.Model):
     _name = 'interface.account.entry.line'
