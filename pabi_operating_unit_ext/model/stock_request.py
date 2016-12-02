@@ -10,6 +10,11 @@ class StockRequest(models.Model):
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 
+    operating_unit_borrow_view_id = fields.Many2one(
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+
     @api.model
     def _prepare_inv(self, expense):
         res = super(StockRequest, self)._prepare_inv(expense)

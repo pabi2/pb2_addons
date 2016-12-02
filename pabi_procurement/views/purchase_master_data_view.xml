@@ -335,6 +335,7 @@
                 <form string="Purchase Committee Type">
                     <group>
                         <field name="name"/>
+                        <field name="code"/>
                         <field name="web_method_ids"/>
                     </group>
                 </form>
@@ -346,6 +347,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Committee Type">
                     <field name="name"/>
+                    <field name="code"/>
                     <field name="web_method_ids"/>
                 </tree>
             </field>
@@ -356,6 +358,7 @@
             <field name="arch" type="xml">
                 <search string="Search Purchase Committee Type">
                     <field name="name" string="Purchase Committee Type"/>
+                    <field name="code" string="Purchase Committee Type Code"/>
                     <field name="web_method_ids" string="Purchase Method"/>
                 </search>
             </field>
