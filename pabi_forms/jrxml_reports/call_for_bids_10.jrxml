@@ -1,181 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="7df4ce44-2425-4fc4-b78c-6306cf0d8212">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
 	<property name="ireport.zoom" value="0.6997610703146053"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="36"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
-	<style name="table">
+	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 1">
+	<style name="table 1" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 2">
+	<style name="table 2" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 3">
+	<style name="table 3" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 3_TH" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 3_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 3_CH" mode="Opaque" backcolor="#FFBFBF">
+	<style name="table 3_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 4">
+	<style name="table 4" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 4_TH" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 4_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<topPen lineWidth="0.5" lineColor="#000000"/>
 			<bottomPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 4_CH" mode="Opaque" backcolor="#FFBFBF">
+	<style name="table 4_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
 		<box>
 			<topPen lineWidth="0.5" lineColor="#000000"/>
 			<bottomPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<topPen lineWidth="0.5" lineColor="#000000"/>
 			<bottomPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 5">
+	<style name="table 5" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 5_TH" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 5_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 5_CH" mode="Opaque" backcolor="#FFBFBF">
+	<style name="table 5_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 6">
+	<style name="table 6" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF">
+	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF">
+	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
-		<paragraph lineSpacing="Single"/>
 	</style>
-	<subDataset name="pr_detail" uuid="4a7322e7-1a8e-4cbd-93e0-242abd268cd0">
+	<subDataset name="pr_detail">
 		<parameter name="ids" class="java.lang.Integer">
 			<parameterDescription><![CDATA[]]></parameterDescription>
 		</parameter>
@@ -225,7 +197,7 @@ ORDER BY id]]>
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>
 	</subDataset>
-	<subDataset name="request_approval" uuid="7d2b9f5d-ff6e-47af-95f0-c362df468cb4">
+	<subDataset name="request_approval">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
@@ -276,7 +248,7 @@ WHERE pd.id = $P{ids}]]>
 			<fieldDescription><![CDATA[Date Approved]]></fieldDescription>
 		</field>
 	</subDataset>
-	<subDataset name="committee" uuid="65517532-aa99-4769-917b-cd65a5f685f5">
+	<subDataset name="committee">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT distinct requisition_id as pd_id
@@ -285,7 +257,7 @@ WHERE requisition_id = $P{ids}]]>
 		</queryString>
 		<field name="pd_id" class="java.lang.Integer"/>
 	</subDataset>
-	<subDataset name="committee2" uuid="db065b41-7002-47d9-924c-be6e04ff9632">
+	<subDataset name="committee2">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT DISTINCT prc.sequence, prc.name, prc.position
@@ -303,7 +275,7 @@ ORDER BY prc.sequence]]>
 			<fieldDescription><![CDATA[Position]]></fieldDescription>
 		</field>
 	</subDataset>
-	<subDataset name="committee3" uuid="dcfe44d3-9ec4-4c67-a168-a1253b7c2313">
+	<subDataset name="committee3">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT DISTINCT prc.sequence, prc.name, prc.position
@@ -543,202 +515,180 @@ WHERE $X{IN, pd.id, PIDS}]]>
 	<title>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="2" width="556" height="49" uuid="925043f0-4a26-4da9-ab9b-37c483dfb548"/>
-				<textElement textAlignment="Center">
+				<reportElement x="0" y="2" width="556" height="49"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="18" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[แบบขออนุมัติจัดจ้างออกแบบและควบคุมงาน โดยวิธีตกลง
 สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="49" width="555" height="1" uuid="b2edcf5c-bee1-47b6-a094-5f6c7af472bb"/>
+				<reportElement x="0" y="49" width="555" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dashed"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="434" y="19" width="54" height="29" uuid="06e302a3-43f0-441f-bb18-2da0f125d3c6"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="434" y="19" width="54" height="29"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="18" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[เลขที่]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="465" y="19" width="225" height="29" uuid="352db929-9691-4bb4-baa2-ea1999f86e00"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="465" y="19" width="225" height="29"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="18" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pd_number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pd_number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<detail>
 		<band height="136" splitType="Stretch">
 			<staticText>
-				<reportElement x="1" y="0" width="87" height="22" uuid="e0d8f107-4f2d-48c3-b3c9-51a0a77b809e"/>
-				<textElement>
+				<reportElement x="1" y="0" width="87" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ศูนย์ : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="16" width="51" height="22" uuid="7e77437b-86de-418f-a3ed-0b134164d208"/>
-				<textElement>
+				<reportElement x="1" y="16" width="51" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ส่วนที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="28" y="16" width="34" height="22" uuid="c96db63a-4a3f-4802-af87-2daad4ed2cb0"/>
-				<textElement>
+				<reportElement x="28" y="16" width="34" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="38" y="16" width="187" height="22" uuid="6a66a44e-57e6-4e5c-b23d-f0a0f8d34e78"/>
-				<textElement>
+				<reportElement x="38" y="16" width="187" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ข้อมูลของผู้ขอจัดหาพัสดุ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="34" width="92" height="21" uuid="98e5eeb8-a6d9-48c5-af3d-12e10e10c9ba"/>
-				<textElement>
+				<reportElement x="1" y="34" width="92" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ผู้ขอ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="157" y="34" width="106" height="21" uuid="d43410c6-cbc6-4cb3-ac28-cd6b5a7f49a3"/>
-				<textElement>
+				<reportElement x="157" y="34" width="106" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ตำแหน่ง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="328" y="34" width="91" height="21" uuid="f20c7438-5982-478f-9890-36706cbcf19b"/>
-				<textElement>
+				<reportElement x="328" y="34" width="91" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[สังกัดงาน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="49" width="190" height="21" uuid="9268d366-e674-4e6d-87a5-2526bfefe76d"/>
-				<textElement>
+				<reportElement x="1" y="49" width="190" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[มีความประสงค์ที่จะขออนุมัติ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="64" width="133" height="21" uuid="724857df-624e-4b94-8208-178251d1e9e5"/>
-				<textElement>
+				<reportElement x="1" y="64" width="133" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ในงบประมาณรวม]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="79" width="133" height="21" uuid="5d03f333-a4b9-4ca2-8c5c-fda49260c78e"/>
-				<textElement>
+				<reportElement x="1" y="79" width="133" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[สถานที่ส่งมอบ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="94" width="177" height="21" uuid="bb0f89ee-7387-470a-a7b1-e5aa1fd5a441"/>
-				<textElement>
+				<reportElement x="1" y="94" width="177" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[โดยมีรายการดังนี้]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="25" y="34" width="197" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="80b2a448-503c-41a1-9a4c-fafbcce179bc"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="25" y="34" width="197" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{requested_by}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="199" y="34" width="160" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="66268eaa-af24-4dbf-a487-1a0862380e1f"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="199" y="34" width="160" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{position}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="374" y="34" width="307" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="17225f32-f705-446a-9281-986ce9ffb2be"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="374" y="34" width="307" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{department}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{department}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="112" y="49" width="428" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="68b11177-6249-48a8-8a16-66f664bf4d69"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="112" y="49" width="428" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{objective}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{objective}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="78" y="64" width="250" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="e0d2580c-56db-44d4-bd92-06a1ae2fc1a3"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="78" y="64" width="250" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{amount_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="64" y="79" width="493" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="2d8be31e-6e61-48d9-b74d-d6d1b70afbe9"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="64" y="79" width="493" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{deliver_to}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{deliver_to}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="28" y="0" width="477" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="8f9c2729-210f-4b60-a46f-b3de6ae2073e"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="28" y="0" width="477" height="22" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ou_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ou_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="328" y="49" width="177" height="21" uuid="34185706-2421-427e-bf43-47f5a0bf1bb6"/>
-				<textElement>
+				<reportElement x="328" y="49" width="177" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[วันที่ต้องการพัสดุ]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement key="table 3" x="1" y="115" width="554" height="21" uuid="389383d0-54f3-447b-811d-5fd084a4e512"/>
+				<reportElement key="table 3" x="1" y="115" width="554" height="21"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="pr_detail" uuid="2c5b83a6-4e42-4053-9a79-885968c464b0">
+					<datasetRun subDataset="pr_detail">
 						<datasetParameter name="ids">
 							<datasetParameterExpression><![CDATA[$F{pd_id}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="553" uuid="cf1b421c-d94c-4f85-9ed4-c99cf649804a">
+					<jr:column width="553">
 						<jr:tableHeader height="33" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -747,73 +697,67 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<staticText>
-								<reportElement x="0" y="0" width="43" height="33" uuid="da961383-30af-4b91-a41a-d48aae302e5e"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="0" y="0" width="43" height="33"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[ลำดับที่
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="72" y="0" width="221" height="33" uuid="e98ad2cb-450b-41d2-89a1-953f8d6a3b1f"/>
-								<textElement textAlignment="Left" verticalAlignment="Middle">
+								<reportElement x="72" y="0" width="221" height="33"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[รายละเอียดพัสดุ/งานจ้าง/การเช่า
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="225" y="0" width="98" height="33" uuid="fdb2de01-cd2f-427d-ba37-3bbcf202a0ee"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="225" y="0" width="98" height="33"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[ราคาประมาณ
 ต่อหน่วย]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="313" y="0" width="96" height="33" uuid="efb531b2-d4a4-40d1-be11-c6ff9d0d3260"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="313" y="0" width="96" height="33"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[PR Number
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="404" y="0" width="48" height="33" uuid="e4b37785-7568-43a2-9410-2b0be7782f41"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="404" y="0" width="48" height="33"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[จำนวน
 ]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="463" y="0" width="90" height="33" uuid="255938c9-d98e-4d68-abc7-70849aa179ab"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="463" y="0" width="90" height="33"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" isStrikeThrough="false" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[ราคารวมโดยประมาณ
 (บาท/รวม Vat ถ้ามี) ]]></text>
 							</staticText>
 							<line>
-								<reportElement x="43" y="0" width="1" height="33" uuid="5b8bb473-1bf1-4f43-a847-ee1149ac86bc"/>
+								<reportElement x="43" y="0" width="1" height="33"/>
 							</line>
 							<line>
-								<reportElement x="224" y="0" width="1" height="33" uuid="25bb3f7a-b74c-4cf8-be0a-b96baf8dfeb3"/>
+								<reportElement x="224" y="0" width="1" height="33"/>
 							</line>
 							<line>
-								<reportElement x="323" y="0" width="1" height="33" uuid="6c53dadc-1970-4e0b-b02e-a5c6c3eb38fe"/>
+								<reportElement x="323" y="0" width="1" height="33"/>
 							</line>
 							<line>
-								<reportElement x="394" y="0" width="1" height="33" uuid="71fedc40-5a03-4cf7-b537-50db0169d633"/>
+								<reportElement x="394" y="0" width="1" height="33"/>
 							</line>
 							<line>
-								<reportElement x="462" y="0" width="1" height="33" uuid="d6cdb95b-9ef5-4cc5-a9d4-98ce54211f7a"/>
+								<reportElement x="462" y="0" width="1" height="33"/>
 							</line>
 						</jr:tableHeader>
 						<jr:tableFooter height="7" rowSpan="1">
@@ -823,19 +767,19 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<line>
-								<reportElement x="43" y="0" width="1" height="7" uuid="d71c9dd0-36ba-4e96-987a-beced1c5afa8"/>
+								<reportElement x="43" y="0" width="1" height="7"/>
 							</line>
 							<line>
-								<reportElement x="224" y="0" width="1" height="7" uuid="9ed2ba0a-a6d5-4b72-b3d0-8d9f25877b7c"/>
+								<reportElement x="224" y="0" width="1" height="7"/>
 							</line>
 							<line>
-								<reportElement x="323" y="0" width="1" height="7" uuid="15b06b0c-0e46-4c36-986d-8158a1b58b94"/>
+								<reportElement x="323" y="0" width="1" height="7"/>
 							</line>
 							<line>
-								<reportElement x="394" y="0" width="1" height="7" uuid="73d8847f-3f51-4bc3-a833-282faae174b4"/>
+								<reportElement x="394" y="0" width="1" height="7"/>
 							</line>
 							<line>
-								<reportElement x="462" y="0" width="1" height="7" uuid="1b04c5d3-8ccc-40a6-b0f3-ee1ef594a5f6"/>
+								<reportElement x="462" y="0" width="1" height="7"/>
 							</line>
 						</jr:tableFooter>
 						<jr:detailCell height="21" rowSpan="1">
@@ -845,236 +789,215 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="47" height="21" uuid="ba68e9c2-a0e7-4fa1-80eb-512a9e13e95c"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="0" y="0" width="47" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{COLUMN_SUM}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{COLUMN_SUM}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="57" y="0" width="177" height="21" uuid="078181e8-fff8-47fb-8aba-a433b693b025"/>
-								<textElement textAlignment="Left" verticalAlignment="Middle">
+								<reportElement x="57" y="0" width="177" height="21"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement x="176" y="0" width="135" height="21" uuid="5d8f8d44-0f4f-4dd3-a800-faa9de074eaf"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle">
+								<reportElement x="176" y="0" width="135" height="21"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{price_unit}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{price_unit}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="311" y="0" width="95" height="21" uuid="27ca8322-5372-4eb0-9eaa-e4c84da921fa"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="311" y="0" width="95" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{pr_no}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{pr_no}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0" isBlankWhenNull="true">
-								<reportElement x="297" y="0" width="127" height="21" uuid="41b1bdc0-dff3-48c5-95f1-557c50e77c25"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle">
+								<reportElement x="297" y="0" width="127" height="21"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{product_qty}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{product_qty}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement x="400" y="0" width="143" height="21" uuid="d8a5509e-dc00-4e1d-98e6-337110072efd"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle">
+								<reportElement x="400" y="0" width="143" height="21"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{price_subtotal}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{price_subtotal}]]></textFieldExpression>
 							</textField>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="43" y="0" width="1" height="21" uuid="72f305a0-081e-4393-a30e-d4a733bf3447"/>
+								<reportElement stretchType="RelativeToTallestObject" x="43" y="0" width="1" height="21"/>
 							</line>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="224" y="0" width="1" height="21" uuid="09fe2292-8946-4eca-95c8-94880d225356"/>
+								<reportElement stretchType="RelativeToTallestObject" x="224" y="0" width="1" height="21"/>
 							</line>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="323" y="0" width="1" height="21" uuid="0e604226-c285-4abc-bb10-ca9f25d3ea3c"/>
+								<reportElement stretchType="RelativeToTallestObject" x="323" y="0" width="1" height="21"/>
 							</line>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="394" y="0" width="1" height="21" uuid="caee8047-4e4e-4b55-af82-e0ab5481a08d"/>
+								<reportElement stretchType="RelativeToTallestObject" x="394" y="0" width="1" height="21"/>
 							</line>
 							<line>
-								<reportElement stretchType="RelativeToTallestObject" x="462" y="0" width="1" height="21" uuid="03205ad1-886d-48c9-bca9-896935b7a6a8"/>
+								<reportElement stretchType="RelativeToTallestObject" x="462" y="0" width="1" height="21"/>
 							</line>
 							<textField isBlankWhenNull="true">
-								<reportElement x="427" y="0" width="68" height="21" uuid="d75db33b-c7c1-4b6d-8674-983d7e772df0"/>
-								<textElement verticalAlignment="Middle">
+								<reportElement x="427" y="0" width="68" height="21"/>
+								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{unit}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{unit}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="399" y="49" width="136" height="21" uuid="d6ad6d89-750a-47c7-8ef0-179ca5702536"/>
-				<textElement>
+				<reportElement x="399" y="49" width="136" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{schedule_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{schedule_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="141" y="64" width="87" height="21" uuid="be789acf-0a70-4a9f-aa4a-7dc8d5906f9e"/>
-				<textElement>
+				<reportElement x="141" y="64" width="87" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[บาท]]></text>
 			</staticText>
 		</band>
 		<band height="21">
 			<staticText>
-				<reportElement x="1" y="0" width="177" height="21" uuid="1c511569-8c7f-414e-9a00-c6edad704ee4"/>
-				<textElement>
+				<reportElement x="1" y="0" width="177" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[เหตุผลในการจัดซื้อ/จ้าง/เช่า ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="112" y="0" width="439" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="9faced54-ca9a-4c5b-89b2-765e8b5b0f69"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="112" y="0" width="439" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{objective}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{objective}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="21">
 			<componentElement>
-				<reportElement key="table 3" x="1" y="0" width="554" height="21" uuid="d52f91e0-8931-4c78-8dd2-6497d335f196"/>
+				<reportElement key="table 3" x="1" y="0" width="554" height="21"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="request_approval" uuid="da770435-e0a1-4481-abb1-6de5e93ed1d2">
+					<datasetRun subDataset="request_approval">
 						<datasetParameter name="ids">
 							<datasetParameterExpression><![CDATA[$F{pd_id}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="277" uuid="1c33bfd6-4b16-4421-ae79-ea693a9104d6">
+					<jr:column width="277">
 						<jr:columnHeader height="25" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="277" height="25" uuid="f1be6126-6b8f-40ff-8e04-cbb37fce9304"/>
+								<reportElement x="0" y="0" width="277" height="25"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
 									<bottomPen lineWidth="1.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[ผู้ขอจัดหา]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell height="41" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="277" height="21" uuid="76b58bd1-ec75-4290-92ac-4fb4d3222344"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="0" y="0" width="277" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{requested_by}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by}]]></textFieldExpression>
 							</textField>
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement x="129" y="19" width="143" height="21" uuid="d2e8db4b-74af-4138-b2a1-31303c2e568b"/>
-								<textElement>
+								<reportElement x="129" y="19" width="143" height="21"/>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{create_date}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{create_date}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="5" y="19" width="115" height="21" uuid="616e447f-cd1c-4aaf-bc64-9cf1a8560577"/>
-								<textElement textAlignment="Right">
+								<reportElement x="5" y="19" width="115" height="21"/>
+								<textElement textAlignment="Right" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[วันที่]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="0" y="0" width="277" height="41" uuid="217fc869-b786-453f-bc50-7693de481107"/>
+								<reportElement x="0" y="0" width="277" height="41"/>
 								<box>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="1.0"/>
 									<bottomPen lineWidth="1.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
-								<textElement>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="8"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[]]></text>
 							</staticText>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="277" uuid="9bd12119-14f6-4088-9ad0-6fb77cab3427">
+					<jr:column width="277">
 						<jr:columnHeader height="25" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="277" height="25" uuid="fa55fe91-87b8-444b-ac61-3949028efaa7"/>
+								<reportElement x="0" y="0" width="277" height="25"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
 									<bottomPen lineWidth="1.0"/>
 									<rightPen lineWidth="1.0"/>
 								</box>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[ผู้มีอำนาจอนุมัติ]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell height="41" rowSpan="1">
 							<staticText>
-								<reportElement x="1" y="19" width="119" height="21" uuid="7f3d1d46-a03b-467d-a33c-7224645c1cfb"/>
-								<textElement textAlignment="Right">
+								<reportElement x="1" y="19" width="119" height="21"/>
+								<textElement textAlignment="Right" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[วันที่]]></text>
 							</staticText>
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement x="127" y="19" width="147" height="21" uuid="ef84ba7f-be6b-4f08-beeb-3bf78d5e1231"/>
-								<textElement>
+								<reportElement x="127" y="19" width="147" height="21"/>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{date_approve}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{date_approve}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="274" height="21" uuid="f67e0a00-d8cf-44ad-bf78-4b833284d891"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
+								<reportElement x="0" y="0" width="274" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{approver}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{approver}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="0" y="0" width="277" height="41" uuid="9fd6c49e-86ad-4b12-8f52-e01d97405777"/>
+								<reportElement x="0" y="0" width="277" height="41"/>
 								<box>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="1.0"/>
 									<bottomPen lineWidth="1.0"/>
 									<rightPen lineWidth="1.0"/>
 								</box>
-								<textElement>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="8"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<text><![CDATA[]]></text>
 							</staticText>
@@ -1085,316 +1008,288 @@ WHERE $X{IN, pd.id, PIDS}]]>
 		</band>
 		<band height="37">
 			<staticText>
-				<reportElement x="38" y="0" width="164" height="22" uuid="56800f96-17b2-4709-ac68-186272c7d61a"/>
-				<textElement>
+				<reportElement x="38" y="0" width="164" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[สำหรับงานจัดหาพัสดุ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="0" width="82" height="22" uuid="393e11f0-9afa-4fb9-86c6-484108eaf8a0"/>
-				<textElement>
+				<reportElement x="1" y="0" width="82" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ส่วนที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="28" y="0" width="65" height="22" uuid="7eba256b-dbbf-47cf-b580-6a38d0c5f9ed"/>
-				<textElement>
+				<reportElement x="28" y="0" width="65" height="22"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="16" width="539" height="21" uuid="ad1f804d-0ab3-4a32-aa33-d6301e3b7031"/>
-				<textElement>
+				<reportElement x="1" y="16" width="539" height="21"/>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ขออนุมัติแต่งตั้ง คณะกรรมการ โดยมีองค์ประกอบดังต่อไปนี้]]></text>
 			</staticText>
 		</band>
 		<band height="139">
 			<staticText>
-				<reportElement x="45" y="1" width="392" height="27" uuid="daa853a2-9bfb-4e92-bc8b-e298d94980d8"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<reportElement x="45" y="1" width="392" height="27"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[คณะกรรมการดำเนินการจ้างออกแบบและควบคุมงาน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="278" y="1" width="276" height="27" uuid="39a16519-6a8e-469a-b626-b64b5f6a143a"/>
+				<reportElement x="278" y="1" width="276" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" isBold="true" isUnderline="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[คณะกรรมการตรวจและรับมอบงาน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="28" width="277" height="100" uuid="20aeed8c-ea88-4ba7-99d3-367bc3e1e87c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="28" width="277" height="100"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="278" y="28" width="276" height="100" uuid="fa046997-1d6e-4ee9-a0b5-50ea73daae9a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="278" y="28" width="276" height="100"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement key="table 6" x="1" y="35" width="277" height="80" uuid="15b895d8-8337-48c2-8b2c-2743d78accac"/>
+				<reportElement key="table 6" x="1" y="35" width="277" height="80"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="committee3" uuid="0cb4a596-3682-4a1e-b5d7-62bb915c04fa">
+					<datasetRun subDataset="committee3">
 						<datasetParameter name="ids">
 							<datasetParameterExpression><![CDATA[$F{pd_id}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="14" uuid="494b9aaa-0e27-4a34-b3f9-3cc438ff7577">
+					<jr:column width="14">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="14" height="21" uuid="fd2f977c-1202-4947-b29f-78622db616ca"/>
+								<reportElement x="0" y="0" width="14" height="21"/>
 								<box>
 									<leftPen lineWidth="0.0"/>
 								</box>
-								<textElement textAlignment="Center">
+								<textElement textAlignment="Center" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="276" uuid="bdd8a58a-0f0d-4a04-8d9b-b2fc883aa72b">
+					<jr:column width="276">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="247" height="21" uuid="e38550c2-ea05-473a-9ea3-9f5c8b3b6156"/>
-								<textElement>
+								<reportElement x="0" y="0" width="247" height="21"/>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="173" y="0" width="103" height="21" uuid="6a05e777-85da-42b4-a768-9353d41c3c5d"/>
-								<textElement>
+								<reportElement x="173" y="0" width="103" height="21"/>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{position}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement key="table 5" x="278" y="35" width="277" height="80" uuid="fb98fe9f-5c32-49d0-98e5-f9da136f5156"/>
+				<reportElement key="table 5" x="278" y="35" width="277" height="80"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="committee2" uuid="05034b17-4ef4-49e2-9e07-f6f50a55e2e1">
+					<datasetRun subDataset="committee2">
 						<datasetParameter name="ids">
 							<datasetParameterExpression><![CDATA[$F{pd_id}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="14" uuid="58fc9abd-0253-4d13-9ede-707d9a4adb70">
+					<jr:column width="14">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="14" height="21" uuid="d3ac615f-d9c6-4646-ace3-895af7d7b3f1"/>
-								<textElement textAlignment="Center">
+								<reportElement x="0" y="0" width="14" height="21"/>
+								<textElement textAlignment="Center" lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{PAGE_COUNT}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_COUNT}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="264" uuid="1d326da4-d02a-4782-97a4-c5a35cb27c15">
+					<jr:column width="264">
 						<jr:detailCell height="21" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="240" height="21" uuid="f434b2da-1956-4240-81ed-c5e6dc9a24a9"/>
-								<textElement>
+								<reportElement x="0" y="0" width="240" height="21"/>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement x="161" y="0" width="103" height="21" uuid="80943e5a-fdf0-4f98-9615-9f2da721a464"/>
-								<textElement>
+								<reportElement x="161" y="0" width="103" height="21"/>
+								<textElement lineSpacing="Single">
 									<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{position}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
 			<staticText>
-				<reportElement x="1" y="1" width="277" height="27" uuid="96b71479-32fb-483f-af06-5ca906837ec5"/>
+				<reportElement x="1" y="1" width="277" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="28" width="553" height="100" uuid="1038ba26-f560-4c1a-ad19-478f8830a6de"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="28" width="553" height="100"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font fontName="TH SarabunPSK"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 		<band height="74">
 			<rectangle>
-				<reportElement x="0" y="13" width="554" height="61" uuid="9e240828-d9b8-4078-91cb-bfe81c3a60e2"/>
+				<reportElement x="0" y="13" width="554" height="61"/>
 			</rectangle>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="273" y="50" width="173" height="21" uuid="bea57835-7ea3-4a73-8e8a-f6cbf7f0ebdd"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+				<reportElement x="273" y="50" width="173" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{verified_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{verified_date}]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="0" y="13" width="554" height="20" uuid="44d7e269-e560-4187-a3d8-8c103c36dcab"/>
+				<reportElement x="0" y="13" width="554" height="20"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="374" y="13" width="184" height="21" uuid="e0ebfe0a-808f-4e58-9359-e645e9dcb751"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="374" y="13" width="184" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[เสนอผู้มีอำนาจอนุมัติ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="28" y="13" width="392" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="7e3158ca-3d18-4eb6-a0e1-7f8801901237"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+				<reportElement mode="Transparent" x="28" y="13" width="392" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[เจ้าหน้าที่พัสดุหรือผู้ที่ได้รับมอบหมาย]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="437" y="50" width="44" height="21" uuid="e5c47cbd-fba2-4341-85aa-b99bec7bc3b4"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<reportElement x="437" y="50" width="44" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="13" width="184" height="21" uuid="f7bda5e4-1468-4212-a281-a27335549f01"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="187" y="13" width="184" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[เสนอหัวหน้าเจ้าหน้าที่พัสดุหรือผู้ที่ได้รับมอบหมาย]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="460" y="50" width="173" height="21" uuid="382a3e47-3008-44b3-a5d6-0996c7bd59d6"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+				<reportElement x="460" y="50" width="173" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{date_of_approval}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_of_approval}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="75" y="50" width="161" height="21" uuid="cab1fbb6-951a-4a9d-84ea-0a79662fb094"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+				<reportElement x="75" y="50" width="161" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="13" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{responsible_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{responsible_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="52" y="50" width="48" height="21" uuid="8f470f29-de86-428b-bc84-dde5370536eb"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<reportElement x="52" y="50" width="48" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<line>
-				<reportElement x="371" y="13" width="1" height="61" uuid="17a9b9b2-cf23-4aba-8647-dd75a04a9dec"/>
+				<reportElement x="371" y="13" width="1" height="61"/>
 			</line>
 			<line>
-				<reportElement x="186" y="13" width="1" height="61" uuid="96e029de-85d1-4326-b55a-7bfbde0389fb"/>
+				<reportElement x="186" y="13" width="1" height="61"/>
 			</line>
 			<staticText>
-				<reportElement x="250" y="50" width="44" height="21" uuid="76aad05f-9f4b-4520-a683-1681a30782d6"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<reportElement x="250" y="50" width="44" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="24" y="33" width="251" height="21" uuid="067b3fbc-3299-4136-af4c-bcd5311b14f2"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
+				<reportElement x="24" y="33" width="251" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["ลงชื่อ "
+				<textFieldExpression class="java.lang.String"><![CDATA["ลงชื่อ "
 +
 ($F{responsible} == null ?  "_________________________": "<u>" + $F{responsible} + "</u>")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="207" y="33" width="255" height="21" uuid="8bd06b7c-2275-4d1f-b693-4d9eb23ff7e9"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
+				<reportElement x="207" y="33" width="255" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["ลงชื่อ "
+				<textFieldExpression class="java.lang.String"><![CDATA["ลงชื่อ "
 +
 ($F{verified_by} == null ?  "_________________________": "<u>" + $F{verified_by} + "</u>")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="393" y="33" width="229" height="21" uuid="1971d127-7aa0-4f4d-905c-b9fb4f2614a5"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
+				<reportElement x="393" y="33" width="229" height="21"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 					<font fontName="TH SarabunPSK" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["ลงชื่อ "
+				<textFieldExpression class="java.lang.String"><![CDATA["ลงชื่อ "
 +
 ($F{approver} == null ?  "_________________________": "<u>" + $F{approver} + "</u>")]]></textFieldExpression>
 			</textField>
