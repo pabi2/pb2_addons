@@ -481,6 +481,10 @@ class PurchaseCommitteeType(models.Model):
         string='Purchase Committee Type',
         required=True,
     )
+    code = fields.Char(
+        string='Purchase Committee Type Code',
+        required=True,
+    )
     web_method_ids = fields.Many2many(
         string='PRWeb Method',
         comodel_name='prweb.purchase.method',

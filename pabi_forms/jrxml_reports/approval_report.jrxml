@@ -248,10 +248,7 @@ LEFT JOIN res_partner_title rpt ON rpt.id = rp.title
 LEFT JOIN operating_unit ou ON po.operating_unit_id = ou.id
 WHERE po.requisition_id = $P{ids} AND order_type LIKE 'quotation' AND po.state != 'cancel'
 GROUP BY ou.name,CONCAT((COALESCE(rpt.name || ' ','')),rp.name)
-) as tmp
-
-
-]]>
+) as tmp]]>
 		</queryString>
 		<field name="count" class="java.lang.Long">
 			<fieldDescription><![CDATA[Repeat]]></fieldDescription>
@@ -305,11 +302,12 @@ WHERE pr.id = $P{ids}]]>
 		<queryString>
 			<![CDATA[SELECT prc.sequence, prc.name, prc.position
 FROM purchase_requisition_committee prc
-left join purchase_requisition pr on pr.id = prc.committee_type_id
-WHERE requisition_id = $P{ids} and
+LEFT JOIN purchase_committee_type pct
+ON pct.id = prc.committee_type_id
+WHERE prc.requisition_id = $P{ids} and
 CASE $P{method_id}
-WHEN 3 THEN committee_type_id = 5
-WHEN 5 THEN committee_type_id = 2
+WHEN 3 THEN pct.code = '5'
+WHEN 5 THEN pct.code = '2'
 END
 ORDER BY prc.sequence]]>
 		</queryString>
