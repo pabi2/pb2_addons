@@ -175,6 +175,11 @@
                     <field name="m10" sum="m10"/>
                     <field name="m11" sum="m11"/>
                     <field name="m12" sum="m12"/>
+                    <field name="period_split_line_ids"/>
+                    <button name="%(account_budget_activity.act_account_budget_line_split_period_view)d"
+                            string="Split Budget Line Period Wise"
+                            type="action"
+                            icon="gtk-justify-fill"/>
 
                 </tree>
             </field>
