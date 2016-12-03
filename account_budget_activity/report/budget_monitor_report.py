@@ -73,11 +73,15 @@ class BudgetMonitorReport(models.Model):
         'product.activity',
         string='Product/Activity'
     )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+    )
 
     def _get_sql_view(self):
         sql_view = """
             select row_number() over (order by doc_ref) as id,
-            budget_method, user_id, fiscalyear_id, doc_ref, doc_id,
+            budget_method, user_id, fiscalyear_id, doc_ref, doc_id, period_id,
             planned_amount, released_amount, amount_so_commit,
             amount_pr_commit, amount_po_commit, amount_exp_commit,
             amount_actual, amount_balance,
@@ -86,7 +90,7 @@ class BudgetMonitorReport(models.Model):
             from
             (select budget_method, user_id, fiscalyear_id, doc_ref,
             'account.budget,' || budget_id as doc_id,
-            planned_amount, released_amount,
+            planned_amount, released_amount, period_id,
             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
             0.0 as amount_po_commit, 0.0 as amount_exp_commit,
             0.0 as amount_actual, released_amount as amount_balance,
@@ -96,6 +100,7 @@ class BudgetMonitorReport(models.Model):
             where state in ('validate', 'done')
             UNION
             select budget_method, user_id, fiscalyear_id, doc_ref, doc_id,
+            period_id,
             0.0 as planned_amount, 0.0 as released_amount,
             amount_so_commit, amount_pr_commit,
             amount_po_commit, amount_exp_commit,

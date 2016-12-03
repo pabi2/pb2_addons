@@ -85,6 +85,10 @@ class AccountAnalyticLine(models.Model):
         string='Doc Ref',
         readonly=True,
     )
+    period_id = fields.Many2one(
+        'account.period',
+        string="Period",
+    )
 
     @api.multi
     @api.depends('date')
@@ -104,7 +108,20 @@ class AccountAnalyticLine(models.Model):
             if analytic:
                 domain = Analytic.get_analytic_search_domain(analytic)
                 vals.update(dict((x[0], x[2]) for x in domain))
+        if vals.get('date', False):
+            periods = self.env['account.period'].find(vals['date'])
+            period = periods and periods[0] or False
+            vals.update({'period_id': period.id})
         return super(AccountAnalyticLine, self).create(vals)
+
+    @api.model
+    def write(self, vals):
+        for rec in self:
+            if vals.get('date', rec.date):
+                periods = self.env['account.period'].find(vals['date'])
+                period = periods and periods[0] or False
+                vals.update({'period_id': period.id})
+        return super(AccountAnalyticLine, self).write(vals)
 
 
 class AccountAnalyticAccount(models.Model):
