@@ -169,6 +169,14 @@ class AccountAnalyticAccount(models.Model):
         return False
 
     @api.model
+    def _invalid_domain(self, domain):
+        # If all domain valus is false, it is invalid
+        res = list(set([x[2] is False for x in domain]))
+        if len(res) == 1 and res[0] is True:
+            return True
+        return False
+
+    @api.model
     def create_matched_analytic(self, rec):
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
@@ -178,6 +186,9 @@ class AccountAnalyticAccount(models.Model):
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account']
         domain = self.get_analytic_search_domain(rec)
+        # If not a valid domain, return False (domain with no values)
+        if self._invalid_domain(domain):
+            return False
         if rec._name == 'account.model.line':  # Creating from Recurring Entry
             domain.append(('type', '=', 'normal'))
         elif rec.product_id:
