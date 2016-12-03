@@ -89,18 +89,27 @@ class BudgetPlanReport(models.Model):
          ('done', 'Done')],
         string='Status',
     )
+    period_id = fields.Many2one(
+        'account.period',
+        string="Period",
+    )
+    period_amount = fields.Float(
+        string="Period Amount",
+    )
 
     def _get_sql_view(self):
         sql_view = """
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
+                ablps.period_id as period_id,ablps.amount as period_amount,
                 -- Amount
                 m1, m2, m3, m4, m5, m6, m7, m8,
                 m9, m10, m11, m12, abl.planned_amount, abl.released_amount,
                 abl.budget_state as state,
                 -- Dimensions
                 %s
-            from account_budget_line abl
+            from account_budget_line_period_split ablps
+            join account_budget_line abl on abl.id = ablps.budget_line_id
             join account_budget ab on ab.id = abl.budget_id
         """ % (self._get_dimension(),)
         return sql_view

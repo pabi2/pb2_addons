@@ -395,6 +395,23 @@ class AccountBudget(models.Model):
         return True
 
 
+class AccountBudgetLinePeriodSplit(models.Model):
+    _name = "account.budget.line.period.split"
+
+    budget_line_id = fields.Many2one(
+        'account.budget.line',
+        string="Budget Line",
+        required=True,
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string="Period",
+    )
+    amount = fields.Float(
+        string="Amount",
+    )
+
+
 class AccountBudgetLine(ActivityCommon, models.Model):
 
     _name = "account.budget.line"
@@ -556,6 +573,11 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         default=False,
         copy=False,
     )
+    period_split_line_ids = fields.One2many(
+        'account.budget.line.period.split',
+        'budget_line_id',
+        string="Period Split Lines",
+    )
 
     @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
@@ -581,6 +603,87 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                                    (rec.m11 * rec.r11), (rec.m12 * rec.r12),
                                    ])
             rec.released_amount = released_amount  # from last year
+
+    @api.onchange(
+        'm1', 'm2', 'm3', 'm4', 'm5', 'm6',
+        'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
+        'planned_amount'
+    )
+    def onchange_planned_amount(self):
+        for rec in self:
+            fy = rec.budget_id.fiscalyear_id
+            period_ids = self.env['account.period'].search(
+                [('fiscalyear_id', '=', fy.id), ('special', '=', False)],
+                order="date_start"
+            )
+            if rec.period_split_line_ids:
+                linecount = 1
+                for line in rec.period_split_line_ids:
+                    amt = 0
+                    if linecount == 1:
+                        amt = rec.m1
+                    if linecount == 2:
+                        amt = rec.m2
+                    if linecount == 3:
+                        amt = rec.m3
+                    if linecount == 4:
+                        amt = rec.m4
+                    if linecount == 5:
+                        amt = rec.m5
+                    if linecount == 6:
+                        amt = rec.m6
+                    if linecount == 7:
+                        amt = rec.m7
+                    if linecount == 8:
+                        amt = rec.m8
+                    if linecount == 9:
+                        amt = rec.m9
+                    if linecount == 10:
+                        amt = rec.m10
+                    if linecount == 11:
+                        amt = rec.m11
+                    if linecount == 12:
+                        amt = rec.m12
+                    line.amount = amt
+                    linecount += 1
+
+            if not rec.period_split_line_ids:
+                count = 1
+                for period in period_ids:
+                    if period.special:
+                        continue
+                    amt = 0
+                    if count == 1:
+                        amt = rec.m1
+                    if count == 2:
+                        amt = rec.m2
+                    if count == 3:
+                        amt = rec.m3
+                    if count == 4:
+                        amt = rec.m4
+                    if count == 5:
+                        amt = rec.m5
+                    if count == 6:
+                        amt = rec.m6
+                    if count == 7:
+                        amt = rec.m7
+                    if count == 8:
+                        amt = rec.m8
+                    if count == 9:
+                        amt = rec.m9
+                    if count == 10:
+                        amt = rec.m10
+                    if count == 11:
+                        amt = rec.m11
+                    if count == 12:
+                        amt = rec.m12
+                    count += 1
+                    vals = {
+                        'budget_line_id': rec.id,
+                        'period_id': period.id,
+                        'amount': amt
+                    }
+                    self.env['account.budget.line.period.split'].create(vals)
 
     @api.multi
     def release_budget_line(self, release_result):

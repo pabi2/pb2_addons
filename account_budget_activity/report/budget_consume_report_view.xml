@@ -8,6 +8,7 @@
              <graph string="Budget Consume" type="pivot">
                  <field name="budget_method" type="row"/>
                  <field name="activity_group_id" type="row"/>
+                 <field name="period_id" type="row"/>
                  <field name="date" type="col"/>
                  <field name="amount_so_commit" type="measure"/>
                  <field name="amount_pr_commit" type="measure"/>
@@ -33,6 +34,7 @@
                  <field name="user_id" />
                  <field name="fiscalyear_id" />
                  <field name="date" />
+                 <field name="period_id"/>
                  <field name="amount_so_commit" />
                  <field name="amount_pr_commit" />
                  <field name="amount_po_commit" />

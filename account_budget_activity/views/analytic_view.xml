@@ -69,6 +69,7 @@
                 <xpath expr="/form/group" position="inside">
                 	<group name="doc_ref" string="Doc Ref">
                			<field name="doc_id" />
+               			<field name="period_id"/>
                 	</group>
                 </xpath>
             </field>
@@ -80,6 +81,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="inside">
               		<field name="doc_id" />
+              		<field name="period_id"/>
               		<field name="activity_group_id" invisible="1"/>
               		<field name="activity_id" invisible="1"/>
                 </xpath>

@@ -64,11 +64,15 @@ class BudgetConsumeReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    period_id = fields.Many2one(
+        'account.period',
+        string="Period",
+    )
 
     def _get_sql_view(self):
         sql_view = """
             select aal.id, aal.user_id, aal.date, aal.fiscalyear_id,
-                aal.doc_ref, aal.doc_id,
+                aal.doc_ref, aal.doc_id, aal.period_id,
                 -- Amount
                 case when aaj.budget_method = 'expense' then -amount
                     else amount end as amount,

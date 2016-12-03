@@ -7,6 +7,39 @@
         <menuitem name="Budget Monitor" id="menu_action_budget_report" parent="menu_budgeting" sequence="110"/>
         <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="120"/>
 
+        <record id="budget_line_period_split_tree_view" model="ir.ui.view">
+            <field name="name">account.budget.line.period.split.tree.view</field>
+            <field name="model">account.budget.line.period.split</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines Period Split">
+                    <field name="budget_line_id" invisible="1"/>
+                    <field name="period_id"/>
+                    <field name="amount" sum="amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="budget_line_period_split_form_view" model="ir.ui.view">
+            <field name="name">account.budget.line.period.split.form.view</field>
+            <field name="model">account.budget.line.period.split</field>
+            <field name="arch" type="xml">
+                <form string="Budget Lines Period Split">
+                    <field name="budget_line_id" invisible="1"/>
+                    <field name="period_id"/>
+                    <field name="amount"/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_account_budget_line_split_period_view">
+            <field name="name">Budget Line Period Split</field>
+            <field name="res_model">account.budget.line.period.split</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'budget_line_id' : active_id}</field>
+            <field name="domain">[('budget_line_id', '=', active_id)]</field>
+        </record>
+            
         <record id="budget_line_tree_view" model="ir.ui.view">
             <field name="name">budget.line.tree.view</field>
             <field name="model">account.budget.line</field>
@@ -32,6 +65,10 @@
                     <field name="m10" sum="m10"/>
                     <field name="m11" sum="m11"/>
                     <field name="m12" sum="m12"/>
+                    <button name="%(act_account_budget_line_split_period_view)d"
+                            string="Split Budget Line Period Wise"
+                            type="action"
+                            icon="gtk-justify-fill" />
                 </tree>
             </field>
         </record>
