@@ -3,6 +3,10 @@ from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
 
+SALE_JOURNAL = ['sale', 'sale_refund', 'sale_debitnote']
+PURCHASE_JOURNAL = ['purchase', 'purchase_refund', 'purchase_debitnote']
+BANK_CASH = ['bank', 'cash']
+
 
 class InterfaceAccountEntry(models.Model):
     _name = 'interface.account.entry'
@@ -16,13 +20,6 @@ class InterfaceAccountEntry(models.Model):
         required=True,
         help="System where this interface transaction is being called",
     )
-    action_id = fields.Many2one(
-        'interface.action',
-        string='Action',
-        ondelete='restrict',
-        required=True,
-        help="Action that this interface will do, journal will depend on it",
-    )
     name = fields.Char(
         string='Document Origin',
         required=True,
@@ -30,11 +27,31 @@ class InterfaceAccountEntry(models.Model):
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
-        related='action_id.journal_id',
-        store=True,
-        readonly=True,
-        copy=False,
         help="Journal to be used in creating Journal Entry",
+    )
+    to_reconcile = fields.Boolean(
+        string='To Reconcile',
+        compute='_compute_to_reconcile',
+        readonly=True,
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+        related='line_ids.partner_id',
+        readonly=True,
+    )
+    reconcile_move_line_ids = fields.Many2many(
+        'account.move.line',
+        'interface_move_line_rel',
+        'interface_id',
+        'move_line_id',
+        string='Reconcile with',
+        domain="""
+        [('state','=','valid'),
+         ('account_id.type', 'in', ['payable', 'receivable']),
+         ('partner_id', '=', partner_id),
+         ('reconcile_id', '=', False)]
+        """,
     )
     line_ids = fields.One2many(
         'interface.account.entry.line',
@@ -57,6 +74,7 @@ class InterfaceAccountEntry(models.Model):
         'account.move',
         string='Journal Entry',
         readonly=True,
+        copy=False,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -69,18 +87,26 @@ class InterfaceAccountEntry(models.Model):
         copy=False,
     )
 
+    @api.multi
+    @api.depends('journal_id')
+    def _compute_to_reconcile(self):
+        for rec in self:
+            rec.to_reconcile = rec.journal_id.type in ('bank', 'cash')
+
     # ================== Main Execution Method ==================
     @api.multi
     def execute(self):
         res = {}
-        invoice_entry = self.env.ref('pabi_interface.action_invoice_entry')
         # payment_entry = self.env.ref('pabi_interface.action_payment_entry')
         for interface in self:
-            # Action = Create Invoice JE
-            if interface.action_id == invoice_entry:
+            # Action = Create Invoice/Refund
+            if interface.journal_id.type in SALE_JOURNAL:
                 move = interface._action_invoice_entry()
                 res.update({interface.name: move.name})
-            # Action = Create Payment JE
+            # Action = Payment Receipt
+            if interface.journal_id.type in BANK_CASH:
+                move = interface._action_payment_entry()
+                res.update({interface.name: move.name})
             # if interface.action_id == payment_entry:
 
             # Action = Reverse JE
@@ -92,7 +118,16 @@ class InterfaceAccountEntry(models.Model):
     def _action_invoice_entry(self):
         self._validate_invoice_entry()
         move = self._create_journal_entry()
-        move.post()
+        return move
+
+    @api.model
+    def _action_payment_entry(self):
+        self._validate_payment_entry()
+        move = self._create_journal_entry()
+        payment_move_lines = move.line_id.filtered(
+            lambda l: l.account_id.type in ('receivable', 'payable'))
+        invoice_move_lines = self.reconcile_move_line_ids
+        self._reconcile(payment_move_lines, invoice_move_lines)
         return move
 
     # == Validate by Action ==
@@ -101,12 +136,23 @@ class InterfaceAccountEntry(models.Model):
         self._check_journal()
         self._check_has_line()
         self._check_tax_line()
+        self._check_line_normal()
         self._check_line_dimension()
         self._check_posting_date()
         self._check_date_maturity()
         self._check_amount_currency()
 
     # @api.model
+    @api.model
+    def _validate_payment_entry(self):
+        self._check_journal()
+        self._check_has_line()
+        self._check_tax_line()
+        self._check_line_normal()
+        self._check_line_dimension()
+        self._check_posting_date()
+        # self._check_date_maturity()
+        self._check_amount_currency()
     # def _validate_payment_entry(self):
 
     # == Validation Logics ==
@@ -128,6 +174,7 @@ class InterfaceAccountEntry(models.Model):
 
     @api.model
     def _check_tax_line(self):
+        journal_type = self.journal_id.type
         tax_lines = self.line_ids.filtered('tax_id')
         for line in tax_lines:
             if line.tax_id.account_collected_id != line.account_id:
@@ -138,9 +185,30 @@ class InterfaceAccountEntry(models.Model):
                 raise ValidationError(_('No tax branch for tax line'))
             if not line.tax_invoice_number:
                 raise ValidationError(_('No tax invoice number for tax line'))
+            if journal_type not in SALE_JOURNAL + PURCHASE_JOURNAL:
+                raise ValidationError(_('This journal is not supported!'))
+            if (line.debit or line.credit) and not line.tax_base_amount:
+                raise ValidationError(_('Tax Base should not be zero!'))
+            # Sales, tax must be in credit and debit for refund
+            # Purchase, tax must be in debit and redit for refund
+            invalid = False
+            if journal_type in SALE_JOURNAL:
+                if journal_type != 'sale_refund':
+                    invalid = line.debit > 0
+                else:
+                    invalid = line.credit > 0
+            if journal_type in PURCHASE_JOURNAL:
+                if journal_type != 'purchase_refund':
+                    invalid = line.credit > 0
+                else:
+                    invalid = line.debit > 0
+            print invalid
+            if invalid:
+                raise ValidationError(
+                    _('Tax in wrong side of dr/cr as refer to journal type!'))
 
     @api.model
-    def _check_line_dimension(self):
+    def _check_line_normal(self):
         # All line must have same OU
         operating_unit = list(set(self.line_ids.mapped('operating_unit_id')))
         if len(operating_unit) != 1:
@@ -149,7 +217,14 @@ class InterfaceAccountEntry(models.Model):
         # All line must have account id
         account_ids = [x.account_id.id for x in self.line_ids]
         if False in account_ids:
-            raise ValidationError(_('Alll lines must have account code!'))
+            raise ValidationError(_('Alll lines must have same account code!'))
+        # All line must have same partner
+        partner_ids = [x.partner_id.id for x in self.line_ids]
+        if False in partner_ids:
+            raise ValidationError(_('Alll lines must have same partner!'))
+
+    @api.model
+    def _check_line_dimension(self):
         # For account non asset/liability line must have section/project
         for line in self.line_ids:
             report_type = line.account_id.user_type.report_type
@@ -207,6 +282,9 @@ class InterfaceAccountEntry(models.Model):
     # == Execution Logics ==
     @api.model
     def _create_journal_entry(self):
+        if self.move_id:
+            raise ValidationError(_('Journal Entry is already created'))
+
         AccountMove = self.env['account.move']
         AccountMoveLine = self.env['account.move.line']
         Analytic = self.env['account.analytic.account']
@@ -214,6 +292,7 @@ class InterfaceAccountEntry(models.Model):
         Period = self.env['account.period']
 
         move_date = self.line_ids[0].date
+        operating_unit_id = self.line_ids[0].operating_unit_id.id
         ctx = self._context.copy()
         ctx.update({'company_id': self.company_id.id})
         periods = Period.find(dt=move_date)
@@ -225,6 +304,7 @@ class InterfaceAccountEntry(models.Model):
         })
         move = AccountMove.create({
             'ref': self.name,
+            'operating_unit_id': operating_unit_id,
             'period_id': period_id,
             'journal_id': journal.id,
             'date': move_date,
@@ -250,27 +330,38 @@ class InterfaceAccountEntry(models.Model):
                 'activity_id': line.activity_id.id,
                 'section_id': line.section_id.id,
                 'project_id': line.project_id.id,
+                # For Tax
+                'taxbranch_id': line.taxbranch_id.id,
             }
-
             move_line = AccountMoveLine.with_context(ctx).create(vals)
-            # Update dimension & analytic
-            move_line.update_related_dimension(vals)
-            analytic_account = Analytic.create_matched_analytic(move_line)
-            move_line.analytic_account_id = analytic_account.id
-            # --
-            if analytic_account and not journal.analytic_journal_id:
-                raise ValidationError(
-                    _("You have to define an analytic journal on the "
-                      "'%s' journal!") % (journal.name,))
+            # For balance sheet item, do not need dimension
+            report_type = line.account_id.user_type.report_type
+            if report_type not in ('asset', 'liability'):
+                move_line.update_related_dimension(vals)
+                analytic_account = Analytic.create_matched_analytic(move_line)
+                if analytic_account and not journal.analytic_journal_id:
+                    raise ValidationError(
+                        _("You have to define an analytic journal on the "
+                          "'%s' journal!") % (journal.name,))
+                move_line.analytic_account_id = analytic_account
 
-            # For Tax Line, also add to account_tax_detail
-            if line.tax_id:
+            # For Normal Tax Line, also add to account_tax_detail
+            if line.tax_id and not line.tax_id.is_wht and \
+                    not line.tax_id.is_undue_tax:
+                # Set negative tax for refund
+                sign = 1
+                if journal.type in SALE_JOURNAL + PURCHASE_JOURNAL:  # invoice
+                    if journal.type in ('sale_refund', 'purchase_refund'):
+                        sign = -1
                 tax_dict = TaxDetail._prepare_tax_detail_dict(
                     False, False,  # No invoice_tax_id, voucher_tax_id
                     self._get_doc_type(journal),
-                    line.partner_id.id, line.tax_invoice_number,
-                    line.date, line.tax_base_amount, line.debit or line.credit)
+                    line.partner_id.id, line.tax_invoice_number, line.date,
+                    sign * line.tax_base_amount,
+                    sign * (line.debit or line.credit)
+                )
                 tax_dict['tax_id'] = line.tax_id.id
+                tax_dict['taxbranch_id'] = line.taxbranch_id.id
                 detail = TaxDetail.create(tax_dict)
                 detail._set_next_sequence()
             # --
@@ -282,16 +373,41 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def _get_doc_type(self, journal):
         doc_type = False  # Determine doctype based on journal type
-        if journal.type in ('sale', 'sale_refund', 'sale_debitnote'):
+        if journal.type in SALE_JOURNAL:
             doc_type = 'sale'
-        elif journal.type in \
-                ('purchase', 'purchase_refund', 'purchase_debitnote'):
+        elif journal.type in PURCHASE_JOURNAL:
             doc_type = 'purchase'
         else:
             raise ValidationError(
                 _("The selected journal type is not supported: %s") %
                 (journal.name,))
         return doc_type
+
+    @api.model
+    def _reconcile(self, payment_move_lines, invoice_move_lines):
+        # Period = self.env['account.period']
+        # Check that account are same account
+        lines = payment_move_lines | invoice_move_lines
+        account_ids = list(set([x.account_id.id for x in lines]))
+        if len(account_ids) != 1:
+            raise ValidationError(_('Different account, can not reconcile!'))
+        # Check residual
+        residual = sum([x.debit - x.credit for x in lines])
+
+        # Case 1) Full reconcile
+        if not residual:
+            # period_id = Period.find().id
+            # account_id = False
+            # journal_id = False
+            # x = lines.reconcile('manual', account_id, period_id, journal_id)
+            lines.reconcile('manual')
+            return
+
+        # Case 2) Partial reconcile
+
+
+        # Case 3) Reconcile with write off
+
 
 class InterfaceAccountEntryLine(models.Model):
     _name = 'interface.account.entry.line'
