@@ -12,21 +12,35 @@ class InterfaceAccountEntry(models.Model):
     _name = 'interface.account.entry'
     _inherit = ['mail.thread']
     _description = 'Interface to create accounting entry, invoice and payment'
+    _order = 'id desc'
 
     system_id = fields.Many2one(
         'interface.system',
         string='System Origin',
         ondelete='restrict',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="System where this interface transaction is being called",
     )
     name = fields.Char(
         string='Document Origin',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    type = fields.Selection(
+        [('invoice', 'Invoice'),
+         ('voucher', 'Payment')],
+        string='Type',
+        readonly=True,
     )
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        required=True,
         help="Journal to be used in creating Journal Entry",
     )
     to_reconcile = fields.Boolean(
@@ -40,24 +54,13 @@ class InterfaceAccountEntry(models.Model):
         related='line_ids.partner_id',
         readonly=True,
     )
-    reconcile_move_line_ids = fields.Many2many(
-        'account.move.line',
-        'interface_move_line_rel',
-        'interface_id',
-        'move_line_id',
-        string='Reconcile with',
-        domain="""
-        [('state','=','valid'),
-         ('account_id.type', 'in', ['payable', 'receivable']),
-         ('partner_id', '=', partner_id),
-         ('reconcile_id', '=', False)]
-        """,
-    )
     line_ids = fields.One2many(
         'interface.account.entry.line',
         'interface_id',
         string='Lines',
         copy=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     legend = fields.Text(
         string='Legend',
@@ -81,17 +84,60 @@ class InterfaceAccountEntry(models.Model):
          ('done', 'Done')],
         string='Status',
         index=True,
-        readonly=True,
         default='draft',
         track_visibility='onchange',
         copy=False,
     )
+    residual = fields.Float(
+        string='Balance',
+        digits=dp.get_precision('Account'),
+        compute='_compute_residual',
+        store=True,
+        help="Remaining amount due.",
+    )
+
+    @api.onchange('type')
+    def _onchange_type(self):
+        domain = []
+        if self.type == 'invoice':
+            domain = [('type', 'in', SALE_JOURNAL + PURCHASE_JOURNAL)]
+        if self.type == 'voucher':
+            domain = [('type', 'in', BANK_CASH)]
+        return {'domain': {'journal_id': domain}}
 
     @api.multi
     @api.depends('journal_id')
     def _compute_to_reconcile(self):
         for rec in self:
-            rec.to_reconcile = rec.journal_id.type in ('bank', 'cash')
+            rec.to_reconcile = rec.journal_id.type in BANK_CASH
+
+    @api.one
+    @api.depends(
+        'state', 'line_ids',
+        'move_id.line_id.account_id.type',
+        'move_id.line_id.amount_residual',
+        'move_id.line_id.reconcile_id',
+        'move_id.line_id.amount_residual_currency',
+        'move_id.line_id.currency_id',
+        'move_id.line_id.reconcile_partial_id.line_partial_ids.invoice.type',
+    )
+    def _compute_residual(self):
+        """ Use account_invoice._compute_residual() as sample """
+        self.residual = 0.0
+        partial_reconciliations_done = []
+        for line in self.sudo().move_id.line_id:
+            if line.account_id.type not in ('receivable', 'payable'):
+                continue
+            if line.reconcile_partial_id and line.reconcile_partial_id.id in \
+                    partial_reconciliations_done:
+                continue
+            line_amount = line.currency_id and \
+                line.amount_residual_currency or line.amount_residual
+            if line.reconcile_partial_id:
+                partial_reconciliations_done.append(
+                    line.reconcile_partial_id.id)
+            self.residual += line_amount
+        self.residual = max(self.residual, 0.0)
 
     # ================== Main Execution Method ==================
     @api.multi
@@ -99,8 +145,13 @@ class InterfaceAccountEntry(models.Model):
         res = {}
         # payment_entry = self.env.ref('pabi_interface.action_payment_entry')
         for interface in self:
+            # Set type based on journal type
+            if interface.journal_id.type in BANK_CASH:
+                interface.type = 'voucher'
+            elif interface.journal_id.type in SALE_JOURNAL + PURCHASE_JOURNAL:
+                interface.type = 'invoice'
             # Action = Create Invoice/Refund
-            if interface.journal_id.type in SALE_JOURNAL:
+            if interface.journal_id.type in SALE_JOURNAL + PURCHASE_JOURNAL:
                 move = interface._action_invoice_entry()
                 res.update({interface.name: move.name})
             # Action = Payment Receipt
@@ -124,160 +175,34 @@ class InterfaceAccountEntry(models.Model):
     def _action_payment_entry(self):
         self._validate_payment_entry()
         move = self._create_journal_entry()
-        payment_move_lines = move.line_id.filtered(
-            lambda l: l.account_id.type in ('receivable', 'payable'))
-        invoice_move_lines = self.reconcile_move_line_ids
-        self._reconcile(payment_move_lines, invoice_move_lines)
+        self._reconcile_payment()
         return move
 
     # == Validate by Action ==
     @api.model
     def _validate_invoice_entry(self):
-        self._check_journal()
-        self._check_has_line()
-        self._check_tax_line()
-        self._check_line_normal()
-        self._check_line_dimension()
-        self._check_posting_date()
-        self._check_date_maturity()
-        self._check_amount_currency()
+        Checker = self.env['interface.account.checker']
+        Checker._check_journal(self)
+        Checker._check_has_line(self)
+        Checker._check_tax_line(self)
+        Checker._check_line_normal(self)
+        Checker._check_line_dimension(self)
+        Checker._check_posting_date(self)
+        Checker._check_date_maturity(self)
+        Checker._check_amount_currency(self)
 
     # @api.model
     @api.model
     def _validate_payment_entry(self):
-        self._check_journal()
-        self._check_has_line()
-        self._check_tax_line()
-        self._check_line_normal()
-        self._check_line_dimension()
-        self._check_posting_date()
-        # self._check_date_maturity()
-        self._check_amount_currency()
-    # def _validate_payment_entry(self):
-
-    # == Validation Logics ==
-    @api.model
-    def _check_journal(self):
-        if not self.journal_id:
-            raise ValidationError(
-                _('Journal has not been setup for this Action!'))
-
-    @api.model
-    def _check_has_line(self):
-        if len(self.line_ids) == 0:
-            raise ValidationError(_('Document must have lines!'))
-
-    @api.model
-    def _check_has_no_line(self):
-        if len(self.line_ids) > 0:
-            raise ValidationError(_('Document must has no lines!'))
-
-    @api.model
-    def _check_tax_line(self):
-        journal_type = self.journal_id.type
-        tax_lines = self.line_ids.filtered('tax_id')
-        for line in tax_lines:
-            if line.tax_id.account_collected_id != line.account_id:
-                raise ValidationError(
-                    _("Invaid Tax Account Code\n%s's account code should be "
-                      "%s") % (line.tax_id.account_collected_id.code))
-            if not line.taxbranch_id:
-                raise ValidationError(_('No tax branch for tax line'))
-            if not line.tax_invoice_number:
-                raise ValidationError(_('No tax invoice number for tax line'))
-            if journal_type not in SALE_JOURNAL + PURCHASE_JOURNAL:
-                raise ValidationError(_('This journal is not supported!'))
-            if (line.debit or line.credit) and not line.tax_base_amount:
-                raise ValidationError(_('Tax Base should not be zero!'))
-            # Sales, tax must be in credit and debit for refund
-            # Purchase, tax must be in debit and redit for refund
-            invalid = False
-            if journal_type in SALE_JOURNAL:
-                if journal_type != 'sale_refund':
-                    invalid = line.debit > 0
-                else:
-                    invalid = line.credit > 0
-            if journal_type in PURCHASE_JOURNAL:
-                if journal_type != 'purchase_refund':
-                    invalid = line.credit > 0
-                else:
-                    invalid = line.debit > 0
-            print invalid
-            if invalid:
-                raise ValidationError(
-                    _('Tax in wrong side of dr/cr as refer to journal type!'))
-
-    @api.model
-    def _check_line_normal(self):
-        # All line must have same OU
-        operating_unit = list(set(self.line_ids.mapped('operating_unit_id')))
-        if len(operating_unit) != 1:
-            raise ValidationError(
-                _('Same operating Unit must be set for all lines!'))
-        # All line must have account id
-        account_ids = [x.account_id.id for x in self.line_ids]
-        if False in account_ids:
-            raise ValidationError(_('Alll lines must have same account code!'))
-        # All line must have same partner
-        partner_ids = [x.partner_id.id for x in self.line_ids]
-        if False in partner_ids:
-            raise ValidationError(_('Alll lines must have same partner!'))
-
-    @api.model
-    def _check_line_dimension(self):
-        # For account non asset/liability line must have section/project
-        for line in self.line_ids:
-            report_type = line.account_id.user_type.report_type
-            if report_type not in ('asset', 'liability'):
-                if not line.section_id and not line.project_id:
-                    raise ValidationError(
-                        _('%s is non-banlance sheet item, it requires '
-                          'Section/Project') % (line.account_id.code,))
-                if not line.activity_id or not line.activity_group_id:
-                    raise ValidationError(
-                        _('%s is non-banlance sheet item, it requires '
-                          'Activity Group and Activity') %
-                        (line.account_id.code,))
-            else:
-                if line.section_id or line.project_id:
-                    raise ValidationError(
-                        _('%s is banlance sheet item, it do not require AG/A '
-                          'or Section/Project') % (line.account_id.code,))
-        for line in self.line_ids:
-            if line.activity_id and \
-                    line.activity_id.account_id != line.account_id:
-                raise ValidationError(
-                    _('%s does not belong to activity %s') %
-                    (line.account_id.code, line.activity_id.name))
-
-    @api.model
-    def _check_posting_date(self):
-        # All line has same posting date
-        move_dates = list(set(self.line_ids.mapped('date')))
-        if len(move_dates) > 1:
-            raise ValidationError(
-                _('Inteferce lines should not have different posting date!'))
-
-    @api.model
-    def _check_date_maturity(self):
-        # For account.type receivable and payble, must have date maturity
-        lines = self.line_ids.filtered(
-            lambda l: l.account_id.type in ('payable', 'receivable'))
-        dates = [x.date_maturity for x in lines]
-        if False in dates:
-            raise ValidationError(
-                _('Payable or receivabe lines must have payment due date!'))
-
-    @api.model
-    def _check_amount_currency(self):
-        # For non THB, must have amount_currency
-        lines = self.line_ids.filtered(
-            lambda l: l.currency_id and
-            l.currency_id.id != self.company_id.currency_id)
-        for l in lines:
-            if (l.debit or l.credit) and not l.amount_currency:
-                raise ValidationError(
-                    _('Amount Currency must not be False '))
+        Checker = self.env['interface.account.checker']
+        Checker._check_journal(self)
+        Checker._check_has_line(self)
+        Checker._check_tax_line(self)
+        Checker._check_line_normal(self)
+        Checker._check_line_dimension(self)
+        Checker._check_posting_date(self)
+        Checker._check_invoice_to_reconcile(self)
+        Checker._check_amount_currency(self)
 
     # == Execution Logics ==
     @api.model
@@ -334,6 +259,7 @@ class InterfaceAccountEntry(models.Model):
                 'taxbranch_id': line.taxbranch_id.id,
             }
             move_line = AccountMoveLine.with_context(ctx).create(vals)
+            line.ref_move_line_id = move_line
             # For balance sheet item, do not need dimension
             report_type = line.account_id.user_type.report_type
             if report_type not in ('asset', 'liability'):
@@ -384,29 +310,33 @@ class InterfaceAccountEntry(models.Model):
         return doc_type
 
     @api.model
-    def _reconcile(self, payment_move_lines, invoice_move_lines):
-        # Period = self.env['account.period']
-        # Check that account are same account
-        lines = payment_move_lines | invoice_move_lines
-        account_ids = list(set([x.account_id.id for x in lines]))
-        if len(account_ids) != 1:
-            raise ValidationError(_('Different account, can not reconcile!'))
-        # Check residual
-        residual = sum([x.debit - x.credit for x in lines])
-
-        # Case 1) Full reconcile
-        if not residual:
-            # period_id = Period.find().id
-            # account_id = False
-            # journal_id = False
-            # x = lines.reconcile('manual', account_id, period_id, journal_id)
-            lines.reconcile('manual')
-            return
-
-        # Case 2) Partial reconcile
-
-
-        # Case 3) Reconcile with write off
+    def _reconcile_payment(self):
+        # To reconcile each reciable/payable line
+        to_reconcile_lines = self.line_ids.filtered(
+            lambda l: l.account_id.type in ('receivable', 'payable'))
+        for line in to_reconcile_lines:
+            payment_ml = line.ref_move_line_id
+            invoice_ml = line.reconcile_move_line_id
+            # Validate Account
+            if payment_ml.account_id != invoice_ml.account_id:
+                raise ValidationError(
+                    _("Wrong account to reconcile for line '%s'") %
+                    (line.name,))
+            # Validate Amount Sign
+            psign = (payment_ml.debit - payment_ml.credit) > 0 and 1 or -1
+            isign = (invoice_ml.debit - invoice_ml.credit) > 0 and 1 or -1
+            if psign == isign:
+                raise ValidationError(
+                    _("To reconcile, amount should be in opposite Dr/Cr "
+                      "for line '%s'") % (line.name,))
+            # Full or Partial reconcile
+            lines = payment_ml | invoice_ml
+            residual = sum([x.debit - x.credit for x in lines])
+            # Reconcile Full or Partial
+            if not residual:
+                lines.reconcile('manual')
+            else:
+                lines.reconcile_partial('manual')
 
 
 class InterfaceAccountEntryLine(models.Model):
@@ -500,3 +430,165 @@ class InterfaceAccountEntryLine(models.Model):
         'res.taxbranch',
         string='Tax Branch',
     )
+    ref_move_line_id = fields.Many2one(
+        'account.move.line',
+        string='Ref Journal Item',
+        readonly=True,
+        copy=False,
+    )
+    reconcile_move_line_id = fields.Many2one(
+        'account.move.line',
+        string='Reconcile with',
+        domain="""
+        [('state','=','valid'),
+         ('account_id.type', 'in', ['payable', 'receivable']),
+         ('partner_id', '=', partner_id),
+         ('reconcile_id', '=', False),]
+        """,
+        copy=False,
+    )
+
+
+class InterfaceAccountChecker(models.AbstractModel):
+    _name = 'interface.account.checker'
+    _description = 'Dedicate for checking the validity of interface lines'
+
+    @api.model
+    def _check_journal(self, inf):
+        if not inf.journal_id:
+            raise ValidationError(
+                _('Journal has not been setup for this Action!'))
+
+    @api.model
+    def _check_has_line(self, inf):
+        if len(inf.line_ids) == 0:
+            raise ValidationError(_('Document must have lines!'))
+
+    @api.model
+    def _check_has_no_line(self, inf):
+        if len(inf.line_ids) > 0:
+            raise ValidationError(_('Document must has no lines!'))
+
+    @api.model
+    def _check_tax_line(self, inf):
+        journal_type = inf.journal_id.type
+        tax_lines = inf.line_ids.filtered('tax_id')
+        for line in tax_lines:
+            if line.tax_id.account_collected_id != line.account_id:
+                raise ValidationError(
+                    _("Invaid Tax Account Code\n%s's account code should be "
+                      "%s") % (line.tax_id.account_collected_id.code))
+            if not line.taxbranch_id:
+                raise ValidationError(_('No tax branch for tax line'))
+            if not line.tax_invoice_number:
+                raise ValidationError(_('No tax invoice number for tax line'))
+            if journal_type not in SALE_JOURNAL + PURCHASE_JOURNAL:
+                raise ValidationError(_('This journal is not supported!'))
+            if (line.debit or line.credit) and not line.tax_base_amount:
+                raise ValidationError(_('Tax Base should not be zero!'))
+            # Sales, tax must be in credit and debit for refund
+            # Purchase, tax must be in debit and redit for refund
+            invalid = False
+            if journal_type in SALE_JOURNAL:
+                if journal_type != 'sale_refund':
+                    invalid = line.debit > 0
+                else:
+                    invalid = line.credit > 0
+            if journal_type in PURCHASE_JOURNAL:
+                if journal_type != 'purchase_refund':
+                    invalid = line.credit > 0
+                else:
+                    invalid = line.debit > 0
+            print invalid
+            if invalid:
+                raise ValidationError(
+                    _('Tax in wrong side of dr/cr as refer to journal type!'))
+
+    @api.model
+    def _check_line_normal(self, inf):
+        # All line must have same OU
+        operating_unit = list(set(inf.line_ids.mapped('operating_unit_id')))
+        if len(operating_unit) != 1:
+            raise ValidationError(
+                _('Same operating Unit must be set for all lines!'))
+        # All line must have account id
+        account_ids = [x.account_id.id for x in inf.line_ids]
+        if False in account_ids:
+            raise ValidationError(_('Alll lines must have same account code!'))
+        # All line must have same partner
+        partner_ids = [x.partner_id.id for x in inf.line_ids]
+        if False in partner_ids:
+            raise ValidationError(_('Alll lines must have same partner!'))
+
+    @api.model
+    def _check_line_dimension(self, inf):
+        # For account non asset/liability line must have section/project
+        for line in inf.line_ids:
+            report_type = line.account_id.user_type.report_type
+            if report_type not in ('asset', 'liability'):
+                if not line.section_id and not line.project_id:
+                    raise ValidationError(
+                        _('%s is non-banlance sheet item, it requires '
+                          'Section/Project') % (line.account_id.code,))
+                if not line.activity_id or not line.activity_group_id:
+                    raise ValidationError(
+                        _('%s is non-banlance sheet item, it requires '
+                          'Activity Group and Activity') %
+                        (line.account_id.code,))
+            else:
+                if line.section_id or line.project_id:
+                    raise ValidationError(
+                        _('%s is banlance sheet item, it do not require AG/A '
+                          'or Section/Project') % (line.account_id.code,))
+        for line in inf.line_ids:
+            if line.activity_id and \
+                    line.activity_id.account_id != line.account_id:
+                raise ValidationError(
+                    _('%s does not belong to activity %s') %
+                    (line.account_id.code, line.activity_id.name))
+
+    @api.model
+    def _check_posting_date(self, inf):
+        # All line has same posting date
+        move_dates = list(set(inf.line_ids.mapped('date')))
+        if len(move_dates) > 1:
+            raise ValidationError(
+                _('Inteferce lines should not have different posting date!'))
+
+    @api.model
+    def _check_invoice_to_reconcile(self, inf):
+        # For payment/receipt, receivable and payable must have Reconcile with
+        if not inf.to_reconcile:
+            return
+        for line in inf.line_ids:
+            if line.account_id.type in ('receivable', 'payable') and \
+                    not line.reconcile_move_line_id:
+                raise ValidationError(
+                    _("Account receivable/payable line '%s' require "
+                      "an invoice to reconcile!") % (line.name,))
+
+        move_dates = list(set(inf.line_ids.mapped('date')))
+        if len(move_dates) > 1:
+            raise ValidationError(
+                _('Inteferce lines should not have different posting date!'))
+
+    @api.model
+    def _check_date_maturity(self, inf):
+        # For account.type receivable and payble, must have date maturity
+        lines = inf.line_ids.filtered(
+            lambda l: l.account_id.type in ('payable', 'receivable'))
+        dates = [x.date_maturity for x in lines]
+        if False in dates:
+            raise ValidationError(
+                _('Payable or receivabe lines must have payment due date!'))
+
+    @api.model
+    def _check_amount_currency(self, inf):
+        # For non THB, must have amount_currency
+        lines = inf.line_ids.filtered(
+            lambda l: l.currency_id and
+            l.currency_id.id != inf.company_id.currency_id)
+        for l in lines:
+            if (l.debit or l.credit) and not l.amount_currency:
+                raise ValidationError(
+                    _('Amount Currency must not be False '))

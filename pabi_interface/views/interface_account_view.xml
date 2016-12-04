@@ -8,6 +8,7 @@
             <field name="model">interface.account.entry.line</field>
             <field name="arch" type="xml">
                 <tree string="Account Entry Line" editable="bottom">
+                    <field name="interface_id" invisible="1"/>
                     <field name="sequence"/>
                     <field name="name"/>
                     <field name="account_id" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation'), ('company_id', '=', parent.company_id)]"/>
@@ -27,6 +28,7 @@
                     <field name="tax_base_amount"/>
                     <field name="date"/>
                     <field name="date_maturity"/>
+                    <field name="reconcile_move_line_id" />
                 </tree>
             </field>
         </record>
@@ -49,10 +51,11 @@
                                 <field name="partner_id" invisible="0"/>
                             </group>
                             <group>
+                                <field name="type"/>
                                 <field name="journal_id"/>
-                                <field name="to_reconcile" invisible="0"/>
-                                <field name="reconcile_move_line_ids" attrs="{'invisible': [('to_reconcile', '=', False)]}" widget="many2many_tags"/>
+                                <field name="to_reconcile" invisible="1"/>
                                 <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                                <field name="residual" />
                             </group>
                         </group>
                         <field name="line_ids" widget="one2many_list"/>
@@ -69,10 +72,12 @@
             <field name="name">interface.account.entry.tree</field>
             <field name="model">interface.account.entry</field>
             <field name="arch" type="xml">
-                <tree string="Journal Entry Model">
+                <tree string="Journal Entry Model" colors="blue:(state == 'draft')">
                     <field name="name"/>
                     <field name="journal_id"/>
+                    <field name="move_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" />
                 </tree>
             </field>
         </record>
@@ -95,13 +100,40 @@
             </field>
         </record>
 
+        <!-- All -->
         <record id="action_interface_account_entry" model="ir.actions.act_window">
-            <field name="name">Accounting Entry</field>
+            <field name="name">All Account Entries</field>
             <field name="res_model">interface.account.entry</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_interface_account_entry_search"/>
         </record>
         <menuitem action="action_interface_account_entry" name="Accounting Entry" id="menu_interface_account_entry" sequence="5" parent="menu_system_interface"/>
+        <!-- Invoice -->
+        <record id="action_interface_account_entry_invoice" model="ir.actions.act_window">
+            <field name="name">Invoice Entries</field>
+            <field name="res_model">interface.account.entry</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type', '=', 'invoice')]</field>
+            <field name="context">{'default_type': 'invoice'}</field>
+            <field name="search_view_id" ref="view_interface_account_entry_search"/>
+        </record>
+        <menuitem action="action_interface_account_entry_invoice" name="Invoice Enteries" id="menu_interface_account_entry_invoice" sequence="6" parent="menu_system_interface"/>
+        <!-- Payment -->
+        <record id="action_interface_account_entry_payment" model="ir.actions.act_window">
+            <field name="name">Payment Entries</field>
+            <field name="res_model">interface.account.entry</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type', '=', 'voucher')]</field>
+            <field name="context">{'default_type': 'voucher'}</field>
+            <field name="search_view_id" ref="view_interface_account_entry_search"/>
+        </record>
+        <menuitem action="action_interface_account_entry_payment" name="Payment Enteries" id="menu_interface_account_entry_payment" sequence="7" parent="menu_system_interface"/>
+
+
+
+
     </data>
 </openerp>
