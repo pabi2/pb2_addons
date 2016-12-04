@@ -47,15 +47,15 @@
                             <group>
                                 <field name="name"/>
                                 <field name="system_id"/>
+                                <field name="type"/>
                                 <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                                 <field name="partner_id" invisible="0"/>
                             </group>
                             <group>
-                                <field name="type"/>
                                 <field name="journal_id"/>
                                 <field name="to_reconcile" invisible="1"/>
                                 <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}"/>
-                                <field name="residual" />
+                                <field name="residual" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
                             </group>
                         </group>
                         <field name="line_ids" widget="one2many_list"/>
@@ -87,13 +87,12 @@
             <field name="arch" type="xml">
                 <search string="Interface Account Entry">
                     <field name="name" string="Document Origin"/>
-                    <filter string="Sale" icon="terp-camera_test" domain="[('journal_id.type', '=', 'sale')]"/>
-                    <filter string="Purchase" icon="terp-purchase" domain="[('journal_id.type', '=', 'purchase')]"/>
                     <field name="system_id"/>
                     <field name="journal_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <group expand="0" string="Group By">
                         <filter string="System" domain="[]" context="{'group_by':'system_id'}"/>
+                        <filter string="Type" domain="[]" context="{'group_by':'type'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
                     </group>
                 </search>
@@ -108,7 +107,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_interface_account_entry_search"/>
         </record>
-        <menuitem action="action_interface_account_entry" name="Accounting Entry" id="menu_interface_account_entry" sequence="5" parent="menu_system_interface"/>
+        <menuitem action="action_interface_account_entry" name="All Entries" id="menu_interface_account_entry" sequence="5" parent="menu_system_interface"/>
         <!-- Invoice -->
         <record id="action_interface_account_entry_invoice" model="ir.actions.act_window">
             <field name="name">Invoice Entries</field>
@@ -133,7 +132,73 @@
         <menuitem action="action_interface_account_entry_payment" name="Payment Enteries" id="menu_interface_account_entry_payment" sequence="7" parent="menu_system_interface"/>
 
 
+        <!-- Reverse Entries -->
+        <record id="view_interface_account_reverse_form" model="ir.ui.view">
+            <field name="name">view.interface.account.reverse.form</field>
+            <field name="model">interface.account.reverse</field>
+            <field name="arch" type="xml">
+                <form string="Reverse Entries">
+                    <header>
+                        <button name="execute" string="Create Reverse Entry" type="object" states="draft" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="move_id"/>
+                                <field name="system_id"/>
+                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                            </group>
+                            <group>
+                                <field name="journal_id" />
+                                <field name="date"/>
+                                <field name="reversed_move_id" attrs="{'invisible': [('reversed_move_id', '=', False)]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="view_interface_account_reverse_tree" model="ir.ui.view">
+            <field name="name">interface.account.reverse.tree</field>
+            <field name="model">interface.account.reverse</field>
+            <field name="arch" type="xml">
+                <tree string="Journal Entry Model" colors="blue:(state == 'draft')">
+                    <field name="move_id"/>
+                    <field name="journal_id"/>
+                    <field name="reversed_move_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="view_interface_account_reverse_search" model="ir.ui.view">
+            <field name="name">view.interface.account.reverse.search</field>
+            <field name="model">interface.account.reverse</field>
+            <field name="arch" type="xml">
+                <search string="Interface Account Reversal">
+                    <field name="move_id" string="Journal Entry"/>
+                    <field name="system_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <group expand="0" string="Group By">
+                        <filter string="System" domain="[]" context="{'group_by':'system_id'}"/>
+                        <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
+        <record id="action_interface_account_reverse" model="ir.actions.act_window">
+            <field name="name">Reverse Entries</field>
+            <field name="res_model">interface.account.reverse</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_interface_account_reverse_search"/>
+        </record>
+        <menuitem action="action_interface_account_reverse" name="Reverse Entries" id="menu_interface_account_reverse" sequence="8" parent="menu_system_interface"/>
 
     </data>
 </openerp>

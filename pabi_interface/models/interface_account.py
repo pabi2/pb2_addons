@@ -89,7 +89,7 @@ class InterfaceAccountEntry(models.Model):
         copy=False,
     )
     residual = fields.Float(
-        string='Balance',
+        string='Unreconciled Amount',
         digits=dp.get_precision('Account'),
         compute='_compute_residual',
         store=True,
@@ -143,25 +143,20 @@ class InterfaceAccountEntry(models.Model):
     @api.multi
     def execute(self):
         res = {}
-        # payment_entry = self.env.ref('pabi_interface.action_payment_entry')
         for interface in self:
             # Set type based on journal type
             if interface.journal_id.type in BANK_CASH:
                 interface.type = 'voucher'
             elif interface.journal_id.type in SALE_JOURNAL + PURCHASE_JOURNAL:
                 interface.type = 'invoice'
-            # Action = Create Invoice/Refund
+            # Invoice / Refund
             if interface.journal_id.type in SALE_JOURNAL + PURCHASE_JOURNAL:
                 move = interface._action_invoice_entry()
                 res.update({interface.name: move.name})
-            # Action = Payment Receipt
+            # Payment Receipt
             if interface.journal_id.type in BANK_CASH:
                 move = interface._action_payment_entry()
                 res.update({interface.name: move.name})
-            # if interface.action_id == payment_entry:
-
-            # Action = Reverse JE
-
         return res
 
     # ================== Sub Method by Action ==================
@@ -228,6 +223,7 @@ class InterfaceAccountEntry(models.Model):
             'period_id': period_id,
         })
         move = AccountMove.create({
+            'system_id': self.system_id.id,
             'ref': self.name,
             'operating_unit_id': operating_unit_id,
             'period_id': period_id,
@@ -592,3 +588,78 @@ class InterfaceAccountChecker(models.AbstractModel):
             if (l.debit or l.credit) and not l.amount_currency:
                 raise ValidationError(
                     _('Amount Currency must not be False '))
+
+
+class InterfaceAccountReverse(models.Model):
+    _name = 'interface.account.reverse'
+    _inherit = ['mail.thread']
+    _description = 'Interface to create reversal of existing entry'
+    _order = 'id desc'
+
+    system_id = fields.Many2one(
+        'interface.system',
+        string='System Origin',
+        ondelete='restrict',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="System where this interface transaction is being called",
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+    )
+    reversed_move_id = fields.Many2one(
+        'account.move',
+        string='Reverseed Journal Entry',
+        readonly=True,
+        copy=False,
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        related='move_id.journal_id',
+        store=True,
+        readonly=True,
+        help="Journal to be used in creating Reversal Journal Entry",
+    )
+    date = fields.Date(
+        string='Date',
+        default=lambda self: fields.Date.context_today(self),
+        required=True,
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        related='journal_id.company_id',
+        store=True,
+        readonly=True
+    )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('done', 'Done')],
+        string='Status',
+        index=True,
+        default='draft',
+        track_visibility='onchange',
+        copy=False,
+    )
+
+    # ================== Main Execution Method ==================
+    @api.multi
+    def execute(self):
+        res = {}
+        Move = self.env['account.move']
+        for interface in self:
+            move = interface.move_id.with_context(force_no_update_check=True)
+            reversed_move_ids = move.create_reversals(interface.date)
+            for reversed_move in Move.browse(reversed_move_ids):
+                interface.write({
+                    'reversed_move_id': reversed_move.id,
+                    'state': 'done'
+                })
+                res = {move.name: reversed_move.name}
+        return res
