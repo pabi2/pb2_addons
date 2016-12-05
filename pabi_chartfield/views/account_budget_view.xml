@@ -51,44 +51,54 @@
                     <field name="budget_revenue_line_unit_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
                                       'section_id': section_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'revenue'}" />
                     <field name="budget_revenue_line_project_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
                                       'program_id': program_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'revenue'}" />
                     <field name="budget_revenue_line_personnel" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
                                       'personnel_costcenter_id': personnel_costcenter_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'revenue'}" />
                     <field name="budget_revenue_line_invest_asset" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
                                       'org_id': org_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'revenue'}" />
                     <field name="budget_revenue_line_invest_construction" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
                                       'org_id': org_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'revenue'}" />
                 </xpath>
                 <xpath expr="/form/sheet/notebook//field[@name='budget_expense_line_ids']" position="replace">
                     <field name="budget_expense_line_unit_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
                                       'section_id': section_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                     <field name="budget_expense_line_project_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
                                       'program_id': program_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                     <field name="budget_expense_line_personnel" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
                                       'personnel_costcenter_id': personnel_costcenter_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                     <field name="budget_expense_line_invest_asset" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
                                       'org_id': org_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                     <field name="budget_expense_line_invest_construction" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
                                       'org_id': org_id,
+                                      'fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                 </xpath>
                 <xpath expr="//page[1]" position="before">
