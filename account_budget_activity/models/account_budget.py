@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
+from openerp import SUPERUSER_ID
+from openerp.api import Environment
 from openerp.exceptions import except_orm, Warning as UserError
 from .account_activity import ActivityCommon
 
@@ -409,13 +411,70 @@ class AccountBudgetLinePeriodSplit(models.Model):
     )
     amount = fields.Float(
         string="Amount",
+        compute="_compute_amount",
+        store=True,
     )
+    sequence = fields.Integer(
+        string="Sequence",
+    )
+
+    @api.depends('budget_line_id',
+                 'budget_line_id.planned_amount')
+    def _compute_amount(self):
+        for line in self:
+            if line.sequence == 1:
+                line.amount = line.budget_line_id.m1
+            elif line.sequence == 2:
+                line.amount = line.budget_line_id.m2
+            elif line.sequence == 3:
+                line.amount = line.budget_line_id.m3
+            elif line.sequence == 4:
+                line.amount = line.budget_line_id.m4
+            elif line.sequence == 5:
+                line.amount = line.budget_line_id.m5
+            elif line.sequence == 6:
+                line.amount = line.budget_line_id.m6
+            elif line.sequence == 7:
+                line.amount = line.budget_line_id.m7
+            elif line.sequence == 8:
+                line.amount = line.budget_line_id.m8
+            elif line.sequence == 9:
+                line.amount = line.budget_line_id.m9
+            elif line.sequence == 10:
+                line.amount = line.budget_line_id.m10
+            elif line.sequence == 11:
+                line.amount = line.budget_line_id.m11
+            elif line.sequence == 12:
+                line.amount = line.budget_line_id.m12
 
 
 class AccountBudgetLine(ActivityCommon, models.Model):
-
     _name = "account.budget.line"
     _description = "Budget Line"
+
+    @api.model
+    def _default_period_split_lines(self):
+        fy = self._context.get('fiscalyear_id', False)
+        if not fy:
+            budget_date = fields.Date.context_today(self)
+            fy = self.env['account.fiscalyear'].find(budget_date)
+        period_ids = self.env['account.period'].search(
+            [('fiscalyear_id', '=', fy), ('special', '=', False)],
+            order="date_start"
+        )
+        lines = []
+        sequence = 1
+        for period in period_ids:
+            if period.special:
+                continue
+            vals = {
+                'period_id': period.id,
+                'amount': 0.0,
+                'sequence': sequence,
+            }
+            lines.append((0, 0, vals))
+            sequence += 1
+        return lines
 
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
@@ -577,7 +636,31 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         'account.budget.line.period.split',
         'budget_line_id',
         string="Period Split Lines",
+        default=_default_period_split_lines,
     )
+
+    def init(self, cr):
+        env = Environment(cr, SUPERUSER_ID, {})
+        budget_lines = env['account.budget.line'].search(
+            [('period_split_line_ids', '=', False)])
+        for line in budget_lines:
+            fy = line.budget_id.fiscalyear_id
+            period_ids = env['account.period'].search(
+                [('fiscalyear_id', '=', fy.id), ('special', '=', False)],
+                order="date_start"
+            )
+            sequence = 1
+            for period in period_ids:
+                if period.special:
+                    continue
+                vals = {
+                    'budget_line_id' : line.id,
+                    'period_id': period.id,
+                    'sequence': sequence,
+                }
+                BudgetPeriodSplit = env['account.budget.line.period.split']
+                lineid = BudgetPeriodSplit.sudo().create(vals)
+                sequence += 1
 
     @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
@@ -603,87 +686,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                                    (rec.m11 * rec.r11), (rec.m12 * rec.r12),
                                    ])
             rec.released_amount = released_amount  # from last year
-
-    @api.onchange(
-        'm1', 'm2', 'm3', 'm4', 'm5', 'm6',
-        'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
-        'planned_amount'
-    )
-    def onchange_planned_amount(self):
-        for rec in self:
-            fy = rec.budget_id.fiscalyear_id
-            period_ids = self.env['account.period'].search(
-                [('fiscalyear_id', '=', fy.id), ('special', '=', False)],
-                order="date_start"
-            )
-            if rec.period_split_line_ids:
-                linecount = 1
-                for line in rec.period_split_line_ids:
-                    amt = 0
-                    if linecount == 1:
-                        amt = rec.m1
-                    if linecount == 2:
-                        amt = rec.m2
-                    if linecount == 3:
-                        amt = rec.m3
-                    if linecount == 4:
-                        amt = rec.m4
-                    if linecount == 5:
-                        amt = rec.m5
-                    if linecount == 6:
-                        amt = rec.m6
-                    if linecount == 7:
-                        amt = rec.m7
-                    if linecount == 8:
-                        amt = rec.m8
-                    if linecount == 9:
-                        amt = rec.m9
-                    if linecount == 10:
-                        amt = rec.m10
-                    if linecount == 11:
-                        amt = rec.m11
-                    if linecount == 12:
-                        amt = rec.m12
-                    line.amount = amt
-                    linecount += 1
-
-            if not rec.period_split_line_ids:
-                count = 1
-                for period in period_ids:
-                    if period.special:
-                        continue
-                    amt = 0
-                    if count == 1:
-                        amt = rec.m1
-                    if count == 2:
-                        amt = rec.m2
-                    if count == 3:
-                        amt = rec.m3
-                    if count == 4:
-                        amt = rec.m4
-                    if count == 5:
-                        amt = rec.m5
-                    if count == 6:
-                        amt = rec.m6
-                    if count == 7:
-                        amt = rec.m7
-                    if count == 8:
-                        amt = rec.m8
-                    if count == 9:
-                        amt = rec.m9
-                    if count == 10:
-                        amt = rec.m10
-                    if count == 11:
-                        amt = rec.m11
-                    if count == 12:
-                        amt = rec.m12
-                    count += 1
-                    vals = {
-                        'budget_line_id': rec.id,
-                        'period_id': period.id,
-                        'amount': amt
-                    }
-                    self.env['account.budget.line.period.split'].create(vals)
 
     @api.multi
     def release_budget_line(self, release_result):
