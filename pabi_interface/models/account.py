@@ -14,10 +14,10 @@ class AccountMove(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('system_origin_id', False):
+        if not vals.get('system_id', False):
             default_pabi2 = self.env.ref('pabi_interface.system_pabi2')
             vals.update({
-                'system_origin_id': default_pabi2.id})
+                'system_id': default_pabi2.id})
         return super(AccountMove, self).create(vals)
 
 
