@@ -11,6 +11,7 @@
           * Stock Borrow
           * Payment Export
           * Bank Receipt
+          * Account Interface
         -->
         <record id="doctype_work_acceptance" model="res.doctype" >
             <field name="name">Work Acceptance</field>
@@ -47,6 +48,16 @@
             <field name="sequence_id" ref="doctype_bank_receipt_seq"/>
             <field name="refer_type">bank_receipt</field>
         </record>
+        <record id="doctype_interface_account" model="res.doctype" >
+            <field name="name">Interface Account</field>
+            <field name="sequence_id" ref="doctype_interface_account_seq"/>
+            <field name="refer_type">interface_account</field>
+        </record>
 
+        <!--Additional Reversal Data-->
+        <record id="doctype_interface_account" model="res.doctype" >
+            <field name="with_reversal" >True</field>
+            <field name="reversal_sequence_id" ref="l10n_th_doctype.doctype_cancel_with_reversal_seq"/>
+        </record>
     </data>
 </openerp>
