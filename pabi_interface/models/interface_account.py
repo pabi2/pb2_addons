@@ -10,6 +10,7 @@ BANK_CASH = ['bank', 'cash']
 
 class InterfaceAccountEntry(models.Model):
     _name = 'interface.account.entry'
+    _rec_name = 'number'
     _inherit = ['mail.thread']
     _description = 'Interface to create accounting entry, invoice and payment'
     _order = 'id desc'
@@ -23,6 +24,13 @@ class InterfaceAccountEntry(models.Model):
         states={'draft': [('readonly', False)]},
         help="System where this interface transaction is being called",
     )
+    number = fields.Char(
+        string='Number',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default="/",
+    )
     name = fields.Char(
         string='Document Origin',
         required=True,
@@ -31,7 +39,8 @@ class InterfaceAccountEntry(models.Model):
     )
     type = fields.Selection(
         [('invoice', 'Invoice'),
-         ('voucher', 'Payment')],
+         ('voucher', 'Payment'),
+         ('reverse', 'Reverse')],
         string='Type',
         readonly=True,
     )
@@ -62,10 +71,6 @@ class InterfaceAccountEntry(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    legend = fields.Text(
-        string='Legend',
-        readonly=True,
-    )
     company_id = fields.Many2one(
         'res.company',
         related='journal_id.company_id',
@@ -78,6 +83,21 @@ class InterfaceAccountEntry(models.Model):
         string='Journal Entry',
         readonly=True,
         copy=False,
+    )
+    to_reverse_entry_id = fields.Many2one(
+        'interface.account.entry',
+        string='To Reverse',
+        domain=[('state', '=', 'done'), ('to_reverse_entry_id', '=', False)],
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    reversed_date = fields.Date(
+        string='Reversed Date',
+        default=lambda self: fields.Date.context_today(self),
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -95,6 +115,10 @@ class InterfaceAccountEntry(models.Model):
         store=True,
         help="Remaining amount due.",
     )
+
+    @api.onchange('to_reverse_entry_id')
+    def _onchange_to_reverse_entry_id(self):
+        self.journal_id = self.to_reverse_entry_id.journal_id
 
     @api.onchange('type')
     def _onchange_type(self):
@@ -144,17 +168,33 @@ class InterfaceAccountEntry(models.Model):
     def execute(self):
         res = {}
         for interface in self:
+            print interface.to_reverse_entry_id
             # Set type based on journal type
-            if interface.journal_id.type in BANK_CASH:
+            if interface.to_reverse_entry_id:
+                interface.type = 'reverse'
+            elif interface.journal_id.type in BANK_CASH:
                 interface.type = 'voucher'
             elif interface.journal_id.type in SALE_JOURNAL + PURCHASE_JOURNAL:
                 interface.type = 'invoice'
-            # Invoice / Refund
-            if interface.journal_id.type in SALE_JOURNAL + PURCHASE_JOURNAL:
+            # 1) Reverse
+            if interface.type == 'reverse':
+                origin_move = interface.to_reverse_entry_id.\
+                    move_id.with_context(force_no_update_check=True)
+                move_id = origin_move.create_reversals(interface.reversed_date)
+                if not move_id:
+                    raise ValidationError(
+                        _('Entry is not created!\n'
+                          '(It might have been created!'))
+                move = self.env['account.move'].browse(move_id)
+                interface.update({'move_id': move.id,
+                                  'state': 'done'})
+                res.update({interface.name: move.name})
+            # 2) Invoice / Refund
+            elif interface.type == 'invoice':
                 move = interface._action_invoice_entry()
                 res.update({interface.name: move.name})
-            # Payment Receipt
-            if interface.journal_id.type in BANK_CASH:
+            # 3) Payment Receipt
+            elif interface.type == 'voucher':
                 move = interface._action_payment_entry()
                 res.update({interface.name: move.name})
         return res
@@ -588,78 +628,3 @@ class InterfaceAccountChecker(models.AbstractModel):
             if (l.debit or l.credit) and not l.amount_currency:
                 raise ValidationError(
                     _('Amount Currency must not be False '))
-
-
-class InterfaceAccountReverse(models.Model):
-    _name = 'interface.account.reverse'
-    _inherit = ['mail.thread']
-    _description = 'Interface to create reversal of existing entry'
-    _order = 'id desc'
-
-    system_id = fields.Many2one(
-        'interface.system',
-        string='System Origin',
-        ondelete='restrict',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        help="System where this interface transaction is being called",
-    )
-    move_id = fields.Many2one(
-        'account.move',
-        string='Journal Entry',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        copy=False,
-    )
-    reversed_move_id = fields.Many2one(
-        'account.move',
-        string='Reverseed Journal Entry',
-        readonly=True,
-        copy=False,
-    )
-    journal_id = fields.Many2one(
-        'account.journal',
-        string='Journal',
-        related='move_id.journal_id',
-        store=True,
-        readonly=True,
-        help="Journal to be used in creating Reversal Journal Entry",
-    )
-    date = fields.Date(
-        string='Date',
-        default=lambda self: fields.Date.context_today(self),
-        required=True,
-    )
-    company_id = fields.Many2one(
-        'res.company',
-        string='Company',
-        related='journal_id.company_id',
-        store=True,
-        readonly=True
-    )
-    state = fields.Selection(
-        [('draft', 'Draft'),
-         ('done', 'Done')],
-        string='Status',
-        index=True,
-        default='draft',
-        track_visibility='onchange',
-        copy=False,
-    )
-
-    # ================== Main Execution Method ==================
-    @api.multi
-    def execute(self):
-        res = {}
-        Move = self.env['account.move']
-        for interface in self:
-            move = interface.move_id.with_context(force_no_update_check=True)
-            reversed_move_ids = move.create_reversals(interface.date)
-            for reversed_move in Move.browse(reversed_move_ids):
-                interface.write({
-                    'reversed_move_id': reversed_move.id,
-                    'state': 'done'
-                })
-                res = {move.name: reversed_move.name}
-        return res
