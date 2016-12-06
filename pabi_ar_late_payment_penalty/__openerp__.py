@@ -16,6 +16,7 @@
     ],
     'data': [
         'wizard/pabi_ar_late_payment_penalty.xml',
+        'views/account_config.xml',
     ],
     'demo': [
     ],

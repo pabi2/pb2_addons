@@ -36,11 +36,11 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         'wizard_id', 'move_line_id',
         string='Test Invoices',
         domain="""
-            [('reconcile_id', '=', False),
-             ('debit', '>', 0.0),
-             ('date_maturity', '!=', False),
-             ('account_id.type', '=', 'receivable'),
-             ('partner_id', '=', partner_id)],
+        [('reconcile_id', '=', False),
+         ('debit', '>', 0.0),
+         ('date_maturity', '!=', False),
+         ('account_id.type', '=', 'receivable'),
+         ('partner_id', '=', partner_id)]
         """,
         help="Specify unpaid invoice number for calculation preview",
     )
@@ -52,11 +52,16 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         'account.activity',
         string='Activity',
         required=True,
+        default=lambda self: self.env.user.company_id.
+        ar_late_payment_penalty_activity_id,
+        domain="[('activity_group_ids', 'in', [activity_group_id or 0])]",
     )
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
         required=True,
+        default=lambda self: self.env.user.company_id.
+        ar_late_payment_penalty_activity_group_id
     )
     account_id = fields.Many2one(
         'account.account',
@@ -80,6 +85,10 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         string='Penalty Lines',
     )
 
+    @api.onchange('activity_id')
+    def _onchange_activity_id(self):
+        self.account_id = self.activity_id.account_id
+
     @api.onchange('line_ids')
     def _onchange_line_ids(self):
         lines = self.line_ids.filtered('select').\
@@ -91,6 +100,7 @@ class PABIARLatePaymentPenalty(models.TransientModel):
     @api.onchange('type', 'partner_id', 'vat_type', 'rate',
                   'test_move_line_ids', 'test_paid_date')
     def _onchange_fields(self):
+        self.line_ids = []
         if self.type == 'penalty_invoice':
             self._penalty_invoice()
         elif self.type == 'penalty_calculate':
@@ -166,7 +176,6 @@ class PABIARLatePaymentPenalty(models.TransientModel):
 
     @api.model
     def _fill_lines(self, rows, test_paid_date=False):
-        self.line_ids = []
         Line = self.env['pabi.ar.late.payment.list']
         for row in rows:
             line = Line.new()
