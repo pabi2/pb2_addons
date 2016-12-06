@@ -513,7 +513,8 @@ class InterfaceAccountChecker(models.AbstractModel):
             if line.tax_id.account_collected_id != line.account_id:
                 raise ValidationError(
                     _("Invaid Tax Account Code\n%s's account code should be "
-                      "%s") % (line.tax_id.account_collected_id.code,))
+                      "%s") % (line.tax_id.account_collected_id.code,
+                               line.account_id.code))
             if not line.taxbranch_id:
                 raise ValidationError(_('No tax branch for tax line'))
             if not line.tax_invoice_number:
