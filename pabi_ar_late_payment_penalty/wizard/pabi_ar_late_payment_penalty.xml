@@ -58,7 +58,8 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_pabi_ar_late_payment_penalty" action="action_pabi_ar_late_payment_penalty" sequence="150" name="Penalty AR Late Payment" parent="account.menu_finance_reports"/>
+        <menuitem id="menu_pabi_ar_late_payment_penalty" action="action_pabi_ar_late_payment_penalty" sequence="1"
+            name="Penalty AR Late Payment" parent="account.periodical_processing_journal_entries_validation"/>
 
     </data>
 </openerp>
