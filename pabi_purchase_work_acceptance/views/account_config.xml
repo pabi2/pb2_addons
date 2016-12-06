@@ -7,10 +7,10 @@
             <field name="inherit_id" ref="account.view_account_config_settings"/>
             <field name="arch" type="xml">
                 <field name="purchase_refund_journal_id" position="after">
-                    <separator string="Delivery Penalty Activity"/>
+                    <separator string="Late Devliery Penalt Income"/>
                     <group name="delivery_penalty_activity">
-                        <field name="delivery_penalty_activity_group_id" class="oe_inline"/>
-                        <field name="delivery_penalty_activity_id" class="oe_inline"/>
+                        <field name="delivery_penalty_activity_group_id" string="Activity Group" class="oe_inline"/>
+                        <field name="delivery_penalty_activity_id" string="Activity" class="oe_inline"/>
                     </group>
                 </field>
             </field>
