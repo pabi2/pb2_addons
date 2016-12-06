@@ -34,7 +34,7 @@
                             <field name="date_paid"/>
                             <field name="days_late"/>
                             <field name="amount"/>
-                            <field name="amount_penalty"/>
+                            <field name="amount_penalty" sum="Total"/>
                             <field name="section_id"/>
                             <field name="project_id"/>
                         </tree>
