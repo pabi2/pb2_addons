@@ -28,7 +28,7 @@ class InterfaceAccountEntry(models.Model):
             if interface.doctype_id.sequence_id:
                 # Get doctype sequence for document number
                 sequence_id = interface.doctype_id.sequence_id.id
-                fiscalyear_id = interface.period_id.fiscalyear_id.id
+                fiscalyear_id = interface.move_id.period_id.fiscalyear_id.id
                 interface.number = self.\
                     with_context(fiscalyear_id=fiscalyear_id).\
                     env['ir.sequence'].next_by_id(sequence_id)

@@ -57,7 +57,7 @@
         <!--Additional Reversal Data-->
         <record id="doctype_interface_account" model="res.doctype" >
             <field name="with_reversal" >True</field>
-            <field name="reversal_sequence_id" ref="l10n_th_doctype.doctype_cancel_with_reversal_seq"/>
+            <field name="reversal_sequence_id" ref="l10n_th_doctype_reversal.doctype_cancel_with_reversal_seq"/>
         </record>
     </data>
 </openerp>
