@@ -114,7 +114,7 @@ class PurchaseRequest(models.Model):
         states={'draft': [('readonly', False)]},
     )
     purchase_prototype_id = fields.Many2one(
-        'purchase.prototype',
+        'res.project.prototype',
         string='Prototype',
         required=True,
         readonly=True,
