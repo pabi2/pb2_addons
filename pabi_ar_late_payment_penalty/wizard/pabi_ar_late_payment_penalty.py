@@ -111,7 +111,10 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         move_lines = move.line_id.\
             filtered(lambda l: l.section_id or l.project_id).\
             sorted(lambda x: x.credit, reverse=True)
-        return move_lines.section_id, move_lines.project_id
+        if move_lines:
+            return move_lines[0].section_id, move_lines[0].project_id
+        else:
+            return False, False
 
     @api.model
     def _penalty_invoice(self):
