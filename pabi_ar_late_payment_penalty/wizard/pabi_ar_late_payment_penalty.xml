@@ -13,15 +13,16 @@
                             <field name="partner_id"/>
                             <field name="rate"/>
                             <field name="vat_type"/>
-                            <field name="test_paid_date" attrs="{'invisible': [('type', '!=', 'penalty_calculate')], 'required': [('type', '=', 'penalty_calculate')]}" />
-                            <field name="test_invoice_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'penalty_calculate')], 'required': [('type', '=', 'penalty_calculate')]}" />
                         </group>
                         <group>
-                            <field name="activity_group_id"/>
-                            <field name="activity_id"/>
-                            <field name="account_id"/>
-                            <field name="section_id"/>
-                            <field name="project_id"/>
+                            <field name="activity_group_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="activity_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="account_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="project_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')], 'required': [('section_id','=',False)]}" />
+                            <field name="section_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')], 'required': [('project_id','=',False)]}" />
+                            <!-- TEST -->
+                            <field name="test_paid_date" attrs="{'invisible': [('type', '!=', 'penalty_calculate')], 'required': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="test_move_line_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'penalty_calculate')], 'required': [('type', '=', 'penalty_calculate')]}" />
                         </group>
                     </group>
                     <field name="line_ids">
@@ -38,7 +39,7 @@
                             <field name="project_id"/>
                         </tree>
                     </field>
-                    <footer>
+                    <footer attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" >
                         <button string="Create Invoice for Penalty" name="execut" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>

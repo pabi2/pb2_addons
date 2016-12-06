@@ -30,11 +30,18 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         string='Rate (%) 365 days',
         required=True,
     )
-    test_invoice_ids = fields.Many2many(
-        'account.invoice',
-        'pabi_ar_penalty_invoice_rel',
-        'wizard_id', 'invoice_id',
+    test_move_line_ids = fields.Many2many(
+        'account.move.line',
+        'pabi_ar_penalty_move_line_rel',
+        'wizard_id', 'move_line_id',
         string='Test Invoices',
+        domain="""
+            [('reconcile_id', '=', False),
+             ('debit', '>', 0.0),
+             ('date_maturity', '!=', False),
+             ('account_id.type', '=', 'receivable'),
+             ('partner_id', '=', partner_id)],
+        """,
         help="Specify unpaid invoice number for calculation preview",
     )
     test_paid_date = fields.Date(
@@ -73,13 +80,21 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         string='Penalty Lines',
     )
 
+    @api.onchange('line_ids')
+    def _onchange_line_ids(self):
+        lines = self.line_ids.filtered('select').\
+            sorted(lambda x: x.amount_penalty, reverse=True)
+        if lines:  # Use section with max penalty
+            self.section_id = lines[0].section_id
+            self.project_id = lines[0].project_id
+
     @api.onchange('type', 'partner_id', 'vat_type', 'rate',
-                  'test_invoice_ids', 'test_paid_date')
+                  'test_move_line_ids', 'test_paid_date')
     def _onchange_fields(self):
         if self.type == 'penalty_invoice':
             self._penalty_invoice()
-        # elif self.type == 'penalty_calculate':
-        #     self._penalty_calculate()
+        elif self.type == 'penalty_calculate':
+            self._penalty_calculate()
 
     @api.model
     def _find_best_costcenter(self, move):
@@ -90,7 +105,6 @@ class PABIARLatePaymentPenalty(models.TransientModel):
 
     @api.model
     def _penalty_invoice(self):
-        self.line_ids = []
         if self.partner_id and self.vat_type and self.rate:
             self._cr.execute("""
             select id, date, date_due, date_paid, amount, amount_tax from
@@ -110,30 +124,67 @@ class PABIARLatePaymentPenalty(models.TransientModel):
                             (select account_collected_id
                             from account_tax where type_tax_use = 'sale'))
                 from account_move_line aml
-                where reconcile_id is not null and debit > 0
+                where debit > 0 and date_maturity is not null
+                and reconcile_id is not null
                 and partner_id = %s
             ) a
-            where date_due < date_paid
+            where date_due < date_paid --> Different clause here
             """, (self.partner_id.id,))
             rows = self._cr.dictfetchall()
-            Line = self.env['pabi.ar.late.payment.list']
-            for row in rows:
-                line = Line.new()
-                line.select = True
-                line.move_line_id = row['id']
-                line.date_invoice = row['date']
-                line.date_due = row['date_due']
-                line.date_paid = row['date_paid']
-                date_due = datetime.strptime(line.date_due, '%Y-%m-%d')
-                date_paid = datetime.strptime(line.date_paid, '%Y-%m-%d')
-                line.days_late = (date_paid - date_due).days
-                line.amount = self.vat_type == 'include' and \
-                    row['amount'] or row['amount'] - row['amount_tax']
-                line.amount_penalty = (self.rate/100/365 *
-                                       line.days_late * line.amount)
-                line.section_id, line.project_id = \
-                    self._find_best_costcenter(line.move_line_id.move_id)
-                self.line_ids += line
+            self._fill_lines(rows)
+
+    @api.model
+    def _penalty_calculate(self):
+        if self.partner_id and self.vat_type and self.rate and \
+                self.test_move_line_ids and self.test_paid_date:
+            self._cr.execute("""
+            select id, date, date_due, date_paid, amount, amount_tax from
+            (
+                select aml.id, aml.ref, aml.date,
+                    aml.date_maturity date_due,
+                    aml.debit amount,
+                    (select max(aml2.date) date_paid
+                        from account_move_line aml2 join account_journal aj
+                        on aj.id = aml2.journal_id
+                        and aj.type in ('bank', 'cash')
+                        where aml2.reconcile_id = aml.reconcile_id),
+                    (select coalesce(sum(aml3.credit), 0.0) amount_tax
+                        from account_move_line aml3
+                        where aml3.move_id = aml.move_id
+                        and aml3.account_id in
+                            (select account_collected_id
+                            from account_tax where type_tax_use = 'sale'))
+                from account_move_line aml
+                where debit > 0 and date_maturity is not null
+                and reconcile_id is null  --> Different clause here
+                and partner_id = %s
+                and id in %s  --> Different clause here
+            ) a
+            """, (self.partner_id.id, self.test_move_line_ids._ids))
+            rows = self._cr.dictfetchall()
+            self._fill_lines(rows, test_paid_date=self.test_paid_date)
+
+    @api.model
+    def _fill_lines(self, rows, test_paid_date=False):
+        self.line_ids = []
+        Line = self.env['pabi.ar.late.payment.list']
+        for row in rows:
+            line = Line.new()
+            line.select = True
+            line.move_line_id = row['id']
+            line.date_invoice = row['date']
+            line.date_due = row['date_due']
+            line.date_paid = test_paid_date or row['date_paid']
+            date_due = datetime.strptime(line.date_due, '%Y-%m-%d')
+            date_paid = datetime.strptime(line.date_paid, '%Y-%m-%d')
+            line.days_late = (date_paid - date_due).days
+            line.amount = self.vat_type == 'include' and \
+                row['amount'] or row['amount'] - row['amount_tax']
+            line.amount_penalty = (self.rate/100/365 *
+                                   line.days_late * line.amount)
+            line.section_id, line.project_id = \
+                self._find_best_costcenter(line.move_line_id.move_id)
+            self.line_ids += line
 
 
 class PABIARLatePaymentList(models.TransientModel):
@@ -149,7 +200,7 @@ class PABIARLatePaymentList(models.TransientModel):
     )
     move_line_id = fields.Many2one(
         'account.move.line',
-        string='Journal Item',
+        string='Invoices',
         readonly=True,
     )
     date_invoice = fields.Date(
