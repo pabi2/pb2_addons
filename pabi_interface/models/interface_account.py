@@ -614,6 +614,9 @@ class InterfaceAccountChecker(models.AbstractModel):
         # For account.type receivable and payble, must have date maturity
         lines = inf.line_ids.filtered(
             lambda l: l.account_id.type in ('payable', 'receivable'))
+        if len(lines) > 1:
+            raise ValidationError(
+                _('Only 1 line allowed for payable or receivable!'))
         dates = [x.date_maturity and True or False for x in lines]
         if False in dates:
             raise ValidationError(
