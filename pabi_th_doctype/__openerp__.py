@@ -31,6 +31,7 @@ PABI2 Extension to l10n_th_doctype for,
         'stock_request',
         'pabi_procurement',
         'payment_export',
+        'pabi_interface',
     ],
     "data": [
         "data/ir_sequence_data.xml",
