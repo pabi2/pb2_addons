@@ -614,10 +614,18 @@ class InterfaceAccountChecker(models.AbstractModel):
         # For account.type receivable and payble, must have date maturity
         lines = inf.line_ids.filtered(
             lambda l: l.account_id.type in ('payable', 'receivable'))
-        dates = [x.date_maturity for x in lines]
+        dates = [x.date_maturity and True or False for x in lines]
         if False in dates:
             raise ValidationError(
                 _('Payable or receivabe lines must have payment due date!'))
+        # For non receivable and payble, must NOT have date maturity
+        lines = inf.line_ids.filtered(
+            lambda l: l.account_id.type not in ('payable', 'receivable'))
+        dates = [x.date_maturity and True or False for x in lines]
+        if True in dates:
+            raise ValidationError(
+                _('Non payable and non receivable lines '
+                  'must not have payment due date!'))
 
     @api.model
     def _check_amount_currency(self, inf):
