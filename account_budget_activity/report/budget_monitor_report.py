@@ -81,7 +81,7 @@ class BudgetMonitorReport(models.Model):
     def _get_sql_view(self):
         sql_view = """
             select row_number() over (order by doc_ref) as id,
-            budget_method, user_id, fiscalyear_id, doc_ref, doc_id, period_id,
+            budget_method, user_id, fiscalyear_id, doc_ref, doc_id, 
             planned_amount, released_amount, amount_so_commit,
             amount_pr_commit, amount_po_commit, amount_exp_commit,
             amount_actual, amount_balance,
@@ -90,7 +90,7 @@ class BudgetMonitorReport(models.Model):
             from
             (select budget_method, user_id, fiscalyear_id, doc_ref,
             'account.budget,' || budget_id as doc_id,
-            planned_amount, released_amount, period_id,
+            planned_amount, released_amount, 
             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
             0.0 as amount_po_commit, 0.0 as amount_exp_commit,
             0.0 as amount_actual, released_amount as amount_balance,
@@ -100,7 +100,6 @@ class BudgetMonitorReport(models.Model):
             where state in ('validate', 'done')
             UNION
             select budget_method, user_id, fiscalyear_id, doc_ref, doc_id,
-            period_id,
             0.0 as planned_amount, 0.0 as released_amount,
             amount_so_commit, amount_pr_commit,
             amount_po_commit, amount_exp_commit,
@@ -122,7 +121,7 @@ class BudgetMonitorReport(models.Model):
         return sql_view
 
     def _get_dimension(self):
-        return 'activity_group_id, activity_id, product_id'
+        return 'activity_group_id, activity_id, product_id, period_id'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
