@@ -30,12 +30,14 @@ class InterfaceAccountEntry(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         default="/",
+        copy=False,
     )
     name = fields.Char(
         string='Document Origin',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=False,
     )
     type = fields.Selection(
         [('invoice', 'Invoice'),
@@ -178,16 +180,15 @@ class InterfaceAccountEntry(models.Model):
                 interface.type = 'invoice'
             # 1) Reverse
             if interface.type == 'reverse':
-                origin_move = interface.to_reverse_entry_id.\
-                    move_id.with_context(force_no_update_check=True)
-                move_id = origin_move.create_reversals(interface.reversed_date)
-                if not move_id:
-                    raise ValidationError(
-                        _('Entry is not created!\n'
-                          '(It might have been created!'))
-                move = self.env['account.move'].browse(move_id)
-                interface.update({'move_id': move.id,
-                                  'state': 'done'})
+                move = interface.to_reverse_entry_id.move_id
+                rev_move = move.copy({'name': move.name + '_VOID',
+                                      'ref': move.ref})
+                rev_move._switch_dr_cr()
+                self.env['account.move'].\
+                    _reconcile_voided_entry([move.id, rev_move.id])
+                rev_move.button_validate()
+                interface.write({'move_id': rev_move.id,
+                                 'state': 'done'})
                 res.update({interface.name: move.name})
             # 2) Invoice / Refund
             elif interface.type == 'invoice':
@@ -614,9 +615,6 @@ class InterfaceAccountChecker(models.AbstractModel):
         # For account.type receivable and payble, must have date maturity
         lines = inf.line_ids.filtered(
             lambda l: l.account_id.type in ('payable', 'receivable'))
-        if len(lines) > 1:
-            raise ValidationError(
-                _('Only 1 line allowed for payable or receivable!'))
         dates = [x.date_maturity and True or False for x in lines]
         if False in dates:
             raise ValidationError(
