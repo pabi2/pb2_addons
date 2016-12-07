@@ -114,10 +114,10 @@ class AccountAnalyticLine(models.Model):
             vals.update({'period_id': period.id})
         return super(AccountAnalyticLine, self).create(vals)
 
-    @api.model
+    @api.multi
     def write(self, vals):
         for rec in self:
-            if vals.get('date', rec.date):
+            if vals.get('date', False):
                 periods = self.env['account.period'].find(vals['date'])
                 period = periods and periods[0] or False
                 vals.update({'period_id': period.id})
