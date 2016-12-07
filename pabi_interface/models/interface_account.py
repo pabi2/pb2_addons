@@ -26,7 +26,7 @@ class InterfaceAccountEntry(models.Model):
     )
     number = fields.Char(
         string='Number',
-        required=True,
+        required=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
         default="/",

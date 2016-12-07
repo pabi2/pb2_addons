@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
@@ -197,6 +197,63 @@ class PABIARLatePaymentPenalty(models.TransientModel):
             line.section_id, line.project_id = \
                 self._find_best_costcenter(line.move_line_id.move_id)
             self.line_ids += line
+
+    @api.model
+    def _prepare_invoice(self, invoice_lines):
+        Invoice = self.env['account.invoice']
+        journal_id = Invoice.default_get(['journal_id'])['journal_id']
+        journal = self.env['account.journal'].browse(journal_id)
+        invoice_vals = {
+            'name': '????',  # <-- this may be suitable to reference?
+            'origin': '?????',
+            'type': 'out_invoice',
+            'reference': '???????',
+            'account_id': journal.default_debit_account.id,
+            'partner_id': self.partner_id.id,
+            'journal_id': journal.id,
+            'invoice_line': invoice_lines,
+            'currency_id': journal.currency_id.id,
+            'comment': '??????',
+            'payment_term': False,
+            'fiscal_position': False,
+            'date_invoice': fields.Date.context_today(self),
+            'company_id': self.env.company_id.id,
+            'user_id': self.env.user.id,
+        }
+        return invoice_vals
+
+    @api.multi
+    def _prepare_invoice_lines(self):
+        invoice_lines = []
+        funds = self.project_id.fund_ids or self.project_id.fund_ids
+        for line in self.line_ids.filtered('select'):
+            reference = line.move_line_id.ref
+            inv_line_values = {
+                'name': _('ค่าปรับจ่ายเงินล่าช้า %s') % (reference, ),
+                'origin': reference,
+                'user_id': self.env.user.id,
+                'price_unit': line.amount_penalty,
+                'quantity': 1.0,
+                'activity_group_id': self.activity_group_id.id,
+                'activity_id': self.activity_id.id,
+                'account_id': self.account_id.id,
+                'section_id': self.section_id.id,
+                'project_id': self.project_id.id,
+                'fund_id': len(funds) == 1 and funds[0] or False
+            }
+            invoice_lines.append((6, 0, inv_line_values))
+        return invoice_lines
+
+    @api.multi
+    def create_invoice(self):
+        self.ensure_one()
+        # Prepare invoice with selected lines
+        if self.section_id and self.project_id:
+            raise UserError(_('Section or Project, not both!'))
+        invoice_lines_val = self._prepare_invoice_lines()
+        invoice_val = self._prepare_invoice(invoice_lines_val)
+        invoice = self.env['account.invoice'].create(invoice_val)
+        return invoice
 
 
 class PABIARLatePaymentList(models.TransientModel):

@@ -40,7 +40,7 @@
                         </tree>
                     </field>
                     <footer attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" >
-                        <button string="Create Invoice for Penalty" name="execut" type="object" class="oe_highlight"/>
+                        <button string="Create Invoice for Penalty" name="create_invoice" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
