@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_pabi_ar_late_payment_penalty_form" model="ir.ui.view">
+            <field name="name">Penalty AR Late Payment</field>
+            <field name="model">pabi.ar.late.payment.penalty</field>
+            <field name="arch" type="xml">
+                <form string="Calculate Penalty Invoice">
+                    <group>
+                        <group>
+                            <field name="type" widget="radio"/>
+                            <field name="partner_id"/>
+                            <field name="rate"/>
+                            <field name="vat_type"/>
+                        </group>
+                        <group>
+                            <field name="activity_group_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="activity_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="account_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="project_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')], 'required': [('section_id','=',False)]}" />
+                            <field name="section_id" attrs="{'invisible': [('type', '=', 'penalty_calculate')], 'required': [('project_id','=',False)]}" />
+                            <!-- TEST -->
+                            <field name="test_paid_date" attrs="{'invisible': [('type', '!=', 'penalty_calculate')], 'required': [('type', '=', 'penalty_calculate')]}" />
+                            <field name="test_move_line_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'penalty_calculate')], 'required': [('type', '=', 'penalty_calculate')]}" />
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="bottom" create="0" delete="0">
+                            <field name="select"/>
+                            <field name="move_line_id"/>
+                            <field name="date_invoice" invisible="1"/>
+                            <field name="date_due"/>
+                            <field name="date_paid"/>
+                            <field name="days_late"/>
+                            <field name="amount"/>
+                            <field name="amount_penalty" sum="Total"/>
+                            <field name="section_id"/>
+                            <field name="project_id"/>
+                        </tree>
+                    </field>
+                    <footer attrs="{'invisible': [('type', '=', 'penalty_calculate')]}" >
+                        <button string="Create Invoice for Penalty" name="create_invoice" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_ar_late_payment_penalty" model="ir.actions.act_window">
+            <field name="name">Penalty AR Late Payment</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pabi.ar.late.payment.penalty</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pabi_ar_late_payment_penalty_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_pabi_ar_late_payment_penalty" action="action_pabi_ar_late_payment_penalty" sequence="1"
+            name="Penalty AR Late Payment" parent="account.periodical_processing_journal_entries_validation"/>
+
+    </data>
+</openerp>

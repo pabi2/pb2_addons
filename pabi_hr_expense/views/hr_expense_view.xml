@@ -45,7 +45,7 @@
 					<field name="date_back" attrs="{'invisible': [('advance_type', '!=', 'attend_seminar')], 'required': [('advance_type', '=', 'attend_seminar')]}"/>
 					<field name="apweb_ref_url" invisible="1"/>
 					<!-- TODO: attrs="{'invisible': [('apweb_ref_url', '=', False)]}" -->
-					<field name="reason_bypass_procure" invisible="1"/>
+					<field name="reason_bypass_procure"/>
 				</field>
 				<field name="currency_id" position="after">
 					<field name="receive_method" widget="radio"/>

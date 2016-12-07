@@ -9,6 +9,7 @@
           * Stock Borrow
           * Payment Export
           * Bank Receipt
+          * Account Interface
         -->
         # Work Acceptance
         <record id="doctype_work_acceptance_seq" model="ir.sequence">
@@ -81,6 +82,17 @@
             <field name="name">DOCTYPE: Bank Receipt</field>
             <field name="code"></field>
             <field name="prefix">BR%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Interface Account
+        <record id="doctype_interface_account_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Interface Account</field>
+            <field name="code"></field>
+            <field name="prefix">IA%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

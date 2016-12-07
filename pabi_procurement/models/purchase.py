@@ -439,16 +439,6 @@ class PurchaseType(models.Model):
     )
 
 
-class PurchasePrototype(models.Model):
-    _name = 'purchase.prototype'
-    _description = 'PABI2 Purchase Prototype'
-
-    name = fields.Char(
-        string='Prototype',
-        required=True,
-    )
-
-
 class PurchaseSelectReason(models.Model):
     _name = 'purchase.select.reason'
     _description = 'PABI2 Purchase Selected Reason'
