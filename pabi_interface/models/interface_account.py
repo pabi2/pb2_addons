@@ -316,9 +316,12 @@ class InterfaceAccountEntry(models.Model):
                 if journal.type in SALE_JOURNAL + PURCHASE_JOURNAL:  # invoice
                     if journal.type in ('sale_refund', 'purchase_refund'):
                         sign = -1
+                if journal.type in BANK_CASH:  # Payment
+                    if line.tax_id.type_tax_use == 'sale':
+                        sign = line.credit and 1 or -1
                 tax_dict = TaxDetail._prepare_tax_detail_dict(
                     False, False,  # No invoice_tax_id, voucher_tax_id
-                    self._get_doc_type(journal),
+                    self._get_doc_type(journal, line),
                     line.partner_id.id, line.tax_invoice_number, line.date,
                     sign * line.tax_base_amount,
                     sign * (line.debit or line.credit)
@@ -334,12 +337,14 @@ class InterfaceAccountEntry(models.Model):
         return move
 
     @api.model
-    def _get_doc_type(self, journal):
+    def _get_doc_type(self, journal, line):
         doc_type = False  # Determine doctype based on journal type
         if journal.type in SALE_JOURNAL:
             doc_type = 'sale'
         elif journal.type in PURCHASE_JOURNAL:
             doc_type = 'purchase'
+        elif journal.type in BANK_CASH:
+            doc_type = line.tax_id.type_tax_use  # sale/purchase
         else:
             raise ValidationError(
                 _("The selected journal type is not supported: %s") %
