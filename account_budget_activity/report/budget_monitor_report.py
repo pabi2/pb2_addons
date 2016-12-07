@@ -77,6 +77,13 @@ class BudgetMonitorReport(models.Model):
         'account.period',
         string='Period',
     )
+    quarter = fields.Selection(
+        [('Q1', 'Q1'),
+         ('Q2', 'Q2'),
+         ('Q3', 'Q3'),
+         ('Q4', 'Q4'),],
+        string="Quarter",
+    )
 
     def _get_sql_view(self):
         sql_view = """
@@ -121,7 +128,7 @@ class BudgetMonitorReport(models.Model):
         return sql_view
 
     def _get_dimension(self):
-        return 'activity_group_id, activity_id, product_id, period_id'
+        return 'activity_group_id, activity_id, product_id, period_id, quarter'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

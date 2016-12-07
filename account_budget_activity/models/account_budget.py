@@ -417,6 +417,33 @@ class AccountBudgetLinePeriodSplit(models.Model):
     sequence = fields.Integer(
         string="Sequence",
     )
+    quarter = fields.Selection(
+        [('Q1', 'Q1'),
+         ('Q2', 'Q2'),
+         ('Q3', 'Q3'),
+         ('Q4', 'Q4'),],
+        string="Quarter",
+        compute="_compute_quarter",
+        store=True,
+    )
+
+    @api.depends('period_id')
+    def _compute_quarter(self):
+        for line in self:
+            period = line.period_id
+            periods = self.env['account.period'].search(
+                [('fiscalyear_id', '=', period.fiscalyear_id.id),
+                 ('special', '=', False)],
+                order="date_start").ids
+            period_index = periods.index(period.id)
+            if period_index in (0, 1, 2):
+                line.quarter = 'Q1'
+            elif period_index in (3, 4, 5):
+                line.quarter = 'Q2'
+            elif period_index in (6, 7, 8):
+                line.quarter = 'Q3'
+            elif period_index in (9, 10, 11):
+                line.quarter = 'Q4'
 
     @api.depends('budget_line_id',
                  'budget_line_id.planned_amount')

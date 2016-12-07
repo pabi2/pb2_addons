@@ -9,6 +9,7 @@
                  <field name="budget_method" type="row"/>
                  <field name="activity_group_id" type="row"/>
                  <field name="period_id" type="row"/>
+                 <field name="quarter" type="row"/>
                  <field name="date" type="col"/>
                  <field name="amount_so_commit" type="measure"/>
                  <field name="amount_pr_commit" type="measure"/>
@@ -35,6 +36,7 @@
                  <field name="fiscalyear_id" />
                  <field name="date" />
                  <field name="period_id"/>
+                 <field name="quarter"/>
                  <field name="amount_so_commit" />
                  <field name="amount_pr_commit" />
                  <field name="amount_po_commit" />
@@ -59,6 +61,8 @@
                     <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                     <filter string="Year" context="{'group_by':'date:year'}"/>
                     <filter string="Month" context="{'group_by':'date:month'}"/>
+                    <filter string="Period" context="{'group_by':'period_id'}"/>
+                    <filter string="Quarter" context="{'group_by':'quarter'}"/>
                 </group>
             </search>
         </field>

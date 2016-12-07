@@ -96,12 +96,19 @@ class BudgetPlanReport(models.Model):
     period_amount = fields.Float(
         string="Period Amount",
     )
+    quarter = fields.Selection(
+        [('Q1', 'Q1'),
+         ('Q2', 'Q2'),
+         ('Q3', 'Q3'),
+         ('Q4', 'Q4'),],
+        string="Quarter",
+    )
 
     def _get_sql_view(self):
         sql_view = """
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
-                ablps.period_id as period_id,ablps.amount as period_amount,
+                ablps.amount as period_amount,
                 -- Amount
                 m1, m2, m3, m4, m5, m6, m7, m8,
                 m9, m10, m11, m12, abl.planned_amount, abl.released_amount,
@@ -115,7 +122,13 @@ class BudgetPlanReport(models.Model):
         return sql_view
 
     def _get_dimension(self):
-        return 'abl.activity_group_id, abl.activity_id, null product_id'
+        return """
+            abl.activity_group_id,
+            abl.activity_id,
+            null product_id,
+            ablps.period_id as period_id,
+            ablps.quarter as quarter
+        """
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
