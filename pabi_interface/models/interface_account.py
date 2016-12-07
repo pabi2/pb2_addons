@@ -520,8 +520,6 @@ class InterfaceAccountChecker(models.AbstractModel):
                 raise ValidationError(_('No tax branch for tax line'))
             if not line.tax_invoice_number:
                 raise ValidationError(_('No tax invoice number for tax line'))
-            if journal_type not in SALE_JOURNAL + PURCHASE_JOURNAL:
-                raise ValidationError(_('This journal is not supported!'))
             if (line.debit or line.credit) and not line.tax_base_amount:
                 raise ValidationError(_('Tax Base should not be zero!'))
             # Sales, tax must be in credit and debit for refund
