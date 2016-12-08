@@ -4,7 +4,7 @@
 
         <act_window
           id="action_invoices_create_payment"
-          name="Create Payment from Invoices"
+          name="Create Payment"
           src_model="account.invoice"
           res_model="invoices.create.payment.wizard"
           view_type="form"

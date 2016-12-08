@@ -13,6 +13,9 @@ class AccountMoveLine(models.Model):
                      ('journal_id.type', 'not in',  # For non invoice moves
                       ['sale', 'sale_refund', 'sale_debitnote',
                        'purchase', 'purchase_refund', 'purchase_debitnote'])]
+        else:
+            args += [(1, '=', 1)]  # don't remove, it require for net pay
+
         return super(AccountMoveLine, self).search(args, offset=offset,
                                                    limit=limit, order=order,
                                                    count=count)
