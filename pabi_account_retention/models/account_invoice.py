@@ -80,23 +80,19 @@ class AccountInvoice(models.Model):
     @api.onchange('retention_purchase_id')
     def _onchange_retention_purchase_id(self):
         self.invoice_line = []
-        self.invoice_line_show_account = []
         if self.retention_purchase_id:
-            self.show_account = True
             retention_line = self.env['account.invoice.line'].new()
             retention_line.account_id = \
                 self.env.user.company_id.account_retention_supplier
             retention_line.name = \
                 self.env.user.company_id.account_retention_supplier.name
             retention_line.quantity = 1.0
-            self.invoice_line_show_account += retention_line
+            self.invoice_line += retention_line
 
     @api.onchange('retention_return_purchase_id')
     def _onchange_retention_return_purchase_id(self):
         self.invoice_line = []
-        self.invoice_line_show_account = []
         if self.retention_return_purchase_id:
-            self.show_account = True
             account_retention_supplier = \
                 self.env.user.company_id.account_retention_supplier
             purchase = self.retention_return_purchase_id
@@ -114,7 +110,7 @@ class AccountInvoice(models.Model):
                         ' (%s)' % (inv.number,)
                     return_line.quantity = line.quantity
                     return_line.price_unit = line.price_unit
-                    self.invoice_line_show_account += return_line
+                    self.invoice_line += return_line
             # 2) Customer Invoice Retention
             invoices = purchase.invoice_ids.filtered(
                 lambda l: l.amount_retention and l.state in ['open', 'paid'])
@@ -125,4 +121,4 @@ class AccountInvoice(models.Model):
                     ' (%s)' % (inv.number,)
                 return_line.quantity = 1.0
                 return_line.price_unit = inv.amount_retention
-                self.invoice_line_show_account += return_line
+                self.invoice_line += return_line

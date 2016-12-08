@@ -361,16 +361,74 @@ class BudgetPlanCommon(object):
         plan = self.browse(active_id)
         vals = {}
         for key in header_fields:
+            if key in plan._columns:
+                if plan._columns[key]._type in ('one2many', 'many2many'):
+                    continue
             vals.update({key: (hasattr(plan[key], '__iter__') and
                                plan[key].id or plan[key])})
-        print vals
         budget = head_trg_model.create(vals)
+        cost_line_id_map = {}
+        if plan.cost_control_ids:
+            if self._context.get('job_order_model', False) and\
+                    self._context.get('job_order_line_model', False):
+                JobOrderSrcModel = self._context['job_order_model']['plan']
+                JobOrderTrgModel = self._context['job_order_model']['budget']
+                JobOrderLineSrcModel =\
+                    self._context['job_order_line_model']['plan']
+                JobOrderLineTrgModel =\
+                    self._context['job_order_line_model']['budget']
+                job_order_fields = self._prepare_copy_fields(JobOrderSrcModel,
+                                                             JobOrderTrgModel)
+                for cost_cntrl in plan.cost_control_ids:
+                    cost_control_vals = {}
+                    for key in job_order_fields:
+                        if key in cost_cntrl._columns:
+                            if cost_cntrl._columns[key]._type in ('one2many',
+                                                                  'many2many'):
+                                continue
+                            cost_control_vals.update({
+                                key: (hasattr(cost_cntrl[key], '__iter__') and
+                                      cost_cntrl[key].id or cost_cntrl[key])
+                            })
+                            cost_control_vals.update({'budget_id': budget.id})
+                    job_order_id = JobOrderTrgModel.create(cost_control_vals)
+                    if cost_cntrl.plan_cost_control_line_ids:
+                        cost_control_line_fields =\
+                            self._prepare_copy_fields(JobOrderLineSrcModel,
+                                                      JobOrderLineTrgModel)
+
+                        for cost_line in cost_cntrl.plan_cost_control_line_ids:
+                            cc_line_vals = {}
+                            for key in cost_control_line_fields:
+                                if key in cost_line._columns:
+                                    if cost_line._columns[key]._type in\
+                                            ('one2many', 'many2many'):
+                                        continue
+                                    cc_line_vals.update({
+                                        key: (hasattr(cost_line[key],
+                                                      '__iter__') and
+                                              cost_line[key].id or
+                                              cost_line[key])
+                                    })
+                                    cc_line_vals.update({
+                                        'cost_control_line_id': job_order_id.id
+                                    })
+                            job_order_line_id =\
+                                JobOrderLineTrgModel.create(cc_line_vals)
+                            cost_line_id_map[cost_line.id] =\
+                                job_order_line_id.id
         for line in plan.plan_line_ids:
+            budget_line_vals = {}
             for key in line_fields:
-                vals.update({key: (hasattr(line[key], '__iter__') and
-                                   line[key].id or line[key])})
-            vals.update({'budget_id': budget.id})
-            line_trg_model.create(vals)
+                budget_line_vals.update({
+                    key: (hasattr(line[key], '__iter__') and
+                          line[key].id or line[key])
+                })
+                if key == 'breakdown_line_id':
+                    if line[key].id in cost_line_id_map:
+                        budget_line_vals[key] = cost_line_id_map[line[key].id]
+            budget_line_vals.update({'budget_id': budget.id})
+            line_trg_model.create(budget_line_vals)
         return budget
 
     @api.multi

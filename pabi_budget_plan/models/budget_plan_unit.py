@@ -169,9 +169,19 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     def convert_plan_to_budget_control(self, active_id):
         head_src_model = self.env['budget.plan.unit']
         line_src_model = self.env['budget.plan.unit.line']
-        return self._convert_plan_to_budget_control(active_id,
-                                                    head_src_model,
-                                                    line_src_model)
+        context = self._context.copy()
+        context.update({
+            'job_order_model':
+                {'plan': self.env['budget.plan.unit.cost.control'],
+                 'budget': self.env['budget.unit.job.order']},
+            'job_order_line_model':
+                {'plan': self.env['budget.plan.unit.cost.control.line'],
+                 'budget': self.env['budget.unit.job.order.line']}
+        })
+        return self.with_context(context).\
+            _convert_plan_to_budget_control(active_id,
+                                            head_src_model,
+                                            line_src_model)
 
     @api.multi  # Only Budget manager can Approve
     def button_accept(self):

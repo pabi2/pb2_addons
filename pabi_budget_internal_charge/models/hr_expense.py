@@ -9,6 +9,10 @@ class HRExpense(models.Model):
     pay_to = fields.Selection(
         selection_add=[('internal', 'Internal Charge')],
     )
+    internal_charge = fields.Boolean(
+        string='IC',
+        compute='_compute_internal_charge',
+    )
     internal_section_id = fields.Many2one(
         'res.section',
         string='Internal Section',
@@ -18,19 +22,6 @@ class HRExpense(models.Model):
     internal_project_id = fields.Many2one(
         'res.project',
         string='Internal Project',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    activity_group_id = fields.Many2one(
-        'account.activity.group',
-        string='Activity Group',
-        compute='_compute_activity_group_id',
-        readonly=True,
-    )
-    activity_id = fields.Many2one(
-        'account.activity',
-        string='Activity',
-        domain=[('budget_method', '=', 'revenue')],
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -58,6 +49,28 @@ class HRExpense(models.Model):
         readonly=True,
         copy=False,
     )
+
+    @api.one
+    @api.constrains('pay_to', 'line_ids')
+    def _check_internal_charge_activity(self):
+        ic = list(set(self.line_ids.mapped('activity_id.internal_charge')))
+        if ic:
+            if len(ic) > 1:
+                raise ValidationError(
+                    _('Not all activity are in same type of charge!'))
+            if ic[0] != (self.internal_charge):
+                if self.internal_charge:
+                    raise ValidationError(
+                        _('Not all activities are internal charge!'))
+                else:
+                    raise ValidationError(
+                        _('Not all activities are external charge!'))
+
+    @api.multi
+    @api.depends('pay_to')
+    def _compute_internal_charge(self):
+        for rec in self:
+            rec.internal_charge = rec.pay_to == 'internal'
 
     @api.onchange('internal_project_id')
     def _onchange_internal_project_id(self):
@@ -100,13 +113,6 @@ class HRExpense(models.Model):
                     raise ValidationError(
                         _('No Project/Section selected on expense line'))
 
-    @api.multi
-    @api.depends('activity_id')
-    def _compute_activity_group_id(self):
-        for rec in self:
-            rec.activity_group_id = rec.activity_id.activity_group_ids and \
-                rec.activity_id.activity_group_ids[0] or False
-
     @api.model
     def _is_valid_for_invoice(self):
         res = super(HRExpense, self)._is_valid_for_invoice()
@@ -133,28 +139,39 @@ class HRExpense(models.Model):
         return vals
 
     @api.model
-    def _prepare_move_line(self, move, expense_line, analytic_account,
-                           activity, debit=0.0, credit=0.0):
-        if not activity.account_id:
-            raise UserError(
-               _("You have to define an account code on "
-                 "the '%s' activity!") % (activity.name, ))
+    def _prepare_move_line(self, move, expense, name, analytic_account_id,
+                           account_id, debit=0.0, credit=0.0):
         vals = {
             'operating_unit_id': move.operating_unit_id.id,
             'move_id': move.id,
             'journal_id': move.journal_id.id,
             'period_id': move.period_id.id,
-            'analytic_account_id': analytic_account.id,
-            'name': expense_line.name,
+            'analytic_account_id': analytic_account_id,
+            'name': name,
             'quantity': 1.0,
             'debit': debit,
             'credit': credit,
-            'account_id': activity.account_id.id,
+            'account_id': account_id,
             'partner_id': False,
             'date': move.date,
             'date_maturity': move.date
         }
         return vals
+
+    @api.model
+    def _get_reference_revenue_activity(self, activity):
+        inrev_activity = activity.inrev_activity_id
+        if not inrev_activity:
+            raise ValidationError(
+                _("The selected activity '%s' do not have reference "
+                  "internal revenue activity") % (activity.name))
+        activity_groups = inrev_activity.activity_group_ids
+        if len(activity_groups) != 1:
+            raise ValidationError(
+                _('Invalid group setup for revenue activity %s.\n'
+                  'Revenue activity must belong to a group') %
+                (activity.name))
+        return inrev_activity, activity_groups[0]
 
     @api.multi
     def create_internal_charge_move(self):
@@ -169,7 +186,6 @@ class HRExpense(models.Model):
             periods = Period.find(expense.date)
             period = periods and periods[0] or False
             ctx.update({'period_id': period.id})
-
             # ============== Create 1st JE for Revenue ==============
             # Cr: Revenue
             rev_journal = expense.rev_ic_journal_id
@@ -177,36 +193,42 @@ class HRExpense(models.Model):
             # move header
             rev_move_vals = self._prepare_move(expense, rev_journal, period)
             rev_move = AccountMove.create(rev_move_vals)
-            temp_exp_line = Expense.create({
-                'expense_id': expense.id,
-                'project_id': expense.internal_project_id.id,
-                'section_id': expense.internal_section_id.id,
-                'activity_id': expense.activity_id.id,
-                'activity_group_id': expense.activity_group_id.id,
-                'name': expense.name,
-            })
-            temp_exp_line.update_related_dimension(rev_move_vals)
-            analytic_account = Analytic.create_matched_analytic(temp_exp_line)
-            rev_cr_vals = self._prepare_move_line(rev_move,
-                                                  temp_exp_line,
-                                                  analytic_account,
-                                                  expense.activity_id,
-                                                  debit=0.0,
-                                                  credit=expense.amount)
-            # Copy before dimensions filled
-            rev_dr_vals = rev_cr_vals.copy()
-
-            AccountMoveLine.with_context(ctx).create(rev_cr_vals)
+            # Credit each expense line
+            for line in expense.line_ids:
+                # Find the reference revenue activity for this activity
+                activity, activity_group = \
+                    self._get_reference_revenue_activity(line.activity_id)
+                temp_exp_line_dict = {
+                    'expense_id': expense.id,
+                    'project_id': expense.internal_project_id.id,
+                    'section_id': expense.internal_section_id.id,
+                    'activity_id': activity.id,
+                    'activity_group_id': activity_group.id,
+                    'name': line.name,
+                }
+                temp_exp_line = Expense.create(temp_exp_line_dict)
+                temp_exp_line.update_related_dimension(temp_exp_line_dict)
+                analytic_account = \
+                    Analytic.create_matched_analytic(temp_exp_line)
+                temp_exp_line.unlink()  # destroy
+                rev_cr_vals = self._prepare_move_line(rev_move,
+                                                      expense,
+                                                      line.name,
+                                                      analytic_account.id,
+                                                      activity.account_id.id,
+                                                      debit=0.0,
+                                                      credit=line.total_amount)
+                AccountMoveLine.with_context(ctx).create(rev_cr_vals)
             # Dr: Internal Charge
-            rev_dr_vals.update({
-                'move_id': rev_move.id,
-                'analytic_account_id': False,
-                'debit': rev_cr_vals['credit'],
-                'credit': False,
-                'account_id': rev_journal.default_debit_account_id.id
-            })
+            account_id = rev_journal.default_debit_account_id.id
+            rev_dr_vals = self._prepare_move_line(rev_move,
+                                                  expense,
+                                                  expense.name,
+                                                  False,
+                                                  account_id,
+                                                  debit=expense.amount,
+                                                  credit=0.0)
             AccountMoveLine.with_context(ctx).create(rev_dr_vals)
-            temp_exp_line.unlink()
 
             # ============== Create 2nd JE for Expense ==============
             exp_journal = expense.exp_ic_journal_id
@@ -217,9 +239,11 @@ class HRExpense(models.Model):
             # Debit each expense line
             for line in expense.line_ids:
                 analytic_account = Analytic.create_matched_analytic(line)
-                exp_dr_vals = self._prepare_move_line(exp_move, line,
-                                                      analytic_account,
-                                                      line.activity_id,
+                account_id = line.activity_id.account_id.id
+                exp_dr_vals = self._prepare_move_line(exp_move, expense,
+                                                      line.name,
+                                                      analytic_account.id,
+                                                      account_id,
                                                       debit=line.total_amount,
                                                       credit=0.0)
                 AccountMoveLine.with_context(ctx).create(exp_dr_vals)

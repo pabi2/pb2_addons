@@ -464,6 +464,30 @@ class PurchaseWorkAcceptance(models.Model):
         readonly=True,
         default=0.0,
     )
+    invoiced = fields.Boolean(
+        string='Invoiced',
+        compute='_compute_invoiced',
+        store=True,
+        help="Fine is invoiced if it is referenced by an open invioce",
+    )
+    invoice_ids = fields.One2many(
+        'account.invoice',
+        'late_delivery_work_acceptance_id',
+        string='Referred Invoices',
+        readonly=True,
+        help="Invoice that reference to this WA for panalty",
+    )
+
+    @api.multi
+    @api.depends('invoice_ids', 'invoice_ids.state')
+    def _compute_invoiced(self):
+        for rec in self:
+            if not rec.invoice_ids:
+                rec.invoiced = False
+            else:
+                # If referenced with invoice and invoice > open
+                states = rec.invoice_ids.mapped('state')
+                rec.invoiced = set(states) <= set(['open', 'paid'])
 
     @api.multi
     def write(self, vals):
@@ -476,7 +500,7 @@ class PurchaseWorkAcceptance(models.Model):
         for wa in self:
             for wa_line in wa.acceptance_line_ids:
                 if wa_line.inv_line_id.invoice_id and \
-                    wa_line.inv_line_id.invoice_id.state == 'draft':
+                        wa_line.inv_line_id.invoice_id.state == 'draft':
                     wa_line.inv_line_id.quantity = wa_line.to_receive_qty
                     wa_line.inv_line_id.price_unit = wa_line.price_unit
                     wa_line.inv_line_id.invoice_id.button_reset_taxes()
@@ -519,7 +543,6 @@ class PurchaseWorkAcceptance(models.Model):
                     _("""Can't evaluate this acceptance.
                          This WA's total amount is over PO's total amount.""")
                 )
-
 
     @api.multi
     def action_evaluate(self):

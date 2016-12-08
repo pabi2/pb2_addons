@@ -8,15 +8,18 @@
     'version': '0.1.0',
     'depends': [
         'hr_expense_auto_invoice',
+        'account_budget_activity',
         'pabi_budget_plan',
         'pabi_hr_expense',
     ],
     'data': [
         'data/account_data.xml',
         'wizard/cost_control_breakdown_wizard.xml',
+        'wizard/account_budget_cost_control_breakdown_wizard.xml',
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',
         'views/account_budget_view.xml',
+        'views/account_activity_view.xml',
         'workflow/hr_expense_workflow.xml',
     ],
     'demo': [

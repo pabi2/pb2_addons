@@ -18,22 +18,6 @@ class AccountInvoice(models.Model):
         readonly=True,
         copy=False,
     )
-    show_account = fields.Boolean(
-        string='Show account (hide product)',
-        default=False,
-        change_default=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]}
-    )
-    invoice_line_show_account = fields.One2many(
-        'account.invoice.line',
-        'invoice_id',
-        string='Invoice Lines',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        copy=True,
-        help="Used when user choose option Show Account instead of Product"
-    )
     payment_count = fields.Integer(
         string='Payment Count',
         compute='_compute_payment_count',
@@ -152,6 +136,13 @@ class AccountInvoice(models.Model):
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
+    account_id_readonly = fields.Many2one(
+        'account.account',
+        string='Account',
+        related='account_id',
+        readonly=True,
+    )
+
     @api.multi
     def onchange_account_id(self, product_id, partner_id, inv_type,
                             fposition_id, account_id):
@@ -166,7 +157,7 @@ class AccountInvoiceLine(models.Model):
     @api.multi
     @api.depends('account_id')
     def _compute_require_chartfield(self):
-        """ Overwrite for case Invoice only """
+        """ Overwrite for case Invoice only, we care about account_id """
         for rec in self:
             if 'account_id' in rec and rec.account_id:
                 report_type = rec.account_id.user_type.report_type

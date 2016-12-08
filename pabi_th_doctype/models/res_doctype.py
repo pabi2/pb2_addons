@@ -16,6 +16,7 @@ class ResDoctype(models.Model):
     #   * Stock Borrow
     #   * Payment Export
     #   * Bank Receipt
+    #   * Interface Account
 
     refer_type = fields.Selection(
         selection_add=[
@@ -27,5 +28,6 @@ class ResDoctype(models.Model):
             ('stock_borrow', 'Stock Borrow'),
             ('payment_export', 'Payment Export'),
             ('bank_receipt', 'Bank Receipt'),
+            ('interface_account', 'Interface Account'),
         ],
     )
