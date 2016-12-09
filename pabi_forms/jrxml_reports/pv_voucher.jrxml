@@ -2,10 +2,11 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name=" pv_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0245201830476058"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;move_ids&quot;]"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["/home/kittiu/hd/workspace/pabi2/pb2_pabi/pabi_forms/jrxml_reports/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
++"/../../../pb2_pabi/pabi_forms/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EVENTS_DATA_SOURCE" class="java.lang.Object"/>
 	<queryString language="xPath">
@@ -101,7 +102,7 @@
 	</background>
 	<pageHeader>
 		<band height="351" splitType="Stretch">
-            <printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 			<staticText>
 				<reportElement x="2" y="17" width="553" height="28"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">

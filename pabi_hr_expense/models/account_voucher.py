@@ -12,8 +12,8 @@ class AccountVoucher(models.Model):
             for voucher in self:
                 if not voucher.date_value:
                     continue
-                status = u'Paid'
-                status_th = u'จ่ายเงิน'
+                status = u'Payment Approved'
+                status_th = u'อนุมัติจ่าย'
                 comment = u'วันที่เช็ค/โอน %s' % (voucher.date_value,)
                 for voucher in self:
                     for line in voucher.line_ids:

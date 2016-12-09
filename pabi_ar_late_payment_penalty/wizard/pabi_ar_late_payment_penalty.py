@@ -72,11 +72,14 @@ class PABIARLatePaymentPenalty(models.TransientModel):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
-        required=True,
     )
     project_id = fields.Many2one(
         'res.project',
         string='Project',
+    )
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='OU',
         required=True,
     )
     line_ids = fields.One2many(
@@ -96,6 +99,7 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         if lines:  # Use section with max penalty
             self.section_id = lines[0].section_id
             self.project_id = lines[0].project_id
+            self.operating_unit_id = lines[0].operating_unit_id
 
     @api.onchange('type', 'partner_id', 'vat_type', 'rate',
                   'test_move_line_ids', 'test_paid_date')
@@ -120,29 +124,39 @@ class PABIARLatePaymentPenalty(models.TransientModel):
     def _penalty_invoice(self):
         if self.partner_id and self.vat_type and self.rate:
             self._cr.execute("""
-            select id, date, date_due, date_paid, amount, amount_tax from
+            select id, pay_move_line_id, operating_unit_id, date, date_due,
+                    date_paid, amount, amount_tax from
             (
-                select aml.id, aml.ref, aml.date,
-                    aml.date_maturity date_due,
-                    aml.debit amount,
-                    (select max(aml2.date) date_paid
-                        from account_move_line aml2 join account_journal aj
-                        on aj.id = aml2.journal_id
-                        and aj.type in ('bank', 'cash')
-                        where aml2.reconcile_id = aml.reconcile_id),
-                    (select coalesce(sum(aml3.credit), 0.0) amount_tax
-                        from account_move_line aml3
-                        where aml3.move_id = aml.move_id
-                        and aml3.account_id in
+                select aml_inv.id, aml_pay.id pay_move_line_id,
+                    aml_inv.operating_unit_id,
+                    aml_inv.ref, aml_inv.date,
+                    aml_inv.date_maturity date_due,
+                    aml_pay.credit amount, aml_pay.date as date_paid,
+                    (select coalesce(sum(aml_tax.credit), 0.0) amount_tax
+                        from account_move_line aml_tax
+                        where aml_inv.move_id = aml_tax.move_id
+                        and aml_tax.account_id in
                             (select account_collected_id
                             from account_tax where type_tax_use = 'sale'))
-                from account_move_line aml
-                where debit > 0 and date_maturity is not null
-                and reconcile_id is not null
-                and partner_id = %s
+                from account_move_line aml_pay
+                    join account_move_line aml_inv
+                        on aml_pay.reconcile_ref = aml_inv.reconcile_ref
+                    and aml_inv.debit > 0 and aml_inv.date_maturity is not null
+                join account_account aa
+                on aa.id = aml_pay.account_id
+                where aml_pay.credit > 0 and aml_pay.date_maturity is null
+                and aa.type = 'receivable'
+                and aml_pay.reconcile_ref is not null
+                and aml_inv.partner_id = %s
             ) a
-            where date_due < date_paid --> Different clause here
-            """, (self.partner_id.id,))
+            where date_due < date_paid
+            and pay_move_line_id not in (  -- not already invoiced
+                select ar_late_move_line_id
+                from account_invoice_line avl
+                join account_invoice av on av.id = avl.invoice_id
+                where av.partner_id = %s and state in ('open', 'paid')
+                and ar_late_move_line_id is not null)
+            """, (self.partner_id.id, self.partner_id.id))
             rows = self._cr.dictfetchall()
             self._fill_lines(rows)
 
@@ -151,9 +165,10 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         if self.partner_id and self.vat_type and self.rate and \
                 self.test_move_line_ids and self.test_paid_date:
             self._cr.execute("""
-            select id, date, date_due, date_paid, amount, amount_tax from
+            select id, operating_unit_id, date, date_due,
+                    date_paid, amount, amount_tax from
             (
-                select aml.id, aml.ref, aml.date,
+                select aml.id, aml.operating_unit_id, aml.ref, aml.date,
                     aml.date_maturity date_due,
                     aml.debit amount,
                     (select max(aml2.date) date_paid
@@ -183,6 +198,7 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         for row in rows:
             line = Line.new()
             line.select = True
+            line.operating_unit_id = row['operating_unit_id']
             line.move_line_id = row['id']
             line.date_invoice = row['date']
             line.date_due = row['date_due']
@@ -196,6 +212,7 @@ class PABIARLatePaymentPenalty(models.TransientModel):
                                    line.days_late * line.amount)
             line.section_id, line.project_id = \
                 self._find_best_costcenter(line.move_line_id.move_id)
+            line.pay_move_line_id = row.get('pay_move_line_id', False)
             self.line_ids += line
 
     @api.model
@@ -203,33 +220,36 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         Invoice = self.env['account.invoice']
         journal_id = Invoice.default_get(['journal_id'])['journal_id']
         journal = self.env['account.journal'].browse(journal_id)
+        refs = [x[2]['ref'] for x in invoice_lines]
         invoice_vals = {
-            'name': '????',  # <-- this may be suitable to reference?
-            'origin': '?????',
+            'name': ', '.join(refs),
+            'origin': False,
             'type': 'out_invoice',
-            'reference': '???????',
-            'account_id': journal.default_debit_account.id,
+            'reference': False,
+            'account_id': self.partner_id.property_account_receivable.id,
             'partner_id': self.partner_id.id,
             'journal_id': journal.id,
             'invoice_line': invoice_lines,
-            'currency_id': journal.currency_id.id,
-            'comment': '??????',
+            'currency_id': self.env.user.company_id.currency_id.id,
+            'comment': False,
             'payment_term': False,
             'fiscal_position': False,
             'date_invoice': fields.Date.context_today(self),
-            'company_id': self.env.company_id.id,
+            'company_id': self.env.user.company_id.id,
             'user_id': self.env.user.id,
+            'operating_unit_id': self.operating_unit_id.id,
         }
         return invoice_vals
 
     @api.multi
-    def _prepare_invoice_lines(self):
+    def _prepare_invoice_lines(self, selected_lines):
         invoice_lines = []
         funds = self.project_id.fund_ids or self.project_id.fund_ids
-        for line in self.line_ids.filtered('select'):
+        for line in selected_lines:
             reference = line.move_line_id.ref
             inv_line_values = {
-                'name': _('ค่าปรับจ่ายเงินล่าช้า %s') % (reference, ),
+                'name': (_('ดอกเบี้ยผิดนัดชำระล่าช้า %s จำนวน %s วัน') %
+                         (reference, line.days_late)),
                 'origin': reference,
                 'user_id': self.env.user.id,
                 'price_unit': line.amount_penalty,
@@ -239,21 +259,39 @@ class PABIARLatePaymentPenalty(models.TransientModel):
                 'account_id': self.account_id.id,
                 'section_id': self.section_id.id,
                 'project_id': self.project_id.id,
-                'fund_id': len(funds) == 1 and funds[0] or False
+                'fund_id': len(funds) == 1 and funds[0] or False,
+                'ar_late_move_line_id': line.pay_move_line_id.id,
+                'ref': line.move_line_id.ref,
             }
-            invoice_lines.append((6, 0, inv_line_values))
+            invoice_lines.append((0, 0, inv_line_values))
         return invoice_lines
+
+    @api.model
+    def _pre_validate(self, selected_lines):
+        if not selected_lines:
+            raise UserError(_('Please selecte at least one line!'))
+        if self.section_id and self.project_id:
+            raise UserError(_('Section or Project, not both!'))
+        operating_unit_ids = selected_lines.mapped('operating_unit_id.id')
+        if len(operating_unit_ids) > 1:
+            raise UserError(_('Can not mix between different OU!'))
 
     @api.multi
     def create_invoice(self):
         self.ensure_one()
         # Prepare invoice with selected lines
-        if self.section_id and self.project_id:
-            raise UserError(_('Section or Project, not both!'))
-        invoice_lines_val = self._prepare_invoice_lines()
+        selected_lines = self.line_ids.filtered('select')
+        self._pre_validate(selected_lines)
+        invoice_lines_val = self._prepare_invoice_lines(selected_lines)
         invoice_val = self._prepare_invoice(invoice_lines_val)
         invoice = self.env['account.invoice'].create(invoice_val)
-        return invoice
+        # Redirect to Customer Invoice
+        action_id = self.env.ref('account.action_invoice_tree1')
+        if action_id:
+            action = action_id.read([])[0]
+            action['domain'] = [('id', '=', invoice.id)]
+            return action
+        return True
 
 
 class PABIARLatePaymentList(models.TransientModel):
@@ -299,4 +337,13 @@ class PABIARLatePaymentList(models.TransientModel):
     project_id = fields.Many2one(
         'res.project',
         string='project',
+    )
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='OU',
+    )
+    pay_move_line_id = fields.Many2one(
+        'account.move.line',
+        string='Receipt',
+        help="Payment move line for the selected invoice move line"
     )
