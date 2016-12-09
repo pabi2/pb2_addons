@@ -220,17 +220,18 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         Invoice = self.env['account.invoice']
         journal_id = Invoice.default_get(['journal_id'])['journal_id']
         journal = self.env['account.journal'].browse(journal_id)
+        refs = [x[2]['ref'] for x in invoice_lines]
         invoice_vals = {
-            'name': '????',  # <-- this may be suitable to reference?
-            'origin': '?????',
+            'name': ', '.join(refs),
+            'origin': False,
             'type': 'out_invoice',
-            'reference': '???????',
+            'reference': False,
             'account_id': self.partner_id.property_account_receivable.id,
             'partner_id': self.partner_id.id,
             'journal_id': journal.id,
             'invoice_line': invoice_lines,
             'currency_id': self.env.user.company_id.currency_id.id,
-            'comment': '??????',
+            'comment': False,
             'payment_term': False,
             'fiscal_position': False,
             'date_invoice': fields.Date.context_today(self),
@@ -260,6 +261,7 @@ class PABIARLatePaymentPenalty(models.TransientModel):
                 'project_id': self.project_id.id,
                 'fund_id': len(funds) == 1 and funds[0] or False,
                 'ar_late_move_line_id': line.pay_move_line_id.id,
+                'ref': line.move_line_id.ref,
             }
             invoice_lines.append((0, 0, inv_line_values))
         return invoice_lines
