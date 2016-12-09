@@ -10,7 +10,7 @@
     'website': "http://ecosoft.co.th",
     'description': """
 
-Add option in Customer Payment and Supplier Payment, to allow net payment
+Option in creating Customer Payment and Supplier Payment, to allow net payment.
 
     """,
     'depends': ['account_voucher',
@@ -18,6 +18,7 @@ Add option in Customer Payment and Supplier Payment, to allow net payment
                 ],
     'demo': [],
     'data': ['wizard/invoices_create_payment_wizard.xml',
+             'views/voucher_payment_receipt_view.xml',
              ],
     'auto_install': False,
     'installable': True,
