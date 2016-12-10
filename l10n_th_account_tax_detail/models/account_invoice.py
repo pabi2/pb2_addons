@@ -31,10 +31,12 @@ class AccountInvoiceTax(models.Model):
 
     @api.model
     def _prepare_invoice_tax_detail(self, invoice_tax):
+        currency = invoice_tax.invoice_id.journal_id.currency
         ttype = invoice_tax.invoice_id.type
         doc_type = \
             ttype in ('out_invoice', 'out_refund') and 'sale' or 'purchase'
         return {'doc_type': doc_type,
+                'currency_id': currency.id,
                 'invoice_tax_id': invoice_tax.id}
 
     @api.model

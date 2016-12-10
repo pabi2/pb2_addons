@@ -30,7 +30,7 @@ class InvoiceVoucherTaxDetail(object):
                     voucher_tax_id = tax.id
                     doc_date = doc.date
                     domain = [('voucher_tax_id', '=', tax.id)]
-                sign = doc.type in ('sale_refund') and -1 or 1
+                sign = doc.type in ('out_refund') and -1 or 1
                 vals = TaxDetail._prepare_tax_detail(invoice_tax_id,
                                                      voucher_tax_id,
                                                      'sale',
@@ -114,7 +114,13 @@ class AccountTaxDetail(models.Model):
     )
     tax_sequence_display = fields.Char(
         string='Sequence',
-        compute='_compute_tax_sequence_display',
+        compute='_compute_tax_report',
+        store=True,
+    )
+    report_period_id = fields.Many2one(
+        'account.period',
+        string='Document Period',
+        compute='_compute_tax_report',
         store=True,
     )
     period_id = fields.Many2one(
@@ -141,6 +147,26 @@ class AccountTaxDetail(models.Model):
     )
     amount = fields.Float(
         string='Tax',
+    )
+    currency_id = fields.Many2one(
+        string='Currency',
+        help="Foreign currency",
+    )
+    base_company = fields.Float(
+        string='Base',
+        compute='_compute_tax_report',
+        store=True,
+        help="Base in company currency",
+    )
+    amount_company = fields.Float(
+        string='Tax',
+        compute='_compute_tax_report',
+        store=True,
+        help="Tax in company currency",
+    )
+    date_doc = fields.Date(
+        string='Document Date',
+        help="Invoice or payment posting date",
     )
 
     _sql_constraints = [
@@ -189,12 +215,14 @@ class AccountTaxDetail(models.Model):
             next_seq = self._get_next_sequence(period)
             self.write({'tax_sequence': next_seq,
                         'period_id': period.id,
+                        'date_doc': date_doc,
                         })
         else:
             add_period = self.env['account.period'].find(self.invoice_date)[:1]
             next_seq = self._get_next_sequence(add_period)
             self.write({'tax_sequence': next_seq,
                         'period_id': add_period.id,
+                        'date_doc': date_doc,
                         'addition': True,
                         })
 
@@ -243,14 +271,41 @@ class AccountTaxDetail(models.Model):
 
     @api.multi
     @api.depends('tax_sequence')
-    def _compute_tax_sequence_display(self):
+    def _compute_tax_report(self):
         for rec in self:
             if rec.period_id and rec.tax_sequence:
                 date_start = rec.period_id.date_start
+                # Sequence Display
                 mo = datetime.strptime(date_start, '%Y-%m-%d').date().month
                 month = '{:02d}'.format(mo)
                 sequence = '{:04d}'.format(rec.tax_sequence)
                 rec.tax_sequence_display = '%s/%s' % (month, sequence)
+                # Reporting Period
+                company = False
+                if rec.invoice_tax_id:
+                    invoice = rec.invoice_tax_id.invoice_id
+                    rec.report_period_id = invoice.period_id
+                    company = invoice.company_id
+                elif rec.voucher_tax_id:
+                    voucher = rec.voucher_tax_id.voucher_id
+                    rec.report_period_id = voucher.period_id
+                    company = voucher.company_id
+                else:
+                    rec.report_period_id = rec.period_id
+                # Compute by currency
+                if rec.currency_id:  # to company currency
+                    company_currency = company.currency_id
+                    from_currency = \
+                        rec.currency_id.with_context(date=rec.date_doc)
+                    rec.base_company = \
+                        from_currency.compute(rec.base, company_currency)
+                    rec.amount_company = \
+                        from_currency.compute(rec.amount, company_currency)
+                else:
+                    rec.base_company = rec.base
+                    rec.amount_company = rec.amount
+                print rec.base_company
+                print rec.amount_company
 
     @api.model
     def _get_seq_search_domain(self, doc_type, period):
