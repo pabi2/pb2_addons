@@ -71,12 +71,11 @@ class AccountTaxReport(models.Model):
             doc_type, atd.id, period_id,
             to_char(ap.date_start, 'YYYY') as "year",
             to_char(ap.date_start, 'MM') as "month",
-            report_period_id, tax_sequence, tax_id,
-            tax_sequence_display, invoice_date,
-            invoice_number, partner_id,
-            rp.name as partner_name, rpt.name as partner_title,
-            rp.vat, rp.taxbranch,
-            base_company as base, amount_company as amount
+            report_period_id, tax_sequence, tax_id, tax_sequence_display,
+            invoice_date, invoice_number, partner_id, rp.name as partner_name,
+            rpt.name as partner_title, rp.vat, rp.taxbranch,
+            base_company as base,
+            case when cancel is true then 0.0 else amount_company end as amount
         """
         return res
 
