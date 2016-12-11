@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		# PDF
+		<record id="l10n_th_tax_report.account_tax_report_pdf" model="ir.actions.report.xml">
+			<field name="report_rml">pabi_th_tax_report/report/account_tax_report.jrxml</field>
+		</record>
+
+		# XLS
+		<record id="l10n_th_tax_report.account_tax_report_xls" model="ir.actions.report.xml">
+			<field name="report_rml">pabi_th_tax_report/report/account_tax_report.jrxml</field>
+		</record>
+
+	</data>
+</openerp>
