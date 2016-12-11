@@ -66,7 +66,6 @@ and report_period_id = $P{report_period_id}]]>
 	<field name="taxbranch" class="java.lang.String"/>
 	<field name="base" class="java.lang.Double"/>
 	<field name="amount" class="java.lang.Double"/>
-	<field name="taxbranch_id" class="java.lang.Integer"/>
 	<variable name="base" class="java.lang.Number" resetType="Group" resetGroup="period" calculation="Sum">
 		<variableExpression><![CDATA[$F{base}]]></variableExpression>
 	</variable>
