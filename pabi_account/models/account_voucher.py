@@ -255,10 +255,9 @@ class AccountVoucherTax(models.Model):
     )
 
     @api.model
-    def _prepare_voucher_tax_detail(self, voucher_tax):
-        res = super(AccountVoucherTax, self).\
-            _prepare_voucher_tax_detail(voucher_tax)
-        res.update({'taxbranch_id': voucher_tax.invoice_id.taxbranch_id.id})
+    def _prepare_voucher_tax_detail(self):
+        res = super(AccountVoucherTax, self)._prepare_voucher_tax_detail()
+        res.update({'taxbranch_id': self.invoice_id.taxbranch_id.id})
         return res
 
     @api.model

@@ -205,10 +205,10 @@ class AccountInvoiceTax(models.Model):
     )
 
     @api.model
-    def _prepare_invoice_tax_detail(self, invoice_tax):
+    def _prepare_invoice_tax_detail(self):
         res = super(AccountInvoiceTax, self).\
-            _prepare_invoice_tax_detail(invoice_tax)
-        res.update({'taxbranch_id': invoice_tax.invoice_id.taxbranch_id.id})
+            _prepare_invoice_tax_detail()
+        res.update({'taxbranch_id': self.invoice_id.taxbranch_id.id})
         return res
 
     @api.model
