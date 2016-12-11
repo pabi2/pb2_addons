@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields
+from openerp import models, api
 
 
 class AccountMove(models.Model):
@@ -22,4 +22,5 @@ class AccountMove(models.Model):
             AccountMoveLine.search([('account_id.reconcile', '=', True),
                                     ('reconcile_id', '=', False),
                                     ('move_id', 'in', move_ids)])
-        move_lines.reconcile('manual')
+        if move_lines:
+            move_lines.reconcile('manual')

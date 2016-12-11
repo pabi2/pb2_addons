@@ -168,6 +168,11 @@ class AccountTaxDetail(models.Model):
         string='Document Date',
         help="Invoice or payment posting date",
     )
+    cancel = fields.Boolean(
+        string='Cancelled',
+        default=False,
+        help="If the Invoice/Voucher is set to cancelled, tax will show 0.0",
+    )
 
     _sql_constraints = [
         ('tax_sequence_uniq', 'unique(doc_type, tax_sequence, period_id)',

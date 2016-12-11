@@ -18,6 +18,27 @@ class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
             self._assign_detail_tax_sequence()
         return result
 
+    @api.multi
+    def action_cancel_draft(self):
+        for rec in self:
+            for voucher_tax in rec.tax_line_normal:
+                # Delete and recreate tax detail
+                voucher_tax.detail_ids.unlink()
+                if voucher_tax.tax_code_type == 'normal':
+                    detail = voucher_tax._prepare_voucher_tax_detail()
+                    self.env['account.tax.detail'].create(detail)
+        res = super(AccountVoucher, self).action_cancel_draft()
+        return res
+
+    @api.multi
+    def cancel_voucher(self):
+        for rec in self:
+            for voucher_tax in rec.tax_line_normal:
+                voucher_tax.detail_ids.write({'cancel': True})
+        res = super(AccountVoucher,
+                    self.with_context(no_reset_tax=True)).cancel_voucher()
+        return res
+
 
 class AccountVoucherTax(models.Model):
     _inherit = 'account.voucher.tax'
@@ -29,19 +50,19 @@ class AccountVoucherTax(models.Model):
     )
 
     @api.model
-    def _prepare_voucher_tax_detail(self, voucher_tax):
-        currency = voucher_tax.voucher_id.journal_id.currency
-        ttype = voucher_tax.voucher_id.type
+    def _prepare_voucher_tax_detail(self):
+        currency = self.voucher_id.journal_id.currency
+        ttype = self.voucher_id.type
         doc_type = ttype == 'receipt' and 'sale' or 'purchase'
         return {'doc_type': doc_type,
                 'currency_id': currency.id,
-                'voucher_tax_id': voucher_tax.id}
+                'voucher_tax_id': self.id}
 
     @api.model
     def create(self, vals):
         voucher_tax = super(AccountVoucherTax, self).create(vals)
         if voucher_tax.tax_code_type == 'normal':
-            detail = self._prepare_voucher_tax_detail(voucher_tax)
+            detail = voucher_tax._prepare_voucher_tax_detail()
             self.env['account.tax.detail'].create(detail)
         return voucher_tax
 
