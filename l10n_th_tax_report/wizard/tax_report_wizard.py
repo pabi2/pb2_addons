@@ -36,7 +36,6 @@ class AccountTaxReportWizard(models.TransientModel):
         data = {'parameters': {}}
         report_name = self.print_format == 'pdf' and \
             'account_tax_report_pdf' or 'account_tax_report_xls'
-        # For ORM, we search for ids, and only pass ids to parser and jasper
         period = self.calendar_period_id.period_id
         # Params
         data['parameters']['report_period_id'] = period.id
@@ -44,10 +43,13 @@ class AccountTaxReportWizard(models.TransientModel):
         data['parameters']['doc_type'] = self.tax_id.type_tax_use
         # Display Params
         company = self.env.user.company_id.partner_id
-        data['parameters']['company_name'] = company.name or ''
-        data['parameters']['company_title'] = company.title.name or ''
-        data['parameters']['company_vat'] = company.vat or ''
-        data['parameters']['company_taxbranch'] = company.taxbranch or ''
+        company_name = company.name or ''
+        data['parameters']['company_name'] = company.title.name and \
+            company.title.name + ' ' + company_name or company_name
+        data['parameters']['branch_name'] = data['parameters']['company_name']
+        data['parameters']['branch_vat'] = company.vat or ''
+        data['parameters']['branch_taxbranch'] = company.taxbranch or ''
+        data['parameters']['advance_sequence'] = False
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
