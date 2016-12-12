@@ -34,6 +34,14 @@
                             <field name="active"/>
                         </group>
                     </group>
+                    <group string="Letter Head">
+                        <group>
+                            <field name="address_print_text"/>
+                        </group>
+                        <group>
+                            <field name="branch_200"/>
+                        </group>
+                    </group>
                     <notebook></notebook>
                 </form>
             </field>

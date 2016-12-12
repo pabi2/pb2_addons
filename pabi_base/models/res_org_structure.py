@@ -22,6 +22,14 @@ class ResOrg(ResCommon, models.Model):
         'operating.unit',
         string='Operating Unit',
     )
+    address_print_text = fields.Text(
+        string='Print Address',
+        translate=True,
+    )
+    branch_200 = fields.Text(
+        string='Branch 200%',
+        translate=True,
+    )
 
 
 class ResSector(ResCommon, models.Model):
