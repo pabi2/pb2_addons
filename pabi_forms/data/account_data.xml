@@ -127,7 +127,7 @@
 			<field name="model">account.invoice</field>
 			<field name="jasper_model_id" ref="account.model_account_invoice"/>
 			<field name="name">Customer Tax Invoice Picking</field>
-			<field name="report_name">customer.tax.receipt.200.form</field>
+			<field name="report_name">customer.tax.receipt.picking.form</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_tax_invoice_picking.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
