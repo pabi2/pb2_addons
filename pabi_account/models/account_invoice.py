@@ -40,6 +40,24 @@ class AccountInvoice(models.Model):
         compute='_compute_doc_ref',
         store=True,
     )
+    invoice_description = fields.Text(
+        string='Invoice Description',
+        compute='_compute_invoice_description',
+        store=True,
+        help="Compute summary description of entire invoice lines",
+    )
+
+    @api.multi
+    @api.depends('invoice_line')
+    def _compute_invoice_description(self):
+        for invoice in self:
+            description = ''
+            for line in invoice.invoice_line:
+                description += line.name + ' ' + \
+                    '{:,}'.format(line.quantity) + \
+                    (line.uos_id and (' ' + line.uos_id.name) or '') + '\n'
+            invoice.invoice_description = \
+                len(description) > 0 and description or False
 
     @api.multi
     @api.depends('tax_line',

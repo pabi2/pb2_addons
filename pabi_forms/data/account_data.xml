@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		<!-- delete existing reports -->
+		<delete model="ir.actions.report.xml" search="[('id', '=', ref('account.account_invoices'))]" />
+
+		<!-- หนังสือรับรองการหักเงินประกันผลงาน (supplier retention form)-->
+		<record id="supplier_retention_form" model="ir.actions.report.xml">
+			<field name="string">หนังสือรับรองการหักเงินประกันผลงาน</field>
+			<field name="auto">True</field>
+			<field name="model">account.invoice</field>
+			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="name">Supplier Retention Form</field>
+			<field name="report_name">supplier.retention.form</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/supplier_retention_form.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="supplier_retention_form_values" model="ir.values">
+			<field name="name">Supplier Retention Form</field>
+			<field name="model">account.invoice</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_retention_form)"/>
+		</record>
+
+		<!-- Customer Invoice -->
+		<record id="customer_invoice_form" model="ir.actions.report.xml">
+			<field name="string">Customer Invoice</field>
+			<field name="auto">True</field>
+			<field name="model">account.invoice</field>
+			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="name">Customer Invoice</field>
+			<field name="report_name">customer.invoice.form</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_invoice.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="customer_invoice_form_values" model="ir.values">
+			<field name="name">Customer Invoice</field>
+			<field name="model">account.invoice</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_invoice_form)"/>
+		</record>
+
+		<!-- Customer Receipt -->
+		<record id="customer_receipt_form" model="ir.actions.report.xml">
+			<field name="string">Customer Receipt</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">Customer Receipt</field>
+			<field name="report_name">customer.receipt.form</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_receipt.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="customer_receipt_form_values" model="ir.values">
+			<field name="name">Customer Receipt</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receipt_form)"/>
+		</record>
+
+		<!-- Customer Tax Receipt -->
+		<record id="customer_tax_receipt_form" model="ir.actions.report.xml">
+			<field name="string">Customer Tax Receipt</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">Customer Tax Receipt</field>
+			<field name="report_name">customer.tax.receipt.form</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_tax_receipt.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="customer_tax_receipt_form_values" model="ir.values">
+			<field name="name">Customer Tax Receipt</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_tax_receipt_form)"/>
+		</record>
+
+		<!-- Customer Tax Receipt 200 -->
+		<record id="customer_tax_receipt_200_form" model="ir.actions.report.xml">
+			<field name="string">Customer Tax Receipt 200%</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">Customer Tax Receipt 200%</field>
+			<field name="report_name">customer.tax.receipt.200.form</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_tax_receipt_200.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="customer_tax_receipt_200_form_values" model="ir.values">
+			<field name="name">Customer Tax Receipt 200%</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_tax_receipt_200_form)"/>
+		</record>
+
+		<!-- Customer Tax Invoice Picking -->
+		<record id="customer_tax_invoice_picking_form" model="ir.actions.report.xml">
+			<field name="string">Customer Tax Invoice Picking</field>
+			<field name="auto">True</field>
+			<field name="model">account.invoice</field>
+			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="name">Customer Tax Invoice Picking</field>
+			<field name="report_name">customer.tax.receipt.200.form</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_tax_invoice_picking.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="customer_tax_invoice_picking_form_values" model="ir.values">
+			<field name="name">Customer Tax Invoice Picking</field>
+			<field name="model">account.invoice</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_tax_invoice_picking_form)"/>
+		</record>
+
+		<!-- Receipt Voucher on Bank Receipt -->
+		<record id="bank_receipt_voucher" model="ir.actions.report.xml">
+			<field name="string">Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.bank.receipt</field>
+			<field name="jasper_model_id" ref="account_bank_receipt.model_account_bank_receipt"/>
+			<field name="name">Voucher</field>
+			<field name="report_name">bank.receipt.voucher</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/bank_receipt_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+		</record>
+		<record id="bank_receipt_voucher_values" model="ir.values">
+			<field name="name">Voucher</field>
+			<field name="model">account.bank.receipt</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_receipt_voucher)"/>
+		</record>
+
+		<!-- Invoice Voucher -->
+		<record id="invoice_voucher" model="ir.actions.report.xml">
+			<field name="string">Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.invoice</field>
+			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="name">Voucher</field>
+			<field name="report_name">invoice.voucher</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/invoice_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="invoice_voucher_values" model="ir.values">
+			<field name="name">Voucher</field>
+			<field name="model">account.invoice</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher)"/>
+		</record>
+
+		<!-- Payment Voucher -->
+		<record id="payment_voucher" model="ir.actions.report.xml">
+			<field name="string">Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">Voucher</field>
+			<field name="report_name">payment.voucher</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/payment_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="payment_voucher_values" model="ir.values">
+			<field name="name">Voucher</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher)"/>
+		</record>
+
+	</data>
+</openerp>

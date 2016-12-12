@@ -206,20 +206,11 @@ class AccountVoucher(models.Model):
 class AccountVoucherLine(models.Model):
     _inherit = 'account.voucher.line'
 
-    # Voucher Selection
-    # select = fields.Boolean(
-    #     string='Select',
-    #     default=False,
-    # )
-    #
-    # @api.onchange('select')
-    # def _onchange_select(self):
-    #     if self.select:
-    #         self.reconcile = True
-    #     else:
-    #         self.reconcile = False
-    #         self.amount = False
-    # --
+    invoice_description = fields.Text(
+        related='invoice_id.invoice_description',
+        string='Invoice Description',
+        readonly=True,
+    )
 
     @api.model
     def get_suppl_inv_taxbranch(self, move_line_id):
