@@ -13,6 +13,7 @@ Thai Tax Report based on Tax Detail table
     'website': 'http://ecosoft.co.th',
     'license': 'AGPL-3',
     "depends": [
+        'jasper_reports',
         'l10n_th_account_tax_detail',
     ],
     "data": [
