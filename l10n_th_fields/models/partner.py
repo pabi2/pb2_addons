@@ -64,7 +64,7 @@ class ResPartner(models.Model):
             count = self.search_count(
                 ['|', ('parent_id', '=', False),
                  ('is_company', '=', True),
-                 ('vat', '=', self.vat)
+                 ('vat', '=', self.vat),
                  ('taxbranch', '=', self.taxbranch)])
             if count > 1:
                 raise ValidationError(
