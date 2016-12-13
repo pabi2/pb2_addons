@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
-	<property name="ireport.zoom" value="1.0245201830476245"/>
+	<property name="ireport.zoom" value="1.2396694214876258"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="768"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -184,7 +184,7 @@
 		<fieldDescription><![CDATA[invoice_line/saleoffice_id/address_text]]></fieldDescription>
 	</field>
 	<field name="branch_address_text" class="java.lang.String">
-		<fieldDescription><![CDATA[taxbranch_id/address_text]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/address_print_text]]></fieldDescription>
 	</field>
 	<field name="saleoffice_use_org" class="java.lang.Boolean">
 		<fieldDescription><![CDATA[invoice_line/saleoffice_id/use_org]]></fieldDescription>
@@ -1292,9 +1292,7 @@ NSTDA is a government sector, no withholding tax]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{saleoffice_use_org} == true ?
-$F{org_payment_method} :
-$F{saleoffice_payment_method}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_method_text}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Transparent" x="0" y="142" width="144" height="10" backcolor="#B5E7D3">
