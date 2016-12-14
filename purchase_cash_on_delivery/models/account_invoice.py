@@ -121,7 +121,7 @@ class AccountInvoice(models.Model):
         if self._context.get('is_clear_prepaid', False):
             if 'move_id' in vals:
                 vals['clear_prepaid_move_id'] = vals.pop('move_id')
-        super(AccountInvoice, self).write(vals)
+        return super(AccountInvoice, self).write(vals)
 
     @api.model
     def _skip_check_move_id(self):
