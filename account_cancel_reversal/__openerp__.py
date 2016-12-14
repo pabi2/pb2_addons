@@ -33,6 +33,7 @@ To-Be:
         'account_cancel',
         'account_invoice_cancel_hooks',
         'account_voucher_cancel_hooks',
+        'account_bank_receipt',
     ],
     'demo': [],
     'data': [

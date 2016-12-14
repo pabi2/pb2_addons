@@ -11,8 +11,10 @@
                         <button name="validate_bank_receipt" states="draft"
                                 string="Validate"
                                 type="object" class="oe_highlight"/>
-                        <button name="backtodraft" states="done"
+                        <button name="backtodraft" states="cancel"
                                 string="Back to Draft" type="object" />
+                        <button name="cancel_bank_receipt" states="done"
+                                string="Cancel" type="object" />
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,done" />
                     </header>
