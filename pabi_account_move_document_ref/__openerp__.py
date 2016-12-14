@@ -17,10 +17,10 @@ Journal Entry's regerence to source document
         'stock_account',
         'purchase_cash_on_delivery',
         'pabi_interface',
+        'pabi_budget_internal_charge',
     ],
     'demo': [],
     'data': [
-        'views/account_move_line_view.xml',
         'views/account_view.xml',
     ],
     'test': [

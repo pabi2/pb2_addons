@@ -131,7 +131,7 @@ class HRExpense(models.Model):
                 (journal.name, ))
         vals = {
             'operating_unit_id': expense.operating_unit_id.id,
-            'ref': expense.name,
+            'ref': expense.number,
             'period_id': period.id,
             'journal_id': journal.id,
             'date': expense.date

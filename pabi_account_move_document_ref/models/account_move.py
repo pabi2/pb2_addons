@@ -5,7 +5,8 @@ REFERENCE_SELECT = [('account.invoice', 'Invoice'),
                     ('account.voucher', 'Voucher'),
                     ('account.bank.receipt', 'Bank Receipt'),
                     ('stock.picking', 'Picking'),
-                    ('interface.account.entry', 'Account Interface')]
+                    ('interface.account.entry', 'Account Interface'),
+                    ('hr.expense.expense', 'Employee Expense'), ]
 
 DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   ('delivery_order', 'Delivery Order'),
@@ -19,7 +20,8 @@ DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   ('in_invoice_debitnote', 'Supplier Debitnote'),
                   ('receipt', 'Customer Payment'),
                   ('payment', 'Supplier Payment'),
-                  ('interface_account', 'Account Interface')]
+                  ('employee_expense', 'Employee Expense'),
+                  ('interface_account', 'Account Interface'), ]
 
 INVOICE_DOCTYPE = {'sale': 'out_invoice',
                    'sale_refund': 'out_refund',
@@ -39,22 +41,22 @@ PICKING_DOCTYPE = {'incoming': 'incoming_shipment',
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    document_ref = fields.Char(
-        string='Origin Document',
+    document = fields.Char(
+        string='Document',
         compute='_compute_document',
         store=True,
         readonly=True,
     )
     document_id = fields.Reference(
         REFERENCE_SELECT,
-        string='Origin Document',
+        string='Document',
         compute='_compute_document',
         store=True,
         readonly=True,
     )
-    document_type = fields.Selection(
+    doctype = fields.Selection(
         DOCTYPE_SELECT,
-        string='Document Type',
+        string='Doctype',
         compute='_compute_document',
         store=True,
         help="Use selection as refer_type in res_doctype",
@@ -107,13 +109,18 @@ class AccountMove(models.Model):
         string='Bank Receipt Cancel',
         readonly=True,
     )
-    # TODO: move is not in picking!!!
-    # picking_ids = fields.One2many(
-    #     'stock.picking',
-    #     'move_id',
-    #     string='Picking',
-    #     readonly=True,
-    # )
+    expense_rev_ic_ids = fields.One2many(
+        'hr.expense.expense',
+        'rev_ic_move_id',
+        string='IC Revenue',
+        readonly=True,
+    )
+    expense_exp_ic_ids = fields.One2many(
+        'hr.expense.expense',
+        'exp_ic_move_id',
+        string='IC Expense',
+        readonly=True,
+    )
     account_interface_ids = fields.One2many(
         'interface.account.entry',
         'move_id',
@@ -122,55 +129,64 @@ class AccountMove(models.Model):
     )
 
     @api.multi
-    @api.depends('invoice_ids.move_id', 'invoice_cancel_ids.cancel_move_id',
-                 'invoice_clear_prepaid_ids.clear_prepaid_move_id',
-                 'voucher_ids.move_id', 'voucher_cancel_ids.cancel_move_id',
-                 'voucher_recognize_vat_ids.recognize_vat_move_id',
-                 'bank_receipt_ids.move_id',
-                 'bank_receipt_cancel_ids.cancel_move_id',
-                 # 'picking_ids.move_id',
-                 'account_interface_ids.move_id')
+    @api.depends('invoice_ids.internal_number',
+                 'invoice_cancel_ids.internal_number',
+                 'invoice_clear_prepaid_ids.internal_number',
+                 'voucher_ids.number',
+                 'voucher_cancel_ids.number',
+                 'voucher_recognize_vat_ids.number',
+                 'bank_receipt_ids.name',
+                 'bank_receipt_cancel_ids.name',
+                 'expense_rev_ic_ids.number',
+                 'expense_exp_ic_ids.number',
+                 'account_interface_ids.number',
+                 'ref',  # check for stock.picking case, as it has no move_id
+                 )
     def _compute_document(self):
         for rec in self:
-            model, _id = False, False
+            document = False
             # Invoice
             if rec.invoice_ids:
-                model, _id = 'account.invoice', rec.invoice_ids[0].id
-            if rec.invoice_cancel_ids:
-                model, _id = 'account.invoice', rec.invoice_cancel_ids[0].id
-            if rec.invoice_clear_prepaid_ids:
-                model, _id = \
-                    'account.invoice', rec.invoice_clear_prepaid_ids[0].id
+                document = rec.invoice_ids[0]
+            elif rec.invoice_cancel_ids:
+                document = rec.invoice_cancel_ids[0]
+            elif rec.invoice_clear_prepaid_ids:
+                document = rec.invoice_clear_prepaid_ids[0]
             # Voucher
-            if rec.voucher_ids:
-                model, _id = 'account.voucher', rec.voucher_ids[0].id
-            if rec.voucher_cancel_ids:
-                model, _id = 'account.voucher', rec.voucher_cancel_ids[0].id
-            if rec.voucher_recognize_vat_ids:
-                model, _id = \
-                    'account.voucher', rec.voucher_recognize_vat_ids[0].id
+            elif rec.voucher_ids:
+                document = rec.voucher_ids[0]
+            elif rec.voucher_cancel_ids:
+                document = rec.voucher_cancel_ids[0]
+            elif rec.voucher_recognize_vat_ids:
+                document = rec.voucher_recognize_vat_ids[0]
             # Bank Receipt
-            if rec.bank_receipt_ids:
-                model, _id = 'account.bank.receipt', rec.bank_receipt_ids[0].id
-            if rec.bank_receipt_cancel_ids:
-                model, _id = \
-                    'account.bank.receipt', rec.bank_receipt_cancel_ids[0].id
-            # Picking
-            # if rec.picking_ids:
-            #     model, _id = 'stock.picking', rec.picking_ids[0].id
+            elif rec.bank_receipt_ids:
+                document = rec.bank_receipt_ids[0]
+            elif rec.bank_receipt_cancel_ids:
+                document = rec.bank_receipt_cancel_ids[0]
+            # Expense IC
+            elif rec.expense_rev_ic_ids:
+                document = rec.expense_rev_ic_ids[0]
+            elif rec.expense_exp_ic_ids:
+                document = rec.expense_exp_ic_ids[0]
             # Account Interface
-            if rec.account_interface_ids:
-                model, _id = \
-                    'interface.account.entry', rec.account_interface_ids[0].id
+            elif rec.account_interface_ids:
+                document = rec.account_interface_ids[0]
+            elif rec.ref:  # Last chance for picking, as it not have move_id
+                Picking = self.env['stock.picking']
+                picking = Picking.search([('name', '=', rec.ref)])
+                document = picking and picking[0] or False
 
             # Assign reference
-            if model:
-                rec.document_id = model and '%s,%s' % (model, _id) or False
-                if model in ('stock.picking', 'account.bank.receipt'):
-                    rec.document_ref = rec.document_id.name
+            if document:
+                rec.document_id = '%s,%s' % (document._name, document.id)
+                if document._name in ('stock.picking', 'account.bank.receipt'):
+                    rec.document = document.name
+                elif document._name == 'account.invoice':
+                    rec.document = document.internal_number
                 else:
-                    rec.document_ref = rec.document_id.number
-                rec.document_type = self._get_doctype(model, rec.document_id)
+                    rec.document = document.number
+                rec.doctype = self._get_doctype(document._name, document)
 
     @api.model
     def _get_doctype(self, model, document):
@@ -180,6 +196,8 @@ class AccountMove(models.Model):
             return VOUCHER_DOCTYPE[document.type]
         if model == 'account.bank.receipt':
             return 'bank_receipt'
+        if model == 'hr.expense.expense':
+            return 'employee_expense'
         if model == 'stock.picking':
             return PICKING_DOCTYPE[document.picking_type_id.code]
         if model == 'interface.account.entry':
@@ -189,22 +207,23 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    document_ref = fields.Char(
-        string='Doc Ref',
-        related='move_id.document_ref',
+    document = fields.Char(
+        string='Document',
+        related='move_id.document',
         store=True,
+        readonly=True,
     )
     document_id = fields.Reference(
         REFERENCE_SELECT,
-        string='Origin Document',
+        string='Document',
         related='move_id.document_id',
         store=True,
         readonly=True,
     )
-    document_type = fields.Selection(
+    doctype = fields.Selection(
         DOCTYPE_SELECT,
-        string='Document Type',
-        related='move_id.document_type',
+        string='Doctype',
+        related='move_id.doctype',
         store=True,
         help="Use selection as refer_type in res_doctype",
     )
