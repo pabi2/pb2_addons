@@ -96,15 +96,45 @@ class BudgetPlanReport(models.Model):
     period_amount = fields.Float(
         string="Period Amount",
     )
+    quarter = fields.Selection(
+        [('Q1', 'Q1'),
+         ('Q2', 'Q2'),
+         ('Q3', 'Q3'),
+         ('Q4', 'Q4'),],
+        string="Quarter",
+    )
 
     def _get_sql_view(self):
         sql_view = """
-            select abl.id, abl.budget_method, ab.creating_user_id as user_id,
+            select ablps.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
-                ablps.period_id as period_id,ablps.amount as period_amount,
+                ablps.amount as period_amount,
                 -- Amount
-                m1, m2, m3, m4, m5, m6, m7, m8,
-                m9, m10, m11, m12, abl.planned_amount, abl.released_amount,
+                case when ablps.sequence = 1
+                    then ablps.amount  end as m1,
+                case when ablps.sequence = 2
+                    then ablps.amount   end as m2,
+                case when ablps.sequence = 3
+                    then ablps.amount  end as m3,
+                case when ablps.sequence = 4
+                    then ablps.amount  end as m4,
+                case when ablps.sequence = 5
+                    then ablps.amount  end as m5,
+                case when ablps.sequence = 6
+                    then ablps.amount  end as m6,
+                case when ablps.sequence = 7
+                    then ablps.amount  end as m7,
+                case when ablps.sequence = 8
+                    then ablps.amount  end as m8,
+                case when ablps.sequence = 9
+                    then ablps.amount  end as m9,
+                case when ablps.sequence = 10
+                    then ablps.amount  end as m10,
+                case when ablps.sequence = 11
+                    then ablps.amount  end as m11,
+                case when ablps.sequence = 12
+                    then ablps.amount  end as m12,
+                abl.planned_amount, abl.released_amount,
                 abl.budget_state as state,
                 -- Dimensions
                 %s
@@ -115,7 +145,13 @@ class BudgetPlanReport(models.Model):
         return sql_view
 
     def _get_dimension(self):
-        return 'abl.activity_group_id, abl.activity_id, null product_id'
+        return """
+            abl.activity_group_id,
+            abl.activity_id,
+            null product_id,
+            ablps.period_id as period_id,
+            ablps.quarter as quarter
+        """
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

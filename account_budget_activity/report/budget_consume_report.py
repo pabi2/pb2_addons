@@ -68,11 +68,18 @@ class BudgetConsumeReport(models.Model):
         'account.period',
         string="Period",
     )
+    quarter = fields.Selection(
+        [('Q1', 'Q1'),
+         ('Q2', 'Q2'),
+         ('Q3', 'Q3'),
+         ('Q4', 'Q4'),],
+        string="Quarter",
+    )
 
     def _get_sql_view(self):
         sql_view = """
             select aal.id, aal.user_id, aal.date, aal.fiscalyear_id,
-                aal.doc_ref, aal.doc_id, aal.period_id,
+                aal.doc_ref, aal.doc_id, aal.period_id, aal.quarter,
                 -- Amount
                 case when aaj.budget_method = 'expense' then -amount
                     else amount end as amount,

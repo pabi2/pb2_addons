@@ -9,21 +9,22 @@
                     <field name="budget_method" type="row"/>
                     <field name="activity_group_id" type="row"/>
                     <field name="period_id" type="row"/>
+                    <field name="quarter" type="row"/>
                     <field name="fiscalyear_id" type="col"/>
                     <field name="planned_amount" type="measure"/>
                     <field name="released_amount" type="measure"/>
-                    <field name="m1" type="measure"/>
-                    <field name="m2" type="measure"/>
-                    <field name="m3" type="measure"/>
-                    <field name="m4" type="measure"/>
-                    <field name="m5" type="measure"/>
-                    <field name="m6" type="measure"/>
-                    <field name="m7" type="measure"/>
-                    <field name="m8" type="measure"/>
-                    <field name="m9" type="measure"/>
-                    <field name="m10" type="measure"/>
-                    <field name="m11" type="measure"/>
-                    <field name="m12" type="measure"/>
+<!--                    <field name="m1" type="measure"/>-->
+<!--                    <field name="m2" type="measure"/>-->
+<!--                    <field name="m3" type="measure"/>-->
+<!--                    <field name="m4" type="measure"/>-->
+<!--                    <field name="m5" type="measure"/>-->
+<!--                    <field name="m6" type="measure"/>-->
+<!--                    <field name="m7" type="measure"/>-->
+<!--                    <field name="m8" type="measure"/>-->
+<!--                    <field name="m9" type="measure"/>-->
+<!--                    <field name="m10" type="measure"/>-->
+<!--                    <field name="m11" type="measure"/>-->
+<!--                    <field name="m12" type="measure"/>-->
                     <field name="period_amount" type="measure"/>
                 </graph>
             </field>
@@ -40,6 +41,7 @@
                     <field name="activity_id"/>
                     <field name="user_id"/>
                     <field name="period_id"/>
+                    <field name="quarter"/>
                     <field name="fiscalyear_id"/>
                     <field name="planned_amount"/>
                     <field name="released_amount"/>
@@ -74,6 +76,7 @@
                         <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                         <filter string="Period" context="{'group_by':'period_id'}"/>
+                        <filter string="Quarter" context="{'group_by':'quarter'}"/>
                     </group>
                 </search>
             </field>

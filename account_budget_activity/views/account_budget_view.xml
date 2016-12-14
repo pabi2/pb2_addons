@@ -14,6 +14,7 @@
                 <tree string="Budget Lines Period Split">
                     <field name="sequence"/>
                     <field name="budget_line_id" invisible="1"/>
+                    <field name="quarter"/>
                     <field name="period_id"/>
                     <field name="amount" sum="amount"/>
                 </tree>
@@ -27,6 +28,7 @@
                 <form string="Budget Lines Period Split">
                     <field name="sequence"/>
                     <field name="budget_line_id" invisible="1"/>
+                    <field name="quarter"/>
                     <field name="period_id"/>
                     <field name="amount"/>
                 </form>
