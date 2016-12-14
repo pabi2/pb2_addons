@@ -55,7 +55,8 @@ class AccountBankReceipt(models.Model):
     )
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('done', 'Done'), ],
+         ('done', 'Done'),
+         ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
         readonly=True,
@@ -182,7 +183,7 @@ class AccountBankReceipt(models.Model):
         return super(AccountBankReceipt, self).unlink()
 
     @api.multi
-    def backtodraft(self):
+    def cancel_bank_receipt(self):
         for receipt in self:
             if receipt.move_id:
                 # It will raise here if journal_id.update_posted = False
@@ -191,6 +192,11 @@ class AccountBankReceipt(models.Model):
                     if line.reconcile_id:
                         line.reconcile_id.unlink()
                 receipt.move_id.unlink()
+            receipt.write({'state': 'cancel'})
+
+    @api.multi
+    def backtodraft(self):
+        for receipt in self:
             receipt.write({'state': 'draft'})
         return True
 

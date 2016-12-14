@@ -4,7 +4,7 @@
     'version': '8.0.0.1.0',
     'category': 'Accounting & Finance',
     'license': 'AGPL-3',
-    'summary': 'Manage trasfer from from intransit account the bank',
+    'summary': 'Manage trasfer from intransit account the bank',
     'author': "Ecosoft",
     'website': 'http://www.ecosoft.co.th/',
     'depends': [
