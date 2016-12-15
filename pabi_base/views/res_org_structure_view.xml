@@ -35,6 +35,7 @@
                         </group>
                     </group>
                     <group string="Letter Head">
+                        <field name="name_print_text" />
                         <group>
                             <field name="address_print_text"/>
                         </group>

@@ -22,6 +22,10 @@ class ResOrg(ResCommon, models.Model):
         'operating.unit',
         string='Operating Unit',
     )
+    name_print_text = fields.Char(
+        string='Print Name',
+        translate=True,
+    )
     address_print_text = fields.Text(
         string='Print Address',
         translate=True,
@@ -195,5 +199,9 @@ class ResTaxbranch(ResCommon, models.Model):
     )
     address_print_text_receipt = fields.Text(
         string='Print Address (Receipt)',
+        translate=True,
+    )
+    payment_method_text = fields.Text(
+        string='Print Payment Method',
         translate=True,
     )

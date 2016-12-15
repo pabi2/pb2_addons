@@ -130,6 +130,7 @@
                     <group>
                         <field name="address_print_text"/>
                         <field name="address_print_text_receipt"/>
+                        <field name="payment_method_text"/>
                     </group>
                     <notebook></notebook>
                 </form>
