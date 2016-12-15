@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
-	<property name="ireport.zoom" value="1.2396694214876258"/>
+	<property name="ireport.zoom" value="1.239669421487626"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="384"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -185,15 +185,6 @@
 	</field>
 	<field name="branch_address_text" class="java.lang.String">
 		<fieldDescription><![CDATA[taxbranch_id/address_print_text]]></fieldDescription>
-	</field>
-	<field name="saleoffice_use_org" class="java.lang.Boolean">
-		<fieldDescription><![CDATA[invoice_line/saleoffice_id/use_org]]></fieldDescription>
-	</field>
-	<field name="org_payment_method" class="java.lang.String">
-		<fieldDescription><![CDATA[org_id/payment_method]]></fieldDescription>
-	</field>
-	<field name="saleoffice_payment_method" class="java.lang.String">
-		<fieldDescription><![CDATA[invoice_line/saleoffice_id/payment_method]]></fieldDescription>
 	</field>
 	<field name="amount_retention" class="java.lang.Number">
 		<fieldDescription><![CDATA[amount_retention]]></fieldDescription>
@@ -426,13 +417,6 @@ $F{amount_total_text_th}]]></variableExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_address_text}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="442" y="106" width="128" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{quotation}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="146" y="41" width="255" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -441,7 +425,7 @@ $F{amount_total_text_th}]]></variableExpression>
 				<text><![CDATA[ใบแจ้งหนี้/Invoice]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="80" y="150" width="215" height="58" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Transparent" x="80" y="134" width="215" height="58" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -451,25 +435,11 @@ $F{amount_total_text_th}]]></variableExpression>
 + ", Fax: " + ($F{cust_fax}.toString() == "" ? "-" : $F{cust_fax})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="443" y="123" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_order_ref}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="443" y="72" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="443" y="157" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date($F{date_order}.getTime() + 7*60*60*1000)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Transparent" x="294" y="89" width="218" height="15" backcolor="#B5E7D3"/>
@@ -478,13 +448,6 @@ $F{amount_total_text_th}]]></variableExpression>
 				</textElement>
 				<text><![CDATA[วันที่/Date:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="443" y="174" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{so_ref_number}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="442" y="89" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -492,20 +455,6 @@ $F{amount_total_text_th}]]></variableExpression>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="295" y="174" width="218" height="15" backcolor="#B5E7D3"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[เลขที่เอกสารอ้างอิง/Reference No.:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Transparent" x="294" y="106" width="218" height="15" backcolor="#B5E7D3"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[เลขที่ใบเสนอราคา/Quotation No.:]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="2" y="204" width="551" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -522,41 +471,20 @@ $F{amount_total_text_th}]]></variableExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer_code}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="2" y="86" width="110" height="15" backcolor="#B5E7D3"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[เรียน/Attention to:]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="111" y="86" width="184" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{attention}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="111" y="105" width="184" height="50" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="111" y="89" width="184" height="50" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}+" "+$F{customer_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="2" y="105" width="110" height="45" backcolor="#B5E7D3"/>
+				<reportElement positionType="Float" mode="Transparent" x="2" y="89" width="110" height="45" backcolor="#B5E7D3"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[หน่วยงาน บริษัท/
 Customer name:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Transparent" x="295" y="140" width="218" height="15" backcolor="#B5E7D3"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[เลขที่ใบสั่งขาย/Sales Order No.:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Transparent" x="295" y="72" width="218" height="15" backcolor="#B5E7D3"/>
@@ -566,25 +494,11 @@ Customer name:]]></text>
 				<text><![CDATA[เลขที่เอกสาร/Document No.:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="2" y="150" width="110" height="35" backcolor="#B5E7D3"/>
+				<reportElement positionType="Float" mode="Transparent" x="2" y="134" width="110" height="35" backcolor="#B5E7D3"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[ที่อยู่/Address:]]></text>
-			</staticText>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="443" y="140" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{sale_order}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="295" y="157" width="218" height="15" backcolor="#B5E7D3"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[วันที่ใบสั่งขาย/Sales Order Date:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Transparent" x="2" y="72" width="110" height="15" backcolor="#B5E7D3"/>
@@ -609,13 +523,6 @@ Customer name:]]></text>
 $F{sale_person_fname} + " " +
 $F{sale_person_lname} + "  / " + $F{sale_person_dpm}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement mode="Transparent" x="295" y="123" width="218" height="15" backcolor="#B5E7D3"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[เลขที่ใบสั่งซื้อ/Purchase Order No.:]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="103" y="230" width="297" height="31" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -920,9 +827,7 @@ NSTDA is a government sector, no withholding tax]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{saleoffice_use_org} == true ?
-$F{org_payment_method} :
-$F{saleoffice_payment_method}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_method_text}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="4" y="276" width="161" height="24"/>

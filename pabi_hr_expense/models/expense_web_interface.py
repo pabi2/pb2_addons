@@ -111,6 +111,7 @@ class HRExpense(models.Model):
             'number': u'/',  # expense number
             'employee_code': u'004012',
             'preparer_code': u'004012',
+            'approver_code': u'004012',
             'date': u'2016-01-31',
             'advance_type': u'attend_seminar',  # attend_seminar, buy_product
             'date_back': u'2016-10-30',  # back from seminar
@@ -205,6 +206,11 @@ class HRExpense(models.Model):
         employee = Employee.search(domain)
         data_dict['user_id.id'] = employee.user_id.id or u''
         del data_dict['preparer_code']
+        # approver_code to approver_id.id
+        domain = [('employee_code', '=', data_dict.get('approver_code'))]
+        employee = Employee.search(domain)
+        data_dict['approver_id.id'] = employee.user_id.id or u''
+        del data_dict['approver_code']
         # OU based on employee
         data_dict['operating_unit_id.id'] = \
             employee.org_id.operating_unit_id.id
@@ -400,8 +406,8 @@ class HRExpense(models.Model):
             return False
         arg = {
             'by': self.env.user.login,
-            'task': '',
-            'task_th': '',
+            'task': 'Finance',
+            'task_th': u'การเงิน',
             'status': status,
             'status_th': status_th,
             'comment': comment,

@@ -22,6 +22,12 @@ class HRExpense(models.Model):
         readonly=True, states={'draft': [('readonly', False)]},
     )
     # --
+    approver_id = fields.Many2one(
+        'res.uers',
+        string='Approved By',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     apweb_ref_url = fields.Char(
         string='PABI Web Ref.',
         readonly=True, states={'draft': [('readonly', False)]},
