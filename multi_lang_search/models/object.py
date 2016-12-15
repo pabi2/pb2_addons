@@ -63,7 +63,7 @@ class ModelExtended(models.Model):
         'ir.model.fields',
         string='Name Search Fields')
 
-    def register_hook(self, cr, ids=None):
+    def _register_hook(self, cr, ids=None):
 
         def make_name_search():
 
@@ -127,7 +127,7 @@ class ModelExtended(models.Model):
             if Model:
                 Model._patch_method('name_search', make_name_search())
                 Model._patch_method('_search', make_search())
-        return super(ModelExtended, self).register_hook(cr)
+        return super(ModelExtended, self)._register_hook(cr)
 
 # @api.model
 # def name_search(self, name='', args=None, operator='ilike', limit=100):
