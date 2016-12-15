@@ -50,9 +50,16 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    purchase_prototype_id = fields.Many2one(
-        'res.project.prototype',
-        string='Prototype',
+    # purchase_prototype_id = fields.Many2one(
+    #     'res.project.prototype',
+    #     string='Prototype',
+    #     readonly=True,
+    #     states={'draft': [('readonly', False)]},
+    # )
+    prototype_type = fields.Selection(
+        [('research', 'Research'),
+         ('deliver', 'Deliver')],
+        string='Prototype Type',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
