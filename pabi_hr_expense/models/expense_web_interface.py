@@ -241,11 +241,9 @@ class HRExpense(models.Model):
         return data_dict
 
     @api.model
-    def _post_process_hr_expense(self, res):
+    def _post_process_hr_expense(self, expense):
         # Submit to manager
-        expense = self.env['hr.expense.expense'].browse(res['result']['id'])
         expense.signal_workflow('confirm')
-        return res
 
     @api.model
     def generate_hr_expense(self, data_dict):
@@ -254,7 +252,8 @@ class HRExpense(models.Model):
             data_dict = self._pre_process_hr_expense(data_dict)
             res = self._create_hr_expense_expense(data_dict)
             if res['is_success'] is True:
-                self._post_process_hr_expense(res)
+                expense = self.browse(res['result']['id'])
+                self._post_process_hr_expense(expense)
                 # Replace Admin with Preparer
                 dom = [('employee_code', '=', prepare_code)]
                 employee = self.env['hr.employee'].search(dom)
