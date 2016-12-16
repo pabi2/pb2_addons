@@ -6,18 +6,34 @@
             <field name="model">open.attachment.url</field>
             <field name="arch" type="xml">
                 <form>
-                	<p class="oe_grey">
-                		Click open to redirect to the document. 
-                	</p>
-                    <footer>
-                        <button name="open" string="View Attachment" type="object"
+                    <p class="oe_grey">
+                        Click open to redirect to the document. 
+                    </p>
+                    <group>
+                        <group>
+                            <field name="attachment_id" invisible="True"/>
+                            <field name="type" invisible="True"/>
+                            <field name="file_name" invisible="True"/>
+                            <field name="binary_file"
+                                   filename='file_name'
+                                   attrs="{'invisible': [('type', '=', 'url')]}"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <footer attrs="{'invisible': [('type', '!=', 'url')]}">
+                        <button name="open"  string="View Attachment" type="object" 
                             class="oe_highlight" />
                         or
+                        <button string="Close" class="oe_link" special="cancel" />
+                    </footer>
+                    <footer attrs="{'invisible': [('type', '=', 'url')]}">
                         <button string="Close" class="oe_link" special="cancel" />
                     </footer>
                 </form>
             </field>
         </record>
+
 
         <record model="ir.actions.act_window" id="action_open_url">
             <field name="name">Open Attachment URL</field>
