@@ -36,5 +36,6 @@ Add more user's profile
         'views/hr_employee_view.xml',
         # name_search
         'name_search/ir.model.csv',
+        'views/res_partner_view.xml',
     ],
 }
