@@ -9,6 +9,7 @@ class ResPartner(models.Model):
         related='employee_id.employee_code',
         string="Employee Code",
         store=True,
+        readonly=True,
     )
 
     @api.model
