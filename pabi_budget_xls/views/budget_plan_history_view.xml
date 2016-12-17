@@ -31,6 +31,9 @@
                   <field name="operation_date"/>
                   <field name="operation_type"/> 
                   <field name="attachement_id"/>
+                  <button name="%(pabi_attachment_helper.action_open_url)d" string="Open Document"
+                                    type="action" icon="gtk-justify-fill"
+                                    />
               </tree>
           </field>
         </record>

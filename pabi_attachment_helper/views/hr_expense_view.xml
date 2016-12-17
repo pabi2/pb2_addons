@@ -19,7 +19,7 @@
 								<field name="url" widget="url" invisible="1"/>
 				    			<button name="%(action_open_url)d" string="Open Document"
 				         			type="action" icon="gtk-justify-fill"
-				         			attrs="{'invisible': [('url', '=', False)]}"/>
+				         			/>
 							</tree>
 						</field>
 					</page>
