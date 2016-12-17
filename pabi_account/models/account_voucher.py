@@ -130,8 +130,8 @@ class AccountVoucher(models.Model):
             i = 0
             for line in voucher.line_ids:
                 if line.move_line_id and i < limit:
-                    if line.move_line_id.doc_ref:
-                        invoices_text.append(line.move_line_id.doc_ref)
+                    if line.move_line_id.document:
+                        invoices_text.append(line.move_line_id.document)
                     i += 1
             voucher.invoices_text = ", ".join(invoices_text)
             if len(voucher.line_ids) > limit:

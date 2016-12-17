@@ -35,9 +35,9 @@ class AccountInvoice(models.Model):
         compute='_compute_currency_rate',
         store=True,
     )
-    doc_ref = fields.Char(
+    ref_docs = fields.Char(
         string='Reference Doc',
-        compute='_compute_doc_ref',
+        compute='_compute_ref_docs',
         store=True,
     )
     invoice_description = fields.Text(
@@ -63,7 +63,7 @@ class AccountInvoice(models.Model):
     @api.depends('tax_line',
                  'tax_line.detail_ids',
                  'tax_line.detail_ids.invoice_number')
-    def _compute_doc_ref(self):
+    def _compute_ref_docs(self):
         for rec in self:
             header_text = ''
             for tax in rec.tax_line:
@@ -73,7 +73,7 @@ class AccountInvoice(models.Model):
                     else:
                         header_text = (header_text + ',' +
                                        detail.invoice_number)
-                    rec.doc_ref = header_text
+                    rec.ref_docs = header_text
 
     @api.multi
     @api.depends('currency_id')
