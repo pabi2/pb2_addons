@@ -19,6 +19,7 @@
         'web_widget_x2many_2d_matrix',
         'pabi_budget_plan',
         'pabi_budget_internal_charge',
+        'pabi_attachment_helper',
     ],
     "data": [
         'security/ir.model.access.csv',
