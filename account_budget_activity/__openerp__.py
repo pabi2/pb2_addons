@@ -15,7 +15,7 @@ NOte: This module provide only framework. There will be no budget check here.
     'depends': [
         'account',
         'account_accountant',
-        'account_move_line_doc_ref',
+        # 'account_move_line_doc_ref',
         'sale',
         'purchase',
         'purchase_requisition',

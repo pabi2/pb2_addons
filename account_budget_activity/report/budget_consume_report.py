@@ -23,17 +23,17 @@ class BudgetConsumeReport(models.Model):
     date = fields.Date(
         string='Date',
     )
-    doc_ref = fields.Char(
-        string='Document Ref'
-    )
-    doc_id = fields.Reference(
-        [('purchase.request', 'Purchase Request'),
-         ('purchase.order', 'Purchase Order'),
-         ('hr.expense.expense', 'Expense'),
-         ('account.invoice', 'Invoice')],
-        string='Document ID',
-        readonly=True,
-    )
+    # doc_ref = fields.Char(
+    #     string='Document Ref'
+    # )
+    # doc_id = fields.Reference(
+    #     [('purchase.request', 'Purchase Request'),
+    #      ('purchase.order', 'Purchase Order'),
+    #      ('hr.expense.expense', 'Expense'),
+    #      ('account.invoice', 'Invoice')],
+    #     string='Document ID',
+    #     readonly=True,
+    # )
     amount = fields.Float(
         string='Total',
     )
@@ -71,8 +71,9 @@ class BudgetConsumeReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            select aal.id, aal.user_id, aal.date, aal.fiscalyear_id,
-                aal.doc_ref, aal.doc_id, aal.period_id,
+            select aal.id, aal.user_id, aal.date,
+                aal.fiscalyear_id, aal.period_id,
+                -------------> aal.doc_ref, aal.doc_id,
                 -- Amount
                 case when aaj.budget_method = 'expense' then -amount
                     else amount end as amount,

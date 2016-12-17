@@ -20,9 +20,9 @@ class BudgetPlanReport(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
     )
-    doc_ref = fields.Char(
-        string='Budget Document',
-    )
+    # doc_ref = fields.Char(
+    #     string='Budget Document',
+    # )
     budget_id = fields.Many2one(
         'account.budget',
         string='Budget Document',
@@ -100,7 +100,8 @@ class BudgetPlanReport(models.Model):
     def _get_sql_view(self):
         sql_view = """
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
-                abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
+                abl.fiscalyear_id, ab.id as budget_id,
+                ------> ab.name as doc_ref,
                 ablps.period_id as period_id,ablps.amount as period_amount,
                 -- Amount
                 m1, m2, m3, m4, m5, m6, m7, m8,

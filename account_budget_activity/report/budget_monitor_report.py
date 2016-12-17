@@ -20,19 +20,19 @@ class BudgetMonitorReport(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
     )
-    doc_ref = fields.Char(
-        string='Document Ref'
-    )
-    doc_id = fields.Reference(
-        [('sale.order', 'Sales Oder'),
-         ('purchase.request', 'Purchase Request'),
-         ('purchase.order', 'Purchase Order'),
-         ('hr.expense.expense', 'Expense'),
-         ('account.invoice', 'Invoice'),
-         ('account.budget', 'Budget Plan')],
-        string='Document ID',
-        readonly=True,
-    )
+    # doc_ref = fields.Char(
+    #     string='Document Ref'
+    # )
+    # doc_id = fields.Reference(
+    #     [('sale.order', 'Sales Oder'),
+    #      ('purchase.request', 'Purchase Request'),
+    #      ('purchase.order', 'Purchase Order'),
+    #      ('hr.expense.expense', 'Expense'),
+    #      ('account.invoice', 'Invoice'),
+    #      ('account.budget', 'Budget Plan')],
+    #     string='Document ID',
+    #     readonly=True,
+    # )
     planned_amount = fields.Float(
         string='Planned Amount',
     )
@@ -80,16 +80,17 @@ class BudgetMonitorReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            select row_number() over (order by doc_ref) as id,
-            budget_method, user_id, fiscalyear_id, doc_ref, doc_id, period_id,
+            select row_number() over (order by period_id) as id,
+            budget_method, user_id, fiscalyear_id, period_id,
+            -----> doc_ref, doc_id,
             planned_amount, released_amount, amount_so_commit,
             amount_pr_commit, amount_po_commit, amount_exp_commit,
             amount_actual, amount_balance,
             coalesce(pa1.id, pa2.id) as product_activity_id,
             %s
             from
-            (select budget_method, user_id, fiscalyear_id, doc_ref,
-            'account.budget,' || budget_id as doc_id,
+            (select budget_method, user_id, fiscalyear_id,
+            ------> doc_ref, 'account.budget,' || budget_id as doc_id,
             planned_amount, released_amount, period_id,
             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
             0.0 as amount_po_commit, 0.0 as amount_exp_commit,
@@ -99,8 +100,8 @@ class BudgetMonitorReport(models.Model):
             from budget_plan_report
             where state in ('validate', 'done')
             UNION
-            select budget_method, user_id, fiscalyear_id, doc_ref, doc_id,
-            period_id,
+            select budget_method, user_id, fiscalyear_id, period_id,
+            ------> doc_ref, doc_id,
             0.0 as planned_amount, 0.0 as released_amount,
             amount_so_commit, amount_pr_commit,
             amount_po_commit, amount_exp_commit,

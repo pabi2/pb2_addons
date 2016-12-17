@@ -137,8 +137,8 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
             'journal_id': general_journal.pr_commitment_analytic_journal_id.id,
             'ref': self.request_id.name,
             'user_id': self._uid,
-            'doc_ref': self.request_id.name,
-            'doc_id': '%s,%s' % ('purchase.request', self.request_id.id),
+            # 'doc_ref': self.request_id.name,
+            # 'doc_id': '%s,%s' % ('purchase.request', self.request_id.id),
         }
 
     @api.one

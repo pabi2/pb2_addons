@@ -173,8 +173,8 @@ class HRExpenseLine(ActivityCommon, models.Model):
             'journal_id': journal_id,
             'ref': self.expense_id.name,
             'user_id': self._uid,
-            'doc_ref': self.expense_id.name,
-            'doc_id': '%s,%s' % ('hr.expense.expense', self.expense_id.id),
+            # 'doc_ref': self.expense_id.name,
+            # 'doc_id': '%s,%s' % ('hr.expense.expense', self.expense_id.id),
         }
 
     @api.one

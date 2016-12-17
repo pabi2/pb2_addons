@@ -26,8 +26,8 @@
          <field name="arch" type="xml">
              <tree string="Budget Consume" >
                  <field name="budget_method" />
-               	 <field name="doc_ref" invisible="0"/>
-               	 <field name="doc_id" invisible="1"/>
+               	 <!-- <field name="doc_ref" invisible="0"/> -->
+               	 <!-- <field name="doc_id" invisible="1"/> -->
                	 <field name="product_id" />
                  <field name="activity_group_id" />
                  <field name="activity_id" />
@@ -52,7 +52,7 @@
             <search string="Budget Consume">
                 <group expand="1" string="Group By">
                     <filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
-                    <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
+                    <!-- <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/> -->
                     <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
                     <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
                     <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
