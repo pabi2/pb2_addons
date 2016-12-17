@@ -86,6 +86,30 @@ class AccountAnalyticLine(models.Model):
     #     string='Doc Ref',
     #     readonly=True,
     # )
+    purchase_request_id = fields.Many2one(
+        'purchase.request',
+        string='Purchase Request',
+        readonly=True,
+        help="PR Commitment",
+    )
+    purchase_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+        readonly=True,
+        help="PO Commitment",
+    )
+    sale_id = fields.Many2one(
+        'sale.order',
+        string='Sales Order',
+        readonly=True,
+        help="SO Commitment",
+    )
+    expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Expense',
+        readonly=True,
+        help="Expense Commitment",
+    )
     period_id = fields.Many2one(
         'account.period',
         string="Period",

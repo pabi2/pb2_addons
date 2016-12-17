@@ -143,8 +143,8 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
             'journal_id': general_journal.po_commitment_analytic_journal_id.id,
             'ref': self.order_id.name,
             'user_id': self._uid,
-            # 'doc_ref': self.order_id.name,
-            # 'doc_id': '%s,%s' % ('purchase.order', self.order_id.id),
+            # PO
+            'purchase_id': self.order_id.id,
         }
 
     @api.one

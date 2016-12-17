@@ -140,8 +140,8 @@ class SaleOrderLine(ActivityCommon, models.Model):
             'journal_id': general_journal.so_commitment_analytic_journal_id.id,
             'ref': self.order_id.name,
             'user_id': self._uid,
-            # 'doc_ref': self.order_id.name,
-            # 'doc_id': '%s,%s' % ('sale.order', self.order_id.id),
+            # SO
+            'sale_id': self.order_id.id,
         }
 
     @api.one
