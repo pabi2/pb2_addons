@@ -10,6 +10,7 @@
         'account_budget_activity',
         'pabi_chartfield',
         'pabi_procurement',
+        'pabi_account_move_document_ref',
     ],
     'data': [
         'security/ir.model.access.csv',
