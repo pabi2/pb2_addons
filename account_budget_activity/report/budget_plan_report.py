@@ -110,7 +110,7 @@ class BudgetPlanReport(models.Model):
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.fiscalyear_id, ab.id as budget_id,
                 ------> ab.name as doc_ref,
-                ablps.period_id as period_id,ablps.amount as period_amount,
+                ablps.amount as period_amount,
                 -- Amount
                 case when ablps.sequence = 1
                     then ablps.amount  end as m1,

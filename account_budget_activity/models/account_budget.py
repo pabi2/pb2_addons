@@ -421,7 +421,8 @@ class AccountBudgetLinePeriodSplit(models.Model):
         [('Q1', 'Q1'),
          ('Q2', 'Q2'),
          ('Q3', 'Q3'),
-         ('Q4', 'Q4'),],
+         ('Q4', 'Q4'),
+         ],
         string="Quarter",
         compute="_compute_quarter",
         store=True,
@@ -681,12 +682,12 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                 if period.special:
                     continue
                 vals = {
-                    'budget_line_id' : line.id,
+                    'budget_line_id': line.id,
                     'period_id': period.id,
                     'sequence': sequence,
                 }
                 BudgetPeriodSplit = env['account.budget.line.period.split']
-                lineid = BudgetPeriodSplit.sudo().create(vals)
+                BudgetPeriodSplit.sudo().create(vals)
                 sequence += 1
 
     @api.multi
