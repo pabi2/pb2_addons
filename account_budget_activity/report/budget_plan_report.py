@@ -20,9 +20,9 @@ class BudgetPlanReport(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
     )
-    doc_ref = fields.Char(
-        string='Budget Document',
-    )
+    # doc_ref = fields.Char(
+    #     string='Budget Document',
+    # )
     budget_id = fields.Many2one(
         'account.budget',
         string='Budget Document',
@@ -100,15 +100,17 @@ class BudgetPlanReport(models.Model):
         [('Q1', 'Q1'),
          ('Q2', 'Q2'),
          ('Q3', 'Q3'),
-         ('Q4', 'Q4'),],
+         ('Q4', 'Q4'),
+         ],
         string="Quarter",
     )
 
     def _get_sql_view(self):
         sql_view = """
-            select ablps.id, abl.budget_method, ab.creating_user_id as user_id,
-                abl.fiscalyear_id, ab.name as doc_ref, ab.id as budget_id,
-                ablps.amount as period_amount,
+            select abl.id, abl.budget_method, ab.creating_user_id as user_id,
+                abl.fiscalyear_id, ab.id as budget_id,
+                ------> ab.name as doc_ref,
+                ablps.period_id as period_id,ablps.amount as period_amount,
                 -- Amount
                 case when ablps.sequence = 1
                     then ablps.amount  end as m1,

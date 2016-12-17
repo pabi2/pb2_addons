@@ -73,18 +73,19 @@ class AccountAnalyticLine(models.Model):
         'account.activity',
         string='Activity',
     )
-    doc_id = fields.Reference(
-        [('purchase.request', 'Purchase Request'),
-         ('purchase.order', 'Purchase Order'),
-         ('hr.expense.expense', 'Expense'),
-         ('account.invoice', 'Invoice')],
-        string='Doc Ref',
-        readonly=True,
-    )
-    doc_ref = fields.Char(
-        string='Doc Ref',
-        readonly=True,
-    )
+    # Don't need as we move to new module
+    # doc_id = fields.Reference(
+    #     [('purchase.request', 'Purchase Request'),
+    #      ('purchase.order', 'Purchase Order'),
+    #      ('hr.expense.expense', 'Expense'),
+    #      ('account.invoice', 'Invoice')],
+    #     string='Doc Ref',
+    #     readonly=True,
+    # )
+    # doc_ref = fields.Char(
+    #     string='Doc Ref',
+    #     readonly=True,
+    # )
     period_id = fields.Many2one(
         'account.period',
         string="Period",
