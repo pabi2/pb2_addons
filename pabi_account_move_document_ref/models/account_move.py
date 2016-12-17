@@ -6,7 +6,12 @@ REFERENCE_SELECT = [('account.invoice', 'Invoice'),
                     ('account.bank.receipt', 'Bank Receipt'),
                     ('stock.picking', 'Picking'),
                     ('interface.account.entry', 'Account Interface'),
-                    ('hr.expense.expense', 'Employee Expense'), ]
+                    ('hr.expense.expense', 'Employee Expense'),
+                    # For analytic line only (budget commitment)
+                    ('purchase.request', 'Purchase Request'),
+                    ('purchase.order', 'Purchase Order'),
+                    ('sale.order', 'Sales Order'),
+                    ]
 
 DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   ('delivery_order', 'Delivery Order'),
@@ -21,7 +26,11 @@ DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   ('receipt', 'Customer Payment'),
                   ('payment', 'Supplier Payment'),
                   ('employee_expense', 'Employee Expense'),
-                  ('interface_account', 'Account Interface'), ]
+                  ('interface_account', 'Account Interface'),
+                  # For analytic line only (budget commitment)
+                  ('purchase_request', 'Purchase Request'),
+                  ('purchase_order', 'Purchase Order'),
+                  ('sale_order', 'Sales Order'), ]
 
 INVOICE_DOCTYPE = {'sale': 'out_invoice',
                    'sale_refund': 'out_refund',

@@ -5,7 +5,10 @@
     'author': 'Ecosoft',
     'summary': 'Account Move - Document Ref',
     'description': """
-Journal Entry's regerence to source document
+* Journal Entry's regerence to source document.
+* Analytic Line referent to source document, in 2 case
+  * Linked to move_ine_id
+  * Linked budget commitment with budget commitment (PR, PO, SO, EXP)
     """,
     'category': 'Accounting',
     'website': 'http://www.ecosoft.co.th',
@@ -14,6 +17,7 @@ Journal Entry's regerence to source document
         'account',
         'account_voucher',
         'account_bank_receipt',
+        'account_budget_activity',
         'stock_account',
         'purchase_cash_on_delivery',
         'pabi_interface',
