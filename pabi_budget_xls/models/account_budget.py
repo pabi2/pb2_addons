@@ -10,3 +10,8 @@ class BudgetPlan(models.Model):
         'plan_id',
         string="Budget Plan History",
     )
+    attachment_ids = fields.One2many(
+        'ir.attachment',
+        'budget_plan_id',
+        string='Attachments',
+    )

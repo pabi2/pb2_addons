@@ -301,6 +301,8 @@ class BudgetImportWizard(models.TransientModel):
                 'datas_fname': self.datas_fname,
                 'res_model': 'budget.plan.unit',
                 'res_id': budget.id,
+                'budget_plan_id': budget.id,
+                'description': 'Import',
             })
             self.env['budget.plan.history'].create({
                 'user_id': self.env.user.id,

@@ -621,6 +621,8 @@ class BudgetExportWizard(models.TransientModel):
                 'datas_fname': filename,
                 'res_model': 'budget.plan.unit',
                 'res_id': budget.id,
+                'budget_plan_id': budget.id,
+                'description': 'Export',
             })
             attach_id = self.env['budget.xls.output'].create({
                 'name': filename,
