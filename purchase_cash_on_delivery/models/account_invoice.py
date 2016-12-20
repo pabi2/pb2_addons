@@ -32,7 +32,7 @@ class AccountInvoice(models.Model):
     @api.depends('payment_term')
     def _compute_is_prepaid(self):
         cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term')
+                                    'cash_on_delivery_payment_term', False)
         for rec in self:
             if rec.payment_term == cod_pay_term:
                 rec.is_prepaid = True
