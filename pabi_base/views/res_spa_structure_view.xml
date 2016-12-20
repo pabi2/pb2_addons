@@ -324,15 +324,6 @@
                                 </tree>
                             </field>
                         </page>
-                        <!-- <page string="Prototypes">
-                            <field name="prototype_ids" nolabel="1">
-                                <tree editable="bottom">
-                                    <field name="name"/>
-                                    <field name="code"/>
-                                    <field name="prototype_type"/>
-                                </tree>
-                            </field> -->
-                        </page>
                     </notebook>
                 </form>
             </field>
