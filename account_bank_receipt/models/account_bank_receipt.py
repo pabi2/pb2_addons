@@ -21,11 +21,13 @@ class AccountBankReceipt(models.Model):
         'account.move.line',
         'bank_receipt_id',
         string='Intransit Payments',
-        states={'done': [('readonly', '=', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     receipt_date = fields.Date(
         string='Receipt Date', required=True,
-        states={'done': [('readonly', '=', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         default=fields.Date.context_today,
     )
     journal_id = fields.Many2one(
@@ -33,7 +35,8 @@ class AccountBankReceipt(models.Model):
         string='Journal',
         domain=[('type', '=', 'bank'), ('intransit', '=', True)],
         required=True,
-        states={'done': [('readonly', '=', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Show only journal of type Bank & Cash and Bank Intransit = True",
     )
     journal_default_account_id = fields.Many2one(
@@ -46,7 +49,8 @@ class AccountBankReceipt(models.Model):
         'res.currency',
         string='Currency',
         required=True,
-        states={'done': [('readonly', '=', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     currency_none_same_company_id = fields.Many2one(
         'res.currency',
@@ -77,7 +81,8 @@ class AccountBankReceipt(models.Model):
         string='Bank Account',
         domain="['|', ('company_id', '=', company_id),"
                "('partner_id', '=', company_partner_id)]",
-        states={'done': [('readonly', '=', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     bank_account_id = fields.Many2one(
         'account.account',
@@ -96,7 +101,8 @@ class AccountBankReceipt(models.Model):
         'res.company',
         string='Company',
         required=True,
-        states={'done': [('readonly', '=', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         default=lambda self: self.env['res.company']._company_default_get(
             'account.bank.receipt'),
     )
@@ -117,6 +123,19 @@ class AccountBankReceipt(models.Model):
     )
     note = fields.Text(
         string='Notes',
+    )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+    )
+    validate_date = fields.Date(
+        'Validate On',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
     )
 
     @api.multi
@@ -159,9 +178,9 @@ class AccountBankReceipt(models.Model):
                             _("The bank intransit with amount %s and "
                               "reference '%s' is in currency %s but the "
                               "receipt is in currency %s.") % (
-                              line.debit, line.ref or '',
-                              line.currency_id.name,
-                              receipt_currency.name))
+                                line.debit, line.ref or '',
+                                line.currency_id.name,
+                                receipt_currency.name))
             else:
                 for line in receipt.bank_intransit_ids:
                     if line.currency_id != receipt_currency:
@@ -169,9 +188,9 @@ class AccountBankReceipt(models.Model):
                             _("The bank intransit with amount %s and "
                               "reference '%s' is in currency %s but the "
                               "receipt is in currency %s.") % (
-                              line.debit, line.ref or '',
-                              line.currency_id.name,
-                              receipt_currency.name))
+                                line.debit, line.ref or '',
+                                line.currency_id.name,
+                                receipt_currency.name))
 
     @api.multi
     def unlink(self):
@@ -280,7 +299,11 @@ class AccountBankReceipt(models.Model):
             aml_obj.create(counter_vals)
 
             move.post()
-            receipt.write({'state': 'done', 'move_id': move.id})
+            receipt.write({'state': 'done',
+                           'move_id': move.id,
+                           'validate_user_id': self.env.user.id,
+                           'validate_date': fields.Date.context_today(self),
+                           })
             # We have to reconcile after post()
             for reconcile_lines in to_reconcile_lines:
                 reconcile_lines.reconcile()

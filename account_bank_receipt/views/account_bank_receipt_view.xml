@@ -45,6 +45,8 @@
                                 <field name="total_amount" widget="monetary"
                                     options="{'currency_field': 'currency_id'}"/>
                                 <field name="move_id"/>
+                                <field name="validate_user_id"/>
+                                <field name="validate_date"/>
                             </group>
                         </group>
                         <group string="Bank Intransit" name="bank_intransit">
