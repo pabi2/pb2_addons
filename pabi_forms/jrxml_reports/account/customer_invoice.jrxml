@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
-	<property name="ireport.zoom" value="1.239669421487626"/>
+	<property name="ireport.zoom" value="1.0245201830476263"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="384"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -216,20 +216,20 @@
 	<field name="prf_name" class="java.lang.String">
 		<fieldDescription><![CDATA[approver_sig_id/emp_prf_id/prf_name]]></fieldDescription>
 	</field>
-	<field name="pst_name" class="java.lang.String">
-		<fieldDescription><![CDATA[approver_sig_id/emp_pst_id/pst_name]]></fieldDescription>
+	<field name="validate_user_position" class="java.lang.String">
+		<fieldDescription><![CDATA[validate_user_id/partner_id/employee_id/position_id/name]]></fieldDescription>
 	</field>
-	<field name="sale_person_fname" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_fname]]></fieldDescription>
+	<field name="validate_user_fname" class="java.lang.String">
+		<fieldDescription><![CDATA[validate_user_id/partner_id/employee_id/first_name]]></fieldDescription>
 	</field>
-	<field name="sale_person_lname" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_lname]]></fieldDescription>
+	<field name="validate_user_lname" class="java.lang.String">
+		<fieldDescription><![CDATA[validate_user_id/partner_id/employee_id/last_name]]></fieldDescription>
 	</field>
-	<field name="sale_person_prefix" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_prf_id/prf_name]]></fieldDescription>
+	<field name="validate_user_title" class="java.lang.String">
+		<fieldDescription><![CDATA[validate_user_id/partner_id/employee_id/title_id/name]]></fieldDescription>
 	</field>
-	<field name="sale_person_dpm" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_dpm_id/dpm_name]]></fieldDescription>
+	<field name="validate_user_phone" class="java.lang.String">
+		<fieldDescription><![CDATA[validate_user_id/partner_id/employee_id/work_phone]]></fieldDescription>
 	</field>
 	<field name="cust_phone" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/phone]]></fieldDescription>
@@ -248,18 +248,6 @@
 	</field>
 	<field name="title_en" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/title/name_en]]></fieldDescription>
-	</field>
-	<field name="sale_person_phone" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_teloffice]]></fieldDescription>
-	</field>
-	<field name="sale_person_mobile" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_mobile]]></fieldDescription>
-	</field>
-	<field name="sale_person_fax" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/partner_id/fax]]></fieldDescription>
-	</field>
-	<field name="sale_person_email" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/emp_id/emp_email]]></fieldDescription>
 	</field>
 	<field name="vat_included" class="java.lang.Boolean">
 		<fieldDescription><![CDATA[invoice_line/invoice_line_tax_id/price_include]]></fieldDescription>
@@ -295,8 +283,10 @@
 $F{amount_total_text_en} :
 $F{amount_total_text_th}]]></variableExpression>
 	</variable>
-	<variable name="approver_name" class="java.lang.String">
-		<variableExpression><![CDATA[$F{prf_name} + " " + $F{approver_fname} + " " + $F{approver_lname}]]></variableExpression>
+	<variable name="validate_user" class="java.lang.String">
+		<variableExpression><![CDATA[$F{validate_user_title} + " " +
+$F{validate_user_fname} + " " +
+$F{validate_user_lname}]]></variableExpression>
 	</variable>
 	<variable name="price_unit_group" class="java.lang.Number" resetType="Group" resetGroup="Sub" calculation="Average">
 		<variableExpression><![CDATA[$F{price_unit}]]></variableExpression>
@@ -365,42 +355,42 @@ $F{amount_total_text_th}]]></variableExpression>
 				<text><![CDATA[DRAFT]]></text>
 			</staticText>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="295" y="278" width="45" height="224" isPrintInFirstWholeBand="true"/>
+				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="295" y="207" width="45" height="295" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="470" y="278" width="85" height="224" isPrintInFirstWholeBand="true"/>
+				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="470" y="207" width="85" height="295" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="278" width="36" height="224" isPrintInFirstWholeBand="true"/>
+				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="207" width="36" height="295" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="385" y="278" width="85" height="224" isPrintInFirstWholeBand="true"/>
+				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="385" y="207" width="85" height="295" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="340" y="278" width="45" height="224" isPrintInFirstWholeBand="true"/>
+				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="340" y="207" width="45" height="295" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="36" y="278" width="259" height="224" isPrintInFirstWholeBand="true"/>
+				<reportElement style="table_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="36" y="207" width="259" height="295" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -409,7 +399,7 @@ $F{amount_total_text_th}]]></variableExpression>
 		</band>
 	</background>
 	<pageHeader>
-		<band height="261" splitType="Stretch">
+		<band height="190" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="20" width="556" height="20"/>
 				<textElement lineSpacing="Single" markup="none">
@@ -425,7 +415,7 @@ $F{amount_total_text_th}]]></variableExpression>
 				<text><![CDATA[ใบแจ้งหนี้/Invoice]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="80" y="134" width="215" height="58" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Transparent" x="80" y="134" width="215" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -456,7 +446,7 @@ $F{amount_total_text_th}]]></variableExpression>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="2" y="204" width="551" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="294" y="106" width="256" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -508,29 +498,28 @@ Customer name:]]></text>
 				<text><![CDATA[รหัสลูกค้า/Customer ID:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="1" y="218" width="137" height="25" backcolor="#B5E7D3"/>
+				<reportElement positionType="Float" mode="Transparent" x="295" y="134" width="137" height="25" backcolor="#B5E7D3"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[ผู้ออกใบแจ้งหนี้/From:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="102" y="218" width="400" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="396" y="134" width="175" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{sale_person_prefix} + " " +
-$F{sale_person_fname} + " " +
-$F{sale_person_lname} + "  / " + $F{sale_person_dpm}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{validate_user_title} + " " +
+$F{validate_user_fname} + " " +
+$F{validate_user_lname}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="103" y="230" width="297" height="31" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="397" y="158" width="174" height="31" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Tel: " + ($F{sale_person_phone}.toString() == "" ? "-" : $F{sale_person_phone})
-+ ", Fax: " + ($F{cust_fax}.toString() == "" ? "-" : $F{sale_person_fax})
-+ "\nEmail: " + ($F{sale_person_email}.toString() == "" ? "-" : $F{sale_person_email})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tel: " + ($F{validate_user_phone}.toString() == "" ? "-" : $F{validate_user_phone})
++ "\nEmail: ar@nstda.or.th"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="555" height="15"/>
@@ -1158,7 +1147,7 @@ $V{sum_price_subtotal} - $V{amount_total}]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["( "+$V{approver_name}+ " )"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["( "+$V{validate_user}+ " )"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="276" width="161" height="24"/>
@@ -1169,11 +1158,11 @@ $V{sum_price_subtotal} - $V{amount_total}]]></textFieldExpression>
 Tax Invoice Address]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="336" y="235" width="247" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="317" y="235" width="247" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{pst_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{validate_user_position}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="4" y="117" width="555" height="25">

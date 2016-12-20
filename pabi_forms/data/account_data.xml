@@ -166,11 +166,11 @@
 
 		<!-- Invoice Voucher -->
 		<record id="invoice_voucher" model="ir.actions.report.xml">
-			<field name="string">Voucher</field>
+			<field name="string">Invoice Voucher</field>
 			<field name="auto">True</field>
-			<field name="model">account.invoice</field>
-			<field name="jasper_model_id" ref="account.model_account_invoice"/>
-			<field name="name">Voucher</field>
+			<field name="model">account.move</field>
+			<field name="jasper_model_id" ref="account.model_account_move"/>
+			<field name="name">Invoice Voucher</field>
 			<field name="report_name">invoice.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/invoice_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -181,18 +181,18 @@
 		</record>
 
 		<record id="invoice_voucher_values" model="ir.values">
-			<field name="name">Voucher</field>
-			<field name="model">account.invoice</field>
+			<field name="name">Invoice Voucher</field>
+			<field name="model">account.move</field>
 			<field name="key2" eval="'client_print_multi'"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher)"/>
 		</record>
 
 		<!-- Payment Voucher -->
 		<record id="payment_voucher" model="ir.actions.report.xml">
-			<field name="string">Voucher</field>
+			<field name="string">Payment Voucher</field>
 			<field name="auto">True</field>
-			<field name="model">account.voucher</field>
-			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="model">account.move</field>
+			<field name="jasper_model_id" ref="account.model_account_move"/>
 			<field name="name">Voucher</field>
 			<field name="report_name">payment.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/payment_voucher.jrxml</field>
@@ -204,8 +204,8 @@
 		</record>
 
 		<record id="payment_voucher_values" model="ir.values">
-			<field name="name">Voucher</field>
-			<field name="model">account.voucher</field>
+			<field name="name">Payment Voucher</field>
+			<field name="model">account.move</field>
 			<field name="key2" eval="'client_print_multi'"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher)"/>
 		</record>

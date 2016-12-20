@@ -2,6 +2,8 @@
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
+from openerp.addons.l10n_th_account.models.res_partner \
+    import INCOME_TAX_FORM
 
 
 class AccountVoucher(models.Model):
@@ -67,6 +69,50 @@ class AccountVoucher(models.Model):
         compute='_compute_currency_rate',
         store=True,
     )
+    voucher_description = fields.Text(
+        string='Voucher Description',
+        compute='_compute_voucher_description',
+        help="Compute summary description of entire voucher lines",
+    )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        compute='_compute_income_tax_form',
+        store=True,
+        help="Auto compute from the selected invoice",
+    )
+
+    @api.multi
+    @api.depends('line_ids')
+    def _compute_income_tax_form(self):
+        for voucher in self:
+            invoices = voucher.line_ids.mapped('move_line_id.invoice')
+            forms = []
+            for invoice in invoices:
+                if invoice.has_wht and invoice.income_tax_form:
+                    forms.append(invoice.income_tax_form)
+            if forms:
+                if len(forms) != 1:
+                    raise ValidationError(
+                        _('Selected invoices has different Income Tax Form!'))
+                voucher.income_tax_form = forms[0]
+
+    @api.multi
+    @api.depends('line_ids')
+    def _compute_voucher_description(self):
+        for voucher in self:
+            items = []
+            description = ''
+            for line in voucher.line_ids:
+                invoice = line.move_line_id.invoice
+                amount = line.amount
+                invoice_number = '%10s' % invoice.number
+                amount_str = '%15s' % '{:,}'.format(amount)
+                items.append('%s %s' % (invoice_number, amount_str))
+                if len(items) == 3:
+                    description += '      '.join(items) + '\n'
+                    items = []
+            voucher.voucher_description = description
 
     @api.multi
     @api.depends('currency_id')

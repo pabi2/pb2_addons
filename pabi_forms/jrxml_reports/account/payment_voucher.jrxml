@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.0000000000000078"/>
+	<property name="ireport.zoom" value="1.4641000000000126"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
-	<property name="OPENERP_RELATIONS" value="[&quot;move_id/line_id&quot;]"/>
+	<property name="ireport.y" value="0"/>
+	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
 	<style name="space">
 		<box rightPadding="2"/>
 	</style>
@@ -15,80 +15,87 @@
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
-	<field name="note" class="java.lang.String">
-		<fieldDescription><![CDATA[narration]]></fieldDescription>
+	<field name="payment_note" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/narration]]></fieldDescription>
 	</field>
 	<field name="doc_date" class="java.util.Date">
-		<fieldDescription><![CDATA[date]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/date]]></fieldDescription>
 	</field>
 	<field name="date_post" class="java.util.Date">
-		<fieldDescription><![CDATA[move_id/date]]></fieldDescription>
+		<fieldDescription><![CDATA[date]]></fieldDescription>
 	</field>
 	<field name="currency" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/currency/name]]></fieldDescription>
 	</field>
-	<field name="rate" class="java.lang.String"/>
 	<field name="doc_no" class="java.lang.String">
-		<fieldDescription><![CDATA[number]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/number]]></fieldDescription>
 	</field>
-	<field name="reference_doc" class="java.lang.String"/>
+	<field name="reference_doc" class="java.lang.String">
+		<fieldDescription><![CDATA[ref]]></fieldDescription>
+	</field>
+	<field name="reverse_doc_ref" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/cancel_move_id/name]]></fieldDescription>
+	</field>
+	<field name="reference" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/reference]]></fieldDescription>
+	</field>
 	<field name="fund" class="java.lang.String">
-		<fieldDescription><![CDATA[invoice_line/fund_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/line_ids/move_line_id/invoice/invoice_line/fund_id/name]]></fieldDescription>
 	</field>
 	<field name="activity_group" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/activity_group_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/activity_group_id/name]]></fieldDescription>
 	</field>
 	<field name="activity" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/activity_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/activity_id/name]]></fieldDescription>
 	</field>
 	<field name="account_code" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/account_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/account_id/code]]></fieldDescription>
 	</field>
 	<field name="account_name" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/account_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/account_id/name]]></fieldDescription>
 	</field>
 	<field name="debit" class="java.lang.Number">
-		<fieldDescription><![CDATA[move_id/line_id/debit]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/debit]]></fieldDescription>
 	</field>
 	<field name="credit" class="java.lang.Number">
-		<fieldDescription><![CDATA[move_id/line_id/credit]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/credit]]></fieldDescription>
 	</field>
 	<field name="tax" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/tax_code_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/tax_code_id/code]]></fieldDescription>
 	</field>
 	<field name="org" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/org_id/name_short]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/org_id/name_short]]></fieldDescription>
 	</field>
 	<field name="budget" class="java.lang.String"/>
 	<field name="job_order" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/cost_control_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/cost_control_id/code]]></fieldDescription>
 	</field>
 	<field name="supplier_invoice_number" class="java.lang.String">
 		<fieldDescription><![CDATA[supplier_invoice_number]]></fieldDescription>
 	</field>
 	<field name="amount_currency" class="java.lang.Number">
-		<fieldDescription><![CDATA[move_id/line_id/amount_currency]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/amount_currency]]></fieldDescription>
 	</field>
 	<field name="project" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/project_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/project_id/code]]></fieldDescription>
 	</field>
 	<field name="section" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/section_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/section_id/code]]></fieldDescription>
 	</field>
 	<field name="invest_asset" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/invest_asset_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/invest_asset_id/code]]></fieldDescription>
 	</field>
 	<field name="invest_construction" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/invest_construction_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/invest_construction_id/code]]></fieldDescription>
 	</field>
 	<field name="personnel_costcenter" class="java.lang.String">
-		<fieldDescription><![CDATA[move_id/line_id/personnel_costcenter_id/code]]></fieldDescription>
+		<fieldDescription><![CDATA[line_id/personnel_costcenter_id/code]]></fieldDescription>
 	</field>
 	<field name="validate_user" class="java.lang.String">
-		<fieldDescription><![CDATA[validate_user_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/validate_user_id/name]]></fieldDescription>
 	</field>
 	<field name="validate_date" class="java.util.Date">
-		<fieldDescription><![CDATA[validate_date]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/validate_date]]></fieldDescription>
 	</field>
 	<field name="doc_type" class="java.lang.String">
 		<fieldDescription><![CDATA[type]]></fieldDescription>
@@ -111,6 +118,21 @@
 	<field name="date_cheque" class="java.util.Date">
 		<fieldDescription><![CDATA[date_cheque]]></fieldDescription>
 	</field>
+	<field name="doctype" class="java.lang.String">
+		<fieldDescription><![CDATA[doctype]]></fieldDescription>
+	</field>
+	<field name="line_item_summary" class="java.lang.String">
+		<fieldDescription><![CDATA[line_item_summary]]></fieldDescription>
+	</field>
+	<field name="voucher_description" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/voucher_description]]></fieldDescription>
+	</field>
+	<field name="payment_type" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/payment_type]]></fieldDescription>
+	</field>
+	<field name="payment_method" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/journal_id/name]]></fieldDescription>
+	</field>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{debit} == null ? 0.0 : $F{debit}]]></variableExpression>
 	</variable>
@@ -129,6 +151,13 @@
 	</background>
 	<pageHeader>
 		<band height="298" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="FixRelativeToBottom" x="58" y="205" width="482" height="76"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_note}]]></textFieldExpression>
+			</textField>
 			<image>
 				<reportElement x="451" y="0" width="104" height="41"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.gif"]]></imageExpression>
@@ -223,7 +252,9 @@
 				<reportElement positionType="FixRelativeToBottom" x="0" y="198" width="555" height="1"/>
 			</line>
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="258" width="555" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="258" width="555" height="1">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 			</line>
 			<staticText>
 				<reportElement positionType="FixRelativeToBottom" x="11" y="204" width="149" height="15"/>
@@ -232,13 +263,6 @@
 				</textElement>
 				<text><![CDATA[Text: ]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" x="48" y="204" width="482" height="44"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{note}]]></textFieldExpression>
-			</textField>
 			<line>
 				<reportElement x="1" y="144" width="555" height="1"/>
 			</line>
@@ -267,28 +291,36 @@
 				<text><![CDATA[Source Doc.:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="0" y="265" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="0" y="265" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[Payment Info:]]></text>
+				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="0" y="280" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="0" y="280" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Amount:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="238" y="265" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="238" y="265" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Bank/Branch:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="238" y="280" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="238" y="280" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -331,70 +363,106 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_no}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="81" y="99" width="167" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="81" y="99" width="167" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "receipt"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="423" y="99" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="423" y="99" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "receipt"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference_doc}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="81" y="113" width="165" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fund}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="127" width="149" height="15"/>
+				<reportElement x="0" y="127" width="149" height="15">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Paid To:]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Transparent" x="54" y="127" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="54" y="127" width="268" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
-			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="172" width="555" height="24"/>
-				<subreportParameter name="SUBREPORT_DIR"/>
-				<dataSourceExpression><![CDATA[$P{EVENTS_DATA_SOURCE}]]></dataSourceExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "payment_voucher_subreport.jasper"]]></subreportExpression>
-			</subreport>
 			<textField>
-				<reportElement mode="Transparent" x="84" y="265" width="154" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="84" y="265" width="154" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{number_cheque}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_type} == "cheque" ? $F{number_cheque} : $F{payment_type}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="84" y="280" width="154" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="84" y="280" width="154" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Transparent" x="322" y="265" width="243" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="322" y="265" width="243" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_cheque} + " / " + $F{branch_cheque}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="323" y="280" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="323" y="280" width="233" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_cheque}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="456" y="113" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reverse_doc_ref}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="7" y="177" width="541" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucher_description}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="1" y="265" width="154" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{doctype} == "payment"]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_type} == "cheque" ? "Cheque Number:" : "Payment Type:"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -660,10 +728,10 @@ Order]]></text>
 				<reportElement x="281" y="72" width="100" height="1"/>
 			</line>
 			<line>
-				<reportElement x="282" y="147" width="100" height="1"/>
+				<reportElement x="282" y="138" width="100" height="1"/>
 			</line>
 			<staticText>
-				<reportElement x="217" y="133" width="149" height="15"/>
+				<reportElement x="217" y="124" width="149" height="15"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -677,28 +745,43 @@ Order]]></text>
 				<text><![CDATA[_____/_____/_____]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="133" width="149" height="15"/>
+				<reportElement x="2" y="124" width="149" height="15">
+					<printWhenExpression><![CDATA[$F{payment_type} == "cheque"]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Recipient]]></text>
 			</staticText>
 			<line>
-				<reportElement x="73" y="147" width="100" height="1"/>
+				<reportElement x="62" y="138" width="100" height="1">
+					<printWhenExpression><![CDATA[$F{payment_type} == "cheque"]]></printWhenExpression>
+				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="2" y="115" width="149" height="15"/>
-				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[Receipt Information]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="75" y="161" width="149" height="15"/>
+				<reportElement x="66" y="161" width="149" height="15">
+					<printWhenExpression><![CDATA[$F{payment_type} == "cheque"]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[_____/_____/_____]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="247" y="124" width="167" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_method}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-38" y="144" width="301" height="15">
+					<printWhenExpression><![CDATA[$F{payment_type} == "cheque"]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[(....................................)]]></text>
 			</staticText>
 		</band>
 	</lastPageFooter>

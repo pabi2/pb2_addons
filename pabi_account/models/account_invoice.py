@@ -2,6 +2,8 @@
 import ast
 from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.addons.l10n_th_account.models.res_partner \
+    import INCOME_TAX_FORM
 
 
 class AccountInvoice(models.Model):
@@ -46,6 +48,25 @@ class AccountInvoice(models.Model):
         store=True,
         help="Compute summary description of entire invoice lines",
     )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        help="If invoice has withholding tax, this field is required.",
+    )
+    has_wht = fields.Boolean(
+        string='Has WHT in invoice line',
+        compute='_compute_has_wht',
+    )
+
+    @api.multi
+    @api.depends('invoice_line.invoice_line_tax_id')
+    def _compute_has_wht(self):
+        for rec in self:
+            rec.has_wht = False
+            for line in rec.invoice_line:
+                for tax in line.invoice_line_tax_id:
+                    if tax.is_wht:
+                        rec.has_wht = True
 
     @api.multi
     @api.depends('invoice_line')

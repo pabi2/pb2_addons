@@ -25,5 +25,6 @@ This moudule provide standard interface in generice way.
         "security/ir.model.access.csv",
         "views/interface_config_view.xml",
         "views/interface_account_view.xml",
+        "views/account_view.xml",
     ],
 }
