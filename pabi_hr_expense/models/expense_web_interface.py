@@ -206,14 +206,14 @@ class HRExpense(models.Model):
         employee = Employee.search(domain)
         data_dict['user_id.id'] = employee.user_id.id or u''
         del data_dict['preparer_code']
+        # OU based on employee
+        data_dict['operating_unit_id.id'] = \
+            employee.org_id.operating_unit_id.id
         # approver_code to approver_id.id
         domain = [('employee_code', '=', data_dict.get('approver_code'))]
         employee = Employee.search(domain)
         data_dict['approver_id.id'] = employee.user_id.id or u''
         del data_dict['approver_code']
-        # OU based on employee
-        data_dict['operating_unit_id.id'] = \
-            employee.org_id.operating_unit_id.id
         # Advance product if required
         if data_dict.get('is_employee_advance', u'False') == u'True' and \
                 'line_ids' in data_dict:
