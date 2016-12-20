@@ -217,7 +217,7 @@ class AccountBankReceipt(models.Model):
             'journal_id': receipt.journal_id.id,
             'date': date,
             'period_id': period_ids[0].id,
-            'name': _('Bank Receipt %s') % receipt.name,
+            'name': receipt.name,
             'ref': receipt.name,
         }
         return move_vals
