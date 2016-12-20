@@ -165,12 +165,13 @@
 		</record>
 
 		<!-- Invoice Voucher -->
-		<record id="invoice_voucher" model="ir.actions.report.xml">
-			<field name="string">Invoice Voucher</field>
+		<!-- KV -->
+		<record id="invoice_voucher_kv" model="ir.actions.report.xml">
+			<field name="string">KV Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">Invoice Voucher</field>
+			<field name="name">KV Voucher</field>
 			<field name="report_name">invoice.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/invoice_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -180,20 +181,43 @@
 			<field name="copies">1</field>
 		</record>
 
-		<record id="invoice_voucher_values" model="ir.values">
-			<field name="name">Invoice Voucher</field>
+		<record id="invoice_voucher_kv_values" model="ir.values">
+			<field name="name">KV Voucher</field>
 			<field name="model">account.move</field>
 			<field name="key2" eval="'client_print_multi'"/>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher)"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher_kv)"/>
 		</record>
-
-		<!-- Payment Voucher -->
-		<record id="payment_voucher" model="ir.actions.report.xml">
-			<field name="string">Payment Voucher</field>
+		<!-- DV -->
+		<record id="invoice_voucher_dv" model="ir.actions.report.xml">
+			<field name="string">DV Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">Voucher</field>
+			<field name="name">DV Voucher</field>
+			<field name="report_name">invoice.voucher</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/invoice_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="invoice_voucher_dv_values" model="ir.values">
+			<field name="name">DV Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher_dv)"/>
+		</record>
+
+		<!-- Payment Voucher -->
+		<!-- PV -->
+		<record id="payment_voucher_pv" model="ir.actions.report.xml">
+			<field name="string">PV Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="jasper_model_id" ref="account.model_account_move"/>
+			<field name="name">PV Voucher</field>
 			<field name="report_name">payment.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/payment_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -203,11 +227,33 @@
 			<field name="copies">1</field>
 		</record>
 
-		<record id="payment_voucher_values" model="ir.values">
-			<field name="name">Payment Voucher</field>
+		<record id="payment_voucher_pv_values" model="ir.values">
+			<field name="name">PV Voucher</field>
 			<field name="model">account.move</field>
 			<field name="key2" eval="'client_print_multi'"/>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher)"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher_pv)"/>
+		</record>
+		<!-- RC -->
+		<record id="payment_voucher_rc" model="ir.actions.report.xml">
+			<field name="string">RC Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="jasper_model_id" ref="account.model_account_move"/>
+			<field name="name">RC Voucher</field>
+			<field name="report_name">payment.voucher</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/payment_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="payment_voucher_rc_values" model="ir.values">
+			<field name="name">RC Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher_rc)"/>
 		</record>
 
 	</data>

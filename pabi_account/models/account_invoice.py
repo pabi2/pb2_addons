@@ -68,6 +68,11 @@ class AccountInvoice(models.Model):
                     if tax.is_wht:
                         rec.has_wht = True
 
+    @api.onchange('has_wht')
+    def _onchange_has_wht(self):
+        self.income_tax_form = \
+            self.has_wht and self.partner_id.income_tax_form or False
+
     @api.multi
     @api.depends('invoice_line')
     def _compute_invoice_description(self):
