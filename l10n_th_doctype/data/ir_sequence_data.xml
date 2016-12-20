@@ -124,7 +124,7 @@
         <record id="doctype_customer_payment_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Customer Payment</field>
             <field name="code"></field>
-            <field name="prefix">RV%(fy)s</field>
+            <field name="prefix">RC%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

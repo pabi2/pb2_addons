@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models
 
-INCOME_TAX_FORM = [('pnd3', 'PND3'), ('pnd53', 'PND53')]
+INCOME_TAX_FORM = [('pnd1', 'PND1'), ('pnd3', 'PND3'), ('pnd53', 'PND53')]
 
 
 class ResPartner(models.Model):
