@@ -3,7 +3,11 @@
     'name': 'Account Cancel Reversal',
     'version': '1.0',
     'author': 'Ecosoft',
-    'summary': 'Cancel Invoice / Voucher by create reversed journal entry',
+    'summary': """
+
+Cancel Invoice / Voucher / Bank receipt by create reversed journal entry
+
+    """,
     'description': """
 
 This module put more accounting control into invoice cancellation.
@@ -39,6 +43,7 @@ To-Be:
     'data': [
         'views/voucher_payment_receipt_view.xml',
         'views/account_invoice_view.xml',
+        'views/account_bank_receipt_view.xml',
     ],
     'test': [
     ],

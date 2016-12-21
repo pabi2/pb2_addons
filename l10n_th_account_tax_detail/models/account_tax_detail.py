@@ -149,6 +149,7 @@ class AccountTaxDetail(models.Model):
         string='Tax',
     )
     currency_id = fields.Many2one(
+        'res.currency',
         string='Currency',
         help="Foreign currency",
     )

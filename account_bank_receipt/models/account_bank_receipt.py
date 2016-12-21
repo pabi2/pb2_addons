@@ -201,16 +201,20 @@ class AccountBankReceipt(models.Model):
                       "cancel it before deleting it.") % receipt.name)
         return super(AccountBankReceipt, self).unlink()
 
+    @api.model
+    def _cancel_move(self):
+        # It will raise here if journal_id.update_posted = False
+        self.move_id.button_cancel()
+        for line in self.bank_intransit_ids:
+            if line.reconcile_id:
+                line.reconcile_id.unlink()
+        self.move_id.unlink()
+
     @api.multi
     def cancel_bank_receipt(self):
         for receipt in self:
             if receipt.move_id:
-                # It will raise here if journal_id.update_posted = False
-                receipt.move_id.button_cancel()
-                for line in receipt.bank_intransit_ids:
-                    if line.reconcile_id:
-                        line.reconcile_id.unlink()
-                receipt.move_id.unlink()
+                receipt._cancel_move()
             receipt.write({'state': 'cancel'})
 
     @api.multi
