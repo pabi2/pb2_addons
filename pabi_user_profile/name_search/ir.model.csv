@@ -1,3 +1,3 @@
 id,name_search_ids/id
 model_hr_employee,"field_hr_employee_first_name,field_hr_employee_last_name,field_hr_employee_mid_name,field_hr_employee_employee_code"
-model_res_partner,"l10n_th_fields.field_res_partner_employee_code,res_partner_ext.field_res_partner_search_key"
+model_res_partner,"field_res_partner_employee_code,res_partner_ext.field_res_partner_search_key"
