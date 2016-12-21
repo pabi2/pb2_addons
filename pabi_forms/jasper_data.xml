@@ -75,7 +75,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Purchase Order</field>
 			<field name="report_name">purchase.order</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/purchase_order_TH.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/purchase_order_TH.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -97,7 +97,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Purchase Order ENG</field>
 			<field name="report_name">purchase.order.en</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/purchase_order_EN.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/purchase_order_EN.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -119,7 +119,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Request For Quotation</field>
 			<field name="report_name">purchase.order_rfq</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/request_for_quotation.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/request_for_quotation.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -141,7 +141,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">ใบนำส่ง ใบสั่งซื้อ/จ้าง</field>
 			<field name="report_name">purchase.order_PO</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/PO.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/PO.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -163,7 +163,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 1</field>
 			<field name="report_name">purchase.requisition_pd1</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_1.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_1.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -185,7 +185,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 2</field>
 			<field name="report_name">purchase.requisition_pd2</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_2.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_2.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -207,7 +207,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 3</field>
 			<field name="report_name">purchase.requisition_pd3</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_3.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_3.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -229,7 +229,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 4</field>
 			<field name="report_name">purchase.requisition_pd4</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_4.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_4.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -251,7 +251,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 5</field>
 			<field name="report_name">purchase.requisition_pd5</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_5.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_5.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -273,7 +273,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 6</field>
 			<field name="report_name">purchase.requisition_pd6</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_6.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_6.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -295,7 +295,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 7</field>
 			<field name="report_name">purchase.requisition_pd7</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_7.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_7.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -317,7 +317,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 8</field>
 			<field name="report_name">purchase.requisition_pd8</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_8.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_8.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -339,7 +339,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 9</field>
 			<field name="report_name">purchase.requisition_pd9</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_9.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_9.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -361,7 +361,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 10</field>
 			<field name="report_name">purchase.requisition_pd10</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_10.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_10.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -383,7 +383,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 11</field>
 			<field name="report_name">purchase.requisition_pd11</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_11.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_11.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -405,7 +405,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Call For Bids 12</field>
 			<field name="report_name">purchase.requisition_pd12</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/call_for_bids_12.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/call_for_bids_12.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -427,7 +427,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">Approval report</field>
 			<field name="report_name">purchase.requisition_summary</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/approval_report.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/approval_report.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -449,7 +449,7 @@
 			<!--<field name="jasper_model_id" ref="purchase_work_acceptance.model_purchase_work_acceptance"/>-->
 			<field name="name">ใบรับวางบิล</field>
 			<field name="report_name">invoice.billing_receipt</field>
-			<field name="report_rml">pabi_forms/jrxml_reports/billing_receipt.jrxml</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/procurement/billing_receipt.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
