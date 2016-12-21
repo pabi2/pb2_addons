@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="bank_receipt_form" model="ir.ui.view">
+            <field name="name">bank.receipt.form</field>
+            <field name="model">account.bank.receipt</field>
+            <field name="inherit_id" ref="account_bank_receipt.account_bank_receipt_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='cancel_bank_receipt']" position="replace">
+                    <button name="%(action_account_bank_receipt_cancel)d" type="action" states="done" string="Cancel Bank Receipt" groups="account.group_account_user"/>
+                </xpath>
+                <xpath expr="//sheet/group" position="before">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                        <field name="cancel_reason_txt" class="oe_inline"/>
+                    </h2>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
