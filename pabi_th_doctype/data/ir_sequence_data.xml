@@ -81,7 +81,7 @@
         <record id="doctype_bank_receipt_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Bank Receipt</field>
             <field name="code"></field>
-            <field name="prefix">BR%(fy)s</field>
+            <field name="prefix">RV%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

@@ -41,6 +41,21 @@
                     <page string="Budget Plan History">
                         <field name="plan_history_line_ids" readonly="True"/>
                     </page>
+                    <page string="Attachments">
+                        <field name="attachment_ids">
+                            <tree string="Attachments">
+                                <field name="type" />
+                                <field name="name" />
+                                <field name="description" />
+                                <field name="url" widget="url" invisible="1"/>
+                                <button name="%(pabi_attachment_helper.action_open_url)d"
+                                        string="Open Document"
+                                        type="action"
+                                        icon="gtk-justify-fill"
+                                    />
+                            </tree>
+                        </field>
+                    </page>
                 </xpath>
             </field>
         </record>

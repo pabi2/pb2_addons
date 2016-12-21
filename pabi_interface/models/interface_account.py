@@ -24,6 +24,19 @@ class InterfaceAccountEntry(models.Model):
         states={'draft': [('readonly', False)]},
         help="System where this interface transaction is being called",
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+    )
+    validate_date = fields.Date(
+        'Validate On',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+    )
     number = fields.Char(
         string='Number',
         required=False,
@@ -37,6 +50,7 @@ class InterfaceAccountEntry(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        default="/",
         copy=False,
     )
     type = fields.Selection(

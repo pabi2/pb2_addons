@@ -131,7 +131,7 @@ class HRExpense(models.Model):
                 (journal.name, ))
         vals = {
             'operating_unit_id': expense.operating_unit_id.id,
-            'ref': expense.name,
+            'ref': expense.number,
             'period_id': period.id,
             'journal_id': journal.id,
             'date': expense.date
@@ -161,10 +161,11 @@ class HRExpense(models.Model):
     @api.model
     def _get_reference_revenue_activity(self, activity):
         inrev_activity = activity.inrev_activity_id
-        if not inrev_activity:
+        if not inrev_activity or not inrev_activity.account_id:
             raise ValidationError(
                 _("The selected activity '%s' do not have reference "
-                  "internal revenue activity") % (activity.name))
+                  "internal revenue activity or account is not valid") %
+                 (activity.name))
         activity_groups = inrev_activity.activity_group_ids
         if len(activity_groups) != 1:
             raise ValidationError(

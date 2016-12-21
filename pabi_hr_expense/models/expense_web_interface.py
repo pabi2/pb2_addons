@@ -111,6 +111,7 @@ class HRExpense(models.Model):
             'number': u'/',  # expense number
             'employee_code': u'004012',
             'preparer_code': u'004012',
+            'approver_code': u'004012',
             'date': u'2016-01-31',
             'advance_type': u'attend_seminar',  # attend_seminar, buy_product
             'date_back': u'2016-10-30',  # back from seminar
@@ -208,6 +209,11 @@ class HRExpense(models.Model):
         # OU based on employee
         data_dict['operating_unit_id.id'] = \
             employee.org_id.operating_unit_id.id
+        # approver_code to approver_id.id
+        domain = [('employee_code', '=', data_dict.get('approver_code'))]
+        employee = Employee.search(domain)
+        data_dict['approver_id.id'] = employee.user_id.id or u''
+        del data_dict['approver_code']
         # Advance product if required
         if data_dict.get('is_employee_advance', u'False') == u'True' and \
                 'line_ids' in data_dict:
@@ -241,11 +247,9 @@ class HRExpense(models.Model):
         return data_dict
 
     @api.model
-    def _post_process_hr_expense(self, res):
+    def _post_process_hr_expense(self, expense):
         # Submit to manager
-        expense = self.env['hr.expense.expense'].browse(res['result']['id'])
         expense.signal_workflow('confirm')
-        return res
 
     @api.model
     def generate_hr_expense(self, data_dict):
@@ -254,7 +258,8 @@ class HRExpense(models.Model):
             data_dict = self._pre_process_hr_expense(data_dict)
             res = self._create_hr_expense_expense(data_dict)
             if res['is_success'] is True:
-                self._post_process_hr_expense(res)
+                expense = self.browse(res['result']['id'])
+                self._post_process_hr_expense(expense)
                 # Replace Admin with Preparer
                 dom = [('employee_code', '=', prepare_code)]
                 employee = self.env['hr.employee'].search(dom)
@@ -401,8 +406,8 @@ class HRExpense(models.Model):
             return False
         arg = {
             'by': self.env.user.login,
-            'task': '',
-            'task_th': '',
+            'task': 'Finance',
+            'task_th': u'การเงิน',
             'status': status,
             'status_th': status_th,
             'comment': comment,

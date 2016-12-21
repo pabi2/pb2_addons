@@ -30,7 +30,7 @@
                   <field name="user_id"/>
                   <field name="operation_date"/>
                   <field name="operation_type"/> 
-                  <field name="attachement_id"/>
+                  <field name="attachement_id" invisible="1"/>
               </tree>
           </field>
         </record>

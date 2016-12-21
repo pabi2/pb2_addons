@@ -32,7 +32,7 @@
                     <field name="objective"/>
                     <field name="description" string="Reason"/>
                     <field name="total_budget_value" attrs="{'invisible': [('total_budget_value', '=', 0)]}"/>
-                    <field name="purchase_prototype_id"/>
+                    <field name="prototype_type"/>
                     <field name="request_uid"/>
                     <field name="assign_uid"/>
                     <field name="request_ref_id"/>

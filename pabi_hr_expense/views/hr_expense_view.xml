@@ -40,6 +40,9 @@
 					<field name="employee_section_id" readonly="1"/>
 					<field name="user_id" string="Prepared By" readonly="1"/>
 				</field>
+				<field name="date" position="before">
+					<field name="approver_id" />
+				</field>
 				<field name="date" position="after">
 					<field name="advance_type" attrs="{'invisible': [('is_employee_advance', '=', False)], 'required': [('is_employee_advance', '=', True)]}"/>
 					<field name="date_back" attrs="{'invisible': [('advance_type', '!=', 'attend_seminar')], 'required': [('advance_type', '=', 'attend_seminar')]}"/>

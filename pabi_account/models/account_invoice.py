@@ -2,6 +2,8 @@
 import ast
 from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.addons.l10n_th_account.models.res_partner \
+    import INCOME_TAX_FORM
 
 
 class AccountInvoice(models.Model):
@@ -35,17 +37,59 @@ class AccountInvoice(models.Model):
         compute='_compute_currency_rate',
         store=True,
     )
-    doc_ref = fields.Char(
+    ref_docs = fields.Char(
         string='Reference Doc',
-        compute='_compute_doc_ref',
+        compute='_compute_ref_docs',
         store=True,
     )
+    invoice_description = fields.Text(
+        string='Invoice Description',
+        compute='_compute_invoice_description',
+        store=True,
+        help="Compute summary description of entire invoice lines",
+    )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        help="If invoice has withholding tax, this field is required.",
+    )
+    has_wht = fields.Boolean(
+        string='Has WHT in invoice line',
+        compute='_compute_has_wht',
+    )
+
+    @api.multi
+    @api.depends('invoice_line.invoice_line_tax_id')
+    def _compute_has_wht(self):
+        for rec in self:
+            rec.has_wht = False
+            for line in rec.invoice_line:
+                for tax in line.invoice_line_tax_id:
+                    if tax.is_wht:
+                        rec.has_wht = True
+
+    @api.onchange('has_wht')
+    def _onchange_has_wht(self):
+        self.income_tax_form = \
+            self.has_wht and self.partner_id.income_tax_form or False
+
+    @api.multi
+    @api.depends('invoice_line')
+    def _compute_invoice_description(self):
+        for invoice in self:
+            description = ''
+            for line in invoice.invoice_line:
+                description += line.name + ' ' + \
+                    '{:,}'.format(line.quantity) + \
+                    (line.uos_id and (' ' + line.uos_id.name) or '') + '\n'
+            invoice.invoice_description = \
+                len(description) > 0 and description or False
 
     @api.multi
     @api.depends('tax_line',
                  'tax_line.detail_ids',
                  'tax_line.detail_ids.invoice_number')
-    def _compute_doc_ref(self):
+    def _compute_ref_docs(self):
         for rec in self:
             header_text = ''
             for tax in rec.tax_line:
@@ -55,7 +99,7 @@ class AccountInvoice(models.Model):
                     else:
                         header_text = (header_text + ',' +
                                        detail.invoice_number)
-                    rec.doc_ref = header_text
+                    rec.ref_docs = header_text
 
     @api.multi
     @api.depends('currency_id')
@@ -173,25 +217,6 @@ class AccountInvoiceLine(models.Model):
                 rec.invest_construction_phase_id = False
         return
 
-    @api.multi
-    def write(self, values):
-        if self.ids:
-            self._cr.execute("""
-                SELECT id FROM account_invoice_line WHERE id in %s
-            """, (tuple(self.ids), ))
-            res = self._cr.fetchall()
-            line_ids = []
-            if res:
-                line_ids = [l[0] for l in res]
-            if len(self.ids) != len(line_ids):
-                missed_ids = list(set(self.ids) - set(line_ids))
-                if len(self.ids) > 1:
-                    for i in missed_ids:
-                        self.ids.remove(i)
-                else:
-                    return True
-        return super(AccountInvoiceLine, self).write(values)
-
 
 class AccountInvoiceTax(models.Model):
     _inherit = "account.invoice.tax"
@@ -205,10 +230,10 @@ class AccountInvoiceTax(models.Model):
     )
 
     @api.model
-    def _prepare_invoice_tax_detail(self, invoice_tax):
+    def _prepare_invoice_tax_detail(self):
         res = super(AccountInvoiceTax, self).\
-            _prepare_invoice_tax_detail(invoice_tax)
-        res.update({'taxbranch_id': invoice_tax.invoice_id.taxbranch_id.id})
+            _prepare_invoice_tax_detail()
+        res.update({'taxbranch_id': self.invoice_id.taxbranch_id.id})
         return res
 
     @api.model
