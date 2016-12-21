@@ -23,7 +23,7 @@ class HRExpense(models.Model):
     )
     # --
     approver_id = fields.Many2one(
-        'res.uers',
+        'res.users',
         string='Approved By',
         readonly=True,
         states={'draft': [('readonly', False)]},
