@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.0000000000000107"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="1.3310000000000146"/>
+	<property name="ireport.x" value="86"/>
+	<property name="ireport.y" value="51"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
@@ -17,23 +17,33 @@ po.date_order as po_date,
 (SELECT it.value FROM  ir_translation it
 WHERE it.res_id = ro.id AND name LIKE 'res.org,name') as ou_name,
 convert_from(rp_ou.image,'UTF8') as ou_image,
-CONCAT(rp_ou.street,' ',rp_ou.street2,' ',
-(SELECT rct.name FROM res_country_township rct WHERE rct.id = rp_ou.township_id),' ',
-(SELECT rcd.name FROM res_country_district rcd WHERE rcd.id = rp_ou.district_id),' ',
-(SELECT rcp.name FROM res_country_province rcp WHERE rcp.id = rp_ou.province_id),' ',rp_ou.zip) as ou_address,
+CONCAT(
+COALESCE(rp_ou.street||' ',''),
+COALESCE(rp_ou.street2||' ',''),
+COALESCE((SELECT rct.name FROM res_country_township rct WHERE rct.id = rp_ou.township_id)||' ',''),
+COALESCE((SELECT rcd.name FROM res_country_district rcd WHERE rcd.id = rp_ou.district_id)||' ',''),
+COALESCE((SELECT rcp.name FROM res_country_province rcp WHERE rcp.id = rp_ou.province_id)||' ',''),
+COALESCE(rp_ou.zip||' ','')) as ou_address,
 rp_ou.phone as ou_phone,
 rp_ou.fax as ou_fax,
 rt.name as taxbranch_name,
-CONCAT(rt.street,' ',rt.street2,' ',rt.city,' ',rt.zip) as taxbranch_address,
+CONCAT(
+COALESCE(rt.street||' ',''),
+COALESCE(rt.street2||' ',''),
+COALESCE(rt.city||' ',''),
+COALESCE(rt.zip,'')) as taxbranch_address,
 rt.phone as taxbranch_phone,
 rt.fax as taxbranch_fax,
 rt.code as taxbranch_code,
 rt.taxid as taxbranch_taxid,
 rp_supplier.name as supplier_name,
-CONCAT(rp_supplier.street,' ',rp_supplier.street2,' ',
-(SELECT rct.name FROM res_country_township rct WHERE rct.id = rp_supplier.township_id),' ',
-(SELECT rcd.name FROM res_country_district rcd WHERE rcd.id = rp_supplier.district_id),' ',
-(SELECT rcp.name FROM res_country_province rcp WHERE rcp.id = rp_supplier.province_id),' ',rp_supplier.zip) as supplier_address,
+CONCAT(
+COALESCE(rp_supplier.street||' ',''),
+COALESCE(rp_supplier.street2||' ',''),
+COALESCE((SELECT rct.name FROM res_country_township rct WHERE rct.id = rp_supplier.township_id)||' ',''),
+COALESCE((SELECT rcd.name FROM res_country_district rcd WHERE rcd.id = rp_supplier.district_id)||' ',''),
+COALESCE((SELECT rcp.name FROM res_country_province rcp WHERE rcp.id = rp_supplier.province_id)||' ',''),
+COALESCE(rp_supplier.zip,'')) as supplier_address,
 rp_supplier.phone as supplier_phone,
 rp_supplier.fax as supplier_fax,
 rp_supplier.vat as supplier_taxid,
@@ -44,6 +54,7 @@ pd.schedule_date as schedule_date,
 apt.name as payment_term,
 pol.name as line_name,
 pol.product_qty as line_qty,
+(SELECT pu.name FROM product_uom pu WHERE pu.id = pol.product_uom) product_uom_name,
 po.notes
 
 
@@ -98,6 +109,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	<field name="line_qty" class="java.math.BigDecimal"/>
 	<field name="ou_id" class="java.lang.Integer"/>
 	<field name="notes" class="java.lang.String"/>
+	<field name="product_uom_name" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -148,16 +160,16 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[ใบขอเสนอราคา (Request For Quotation)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="316" y="48" width="103" height="20"/>
-				<textElement textAlignment="Right" lineSpacing="Single">
-					<font size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="366" y="48" width="58" height="20"/>
+				<textElement textAlignment="Left" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เลขที่ (No) : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="320" y="81" width="99" height="20"/>
-				<textElement textAlignment="Right" lineSpacing="Single">
-					<font size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="366" y="81" width="58" height="20"/>
+				<textElement textAlignment="Left" lineSpacing="Single">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่ (Date) : ]]></text>
 			</staticText>
@@ -399,11 +411,18 @@ $F{payment_term} == "Immediate Payment" ? "จ่ายทันที" : ""]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{line_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="324" y="0" width="78" height="21"/>
+				<reportElement x="324" y="0" width="60" height="21"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{line_qty}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="368" y="0" width="31" height="21"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{line_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
