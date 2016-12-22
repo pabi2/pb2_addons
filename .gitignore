@@ -63,7 +63,7 @@ target/
 
 # Additional
 openerp-server.conf
-# *.jasper
+*.jasper
 .project
 .pydevproject
 *.settings
