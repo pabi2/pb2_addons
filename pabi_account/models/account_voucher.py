@@ -183,6 +183,15 @@ class AccountVoucher(models.Model):
             if len(voucher.line_ids) > limit:
                 voucher.invoices_text += ', ...'
 
+    @api.constrains('supplier_invoice_taxbranch_id')
+    def check_supplier_invoice_taxbranch_id(self):
+        for line in self:
+            if line.voucher_id.type == 'receipt':
+                if line.supplier_invoice_taxbranch_id:
+                    raise ValidationError(
+                        _('You can not allowed taxbranch \
+                        with customer payment.'))
+
     @api.multi
     def action_open_invoices(self):
         self.ensure_one()
