@@ -83,6 +83,16 @@ class AccountVoucher(models.Model):
     )
 
     @api.multi
+    @api.constrains('line_ids', 'line_cr_ids', 'line_dr_ids')
+    def _check_receipt_no_mixing_taxbranch(self):
+        for voucher in self:
+            if voucher.type == 'receipt':
+                taxbranches = voucher.line_ids.mapped('invoice_taxbranch_id')
+                if len(taxbranches) > 1:
+                    raise ValidationError(_('Mixing invoices for different '
+                                            'tax branch is not allowed!'))
+
+    @api.multi
     @api.depends('line_ids')
     def _compute_income_tax_form(self):
         for voucher in self:
@@ -201,52 +211,11 @@ class AccountVoucher(models.Model):
 
     @api.multi
     def proforma_voucher(self):
-        # for voucher in self:
-        #     taxbranchs = []
-        #     for line in voucher.line_ids:
-        #         if line.amount or line.amount_wht or line.amount_retention:
-        #             taxbranchs.append(line.supplier_invoice_taxbranch_id.id)
-        #     if len(list(set(taxbranchs))) > 1:
-        #         raise UserError(_('Mixing invoices of different '
-        #                           'tax branch is not allowed!'))
         result = super(AccountVoucher, self).proforma_voucher()
         for voucher in self:
             voucher.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
         return result
-
-    # Voucher Selection
-    # @api.model
-    # def create(self, vals):
-    #     print vals
-    #     # DR
-    #     line_dr_ids = []
-    #     for line in vals.get('line_dr_ids', []):
-    #         if line[2]['amount'] > 0.0:
-    #             line_dr_ids.append(line)
-    #     vals.update({'line_dr_ids': line_dr_ids})
-    #     # CR
-    #     line_cr_ids = []
-    #     for line in vals.get('line_cr_ids', []):
-    #         if line[2]['amount'] > 0.0:
-    #             line_cr_ids.append(line)
-    #     vals.update({'line_cr_ids': line_cr_ids})
-    #     # --
-    #     voucher = super(AccountVoucher, self).create(vals)
-    #     return voucher
-
-    # @api.multi
-    # def write(self, vals):
-    #     res = super(AccountVoucher, self).write(vals)
-    #     # Delete all amount zero lines
-    #     for voucher in self:
-    #         # Voucher Line
-    #         zero_lines = voucher.line_ids.filtered(lambda l: not l.amount)
-    #         zero_lines.unlink()
-    #         # Tax Line
-    #         zero_lines = voucher.tax_line.filtered(lambda l: not l.amount)
-    #         zero_lines.unlink()
-    #     return res
 
 
 class AccountVoucherLine(models.Model):
@@ -257,24 +226,9 @@ class AccountVoucherLine(models.Model):
         string='Invoice Description',
         readonly=True,
     )
-
-    @api.model
-    def get_suppl_inv_taxbranch(self, move_line_id):
-        move_line = self.env['account.move.line'].\
-            browse(move_line_id)
-        return (move_line.invoice and
-                move_line.invoice.taxbranch_id or False)
-
-    @api.depends('move_line_id', 'voucher_id', 'amount')
-    def _compute_supplier_invoice_taxbranch(self):
-        for line in self:
-            if line.move_line_id:
-                line.supplier_invoice_taxbranch_id =\
-                    self.get_suppl_inv_taxbranch(line.move_line_id.id)
-
-    supplier_invoice_taxbranch_id = fields.Many2one(
+    invoice_taxbranch_id = fields.Many2one(
         'res.taxbranch',
-        compute='_compute_supplier_invoice_taxbranch',
+        related='move_line_id.invoice.taxbranch_id',
         string='Taxbranch',
         store=True,
     )
@@ -305,7 +259,7 @@ class AccountVoucherTax(models.Model):
         taxbranch_id = False
         for line in voucher.line_ids:
             if line.amount or line.amount_wht or line.amount_retention:
-                taxbranch_id = line.supplier_invoice_taxbranch_id.id
+                taxbranch_id = line.invoice_taxbranch_id.id
         tax_move_by_taxbranch = self.env.user.company_id.tax_move_by_taxbranch
         if tax_move_by_taxbranch:
             wht_taxbranch_id = self.env.user.company_id.wht_taxbranch_id.id
