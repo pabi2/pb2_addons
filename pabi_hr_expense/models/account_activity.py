@@ -47,6 +47,18 @@ class AccountActivityGroup(models.Model):
             })
         return activity_group
 
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=80):
+        if self._context.get('expense_id', False):
+            expense_id = self._context['expense_id']
+            expense = self.env['hr.expense.expense'].browse(expense_id)
+            domain = [('id', 'in', expense.activity_group_ids.ids)]
+            args += domain
+        return super(AccountActivityGroup, self).name_search(name=name,
+                                                             args=args,
+                                                             operator=operator,
+                                                             limit=limit)
+
 
 class AccountActivity(models.Model):
     _inherit = "account.activity"
