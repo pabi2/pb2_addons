@@ -78,7 +78,7 @@
 
 		<!-- Customer Receipt -->
 		<!-- EN -->
-		<record id="customer_receipt_en_form" model="ir.actions.report.xml">
+		<record id="customer_receipt_form_en" model="ir.actions.report.xml">
 			<field name="string">Customer Receipt (EN)</field>
 			<field name="name">Customer Receipt (EN)</field>
 			<field name="report_name">customer.receipt.form.en</field>
@@ -100,7 +100,7 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receipt_form_en)"/>
 		</record>
 		<!-- TH -->
-		<record id="customer_receipt_th_form" model="ir.actions.report.xml">
+		<record id="customer_receipt_form_th" model="ir.actions.report.xml">
 			<field name="string">Customer Receipt (TH)</field>
 			<field name="name">Customer Receipt (TH)</field>
 			<field name="report_name">customer.receipt.form.th</field>
