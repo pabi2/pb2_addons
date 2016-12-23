@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
-	<property name="ireport.zoom" value="1.3636363636363917"/>
-	<property name="ireport.x" value="239"/>
-	<property name="ireport.y" value="802"/>
+	<property name="ireport.zoom" value="1.1269722013523904"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -136,7 +136,7 @@
 		<fieldDescription><![CDATA[comment]]></fieldDescription>
 	</field>
 	<field name="logo" class="java.lang.String">
-		<fieldDescription><![CDATA[org_id/logo]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/logo]]></fieldDescription>
 	</field>
 	<field name="attention" class="java.lang.String">
 		<fieldDescription><![CDATA[attention]]></fieldDescription>
@@ -156,29 +156,17 @@
 	<field name="date_due" class="java.util.Date">
 		<fieldDescription><![CDATA[date_due]]></fieldDescription>
 	</field>
-	<field name="client_order_ref" class="java.lang.String">
-		<fieldDescription><![CDATA[sale_ids/client_order_ref]]></fieldDescription>
-	</field>
-	<field name="sale_order" class="java.lang.String">
-		<fieldDescription><![CDATA[sale_ids/name]]></fieldDescription>
-	</field>
-	<field name="quotation" class="java.lang.String">
-		<fieldDescription><![CDATA[sale_ids/quote_id/name]]></fieldDescription>
-	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[name]]></fieldDescription>
 	</field>
 	<field name="sale_person" class="java.lang.String">
 		<fieldDescription><![CDATA[sale_ids/user_id/name]]></fieldDescription>
 	</field>
-	<field name="date_order" class="java.util.Date">
-		<fieldDescription><![CDATA[sale_ids/date_order]]></fieldDescription>
-	</field>
 	<field name="org_name" class="java.lang.String">
-		<fieldDescription><![CDATA[operating_unit_id/org_id/name_print_text]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/name_print_text]]></fieldDescription>
 	</field>
 	<field name="org_address_text" class="java.lang.String">
-		<fieldDescription><![CDATA[operating_unit_id/org_id/address_print_text]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/address_print_text]]></fieldDescription>
 	</field>
 	<field name="so_address_text" class="java.lang.String">
 		<fieldDescription><![CDATA[invoice_line/saleoffice_id/address_text]]></fieldDescription>
@@ -231,6 +219,9 @@
 	<field name="validate_user_phone" class="java.lang.String">
 		<fieldDescription><![CDATA[validate_user_id/partner_id/employee_id/work_phone]]></fieldDescription>
 	</field>
+	<field name="validate_date" class="java.util.Date">
+		<fieldDescription><![CDATA[validate_date]]></fieldDescription>
+	</field>
 	<field name="cust_phone" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/phone]]></fieldDescription>
 	</field>
@@ -254,6 +245,9 @@
 	</field>
 	<field name="payment_method_text" class="java.lang.String">
 		<fieldDescription><![CDATA[taxbranch_id/payment_method_text]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[type]]></fieldDescription>
 	</field>
 	<variable name="discount_amt" class="java.lang.Number">
 		<variableExpression><![CDATA[($F{discount} == null ? 0.0 : $F{discount}) / 100 * $F{quantity} * $F{price_unit}]]></variableExpression>
@@ -293,6 +287,15 @@ $F{validate_user_lname}]]></variableExpression>
 	</variable>
 	<variable name="sum_price_subtotal" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$V{price_subtotal_group}]]></variableExpression>
+	</variable>
+	<variable name="validate_date_en" class="java.lang.String">
+		<variableExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{validate_date})]]></variableExpression>
+	</variable>
+	<variable name="date_invoice_en" class="java.lang.String">
+		<variableExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_invoice})]]></variableExpression>
+	</variable>
+	<variable name="date_due_en" class="java.lang.String">
+		<variableExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_due})]]></variableExpression>
 	</variable>
 	<group name="Sub">
 		<groupExpression><![CDATA[$F{product_name}]]></groupExpression>
@@ -407,13 +410,13 @@ $F{validate_user_lname}]]></variableExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_address_text}]]></textFieldExpression>
 			</textField>
-			<staticText>
+			<textField>
 				<reportElement mode="Transparent" x="146" y="41" width="255" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[ใบแจ้งหนี้/Invoice]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{type} == "out_refund" ? "ใบลดหนี้/Credit Note" : "ใบแจ้งหนี้/Invoice"]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="80" y="117" width="215" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -443,7 +446,7 @@ $F{validate_user_lname}]]></variableExpression>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_invoice_en}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="4" y="158" width="367" height="28" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -558,6 +561,10 @@ $F{validate_user_lname}]]></textFieldExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["หน้า/Page " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="436" y="-4" width="117" height="42"/>
+				<imageExpression class="java.lang.String"><![CDATA[$F{logo}]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -734,7 +741,7 @@ NSTDA is a government sector, no withholding tax]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_due_en}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
 				<reportElement mode="Transparent" x="84" y="50" width="256" height="31" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -1015,13 +1022,6 @@ Sub Total
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
-			<staticText>
-				<reportElement x="396" y="253" width="83" height="12"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[/             /]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement mode="Transparent" x="470" y="27" width="83" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -1085,7 +1085,7 @@ $V{sum_price_subtotal} - $V{amount_total}]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_due_en}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="table" x="340" y="0" width="130" height="18"/>
@@ -1204,6 +1204,13 @@ NSTDA is a government sector, no withholding tax]]></text>
 					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{amount_total_text}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="374" y="253" width="128" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{validate_date_en}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

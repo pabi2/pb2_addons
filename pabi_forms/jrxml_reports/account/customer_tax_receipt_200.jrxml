@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<property name="ireport.zoom" value="1.241842646118311"/>
+	<property name="ireport.zoom" value="1.2418426461183112"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
@@ -118,13 +118,13 @@
 		<fieldDescription><![CDATA[partner_id/taxbranch]]></fieldDescription>
 	</field>
 	<field name="org_address_text" class="java.lang.String">
-		<fieldDescription><![CDATA[operating_unit_id/org_id/address_print_text]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/address_print_text]]></fieldDescription>
 	</field>
 	<field name="branch_address_text" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/taxbranch_id/address_print_text_receipt]]></fieldDescription>
 	</field>
 	<field name="branch_200" class="java.lang.String">
-		<fieldDescription><![CDATA[operating_unit_id/org_id/branch_200]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/branch_200]]></fieldDescription>
 	</field>
 	<field name="first_product_categ" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/invoice_line/categ_id/name]]></fieldDescription>
@@ -166,6 +166,12 @@
 	<field name="journal_code" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/code]]></fieldDescription>
 	</field>
+	<field name="research_type" class="java.lang.String">
+		<fieldDescription><![CDATA[research_type]]></fieldDescription>
+	</field>
+	<field name="contract_number" class="java.lang.String">
+		<fieldDescription><![CDATA[contract_number]]></fieldDescription>
+	</field>
 	<variable name="amount_untaxed" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_untaxed} : $F{invoice_amount_untaxed})]]></variableExpression>
@@ -197,8 +203,15 @@ $F{amount_total_text_th}]]></variableExpression>
 	</background>
 	<title>
 		<band height="288">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="394" y="271" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_number}]]></textFieldExpression>
+			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="65" y="118" width="329" height="71">
+				<reportElement x="65" y="118" width="329" height="43">
 					<printWhenExpression><![CDATA[$F{first_product_categ}.toString() == "การรับจ้างวิจัย"
 ||
 $F{first_product_categ}.toString() == "การร่วมวิจัย"]]></printWhenExpression>
@@ -230,7 +243,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress($F{street},"",$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="65" y="118" width="329" height="71">
+				<reportElement x="65" y="118" width="329" height="43">
 					<printWhenExpression><![CDATA[$F{first_product_categ}.toString() != "การรับจ้างวิจัย"
 &&
 $F{first_product_categ}.toString() != "การร่วมวิจัย"]]></printWhenExpression>
@@ -248,26 +261,41 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_payment}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="394" y="271" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="49" y="268" width="165" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{vat} + " / " + ($F{taxbranch} == "00000" ? "สำนักงานใหญ่" : $F{taxbranch})]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="239" y="161" width="13" height="20">
+					<printWhenExpression><![CDATA[$F{research_type} == "applied"]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[X]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="87" y="161" width="13" height="20">
+					<printWhenExpression><![CDATA[$F{research_type} == "basic"]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[X]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="44" splitType="Stretch"/>
+		<band height="44" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="394" y="-2" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number}]]></textFieldExpression>
+			</textField>
+		</band>
 	</columnHeader>
 	<detail>
 		<band height="18" splitType="Stretch">

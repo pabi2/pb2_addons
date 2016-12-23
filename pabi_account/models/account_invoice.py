@@ -57,6 +57,11 @@ class AccountInvoice(models.Model):
         string='Has WHT in invoice line',
         compute='_compute_has_wht',
     )
+    number_preprint = fields.Char(
+        string='Preprint Number',
+    )
+    _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
+                        'Preparint Number must be unique!')]
 
     @api.multi
     @api.depends('invoice_line.invoice_line_tax_id')

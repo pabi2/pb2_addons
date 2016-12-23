@@ -29,13 +29,15 @@
 		</record>
 
 		<!-- Customer Invoice -->
-		<record id="customer_invoice_form" model="ir.actions.report.xml">
-			<field name="string">Customer Invoice</field>
+		<!-- EN -->
+		<record id="customer_invoice_form_en" model="ir.actions.report.xml">
+			<field name="string">Customer Invoice/Refund (EN)</field>
+			<field name="name">Customer Invoice/Refund (EN)</field>
+			<field name="report_name">customer.invoice.en.form</field>
+			<field name="force_locale">en_US</field>
 			<field name="auto">True</field>
 			<field name="model">account.invoice</field>
 			<field name="jasper_model_id" ref="account.model_account_invoice"/>
-			<field name="name">Customer Invoice</field>
-			<field name="report_name">customer.invoice.form</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_invoice.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
@@ -43,14 +45,34 @@
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
 		</record>
-
-		<record id="customer_invoice_form_values" model="ir.values">
-			<field name="name">Customer Invoice</field>
+		<record id="customer_invoice_form_en_values" model="ir.values">
+			<field name="name">Customer Invoice/Refund (EN)</field>
 			<field name="model">account.invoice</field>
 			<field name="key2" eval="'client_print_multi'"/>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_invoice_form)"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_invoice_form_en)"/>
 		</record>
-
+		<!-- TH -->
+		<record id="customer_invoice_form_th" model="ir.actions.report.xml">
+			<field name="string">Customer Invoice/Refund (TH)</field>
+			<field name="name">Customer Invoice/Refund (TH)</field>
+			<field name="report_name">customer.invoice.th.form</field>
+			<field name="force_locale">th_TH</field>
+			<field name="auto">True</field>
+			<field name="model">account.invoice</field>
+			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_invoice.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+		<record id="customer_invoice_form_th_values" model="ir.values">
+			<field name="name">Customer Invoice/Refund (TH)</field>
+			<field name="model">account.invoice</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_invoice_form_th)"/>
+		</record>
 		<!-- Customer Receipt -->
 		<record id="customer_receipt_form" model="ir.actions.report.xml">
 			<field name="string">Customer Receipt</field>

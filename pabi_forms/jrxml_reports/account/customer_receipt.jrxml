@@ -115,13 +115,13 @@
 		<fieldDescription><![CDATA[partner_id/taxbranch]]></fieldDescription>
 	</field>
 	<field name="org_address_text" class="java.lang.String">
-		<fieldDescription><![CDATA[operating_unit_id/org_id/address_print_text]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/address_print_text]]></fieldDescription>
 	</field>
 	<field name="branch_address_text" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/taxbranch_id/address_print_text_receipt]]></fieldDescription>
 	</field>
 	<field name="branch_200" class="java.lang.String">
-		<fieldDescription><![CDATA[operating_unit_id/org_id/branch_200]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/org_id/branch_200]]></fieldDescription>
 	</field>
 	<field name="first_product_categ" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/invoice_line/categ_id/name]]></fieldDescription>

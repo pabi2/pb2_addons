@@ -81,6 +81,20 @@ class AccountVoucher(models.Model):
         store=True,
         help="Auto compute from the selected invoice",
     )
+    number_preprint = fields.Char(
+        string='Preprint Number',
+    )
+    research_type = fields.Selection(
+        [('basic', 'Basic Research'),
+         ('applied', 'Applied Research'),
+         ],
+        string='Research Type',
+    )
+    contract_number = fields.Char(
+        string='Contract Number',
+    )
+    _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
+                        'Preparint Number must be unique!')]
 
     @api.multi
     @api.constrains('line_ids', 'line_cr_ids', 'line_dr_ids')

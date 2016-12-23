@@ -15,8 +15,23 @@
             </field>
         </record>
 
-        # Supplier Invoice
+        # Customer Invoice
+        <record model="ir.ui.view" id="invoice_form">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position']" position="after" >
+                    <field name="number_preprint" />
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Other Info']//field[@name='period_id']" position="after">
+                    <field name="validate_user_id"/>
+                    <field name="validate_date"/>
+                </xpath>
+            </field>
+        </record>
 
+        # Supplier Invoice
         <record model="ir.ui.view" id="view_invoice_supplier">
             <field name="name">view.invoice.supplier</field>
             <field name="model">account.invoice</field>
