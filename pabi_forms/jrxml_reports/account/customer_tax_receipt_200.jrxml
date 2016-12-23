@@ -121,7 +121,7 @@
 		<fieldDescription><![CDATA[operating_unit_id/org_id/address_print_text]]></fieldDescription>
 	</field>
 	<field name="branch_address_text" class="java.lang.String">
-		<fieldDescription><![CDATA[line_ids/invoice_id/taxbranch_id/address_print_text_receipt]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/taxbranch_id/address_print_text_receipt]]></fieldDescription>
 	</field>
 	<field name="branch_200" class="java.lang.String">
 		<fieldDescription><![CDATA[operating_unit_id/org_id/branch_200]]></fieldDescription>
@@ -230,7 +230,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress($F{street},"",$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="125" y="118" width="329" height="71">
+				<reportElement x="65" y="118" width="329" height="71">
 					<printWhenExpression><![CDATA[$F{first_product_categ}.toString() != "การรับจ้างวิจัย"
 &&
 $F{first_product_categ}.toString() != "การร่วมวิจัย"]]></printWhenExpression>
@@ -340,7 +340,9 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{amount_total_text}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Transparent" x="125" y="144" width="375" height="31" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="125" y="144" width="375" height="31" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH")]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
