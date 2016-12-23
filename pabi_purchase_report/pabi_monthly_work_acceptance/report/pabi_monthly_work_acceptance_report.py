@@ -91,5 +91,4 @@ class PabiMonthlyWorkAcceptanceReport(models.Model):
         FROM purchase_order_line pol
         WHERE pol.order_id = po.id)
         WHERE po.order_type LIKE 'purchase_order'
-        AND po.state = 'done'
         )""" % (self._table, ))
