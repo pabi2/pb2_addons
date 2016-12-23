@@ -17,6 +17,7 @@
     'data': [
         'jasper_data.xml',
         'data/account_data.xml',
+        'data/payment_export_data.xml',
     ],
     'installable': True,
     'auto_install': False,
