@@ -47,6 +47,7 @@ class AccountActivityGroup(models.Model):
             })
         return activity_group
 
+    # Inherit for issues/1173
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):
         if self._context.get('expense_id', False):
