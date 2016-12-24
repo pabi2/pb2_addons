@@ -10,7 +10,8 @@ class AccountBankReceiptCancel(models.TransientModel):
 
     cancel_reason_txt = fields.Char(
         string="Reason",
-        readonly=False)
+        readonly=False
+    )
 
     @api.one
     def confirm_cancel(self):
