@@ -171,3 +171,7 @@ class ResProject(models.Model):
         string='Project Monitor',
         domain=[('budget_method', '=', 'expense')],
     )
+    rpt_program_id = fields.Many2one(
+        'res.program',
+        string='Report Program',
+    )

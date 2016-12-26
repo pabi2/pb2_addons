@@ -13,6 +13,10 @@ class BudgetPlanReport(ChartField, models.Model):
         readonly=True,
         help="Reference to original document",
     )
+    rpt_program_id = fields.Many2one(
+        'res.program',
+        string='Report Program',
+    )
 
     def _get_dimension(self):
         # Add dimensions from chart field
@@ -22,6 +26,7 @@ class BudgetPlanReport(ChartField, models.Model):
         dimensions += ', abl.chart_view'
         # Add document reference
         dimensions += ', ab.name as document'
+        dimensions += ', abl.rpt_program_id'
         return dimensions
 
     def init(self, cr):
