@@ -198,29 +198,3 @@ class AccountBudget(models.Model):
                 if not res['budget_ok']:
                     return res
         return res
-
-class AccountBudgetLine(models.Model):
-    _inherit = 'account.budget.line'
-
-    @api.depends(
-        'budget_id.section_id',
-        'section_id',
-        'section_id.rpt_program_id',
-        'project_id',
-        'project_id.rpt_program_id')
-    def _compute_rpt_program_id(self):
-        for line in self:
-            if line.budget_id.chart_view == 'unit_base':
-                if line.section_id:
-                    line.rpt_program_id = line.section_id.rpt_program_id
-            elif line.budget_id.chart_view == 'project_base':
-                if line.project_id:
-                    line.rpt_program_id = line.project_id.rpt_program_id
-
-    rpt_program_id = fields.Many2one(
-        'res.program',
-        compute='_compute_rpt_program_id',
-        string='Report Program',
-        store=True,
-    )
-    
