@@ -21,7 +21,7 @@
                 <group position="before" >
                     <div class="oe_right oe_button_box" name="buttons">
                         <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
-                                name="action_open_outstanding_advance" 
+                                name="action_open_outstanding_advance"
                                 attrs="{'invisible': [('is_employee_advance', '=', False)]}">
                             <field string="AV Outstanding" name="outstanding_advance_count" widget="statinfo" />
                         </button>
@@ -30,7 +30,7 @@
                 <xpath expr="//field[@name='currency_id']" position="after">
                     <field name="is_employee_advance" invisible="1"/>
                     <field name="is_advance_clearing" invisible="1"/>
-                    <field name="advance_expense_id" 
+                    <field name="advance_expense_id"
                            domain="[('is_employee_advance', '=', True), ('state', 'in', ('open','paid')),
                                     ('employee_id', '=', employee_id), ('amount_to_clearing', '&gt;', 0.0)]"
                            attrs="{'invisible': [('is_advance_clearing', '=', False)],
@@ -45,7 +45,7 @@
                 <xpath expr="//form/sheet/notebook/page[1]/field/tree/field[@name='unit_quantity']" position="attributes">
                     <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
                 </xpath>
-                
+
                 <xpath expr="//form/sheet/notebook/page[1]/field/form/group/group[1]/field[@name='product_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('is_advance_product_line', '=', True)]}</attribute>
                 </xpath>
@@ -73,6 +73,7 @@
 	                            <field name="invoice_id" />
 	                            <field name="clearing_amount" />
 	                            <field name="invoiced_amount" />
+                              <field name="validate_user_id" />
                             </tree>
                         </field>
                     </page>
@@ -106,10 +107,10 @@
             <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//filter[last()]" position="after">
-                    <filter string="Employee Advance" 
+                    <filter string="Employee Advance"
                             name="is_employee_advance"
                             domain="[('is_employee_advance', '=', True)]"/>
-                    <filter string="Advance Clearing" 
+                    <filter string="Advance Clearing"
                             name="is_advance_clearing"
                             domain="[('is_advance_clearing', '=', True)]"/>
                 </xpath>
@@ -132,7 +133,7 @@
             <field name="domain">[('is_employee_advance', '=', True)]</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
-                Click to register new expenses. 
+                Click to register new expenses.
               </p><p>
                 Odoo will ensure the whole process is followed; the expense
                 sheet is validated by manager(s), the employee is reimbursed
@@ -141,7 +142,7 @@
               </p>
             </field>
         </record>
-        
+
         <record id="action_expense_clearing" model="ir.actions.act_window">
             <field name="name">Employee Clearing</field>
             <field name="res_model">hr.expense.expense</field>
@@ -153,7 +154,7 @@
             <field name="domain">[('is_advance_clearing', '=', True)]</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
-                Click to register new expenses. 
+                Click to register new expenses.
               </p><p>
                 Odoo will ensure the whole process is followed; the expense
                 sheet is validated by manager(s), the employee is reimbursed
@@ -162,7 +163,7 @@
               </p>
             </field>
         </record>
-        
+
         <menuitem action="action_expense_advance"
                   id="menu_expense_advance"
                   name="Employee Advance"
