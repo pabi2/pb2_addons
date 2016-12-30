@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+
+		<record id="view_pabi_customer_dunning_wizard" model="ir.ui.view">
+			<field name="name">Budget Monitoring</field>
+			<field name="model">pabi.customer.dunning.wizard</field>
+			<field name="arch" type="xml">
+				<form>
+					<group>
+						<group>
+							<field name="date_run"/>
+							<field name="open_item"/>
+						</group>
+						<group>
+							<field name="report_type"/>
+						</group>
+					</group>
+					<group>
+						<group name="filter_unit_base" string="Filters">
+							<field name="org_id"/>
+						</group>
+						<group name="groupby_unit_base" string="Group by">
+							<field name="groupby_org"/>
+						</group>
+					</group>
+					<footer>
+						<button name="run_report" string="Run Report" type="object" class="oe_highlight"/>
+						or
+						<button string="Cancel" class="oe_link" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_pabi_customer_dunning_wizard" model="ir.actions.act_window">
+			<field name="name">Customer Dunning Report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">pabi.customer.dunning.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_pabi_customer_dunning_wizard"/>
+			<field name="target">new</field>
+		</record>
+
+		<menuitem action="action_pabi_customer_dunning_wizard" id="menu_pabi_customer_dunning_report" sequence="110" name="Customer Dunning Report" parent="account.menu_finance_reports"/>
+
+	</data>
+</openerp>
