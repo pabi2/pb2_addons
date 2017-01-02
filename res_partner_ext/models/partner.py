@@ -227,6 +227,7 @@ class ResPartner(models.Model):
 
     @api.multi
     def name_get(self):
+        """ Overwrite method, just to add Title """
         res = []
         for record in self:
             if record.title:
@@ -238,9 +239,10 @@ class ResPartner(models.Model):
             if self._context.get('show_address_only'):
                 name = self._display_address(record, without_company=True)
             if self._context.get('show_address'):
-                name = name + "\n" + self._display_address(record, without_company=True)
-            name = name.replace('\n\n','\n')
-            name = name.replace('\n\n','\n')
+                name = name + "\n" + \
+                    self._display_address(record, without_company=True)
+            name = name.replace('\n\n', '\n')
+            name = name.replace('\n\n', '\n')
             if self._context.get('show_email') and record.email:
                 name = "%s <%s>" % (name, record.email)
             res.append((record.id, name))
