@@ -20,7 +20,7 @@
             <field name="arch" type="xml">
             	<field name="name" position="attributes">
             		<attribute name="filter_domain">
-            			['|','|','|','|',('display_name','ilike',self),('ref','=',self),
+            			['|','|','|','|','|',('name','ilike',self),('display_name','ilike',self),('ref','=',self),
             			('email','ilike',self),('search_key','ilike',self),('vat','ilike',self)]
             		</attribute>
             	</field>
