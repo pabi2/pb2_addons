@@ -146,6 +146,25 @@ class HRExpense(models.Model):
     remark = fields.Text(
         string='Note for Advance',
     )
+    activity_group_ids = fields.Many2many(
+        'account.activity.group',
+        string="Activity Groups",
+        compute='_compute_activity_groups',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends(
+        'line_ids',
+        'line_ids.activity_group_id')
+    def _compute_activity_groups(self):
+        for expense in self:
+            if expense.line_ids:
+                expense_ids = []
+                for line in expense.line_ids:
+                    if line.activity_group_id:
+                        expense_ids.append(line.activity_group_id.id)
+                expense.activity_group_ids = expense_ids
 
     @api.multi
     def write(self, vals):
