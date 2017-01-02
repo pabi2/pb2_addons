@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <report 
+        <!-- <report
             id="action_report_payment_export"
             model="payment.export"
             string="Payment Export"
             report_type="qweb-pdf"
-            name="payment_export.report_payment_export" 
+            name="payment_export.report_payment_export"
             file="payment_export.report_payment_export"
-        />
+        /> -->
     </data>
 </openerp>
