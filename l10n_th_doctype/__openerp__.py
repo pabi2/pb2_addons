@@ -51,6 +51,7 @@ List of Doctype
         'sale_split_quote2order',
         'hr_expense_advance_clearing',
         'stock',
+        'account_debitnote',
     ],
     "data": [
         "security/ir.model.access.csv",
