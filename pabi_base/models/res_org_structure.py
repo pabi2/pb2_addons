@@ -22,6 +22,9 @@ class ResOrg(ResCommon, models.Model):
         'operating.unit',
         string='Operating Unit',
     )
+    logo = fields.Binary(
+        string='Logo',
+    )
     name_print_text = fields.Char(
         string='Print Name',
         translate=True,
@@ -204,4 +207,9 @@ class ResTaxbranch(ResCommon, models.Model):
     payment_method_text = fields.Text(
         string='Print Payment Method',
         translate=True,
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        required=True,
     )

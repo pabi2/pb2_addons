@@ -121,6 +121,7 @@
                             <field name="website" widget="url"/>
                         </group>
                         <group>
+                            <field name="org_id"/>
                             <field name="email"/>
                             <field name="phone"/>
                             <field name="fax"/>
