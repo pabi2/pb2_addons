@@ -228,9 +228,9 @@
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_group_id']" position="attributes">
+                <!-- <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_group_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
         <record model="ir.ui.view" id="cancel_reason_view_purchase_requisition_form">
