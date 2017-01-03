@@ -52,12 +52,12 @@ class PurchaseOrder(models.Model):
         string='Invoice Created',
         compute='_compute_plan_invoice_created',
         store=True,
-        help="Compute whether number of invoices (not cancelled invoices) "
-        "are created as planned"
+        help="Compute whether number of invoices "
+        "(not cancelled invoices) are created as planned",
     )
     total_invoice_amount = fields.Float(
         compute='_compute_plan_invoice_created',
-        string='Invoice Amount'
+        string='Invoice Amount',
     )
     num_installment = fields.Integer(
         string='Number of Installment',

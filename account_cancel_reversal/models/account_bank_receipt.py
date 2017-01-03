@@ -26,7 +26,6 @@ class AccountBankReceipt(models.Model):
         self.cancel_move_id = rev_move
         # As accounto n both DR and CR are balance sheet item, do one by one
         accounts = move.line_id.mapped('account_id')
-        print accounts
         for account in accounts:
             self.env['account.move'].\
                 _reconcile_voided_entry_by_account([move.id, rev_move.id],

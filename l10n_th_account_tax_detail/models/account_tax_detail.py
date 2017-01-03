@@ -310,8 +310,6 @@ class AccountTaxDetail(models.Model):
                 else:
                     rec.base_company = rec.base
                     rec.amount_company = rec.amount
-                print rec.base_company
-                print rec.amount_company
 
     @api.model
     def _get_seq_search_domain(self, doc_type, period):
