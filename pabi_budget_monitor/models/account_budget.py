@@ -99,13 +99,12 @@ class AccountBudget(models.Model):
                 'personnel': 'monitor_personnel_costcenter_ids',
                 'invest_asset': 'monitor_invest_asset_ids',
                 'invest_construction':
-                'monitor_invest_construction_phase_ids'}
+                'monitor_invest_construction_phase_ids'
+            }
             return resource[budget_type_dict[budget_type]].\
                 filtered(lambda x:
                          (x.fiscalyear_id == fiscal and
                           x[ext_field].id == ext_res_id))
-            raise ValidationError(
-                _('Budget Check at Fund level require a compliment dimension'))
         else:
             return super(AccountBudget, self).\
                 _get_budget_monitor(fiscal, budget_type,

@@ -797,9 +797,9 @@ class PurchaseContract(models.Model):
                         gid = self.env.ref(ext_grp)
                     else:
                         raise osv.except_osv(
-                             _(u'Error!!'),
-                             _("""You do not have permission to create.
-                                Please contact your system administrator."""))
+                            _(u'Error!!'),
+                            _("You do not have permission to create.\n"
+                              "Please contact your system administrator."))
                 self.admin_org_groups_id = gid
             else:
                 self.admin_org_groups_id = False

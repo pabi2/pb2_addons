@@ -4,8 +4,7 @@ import cStringIO
 import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils import quote_sheetname
-from openpyxl.styles import PatternFill, Border, \
-    Side, Protection, Font, Alignment
+from openpyxl.styles import PatternFill, Border, Side, Protection, Font
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
@@ -241,7 +240,7 @@ class BudgetExportWizard(models.TransientModel):
                 if const_cntrl_line.cost_control_id:
                     ConstControl_Sheet.cell(
                         row=cc_f_row, column=2).value = \
-                            const_cntrl_line.cost_control_id.name
+                        const_cntrl_line.cost_control_id.name
                     cc_f_row += cc_row_gap
                 if const_cntrl_line.plan_cost_control_line_ids:
                     for line in const_cntrl_line.plan_cost_control_line_ids:
