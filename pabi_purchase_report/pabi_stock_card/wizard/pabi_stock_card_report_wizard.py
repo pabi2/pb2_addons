@@ -9,22 +9,21 @@ class PabiStockCardReportWizard(models.TransientModel):
     operating_unit = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
-        )
-
+    )
     product = fields.Many2one(
         'product.product',
         string='Product',
-        )
-
+    )
     category = fields.Many2one(
         'product.category',
         string='Category',
-        )
-
-
-    date_from = fields.Date(string='Contract Start Date')
-    date_to = fields.Date(string='Contract End Date')
-
+    )
+    date_from = fields.Date(
+        string='Contract Start Date',
+    )
+    date_to = fields.Date(
+        string='Contract End Date',
+    )
 
     format = fields.Selection(
         [('pdf', 'PDF'),

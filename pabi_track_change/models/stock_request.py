@@ -51,4 +51,3 @@ class StockRequest(models.Model):
     note = fields.Text(
         track_visibility='onchange',
     )
-

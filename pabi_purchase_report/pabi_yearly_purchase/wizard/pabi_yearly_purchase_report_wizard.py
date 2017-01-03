@@ -22,7 +22,8 @@ class PabiYearlyPurchaseReportWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
-        report_name = self.format == 'pdf' and 'pabi_yearly_purchase_report' or \
+        report_name = self.format == 'pdf' and \
+            'pabi_yearly_purchase_report' or \
             'pabi_yearly_purchase_report_xls'
         # For SQL, we search simply pass params
         data['parameters']['year'] = self.year.id

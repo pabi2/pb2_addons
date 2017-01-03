@@ -604,8 +604,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
             if acc_line.line_id.order_id.invoice_method == 'invoice_plan':
                 acc_line.balance_qty = acc_line.line_id.product_qty
             else:
-                acc_line.balance_qty = acc_line.line_id.product_qty - \
-                                   acc_line.line_id.invoiced_qty
+                acc_line.balance_qty = (acc_line.line_id.product_qty -
+                                        acc_line.line_id.invoiced_qty)
 
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',

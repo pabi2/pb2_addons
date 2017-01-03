@@ -19,7 +19,8 @@ class PabiPurchaseSummarizeReportWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
-        report_name = self.format == 'pdf' and 'pabi_purchase_summarize_report' or \
+        report_name = self.format == 'pdf' and \
+            'pabi_purchase_summarize_report' or \
             'pabi_purchase_summarize_report_xls'
         # For SQL, we search simply pass params
         data['parameters']['date_from'] = self.date_from

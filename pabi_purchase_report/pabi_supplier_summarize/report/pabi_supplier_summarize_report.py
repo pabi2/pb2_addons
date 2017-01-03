@@ -115,7 +115,7 @@ class PabiSupplierSummarizeReport(models.Model):
         case when
         (
         (
-        select (((sum(wa2.eval_receiving::float)) / (count(wa2.id) * 3)) * 3)::float
+        select (((sum(wa2.eval_receiving::float))/(count(wa2.id)*3))*3)::float
         from purchase_work_acceptance wa2
         left join purchase_order po2
         on po2.id = wa2.order_id
@@ -131,7 +131,7 @@ class PabiSupplierSummarizeReport(models.Model):
         and po2.state != 'cancel'
         ) +
         (
-        select (((sum(wa2.eval_service::float)) / (count(wa2.id) * 2)) * 2)::float
+        select (((sum(wa2.eval_service::float))/(count(wa2.id)*2))*2)::float
         from purchase_work_acceptance wa2
         left join purchase_order po2
         on po2.id = wa2.order_id

@@ -18,6 +18,7 @@ class BudgetPlanUnitAccept(models.TransientModel):
                     _("Selected budget plan cannot be approved\
                     as they are not in 'Submitted' state."))
 
+
 class BudgetPlanUnitVerify(models.TransientModel):
     _name = "budget.plan.unit.verify"
 
@@ -30,8 +31,9 @@ class BudgetPlanUnitVerify(models.TransientModel):
                 plan.button_approve()
             else:
                 raise UserError(
-                    _("Selected budget plan cannot be verify\
-                    as they are not in 'Approved' state."))
+                    _("Selected budget plan cannot be verified "
+                      "as they are not in 'Approved' state."))
+
 
 class BudgetPlanUnitAccepteCorp(models.TransientModel):
     _name = "budget.plan.unit.accept.corp"
@@ -45,6 +47,5 @@ class BudgetPlanUnitAccepteCorp(models.TransientModel):
                 plan.button_accept_corp()
             else:
                 raise UserError(
-                    _("Selected budget plan cannot be verify\
-                    as they are not in 'Verified' state."))
-            
+                    _("Selected budget plan cannot be verified "
+                      "as they are not in 'Verified' state."))

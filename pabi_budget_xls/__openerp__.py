@@ -21,6 +21,7 @@
         'pabi_budget_internal_charge',
         'pabi_attachment_helper',
     ],
+    'external_dependencies': {'python': ['openpyxl']},
     "data": [
         'security/ir.model.access.csv',
         'wizard/budget_import_wiz_view.xml',

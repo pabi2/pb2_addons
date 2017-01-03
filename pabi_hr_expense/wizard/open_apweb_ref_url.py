@@ -9,7 +9,6 @@ class OpenAPWebRefURL(models.TransientModel):
     @api.multi
     def open(self):
         self.ensure_one()
-        print self._context
         url = self._context.get('apweb_ref_url')
         if not url:
             raise UserError(_('No reference document found!'))

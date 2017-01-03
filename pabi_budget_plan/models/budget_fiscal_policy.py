@@ -523,9 +523,9 @@ class BudgetFiscalPolicy(models.Model):
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
         domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
                   ('ref_budget_policy_id', '=', self.id)]
-        Breakdown_search = Breakdown.search(
-                domain + [('chart_view', '=', 'unit_base'),
-                          ('state', '!=', 'cancel')])
+        Breakdown_search = Breakdown.search(domain +
+                                            [('chart_view', '=', 'unit_base'),
+                                             ('state', '!=', 'cancel')])
         if Breakdown_search:
             raise UserError(_('Breakdowns already created.'))
         for unit in self.unit_base_ids:

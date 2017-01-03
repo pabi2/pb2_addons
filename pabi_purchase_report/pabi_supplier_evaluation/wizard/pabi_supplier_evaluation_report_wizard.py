@@ -19,7 +19,8 @@ class PabiSupplierEvaluationReportWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
-        report_name = self.format == 'pdf' and 'pabi_supplier_evaluation_report' or \
+        report_name = self.format == 'pdf' and \
+            'pabi_supplier_evaluation_report' or \
             'pabi_supplier_evaluation_report_xls'
         # datestring = fields.Date.context_today(self)
         # For SQL, we search simply pass params

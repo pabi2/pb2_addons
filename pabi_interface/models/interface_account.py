@@ -184,7 +184,6 @@ class InterfaceAccountEntry(models.Model):
     def execute(self):
         res = {}
         for interface in self:
-            print interface.to_reverse_entry_id
             # Set type based on journal type
             if interface.to_reverse_entry_id:
                 interface.type = 'reverse'
@@ -554,7 +553,6 @@ class InterfaceAccountChecker(models.AbstractModel):
                     invalid = line.credit > 0
                 else:
                     invalid = line.debit > 0
-            print invalid
             if invalid:
                 raise ValidationError(
                     _('Tax in wrong side of dr/cr as refer to journal type!'))

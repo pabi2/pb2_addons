@@ -44,4 +44,4 @@ class BudgetPlanLineTemplate(models.Model):
 #                 rec.planned_expense_internal = expense_internal
 #                 rec.planned_revenue = revenue_external + revenue_internal
 #                 rec.planned_expense = expense_external + expense_internal
-#                 rec.planned_overall = rec.planned_revenue - rec.planned_expense
+#               rec.planned_overall = rec.planned_revenue - rec.planned_expense

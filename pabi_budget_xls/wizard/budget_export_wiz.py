@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 import base64
 import cStringIO
-
 import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils import quote_sheetname
-from openpyxl.styles import PatternFill, Border,\
+from openpyxl.styles import PatternFill, Border, \
     Side, Protection, Font, Alignment
-
-from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
@@ -93,19 +90,27 @@ class BudgetExportWizard(models.TransientModel):
         costcontrols = self.env['cost.control'].search([])
         ConstControl_MasterSheet = False
         try:
-            ConstControl_MasterSheet = workbook.get_sheet_by_name('master_job_order')
+            ConstControl_MasterSheet = \
+                workbook.get_sheet_by_name('master_job_order')
         except:
-            ConstControl_MasterSheet = workbook.create_sheet('master_job_order')
+            ConstControl_MasterSheet = \
+                workbook.create_sheet('master_job_order')
         ConstControl_MasterSheet.protection.sheet = True
 
         bold_font = Font(bold=True, name='Arial', size=11)
 
-        ConstControl_MasterSheet.cell(row=1, column=1).value = 'Sequence'
-        ConstControl_MasterSheet.cell(row=1, column=2).value = 'Job Order - English'
-        ConstControl_MasterSheet.cell(row=1, column=3).value = 'Job Order - Thai'
-        ConstControl_MasterSheet.cell(row=1, column=1).font = bold_font
-        ConstControl_MasterSheet.cell(row=1, column=2).font = bold_font
-        ConstControl_MasterSheet.cell(row=1, column=3).font = bold_font
+        ConstControl_MasterSheet.cell(row=1,
+                                      column=1).value = 'Sequence'
+        ConstControl_MasterSheet.cell(row=1,
+                                      column=2).value = 'Job Order - English'
+        ConstControl_MasterSheet.cell(row=1,
+                                      column=3).value = 'Job Order - Thai'
+        ConstControl_MasterSheet.cell(row=1,
+                                      column=1).font = bold_font
+        ConstControl_MasterSheet.cell(row=1,
+                                      column=2).font = bold_font
+        ConstControl_MasterSheet.cell(row=1,
+                                      column=3).font = bold_font
 
         ag_row = 2
         ag_count = 1
@@ -135,32 +140,33 @@ class BudgetExportWizard(models.TransientModel):
 
     @api.model
     def _update_costcontrol_sheet(self, workbook, budget):
-        center_align = Alignment(horizontal='center')
-        protection = Protection(locked=False)
-
+        # center_align = Alignment(horizontal='center')
+        # protection = Protection(locked=False)
         ConstControl_Sheet = False
         try:
             ConstControl_Sheet = workbook.get_sheet_by_name('JobOrder')
-#             ConstControl_Sheet.protection.sheet = True
+            # ConstControl_Sheet.protection.sheet = True
         except:
             pass
 
-        greyFill = PatternFill(
-            start_color='D3D3D3',
-            end_color='D3D3D3',
-            fill_type='solid',
-        )
-        Whitefont = Font(color='FFFFFF')
+        # greyFill = PatternFill(
+        #     start_color='D3D3D3',
+        #     end_color='D3D3D3',
+        #     fill_type='solid',
+        # )
+        # Whitefont = Font(color='FFFFFF')
         if ConstControl_Sheet:
             self._update_costcontrol_masterdata(workbook)
-            job_order_lines,non_job_order_lines = self._compute_previous_year_amount(budget,
-                                                                                     budget_method='expense')
+            job_order_lines, non_job_order_lines = \
+                self._compute_previous_year_amount(budget,
+                                                   budget_method='expense')
             ag_list_formula = SHEET_FORMULAS.get('ag_list', False)
             ChargeType = DataValidation(
                 type="list",
                 formula1='"External,Internal"'
             )
-            costcontrol_formula = SHEET_FORMULAS.get('cost_control_formula', False)
+            costcontrol_formula = \
+                SHEET_FORMULAS.get('cost_control_formula', False)
             ConstControl_Sheet.add_data_validation(costcontrol_formula)
             ConstControl_Sheet.add_data_validation(ChargeType)
             ConstControl_Sheet.add_data_validation(ag_list_formula)
@@ -171,30 +177,36 @@ class BudgetExportWizard(models.TransientModel):
 
             row = 1
             ConstControl_Sheet.cell(row=row, column=2,
-                                       value=budget.fiscalyear_id.name)
+                                    value=budget.fiscalyear_id.name)
             row += 1
             ConstControl_Sheet.cell(row=row, column=2, value=org)
             row += 1
             ConstControl_Sheet.cell(row=row, column=2, value=section)
             row += 1
-            ConstControl_Sheet.cell(row=row, column=2, value=fields.Date.today())
+            ConstControl_Sheet.cell(row=row, column=2,
+                                    value=fields.Date.today())
             row += 1
-            ConstControl_Sheet.cell(row=row, column=2, value=self.env.user.name)
+            ConstControl_Sheet.cell(row=row, column=2,
+                                    value=self.env.user.name)
             row += 1
 
-            ag_column_list = []
+            # ag_column_list = []
             cost_cntrl_first_column = 8
             row_gap = 28
             for r in range(1, 11):
-                costcontrol_formula.add(ConstControl_Sheet.cell(row=cost_cntrl_first_column, column=2))
+                costcontrol_formula.add(
+                    ConstControl_Sheet.cell(row=cost_cntrl_first_column,
+                                            column=2))
                 cost_cntrl_first_column = cost_cntrl_first_column + row_gap
 
             ag_first_column = 13
             row_gap = 8
             for r in range(1, 11):
                 for rr in range(ag_first_column, ag_first_column+20):
-                    ChargeType.add(ConstControl_Sheet.cell(row=rr, column=1))
-                    ag_list_formula.add(ConstControl_Sheet.cell(row=rr, column=2))
+                    ChargeType.add(ConstControl_Sheet.cell(row=rr,
+                                                           column=1))
+                    ag_list_formula.add(ConstControl_Sheet.cell(row=rr,
+                                                                column=2))
                     ag_first_column += 1
                 ag_first_column = ag_first_column+row_gap
 
@@ -205,75 +217,109 @@ class BudgetExportWizard(models.TransientModel):
                 for jb in job_order_lines:
                     line_fi_row = cc_fi_row + 5
                     costcontrol = self.env['cost.control'].browse(jb)
-                    ConstControl_Sheet.cell(row=cc_fi_row, column=2).value = costcontrol.name
+                    ConstControl_Sheet.cell(
+                        row=cc_fi_row, column=2).value = costcontrol.name
                     cc_fi_row += cc_row_gap
                     if job_order_lines[jb]:
                         for ag in job_order_lines[jb]:
                             col = 2
                             amt = job_order_lines[jb][ag]
                             if ag:
-                                ag_name = self.env['account.activity.group'].browse(ag).name
-                                ConstControl_Sheet.cell(row=line_fi_row, column=col).value = ag_name
+                                ag_name = \
+                                    self.env['account.activity.group'].\
+                                    browse(ag).name
+                                ConstControl_Sheet.cell(
+                                    row=line_fi_row,
+                                    column=col).value = ag_name
                             col += 7
-                            ConstControl_Sheet.cell(row=line_fi_row, column=col).value = amt
+                            ConstControl_Sheet.cell(
+                                row=line_fi_row, column=col).value = amt
                             line_fi_row += 1
 
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
                 if const_cntrl_line.cost_control_id:
-                    ConstControl_Sheet.cell(row=cc_f_row, column=2).value = const_cntrl_line.cost_control_id.name
+                    ConstControl_Sheet.cell(
+                        row=cc_f_row, column=2).value = \
+                            const_cntrl_line.cost_control_id.name
                     cc_f_row += cc_row_gap
                 if const_cntrl_line.plan_cost_control_line_ids:
                     for line in const_cntrl_line.plan_cost_control_line_ids:
                         col = 1
                         if line.charge_type:
                             if line.charge_type == 'external':
-                                ConstControl_Sheet.cell(row=line_f_row, column=col).value = 'External'
+                                ConstControl_Sheet.cell(
+                                    row=line_f_row,
+                                    column=col).value = 'External'
                             else:
-                                ConstControl_Sheet.cell(row=line_f_row, column=col).value = 'Internal'
+                                ConstControl_Sheet.cell(
+                                    row=line_f_row,
+                                    column=col).value = 'Internal'
                         col += 1
                         if line.activity_group_id:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_group_id.name
+                            ConstControl_Sheet.cell(
+                                row=line_f_row,
+                                column=col).value = line.activity_group_id.name
                         col += 1
                         if line.name:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.name
+                            ConstControl_Sheet.cell(
+                                row=line_f_row,
+                                column=col).value = line.name
                         col += 1
                         col += 1
                         if line.unit:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.unit
+                            ConstControl_Sheet.cell(
+                                row=line_f_row,
+                                column=col).value = line.unit
                         col += 1
                         if line.activity_unit_price:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_unit_price
+                            ConstControl_Sheet.cell(
+                                row=line_f_row,
+                                column=col).value = line.activity_unit_price
                         col += 1
                         if line.activity_unit:
-                            ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.activity_unit
+                            ConstControl_Sheet.cell(
+                                row=line_f_row,
+                                column=col).value = line.activity_unit
 
                         col += 1
                         col += 1
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m1
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m1
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m2
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m2
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m3
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m3
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m4
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m4
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m5
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m5
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m6
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m6
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m7
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m7
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m8
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m8
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m9
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m9
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m10
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m10
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m11
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m11
                         col += 1
-                        ConstControl_Sheet.cell(row=line_f_row, column=col).value = line.m12
+                        ConstControl_Sheet.cell(
+                            row=line_f_row, column=col).value = line.m12
                         col += 3
                         line_f_row += 1
         return True
@@ -281,18 +327,21 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _compute_previous_year_amount(self, budget, budget_method):
         current_fy = budget.fiscalyear_id
-        previous_fy = self.env['account.fiscalyear'].search([('date_stop', '<', current_fy.date_start)], order='date_stop', limit=1)
+        previous_fy = self.env['account.fiscalyear'].search(
+            [('date_stop', '<', current_fy.date_start)],
+            order='date_stop', limit=1)
         job_order_lines = {}
         non_job_order_lines = {}
         if not self.export_committed_budget or not previous_fy:
-            return job_order_lines,non_job_order_lines
+            return job_order_lines, non_job_order_lines
         if previous_fy:
             report_domain = [('fiscalyear_id', '=', previous_fy.id),
                              ('section_id', '=', budget.section_id.id),
                              ('org_id', '=', budget.org_id.id),
                              ('division_id', '=', budget.division_id.id),
                              ('budget_method', '=', budget_method)]
-            report_lines = self.env['budget.monitor.report'].search(report_domain)
+            report_lines = self.env['budget.monitor.report'].\
+                search(report_domain)
             for line in report_lines:
                 total_commited_amt =\
                     line.amount_exp_commit +\
@@ -304,47 +353,52 @@ class BudgetExportWizard(models.TransientModel):
                     if line.cost_control_id.id not in job_order_lines:
                         job_order_lines[line.cost_control_id.id] = {}
                     if line.activity_group_id:
-                        if line.activity_group_id.id not in\
-                            job_order_lines[line.cost_control_id.id]:
+                        if line.activity_group_id.id not in \
+                                job_order_lines[line.cost_control_id.id]:
                             job_order_lines[line.cost_control_id.id].\
-                                update({line.activity_group_id.id :
+                                update({line.activity_group_id.id:
                                         total_commited_amt})
                         else:
-                            job_order_lines[line.cost_control_id.id]\
-                                [line.activity_group_id.id] += total_commited_amt
+                            cc_id = line.cost_control_id.id
+                            ag_id = line.activity_group_id.id
+                            job_order_lines[cc_id][ag_id] += total_commited_amt
                     else:
-                        if False not in job_order_lines[line.cost_control_id.id]:
+                        if False not in \
+                                job_order_lines[line.cost_control_id.id]:
                             job_order_lines[line.cost_control_id.id].\
-                                update({False : total_commited_amt})
+                                update({False: total_commited_amt})
                         else:
-                            job_order_lines[line.cost_control_id.id]\
-                                [False] += total_commited_amt
+                            cc_id = line.cost_control_id.id
+                            job_order_lines[cc_id][False] += total_commited_amt
                 else:
                     if line.activity_group_id:
-                        if line.activity_group_id.id not in non_job_order_lines:
-                            non_job_order_lines[line.activity_group_id.id] = total_commited_amt
+                        if line.activity_group_id.id not in \
+                                non_job_order_lines:
+                            non_job_order_lines[line.activity_group_id.id] = \
+                                total_commited_amt
                         else:
-                            non_job_order_lines[line.activity_group_id.id] += total_commited_amt
+                            non_job_order_lines[line.activity_group_id.id] += \
+                                total_commited_amt
                     else:
                         if False not in non_job_order_lines:
                             non_job_order_lines[False] = total_commited_amt
                         else:
                             non_job_order_lines[False] += total_commited_amt
-        return job_order_lines,non_job_order_lines
-
+        return job_order_lines, non_job_order_lines
 
     @api.model
     def _update_non_joborder_sheets(self, Sheet, budget, budget_method):
         NonCostCtrl_Sheet = Sheet
         NonCostCtrl_Sheet.protection.sheet = True
         bold_font = Font(bold=True, name='Arial', size=11)
-        ActGroupList =  SHEET_FORMULAS.get('ag_list', False)
-        ChargeType =  SHEET_FORMULAS.get('charge_type', False)
-        job_order_lines,non_job_order_lines =\
+        ActGroupList = SHEET_FORMULAS.get('ag_list', False)
+        ChargeType = SHEET_FORMULAS.get('charge_type', False)
+        job_order_lines, non_job_order_lines =\
             self._compute_previous_year_amount(budget, budget_method)
-        decimal_type_validation = DataValidation(type="decimal",
-            operator="greaterThanOrEqual",
-            formula1=0)
+        decimal_type_validation = \
+            DataValidation(type="decimal",
+                           operator="greaterThanOrEqual",
+                           formula1=0)
         NonCostCtrl_Sheet.add_data_validation(decimal_type_validation)
         NonCostCtrl_Sheet.add_data_validation(ActGroupList)
         NonCostCtrl_Sheet.add_data_validation(ChargeType)
@@ -360,7 +414,7 @@ class BudgetExportWizard(models.TransientModel):
         NonCostCtrl_Sheet.cell(row=5, column=2, value=self.env.user.name)
 
         row = 11
-        section_name = budget.section_id.name
+        # section_name = budget.section_id.name
         LineStart = row
         if budget_method == 'expense':
             lines = budget.plan_expense_line_ids
@@ -373,9 +427,11 @@ class BudgetExportWizard(models.TransientModel):
                 ChargeType.add(NonCostCtrl_Sheet.cell(row=row, column=1))
                 if line.charge_type:
                     if line.charge_type == 'external':
-                        NonCostCtrl_Sheet.cell(row=row, column=1).value = 'External'
+                        NonCostCtrl_Sheet.cell(row=row,
+                                               column=1).value = 'External'
                     else:
-                        NonCostCtrl_Sheet.cell(row=row, column=1).value = 'Internal'
+                        NonCostCtrl_Sheet.cell(row=row,
+                                               column=1).value = 'Internal'
                 ActGroupList.add(NonCostCtrl_Sheet.cell(row=row, column=2))
                 ag_name = line.activity_group_id.name
                 NonCostCtrl_Sheet.cell(row=row, column=2).value = ag_name
@@ -388,16 +444,18 @@ class BudgetExportWizard(models.TransientModel):
                     row=row, column=6).value = line.activity_unit_price
                 NonCostCtrl_Sheet.cell(
                     row=row, column=7).value = line.activity_unit
-    
+
                 for cl in range(5, 8):
-                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
-                    NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
-    
+                    decimal_type_validation.add(
+                        NonCostCtrl_Sheet.cell(row=row, column=cl))
+                    NonCostCtrl_Sheet.cell(
+                        row=row, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
-                    row=row, column=8).value = "=E%s*$F$%s*$G$%s" % (row,
-                                                                      row,
-                                                                      row)
-                NonCostCtrl_Sheet.cell(row=row, column=8).number_format = '#,##0.00'
+                    row=row, column=8).value = \
+                    "=E%s*$F$%s*$G$%s" % (row, row, row)
+                NonCostCtrl_Sheet.cell(row=row, column=8).number_format = \
+                    '#,##0.00'
                 NonCostCtrl_Sheet.cell(row=row, column=10).value = line.m1
                 NonCostCtrl_Sheet.cell(row=row, column=11).value = line.m2
                 NonCostCtrl_Sheet.cell(row=row, column=12).value = line.m3
@@ -410,17 +468,21 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(row=row, column=19).value = line.m10
                 NonCostCtrl_Sheet.cell(row=row, column=20).value = line.m11
                 NonCostCtrl_Sheet.cell(row=row, column=21).value = line.m12
-    
+
                 for cl in range(5, 22):
-                    decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=row, column=cl))
-                    NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
-    
+                    decimal_type_validation.add(
+                        NonCostCtrl_Sheet.cell(row=row, column=cl))
+                    NonCostCtrl_Sheet.cell(
+                        row=row, column=cl).number_format = '#,##0.00'
+
                 NonCostCtrl_Sheet.cell(
                     row=row, column=22, value="=SUM(J%s:$U$%s)" % (row, row))
                 NonCostCtrl_Sheet.cell(
                     row=row, column=23, value="=H%s-$V$%s" % (row, row))
-                NonCostCtrl_Sheet.cell(row=row, column=22).number_format = '#,##0.00'
-                NonCostCtrl_Sheet.cell(row=row, column=23).number_format = '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=row, column=22).number_format = \
+                    '#,##0.00'
+                NonCostCtrl_Sheet.cell(row=row, column=23).number_format = \
+                    '#,##0.00'
                 row += 1
 
         to_row = row + self.editable_lines
@@ -430,15 +492,19 @@ class BudgetExportWizard(models.TransientModel):
             ActGroupList.add(NonCostCtrl_Sheet.cell(row=r, column=2))
 
             for cl in range(5, 8):
-                decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=r, column=cl))
-                NonCostCtrl_Sheet.cell(row=r, column=cl).number_format = '#,##0.00'
+                decimal_type_validation.add(
+                    NonCostCtrl_Sheet.cell(row=r, column=cl))
+                NonCostCtrl_Sheet.cell(
+                    row=r, column=cl).number_format = '#,##0.00'
 
             NonCostCtrl_Sheet.cell(
                 row=r, column=8).value = "=E%s*$F$%s*$G$%s" % (r, r, r)
 
             for cl in range(9, 22):
-                decimal_type_validation.add(NonCostCtrl_Sheet.cell(row=r, column=cl))
-                NonCostCtrl_Sheet.cell(row=r, column=cl).number_format = '#,##0.00'
+                decimal_type_validation.add(
+                    NonCostCtrl_Sheet.cell(row=r, column=cl))
+                NonCostCtrl_Sheet.cell(
+                    row=r, column=cl).number_format = '#,##0.00'
 
             NonCostCtrl_Sheet.cell(
                 row=r, column=22, value="=SUM(J%s:$U$%s)" % (r, r))
@@ -454,11 +520,14 @@ class BudgetExportWizard(models.TransientModel):
             r = linetofill
             for ag in non_job_order_lines:
                 if ag:
-                    ag_name = self.env['account.activity.group'].browse(ag).name
+                    ActivityGroup = self.env['account.activity.group']
+                    ag_name = ActivityGroup.browse(ag).name
                     NonCostCtrl_Sheet.cell(row=r, column=2).value = ag_name
-                    NonCostCtrl_Sheet.cell(row=r, column=9).value = non_job_order_lines[ag]
+                    NonCostCtrl_Sheet.cell(row=r, column=9).value = \
+                        non_job_order_lines[ag]
                 else:
-                    NonCostCtrl_Sheet.cell(row=r, column=9).value = non_job_order_lines[ag]
+                    NonCostCtrl_Sheet.cell(row=r, column=9).value = \
+                        non_job_order_lines[ag]
                 r += 1
 
         column_to_fill = [8, 9, 22, 23]
@@ -512,10 +581,11 @@ class BudgetExportWizard(models.TransientModel):
         NonCostCtrl_Sheet.cell(
             row=row, column=21).value = '=SUM(U%s:U%s)' % params
         for cl in range(8, 22):
-            NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = '#,##0.00'
+            NonCostCtrl_Sheet.cell(row=row, column=cl).number_format = \
+                '#,##0.00'
 
         NonCostCtrl_Sheet.cell(
-            row=6, column=2).value = '=H%s' %(row)
+            row=6, column=2).value = '=H%s' % (row)
 
         self._add_cell_border(NonCostCtrl_Sheet, row_start=row,
                               row_end=row+1, col_start=7, col_end=21)
@@ -595,8 +665,10 @@ class BudgetExportWizard(models.TransientModel):
             )
             SHEET_FORMULAS.update({'ag_list': ActGroupList})
             SHEET_FORMULAS.update({'charge_type': ChargeType})
-            Non_JobOrder_Expense = workbook.get_sheet_by_name('Non_JobOrder_Expense')
-            Non_JobOrder_Revenue = workbook.get_sheet_by_name('Non_JobOrder_Revenue')
+            Non_JobOrder_Expense = \
+                workbook.get_sheet_by_name('Non_JobOrder_Expense')
+            Non_JobOrder_Revenue = \
+                workbook.get_sheet_by_name('Non_JobOrder_Revenue')
             self._update_non_joborder_sheets(Non_JobOrder_Expense,
                                              budget,
                                              budget_method='expense')

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from openerp import api, models, fields
-# from lxml import etree
-# from openerp.osv.orm import setup_modifiers
+from openerp import api, models
 
 
 class StockRequest(models.Model):

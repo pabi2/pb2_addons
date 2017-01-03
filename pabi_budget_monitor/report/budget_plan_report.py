@@ -18,7 +18,6 @@ class BudgetPlanReport(ChartField, models.Model):
         string='Report Program',
     )
 
-
     def _get_sql_view(self):
         sql_view = super(BudgetPlanReport, self)._get_sql_view()
         join_query = """
@@ -36,10 +35,10 @@ class BudgetPlanReport(ChartField, models.Model):
         dimensions += ', abl.chart_view'
         # Add document reference
         dimensions += ', ab.name as document'
-        dimensions += '''
+        dimensions += """
             , CASE WHEN abl.section_id is not null THEN section.rpt_program_id
-                    WHEN abl.project_id is not null THEN project.rpt_program_id 
-                    END as rpt_program_id'''
+                   WHEN abl.project_id is not null THEN project.rpt_program_id
+              END as rpt_program_id"""
         return dimensions
 
     def init(self, cr):

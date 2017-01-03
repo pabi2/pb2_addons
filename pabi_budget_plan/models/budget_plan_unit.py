@@ -445,8 +445,8 @@ class BudgetPlanUnitCostControlLine(models.Model):
     @api.multi
     def write(self, vals):
         for record in self:
-            line_exist = self.env['budget.plan.unit.line'].search(
-                        [('breakdown_line_id', '=', record.id)])
+            line_exist = self.env['budget.plan.unit.line'].\
+                search([('breakdown_line_id', '=', record.id)])
             if line_exist:
                 line_exist.write(vals)
         return super(BudgetPlanUnitCostControlLine, self).write(vals)

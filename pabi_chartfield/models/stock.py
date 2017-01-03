@@ -8,7 +8,6 @@ class StockMove(ChartFieldAction, models.Model):
 
     @api.model
     def create(self, vals):
-        print vals
         res = super(StockMove, self).create(vals)
         res.update_related_dimension(vals)
         return res

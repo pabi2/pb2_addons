@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import tools
 import openerp.addons.decimal_precision as dp
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 
 
 class BudgetUnitSummary(models.Model):

@@ -54,7 +54,7 @@ class PurchaseOrder(models.Model):
     def _create_invoice_line(self, inv_line_data, inv_lines, po_line):
         if not po_line.order_id.by_fiscalyear:
             return super(PurchaseOrder, self).\
-                    _create_invoice_line(inv_line_data, inv_lines, po_line)
+                _create_invoice_line(inv_line_data, inv_lines, po_line)
 
         installment = self._context.get('installment', False)
         if installment:

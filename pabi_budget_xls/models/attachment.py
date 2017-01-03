@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# © <YEAR(S)> <AUTHOR(S)>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
 from openerp import models, fields
 
 
@@ -17,4 +14,4 @@ class Attachment(models.Model):
 
     def init(self, cr):
         if 'budget.plan.unit' not in self._models_check:
-            self._models_check.update({'budget.plan.unit': 'budget_plan_id',})
+            self._models_check.update({'budget.plan.unit': 'budget_plan_id'})

@@ -258,9 +258,9 @@ class PurchaseContract(models.Model):
             gid = False
             if Emp and self.env.ref(
                 'base.group_pabi_purchase_contract_user').id in \
-                self.env.user.groups_id.mapped('id'):
+                    self.env.user.groups_id.mapped('id'):
                 if Emp.org_id.name_short == 'CT' or \
-                    Emp.org_id.name_short == 'CO':
+                        Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
                     if Emp.org_id.name_short:
@@ -268,19 +268,19 @@ class PurchaseContract(models.Model):
                         gid = self.env.ref(ext_grp)
                     else:
                         raise osv.except_osv(
-                             _(u'Error!!'),
-                             _("""You do not have permission to create.
-                                Please contact your system administrator."""))
+                            _(u'Error!!'),
+                            _("You do not have permission to create.\n"
+                              "Please contact your system administrator."))
                 return gid
             else:
                 raise osv.except_osv(
                     _(u'Error!!'),
-                    _("""You do not have permission to create.
-                        Please contact your system administrator."""))
+                    _("You do not have permission to create.\n"
+                      "Please contact your system administrator."))
         else:
             raise osv.except_osv(
                 _(u'Error!!'),
-                _("""You do not have permission to create."""))
+                _("You do not have permission to create."))
 
     @api.model
     def create(self, vals):
@@ -751,8 +751,9 @@ class PurchaseContract(models.Model):
             }
         else:
             raise osv.except_osv(
-                _(u'Can not to be Reversion'), _('The contract no. ')
-                + self.poc_code + _(' has not send documents'))
+                _(u'Can not to be Reversion'),
+                _('The contract no. %s has not send documents') %
+                (self.poc_code,))
 
     @api.multi
     def action_button_delete_reversion(self):
@@ -784,11 +785,11 @@ class PurchaseContract(models.Model):
             Emp = Employees.search(
                 [['user_id', '=', self._uid]], limit=1)
             gid = False
-            if Emp and self.env.ref(
-                'base.group_pabi_purchase_contract_user').id in \
-                self.env.user.groups_id.mapped('id'):
+            ext_id = 'base.group_pabi_purchase_contract_user'
+            if Emp and self.env.ref(ext_id).id in \
+                    self.env.user.groups_id.mapped('id'):
                 if Emp.org_id.name_short == 'CT' or \
-                    Emp.org_id.name_short == 'CO':
+                        Emp.org_id.name_short == 'CO':
                     gid = self.env.ref(Ext_group + 'central')
                 else:
                     if Emp.org_id.name_short:

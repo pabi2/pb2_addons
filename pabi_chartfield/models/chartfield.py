@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 from openerp import api, models, fields, _
 from openerp.addons.pabi_base.models.res_common import ResCommon
 from openerp.exceptions import ValidationError
-from openerp.addons.account_budget_activity.models.account_activity import \
-    ActivityCommon
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
 #                                           (mission)

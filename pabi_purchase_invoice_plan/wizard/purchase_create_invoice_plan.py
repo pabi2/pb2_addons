@@ -166,7 +166,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         prec = obj_precision.precision_get('Account')
         if not self.by_fiscalyear:
             return super(PurchaseCreateInvoicePlan, self).\
-                    _compute_installment_details()
+                _compute_installment_details()
         order = self.env['purchase.order'].browse(self._context['active_id'])
         self._check_invoice_mode(order)
         fiscalyear_dict = {}
@@ -305,7 +305,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     @api.model
     def _prepare_installment_line(self, order, order_line, install):
         result = super(PurchaseCreateInvoicePlan, self).\
-                _prepare_installment_line(order, order_line, install)
+            _prepare_installment_line(order, order_line, install)
         if not self.by_fiscalyear:
             return result
         result.update({'fiscalyear_id': install.fiscalyear_id.id})

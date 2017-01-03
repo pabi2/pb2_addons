@@ -5,5 +5,3 @@ from openerp import models, fields
 class PurchaseContractCollateral(models.Model):
     _name = 'purchase.contract.collateral'
     name = fields.Char(string="Name")
-
-PurchaseContractCollateral()

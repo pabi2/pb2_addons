@@ -66,7 +66,6 @@ class StockRequest(models.Model):
                      'section_id': line.request_id.section_id.id,
                      'fund_id': line.request_id.fund_id.id,
                      })
-        print data['section_id']
         return data
 
 

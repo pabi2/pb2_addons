@@ -10,7 +10,7 @@ PABI2 - Purchase Stock Request
 ================================
 
   * Change some field's action and input.
- 
+
     """,
     "website": "https://nstda.or.th/",
     "author": "TrinityRoots",

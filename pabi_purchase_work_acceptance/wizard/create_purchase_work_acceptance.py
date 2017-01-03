@@ -211,7 +211,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         })
         acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
-            items = self._prepare_acceptance_plan_line(self.select_invoice_plan)
+            items = \
+                self._prepare_acceptance_plan_line(self.select_invoice_plan)
             lines = items
         else:
             for act_line in self.acceptance_line_ids:
@@ -253,7 +254,6 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
 
 
 class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
-
     _name = 'create.purchase.work.acceptance.item'
 
     wiz_id = fields.Many2one(

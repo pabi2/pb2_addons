@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import openerp.addons.decimal_precision as dp
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 
 
 class BudgetUnitJobOrder(models.Model):
@@ -153,8 +153,8 @@ class BudgetUnitJobOrderLine(models.Model):
     @api.multi
     def write(self, vals):
         for record in self:
-            line_exist = self.env['account.budget.line'].search(
-                        [('breakdown_line_id', '=', record.id)])
+            line_exist = self.env['account.budget.line'].\
+                search([('breakdown_line_id', '=', record.id)])
             if line_exist:
                 line_exist.write(vals)
         return super(BudgetUnitJobOrderLine, self).write(vals)

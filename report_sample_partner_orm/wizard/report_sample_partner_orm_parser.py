@@ -8,8 +8,9 @@ def report_sample_partner_orm_parser(cr, uid, ids, data, context):
         'ids': data['parameters']['ids'],
         'parameters': {
             'xxx': data['parameters']['ids'],
-            }
-       }
+        }
+    }
+
 
 jasper_reports.report_jasper(
     'report.report_sample_partner_orm',  # report_name in report_data.xml

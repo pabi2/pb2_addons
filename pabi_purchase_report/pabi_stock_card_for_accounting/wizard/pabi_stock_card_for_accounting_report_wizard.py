@@ -3,28 +3,26 @@ from openerp import models, fields, api
 
 
 class PabiStockCardForAccountingReportWizard(models.TransientModel):
-
     _name = 'pabi.stock.card.for.accounting.report.wizard'
 
     operating_unit = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
-        )
-
+    )
     product = fields.Many2one(
         'product.product',
         string='Product',
-        )
-
+    )
     category = fields.Many2one(
         'product.category',
         string='Category',
-        )
-
-
-    date_from = fields.Date(string='Contract Start Date')
-    date_to = fields.Date(string='Contract End Date')
-
+    )
+    date_from = fields.Date(
+        string='Contract Start Date',
+    )
+    date_to = fields.Date(
+        string='Contract End Date',
+    )
 
     format = fields.Selection(
         [('pdf', 'PDF'),
@@ -37,7 +35,8 @@ class PabiStockCardForAccountingReportWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
-        report_name = self.format == 'pdf' and 'pabi_stock_card_for_accouting_report' or \
+        report_name = self.format == 'pdf' and \
+            'pabi_stock_card_for_accouting_report' or \
             'pabi_stock_card_for_accouting_report_xls'
         # For SQL, we search simply pass params
         data['parameters']['operating_unit'] = self.operating_unit.id

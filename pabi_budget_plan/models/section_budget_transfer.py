@@ -234,29 +234,20 @@ class SectionTransferUnitLine(models.Model):
         string="Notes/Reason",
     )
 
-    @api.onchange('from_budget_control_line_id',
-                  #'from_budget_control_id',
-                  'to_budget_control_line_id',
-                  #'to_budget_control_id'
-                )
+    @api.onchange('from_budget_control_line_id', 'to_budget_control_line_id')
     def onchage_line_params(self):
         for record in self:
+            budget = record.from_budget_control_line_id.budget_id
             if record.from_budget_control_line_id:
-                record.from_budget_control_id =\
-                    record.from_budget_control_line_id.budget_id
-                record.from_section_id =\
-                    record.from_budget_control_line_id.budget_id.section_id
-                record.from_org_id =\
-                    record.from_budget_control_line_id.budget_id.section_id.org_id
+                record.from_budget_control_id = budget
+                record.from_section_id = budget.section_id
+                record.from_org_id = budget.section_id.org_id
             elif record.from_budget_control_id:
-                record.from_section_id =\
-                    record.from_budget_control_line_id.budget_id.section_id
+                record.from_section_id = budget.section_id
 
+            budget = record.to_budget_control_line_id.budget_id
             if record.to_budget_control_line_id:
-                record.to_budget_control_id =\
-                    record.to_budget_control_line_id.budget_id
-                record.to_section_id =\
-                    record.to_budget_control_line_id.budget_id.section_id
+                record.to_budget_control_id = budget
+                record.to_section_id = budget.section_id
             elif record.from_budget_control_id:
-                record.to_section_id =\
-                    record.to_budget_control_line_id.budget_id.section_id
+                record.to_section_id = budget.section_id

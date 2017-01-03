@@ -12,6 +12,7 @@ def pabi_dunning_letter_parser(cr, uid, ids, data, context):
         }
     }
 
+
 jasper_reports.report_jasper(
     'report.pabi_dunning_letter',  # report_name in report_data.xml
     'hr.expense.expense',  # Model View name
