@@ -31,7 +31,8 @@ class BudgetImportWizard(models.TransientModel):
                     [('name', '=', tools.ustr(costcontrol))]
                 )
                 if costcontrol_id:
-                    costcontrol_vals.update({'cost_control_id': costcontrol_id.id})
+                    costcontrol_vals.update(
+                        {'cost_control_id': costcontrol_id.id})
                 else:
                     raise UserError(_('Please select valid Job Order!'))
             else:
@@ -40,12 +41,12 @@ class BudgetImportWizard(models.TransientModel):
 
             existing_costcontrol_lines =\
                 self.env['budget.plan.unit.cost.control'].search(
-                    [('plan_id','=' ,budget.id),
+                    [('plan_id', '=', budget.id),
                      ('cost_control_id', '=', costcontrol_id.id)])
             if existing_costcontrol_lines:
                 existing_costcontrol_lines.unlink()
-            costcontrol_line =\
-                self.env['budget.plan.unit.cost.control'].create(costcontrol_vals)
+            costcontrol_line = self.env['budget.plan.unit.cost.control'].\
+                create(costcontrol_vals)
 
             line_start = cc_row + 5
             calculate_vals = {}
@@ -66,7 +67,8 @@ class BudgetImportWizard(models.TransientModel):
                     activity_group_id = \
                         self.env['account.activity.group'].search(
                             [('name', '=', tools.ustr(activity_group))])
-                    line_vals.update({'activity_group_id': activity_group_id.id})
+                    line_vals.update(
+                        {'activity_group_id': activity_group_id.id})
                 else:
                     continue
                 col += 1
@@ -89,16 +91,18 @@ class BudgetImportWizard(models.TransientModel):
                 line_vals.update({'unit': unit})
                 col += 1
 
-                activity_unit_price = CostCtrl_Sheet.cell(row=row, column=col).value
+                activity_unit_price = \
+                    CostCtrl_Sheet.cell(row=row, column=col).value
                 if activity_unit_price:
-                    if activity_unit_price and not isinstance(activity_unit_price,
-                                                              long):
+                    if activity_unit_price and not \
+                            isinstance(activity_unit_price, long):
                         raise UserError(
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
                 else:
                     activity_unit_price = 0.0
-                calculate_vals.update({'activity_unit_price': activity_unit_price})
+                calculate_vals.update(
+                    {'activity_unit_price': activity_unit_price})
                 line_vals.update({'activity_unit_price': activity_unit_price})
                 col += 1
                 activity_unit = CostCtrl_Sheet.cell(row=row, column=col).value
@@ -127,14 +131,15 @@ class BudgetImportWizard(models.TransientModel):
                                 _('Please insert float value on\
                                  row: %s - column: %s') % (row, col))
                         total_month_budget += val
-                        line_vals.update({m_field : val})
+                        line_vals.update({m_field: val})
                     cnt += 1
                     col += 1
                 col += 1
                 col += 1
                 if (total_act_budget - total_month_budget) != 0.0:
                     raise UserError(_('Please verify budget lines total!'))
-                cc_line = self.env['budget.plan.unit.cost.control.line'].create(line_vals)
+                cc_line = self.env['budget.plan.unit.cost.control.line'].\
+                    create(line_vals)
                 if cc_line:
                     plan_line_vals = {}
                     plan_line_vals.update(line_vals)
@@ -147,7 +152,8 @@ class BudgetImportWizard(models.TransientModel):
                         'cost_control_id': costcontrol_line.cost_control_id.id,
                     }
                     create_vals.update(plan_line_vals)
-                    new_id = self.env['budget.plan.unit.line'].create(create_vals).id
+                    new_id = self.env['budget.plan.unit.line'].\
+                        create(create_vals).id
                     ids.append(new_id)
             cc_row += 28
             costcontrol_line.write({'detail_ids': [(6, 0, ids)]})
@@ -155,7 +161,7 @@ class BudgetImportWizard(models.TransientModel):
 
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
-        
+
         def _compute_line_vals(NonCostCtrl_Sheet, common_line_vals):
             line_row = 11
             lines_to_create = []
@@ -190,7 +196,7 @@ class BudgetImportWizard(models.TransientModel):
                     'activity_unit': activity_unit,
                     'description': description,
                 })
-                total_act_budget = unit * act_unitprice * activity_unit
+                # total_act_budget = unit * act_unitprice * activity_unit
                 p = 1
                 col = 10
                 total_month_budget = 0.0
@@ -234,7 +240,8 @@ class BudgetImportWizard(models.TransientModel):
                 raise UserError(
                     _('You can update budget plan only in draft state!'))
 
-            Non_JobOrder_Expense = workbook.get_sheet_by_name('Non_JobOrder_Expense')
+            Non_JobOrder_Expense = \
+                workbook.get_sheet_by_name('Non_JobOrder_Expense')
             vals = {}
 
             bg_id = Non_JobOrder_Expense.cell(row=1, column=5).value
@@ -254,8 +261,8 @@ class BudgetImportWizard(models.TransientModel):
                     ['|',
                      ('code', '=', tools.ustr(org)),
                      ('name_short', '=', tools.ustr(org))])
-#             if org_id:
-#                 vals.update({'org_id': org_id.id})
+            # if org_id:
+            #     vals.update({'org_id': org_id.id})
 
             section = Non_JobOrder_Expense.cell(row=3, column=2).value
             section_id = self.env['res.section'].search(
@@ -283,13 +290,16 @@ class BudgetImportWizard(models.TransientModel):
                 'org_id': org_id.id,
                 'budget_method': 'expense',
             }
-            expense_lines_to_create = _compute_line_vals(Non_JobOrder_Expense,
-                                                         common_line_vals=common_line_vals)
+            expense_lines_to_create = \
+                _compute_line_vals(Non_JobOrder_Expense,
+                                   common_line_vals=common_line_vals)
             common_line_vals['budget_method'] = 'revenue'
-            Non_JobOrder_Revenue = workbook.get_sheet_by_name('Non_JobOrder_Revenue')
-            
-            revenue_lines_to_create = _compute_line_vals(Non_JobOrder_Revenue,
-                                                         common_line_vals=common_line_vals)
+            Non_JobOrder_Revenue = \
+                workbook.get_sheet_by_name('Non_JobOrder_Revenue')
+
+            revenue_lines_to_create = \
+                _compute_line_vals(Non_JobOrder_Revenue,
+                                   common_line_vals=common_line_vals)
             lines_to_create = expense_lines_to_create + revenue_lines_to_create
 
             for line in lines_to_create:
@@ -311,7 +321,7 @@ class BudgetImportWizard(models.TransientModel):
                 'plan_id': budget.id,
                 'attachement_id': attachement_id.id
             })
-            cost_control_data = self._update_cost_control_lines(workbook, budget)
+            self._update_cost_control_lines(workbook, budget)
         return {}
 
     @api.multi
