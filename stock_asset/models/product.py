@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from openerp import fields, models, _
+from openerp import fields, models
 
 
 class ProductTemplate(models.Model):

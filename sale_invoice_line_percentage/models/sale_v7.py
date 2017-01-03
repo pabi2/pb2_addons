@@ -103,7 +103,3 @@ class sale_order_line(osv.osv):
                 'sale.order.line': (lambda self, cr, uid, ids, ctx=None: ids,
                                     ['invoice_lines'], 10)}),
     }
-
-sale_order_line()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

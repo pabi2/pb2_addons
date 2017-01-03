@@ -62,7 +62,6 @@ class sale_advance_payment_inv(osv.osv_memory):
             sale_advance_payment_inv, self)._prepare_advance_invoice_vals(
             cr, uid, ids, context=context)
         sale_obj = self.pool.get('sale.order')
-        ir_property_obj = self.pool.get('ir.property')
         fiscal_obj = self.pool.get('account.fiscal.position')
         wizard = self.browse(cr, uid, ids[0], context)
         sale_ids = context.get('active_ids', [])
@@ -145,7 +144,3 @@ class sale_advance_payment_inv(osv.osv_memory):
         else:
             return super(sale_advance_payment_inv, self).create_invoices(
                 cr, uid, ids, context=context)
-
-sale_advance_payment_inv()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

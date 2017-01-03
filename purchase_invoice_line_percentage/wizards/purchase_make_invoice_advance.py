@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
@@ -74,7 +73,3 @@ class purchase_advance_payment_inv(osv.osv_memory):
             'context': "{'type': 'in_invoice'}",
             'type': 'ir.actions.act_window',
         }
-
-purchase_advance_payment_inv()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

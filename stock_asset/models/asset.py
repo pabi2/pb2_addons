@@ -84,7 +84,7 @@ class StockMove(models.Model):
                 while qty > 0:
                     qty -= 1
                     if move.product_id.sequence_id:
-                        #generate lot
+                        # generate lot
                         new_seq = Seq.get(move.product_id.sequence_id.code)
                         new_lot = Lot.create({
                             'name': new_seq,

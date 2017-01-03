@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from openerp.osv import fields, osv
 
 
 class purchase_order(osv.osv):
-
     _inherit = 'purchase.order'
 
     _columns = {
@@ -41,11 +39,8 @@ class purchase_order(osv.osv):
                  (res.get('quantity') or 0.0) * (line_percent / 100)})
         return res
 
-purchase_order()
-
 
 class purchase_order_line(osv.osv):
-
     _inherit = 'purchase.order.line'
 
     def _fnct_line_invoiced(
@@ -90,5 +85,3 @@ class purchase_order_line(osv.osv):
                 'purchase.order.line': (lambda self, cr, uid, ids, ctx=None:
                                         ids, ['invoice_lines'], 10)}),
     }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

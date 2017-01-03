@@ -6,7 +6,9 @@
     'summary': 'Account Posting Scheduled Job',
     'description': """
 This module will auto post journal entries that has not been posted yet.
-To configure, go to menu > Settings > Technical > Scheduler, then open Account Auto Post
+To configure, go to menu > Settings > Technical > Scheduler,
+then open Account Auto Post
+
 Arguments:
 ==========
 * () --> Post all journals

@@ -12,7 +12,7 @@ ALLOWED_OPS = set(['ilike', 'like'])
 def _get_rec_names(self):
     "List of fields to search into"
     self._cr.execute("SELECT id from ir_model where model = '%s'"
-                     %(str(self._model)))
+                     % (str(self._model)))
     model_id = self._cr.fetchone()
     model_id = model_id and model_id[0] or False
     model = self.env['ir.model'].browse(model_id)
@@ -50,7 +50,7 @@ def _extend_search_results_translation(self, sub_domain):
                 name = '%s'
         """ % (value, trans_name))
         res = self._cr.fetchone()
-        source_value =  res and res[0] or False
+        source_value = res and res[0] or False
         if source_value:
             sub_domain[2] = source_value
     return sub_domain
@@ -99,22 +99,24 @@ class ModelExtended(models.Model):
                 # Perform standard _search
                 result = _search.origin(
                     self, args=args, offset=offset, limit=limit, order=order,
-                        count=count, access_rights_uid=access_rights_uid)
+                    count=count, access_rights_uid=access_rights_uid)
                 if args:
-                     # Perform extended search
+                    # Perform extended search
                     base_domain = args or []
                     for a in base_domain:
                         if isinstance(a, list) and len(a) == 3:
-                            new_sub_domain = _extend_search_results_translation(self, a)
+                            new_sub_domain = \
+                                _extend_search_results_translation(self, a)
                             a = new_sub_domain
                     new_result = self._search.origin(
-                        self, args=base_domain, offset=offset, limit=limit, order=order,
-                            count=count, access_rights_uid=access_rights_uid)
+                        self, args=base_domain, offset=offset,
+                        limit=limit, order=order,
+                        count=count, access_rights_uid=access_rights_uid)
                     if not isinstance(result, list):
                         result = [result]
                     if not isinstance(new_result, list):
                         new_result = [new_result]
-                    result_add = [x for x in new_result if not x in result]
+                    result_add = [x for x in new_result if x not in result]
                     if result_add:
                         result.extend(result_add)
                 return result
