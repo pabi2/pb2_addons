@@ -11,10 +11,15 @@ class IrAttachment(models.Model):
         'hr.expense.expense',
         string='Expense',
     )
+    payment_export_id = fields.Many2one(
+        'payment.export',
+        string="Payment Export",
+    )
 
     # Add module and fk field
     _models_check = {
         'hr.expense.expense': 'expense_id',
+        'payment.export': 'payment_export_id',
     }
 
     @api.model
