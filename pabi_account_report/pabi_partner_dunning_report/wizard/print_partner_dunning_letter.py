@@ -23,11 +23,8 @@ class PrintPartnerDunningLetter(models.TransientModel):
         days_overdue = dunnings.mapped('days_overdue')
         print days_overdue
         if len(days_overdue) == 1:
-            res['report_type'] = str(days_overdue[0])
-        # invoice_ids = self._context.get('active_ids', [])
-        # invoices = self.env['account.invoice'].browse(invoice_ids)
-        # self._validate(invoices)
-        # res['partner_id'] = invoices[0].partner_id.id
+            if days_overdue[0] in (7, 14, 19):
+                res['report_type'] = str(days_overdue[0])
         return res
 
     @api.multi

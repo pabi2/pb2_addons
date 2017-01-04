@@ -34,8 +34,16 @@ class PABIPartnerDunningWizard(models.TransientModel):
         'res.org',
         string='Org',
     )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+    )
     groupby_org = fields.Boolean(
         string='Org',
+        default=False,
+    )
+    groupby_partner = fields.Boolean(
+        string='Partner',
         default=False,
     )
 
@@ -58,6 +66,8 @@ class PABIPartnerDunningWizard(models.TransientModel):
             domain.append(('reconcile_id', '=', False))
         if self.org_id:
             domain.append(('org_id', '=', self.org_id.id))
+        if self.partner_id:
+            domain.append(('partner_id', '=', self.partner_id.id))
         return domain
 
     @api.model
@@ -65,6 +75,8 @@ class PABIPartnerDunningWizard(models.TransientModel):
         res = {}
         if self.groupby_org:
             res.update({'search_default_groupby_org': True})
+        if self.groupby_partner:
+            res.update({'search_default_groupby_partner': True})
         return res
 
     @api.multi

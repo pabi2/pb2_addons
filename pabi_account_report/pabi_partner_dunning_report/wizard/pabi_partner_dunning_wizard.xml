@@ -21,9 +21,11 @@
 					<group>
 						<group name="filter_unit_base" string="Filters">
 							<field name="org_id"/>
+							<field name="partner_id"/>
 						</group>
 						<group name="groupby_unit_base" string="Group by">
 							<field name="groupby_org"/>
+							<field name="groupby_partner"/>
 						</group>
 					</group>
 					<footer>
