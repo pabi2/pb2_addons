@@ -24,6 +24,7 @@ This module add Attachment tab for
     ],
     "data": [
         'wizard/open_attachment_url_view.xml',
+        'views/attachment_view.xml',
         'views/hr_expense_view.xml',
         'views/payment_export_view.xml',
     ],

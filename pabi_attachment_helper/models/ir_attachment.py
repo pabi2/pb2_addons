@@ -15,6 +15,11 @@ class IrAttachment(models.Model):
         'payment.export',
         string="Payment Export",
     )
+    attach_by = fields.Many2one(
+        'res.users',
+        string="Attach By",
+        default=lambda self: self.env.user,
+    )
 
     # Add module and fk field
     _models_check = {
