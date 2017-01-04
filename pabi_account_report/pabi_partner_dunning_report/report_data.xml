@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		<record id="pabi_customer_dunning_letter" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="name">Customer Dunning Letter</field>
+			<field name="report_name">pabi_customer_dunning_letter</field>
+			<field name="report_rml">pabi_account_report/pabi_partner_dunning_report/report/pabi_customer_dunning_letter.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+	</data>
+</openerp>
