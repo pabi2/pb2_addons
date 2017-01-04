@@ -3,9 +3,9 @@
 <openerp>
 	<data>
 
-		<record id="view_pabi_customer_dunning_wizard" model="ir.ui.view">
-			<field name="name">Budget Monitoring</field>
-			<field name="model">pabi.customer.dunning.wizard</field>
+		<record id="view_pabi_partner_dunning_wizard" model="ir.ui.view">
+			<field name="name">Partner Dunning Wizard</field>
+			<field name="model">pabi.partner.dunning.wizard</field>
 			<field name="arch" type="xml">
 				<form>
 					<group>
@@ -14,6 +14,7 @@
 							<field name="open_item"/>
 						</group>
 						<group>
+							<field name="account_type"/>
 							<field name="report_type"/>
 						</group>
 					</group>
@@ -34,17 +35,17 @@
 			</field>
 		</record>
 
-		<record id="action_pabi_customer_dunning_wizard" model="ir.actions.act_window">
-			<field name="name">Customer Dunning Report</field>
+		<record id="action_pabi_partner_dunning_wizard" model="ir.actions.act_window">
+			<field name="name">Partner Dunning Report</field>
 			<field name="type">ir.actions.act_window</field>
-			<field name="res_model">pabi.customer.dunning.wizard</field>
+			<field name="res_model">pabi.partner.dunning.wizard</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
-			<field name="view_id" ref="view_pabi_customer_dunning_wizard"/>
+			<field name="view_id" ref="view_pabi_partner_dunning_wizard"/>
 			<field name="target">new</field>
 		</record>
 
-		<menuitem action="action_pabi_customer_dunning_wizard" id="menu_pabi_customer_dunning_report" sequence="110" name="Customer Dunning Report" parent="account.menu_finance_reports"/>
+		<menuitem action="action_pabi_partner_dunning_wizard" id="menu_pabi_partner_dunning_report" sequence="110" name="Dunning Report" parent="account.menu_finance_reports"/>
 
 	</data>
 </openerp>

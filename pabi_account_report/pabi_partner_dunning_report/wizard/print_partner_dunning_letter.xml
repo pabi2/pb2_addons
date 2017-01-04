@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <act_window
+          id="action_print_partner_dunning_letter"
+          name="Print Dunning Letter"
+          src_model="pabi.partner.dunning.report"
+          res_model="print.partner.dunning.letter"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"
+          />
+
+        <record id="wizard_print_partner_dunning_letter" model="ir.ui.view">
+            <field name="name">wizard.print.partner.dunning.letter</field>
+            <field name="model">print.partner.dunning.letter</field>
+            <field name="arch" type="xml">
+                <form string="Print Dunning Letter">
+                    <p>
+                      Print dunning letter based on template of selected report type.\n
+                      You can also edit message or change template as appropriate.
+                    </p>
+                    <group>
+                        <group>
+                            <field name="report_type"/>
+                        </group>
+                        <group name="extra">
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print_dunning_letter" type="object" string="Print Letter" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

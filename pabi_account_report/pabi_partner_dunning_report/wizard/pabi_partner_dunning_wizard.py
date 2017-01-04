@@ -4,8 +4,8 @@ from dateutil.relativedelta import relativedelta
 from openerp import api, fields, models, _
 
 
-class PABICustomerDunningWizard(models.TransientModel):
-    _name = 'pabi.customer.dunning.wizard'
+class PABIPartnerDunningWizard(models.TransientModel):
+    _name = 'pabi.partner.dunning.wizard'
 
     date_run = fields.Date(
         string='Report Run Date',
@@ -18,6 +18,13 @@ class PABICustomerDunningWizard(models.TransientModel):
          ('19', 'Overdue 19 Days')],
         string='Type',
         default='7',
+    )
+    account_type = fields.Selection(
+        [('payable', 'Payable'),
+         ('receivable', 'Receivable')],
+        string='Account Type',
+        required=True,
+        default='receivable',
     )
     open_item = fields.Boolean(
         string='Unpaid Items Only',
@@ -34,8 +41,10 @@ class PABICustomerDunningWizard(models.TransientModel):
 
     @api.model
     def _get_filter(self):
-        Report = self.env['pabi.customer.dunning.report']
+        Report = self.env['pabi.partner.dunning.report']
         domain = []
+        if self.account_type:
+            domain.append(('account_type', '=', self.account_type))
         if self.report_type:
             days = int(self.report_type)
             date_due = (datetime.strptime(self.date_run, '%Y-%m-%d') -
@@ -62,7 +71,7 @@ class PABICustomerDunningWizard(models.TransientModel):
     def run_report(self):
         self.ensure_one()
         action = self.env.ref('pabi_account_report.'
-                              'action_pabi_customer_dunning_report')
+                              'action_pabi_partner_dunning_report')
         result = action.read()[0]
         # Get filter
         domain = []
@@ -72,7 +81,7 @@ class PABICustomerDunningWizard(models.TransientModel):
         result['context'] = {'date_run': self.date_run}
         result['context'].update(self._get_groupby())
         # Update report name
-        report_name = _('Customer Dunning Report - %s Days Overdue') % \
+        report_name = _('Dunning Report - %s Days Overdue') % \
             (self.report_type)
         result.update({'display_name': report_name})
         result.update({'name': report_name})

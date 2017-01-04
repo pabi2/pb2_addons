@@ -11,17 +11,20 @@
     'description': """
 
 Accounting Related Reports
-==========================
+--------------------------
 
-* Customer Dunning Report
+* Partner Dunning Report
 
     """,
     'depends': [
-        'pabi_hr_expense',
+        'pabi_account',
     ],
     'data': [
-        'pabi_customer_dunning_report/report/pabi_customer_dunning_wizard.xml',
-        'pabi_customer_dunning_report/report/pabi_customer_dunning_report.xml',
+        # Partner Dunning Report
+        'pabi_partner_dunning_report/report_data.xml',
+        'pabi_partner_dunning_report/wizard/pabi_partner_dunning_wizard.xml',
+        'pabi_partner_dunning_report/wizard/print_partner_dunning_letter.xml',
+        'pabi_partner_dunning_report/report/pabi_partner_dunning_report.xml',
     ],
     'demo': [
     ],
