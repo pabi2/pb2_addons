@@ -21,10 +21,10 @@ class HRExpense(models.Model):
             'note': u'From Reason field',
             'apweb_ref_url': u'XXX',
             'receive_method': 'other_bank',  # salary_bank, other_bank
-            'employee_bank_id.id': u'99',
+            'employee_bank_id.id': u'64',
             'line_ids': [  # 1 line only, Advance
                 {
-                    'section_id.id': u'1276',
+                    'section_id.id': u'434',
                     'project_id.id': u'',
                     'invest_asset_id.id': u'',
                     'invest_construction_phase_id.id': u'',
@@ -35,11 +35,11 @@ class HRExpense(models.Model):
                     'cost_control_id.id': u'',
                 },
                 {
-                    'section_id.id': u'1276',
+                    'section_id.id': u'434',
                     'project_id.id': u'',
                     'invest_asset_id.id': u'',
                     'invest_construction_phase_id.id': u'',
-                    'fund_id.id': u'2',
+                    'fund_id.id': u'1',
                     'is_advance_product_line': u'True',
                     'name': u'Employee Advance 2',  # Expense Note (not in AF?)
                     'unit_amount': u'3000',  # total
@@ -119,30 +119,30 @@ class HRExpense(models.Model):
             'note': u'From Reason field',
             'apweb_ref_url': u'XXX',
             'receive_method': 'other_bank',  # salary_bank, other_bank
-            'employee_bank_id.id': u'99',
+            'employee_bank_id.id': u'64',
             'advance_expense_number': u'',  # Case clearing, refer Exp Advance
             'line_ids': [  # 1 line only, Advance
                 {
-                    'section_id.id': u'1276',
+                    'section_id.id': u'434',
                     'project_id.id': u'',
                     'invest_asset_id.id': u'',
                     'invest_construction_phase_id.id': u'',
                     'fund_id.id': u'1',
                     'is_advance_product_line': u'False',  # Must be False
-                    'activity_group_id.id': u'367',
+                    'activity_group_id.id': u'59',
                     'activity_id.id': u'3',
                     'name': u'Some Expense',
                     'unit_amount': u'2000',  # total
                     'cost_control_id.id': u'',
                 },
                 {
-                    'section_id.id': u'1276',
+                    'section_id.id': u'434',
                     'project_id.id': u'',
                     'invest_asset_id.id': u'',
                     'invest_construction_phase_id.id': u'',
-                    'fund_id.id': u'2',
+                    'fund_id.id': u'1',
                     'is_advance_product_line': u'False',  # Must be False
-                    'activity_group_id.id': u'367',
+                    'activity_group_id.id': u'59',
                     'activity_id.id': u'3',
                     'name': u'Some Expense',  # Expense Note (not in AF?)
                     'unit_amount': u'3000',  # total
@@ -176,11 +176,13 @@ class HRExpense(models.Model):
                     'name': u'Expense1.pdf',
                     'description': u'My Expense 1 Document Description',
                     'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
+                    'attach_by': u'000143',
                 },
                 {
                     'name': u'Expense2.pdf',
                     'description': u'My Expense 2 Document Description',
                     'url': u'b1d1d9a9-740f-42ad-a96b-b4747edbae1d',
+                    'attach_by': u'000143',
                 },
             ]
         }
