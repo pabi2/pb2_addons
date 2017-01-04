@@ -242,6 +242,9 @@ class HRExpense(models.Model):
                 data['url'] = file_prefix + data['url']
                 data['res_model'] = self._name
                 data['type'] = 'url'
+                domain = [('employee_code', '=', data.get('attach_by'))]
+                data['attach_by.id'] = Employee.search(domain).id
+                del data['attach_by']
         # Web Ref URL
         if 'apweb_ref_url' in data_dict:
             data_dict['apweb_ref_url'] = \
