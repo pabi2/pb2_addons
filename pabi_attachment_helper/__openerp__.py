@@ -9,7 +9,7 @@
 This module add Attachment tab for
 
 * HR Expense
-* ???
+* Payment Export
 
     """,
     "website": "https://ecosoft.co.th/",
