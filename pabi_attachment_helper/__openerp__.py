@@ -9,7 +9,7 @@
 This module add Attachment tab for
 
 * HR Expense
-* ???
+* Payment Export
 
     """,
     "website": "https://ecosoft.co.th/",
@@ -20,9 +20,11 @@ This module add Attachment tab for
     "depends": [
         # "document_url",
         "hr_expense",
+        'payment_export',
     ],
     "data": [
         'wizard/open_attachment_url_view.xml',
         'views/hr_expense_view.xml',
+        'views/payment_export_view.xml',
     ],
 }
