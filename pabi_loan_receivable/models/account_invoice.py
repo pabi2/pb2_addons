@@ -117,7 +117,7 @@ class AccountInvoice(models.Model):
                 ('date_due', '<', date_due),
                 ('loan_agreement_id', '=', loan_agreement_id),
             ]
-            if self.search_count(dom) > 0:
+            if len(self.search(dom)._ids) > 0:
                 raise UserError(
                     _('You are not allowed to validate '
                       'invoice plan in advance!'))
