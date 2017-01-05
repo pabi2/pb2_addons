@@ -19,18 +19,18 @@ class PurchaseOrder(models.Model):
         Invoice = self.env['account.invoice']
         for po in self:
             # 1) Contract Warranty (customer_invoice)
-            count = Invoice.search([('partner_id', '=', po.partner_id.id),
-                                    ('state', 'in', ['open', 'paid']),
-                                    ('retention_purchase_id', '=', po.id)],
-                                   count=True)
+            count = len(Invoice.search(
+                [('partner_id', '=', po.partner_id.id),
+                 ('state', 'in', ['open', 'paid']),
+                 ('retention_purchase_id', '=', po.id)])._ids)
             if count:
                 po.has_supplier_retention = True
                 continue
             # 2) Retention from Supplier Invoice (invoice plan)
-            count = Invoice.search([('partner_id', '=', po.partner_id.id),
-                                    ('amount_retention', '>', 0.0),
-                                    ('purchase_ids', 'in', [po.id])],
-                                   count=True)
+            count = len(Invoice.search(
+                [('partner_id', '=', po.partner_id.id),
+                 ('amount_retention', '>', 0.0),
+                 ('purchase_ids', 'in', [po.id])])._ids)
             if count:
                 po.has_supplier_retention = True
                 continue

@@ -17,8 +17,8 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _default_export_committed_budget(self):
         active_ids = self._context.get('active_ids', [])
-        lines = self.env['budget.plan.unit.summary'].\
-            search([('plan_id', 'in', active_ids)], count=True)
+        lines = len(self.env['budget.plan.unit.summary'].search(
+            [('plan_id', 'in', active_ids)])._ids)
         if lines > 0:
             return False
         return True

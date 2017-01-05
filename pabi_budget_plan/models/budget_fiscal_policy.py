@@ -262,10 +262,10 @@ class BudgetFiscalPolicy(models.Model):
         for rec in self:
             domain = [('fiscalyear_id', '=', rec.fiscalyear_id.id),
                       ('ref_budget_policy_id', '=', rec.id)]
-            rec.unit_breakdown_count = Breakdown.search_count(
-                domain + [('chart_view', '=', 'unit_base')])
-            rec.invest_asset_breakdown_count = Breakdown.search_count(
-                domain + [('chart_view', '=', 'invest_asset')])
+            rec.unit_breakdown_count = len(Breakdown.search(
+                domain + [('chart_view', '=', 'unit_base')])._ids)
+            rec.invest_asset_breakdown_count = len(Breakdown.search(
+                domain + [('chart_view', '=', 'invest_asset')])._ids)
 
     @api.multi
     @api.depends('line_ids',
