@@ -181,9 +181,8 @@ class BudgetFiscalPolicyBreakdown(models.Model):
     @api.depends()
     def _count_budget_control(self):
         for breakdown in self:
-            counts = \
-                self.env['account.budget'].search_count(
-                    [('ref_breakdown_id', '=', breakdown.id)])
+            counts = len(self.env['account.budget'].search(
+                [('ref_breakdown_id', '=', breakdown.id)])._ids)
             breakdown.budget_control_count = counts
 
     @api.one

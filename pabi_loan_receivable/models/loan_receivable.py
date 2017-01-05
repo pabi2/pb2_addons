@@ -233,8 +233,10 @@ class LoanCustomerAgreement(models.Model):
                         ('loan_agreement_id', '=', rec.id)]
             install_dom = [('type', 'in', ('out_invoice', 'out_refund')),
                            ('loan_agreement_id', '=', rec.id)]
-            rec.bank_invoice_count = Invoice.search_count(bank_dom)
-            rec.installment_invoice_count = Invoice.search_count(install_dom)
+            rec.bank_invoice_count = \
+                len(Invoice.search(bank_dom)._ids)
+            rec.installment_invoice_count = \
+                len(Invoice.search(install_dom)._ids)
 
     @api.multi
     @api.depends('signed',
