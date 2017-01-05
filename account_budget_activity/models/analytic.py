@@ -161,20 +161,24 @@ class AccountAnalyticLine(models.Model):
             if analytic:
                 domain = Analytic.get_analytic_search_domain(analytic)
                 vals.update(dict((x[0], x[2]) for x in domain))
+        # Prepare period_id for reporting purposes
         if vals.get('date', False):
             periods = self.env['account.period'].find(vals['date'])
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
+        # --
         return super(AccountAnalyticLine, self).create(vals)
 
     @api.multi
     def write(self, vals):
         for rec in self:
+            # Prepare period_id for reporting purposes
             if vals.get('date', rec.date):
                 date = vals.get('date', rec.date)
                 periods = self.env['account.period'].find(date)
                 period = periods and periods[0] or False
                 vals.update({'period_id': period.id})
+            # --
         return super(AccountAnalyticLine, self).write(vals)
 
 

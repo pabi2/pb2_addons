@@ -26,6 +26,14 @@ class HRExpenseLine(models.Model):
         else:
             return super(HRExpenseLine, self)._get_non_product_account_id()
 
+    @api.model
+    def _prepare_analytic_line(self, reverse=False):
+        if self.is_advance_product_line:
+            return False
+        res = super(HRExpenseLine, self).\
+            _prepare_analytic_line(reverse=reverse)
+        return res
+
 
 class HRExpenseExpense(models.Model):
     _inherit = "hr.expense.expense"
