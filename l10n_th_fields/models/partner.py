@@ -53,7 +53,7 @@ class ResPartner(models.Model):
     @api.one
     @api.constrains('name', 'supplier', 'customer')
     def _check_partner_name(self):
-        count = self.search_count([('name', '=', self.name)])
+        count = len(self.search([('name', '=', self.name)])._ids)
         if count > 1:
             raise ValidationError("Partner Name must be unique!")
 
@@ -61,11 +61,11 @@ class ResPartner(models.Model):
     @api.constrains('vat', 'taxbranch')
     def _check_vat_taxbranch_unique(self):
         if self.vat or self.taxbranch:
-            count = self.search_count(
+            count = len(self.search(
                 ['|', ('parent_id', '=', False),
                  ('is_company', '=', True),
                  ('vat', '=', self.vat),
-                 ('taxbranch', '=', self.taxbranch)])
+                 ('taxbranch', '=', self.taxbranch)])._ids)
             if count > 1:
                 raise ValidationError(
                     _("Tax ID + Tax Branch ID must be unique!"))
