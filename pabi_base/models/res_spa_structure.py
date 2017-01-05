@@ -73,12 +73,12 @@ class ResSpa(models.Model):
         if self.begin_date >= self.end_date:
             raise UserError(_('Date range error!'))
         # Duplicated range?
-        overlaps1 = self.search_count([('begin_date', '<=', self.begin_date),
-                                       ('end_date', '>=', self.begin_date),
-                                       ('id', '!=', self.id)])
-        overlaps2 = self.search_count([('begin_date', '<=', self.end_date),
-                                       ('end_date', '>=', self.end_date),
-                                       ('id', '!=', self.id)])
+        overlaps1 = len(self.search([('begin_date', '<=', self.begin_date),
+                                    ('end_date', '>=', self.begin_date),
+                                    ('id', '!=', self.id)])._ids)
+        overlaps2 = len(self.search([('begin_date', '<=', self.end_date),
+                                    ('end_date', '>=', self.end_date),
+                                    ('id', '!=', self.id)])._ids)
         if overlaps1 or overlaps2:
             raise UserError(_('This SPA has overlap period with other SPA!'))
 
