@@ -97,7 +97,7 @@ class BudgetExportWizard(models.TransientModel):
         ConstControl_MasterSheet.protection.sheet = True
 
         bold_font = Font(bold=True, name='Arial', size=11)
-
+        # Add cost control header in cost control data sheet
         ConstControl_MasterSheet.cell(row=1,
                                       column=1).value = 'Sequence'
         ConstControl_MasterSheet.cell(row=1,
@@ -110,7 +110,7 @@ class BudgetExportWizard(models.TransientModel):
                                       column=2).font = bold_font
         ConstControl_MasterSheet.cell(row=1,
                                       column=3).font = bold_font
-
+        # Add cost control from odoo in cost control data sheet
         ag_row = 2
         ag_count = 1
         ag_length = 1
@@ -155,6 +155,7 @@ class BudgetExportWizard(models.TransientModel):
         # )
         # Whitefont = Font(color='FFFFFF')
         if ConstControl_Sheet:
+            # Update costcontrol sheet from odoo
             self._update_costcontrol_masterdata(workbook)
             job_order_lines, non_job_order_lines = \
                 self._compute_previous_year_amount(budget,
@@ -173,7 +174,7 @@ class BudgetExportWizard(models.TransientModel):
                 budget.org_id.code or budget.org_id.name_short
             section = budget.section_id.code and\
                 budget.section_id.code or budget.section_id.name_short
-
+            # add header data to sheet
             row = 1
             ConstControl_Sheet.cell(row=row, column=2,
                                     value=budget.fiscalyear_id.name)
@@ -192,6 +193,7 @@ class BudgetExportWizard(models.TransientModel):
             # ag_column_list = []
             cost_cntrl_first_column = 8
             row_gap = 28
+            # add job order drop down formula to each job order cell
             for r in range(1, 11):
                 costcontrol_formula.add(
                     ConstControl_Sheet.cell(row=cost_cntrl_first_column,
@@ -201,6 +203,8 @@ class BudgetExportWizard(models.TransientModel):
             ag_first_column = 13
             row_gap = 8
             for r in range(1, 11):
+                # Add charge type and activity 
+                # group formula to each job order line
                 for rr in range(ag_first_column, ag_first_column+20):
                     ChargeType.add(ConstControl_Sheet.cell(row=rr,
                                                            column=1))
@@ -213,6 +217,7 @@ class BudgetExportWizard(models.TransientModel):
             cc_row_gap = 28
             cc_fi_row = 8
             if job_order_lines:
+                # if job order line exists in odoo fill up in excel sheet
                 for jb in job_order_lines:
                     line_fi_row = cc_fi_row + 5
                     costcontrol = self.env['cost.control'].browse(jb)
@@ -234,7 +239,6 @@ class BudgetExportWizard(models.TransientModel):
                             ConstControl_Sheet.cell(
                                 row=line_fi_row, column=col).value = amt
                             line_fi_row += 1
-
             for const_cntrl_line in budget.cost_control_ids:
                 line_f_row = cc_f_row + 5
                 if const_cntrl_line.cost_control_id:
@@ -242,6 +246,7 @@ class BudgetExportWizard(models.TransientModel):
                         row=cc_f_row, column=2).value = \
                         const_cntrl_line.cost_control_id.name
                     cc_f_row += cc_row_gap
+                # add lines in job order sections from job order tab
                 if const_cntrl_line.plan_cost_control_line_ids:
                     for line in const_cntrl_line.plan_cost_control_line_ids:
                         col = 1
@@ -333,6 +338,7 @@ class BudgetExportWizard(models.TransientModel):
         non_job_order_lines = {}
         if not self.export_committed_budget or not previous_fy:
             return job_order_lines, non_job_order_lines
+        # compute committed amount for previous year 
         if previous_fy:
             report_domain = [('fiscalyear_id', '=', previous_fy.id),
                              ('section_id', '=', budget.section_id.id),
@@ -387,6 +393,7 @@ class BudgetExportWizard(models.TransientModel):
 
     @api.model
     def _update_non_joborder_sheets(self, Sheet, budget, budget_method):
+        # Update lines of Non job order sheets based on odoo budget lines
         NonCostCtrl_Sheet = Sheet
         NonCostCtrl_Sheet.protection.sheet = True
         bold_font = Font(bold=True, name='Arial', size=11)
@@ -424,6 +431,7 @@ class BudgetExportWizard(models.TransientModel):
                 if line.breakdown_line_id:
                     continue
                 ChargeType.add(NonCostCtrl_Sheet.cell(row=row, column=1))
+                # Update/create lines in sheet
                 if line.charge_type:
                     if line.charge_type == 'external':
                         NonCostCtrl_Sheet.cell(row=row,
@@ -495,7 +503,7 @@ class BudgetExportWizard(models.TransientModel):
                     NonCostCtrl_Sheet.cell(row=r, column=cl))
                 NonCostCtrl_Sheet.cell(
                     row=r, column=cl).number_format = '#,##0.00'
-
+            # Add expression for multiply unit*unit price*activity unit 
             NonCostCtrl_Sheet.cell(
                 row=r, column=8).value = "=E%s*$F$%s*$G$%s" % (r, r, r)
 
@@ -505,8 +513,11 @@ class BudgetExportWizard(models.TransientModel):
                 NonCostCtrl_Sheet.cell(
                     row=r, column=cl).number_format = '#,##0.00'
 
+            # Add expression for get sum of m1 to m12 columns
             NonCostCtrl_Sheet.cell(
                 row=r, column=22, value="=SUM(J%s:$U$%s)" % (r, r))
+            # Add expression for get difference between total budget
+            # and sum of 12 columns
             NonCostCtrl_Sheet.cell(
                 row=r, column=23, value="=H%s-$V$%s" % (r, r))
 
@@ -551,6 +562,7 @@ class BudgetExportWizard(models.TransientModel):
         NonCostCtrl_Sheet.cell(row=row, column=7).value = 'Total'
         NonCostCtrl_Sheet.cell(row=row, column=7).font = bold_font
         params = (LineStart, row-1)
+        # Add Expression for 
         NonCostCtrl_Sheet.cell(
             row=row, column=8).value = '=SUM(H%s:H%s)' % params
         NonCostCtrl_Sheet.cell(
@@ -621,13 +633,14 @@ class BudgetExportWizard(models.TransientModel):
                 ACMc_Sheet.protection.sheet = True
             except:
                 pass
-
+            # Add activity group datas in activity group master sheet from odoo
             AG_Sheet = workbook.get_sheet_by_name('master_activity_group')
             AG_Sheet.protection.sheet = True
             activities = self.env['account.activity.group'].search([])
 
             bold_font = Font(bold=True, name='Arial', size=11)
 
+            # Set header of activity group data sheet
             AG_Sheet.cell(row=1, column=1).value = 'Sequence'
             AG_Sheet.cell(row=1, column=2).value = 'Activity Group - English'
             AG_Sheet.cell(row=1, column=3).value = 'Activity Group - Thai'
@@ -635,6 +648,7 @@ class BudgetExportWizard(models.TransientModel):
             AG_Sheet.cell(row=1, column=2).font = bold_font
             AG_Sheet.cell(row=1, column=3).font = bold_font
 
+            # create lines in activity group data sheet
             ag_row = 2
             ag_count = 1
             ag_length = 1
@@ -662,6 +676,7 @@ class BudgetExportWizard(models.TransientModel):
                 type="list",
                 formula1='"External,Internal"'
             )
+            # Attach formulas to sheet to use further
             SHEET_FORMULAS.update({'ag_list': ActGroupList})
             SHEET_FORMULAS.update({'charge_type': ChargeType})
             Non_JobOrder_Expense = \
