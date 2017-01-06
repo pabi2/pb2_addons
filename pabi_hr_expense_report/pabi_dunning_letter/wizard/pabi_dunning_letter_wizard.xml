@@ -20,22 +20,26 @@
                         <group>
                             <field name="print_pdf"/>
                             <field name="send_email"/>
-                            <field name="to_mail_group_ids" widget="many2many_tags"/>
-                            <field name="cc_mail_group_ids" widget="many2many_tags"/>
+                            <field name="group_email"/>
+<!--                            <field name="to_mail_group_ids" widget="many2many_tags"/>-->
+<!--                            <field name="cc_mail_group_ids" widget="many2many_tags"/>-->
                         </group>
                     </group>
                     <field name="dunning_list_ids">
-                        <tree editable="bottom" create="0" delete="0">
+                        <tree colors="red:empty_email == True;black:empty_email == False"  editable="bottom" create="0" delete="0">
                             <field name="select"/>
                             <field name="expense_id"/>
                             <field name="date_due"/>
                             <field name="employee_id"/>
                             <field name="amount_to_clearing"/>
                             <field name="description"/>
+                            <field name="empty_email"/>
                         </tree>
                     </field>
                     <footer>
                         <button string="Execute" name="run_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Send Email" name="action_send_email" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>

@@ -42,6 +42,11 @@ class PABIDunnintLetterWizard(models.TransientModel):
         'wizard_id',
         string='List of Dunning',
     )
+    # Temporary Fields todo remove
+    group_email = fields.Char(
+        string="Group Email",
+        default="acf-adv@nstda.or.th",
+    )
 
     @api.onchange('due_days')
     def _onchange_due_days(self):
@@ -60,6 +65,8 @@ class PABIDunnintLetterWizard(models.TransientModel):
             new_line = Line.new()
             new_line.expense_id = expense
             new_line.select = True
+            if not expense.employee_id.work_email:
+                new_line.empty_email = True
             self.dunning_list_ids += new_line
 
     @api.multi
@@ -85,6 +92,28 @@ class PABIDunnintLetterWizard(models.TransientModel):
             'context': {'lang': 'th_TH'}
         }
         return res
+    
+    @api.multi
+    def action_send_email(self):
+#         if self.due_days == '10':
+        self.ensure_one()
+        exp_ids = [x.select and x.expense_id.id for x in self.dunning_list_ids]
+        exp_ids = list(set(exp_ids))  # remove all False
+        if False in exp_ids:
+            exp_ids.remove(False)
+        if not exp_ids:
+            raise UserError(_('No dunning letter to print/email!'))
+        template = False
+        try:
+            template = self.env.ref('pabi_hr_expense_report.email_template_edi_10_days_to_due')
+        except:
+            pass
+        expense_ids = self.env['hr.expense.expense'].browse(exp_ids)
+        if template:
+            for exp_id in expense_ids:
+                template.email_to = exp_id.employee_id.work_email
+                template.email_cc = self.group_email
+                template.send_mail(exp_id.id)
 
 
 class DunningList(models.TransientModel):
@@ -123,4 +152,7 @@ class DunningList(models.TransientModel):
         string='Description',
         related='expense_id.name',
         readonly=True,
+    )
+    empty_email = fields.Boolean(
+        string="Email Empty?"
     )
