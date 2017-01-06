@@ -25,6 +25,7 @@ class BudgetImportWizard(models.TransientModel):
         cc_row = 8
         for row in range(cc_row, max_row):
             costcontrol_vals = {'plan_id': budget.id}
+            # get job order from each section
             costcontrol = CostCtrl_Sheet.cell(row=cc_row, column=2).value
             if costcontrol:
                 costcontrol_id = self.env['cost.control'].search(
@@ -43,6 +44,7 @@ class BudgetImportWizard(models.TransientModel):
                 self.env['budget.plan.unit.cost.control'].search(
                     [('plan_id', '=', budget.id),
                      ('cost_control_id', '=', costcontrol_id.id)])
+            # remove all job order line for plan
             if existing_costcontrol_lines:
                 existing_costcontrol_lines.unlink()
             costcontrol_line = self.env['budget.plan.unit.cost.control'].\
@@ -52,6 +54,7 @@ class BudgetImportWizard(models.TransientModel):
             calculate_vals = {}
             ids = []
             for row in range(line_start, line_start+20):
+                # compute values for job order lines
                 line_vals = {'cost_control_line_id': costcontrol_line.id}
                 col = 1
                 charge_type = CostCtrl_Sheet.cell(row=row, column=col).value
@@ -151,6 +154,7 @@ class BudgetImportWizard(models.TransientModel):
                         'section_id': costcontrol_line.plan_id.section_id.id,
                         'cost_control_id': costcontrol_line.cost_control_id.id,
                     }
+                    #compute values for plan job order lines and create lines
                     create_vals.update(plan_line_vals)
                     new_id = self.env['budget.plan.unit.line'].\
                         create(create_vals).id
@@ -235,7 +239,7 @@ class BudgetImportWizard(models.TransientModel):
             raise UserError(_('Wrong file format. Please enter .xlsx file.'))
         budgets = self.env['budget.plan.unit'].browse(budget_ids)
         for budget in budgets:
-
+            # if we are trying to import after draft state then restrict him
             if budget.state != 'draft':
                 raise UserError(
                     _('You can update budget plan only in draft state!'))
@@ -245,16 +249,18 @@ class BudgetImportWizard(models.TransientModel):
             vals = {}
 
             bg_id = Non_JobOrder_Expense.cell(row=1, column=5).value
+            # if we trying to import sheet of other record then raise error
             if budget.id != bg_id:
                 raise UserError(
                     _('Please import the correct file for this plan')
                 )
+            # get fiscal year from sheet
             fiscal_year = Non_JobOrder_Expense.cell(row=1, column=2).value
             fiscal_year_id = self.env['account.fiscalyear'].search(
                 [('name', '=', tools.ustr(fiscal_year))])
             if fiscal_year_id:
                 vals.update({'fiscalyear_id': fiscal_year_id.id})
-
+            # get org from sheet
             org = Non_JobOrder_Expense.cell(row=2, column=2).value
             org_id =\
                 self.env['res.org'].search(
@@ -263,7 +269,7 @@ class BudgetImportWizard(models.TransientModel):
                      ('name_short', '=', tools.ustr(org))])
             # if org_id:
             #     vals.update({'org_id': org_id.id})
-
+            # get section from sheet
             section = Non_JobOrder_Expense.cell(row=3, column=2).value
             section_id = self.env['res.section'].search(
                 ['|',
@@ -280,6 +286,7 @@ class BudgetImportWizard(models.TransientModel):
                 [('name', '=', tools.ustr(responsible_by))])
             if section_id:
                 vals.update({'creating_user_id': responsible_by_id.id})
+            # remove plan lines from plan first
             existing_lines = self.env['budget.plan.unit.line'].\
                 search([('plan_id', '=', budget.id)])
             if existing_lines:
@@ -290,18 +297,19 @@ class BudgetImportWizard(models.TransientModel):
                 'org_id': org_id.id,
                 'budget_method': 'expense',
             }
+            # compute values for expense lines
             expense_lines_to_create = \
                 _compute_line_vals(Non_JobOrder_Expense,
                                    common_line_vals=common_line_vals)
             common_line_vals['budget_method'] = 'revenue'
             Non_JobOrder_Revenue = \
                 workbook.get_sheet_by_name('Non_JobOrder_Revenue')
-
+            # compute values for revenue lines
             revenue_lines_to_create = \
                 _compute_line_vals(Non_JobOrder_Revenue,
                                    common_line_vals=common_line_vals)
             lines_to_create = expense_lines_to_create + revenue_lines_to_create
-
+            # create all lines and assign to plan
             for line in lines_to_create:
                 self.env['budget.plan.unit.line'].create(line)
             budget.write(vals)
@@ -321,6 +329,7 @@ class BudgetImportWizard(models.TransientModel):
                 'plan_id': budget.id,
                 'attachement_id': attachement_id.id
             })
+            # process for job order sheet
             self._update_cost_control_lines(workbook, budget)
         return {}
 
