@@ -38,8 +38,6 @@ class ResCompany(models.Model):
         'company_id', 'user_id',
         string='Bank Account Approvers',
     )
-
-    # def init(self, cr):
-    #     # for PABI2, we want to use disable_voucher_auto_lines
-    #     # As company is nonupdatable, we have to use SQL
-    #    cr.execute("update res_company set disable_voucher_auto_lines = True")
+    bank_ids = fields.One2many(
+        domain=['|', ('active', '=', False), ('active', '=', True)],
+    )

@@ -9,6 +9,9 @@
                 <group name="account_grp" position="inside">
                     <field name="bank_account_approver_ids" widget="many2many_tags"/>
                 </group>
+                <group string="Bank Accounts" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </group>
             </field>
         </record>
     </data>
