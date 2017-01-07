@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        
+        <record id="view_pabi_dunning_letter_email_summary_form" model="ir.ui.view">
+            <field name="name">Print Dunning Letter Email Summary</field>
+            <field name="model">pabi.dunning.letter.email.summary.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Dunning Letter Email Summary">
+                    <header>
+                        <field name="description" widget="html" class="oe_view_only"/>
+                    </header>
+                    <footer>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_dunning_letter_email_summary" model="ir.actions.act_window">
+            <field name="name">Print Dunning Letter Email Summary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pabi.dunning.letter.email.summary.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pabi_dunning_letter_email_summary_form"/>
+            <field name="target">new</field>
+        </record>
+        
         <record id="view_pabi_dunning_letter_form" model="ir.ui.view">
             <field name="name">Print Dunning Letter</field>
             <field name="model">pabi.dunning.letter.wizard</field>
@@ -33,7 +59,7 @@
                             <field name="employee_id"/>
                             <field name="amount_to_clearing"/>
                             <field name="description"/>
-                            <field name="empty_email"/>
+                            <field name="empty_email" invisible="True"/>
                         </tree>
                     </field>
                     <footer>

@@ -5,6 +5,15 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
 
+class PABIDunnintLetterEmailSummaryWizard(models.TransientModel):
+    _name = 'pabi.dunning.letter.email.summary.wizard'
+
+    description = fields.Text(
+        string="Summary",
+        readonly=True,
+    )
+
+
 class PABIDunnintLetterWizard(models.TransientModel):
     _name = 'pabi.dunning.letter.wizard'
 
@@ -92,10 +101,11 @@ class PABIDunnintLetterWizard(models.TransientModel):
             'context': {'lang': 'th_TH'}
         }
         return res
-    
+
     @api.multi
     def action_send_email(self):
-#         if self.due_days == '10':
+        if not self.due_days == '10':
+            raise UserError(_('Implemented for 10 days only!'))
         self.ensure_one()
         exp_ids = [x.select and x.expense_id.id for x in self.dunning_list_ids]
         exp_ids = list(set(exp_ids))  # remove all False
@@ -105,15 +115,47 @@ class PABIDunnintLetterWizard(models.TransientModel):
             raise UserError(_('No dunning letter to print/email!'))
         template = False
         try:
-            template = self.env.ref('pabi_hr_expense_report.email_template_edi_10_days_to_due')
+            template = self.env.ref(
+                'pabi_hr_expense_report.email_template_edi_10_days_to_due')
         except:
             pass
         expense_ids = self.env['hr.expense.expense'].browse(exp_ids)
+        if not self.group_email:
+            raise UserError(
+                _('Please enter valid email address for group email!'))
         if template:
-            for exp_id in expense_ids:
-                template.email_to = exp_id.employee_id.work_email
-                template.email_cc = self.group_email
-                template.send_mail(exp_id.id)
+            employees_no_email = []
+            sent_email_counter = 0
+            for expense in expense_ids:
+                context = self.env.context.copy()
+                context.update({
+                    'due_days': self.due_days,
+                    'date_print': self.date_print,
+                    'email_attachment': True,
+                })
+                if expense.employee_id.work_email:
+                    template.email_to = expense.employee_id.work_email
+                    template.email_cc = self.group_email
+                    template.with_context(context).send_mail(expense.id)
+                    sent_email_counter += 1
+                else:
+                    employees_no_email.append(expense.employee_id.name)
+            action = self.env.ref(
+                'pabi_hr_expense_report.action_dunning_letter_email_summary')
+            action = action.read()[0]
+            resulttext = "-(%s) email sent successfully! <BR/><BR/>" \
+                % (str(sent_email_counter))
+            if employees_no_email:
+                resulttext += """
+                    -<b> (%s) Email not sent to following employees
+                    due to wrong email configuration.</b>
+                """ % (str(len(employees_no_email)))
+                resulttext += '<BR/><BR/>'
+                resulttext += '<BR/>'.join(employees_no_email)
+                resulttext += '<BR/><BR/>'
+            resulttext += '<BR/><BR/>'
+            action['context'] = {'default_description': resulttext}
+            return action
 
 
 class DunningList(models.TransientModel):

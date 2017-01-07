@@ -1,9 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
-    <data>
+    <data noupdate="1">
 
-    <!-- Mail template are declared in a NOUPDATE block
-         so users can freely customize/delete them -->
         <!--Email template -->
         <record id="email_template_edi_10_days_to_due" model="email.template">
             <field name="name">Expense clearning - 10 days to due reminder</field>
@@ -19,11 +17,9 @@
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
 
     <p>Hello ${object.employee_id.name},</p>
-
-    <br/>
-    <p>If you have any question, do not hesitate to contact us.</p>
+    <p>Your clearing for expense: ${object.number} is due in 10 days.</p>
+    <p>Please find attached document for more details.</p><br/>
     <p>Thank you for choosing ${object.company_id.name or 'us'}!</p>
-    <br/>
     <br/>
     <div style="width: 375px; margin: 0px; padding: 0px; background-color: #8E0000; border-top-left-radius: 5px 5px; border-top-right-radius: 5px 5px; background-repeat: repeat no-repeat;">
         <h3 style="margin: 0px; padding: 2px 14px; font-size: 12px; color: #DDD;">
