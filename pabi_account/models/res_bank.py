@@ -20,6 +20,7 @@ class ResPartnerBank(models.Model):
     @api.model
     def create(self, vals):
         bank_acct = super(ResPartnerBank, self).create(vals)
+        # Bank change history
         if bank_acct.partner_id:
             res = {'partner_id': bank_acct.partner_id.id,
                    'bank_account': bank_acct.acc_number,
@@ -47,6 +48,7 @@ class ResPartnerBank(models.Model):
                         write({'default': False})
                 # --
         res = super(ResPartnerBank, self).write(vals)
+        return res
 
     @api.multi
     def unlink(self):
