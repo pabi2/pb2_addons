@@ -26,7 +26,7 @@ class AccountVoucher(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    branch_cheque = fields.Char(
+    bank_branch = fields.Char(
         string='Bank Branch',
         size=64,
         readonly=True,
