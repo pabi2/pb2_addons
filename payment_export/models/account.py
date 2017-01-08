@@ -22,12 +22,8 @@ class AccountJournal(models.Model):
     )
     export_config_ids = fields.One2many(
         'journal.export.config',
-        string='Payment Export Pack'
-
-
-
-
-        
+        'journal_id',
+        string='Payment Export Pack',
     )
 
     @api.multi
@@ -41,3 +37,32 @@ class AccountJournal(models.Model):
                     _('Journal %s is used in more than '
                       'one bank account!') % (journal.name,))
             journal.bank_id = banks and banks[0] or False
+
+
+class JournalExportConfig(models.Model):
+    _name = 'journal.export.config'
+    _description = 'Document Export Config criteria for this journal'
+
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        index=True,
+        readonly=True,
+    )
+    transfer_type = fields.Selection(
+        [('direct', 'DIRECT'),
+         ('smart', 'SMART')
+         ],
+        string='Transfer Type',
+        required=True,
+        help="- DIRECT is transfer within same bank.\n"
+        "- SMART is transfer is between different bank."
+    )
+    config_id = fields.Many2one(
+        'document.export.config',
+        string='Export Pack',
+        required=True,
+    )
+    _sql_constraints = [
+        ('export_config_uniq', 'unique(journal_id, transfer_type, config_id)',
+         'Duplicated config for the same pyemnt method / transfer type!')]

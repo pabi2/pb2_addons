@@ -6,9 +6,9 @@
             <field name="model">account.journal</field>
             <field name="inherit_id" ref="account.view_account_journal_form"/>
             <field name="arch" type="xml">
-                <field name="file_type" position="replace" />
+                <field name="file_type" position="replace"/>
                 <notebook position="inside">
-                    <page string="Cheque LOT">
+                    <page string="Cheque LOT" attrs="{'invisible': [('type', 'not in', ('bank', 'cash'))]}">
                         <field name="lot_ids" readonly="1">
                             <tree>
                                 <field name="name"/>
@@ -21,10 +21,15 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="Payment Export Pack">
-                        <field name="file_type" />
-                        <field name="export_config_ids" readonly="1">
-                            <tree>
+                    <page string="Payment Export Pack" attrs="{'invisible': [('type', 'not in', ('bank', 'cash'))]}">
+                        <group>
+                            <group>
+                                <field name="file_type"/>
+                            </group>
+                            <group></group>
+                        </group>
+                        <field name="export_config_ids">
+                            <tree editable="bottom">
                                 <field name="transfer_type"/>
                                 <field name="config_id"/>
                             </tree>

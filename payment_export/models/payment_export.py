@@ -24,8 +24,8 @@ class PaymentExport(models.Model):
          ('smart', 'SMART')
          ],
         string='Transfer Type',
-        help="- Direct is transfer within same bank.\n"
-        "- Smart is transfer is between different bank."
+        help="- DIRECT is transfer within same bank.\n"
+        "- SMART is transfer is between different bank."
     )
     is_cheque_lot = fields.Boolean(
         string='Is Cheque Lot Available',
