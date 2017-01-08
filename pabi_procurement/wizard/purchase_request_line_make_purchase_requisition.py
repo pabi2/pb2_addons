@@ -179,6 +179,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             'description': line.description,
             'type': line.type,
             'url': line.url,
+            'attach_by': line.attach_by.id,
             'datas': line.datas or False,
         }
 
