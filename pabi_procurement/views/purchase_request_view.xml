@@ -125,7 +125,14 @@
                             <tree>
                                 <field name="name"/>
                                 <field name="type"/>
-                                <field name="url"/>
+                                <field name="description" />
+                                <field name="attach_by" />
+                                <field name="url" widget="url" invisible="1"/>
+                                <button name="%(pabi_attachment_helper.action_open_url)d"
+                                        string="Open Document"
+                                        type="action"
+                                        icon="gtk-justify-fill"
+                                    />
                             </tree>
                             <form>
                             	<group colspan="4">
