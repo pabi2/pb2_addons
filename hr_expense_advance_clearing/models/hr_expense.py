@@ -226,7 +226,7 @@ class HRExpenseExpense(models.Model):
 
 
 class HRExpenseClearing(models.Model):
-    _name = "hr.expense.clearing"
+    _name = 'hr.expense.clearing'
     _auto = False
 
     advance_expense_id = fields.Many2one(
