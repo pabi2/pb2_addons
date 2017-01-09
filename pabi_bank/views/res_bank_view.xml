@@ -2,12 +2,12 @@
 <openerp>
     <data>
 
-        <!-- res.bank.master.master -->
+        <!-- res.bank.branch.master -->
         <record id="view_res_bank_master_form" model="ir.ui.view">
-            <field name="name">res.bank.master.form</field>
-            <field name="model">res.bank.master</field>
+            <field name="name">res.bank.branch.form</field>
+            <field name="model">res.bank.branch</field>
             <field name="arch" type="xml">
-                <form string="Bank Master">
+                <form string="Bank Branch">
                     <group>
                         <group>
                             <field name="code"/>
@@ -15,6 +15,7 @@
                         </group>
                         <group>
                             <field name="name"/>
+                            <field name="bank_id"/>
                             <field name="active"/>
                         </group>
                     </group>
@@ -22,24 +23,25 @@
             </field>
         </record>
         <record id="view_res_bank_master_tree" model="ir.ui.view">
-            <field name="name">res.bank.master.tree</field>
-            <field name="model">res.bank.master</field>
+            <field name="name">res.bank.branch.tree</field>
+            <field name="model">res.bank.branch</field>
             <field name="arch" type="xml">
-                <tree string="Bank Master">
+                <tree string="Bank Branch">
                     <field name="code"/>
                     <field name="abbrev"/>
                     <field name="name"/>
+                    <field name="bank_id"/>
                 </tree>
             </field>
         </record>
         <record id="action_res_bank_master_form" model="ir.actions.act_window">
-            <field name="name">Bank Master</field>
-            <field name="res_model">res.bank.master</field>
+            <field name="name">Bank Branch</field>
+            <field name="res_model">res.bank.branch</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
-                    Click to create a new bank master
+                    Click to create a new bank branch
                 </p>
                 <p>
                     Manage bank records you want to be used in the system.

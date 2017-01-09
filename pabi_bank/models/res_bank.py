@@ -2,9 +2,9 @@
 from openerp import fields, models
 
 
-class ResBankMaster(models.Model):
-    _name = 'res.bank.master'
-    _description = 'Bank Master Data'
+class ResBankBranch(models.Model):
+    _name = 'res.bank.branch'
+    _description = 'Bank Branch'
 
     name = fields.Char(
         string='Name',
@@ -18,6 +18,10 @@ class ResBankMaster(models.Model):
     abbrev = fields.Char(
         string='Abbreviation',
         required=True,
+    )
+    bank_id = fields.Many2one(
+        'res.bank',
+        sring='Bank',
     )
     active = fields.Boolean(
         string='Active',
