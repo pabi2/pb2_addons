@@ -292,6 +292,7 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def create_purchase_request_attachment(self, data_dict, pr_id):
+        Employee = self.env['hr.employee']
         attachment_ids = []
         attach_data = {}
         if 'attachment_ids' in data_dict:
@@ -304,6 +305,9 @@ class PurchaseRequest(models.Model):
                 attach_data['res_id'] = pr_id
                 attach_data['res_model'] = 'purchase.request'
                 attach_data['type'] = 'url'
+                domain = [('employee_code', '=', att_rec.get('attach_by'))]
+                attach_data['attach_by.id'] = \
+                    Employee.search(domain).user_id.id
                 attach_data['url'] = file_prefix + att_rec['file_url']
                 attachment = PRAttachment.create(attach_data)
                 attachment_ids.append(attachment.id)
