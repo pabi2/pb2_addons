@@ -71,7 +71,7 @@ class PABIDunnintLetterWizard(models.TransientModel):
 
     @api.multi
     def run_report(self):
-        if not self.send_email and self.print_pdf:
+        if not self.send_email and not self.print_pdf:
             return {}
 
         data = {'parameters': {}}
