@@ -58,7 +58,7 @@ class HRExpense(models.Model):
         readonly=True, states={'draft': [('readonly', False)]},
     )
     employee_bank_id = fields.Many2one(
-        'res.bank.master',
+        'res.bank',
         string='Bank',
         readonly=True, states={'draft': [('readonly', False)]},
     )
