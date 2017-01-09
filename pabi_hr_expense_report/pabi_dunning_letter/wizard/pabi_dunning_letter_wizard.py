@@ -57,6 +57,18 @@ class PABIDunnintLetterWizard(models.TransientModel):
             new_line = Line.new()
             new_line.expense_id = expense
             new_line.select = True
+
+            # Set Email-to on lines
+            if self.due_days == '10':
+                new_line.to_employee_ids = [(6, 0, [new_line.employee_id.id])]
+                new_line.cc_employee_ids = [(6, 0, [])]
+            elif self.due_days == '5':
+                new_line.to_employee_ids = [(6, 0, [])]
+                new_line.cc_employee_ids = [(6, 0, [new_line.employee_id.id])]
+            else:
+                new_line.to_employee_ids = [(6, 0, [])]
+                new_line.cc_employee_ids = [(6, 0, [new_line.employee_id.id])]
+
             self.dunning_list_ids += new_line
 
     @api.multi
@@ -75,9 +87,8 @@ class PABIDunnintLetterWizard(models.TransientModel):
             raise UserError(_('No dunning letter to print/email!'))
 
         # Send dunning letter by email to each of selected employees
-        # TODO Remove condition for due days after implement for all options
-        if self.due_days == '10' and self.send_email:
-            self._send_dunning_letter_by_mail(exp_ids)
+        if self.send_email:
+            self._send_dunning_letter_by_mail()
 
         if not self.print_pdf:
             return {}
@@ -93,8 +104,8 @@ class PABIDunnintLetterWizard(models.TransientModel):
         return res
 
     @api.model
-    def _send_dunning_letter_by_mail(self, expense_ids):
-        if not expense_ids:
+    def _send_dunning_letter_by_mail(self):
+        if not self.dunning_list_ids:
             return True
         template = False
         try:
@@ -102,22 +113,33 @@ class PABIDunnintLetterWizard(models.TransientModel):
                 'pabi_hr_expense_report.email_template_edi_10_days_to_due')
         except:
             pass
-        expense_ids = self.env['hr.expense.expense'].browse(expense_ids)
         if not self.group_email:
             raise UserError(
                 _('Please enter valid email address for group email!'))
         if template:
-            for expense in expense_ids:
-                context = self.env.context.copy()
-                context.update({
+            for line in self.dunning_list_ids:
+                ctx = self.env.context.copy()
+                ctx.update({
                     'due_days': self.due_days,
                     'date_print': self.date_print,
                     'email_attachment': True,
                 })
-                if expense.employee_id.work_email:
-                    template.email_to = expense.employee_id.work_email
-                    template.email_cc = self.group_email
-                    template.with_context(context).send_mail(expense.id)
+                if line.expense_id and line.select:
+                    to_email = False
+                    cc_email = self.group_email
+                    for to_line in line.to_employee_ids:
+                        if to_line.work_email:
+                            if not to_email:
+                                to_email = to_line.work_email
+                            else:
+                                to_email = to_email + ',' + to_line.work_email
+
+                    for cc_line in line.cc_employee_ids:
+                        if cc_line.work_email:
+                            cc_email = cc_email + ',' + cc_line.work_email
+                    template.email_to = to_email
+                    template.email_cc = cc_email
+                    template.with_context(ctx).send_mail(line.expense_id.id)
         return True
 
 
@@ -157,4 +179,12 @@ class DunningList(models.TransientModel):
         string='Description',
         related='expense_id.name',
         readonly=True,
+    )
+    to_employee_ids = fields.Many2many(
+        'hr.employee',
+        string="TO",
+    )
+    cc_employee_ids = fields.Many2many(
+        'hr.employee',
+        string="CC",
     )
