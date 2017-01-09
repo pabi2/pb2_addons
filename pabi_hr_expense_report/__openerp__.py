@@ -20,6 +20,7 @@ Expense Related Reports
         'pabi_hr_expense',
     ],
     'data': [
+        'pabi_dunning_letter/edi/email_templates.xml',
         'views/hr_expense_view.xml',
         'pabi_dunning_letter/wizard/pabi_dunning_letter_wizard.xml',
         'pabi_dunning_letter/data/report_data.xml',

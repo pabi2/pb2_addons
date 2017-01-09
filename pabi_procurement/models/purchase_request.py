@@ -306,7 +306,7 @@ class PurchaseRequest(models.Model):
                 attach_data['res_model'] = 'purchase.request'
                 attach_data['type'] = 'url'
                 domain = [('employee_code', '=', att_rec.get('attach_by'))]
-                attach_data['attach_by.id'] = \
+                attach_data['attach_by'] = \
                     Employee.search(domain).user_id.id
                 attach_data['url'] = file_prefix + att_rec['file_url']
                 attachment = PRAttachment.create(attach_data)

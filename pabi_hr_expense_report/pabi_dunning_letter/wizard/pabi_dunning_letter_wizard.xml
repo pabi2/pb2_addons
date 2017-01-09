@@ -20,8 +20,7 @@
                         <group>
                             <field name="print_pdf"/>
                             <field name="send_email"/>
-                            <field name="to_mail_group_ids" widget="many2many_tags"/>
-                            <field name="cc_mail_group_ids" widget="many2many_tags"/>
+                            <field name="group_email"/>
                         </group>
                     </group>
                     <field name="dunning_list_ids">
@@ -32,6 +31,9 @@
                             <field name="employee_id"/>
                             <field name="amount_to_clearing"/>
                             <field name="description"/>
+                            <field name="send_email" invisible="True"/>
+                            <field name="to_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="cc_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
                         </tree>
                     </field>
                     <footer>
