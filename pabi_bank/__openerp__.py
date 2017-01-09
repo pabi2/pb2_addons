@@ -10,6 +10,8 @@
     "author": "Kitti U.",
     "license": "AGPL-3",
     "depends": [
+        'l10n_th_fields',
+        'payment_export',
     ],
     "data": [
         'security/ir.model.access.csv',
