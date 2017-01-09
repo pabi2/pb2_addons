@@ -29,10 +29,11 @@
                             <field name="expense_id"/>
                             <field name="date_due"/>
                             <field name="employee_id"/>
-                            <field name="to_employee_ids" widget="many2many_tags"/>
-                            <field name="cc_employee_ids" widget="many2many_tags"/>
                             <field name="amount_to_clearing"/>
                             <field name="description"/>
+                            <field name="send_email" invisible="True"/>
+                            <field name="to_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="cc_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
                         </tree>
                     </field>
                     <footer>

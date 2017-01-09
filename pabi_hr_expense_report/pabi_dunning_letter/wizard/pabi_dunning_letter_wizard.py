@@ -180,6 +180,10 @@ class DunningList(models.TransientModel):
         related='expense_id.name',
         readonly=True,
     )
+    send_email = fields.Boolean(
+        related='wizard_id.send_email',
+        string='Send Email',
+    )
     to_employee_ids = fields.Many2many(
         'hr.employee',
         string="TO",
