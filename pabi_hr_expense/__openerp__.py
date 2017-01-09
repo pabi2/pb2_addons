@@ -19,7 +19,6 @@
         "hr_expense_cancel_reason",
         "account_budget_activity",
         "l10n_th_account",
-        "pabi_bank",
     ],
     "data": [
         "data/config_parameter.xml",
