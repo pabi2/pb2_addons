@@ -27,7 +27,7 @@ class DocumentExportParser(models.TransientModel):
             [('journal_id', '=', export.journal_id.id),
              ('transfer_type', '=', export.transfer_type)])
         if configs:
-            res['config_id'] = configs[0].id
+            res['config_id'] = configs[0].config_id.id
         else:
             raise UserError(
                 _('Not Export Config for %s') % (export.journal_id.name,))

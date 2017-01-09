@@ -105,27 +105,6 @@ class DocumentExportParser(models.TransientModel):
                                                         'id': 0,
                                                         'value': '003'})
                 data_list.append(line_detail_config_lines)
-#         # for Invoice Detail part
-#         invoice_detail_config_lines =\
-#             config_id.invoice_config_line_ids.read(config_fields_to_read)
-#         for line in invoice_detail_config_lines:
-#             if line['field_code']:
-#                 eval(line['field_code'], eval_context,
-#                      mode="exec", nocopy=True)
-#                 value = eval_context.get('value', False)
-#                 line.update({'value': value})
-#             else:
-#                 value = line['default_value'] and line['default_value'] or ''
-#                 line.update({'value': value})
-#         if invoice_detail_config_lines:
-#             invoice_detail_config_lines.insert(0, {'length': 3,
-#                                                    'mandatory': True,
-#                                                    'sequence': 0,
-#                                                    'field_code': '',
-#                                                    'id': 0,
-#                                                    'value': '006'})
-#             data_list.append(invoice_detail_config_lines)
-
         # for footer part
         footer_config_lines =\
             config_id.footer_config_line_ids.read(config_fields_to_read)
