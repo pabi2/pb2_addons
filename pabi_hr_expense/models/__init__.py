@@ -3,5 +3,3 @@
 from . import hr_expense
 from . import account_activity
 from . import account_invoice
-from . import expense_web_interface
-from . import account_voucher
