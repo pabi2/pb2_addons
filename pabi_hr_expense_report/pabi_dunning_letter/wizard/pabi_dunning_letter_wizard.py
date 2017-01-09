@@ -29,18 +29,15 @@ class PABIDunnintLetterWizard(models.TransientModel):
         string='Send Email',
         default=True,
     )
-    to_mail_group_ids = fields.Many2many(
-        'mail.group',
-        string='TO:',
-    )
-    cc_mail_group_ids = fields.Many2many(
-        'mail.group',
-        string='CC:',
-    )
     dunning_list_ids = fields.One2many(
         'dunning.list',
         'wizard_id',
         string='List of Dunning',
+    )
+    # Temporary Fields todo remove
+    group_email = fields.Char(
+        string="Group Email",
+        default="acf-adv@nstda.or.th",
     )
 
     @api.onchange('due_days')
@@ -60,10 +57,25 @@ class PABIDunnintLetterWizard(models.TransientModel):
             new_line = Line.new()
             new_line.expense_id = expense
             new_line.select = True
+
+            # Set Email-to on lines
+            if self.due_days == '10':
+                new_line.to_employee_ids = [(6, 0, [new_line.employee_id.id])]
+                new_line.cc_employee_ids = [(6, 0, [])]
+            elif self.due_days == '5':
+                new_line.to_employee_ids = [(6, 0, [])]
+                new_line.cc_employee_ids = [(6, 0, [new_line.employee_id.id])]
+            else:
+                new_line.to_employee_ids = [(6, 0, [])]
+                new_line.cc_employee_ids = [(6, 0, [new_line.employee_id.id])]
+
             self.dunning_list_ids += new_line
 
     @api.multi
     def run_report(self):
+        if not self.send_email and not self.print_pdf:
+            return {}
+
         data = {'parameters': {}}
         report_name = 'pabi_dunning_letter'
         # For ORM, we search for ids, and only pass ids to parser and jasper
@@ -73,6 +85,11 @@ class PABIDunnintLetterWizard(models.TransientModel):
             exp_ids.remove(False)
         if not exp_ids:
             raise UserError(_('No dunning letter to print/email!'))
+
+        # Send dunning letter by email to each of selected employees
+        if self.send_email:
+            self._send_dunning_letter_by_mail()
+
         if not self.print_pdf:
             return {}
         data['parameters']['ids'] = exp_ids
@@ -85,6 +102,45 @@ class PABIDunnintLetterWizard(models.TransientModel):
             'context': {'lang': 'th_TH'}
         }
         return res
+
+    @api.model
+    def _send_dunning_letter_by_mail(self):
+        if not self.dunning_list_ids:
+            return True
+        template = False
+        try:
+            template = self.env.ref(
+                'pabi_hr_expense_report.email_template_edi_10_days_to_due')
+        except:
+            pass
+        if not self.group_email:
+            raise UserError(
+                _('Please enter valid email address for group email!'))
+        if template:
+            for line in self.dunning_list_ids:
+                ctx = self.env.context.copy()
+                ctx.update({
+                    'due_days': self.due_days,
+                    'date_print': self.date_print,
+                    'email_attachment': True,
+                })
+                if line.expense_id and line.select:
+                    to_email = False
+                    cc_email = self.group_email
+                    for to_line in line.to_employee_ids:
+                        if to_line.work_email:
+                            if not to_email:
+                                to_email = to_line.work_email
+                            else:
+                                to_email = to_email + ',' + to_line.work_email
+
+                    for cc_line in line.cc_employee_ids:
+                        if cc_line.work_email:
+                            cc_email = cc_email + ',' + cc_line.work_email
+                    template.email_to = to_email
+                    template.email_cc = cc_email
+                    template.with_context(ctx).send_mail(line.expense_id.id)
+        return True
 
 
 class DunningList(models.TransientModel):
@@ -123,4 +179,16 @@ class DunningList(models.TransientModel):
         string='Description',
         related='expense_id.name',
         readonly=True,
+    )
+    send_email = fields.Boolean(
+        related='wizard_id.send_email',
+        string='Send Email',
+    )
+    to_employee_ids = fields.Many2many(
+        'hr.employee',
+        string="TO",
+    )
+    cc_employee_ids = fields.Many2many(
+        'hr.employee',
+        string="CC",
     )
