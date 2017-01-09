@@ -29,14 +29,6 @@ class PABIDunnintLetterWizard(models.TransientModel):
         string='Send Email',
         default=True,
     )
-    to_mail_group_ids = fields.Many2many(
-        'mail.group',
-        string='TO:',
-    )
-    cc_mail_group_ids = fields.Many2many(
-        'mail.group',
-        string='CC:',
-    )
     dunning_list_ids = fields.One2many(
         'dunning.list',
         'wizard_id',
