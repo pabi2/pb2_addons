@@ -9,15 +9,15 @@
                 <tree string="Document Export Configuration Lines" editable="bottom">
                     <field name="sequence" />
                     <field name="model_id"/>
-                    <field name="field_code" /> 
+                    <field name="field_code" />
                     <field name="default_value"/>
                     <field name="notes"/>
-                    <field name="length" /> 
+                    <field name="length" />
                     <field name="mandatory" />
                 </tree>
             </field>
         </record>
-        
+
         # Document Export Configuration
         <record model="ir.ui.view" id="view_document_export_config_tree">
             <field name="name">view.document.export.config.tree</field>
@@ -30,8 +30,8 @@
                 </tree>
             </field>
         </record>
-        
-        
+
+
         <record model="ir.ui.view" id="view_document_export_config_form">
             <field name="name">view.document.export.config.form</field>
             <field name="model">document.export.config</field>
@@ -45,17 +45,16 @@
                         </div>
                         <group>
                             <group>
-                                <field name="journal_id"/>
                                 <field name="user_id" />
                                 <field name="company_id" />
                             </group>
                             <group>
-                                <field name="date" /> 
+                                <field name="date" />
                                 <field name="delimiter_symbol"/>
                             </group>
                         </group>
                         <separator string="Header Configurations"/>
-                        <field name="header_config_line_ids" /> 
+                        <field name="header_config_line_ids" />
                         <separator string="Details Configurations"/>
                         <field name="detail_config_line_ids"/>
                         <separator string="Footer Configurations"/>
@@ -64,8 +63,8 @@
                 </form>
             </field>
         </record>
-        
-        
+
+
         <record id="action_document_export_config" model="ir.actions.act_window">
             <field name="name">Document Export Configuration</field>
             <field name="res_model">document.export.config</field>
@@ -79,7 +78,7 @@
             </field>
         </record>
         <menuitem id="menu_document_export_config" name="Document Export Configurations"  parent="base.menu_administration"/>
-        
+
         <menuitem action="action_document_export_config"
             id="menu_action_document_export_config"  parent="menu_document_export_config"/>
 

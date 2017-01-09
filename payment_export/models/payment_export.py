@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class PaymentExport(models.Model):
@@ -17,23 +17,15 @@ class PaymentExport(models.Model):
     journal_id = fields.Many2one(
         'account.journal',
         string='Payment Method',
-        domain=[('type', '=', 'bank')],
         required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
     )
-    date_value = fields.Date(
-        string='Value/Cheque Date',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    bank_id = fields.Many2one(
-        'res.partner.bank',
-        related='journal_id.bank_id',
-        string='Bank Account',
-        store=True,
-        readonly=True,
+    transfer_type = fields.Selection(
+        [('direct', 'DIRECT'),
+         ('smart', 'SMART')
+         ],
+        string='Transfer Type',
+        help="- DIRECT is transfer within same bank.\n"
+        "- SMART is transfer is between different bank."
     )
     is_cheque_lot = fields.Boolean(
         string='Is Cheque Lot Available',
@@ -42,9 +34,15 @@ class PaymentExport(models.Model):
     cheque_lot_id = fields.Many2one(
         'cheque.lot',
         string='Cheque Lot',
-        domain="[('bank_id', '=', bank_id), "
-        "('journal_id', '=', journal_id),('state', '=', 'active')]",
+        domain="[('journal_id', '=', journal_id), "
+        "('state', '=', 'active')]",
         ondelete='restrict',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_value = fields.Date(
+        string='Value/Cheque Date',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -113,7 +111,18 @@ class PaymentExport(models.Model):
     )
     cancel_reason_txt = fields.Char(
         string="Description",
-        readonly=True)
+        readonly=True,
+    )
+
+    @api.onchange('transfer_type')
+    def _onchange_transfer_type(self):
+        if self.transfer_type:
+            self.cheque_lot_id = False
+
+    @api.onchange('cheque_lot_id')
+    def _onchange_cheque_lot_id(self):
+        if self.cheque_lot_id:
+            self.transfer_type = False
 
     @api.model
     def create(self, vals):
@@ -157,11 +166,10 @@ class PaymentExport(models.Model):
             export.cheque_number_to = res[1]
 
     @api.one
-    @api.depends('bank_id', 'journal_id')
+    @api.depends('journal_id')
     def _compute_is_cheque_lot(self):
         Lot = self.env['cheque.lot']
-        lots = Lot.search([('bank_id', '=', self.bank_id.id),
-                           ('journal_id', '=', self.journal_id.id)])
+        lots = Lot.search([('journal_id', '=', self.journal_id.id)])
         self.is_cheque_lot = lots and True or False
 
     @api.onchange('journal_id')
@@ -207,6 +215,10 @@ class PaymentExport(models.Model):
             export_line.amount = voucher.amount
             self.line_ids += export_line
             i += 1
+
+    @api.multi
+    def action_export_payment_pack(self):
+        raise ValidationError(_('No implementation for the export function!'))
 
     @api.multi
     def action_assign_cheque_number(self):
@@ -265,13 +277,13 @@ class PaymentExport(models.Model):
                         cheque_lot = cheque_register.cheque_lot_id
                         cheque_number = cheque_register.number
                         cheque_date = export.date_value
-                        bank_name = cheque_lot.bank_id.name
-                        bank_branch = cheque_lot.bank_id.branch_cheque
+                        bank_name = cheque_lot.journal_id.bank_id.name
+                        bank_branch = cheque_lot.journal_id.bank_id.bank_branch
                         line.voucher_id.write({
                             'date_cheque': cheque_date,
                             'number_cheque': cheque_number,
                             'bank_cheque': bank_name,
-                            'branch_cheque': bank_branch,
+                            'bank_branch': bank_branch,
                         })
                         line.write({'exported': True})
         self.write({'state': 'done'})

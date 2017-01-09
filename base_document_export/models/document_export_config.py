@@ -109,8 +109,3 @@ class DocumentExportConfig(models.Model):
         string="Joining Delimiter",
         required=True,
     )
-    journal_id = fields.Many2one(
-        'account.journal',
-        string='Payment Method',
-        required=True,
-    )
