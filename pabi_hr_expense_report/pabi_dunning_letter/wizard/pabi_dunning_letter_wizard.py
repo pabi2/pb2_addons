@@ -71,6 +71,9 @@ class PABIDunnintLetterWizard(models.TransientModel):
 
     @api.multi
     def run_report(self):
+        if not self.send_email and self.print_pdf:
+            return {}
+
         data = {'parameters': {}}
         report_name = 'pabi_dunning_letter'
         # For ORM, we search for ids, and only pass ids to parser and jasper
