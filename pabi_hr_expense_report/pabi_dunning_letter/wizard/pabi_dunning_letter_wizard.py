@@ -65,8 +65,6 @@ class PABIDunnintLetterWizard(models.TransientModel):
             new_line = Line.new()
             new_line.expense_id = expense
             new_line.select = True
-            if not expense.employee_id.work_email:
-                new_line.empty_email = True
             self.dunning_list_ids += new_line
 
     @api.multi
@@ -167,7 +165,4 @@ class DunningList(models.TransientModel):
         string='Description',
         related='expense_id.name',
         readonly=True,
-    )
-    empty_email = fields.Boolean(
-        string="Email Empty?"
     )
