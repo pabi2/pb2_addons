@@ -250,10 +250,6 @@ class HRExpenseClearing(models.Model):
     invoiced_amount = fields.Float(
         sting='Invoiced Amount',
     )
-    validate_user_id = fields.Many2one(
-        'res.users',
-        string='Validated by',
-    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -262,8 +258,7 @@ class HRExpenseClearing(models.Model):
         select row_number() over (order by date) as id, * from (
         (select create_date as date, advance_expense_id, id as expense_id,
             null as invoice_id, amount as expense_amount,
-            null as clearing_amount, null as invoiced_amount,
-            null as validate_user_id
+            null as clearing_amount, null as invoiced_amount
             from hr_expense_expense
             where state = 'accepted' and advance_expense_id is not null)
         UNION
@@ -271,8 +266,7 @@ class HRExpenseClearing(models.Model):
                 expense_amount, clearing_amount,
                 case when type in ('in_invoice')
                     then amount_total + clearing_amount
-                    else amount_total end as invoiced_amount,
-                    validate_user_id
+                    else amount_total end as invoiced_amount
             from (
                 select coalesce(exp.create_date, ai.create_date) as date,
                     ai.advance_expense_id, ai.type, expense_id,
@@ -280,8 +274,7 @@ class HRExpenseClearing(models.Model):
                     case when ai.type in ('in_invoice')
                         and ail.price_subtotal < 0.0 then -ail.price_subtotal
                         when ai.type in ('out_invoice') then ai.amount_total
-                        else 0.0 end as clearing_amount,
-                    ai.amount_total, ai.validate_user_id
+                        else 0.0 end as clearing_amount, ai.amount_total
                 from account_invoice ai join account_invoice_line ail
                         on ai.id = ail.invoice_id
                     left outer join hr_expense_expense exp
