@@ -3,6 +3,18 @@
 <openerp>
 	<data>
 
+		<!-- Expenses Advance's Clearning tab -->
+		<record id="view_expenses_form_advance" model="ir.ui.view">
+			<field name="name">view.expenses.form.advance</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense_advance_clearing.view_expenses_form_advance"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='advance_clearing_ids']/tree/field[@name='invoiced_amount']" position="after">
+					<field name="validate_user_id" />
+				</xpath>
+			</field>
+		</record>
+
 		<!-- Expenses -->
 		<record id="view_expenses_form_no_create_delete" model="ir.ui.view">
 			<field name="name">hr.expense.form.no.create.delete</field>
@@ -21,8 +33,8 @@
 					<attribute name="delete">0</attribute>
 				</xpath>
 				<xpath expr="//field[@name='currency_id']" position="after">
-                    <field name="activity_group_ids" widget='many2many_tags'/>
-                </xpath>
+					<field name="activity_group_ids" widget='many2many_tags'/>
+				</xpath>
 			</field>
 		</record>
 
@@ -44,7 +56,7 @@
 					<field name="user_id" string="Prepared By" readonly="1"/>
 				</field>
 				<field name="date" position="before">
-					<field name="approver_id" />
+					<field name="approver_id"/>
 				</field>
 				<field name="date" position="after">
 					<field name="advance_type" attrs="{'invisible': [('is_employee_advance', '=', False)], 'required': [('is_employee_advance', '=', True)]}"/>
@@ -129,8 +141,8 @@
 				</notebook>
 
 				<xpath expr="/form/sheet/notebook/page/group/div" position="inside">
-						<separator string="Note for Advance"/>
-						<field name="remark" placeholder="Free Notes"/>
+					<separator string="Note for Advance"/>
+					<field name="remark" placeholder="Free Notes"/>
 				</xpath>
 			</field>
 		</record>

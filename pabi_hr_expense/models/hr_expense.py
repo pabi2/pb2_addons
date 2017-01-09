@@ -331,6 +331,16 @@ class HRExpenseAttendeeExternal(models.Model):
     )
 
 
+class HRExpenseClearing(models.Model):
+    _inherit = 'hr.expense.clearing'
+
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated by',
+        # related='invoice_id.validate_user_id',
+    )
+
+
 class HRExpenseRule(models.Model):
     _name = "hr.expense.rule"
 
