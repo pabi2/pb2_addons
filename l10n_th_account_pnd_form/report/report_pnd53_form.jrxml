@@ -38,8 +38,6 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<field name="title_id" class="java.lang.Integer"/>
 	<field name="title" class="java.lang.String"/>
 	<field name="employee_id" class="java.lang.Integer"/>
-	<field name="supplier_firstname" class="java.lang.String"/>
-	<field name="supplier_lastname" class="java.lang.String"/>
 	<field name="supplier_street" class="java.lang.String"/>
 	<field name="supplier_street2" class="java.lang.String"/>
 	<field name="supplier_township" class="java.lang.String"/>
@@ -49,8 +47,6 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<field name="supplier_country" class="java.lang.String"/>
 	<field name="base_total" class="java.math.BigDecimal"/>
 	<field name="tax_total" class="java.math.BigDecimal"/>
-	<field name="supplier_firstname_th" class="java.lang.String"/>
-	<field name="supplier_lastname_th" class="java.lang.String"/>
 	<field name="title_th" class="java.lang.String"/>
 	<field name="supplier_name_th" class="java.lang.String"/>
 	<variable name="supplier_address" class="java.lang.String">

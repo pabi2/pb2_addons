@@ -11,7 +11,6 @@
         'l10n_th_account',
         'hr',
         'resource',
-        'pabi_user_profile',  # TODO: removes for generic project.
     ],
     'data': [
         'wizard/print_pnd_form_wizard.xml',

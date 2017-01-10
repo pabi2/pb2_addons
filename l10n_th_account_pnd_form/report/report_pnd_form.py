@@ -36,9 +36,6 @@ class ReportPNDForm(models.Model):
     supplier_branch_th = fields.Char(
         string='Supplier Branch',
     )
-    supplier_firstname_th = fields.Char(
-        string='Supplier First Name',
-    )
     supplier_branch = fields.Char(
         string='Supplier Branch',
     )
@@ -47,18 +44,6 @@ class ReportPNDForm(models.Model):
     )
     supplier_name = fields.Char(
         string='Supplier Name',
-    )
-    supplier_firstname_th = fields.Char(
-        string='Supplier First Name (TH)',
-    )
-    supplier_lastname_th = fields.Char(
-        string='Supplier Last Name (TH)',
-    )
-    supplier_firstname = fields.Char(
-        string='Supplier First Name',
-    )
-    supplier_lastname = fields.Char(
-        string='Supplier Last Name',
     )
     supplier_street = fields.Char(
         string='Supplier Street',
@@ -91,18 +76,6 @@ class ReportPNDForm(models.Model):
         cr.execute("""CREATE or REPLACE VIEW %s as (
         select *, coalesce((select value
                 from ir_translation
-                where name = 'hr.employee,first_name'
-                and type = 'model' and lang='th_TH'
-                and res_id = a.employee_id),
-                a.supplier_firstname) as supplier_firstname_th,
-                coalesce((select value
-                from ir_translation
-                where name = 'hr.employee,last_name'
-                and type = 'model' and lang='th_TH'
-                and res_id = a.employee_id),
-                a.supplier_lastname) as supplier_lastname_th,
-                coalesce((select value
-                from ir_translation
                 where name = 'res.partner.title,name'
                 and type = 'model' and lang='th_TH'
                 and res_id = a.title_id),
@@ -129,8 +102,6 @@ class ReportPNDForm(models.Model):
             rt.id as title_id,
             rt.name as title,
             emp.id as employee_id,
-            emp.first_name as supplier_firstname,
-            emp.last_name as supplier_lastname,
             rp.street as supplier_street,
             rp.street2 as supplier_street2,
             ts.name as supplier_township,
@@ -156,8 +127,8 @@ class ReportPNDForm(models.Model):
         where av.wht_sequence > 0
         group by av.state, av.wht_sequence_display, av.number,
             av.date_value, av.income_tax_form, av.wht_period_id, av.id,
-            av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name, rt.id, rt.name,
-            emp.id, emp.first_name, emp.last_name, rp.street, rp.street2,
+            av.tax_payer, rp.vat, rp.taxbranch, rp.id, rp.name,
+            rt.id, rt.name, emp.id, rp.street, rp.street2,
             ts.name, dt.name, pv.name, ts.zip, co.name
         ) a
         order by a.wht_sequence_display
