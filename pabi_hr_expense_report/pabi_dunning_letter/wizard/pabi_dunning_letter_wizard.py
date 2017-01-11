@@ -107,10 +107,19 @@ class PABIDunnintLetterWizard(models.TransientModel):
     def _send_dunning_letter_by_mail(self):
         if not self.dunning_list_ids:
             return True
+        template_name = False
+        if self.due_days == '-1':
+            template_name = 'pabi_hr_expense_report.email_template_edi_past_due_days'
+        elif self.due_days == '0':
+            template_name = 'pabi_hr_expense_report.email_template_edi_0_due_days'
+        elif self.due_days == '5':
+            template_name = 'pabi_hr_expense_report.email_template_edi_5_due_days'
+        else:
+            template_name = 'pabi_hr_expense_report.email_template_edi_10_due_days'
+
         template = False
         try:
-            template = self.env.ref(
-                'pabi_hr_expense_report.email_template_edi_10_days_to_due')
+            template = self.env.ref(template_name)
         except:
             pass
         if not self.group_email:
@@ -186,9 +195,15 @@ class DunningList(models.TransientModel):
     )
     to_employee_ids = fields.Many2many(
         'hr.employee',
+        'to_employee_dunning_rel',
+        'employee_id',
+        'line_id',
         string="TO",
     )
     cc_employee_ids = fields.Many2many(
         'hr.employee',
+        'cc_employee_dunning_rel',
+        'employee_id',
+        'line_id',
         string="CC",
     )
