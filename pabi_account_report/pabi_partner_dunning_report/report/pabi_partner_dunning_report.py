@@ -6,36 +6,48 @@ from openerp import tools
 
 class PABIPartnerDunningReport(models.Model):
     _name = 'pabi.partner.dunning.report'
+    _order = 'partner_id, move_line_id'
     _auto = False
 
     move_line_id = fields.Many2one(
         'account.move.line',
         string='Journal Item',
+        readonly=True,
     )
     amount_residual = fields.Float(
         related='move_line_id.amount_residual',
         string='Balance',
+        readonly=True,
     )
     invoice_id = fields.Many2one(
         'account.invoice',
         related='move_line_id.invoice',
         string='Invoice',
+        readonly=True,
     )
     reconcile_id = fields.Many2one(
         'account.move.reconcile',
         related='move_line_id.reconcile_id',
         string='Reconcile',
+        readonly=True,
     )
     date_maturity = fields.Date(
         string='Due Date',
+        readonly=True,
     )
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+        readonly=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
+        readonly=True,
+    )
+    new_title = fields.Char(
+        string='New Title',
+        readonly=True,
     )
     date_run = fields.Date(
         string='Runing Date',
@@ -49,6 +61,7 @@ class PABIPartnerDunningReport(models.Model):
         [('payable', 'Payable'),
          ('receivable', 'Receivable')],
         string='Account Type',
+        readonly=True,
     )
     print_ids = fields.One2many(
         'pabi.partner.dunning.print.history',
@@ -74,11 +87,15 @@ class PABIPartnerDunningReport(models.Model):
 
         _sql = """
             select aml.id, aml.id as move_line_id, date_maturity,
-            aml.org_id, aml.partner_id, aa.type account_type
+            aml.org_id, aml.partner_id, aa.type account_type, new_title
             from account_move_line aml
             join account_account aa on aa.id = aml.account_id
+            join res_partner rp on rp.id = aml.partner_id
+            left outer join pabi_dunning_config_title pdct
+                on rp.title = pdct.title_id
             where aml.state = 'valid' and aa.type in ('receivable', 'payable')
             and aml.date_maturity is not null
+            and aml.partner_id is not null
         """
 
         cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %

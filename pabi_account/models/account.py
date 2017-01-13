@@ -17,5 +17,8 @@ class AccountMove(models.Model):
     def _compute_line_item_summary(self):
         for rec in self:
             items = ['%s [%s]' % (x.name, x.quantity)
-                     for x in rec.line_id if x.name != '/']
+                     for x in rec.line_id
+                     if (x.name != '/' and
+                         x.account_id.user_type.report_type in ('income',
+                                                                'expense'))]
             rec.line_item_summary = ", ".join(items)

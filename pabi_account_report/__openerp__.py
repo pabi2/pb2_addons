@@ -21,6 +21,7 @@ Accounting Related Reports
     ],
     'data': [
         # Partner Dunning Report
+        'pabi_partner_dunning_report/views/pabi_dunning_config.xml',
         'pabi_partner_dunning_report/report_data.xml',
         'pabi_partner_dunning_report/wizard/pabi_partner_dunning_wizard.xml',
         'pabi_partner_dunning_report/wizard/print_partner_dunning_letter.xml',
