@@ -221,7 +221,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="34" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[RC]]></text>
+				<text><![CDATA[RV]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="185" width="555" height="1"/>
