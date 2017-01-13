@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError, Warning as UserError
 import xmlrpclib
 
 
@@ -429,3 +429,23 @@ class HRExpense(models.Model):
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         return result
+
+    @api.multi
+    def write(self, vals):
+        res = super(HRExpense, self).write(vals)
+        try:
+            to_state = vals.get('state', False)
+            # if to_state in ('accepted', 'cancelled', 'paid'):
+            if to_state in ('accepted', 'cancelled'):
+                # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
+                signals = {'accepted': '1', 'cancelled': '2'}
+                for exp in self:
+                    if to_state == 'cancelled':
+                        comment = exp.cancel_reason_txt or ''
+                        exp.send_signal_to_pabiweb(signals[to_state], comment)
+                    else:
+                        exp.send_signal_to_pabiweb(signals[to_state])
+        except Exception, e:
+            self._cr.rollback()
+            raise ValidationError(str(e))
+        return res
