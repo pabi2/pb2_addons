@@ -151,29 +151,31 @@ class HRExpense(models.Model):
         compute='_compute_activity_groups',
         store=True,
     )
-    
+
     @api.multi
     @api.constrains('line_ids')
     def _check_line_ids(self):
         chart_fields = {
-            'project_id':[],
-            'section_id':[],
-            'invest_asset_id':[],
-            'invest_construction_phase_id':[],
+            'project_id': [],
+            'section_id': [],
+            'invest_asset_id': [],
+            'invest_construction_phase_id': [],
         }
-        
+        msg = ("You are selecting dimension which "
+        "has not been used in Advance %s." 
+        % self.advance_expense_id.name_get()[0][1])
+
         for line in self.advance_expense_id.line_ids:
             for field in chart_fields:
                 if line[field]:
                     chart_fields[field].append(line[field].id)
-        
+
         for line in self.line_ids:
             for field in chart_fields:
                 if line[field]:
                     if line[field].id not in chart_fields[field]:
-                        raise Warning(_('You are selecting dimension which \
-                         has not been used in Advance %s.' 
-                         % self.advance_expense_id.name_get()[0][1]))
+                        raise Warning(_(msg))
+
     @api.multi
     @api.depends(
         'line_ids',
