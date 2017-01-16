@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 
 
 class HRExpense(models.Model):
@@ -171,8 +171,9 @@ class HRExpense(models.Model):
             for field in chart_fields:
                 if line[field]:
                     if line[field].id not in chart_fields[field]:
-                        raise Warning(_('You are selecting dimension which has not been used in Advance %s.' % self.advance_expense_id.name_get()[0][1]))
-                    
+                        raise Warning(_('You are selecting dimension which \
+                         has not been used in Advance %s.' 
+                         % self.advance_expense_id.name_get()[0][1]))
     @api.multi
     @api.depends(
         'line_ids',
