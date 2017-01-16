@@ -378,12 +378,13 @@ class InterfaceAccountEntry(models.Model):
                     _("Wrong account to reconcile for line '%s'") %
                     (line.name,))
             # Validate Amount Sign
-            psign = (payment_ml.debit - payment_ml.credit) > 0 and 1 or -1
-            isign = (invoice_ml.debit - invoice_ml.credit) > 0 and 1 or -1
-            if psign == isign:
-                raise ValidationError(
-                    _("To reconcile, amount should be in opposite Dr/Cr "
-                      "for line '%s'") % (line.name,))
+            # NOTE: remove this condition for case Undue Tax
+            # psign = (payment_ml.debit - payment_ml.credit) > 0 and 1 or -1
+            # isign = (invoice_ml.debit - invoice_ml.credit) > 0 and 1 or -1
+            # if psign == isign:
+            #     raise ValidationError(
+            #         _("To reconcile, amount should be in opposite Dr/Cr "
+            #           "for line '%s'") % (line.name,))
             # Full or Partial reconcile
             lines = payment_ml | invoice_ml
             residual = sum([x.debit - x.credit for x in lines])

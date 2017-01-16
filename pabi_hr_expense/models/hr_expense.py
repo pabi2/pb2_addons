@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-from openerp.exceptions import ValidationError
 
 
 class HRExpense(models.Model):
@@ -165,26 +164,6 @@ class HRExpense(models.Model):
                     if line.activity_group_id:
                         expense_ids.append(line.activity_group_id.id)
                 expense.activity_group_ids = expense_ids
-
-    @api.multi
-    def write(self, vals):
-        res = super(HRExpense, self).write(vals)
-        try:
-            to_state = vals.get('state', False)
-            # if to_state in ('accepted', 'cancelled', 'paid'):
-            if to_state in ('accepted', 'cancelled'):
-                # signals = {'accepted': '1', 'cancelled': '2', 'paid': '3'}
-                signals = {'accepted': '1', 'cancelled': '2'}
-                for exp in self:
-                    if to_state == 'cancelled':
-                        comment = exp.cancel_reason_txt or ''
-                        exp.send_signal_to_pabiweb(signals[to_state], comment)
-                    else:
-                        exp.send_signal_to_pabiweb(signals[to_state])
-        except Exception, e:
-            self._cr.rollback()
-            raise ValidationError(str(e))
-        return res
 
     @api.multi
     @api.depends('line_ids', 'line_ids.project_id', 'line_ids.section_id')

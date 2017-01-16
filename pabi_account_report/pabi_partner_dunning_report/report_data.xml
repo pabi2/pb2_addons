@@ -2,12 +2,41 @@
 <openerp>
 	<data>
 
-		<record id="pabi_customer_dunning_letter" model="ir.actions.report.xml">
+		# 1st
+		<record id="pabi_customer_dunning_letter_1st" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">pabi.partner.dunning.report</field>
-			<field name="name">Customer Dunning Letter</field>
-			<field name="report_name">pabi_customer_dunning_letter</field>
-			<field name="report_rml">pabi_account_report/pabi_partner_dunning_report/report/pabi_customer_dunning_letter.jrxml</field>
+			<field name="name">Customer Dunning Letter 1st</field>
+			<field name="report_name">pabi_customer_dunning_letter_1st</field>
+			<field name="report_rml">pabi_account_report/pabi_partner_dunning_report/report/pabi_customer_dunning_letter_1st.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		# 2nd
+		<record id="pabi_customer_dunning_letter_2nd" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="name">Customer Dunning Letter 2nd</field>
+			<field name="report_name">pabi_customer_dunning_letter_2nd</field>
+			<field name="report_rml">pabi_account_report/pabi_partner_dunning_report/report/pabi_customer_dunning_letter_2nd.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		# 3rd
+		<record id="pabi_customer_dunning_letter_3rd" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="name">Customer Dunning Letter 3rd</field>
+			<field name="report_name">pabi_customer_dunning_letter_3rd</field>
+			<field name="report_rml">pabi_account_report/pabi_partner_dunning_report/report/pabi_customer_dunning_letter_3rd.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>

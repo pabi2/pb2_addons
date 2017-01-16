@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class PrintPartnerDunningLetter(models.TransientModel):
@@ -30,15 +31,31 @@ class PrintPartnerDunningLetter(models.TransientModel):
     @api.multi
     def action_print_dunning_letter(self):
         data = {'parameters': {}}
-        report_name = 'pabi_customer_dunning_letter'
+        report_name = False
+        if self.report_type == '7':
+            report_name = 'pabi_customer_dunning_letter_1st'
+        elif self.report_type == '14':
+            report_name = 'pabi_customer_dunning_letter_2nd'
+        elif self.report_type == '19':
+            report_name = 'pabi_customer_dunning_letter_3rd'
         # For ORM, we search for ids, and only pass ids to parser and jasper
+        if not report_name:
+            raise UserError(_('No report template found!'))
         active_ids = self._context.get('active_ids', [])
         model = self._context.get('active_model')
         dunnings = self.env[model].browse(active_ids)
         # Log Print History
         dunnings._create_print_history(self.report_type)
         # Print
+        company = self.env.user.company_id
         data['parameters']['ids'] = active_ids
+        data['parameters']['date_run'] = dunnings[0].date_run
+        data['parameters']['signature_dunning'] = \
+            company.signature_dunning
+        data['parameters']['signature_litigation'] = \
+            company.signature_litigation
+        data['parameters']['account_dept_contact'] = \
+            company.account_dept_contact
 
         res = {
             'type': 'ir.actions.report.xml',
