@@ -161,7 +161,7 @@ class HRExpense(models.Model):
             'invest_asset_id': [],
             'invest_construction_phase_id': [],
         }
-        msg = ("You are selecting dimension which "
+        msg = _("You are selecting dimension which "
         "has not been used in Advance %s." 
         % self.advance_expense_id.name_get()[0][1])
 
@@ -174,7 +174,7 @@ class HRExpense(models.Model):
             for field in chart_fields:
                 if line[field]:
                     if line[field].id not in chart_fields[field]:
-                        raise Warning(_(msg))
+                        raise Warning(msg)
 
     @api.multi
     @api.depends(
