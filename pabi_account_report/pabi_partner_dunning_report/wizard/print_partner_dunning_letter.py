@@ -7,26 +7,37 @@ class PrintPartnerDunningLetter(models.TransientModel):
     _name = 'print.partner.dunning.letter'
 
     report_type = fields.Selection(
-        [('7', 'Overdue 7 Days'),
-         ('14', 'Overdue 14 Days'),
-         ('19', 'Overdue 19 Days')],
-        string='Type',
+        [('7', '#1 Overdue 7 Days'),
+         ('14', '#2 Overdue 14 Days'),
+         ('19', '#3 Overdue 19 Days')],
+        string='Report Type',
         required=True,
     )
+    lang = fields.Selection(
+        [('th_TH', 'Thai'),
+         ('en_US', 'English')],
+        string='Language',
+        default='th_TH',
+    )
+    date_run = fields.Date(
+        string='Report Run Date',
+        default=lambda self: self._context.get('date_run', False),
+        # Try to pass the context here, but only works in Form Views
+    )
 
-    @api.model
-    def default_get(self, field_list):
-        res = super(PrintPartnerDunningLetter, self).default_get(field_list)
-        active_ids = self._context.get('active_ids')
-        model = self._context.get('active_model')
-        dunnings = self.env[model].browse(active_ids)
-        # Check Days Overdue, whether all records has same value
-        days_overdue = dunnings.mapped('days_overdue')
-        print days_overdue
-        if len(days_overdue) == 1:
-            if days_overdue[0] in (7, 14, 19):
-                res['report_type'] = str(days_overdue[0])
-        return res
+    # @api.model
+    # def default_get(self, field_list):
+    #     print self._context
+    #     res = super(PrintPartnerDunningLetter, self).default_get(field_list)
+    #     active_ids = self._context.get('active_ids')
+    #     model = self._context.get('active_model')
+    #     dunnings = self.env[model].browse(active_ids)
+    #     # Check Days Overdue, whether all records has same value
+    #     days_overdue = dunnings.mapped('days_overdue')
+    #     if len(days_overdue) == 1:
+    #         if days_overdue[0] in (7, 14, 19):
+    #             res['report_type'] = str(days_overdue[0])
+    #     return res
 
     @api.multi
     def action_print_dunning_letter(self):
@@ -49,7 +60,7 @@ class PrintPartnerDunningLetter(models.TransientModel):
         # Print
         company = self.env.user.company_id
         data['parameters']['ids'] = active_ids
-        data['parameters']['date_run'] = dunnings[0].date_run
+        data['parameters']['date_run'] = self._context.get('date_run', False)
         data['parameters']['signature_dunning'] = \
             company.signature_dunning
         data['parameters']['signature_litigation'] = \
@@ -61,5 +72,6 @@ class PrintPartnerDunningLetter(models.TransientModel):
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
             'datas': data,
+            'context': {'lang': self.lang},
         }
         return res
