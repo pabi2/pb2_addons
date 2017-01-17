@@ -183,7 +183,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_type} == "payment" ?
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "payment" ?
 "PAYMENT VOUCHER" : "RECEIPT VOUCHER"]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -254,7 +254,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="34" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_type} == "payment" ?
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "payment" ?
 "PV" : "RC"]]></textFieldExpression>
 			</textField>
 			<line>
