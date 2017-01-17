@@ -16,10 +16,10 @@
         'account',
     ],
     'data': [
-        'jasper_data.xml',
+        'data/procurement_data.xml',
         'data/account_data.xml',
         'data/payment_export_data.xml',
-        'journal_entries/wizard/print_voucher_wizard.xml',
+        'print_journal_entries/print_voucher_wizard.xml',
     ],
     'installable': True,
     'auto_install': False,
