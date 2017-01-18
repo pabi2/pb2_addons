@@ -38,6 +38,7 @@ org -> sector -> subsector -> division -> section -> costcenter
         # Data
         'data/fund_data.xml',
         # security
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
         # views
         'views/menu_view.xml',
