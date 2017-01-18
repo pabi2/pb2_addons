@@ -225,6 +225,17 @@ class CostControl(ResCommon, models.Model):
     _name = 'cost.control'
     _description = 'Job Order'
 
+    @api.model
+    def _get_owner_level_selection(self):
+        selection = [
+            ('org', 'Org'),
+            ('sector', 'Sector'),
+            ('subsector', 'Subsector'),
+            ('division', 'Division'),
+            ('section', 'Section'),
+        ]
+        return selection
+
     description = fields.Text(
         string='Description',
     )
@@ -233,6 +244,58 @@ class CostControl(ResCommon, models.Model):
         string='Job Order Type',
         required=True,
     )
+    public = fields.Boolean(
+        string="NSTDA Wide",
+        copy=False,
+        default=True,
+    )
+    owner_level = fields.Selection(
+        string="Owner Level",
+        selection=_get_owner_level_selection,
+        copy=False,
+    )
+    # Unit Base
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
+    sector_id = fields.Many2one(
+        'res.sector',
+        string='Sector',
+    )
+    subsector_id = fields.Many2one(
+        'res.subsector',
+        string='Subsector',
+    )
+    division_id = fields.Many2one(
+        'res.division',
+        string='Division',
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+    )
+
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)', 'Job Order Name must be unique!'),
+    ]
+
+    @api.onchange('public')
+    def _onchange_public(self):
+        self.owner_level = False
+        self.org_id = False
+        self.sector_id = False
+        self.subsector_id = False
+        self.division_id = False
+        self.section_id = False
+
+    @api.onchange('owner_level')
+    def _onchange_owner_level(self):
+        self.org_id = False
+        self.sector_id = False
+        self.subsector_id = False
+        self.division_id = False
+        self.section_id = False
 
     # @api.multi
     # def name_get(self):
