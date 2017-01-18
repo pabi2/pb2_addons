@@ -248,32 +248,46 @@ class CostControl(ResCommon, models.Model):
         string="NSTDA Wide",
         copy=False,
         default=True,
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
     owner_level = fields.Selection(
         string="Owner Level",
         selection=_get_owner_level_selection,
         copy=False,
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
     sector_id = fields.Many2one(
         'res.sector',
         string='Sector',
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
     subsector_id = fields.Many2one(
         'res.subsector',
         string='Subsector',
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
     section_id = fields.Many2one(
         'res.section',
         string='Section',
+        read=['pabi_base.group_cooperate_budget'],
+        write=['pabi_base.group_cooperate_budget'],
     )
 
     _sql_constraints = [
