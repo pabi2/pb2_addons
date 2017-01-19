@@ -180,6 +180,21 @@ class InterfaceAccountEntry(models.Model):
         self.residual = max(self.residual, 0.0)
 
     # ================== Main Execution Method ==================
+    @api.model
+    def _prepare_voucher_move_for_reversal(self, move):
+        for line in move.line_id:
+            # Similar to def voucher_cancel()
+            line.refresh()
+            if line.reconcile_id:
+                move_line_ids = [move_line.id for move_line in
+                                 line.reconcile_id.line_id]
+                move_line_ids.remove(line.id)
+                line.reconcile_id.unlink()
+                if len(move_line_ids) >= 2:
+                    move_lines = self.env['account.move.line'].\
+                        browse(move_line_ids)
+                    move_lines.reconcile_partial('auto')
+
     @api.multi
     def execute(self):
         res = {}
@@ -194,6 +209,10 @@ class InterfaceAccountEntry(models.Model):
             # 1) Reverse
             if interface.type == 'reverse':
                 move = interface.to_reverse_entry_id.move_id
+                # If payment reversal, refresh it first
+                if interface.to_reverse_entry_id.type == 'voucher':
+                    self._prepare_voucher_move_for_reversal(move)
+                # Start reverse
                 rev_move = move.copy({'name': move.name + '_VOID',
                                       'ref': move.ref})
                 rev_move._switch_dr_cr()
