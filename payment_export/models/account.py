@@ -65,4 +65,4 @@ class JournalExportConfig(models.Model):
     )
     _sql_constraints = [
         ('export_config_uniq', 'unique(journal_id, transfer_type, config_id)',
-         'Duplicated config for the same pyemnt method / transfer type!')]
+         'Duplicated config for the same transfer type not allowed!')]
