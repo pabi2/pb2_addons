@@ -91,7 +91,11 @@
                             <field name="description" />
                         </group>
                     </group>
-                    <notebook></notebook>
+                    <notebook>
+                        <page string="Status History">
+                            <field name="auditlog_line_ids"/>
+                        </page>
+                    </notebook>
                 </form>
             </field>
         </record>

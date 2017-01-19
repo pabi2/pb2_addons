@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields, _
 from openerp.addons.pabi_base.models.res_common import ResCommon
+from openerp.addons.document_status_history.models.document_history import \
+    LogCommon
+
 from openerp.exceptions import ValidationError
 
 # org -> sector -> subsector -> division -> *section* -> costcenter
@@ -221,7 +224,7 @@ class CostControlType(ResCommon, models.Model):
     )
 
 
-class CostControl(ResCommon, models.Model):
+class CostControl(ResCommon, LogCommon, models.Model):
     _name = 'cost.control'
     _description = 'Job Order'
 
