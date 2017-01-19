@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-from . import journal_entries
+from . import print_journal_entries
