@@ -114,6 +114,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
                  'cost_control_ids.detail_ids')
     def _compute_planned_overall(self):
         for rec in self:
+            rec.plan_expense_line_ids.onchange_mx()
+            rec.plan_revenue_line_ids.onchange_mx()
             amounts = \
                 rec.plan_summary_revenue_line_ids.mapped('planned_amount')
             rec.planned_revenue = sum(amounts)
@@ -273,6 +275,17 @@ class BudgetPlanUnitLine(ActivityCommon, models.Model):
         string="Total Budget",
         compute="_compute_total_budget",
     )
+
+    @api.multi
+    @api.onchange('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
+                 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',)
+    def onchange_mx(self):
+        for rec in self:
+            planned_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
+                                  rec.m5, rec.m6, rec.m7, rec.m8,
+                                  rec.m9, rec.m10, rec.m11, rec.m12
+                                  ])
+            rec.planned_amount = planned_amount
 
     @api.depends('unit',
                  'activity_unit',
