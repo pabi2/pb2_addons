@@ -23,6 +23,7 @@ class PrintPartnerDunningLetter(models.TransientModel):
         string='Report Run Date',
         default=lambda self: self._context.get('date_run', False),
         # Try to pass the context here, but only works in Form Views
+        # will fix later. For now, user will have to choose the date_run
     )
 
     # @api.model
@@ -60,7 +61,7 @@ class PrintPartnerDunningLetter(models.TransientModel):
         # Print
         company = self.env.user.company_id
         data['parameters']['ids'] = active_ids
-        data['parameters']['date_run'] = self._context.get('date_run', False)
+        data['parameters']['date_run'] = self.date_run
         data['parameters']['signature_dunning'] = \
             company.signature_dunning
         data['parameters']['signature_litigation'] = \
