@@ -7,6 +7,8 @@ import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils import quote_sheetname
 from openpyxl.styles import PatternFill, Border, Side, Protection, Font
+from openpyxl.utils import (_get_column_letter)
+
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
 
@@ -116,28 +118,27 @@ class BudgetExportWizard(models.TransientModel):
         Sheet.cell(row=1, column=2, value=budget.fiscalyear_id.name)
         Sheet.cell(row=2, column=2, value=org)
         Sheet.cell(row=3, column=2, value=budget.section_id.code)
-        Sheet.cell(row=4, column=2, value=datetime.today().strftime('%d-%m-%Y'))
+#         Sheet.cell(row=4, column=2, value=datetime.today().strftime('%d-%m-%Y'))
+        Sheet.cell(row=4, column=2, value=fields.Date.today())
         Sheet.cell(row=5, column=2, value=self.env.user.name)
 
     @api.model
     def _update_sheet_lines(self, budget, budget_method, Sheet):
+        ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
+        ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
+        RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
+        JobOrderFormula = SHEET_FORMULAS.get('job_order_formula', False)
+        
+        Sheet.add_data_validation(ChargeTypeFormula)
+        Sheet.add_data_validation(ExpenseAGFormula)
+        Sheet.add_data_validation(RevenueAGFormula)
+        Sheet.add_data_validation(JobOrderFormula)
         if budget_method == 'expense':
             lines = budget.plan_expense_line_ids
         else:
             lines = budget.plan_revenue_line_ids
 
-        if not lines:
-            return True
-
-        ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
-        AGFormula = SHEET_FORMULAS.get('ag_list', False)
-        JobOrderFormula = SHEET_FORMULAS.get('job_order_formula', False)
-        
-        Sheet.add_data_validation(ChargeTypeFormula)
-        Sheet.add_data_validation(AGFormula)
-        Sheet.add_data_validation(JobOrderFormula)
-
-        last_row = 10 + 49
+        last_row = 10 + self.editable_lines
         row = 10
         job_order_lines, non_job_order_lines =\
             self._compute_previous_year_amount(budget, budget_method)
@@ -154,14 +155,21 @@ class BudgetExportWizard(models.TransientModel):
 
         for line in lines:
             ChargeTypeFormula.add(Sheet.cell(row=row, column=1))
-            AGFormula.add(Sheet.cell(row=row, column=2))
+            if budget_method == 'expense':
+                ExpenseAGFormula.add(Sheet.cell(row=row, column=2))
+            else:
+                RevenueAGFormula.add(Sheet.cell(row=row, column=2))
+
             JobOrderFormula.add(Sheet.cell(row=row, column=3))
             charge_type = line.charge_type =='internal' and 'Internal' or 'External'
 
             Sheet.cell(row=row, column=1, value=charge_type)
-            Sheet.cell(row=row, column=2, value=line.activity_group_id.name)
-            Sheet.cell(row=row, column=3, value=line.cost_control_id.name)
-            Sheet.cell(row=row, column=4, value=line.description)
+            if line.activity_group_id:
+                Sheet.cell(row=row, column=2, value=line.activity_group_id.name)
+            if line.cost_control_id:
+                Sheet.cell(row=row, column=3, value=line.cost_control_id.name)
+            if line.description:
+                Sheet.cell(row=row, column=4, value=line.description)
             Sheet.cell(row=row, column=5, value='')
             Sheet.cell(row=row, column=6, value=line.unit)
             Sheet.cell(row=row, column=7, value=line.activity_unit_price)
@@ -174,30 +182,136 @@ class BudgetExportWizard(models.TransientModel):
             Sheet.cell(row=row, column=14, value=line.m4)
             Sheet.cell(row=row, column=15, value=line.m5)
             Sheet.cell(row=row, column=16, value=line.m6)
-            Sheet.cell(row=row, column=17, value=line.m6)
-            Sheet.cell(row=row, column=18, value=line.m7)
-            Sheet.cell(row=row, column=19, value=line.m8)
-            Sheet.cell(row=row, column=20, value=line.m9)
-            Sheet.cell(row=row, column=21, value=line.m10)
-            Sheet.cell(row=row, column=22, value=line.m11)
-            Sheet.cell(row=row, column=23, value=line.m12)
+            Sheet.cell(row=row, column=17, value=line.m7)
+            Sheet.cell(row=row, column=18, value=line.m8)
+            Sheet.cell(row=row, column=19, value=line.m9)
+            Sheet.cell(row=row, column=20, value=line.m10)
+            Sheet.cell(row=row, column=21, value=line.m11)
+            Sheet.cell(row=row, column=22, value=line.m12)
             row += 1
 
         while row < last_row:
             ChargeTypeFormula.add(Sheet.cell(row=row, column=1))
-            AGFormula.add(Sheet.cell(row=row, column=2))
+            if budget_method == 'expense':
+                ExpenseAGFormula.add(Sheet.cell(row=row, column=2))
+            else:
+                RevenueAGFormula.add(Sheet.cell(row=row, column=2))
             JobOrderFormula.add(Sheet.cell(row=row, column=3))
             row += 1
+
+    @api.model
+    def _format_sheet(self, Sheet):
+        CyanFill = PatternFill(
+            start_color='E0FFFF',
+            end_color='E0FFFF',
+            fill_type='solid',
+        )
+        SkyBlueFill = PatternFill(
+            start_color='71acd6',
+            end_color='71acd6',
+            fill_type='solid',
+        )
+
+        thin = Side(border_style="thin", color="000000")
+        border = Border(top=thin, left=thin, right=thin, bottom=thin)
+        CalibriFont = Font(bold=False, name='Tahoma', size=10)
+        CalibriRedFont = Font(bold=False, name='Tahoma', size=10, color = 'FF0000')
+        CalibriBoldFont = Font(bold=True, name='Tahoma', size=10)
+
+#         # Format Header Part
+        for row in range(1, 6):
+            #First Column
+            Sheet.cell(row=row, column=1).fill = CyanFill
+            Sheet.cell(row=row, column=1).border = border
+            Sheet.cell(row=row, column=1).font = CalibriBoldFont
+
+            #Second Column
+            Sheet.cell(row=row, column=2).fill = SkyBlueFill
+            Sheet.cell(row=row, column=2).border = border
+            Sheet.cell(row=row, column=2).font = CalibriBoldFont
+
+        ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
+        ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
+        RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
+        JobOrderFormula = SHEET_FORMULAS.get('job_order_formula', False)
+
+        Sheet.add_data_validation(ChargeTypeFormula)
+        Sheet.add_data_validation(ExpenseAGFormula)
+        Sheet.add_data_validation(RevenueAGFormula)
+        Sheet.add_data_validation(JobOrderFormula)
+
+        startrow = 10
+        lastrow = self.editable_lines + startrow
+
+        for row in range(startrow, lastrow):
+            for col in range(1, 26):
+                Sheet.cell(row=row, column=col).fill = CyanFill
+                Sheet.cell(row=row, column=col).border = border
+                Sheet.cell(row=row, column=col).font = CalibriFont
+
+                if col == 1:
+                    ChargeTypeFormula.add(Sheet.cell(row=row, column=col))
+                if col == 2:
+                    ExpenseAGFormula.add(Sheet.cell(row=row, column=col))
+                if col == 3:
+                    JobOrderFormula.add(Sheet.cell(row=row, column=col))
+                if col == 9:
+                    col6 = _get_column_letter(6)
+                    col7 = _get_column_letter(7)
+                    col8 = _get_column_letter(8)
+                    value="=%s%s*$%s$%s*$%s$%s" % (col6, row,
+                                                   col7, row,
+                                                   col8, row)
+                    Sheet.cell(row=row, column=col).value = value
+
+                if col == 23:
+                    col11 = _get_column_letter(11)
+                    col22 = _get_column_letter(22)
+                    value="=SUM(%s%s:$%s$%s)" % (col11, row,
+                                                 col22, row)
+                    Sheet.cell(row=row, column=col).value = value
+
+                if col == 24:
+                    col9 = _get_column_letter(9)
+                    col23 = _get_column_letter(23)
+                    value="=IF(%s%s-%s%s<>0,%s%s-%s%s,0)" % (col9, row,
+                                                             col23, row,
+                                                             col9, row,
+                                                             col23, row)
+                    Sheet.cell(row=row, column=col).value = value
+
+                if col == 25:
+                    col24 = _get_column_letter(24)
+                    value='=IF(ABS(%s%s)>0,"Error","")'% (col24, row)
+                    Sheet.cell(row=row, column=col).value = value
+                    Sheet.cell(row=row, column=col).font = CalibriRedFont
+        
+        for col in range(1, 25):
+            Sheet.cell(row=lastrow, column=col).fill = SkyBlueFill
+            Sheet.cell(row=lastrow, column=col).border = border
+            Sheet.cell(row=lastrow, column=col).font = CalibriFont
+            
+            if col == 1:
+                Sheet.cell(row=lastrow, column=col).value = 'TOTAL'
+                Sheet.cell(row=lastrow, column=col).font = CalibriBoldFont
+                
+            if col > 7:
+                col_letter = _get_column_letter(col)
+                value="=SUM(%s%s:$%s$%s)" % (col_letter, startrow,
+                                             col_letter, row)
+                Sheet.cell(row=lastrow, column=col).value = value
 
     @api.model
     def _update_non_joborder_sheets(self, budget, workbook):
         #Update Expense sheet
         ExpenseSheet = workbook.get_sheet_by_name('Expense')
+        self._format_sheet(ExpenseSheet)
         self._update_sheet_header(budget, ExpenseSheet)
         self._update_sheet_lines(budget, 'expense', ExpenseSheet)
 
         #Update Revenue sheet
         RevenueSheet = workbook.get_sheet_by_name('Revenue')
+        self._format_sheet(RevenueSheet)
         self._update_sheet_header(budget, RevenueSheet)
         self._update_sheet_lines(budget, 'revenue', RevenueSheet)
 
@@ -206,22 +320,37 @@ class BudgetExportWizard(models.TransientModel):
         try:
             AG_Sheet = workbook.get_sheet_by_name('Activity Group')
             AG_Sheet.protection.sheet = True
-            activities = self.env['account.activity.group'].search([])
+            expense_activities = self.env['account.activity.group'].search([('budget_method', '=', 'expense')])
             # create lines in activity group data sheet
-            row = 2
-            for ag in activities:
-                AG_Sheet.cell(row=row, column=1, value=ag.name)
-                AG_Sheet.cell(row=row, column=2, value=ag.description)
-                row += 1
-            formula1 = "{0}!$A$2:$A$%s" % (row)
+            expense_row = 2
+            for ag in expense_activities:
+                AG_Sheet.cell(row=expense_row, column=1, value=ag.name)
+                AG_Sheet.cell(row=expense_row, column=2, value=ag.description)
+                expense_row += 1
+            formula1 = "{0}!$A$2:$A$%s" % (expense_row)
             ActGroupList = DataValidation(
                 type="list",
                 formula1=formula1.format(
                     quote_sheetname('Activity Group')
                 )
             )
+            SHEET_FORMULAS.update({'expense_ag_list': ActGroupList})
+            revenue_activities = self.env['account.activity.group'].search([('budget_method', '=', 'revenue')])
+            # create lines in activity group data sheet
+            revenue_row = expense_row + 1
+            for ag in revenue_activities:
+                AG_Sheet.cell(row=revenue_row, column=1, value=ag.name)
+                AG_Sheet.cell(row=revenue_row, column=2, value=ag.description)
+                revenue_row += 1
+            revenue_formula = "{0}!$A$%s:$A$%s" % (expense_row+1 ,revenue_row)
+            RevenueActGroupList = DataValidation(
+                type="list",
+                formula1=revenue_formula.format(
+                    quote_sheetname('Activity Group')
+                )
+            )
             # Attach formulas to sheet to use further
-            SHEET_FORMULAS.update({'ag_list': ActGroupList})
+            SHEET_FORMULAS.update({'revenue_ag_list': RevenueActGroupList})
         except:
             pass
         return True
@@ -272,7 +401,6 @@ class BudgetExportWizard(models.TransientModel):
         if not budget_ids:
             raise UserError(_('No budget to export.'))
         budgets = self.env['budget.plan.unit'].browse(budget_ids)
-#         template_file = self.env['ir.attachment'].browse(template_id)
 
         for budget in budgets:
             exp_file = self.attachment_id.datas.decode('base64')
