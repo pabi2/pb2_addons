@@ -58,7 +58,7 @@ class BudgetExportWizard(models.TransientModel):
         non_job_order_lines = {}
         if not self.export_committed_budget or not previous_fy:
             return job_order_lines, non_job_order_lines
-        # compute committed amount for previous year 
+        # compute committed amount for previous year
         if previous_fy:
             report_domain = [('fiscalyear_id', '=', previous_fy.id),
                              ('section_id', '=', budget.section_id.id),
@@ -118,8 +118,8 @@ class BudgetExportWizard(models.TransientModel):
         Sheet.cell(row=1, column=2, value=budget.fiscalyear_id.name)
         Sheet.cell(row=2, column=2, value=org)
         Sheet.cell(row=3, column=2, value=budget.section_id.code)
-#         Sheet.cell(row=4, column=2, value=datetime.today().strftime('%d-%m-%Y'))
-        Sheet.cell(row=4, column=2, value=fields.Date.today())
+        Sheet.cell(row=4, column=2,
+                   value=datetime.today().strftime('%d-%m-%Y'))
         Sheet.cell(row=5, column=2, value=self.env.user.name)
 
     @api.model
@@ -128,11 +128,12 @@ class BudgetExportWizard(models.TransientModel):
         ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
         RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
         JobOrderFormula = SHEET_FORMULAS.get('job_order_formula', False)
-        
+
         Sheet.add_data_validation(ChargeTypeFormula)
         Sheet.add_data_validation(ExpenseAGFormula)
         Sheet.add_data_validation(RevenueAGFormula)
         Sheet.add_data_validation(JobOrderFormula)
+
         if budget_method == 'expense':
             lines = budget.plan_expense_line_ids
         else:
@@ -148,9 +149,11 @@ class BudgetExportWizard(models.TransientModel):
                     ActivityGroup = self.env['account.activity.group']
                     ag_name = ActivityGroup.browse(ag).name
                     Sheet.cell(row=row, column=2).value = ag_name
-                    Sheet.cell(row=row, column=10).value = non_job_order_lines[ag]
+                    Sheet.cell(row=row, column=10).value =\
+                        non_job_order_lines[ag]
                 else:
-                    Sheet.cell(row=row, column=10).value = non_job_order_lines[ag]
+                    Sheet.cell(row=row, column=10).value =\
+                        non_job_order_lines[ag]
                 row += 1
 
         for line in lines:
@@ -161,11 +164,13 @@ class BudgetExportWizard(models.TransientModel):
                 RevenueAGFormula.add(Sheet.cell(row=row, column=2))
 
             JobOrderFormula.add(Sheet.cell(row=row, column=3))
-            charge_type = line.charge_type =='internal' and 'Internal' or 'External'
+            charge_type =\
+                line.charge_type == 'internal' and 'Internal' or 'External'
 
             Sheet.cell(row=row, column=1, value=charge_type)
             if line.activity_group_id:
-                Sheet.cell(row=row, column=2, value=line.activity_group_id.name)
+                Sheet.cell(row=row, column=2,
+                           value=line.activity_group_id.name)
             if line.cost_control_id:
                 Sheet.cell(row=row, column=3, value=line.cost_control_id.name)
             if line.description:
@@ -201,6 +206,7 @@ class BudgetExportWizard(models.TransientModel):
 
     @api.model
     def _format_sheet(self, Sheet):
+        # Background Color
         CyanFill = PatternFill(
             start_color='E0FFFF',
             end_color='E0FFFF',
@@ -212,105 +218,136 @@ class BudgetExportWizard(models.TransientModel):
             fill_type='solid',
         )
 
-        thin = Side(border_style="thin", color="000000")
-        border = Border(top=thin, left=thin, right=thin, bottom=thin)
-        CalibriFont = Font(bold=False, name='Tahoma', size=10)
-        CalibriRedFont = Font(bold=False, name='Tahoma', size=10, color = 'FF0000')
-        CalibriBoldFont = Font(bold=True, name='Tahoma', size=10)
+        # Border Style
+        thin = Side(
+            border_style="thin",
+            color="000000"
+        )
+        border = Border(
+            top=thin,
+            left=thin,
+            right=thin,
+            bottom=thin
+        )
 
-#         # Format Header Part
-        for row in range(1, 6):
-            #First Column
-            Sheet.cell(row=row, column=1).fill = CyanFill
-            Sheet.cell(row=row, column=1).border = border
-            Sheet.cell(row=row, column=1).font = CalibriBoldFont
+        # Font Style
+        TahomaFont = Font(
+            bold=False,
+            name='Tahoma',
+            size=10
+        )
+        TahomaRedFont = Font(
+            bold=False,
+            name='Tahoma',
+            size=10,
+            color='FF0000'
+        )
+        TahomaBoldFont = Font(
+            bold=True,
+            name='Tahoma',
+            size=10
+        )
 
-            #Second Column
-            Sheet.cell(row=row, column=2).fill = SkyBlueFill
-            Sheet.cell(row=row, column=2).border = border
-            Sheet.cell(row=row, column=2).font = CalibriBoldFont
-
+        num_format = '#,##0.00'
         ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
         ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
         RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
         JobOrderFormula = SHEET_FORMULAS.get('job_order_formula', False)
 
+        # Adding drop-down formula to sheet
         Sheet.add_data_validation(ChargeTypeFormula)
         Sheet.add_data_validation(ExpenseAGFormula)
         Sheet.add_data_validation(RevenueAGFormula)
         Sheet.add_data_validation(JobOrderFormula)
 
+        protection = Protection(locked=False)
+
         startrow = 10
         lastrow = self.editable_lines + startrow
 
+        # Formating Lines
         for row in range(startrow, lastrow):
             for col in range(1, 26):
                 Sheet.cell(row=row, column=col).fill = CyanFill
                 Sheet.cell(row=row, column=col).border = border
-                Sheet.cell(row=row, column=col).font = CalibriFont
+                Sheet.cell(row=row, column=col).font = TahomaFont
 
-                if col == 1:
+                if col == 1:  # Charge Type Column
                     ChargeTypeFormula.add(Sheet.cell(row=row, column=col))
-                if col == 2:
+                    Sheet.cell(row=row, column=col).protection = protection
+                elif col == 2:  # Activity Group Column
                     ExpenseAGFormula.add(Sheet.cell(row=row, column=col))
-                if col == 3:
+                    Sheet.cell(row=row, column=col).protection = protection
+                elif col == 3:
                     JobOrderFormula.add(Sheet.cell(row=row, column=col))
-                if col == 9:
-                    col6 = _get_column_letter(6)
-                    col7 = _get_column_letter(7)
-                    col8 = _get_column_letter(8)
-                    value="=%s%s*$%s$%s*$%s$%s" % (col6, row,
-                                                   col7, row,
-                                                   col8, row)
+                    Sheet.cell(row=row, column=col).protection = protection
+                elif col == 9:  # Total Budget Column
+                    col_F = _get_column_letter(6)
+                    col_G = _get_column_letter(7)
+                    col_H = _get_column_letter(8)
+                    value = "=%s%s*$%s$%s*$%s$%s" % (col_F, row,
+                                                     col_G, row,
+                                                     col_H, row)
                     Sheet.cell(row=row, column=col).value = value
+                    Sheet.cell(row=row, column=col).number_format = num_format
+                elif col == 23:  # Total of phased entries Column
+                    col_K = _get_column_letter(11)
+                    col_V = _get_column_letter(22)
+                    value = "=SUM(%s%s:$%s$%s)" % (col_K, row,
+                                                   col_V, row)
+                    Sheet.cell(row=row, column=col).value = value
+                    Sheet.cell(row=row, column=col).number_format = num_format
+                elif col == 24:  # Total minus phased total Column
+                    col_I = _get_column_letter(9)
+                    col_W = _get_column_letter(23)
+                    value = "=IF(%s%s-%s%s<>0,%s%s-%s%s,0)" % (col_I, row,
+                                                               col_W, row,
+                                                               col_I, row,
+                                                               col_W, row)
+                    Sheet.cell(row=row, column=col).value = value
+                    Sheet.cell(row=row, column=col).number_format = num_format
+                elif col == 25:  # Error Column
+                    col_X = _get_column_letter(24)
+                    value = '=IF(ABS(%s%s)>0,"Error","")' % (col_X, row)
+                    Sheet.cell(row=row, column=col).value = value
+                    Sheet.cell(row=row, column=col).font = TahomaRedFont
+                else:
+                    Sheet.cell(row=row, column=col).protection = protection
+                    Sheet.cell(row=row, column=col).number_format = num_format
 
-                if col == 23:
-                    col11 = _get_column_letter(11)
-                    col22 = _get_column_letter(22)
-                    value="=SUM(%s%s:$%s$%s)" % (col11, row,
-                                                 col22, row)
-                    Sheet.cell(row=row, column=col).value = value
-
-                if col == 24:
-                    col9 = _get_column_letter(9)
-                    col23 = _get_column_letter(23)
-                    value="=IF(%s%s-%s%s<>0,%s%s-%s%s,0)" % (col9, row,
-                                                             col23, row,
-                                                             col9, row,
-                                                             col23, row)
-                    Sheet.cell(row=row, column=col).value = value
-
-                if col == 25:
-                    col24 = _get_column_letter(24)
-                    value='=IF(ABS(%s%s)>0,"Error","")'% (col24, row)
-                    Sheet.cell(row=row, column=col).value = value
-                    Sheet.cell(row=row, column=col).font = CalibriRedFont
-        
+        # Formating TOTAL line
         for col in range(1, 25):
             Sheet.cell(row=lastrow, column=col).fill = SkyBlueFill
             Sheet.cell(row=lastrow, column=col).border = border
-            Sheet.cell(row=lastrow, column=col).font = CalibriFont
-            
+            Sheet.cell(row=lastrow, column=col).font = TahomaFont
+
             if col == 1:
                 Sheet.cell(row=lastrow, column=col).value = 'TOTAL'
-                Sheet.cell(row=lastrow, column=col).font = CalibriBoldFont
-                
+                Sheet.cell(row=lastrow, column=col).font = TahomaBoldFont
+
             if col > 7:
                 col_letter = _get_column_letter(col)
-                value="=SUM(%s%s:$%s$%s)" % (col_letter, startrow,
-                                             col_letter, row)
+                value = "=SUM(%s%s:$%s$%s)" % (col_letter, startrow,
+                                               col_letter, row)
                 Sheet.cell(row=lastrow, column=col).value = value
+                Sheet.cell(row=lastrow, column=col).number_format = num_format
 
     @api.model
     def _update_non_joborder_sheets(self, budget, workbook):
-        #Update Expense sheet
+        # Update Expense sheet
         ExpenseSheet = workbook.get_sheet_by_name('Expense')
+        ExpenseSheet.protection.sheet = True
+        # set password to sheet
+        ExpenseSheet.protection.set_password('pabi2')
         self._format_sheet(ExpenseSheet)
         self._update_sheet_header(budget, ExpenseSheet)
         self._update_sheet_lines(budget, 'expense', ExpenseSheet)
 
-        #Update Revenue sheet
+        # Update Revenue sheet
         RevenueSheet = workbook.get_sheet_by_name('Revenue')
+        RevenueSheet.protection.sheet = True
+        # set password to sheet
+        RevenueSheet.protection.set_password('pabi2')
         self._format_sheet(RevenueSheet)
         self._update_sheet_header(budget, RevenueSheet)
         self._update_sheet_lines(budget, 'revenue', RevenueSheet)
@@ -318,12 +355,14 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _update_activity_group_sheet(self, workbook):
         try:
+            AGObj = self.env['account.activity.group']
             AG_Sheet = workbook.get_sheet_by_name('Activity Group')
             AG_Sheet.protection.sheet = True
-            expense_activities = self.env['account.activity.group'].search([('budget_method', '=', 'expense')])
+            AG_Sheet.protection.set_password('pabi2')
+            expense_ags = AGObj.search([('budget_method', '=', 'expense')])
             # create lines in activity group data sheet
             expense_row = 2
-            for ag in expense_activities:
+            for ag in expense_ags:
                 AG_Sheet.cell(row=expense_row, column=1, value=ag.name)
                 AG_Sheet.cell(row=expense_row, column=2, value=ag.description)
                 expense_row += 1
@@ -335,14 +374,14 @@ class BudgetExportWizard(models.TransientModel):
                 )
             )
             SHEET_FORMULAS.update({'expense_ag_list': ActGroupList})
-            revenue_activities = self.env['account.activity.group'].search([('budget_method', '=', 'revenue')])
+            revenue_ags = AGObj.search([('budget_method', '=', 'revenue')])
             # create lines in activity group data sheet
             revenue_row = expense_row + 1
-            for ag in revenue_activities:
+            for ag in revenue_ags:
                 AG_Sheet.cell(row=revenue_row, column=1, value=ag.name)
                 AG_Sheet.cell(row=revenue_row, column=2, value=ag.description)
                 revenue_row += 1
-            revenue_formula = "{0}!$A$%s:$A$%s" % (expense_row+1 ,revenue_row)
+            revenue_formula = "{0}!$A$%s:$A$%s" % (expense_row+1, revenue_row)
             RevenueActGroupList = DataValidation(
                 type="list",
                 formula1=revenue_formula.format(
@@ -360,16 +399,42 @@ class BudgetExportWizard(models.TransientModel):
         try:
             JobOrder_Sheet = workbook.get_sheet_by_name('JorOder')
             JobOrder_Sheet.protection.sheet = True
+            JobOrder_Sheet.protection.set_password('pabi2')
+            TahomaFont = Font(bold=False, name='Tahoma', size=10)
             joborders = self.env['cost.control'].search([])
             # Add cost control from odoo in cost control data sheet
             row = 2
             for joborder in joborders:
-                JobOrder_Sheet.cell(row=row, column=1, value=joborder.cost_control_type_id.name)
-                JobOrder_Sheet.cell(row=row, column=2, value=joborder.code)
-                JobOrder_Sheet.cell(row=row, column=3, value=joborder.name)
-                JobOrder_Sheet.cell(row=row, column=4, value=joborder.name_short)
-                JobOrder_Sheet.cell(row=row, column=5, value='')
-                JobOrder_Sheet.cell(row=row, column=6, value='')
+                JobOrder_Sheet.cell(
+                    row=row,
+                    column=1,
+                    value=joborder.cost_control_type_id.name
+                ).font = TahomaFont
+                JobOrder_Sheet.cell(
+                    row=row,
+                    column=2,
+                    value=joborder.code
+                ).font = TahomaFont
+                JobOrder_Sheet.cell(
+                    row=row,
+                    column=3,
+                    value=joborder.name
+                ).font = TahomaFont
+                JobOrder_Sheet.cell(
+                    row=row,
+                    column=4,
+                    value=joborder.name_short
+                ).font = TahomaFont
+                JobOrder_Sheet.cell(
+                    row=row,
+                    column=5,
+                    value=''
+                ).font = TahomaFont
+                JobOrder_Sheet.cell(
+                    row=row,
+                    column=6,
+                    value=''
+                ).font = TahomaFont
                 row += 1
 
             formula1 = "{0}!$C$2:$C$%s" % (row)
@@ -389,9 +454,9 @@ class BudgetExportWizard(models.TransientModel):
         template_file = self.attachment_id
         org = budget.org_id.code or budget.org_id.name_short
         filename = '%s-%s-%s-%s.xlsx' % (budget.fiscalyear_id.name,
-                                        org,
-                                        budget.section_id.code,
-                                        template_file.name)
+                                         org,
+                                         budget.section_id.code,
+                                         template_file.name)
         return filename
 
     @api.multi
@@ -407,7 +472,10 @@ class BudgetExportWizard(models.TransientModel):
             stream = cStringIO.StringIO(exp_file)
             workbook = openpyxl.load_workbook(stream)
 
-            ChargeType = DataValidation(type="list", formula1='"External,Internal"')
+            ChargeType = DataValidation(
+                type="list",
+                formula1='"External,Internal"'
+            )
             SHEET_FORMULAS.update({'charge_type': ChargeType})
 
             self._update_activity_group_sheet(workbook)

@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import sys
 import cStringIO
+from datetime import datetime
 
 import openpyxl
 
@@ -154,7 +155,7 @@ class BudgetImportWizard(models.TransientModel):
                         'section_id': costcontrol_line.plan_id.section_id.id,
                         'cost_control_id': costcontrol_line.cost_control_id.id,
                     }
-                    #compute values for plan job order lines and create lines
+                    # compute values for plan job order lines and create lines
                     create_vals.update(plan_line_vals)
                     new_id = self.env['budget.plan.unit.line'].\
                         create(create_vals).id
@@ -279,6 +280,9 @@ class BudgetImportWizard(models.TransientModel):
                 vals.update({'section_id': section_id.id})
             export_date = Non_JobOrder_Expense.cell(row=4, column=2).value
             if export_date:
+                export_date = datetime.strftime(
+                                datetime.strptime(
+                                    export_date, '%d-%m-%Y'), '%Y-%m-%d')
                 vals.update({'date': export_date})
             responsible_by = Non_JobOrder_Expense.cell(row=5, column=2).value
             responsible_by_id = self.env['res.users'].search(
