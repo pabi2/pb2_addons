@@ -18,7 +18,7 @@ class AccountMove(models.Model):
                 filters.append(('journal_id', 'in', journal_ids))
             if exclude_journal_ids:
                 filters.append(('journal_id', 'not in', exclude_journal_ids))
-        moves = self.search(filters)
+        moves = self.search(filters, limit=1000)
         try:
             if moves:
                 moves.button_validate()
