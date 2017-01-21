@@ -248,6 +248,11 @@ class BudgetExportWizard(models.TransientModel):
             size=10
         )
 
+        # Cell Type
+        DecimalNumber = DataValidation(type="decimal",
+                           operator="greaterThanOrEqual",
+                           formula1=0)
+
         num_format = '#,##0.00'
         ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
         ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
@@ -259,6 +264,7 @@ class BudgetExportWizard(models.TransientModel):
         Sheet.add_data_validation(ExpenseAGFormula)
         Sheet.add_data_validation(RevenueAGFormula)
         Sheet.add_data_validation(JobOrderFormula)
+        Sheet.add_data_validation(DecimalNumber)
 
         protection = Protection(locked=False)
 
@@ -311,9 +317,12 @@ class BudgetExportWizard(models.TransientModel):
                     value = '=IF(ABS(%s%s)>0,"Error","")' % (col_X, row)
                     Sheet.cell(row=row, column=col).value = value
                     Sheet.cell(row=row, column=col).font = TahomaRedFont
+                elif col not in (4, 5):
+                    Sheet.cell(row=row, column=col).protection = protection
+                    DecimalNumber.add(Sheet.cell(row=row, column=col))
+                    Sheet.cell(row=row, column=col).number_format = num_format
                 else:
                     Sheet.cell(row=row, column=col).protection = protection
-                    Sheet.cell(row=row, column=col).number_format = num_format
 
         # Formating TOTAL line
         for col in range(1, 25):
