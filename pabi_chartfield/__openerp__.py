@@ -15,6 +15,7 @@
         'purchase_requisition',
         'purchase_request',
         'stock_request',
+        'document_status_history',
         # 'account_model_generate_hook',
     ],
     'data': [
@@ -22,6 +23,7 @@
         'security/ir.model.access.csv',
         'views/res_config_view.xml',
         'data/cost_control_data.xml',
+        'data/job_order_history_rule.xml',
         'name_search/ir.model.csv',
         'wizard/cost_control_breakdown_wizard.xml',
         'views/account_budget_view.xml',
