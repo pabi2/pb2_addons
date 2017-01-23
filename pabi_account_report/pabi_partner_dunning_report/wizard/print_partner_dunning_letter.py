@@ -45,9 +45,15 @@ class PrintPartnerDunningLetter(models.TransientModel):
         data = {'parameters': {}}
         report_name = False
         if self.report_type == '7':
-            report_name = 'pabi_customer_dunning_letter_1st'
+            if self.lang == 'en_US':
+                report_name = 'pabi_customer_dunning_letter_1st_en'
+            else:
+                report_name = 'pabi_customer_dunning_letter_1st'
         elif self.report_type == '14':
-            report_name = 'pabi_customer_dunning_letter_2nd'
+            if self.lang == 'en_US':
+                report_name = 'pabi_customer_dunning_letter_2nd_en'
+            else:
+                report_name = 'pabi_customer_dunning_letter_2nd'
         elif self.report_type == '19':
             report_name = 'pabi_customer_dunning_letter_3rd'
         # For ORM, we search for ids, and only pass ids to parser and jasper
