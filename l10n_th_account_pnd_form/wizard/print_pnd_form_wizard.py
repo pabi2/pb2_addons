@@ -18,6 +18,13 @@ class PrintPNDFormWizard(models.TransientModel):
         string='Calendar Period',
         required=True,
     )
+    print_format = fields.Selection(
+        [('pdf', 'PDF'),
+         ('xls', 'Excel')],
+        string='Print Format',
+        default='pdf',
+        required=True,
+    )
 
     @api.multi
     def run_report(self):
@@ -25,9 +32,11 @@ class PrintPNDFormWizard(models.TransientModel):
         data_dict = {}
         report_name = False
         if self.income_tax_form == 'pnd53':
-            report_name = 'report_pnd53_form'
+            report_name = self.print_format == 'pdf' and \
+                'report_pnd53_form' or 'report_pnd53_form_xls'
         if self.income_tax_form == 'pnd3':
-            report_name = 'report_pnd3_form'
+            report_name = self.print_format == 'pdf' and \
+                'report_pnd3_form' or 'report_pnd3_form_xls'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
         data_dict['income_tax_form'] = self.income_tax_form

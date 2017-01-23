@@ -9,6 +9,7 @@
                     <group>
                         <group>
                             <field name="income_tax_form" />
+                            <field name="print_format" />
                         </group>
                         <group>
                             <field name="calendar_period_id" />
