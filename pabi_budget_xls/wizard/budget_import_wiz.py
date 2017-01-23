@@ -19,129 +19,58 @@ class BudgetImportWizard(models.TransientModel):
     datas_fname = fields.Char('Import File Name')
 
     @api.model
-    def _update_cost_control_lines(self, workbook, budget):
-        CostCtrl_Sheet = workbook.get_sheet_by_name('JobOrder')
-        max_row = CostCtrl_Sheet.max_row
+    def _create_joborder_lines(self, lines):
+        groupby_job_order_dict = {}
+        plan_id = False
+        for line in lines:
+            plan_id = line['plan_id']
+            if line['cost_control_id'] not in groupby_job_order_dict:
+                groupby_job_order_dict[line['cost_control_id']] = []
+            groupby_job_order_dict[line['cost_control_id']].append(line)
 
-        cc_row = 8
-        for row in range(cc_row, max_row):
-            costcontrol_vals = {'plan_id': budget.id}
+        for joborder in groupby_job_order_dict:
+            costcontrol_vals = {'plan_id': plan_id}
+            costcontrol_vals.update({'cost_control_id': joborder})
             # get job order from each section
-            costcontrol = CostCtrl_Sheet.cell(row=cc_row, column=2).value
-            if costcontrol:
-                costcontrol_id = self.env['cost.control'].search(
-                    [('name', '=', tools.ustr(costcontrol))]
-                )
-                if costcontrol_id:
-                    costcontrol_vals.update(
-                        {'cost_control_id': costcontrol_id.id})
-                else:
-                    raise UserError(_('Please select valid Job Order!'))
-            else:
-                cc_row += 28
-                continue
-
             existing_costcontrol_lines =\
                 self.env['budget.plan.unit.cost.control'].search(
-                    [('plan_id', '=', budget.id),
-                     ('cost_control_id', '=', costcontrol_id.id)])
+                    [('plan_id', '=', plan_id),
+                     ('cost_control_id', '=', joborder)])
             # remove all job order line for plan
             if existing_costcontrol_lines:
                 existing_costcontrol_lines.unlink()
             costcontrol_line = self.env['budget.plan.unit.cost.control'].\
                 create(costcontrol_vals)
-
-            line_start = cc_row + 5
             calculate_vals = {}
             ids = []
-            for row in range(line_start, line_start+20):
+            for line in groupby_job_order_dict[joborder]:
                 # compute values for job order lines
                 line_vals = {'cost_control_line_id': costcontrol_line.id}
-                col = 1
-                charge_type = CostCtrl_Sheet.cell(row=row, column=col).value
-                if charge_type:
-                    if str(charge_type) == 'External':
-                        line_vals.update({'charge_type': 'external'})
-                    else:
-                        line_vals.update({'charge_type': 'internal'})
-
-                col += 1
-                activity_group = CostCtrl_Sheet.cell(row=row, column=col).value
-                if activity_group:
-                    activity_group_id = \
-                        self.env['account.activity.group'].search(
-                            [('name', '=', tools.ustr(activity_group))])
-                    line_vals.update(
-                        {'activity_group_id': activity_group_id.id})
-                else:
-                    continue
-                col += 1
-
-                name = CostCtrl_Sheet.cell(row=row, column=col).value
-                if name:
-                    line_vals.update({'name': tools.ustr(name)})
-                    calculate_vals.update({'description': tools.ustr(name)})
-                col += 1
-                col += 1
-
-                unit = CostCtrl_Sheet.cell(row=row, column=col).value
-                if unit and not isinstance(unit, long):
-                    raise UserError(
-                        _('Please insert float value on\
-                         row: %s - column: %s') % (row, 5))
-                if not unit:
-                    unit = 0.0
-                calculate_vals.update({'unit': unit})
-                line_vals.update({'unit': unit})
-                col += 1
-
-                activity_unit_price = \
-                    CostCtrl_Sheet.cell(row=row, column=col).value
-                if activity_unit_price:
-                    if activity_unit_price and not \
-                            isinstance(activity_unit_price, long):
-                        raise UserError(
-                            _('Please insert float value on\
-                             row: %s - column: %s') % (row, col))
-                else:
-                    activity_unit_price = 0.0
-                calculate_vals.update(
-                    {'activity_unit_price': activity_unit_price})
-                line_vals.update({'activity_unit_price': activity_unit_price})
-                col += 1
-                activity_unit = CostCtrl_Sheet.cell(row=row, column=col).value
-                if activity_unit:
-                    if activity_unit and not isinstance(activity_unit, long):
-                        raise UserError(
-                            _('Please insert float value on\
-                             row: %s - column: %s') % (row, col))
-                else:
-                    activity_unit = 0.0
-                calculate_vals.update({'activity_unit': activity_unit})
-                line_vals.update({'activity_unit': activity_unit})
-                total_act_budget = unit * activity_unit_price * activity_unit
-                col += 1
-                col += 1
-                col += 1
-                m_col = col
-                cnt = 1
-                total_month_budget = 0
-                for c in range(m_col, m_col+12):
-                    val = CostCtrl_Sheet.cell(row=row, column=c).value
-                    m_field = 'm'+str(cnt)
-                    if val:
-                        if val and not isinstance(val, long):
-                            raise UserError(
-                                _('Please insert float value on\
-                                 row: %s - column: %s') % (row, col))
-                        total_month_budget += val
-                        line_vals.update({m_field: val})
-                    cnt += 1
-                    col += 1
-                col += 1
-                col += 1
-                if (total_act_budget - total_month_budget) != 0.0:
-                    raise UserError(_('Please verify budget lines total!'))
+                line_vals.update({'charge_type': line['charge_type'],
+                    'activity_group_id': line['activity_group_id'],
+                    'name': line['description'],
+                    'unit': line['unit'],
+                    'activity_unit_price': line['activity_unit_price'],
+                    'activity_unit': line['activity_unit'],
+                    'm1': line['m1'],
+                    'm2': line['m2'],
+                    'm3': line['m3'],
+                    'm4': line['m4'],
+                    'm5': line['m5'],
+                    'm6': line['m6'],
+                    'm7': line['m7'],
+                    'm8': line['m8'],
+                    'm9': line['m9'],
+                    'm10': line['m10'],
+                    'm11': line['m11'],
+                    'm12': line['m12'],
+                })
+                calculate_vals.update({
+                    'description': line['description'],
+                    'unit': line['unit'],
+                    'activity_unit_price': line['activity_unit_price'],
+                    'activity_unit': line['activity_unit'],
+                })
                 cc_line = self.env['budget.plan.unit.cost.control.line'].\
                     create(line_vals)
                 if cc_line:
@@ -160,13 +89,12 @@ class BudgetImportWizard(models.TransientModel):
                     new_id = self.env['budget.plan.unit.line'].\
                         create(create_vals).id
                     ids.append(new_id)
-            cc_row += 28
             costcontrol_line.write({'detail_ids': [(6, 0, ids)]})
         return True
 
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
-
+        joborder_lines = []
         def _compute_line_vals(NonCostCtrl_Sheet, common_line_vals):
             line_row = 10
             lines_to_create = []
@@ -218,7 +146,16 @@ class BudgetImportWizard(models.TransientModel):
                         break
                     col += 1
                     p += 1
-                lines_to_create.append(line_vals)
+                    
+                cost_control = NonCostCtrl_Sheet.cell(row=row, column=3).value
+                if cost_control:
+                    cost_control_id = self.env['cost.control'].search(
+                        [('name', '=', tools.ustr(cost_control))])
+                    if cost_control_id:
+                        line_vals.update({'cost_control_id' : cost_control_id.id})
+                    joborder_lines.append(line_vals)
+                else:
+                    lines_to_create.append(line_vals)
             return lines_to_create
 
         if not template:
@@ -312,6 +249,7 @@ class BudgetImportWizard(models.TransientModel):
                 _compute_line_vals(Non_JobOrder_Revenue,
                                    common_line_vals=common_line_vals)
             lines_to_create = expense_lines_to_create + revenue_lines_to_create
+            self._create_joborder_lines(joborder_lines)
             # create all lines and assign to plan
             for line in lines_to_create:
                 self.env['budget.plan.unit.line'].create(line)
@@ -333,7 +271,6 @@ class BudgetImportWizard(models.TransientModel):
                 'attachement_id': attachement_id.id
             })
             # process for job order sheet
-#             self._update_cost_control_lines(workbook, budget)
         return {}
 
     @api.multi

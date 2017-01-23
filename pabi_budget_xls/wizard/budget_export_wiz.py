@@ -156,6 +156,13 @@ class BudgetExportWizard(models.TransientModel):
                         non_job_order_lines[ag]
                 row += 1
 
+        line_domain = [('id', 'not in', lines.ids),
+                       ('plan_id', '=', budget.id),
+                       ('budget_method', '=', budget_method),
+                       ('cost_control_id', '!=', False)]
+        joborderlines = self.env['budget.plan.unit.line'].search(line_domain)
+        lines = lines + joborderlines
+
         for line in lines:
             ChargeTypeFormula.add(Sheet.cell(row=row, column=1))
             if budget_method == 'expense':
@@ -249,9 +256,11 @@ class BudgetExportWizard(models.TransientModel):
         )
 
         # Cell Type
-        DecimalNumber = DataValidation(type="decimal",
-                           operator="greaterThanOrEqual",
-                           formula1=0)
+        DecimalNumber = DataValidation(
+            type="decimal",
+            operator="greaterThanOrEqual",
+            formula1=0
+        )
 
         num_format = '#,##0.00'
         ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
