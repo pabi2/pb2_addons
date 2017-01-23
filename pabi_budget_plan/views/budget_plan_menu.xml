@@ -2,7 +2,7 @@
 <openerp>
     <data>
     
-        <menuitem name="Budget Plan" id="menu_action_budget_plan" groups="pabi_budget_plan.group_budget_user" parent="account_budget_activity.menu_budgeting" sequence="10"/>
+        <menuitem name="Budget Plan" id="menu_action_budget_plan" groups="pabi_base.group_budget_user" parent="account_budget_activity.menu_budgeting" sequence="10"/>
     		<menuitem name="Unit Based" id="menu_action_budget_plan_unit" parent="menu_action_budget_plan" sequence="10"/>
     		<menuitem name="Project Based" id="menu_action_budget_plan_project" parent="menu_action_budget_plan" sequence="20"/>
     		<menuitem name="Personnel" id="menu_action_budget_plan_personnel" parent="menu_action_budget_plan" sequence="30"/>

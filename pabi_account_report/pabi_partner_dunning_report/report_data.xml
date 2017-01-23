@@ -44,7 +44,7 @@
 			<field name="copies">1</field>
 		</record>
 
-		# 4st En
+		# 1st En
 		<record id="pabi_customer_dunning_letter_1st_en" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">pabi.partner.dunning.report</field>
@@ -58,7 +58,7 @@
 			<field name="copies">1</field>
 		</record>
 
-		# 5nd En
+		# 2nd En
 		<record id="pabi_customer_dunning_letter_2nd_en" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">pabi.partner.dunning.report</field>

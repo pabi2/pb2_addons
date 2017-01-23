@@ -61,15 +61,15 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" groups="pabi_budget_plan.group_budget_user" name="button_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" groups="pabi_budget_plan.group_budget_manager" name="button_accept" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Verify" groups="pabi_budget_plan.group_operating_unit_budget" name="button_approve" states="accept" type="object" class="oe_highlight"/>
-                        <button string="Accept" groups="pabi_budget_plan.group_cooperate_budget" name="button_accept_corp" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Back to Approved" groups="pabi_budget_plan.group_cooperate_budget" name="button_back_approve" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Back to Verified" groups="pabi_budget_plan.group_cooperate_budget" name="button_back_verify" states="accept_corp" type="object" class="oe_highlight"/>
-                        <button string="Reject" groups="pabi_budget_plan.group_budget_manager" name="button_reject" states="submit,accept" type="object" class="oe_highlight"/>
-                        <button string="Reset to Draft" groups="pabi_budget_plan.group_budget_manager" name="button_draft" states="cancel,reject" type="object"/>
-                        <button string="Cancel" groups="pabi_budget_plan.group_budget_user" name="button_cancel" states="draft" type="object"/>
+                        <button string="Submit" groups="pabi_base.group_budget_user" name="button_submit" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" groups="pabi_base.group_budget_manager" name="button_accept" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="button_approve" states="accept" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="button_accept_corp" states="approve" type="object" class="oe_highlight"/>
+                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="button_back_approve" states="approve" type="object" class="oe_highlight"/>
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="button_back_verify" states="accept_corp" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager" name="button_reject" states="submit,accept" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" groups="pabi_base.group_budget_manager" name="button_draft" states="cancel,reject" type="object"/>
+                        <button string="Cancel" groups="pabi_base.group_budget_user" name="button_cancel" states="draft" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,accept,approve,accept_corp"/>
                     </header>
                     <sheet>
