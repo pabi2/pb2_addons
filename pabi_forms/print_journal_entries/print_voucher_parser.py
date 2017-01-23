@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 from openerp.addons import jasper_reports
-from print_voucher_wizard import *
 
 
 def print_voucher_parser(cr, uid, ids, data, context):
