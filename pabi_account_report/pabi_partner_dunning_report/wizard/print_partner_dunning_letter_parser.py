@@ -45,3 +45,33 @@ jasper_reports.report_jasper(
     'pabi.partner.dunning.report',  # Model View name
     parser=pabi_partner_dunning_letter_3rd_parser,
 )
+
+
+def pabi_partner_dunning_letter_1rd_en_parser(cr, uid, ids, data, context):
+    # For ORM, just pass ids
+    return {
+        'ids': data['parameters']['ids'],
+        'parameters': data['parameters']
+    }
+
+
+jasper_reports.report_jasper(
+    'report.pabi_customer_dunning_letter_1st_en',  # report_name report_data.xml
+    'pabi.partner.dunning.report',  # Model View name
+    parser=pabi_partner_dunning_letter_1rd_en_parser,
+)
+
+
+def pabi_partner_dunning_letter_2nd_en_parser(cr, uid, ids, data, context):
+    # For ORM, just pass ids
+    return {
+        'ids': data['parameters']['ids'],
+        'parameters': data['parameters']
+    }
+
+
+jasper_reports.report_jasper(
+    'report.pabi_customer_dunning_letter_2nd_en',  # report_name report_data.xml
+    'pabi.partner.dunning.report',  # Model View name
+    parser=pabi_partner_dunning_letter_2nd_en_parser,
+)
