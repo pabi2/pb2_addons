@@ -18,27 +18,15 @@ class PrintPartnerDunningLetter(models.TransientModel):
          ('en_US', 'English')],
         string='Language',
         default='th_TH',
+        required=True,
     )
     date_run = fields.Date(
         string='Report Run Date',
         default=lambda self: self._context.get('date_run', False),
+        required=True,
         # Try to pass the context here, but only works in Form Views
         # will fix later. For now, user will have to choose the date_run
     )
-
-    # @api.model
-    # def default_get(self, field_list):
-    #     print self._context
-    #     res = super(PrintPartnerDunningLetter, self).default_get(field_list)
-    #     active_ids = self._context.get('active_ids')
-    #     model = self._context.get('active_model')
-    #     dunnings = self.env[model].browse(active_ids)
-    #     # Check Days Overdue, whether all records has same value
-    #     days_overdue = dunnings.mapped('days_overdue')
-    #     if len(days_overdue) == 1:
-    #         if days_overdue[0] in (7, 14, 19):
-    #             res['report_type'] = str(days_overdue[0])
-    #     return res
 
     @api.multi
     def action_print_dunning_letter(self):
@@ -68,13 +56,24 @@ class PrintPartnerDunningLetter(models.TransientModel):
         company = self.env.user.company_id
         data['parameters']['ids'] = active_ids
         data['parameters']['date_run'] = self.date_run
+        data['parameters']['litigation_contact'] = \
+            company.litigation_contact
         data['parameters']['signature_dunning'] = \
             company.signature_dunning
         data['parameters']['signature_litigation'] = \
             company.signature_litigation
         data['parameters']['account_dept_contact'] = \
             company.account_dept_contact
-
+        # EN
+        data['parameters']['litigation_contact_en'] = \
+            company.litigation_contact_en
+        data['parameters']['signature_dunning_en'] = \
+            company.signature_dunning_en
+        data['parameters']['signature_litigation_en'] = \
+            company.signature_litigation_en
+        data['parameters']['account_dept_contact_en'] = \
+            company.account_dept_contact_en
+        print data['parameters']
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
