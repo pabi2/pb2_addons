@@ -190,7 +190,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
         user = self.env.user
         employee = user.partner_id.employee_id
         for rec in self:
-            if user.has_group('pabi_budget_plan.group_budget_manager') and \
+            if user.has_group('pabi_base.group_budget_manager') and \
                     employee.section_id.division_id == rec.division_id:
                 continue
             elif user.id == SUPERUSER_ID:

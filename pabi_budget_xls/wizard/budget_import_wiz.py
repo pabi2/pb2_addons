@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import sys
 import cStringIO
+from datetime import datetime
 
 import openpyxl
 
@@ -154,7 +155,7 @@ class BudgetImportWizard(models.TransientModel):
                         'section_id': costcontrol_line.plan_id.section_id.id,
                         'cost_control_id': costcontrol_line.cost_control_id.id,
                     }
-                    #compute values for plan job order lines and create lines
+                    # compute values for plan job order lines and create lines
                     create_vals.update(plan_line_vals)
                     new_id = self.env['budget.plan.unit.line'].\
                         create(create_vals).id
@@ -167,7 +168,7 @@ class BudgetImportWizard(models.TransientModel):
     def update_budget_prepare(self, budget_ids, template=None):
 
         def _compute_line_vals(NonCostCtrl_Sheet, common_line_vals):
-            line_row = 11
+            line_row = 10
             lines_to_create = []
             max_row = NonCostCtrl_Sheet.max_row
             for row in range(line_row, max_row):
@@ -186,14 +187,14 @@ class BudgetImportWizard(models.TransientModel):
                     [('name', '=', tools.ustr(ag_group))])
                 if ag_group_id:
                     line_vals.update({'activity_group_id': ag_group_id.id})
-                description = NonCostCtrl_Sheet.cell(row=row, column=3).value
+                description = NonCostCtrl_Sheet.cell(row=row, column=4).value
                 if description == '=FALSE()':
                     description = ''
-                unit = NonCostCtrl_Sheet.cell(row=row, column=5).value or 0.0
+                unit = NonCostCtrl_Sheet.cell(row=row, column=6).value or 0.0
                 act_unitprice\
-                    = NonCostCtrl_Sheet.cell(row=row, column=6).value or 0.0
+                    = NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
                 activity_unit =\
-                    NonCostCtrl_Sheet.cell(row=row, column=7).value or 0.0
+                    NonCostCtrl_Sheet.cell(row=row, column=8).value or 0.0
                 line_vals.update({
                     'unit': unit,
                     'activity_unit_price': act_unitprice,
@@ -202,7 +203,7 @@ class BudgetImportWizard(models.TransientModel):
                 })
                 # total_act_budget = unit * act_unitprice * activity_unit
                 p = 1
-                col = 10
+                col = 11
                 total_month_budget = 0.0
                 while p != 13:
                     val = NonCostCtrl_Sheet.cell(row=row, column=col).value
@@ -213,7 +214,7 @@ class BudgetImportWizard(models.TransientModel):
                     if val:
                         total_month_budget += val
                     line_vals.update({'m' + str(p): val})
-                    if col == 21:
+                    if col == 22:
                         break
                     col += 1
                     p += 1
@@ -245,7 +246,7 @@ class BudgetImportWizard(models.TransientModel):
                     _('You can update budget plan only in draft state!'))
 
             Non_JobOrder_Expense = \
-                workbook.get_sheet_by_name('Non_JobOrder_Expense')
+                workbook.get_sheet_by_name('Expense')
             vals = {}
 
             bg_id = Non_JobOrder_Expense.cell(row=1, column=5).value
@@ -279,8 +280,10 @@ class BudgetImportWizard(models.TransientModel):
                 vals.update({'section_id': section_id.id})
             export_date = Non_JobOrder_Expense.cell(row=4, column=2).value
             if export_date:
+                export_date = datetime.strftime(
+                                datetime.strptime(
+                                    export_date, '%d-%m-%Y'), '%Y-%m-%d')
                 vals.update({'date': export_date})
-
             responsible_by = Non_JobOrder_Expense.cell(row=5, column=2).value
             responsible_by_id = self.env['res.users'].search(
                 [('name', '=', tools.ustr(responsible_by))])
@@ -303,7 +306,7 @@ class BudgetImportWizard(models.TransientModel):
                                    common_line_vals=common_line_vals)
             common_line_vals['budget_method'] = 'revenue'
             Non_JobOrder_Revenue = \
-                workbook.get_sheet_by_name('Non_JobOrder_Revenue')
+                workbook.get_sheet_by_name('Revenue')
             # compute values for revenue lines
             revenue_lines_to_create = \
                 _compute_line_vals(Non_JobOrder_Revenue,
@@ -330,7 +333,7 @@ class BudgetImportWizard(models.TransientModel):
                 'attachement_id': attachement_id.id
             })
             # process for job order sheet
-            self._update_cost_control_lines(workbook, budget)
+#             self._update_cost_control_lines(workbook, budget)
         return {}
 
     @api.multi

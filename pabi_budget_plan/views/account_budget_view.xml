@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem name="Budgeting" groups="pabi_budget_plan.group_budget_user"  id="account_budget_activity.menu_budgeting" sequence="51"/>
+        <menuitem name="Budgeting" groups="pabi_base.group_budget_user"  id="account_budget_activity.menu_budgeting" sequence="51"/>
 
         <record id="account_budget_view_form" model="ir.ui.view" >
             <field name="name">account.budget.view.form</field>
@@ -17,22 +17,22 @@
                 	<field name="currency_id" groups="base.group_multi_currency"/>
                 </xpath>
                 <xpath expr="//button[@name='confirm']" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//button[@name='validate']" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//button[@name='done']" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//button[@name='draft']" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//button[@name='cancel']" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//button[@name='new_minor_revision']" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//div[@name='buttons']/button[1]" position="attributes">
                     <attribute name="type">object</attribute>
@@ -47,7 +47,7 @@
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//button" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
             </field>
         </record>
@@ -58,7 +58,7 @@
             <field name="inherit_id" ref="account_budget_activity.view_account_budget_line_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//button" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
             </field>
         </record>
@@ -69,7 +69,7 @@
             <field name="inherit_id" ref="pabi_chartfield.unit_base_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//button" position="attributes">
-                    <attribute name="groups">pabi_budget_plan.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
             </field>
         </record>
