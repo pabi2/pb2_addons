@@ -54,11 +54,13 @@
             <field name="name">view.cost.control.tree</field>
             <field name="model">cost.control</field>
             <field name="arch" type="xml">
-                <tree string="Job Order">
+                <tree string="Job Order" colors="grey:(not active)">
                     <field name="cost_control_type_id"/>
                     <field name="name"/>
                     <field name="code" />
                     <field name="description" />
+                    <field name="owner_level"/>
+                    <field name="active"/>
                 </tree>
             </field>
         </record>
@@ -75,14 +77,42 @@
                     <group>
                         <group>
                             <field name="cost_control_type_id" />
+                            <field name="public"/>
+                            <field name="owner_level" attrs="{'invisible': [('public', '=', True)], 'required': [('public', '=', False)]}"/>
+                            <field name="org_id" attrs="{'invisible': [('owner_level', '!=', 'org')], 'required': [('owner_level', '=', 'org')]}"/>
+                            <field name="sector_id" attrs="{'invisible': [('owner_level', '!=', 'sector')], 'required': [('owner_level', '=', 'sector')]}"/>
+                            <field name="subsector_id" attrs="{'invisible': [('owner_level', '!=', 'subsector')], 'required': [('owner_level', '=', 'subsector')]}"/>
+                            <field name="division_id" attrs="{'invisible': [('owner_level', '!=', 'division')], 'required': [('owner_level', '=', 'division')]}"/>
+                            <field name="section_id" attrs="{'invisible': [('owner_level', '!=', 'section')], 'required': [('owner_level', '=', 'section')]}"/>
                         </group>
                         <group>
+                            <field name="active"/>
                         	<field name="code" />
                             <field name="description" />
                         </group>
                     </group>
-                    <notebook></notebook>
+                    <notebook>
+                        <page string="Status History">
+                            <field name="auditlog_line_ids"/>
+                        </page>
+                    </notebook>
                 </form>
+            </field>
+        </record>
+        
+        <record id="view_cost_control_search" model="ir.ui.view">
+            <field name="name">view.cost.control.search</field>
+            <field name="model">cost.control</field>
+            <field name="arch" type="xml">
+                <search string="Search Job Order">
+                    <field name="name" string="Job Order" filter_domain="['|',('name','ilike',self), ('code','ilike',self)]"/>
+                    <filter name="public" string="NSTDA Wide" domain="[('public','=',True)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_owner_level" string="Owner Level" context="{'group_by':'owner_level'}"/>
+                        <filter name="group_by_active" string="Active" context="{'group_by':'active'}"/>
+                    </group>
+               </search>
             </field>
         </record>
 
@@ -91,6 +121,7 @@
             <field name="res_model">cost.control</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_cost_control_tree"/>
+            <field name="context">{'active_test': False}</field>
         </record>
 
         <menuitem name="Job Order"
