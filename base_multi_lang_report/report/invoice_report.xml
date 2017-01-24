@@ -1,35 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="account.account_invoices" model="ir.actions.report.xml">
-            <field name="model">account.invoice</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="name">Invoices[EN]</field>
-            <field name="file">account.report_invoice</field>
-            <field name="report_name">account.report_invoice</field>
-            <field name="context">{'lang': 'en_US'}</field>
-<!--            <field name="attachment_use">False</field-->
-            <field name="attachment">(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')</field>
+        <report 
+            id="thai_account_invoices"
+            model="account.invoice"
+            string="Invoices[TH]"
+            report_type="qweb-pdf"
+            name="base_multi_lang_report.report_invoice_thai"
+            file="base_multi_lang_report.report_invoice_thai"
+        />
+        <record id="base_multi_lang_report.thai_account_invoices" model="ir.actions.report.xml">
+            <field name="context">{'lang': 'th_TH'}</field>
         </record>
-
-        <template id="account.report_invoice_thai">
+        <template id="report_invoice_thai">
             <t t-call="report.html_container">
                 <t t-foreach="doc_ids" t-as="doc_id">
                     <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', 'account.report_invoice_document')"/>
                 </t>
             </t>
         </template>
-
-        <record id="account_invoices_thai" model="ir.actions.report.xml">
-            <field name="model">account.invoice</field>
-            <field name="string">Invoices[TH]</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="name">Invoices[TH]</field>
-            <field name="report_name">account.report_invoice_thai</field>
-            <field name="file">account.report_invoice_thai</field>
-            <field name="context">{'lang': 'th_TH'}</field>
-<!--            <field name="attachment_use"-->
-            <field name="attachment">(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')</field>
-        </record>
     </data>
 </openerp>
