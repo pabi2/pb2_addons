@@ -20,7 +20,8 @@ class PrintPNDFormWizard(models.TransientModel):
     )
     print_format = fields.Selection(
         [('pdf', 'PDF'),
-         ('xls', 'Excel')],
+         ('xls', 'XLS'),
+         ('csv', 'CSV')],
         string='Print Format',
         default='pdf',
         required=True,
@@ -29,14 +30,24 @@ class PrintPNDFormWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
-        data_dict = {}
+        data_dict = {'no_header': False}
         report_name = False
         if self.income_tax_form == 'pnd53':
-            report_name = self.print_format == 'pdf' and \
-                'report_pnd53_form' or 'report_pnd53_form_xls'
+            if self.print_format == 'pdf':
+                report_name = 'report_pnd53_form'
+            elif self.print_format == 'xls':
+                report_name = 'report_pnd53_form_xls'
+            elif self.print_format == 'csv':
+                data_dict['no_header'] = True
+                report_name = 'report_pnd53_form_csv'
         if self.income_tax_form == 'pnd3':
-            report_name = self.print_format == 'pdf' and \
-                'report_pnd3_form' or 'report_pnd3_form_xls'
+            if self.print_format == 'pdf':
+                report_name = 'report_pnd3_form'
+            elif self.print_format == 'xls':
+                report_name = 'report_pnd3_form_xls'
+            elif self.print_format == 'csv':
+                data_dict['no_header'] = True
+                report_name = 'report_pnd3_form_csv'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
         data_dict['income_tax_form'] = self.income_tax_form

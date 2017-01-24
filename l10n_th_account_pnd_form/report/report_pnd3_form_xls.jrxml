@@ -27,6 +27,7 @@
 	<parameter name="wht_period_id" class="java.lang.Integer"/>
 	<parameter name="print_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="print_position" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="no_header" class="java.lang.Boolean" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select wht_sequence_display, number, a.date_value, tax_payer, supplier_taxid, supplier_branch,
 supplier_name, title, supplier_street, supplier_street2, supplier_township,
@@ -85,6 +86,7 @@ where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_
 	</variable>
 	<pageHeader>
 		<band height="15">
+			<printWhenExpression><![CDATA[$P{no_header} == false]]></printWhenExpression>
 			<staticText>
 				<reportElement style="style1" x="0" y="0" width="100" height="15"/>
 				<textElement markup="none">
