@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <button name="action_cancel_draft" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
+                <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id" />
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <button name="action_cancel_draft" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
+                <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

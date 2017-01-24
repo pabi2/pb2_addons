@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from openerp import api, models, fields
 
 
@@ -44,13 +45,20 @@ class AccountTaxWizard(models.TransientModel):
             res['invoice_tax_id'] = tax.id
             doc = tax.invoice_id
             date_doc = doc.date_invoice
+            res['is_readonly'] = doc.state != 'draft'
         else:
             res['voucher_tax_id'] = tax.id
             doc = tax.voucher_id
+            if doc.auto_recognize_vat:
+                res['is_readonly'] = doc.state != 'draft'
+            elif doc.recognize_vat_move_id:
+                res['is_readonly'] = True
         res['base'] = tax.base
         res['amount'] = tax.amount
-        res['is_readonly'] = doc.state != 'draft'
         res['detail_ids'] = []
+        # For refund, show negative number
+        sign = doc.journal_id.type in ('sale_refund', 'purchase_refund') \
+            and -1 or 1
         for line in tax.detail_ids:
             partner = line.partner_id or doc.partner_id
             vals = {
@@ -62,16 +70,14 @@ class AccountTaxWizard(models.TransientModel):
                 'invoice_date': (line.invoice_date or
                                  date_doc or
                                  False),
-                'base': line.base or tax.base or False,
-                'amount': line.amount or tax.amount or False,
+                'base': line.base or (sign * tax.base) or False,
+                'amount': line.amount or (sign * tax.amount) or False,
                 'tax_sequence': line.tax_sequence,
                 'addition': line.addition,
             }
-            # Supplier Invoice only, invoice number is manually keyed
             if active_model == 'account.invoice.tax':
                 if doc.type in ('in_invoice', 'in_refund'):
                     vals['invoice_number'] = (line.invoice_number or
-                                              doc.supplier_invoice_number or
                                               False)
             else:
                 if doc.type in ('payment'):
@@ -83,10 +89,10 @@ class AccountTaxWizard(models.TransientModel):
     def save_tax_detail(self):
         self.ensure_one()
         active_model = self._context.get('active_model')
-        if active_model == 'account.invoice.tax':
-            self.invoice_tax_id.detail_ids.unlink()
-        elif active_model == 'account.voucher.tax':
-            self.voucher_tax_id.detail_ids.unlink()
+        # if active_model == 'account.invoice.tax':
+        #     self.invoice_tax_id.detail_ids.unlink()
+        # elif active_model == 'account.voucher.tax':
+        #     self.voucher_tax_id.detail_ids.unlink()
         doc = False
         date_doc = False
         line_tax = False
@@ -101,15 +107,15 @@ class AccountTaxWizard(models.TransientModel):
         InvoiceTax = self.env['account.invoice.tax']
         TaxDetail = self.env['account.tax.detail']
         for line in self.detail_ids:
-            vals = {
-                'invoice_tax_id': self.invoice_tax_id.id,
-                'voucher_tax_id': self.voucher_tax_id.id,
-                'partner_id': line.partner_id.id,
-                'invoice_number': line.invoice_number,
-                'invoice_date': line.invoice_date,
-                'base': line.base,
-                'amount': line.amount,
-            }
+            doc_type = doc.type in ('out_invoice', 'out_refund', 'receipt') \
+                and 'sale' or 'purchase'
+            vals = TaxDetail._prepare_tax_detail(self.invoice_tax_id.id,
+                                                 self.voucher_tax_id.id,
+                                                 doc_type,
+                                                 line.partner_id.id,
+                                                 line.invoice_number,
+                                                 line.invoice_date,
+                                                 line.base, line.amount)
             if line.tax_detail_id:
                 line.tax_detail_id.write(vals)
             else:
@@ -127,10 +133,11 @@ class AccountTaxWizard(models.TransientModel):
                                               doc.company_id.id,
                                               date_doc,
                                               )['value']['tax_amount']
-        line_tax.write({'base': sum_base,
-                        'amount': sum_amount,
-                        'base_amount': base_amount,
-                        'tax_amount': tax_amount,
+        # use abs() when write to cover refund case when wizard show (-)
+        line_tax.write({'base': abs(sum_base),
+                        'amount': abs(sum_amount),
+                        'base_amount': abs(base_amount),
+                        'tax_amount': abs(tax_amount),
                         })
         # Update Supplier Invoice Number
         if active_model == 'account.invoice.tax':
@@ -169,9 +176,17 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         string='Tax ID',
         readonly=True,
     )
+    vat_readonly = fields.Char(
+        string='Tax ID',
+        related='vat',
+    )
     taxbranch = fields.Char(
         string='Tax Branch ID',
         readonly=True,
+    )
+    taxbranch_readonly = fields.Char(
+        string='Tax Branch ID',
+        related='taxbranch',
     )
     invoice_number = fields.Char(
         string='Tax Invoice Number',
@@ -194,14 +209,31 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
         readonly=True,
         help="Running sequence for the same period. Reset every period",
     )
+    tax_sequence_display = fields.Char(
+        string='Sequence',
+        compute='_compute_tax_sequence_display',
+    )
     addition = fields.Boolean(
-        strin='Past Period Tax',
+        string='Past Period Tax',
         default=False,
+        readonly=True,
     )
     is_readonly = fields.Boolean(
         related='wizard_id.is_readonly',
         string='Readonly',
     )
+
+    @api.multi
+    @api.depends('tax_sequence')
+    def _compute_tax_sequence_display(self):
+        for rec in self:
+            if rec.period_id and rec.tax_sequence:
+                date_start = rec.period_id.date_start
+                mo = datetime.datetime.strptime(date_start,
+                                                '%Y-%m-%d').date().month
+                month = '{:02d}'.format(mo)
+                sequence = '{:04d}'.format(rec.tax_sequence)
+                rec.tax_sequence_display = '%s/%s' % (month, sequence)
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):

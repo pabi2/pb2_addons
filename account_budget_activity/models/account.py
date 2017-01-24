@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
+from .account_activity import ActivityCommon
 
 
 class AccountFiscalyear(models.Model):
@@ -90,6 +91,16 @@ class AccountJournal(models.Model):
         string='Commit Budget',
         default=False,
     )
+    so_commitment_analytic_journal_id = fields.Many2one(
+        'account.analytic.journal',
+        string='Analytic Journal for SO Commitments',
+        domain=[('type', '=', 'general')]
+    )
+    so_commitment_account_id = fields.Many2one(
+        'account.account',
+        string='Account for SO Commitment',
+        domain=[('type', '!=', 'view')]
+    )
     pr_commitment_analytic_journal_id = fields.Many2one(
         'account.analytic.journal',
         string='Analytic Journal for PR Commitments',
@@ -120,3 +131,38 @@ class AccountJournal(models.Model):
         string='Account for Expense Commitment',
         domain=[('type', '!=', 'view')]
     )
+
+
+class AccountAccount(models.Model):
+    _inherit = 'account.account'
+
+    activity_ids = fields.One2many(
+        'account.activity',
+        'account_id',
+        string='Activities',
+        readonly=True,
+    )
+
+
+class AccountModelLine(ActivityCommon, models.Model):
+    _inherit = 'account.model.line'
+
+    @api.model
+    def create(self, vals):
+        line = super(AccountModelLine, self).create(vals)
+        Analytic = self.env['account.analytic.account']
+        line.analytic_account_id = \
+            Analytic.create_matched_analytic(line)
+        return line
+
+    @api.multi
+    def write(self, vals):
+        res = super(AccountModelLine, self).write(vals)
+        if self.env.context.get('MyModelLoopBreaker'):
+            return res
+        self = self.with_context(MyModelLoopBreaker=True)
+        for line in self:
+            Analytic = self.env['account.analytic.account']
+            line.analytic_account_id = \
+                Analytic.create_matched_analytic(line)
+        return res

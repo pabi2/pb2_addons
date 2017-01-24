@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_period_form" model="ir.ui.view">
+            <field name="name">view.account.period.form</field>
+            <field name="model">account.period</field>
+            <field name="inherit_id" ref="l10n_th_account.view_account_period_form"/>
+            <field name="arch" type="xml">
+                <notebook name="tax_sequence" position="inside">
+                    <page string="Tax Detail's Sequence">
+                        <field name="taxdetail_sequence_ids" readonly="1">
+                            <tree editable="bottom">
+                                <field name="sequence_id"/>
+                                <field name="doc_type"/>
+                                <field name="number_next_actual"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -6,6 +6,13 @@ from openerp import models, fields, api
 class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
 
+    date_value_history_ids = fields.One2many(
+        'date.value.history',
+        'voucher_id',
+        string='Value Date History',
+        readonly=True,
+    )
+
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()

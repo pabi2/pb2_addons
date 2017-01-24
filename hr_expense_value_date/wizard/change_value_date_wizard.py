@@ -12,6 +12,10 @@ class ChangeDateValue(models.TransientModel):
         default=lambda self: fields.Date.context_today(self),
         required=True,
     )
+    reason = fields.Char(
+        string="Reason",
+        required=True,
+    )
 
     @api.multi
     def action_change_date_value(self):
@@ -25,7 +29,7 @@ class ChangeDateValue(models.TransientModel):
                 voucher.date_value = self.date_value
                 for line in voucher.line_ids:
                     invoice = line.move_line_id.invoice
-                    if invoice and invoice.expense_id:
+                    if invoice:
                         self.env['date.value.history'].create({
                             'voucher_id': voucher.id,
                             'invoice_id': invoice.id,
@@ -34,5 +38,6 @@ class ChangeDateValue(models.TransientModel):
                             'amount': line.amount,
                             'user_id': self.env.user.id,
                             'date': fields.Date.context_today(voucher),
+                            'reason': self.reason,
                         })
         return True

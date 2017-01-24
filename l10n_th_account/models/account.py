@@ -144,3 +144,13 @@ class AccountTaxCode(models.Model):
             self.tax_code_type = 'wht'
         elif is_undue_tax:
             self.tax_code_type = 'undue'
+
+
+class AccountPeriod(models.Model):
+    _inherit = 'account.period'
+
+    wht_sequence_ids = fields.One2many(
+        'withholding.tax.sequence',
+        'period_id',
+        string='WHT Sequence',
+    )

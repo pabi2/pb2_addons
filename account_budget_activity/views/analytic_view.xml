@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-    
-        <record id="view_account_analytic_journal_form" model="ir.ui.view" >
+
+        <record id="view_account_analytic_journal_form" model="ir.ui.view">
             <field name="name">view.account.analytic.journal.form</field>
             <field name="model">account.analytic.journal</field>
             <field name="inherit_id" ref="account.view_account_analytic_journal_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='type']" position="after">
-                	<field name="budget_commit_type" />
-                </xpath> 
+                    <field name="budget_commit_type"/>
+                    <field name="budget_method"/>
+                </xpath>
             </field>
-        </record>   
-        
-        
-        <record id="view_account_analytic_account_form" model="ir.ui.view" >
+        </record>
+
+        <record id="view_account_analytic_account_form" model="ir.ui.view">
             <field name="name">view.account.analytic.account.form</field>
             <field name="model">account.analytic.account</field>
             <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/div[@class='oe_title']" position="after">
-                	<group name="multi_dimension" >
-                		<group name="chartfields" >
-                		</group>
-                		<group name="activity" >
-                			<field name="product_id" />
-		                    <field name="activity_group_id" invisible="0" />
-		                    <field name="activity_id" />
-                		</group>
-                	</group>
-                </xpath> 
+                    <group name="multi_dimension">
+                        <group name="chartfields"></group>
+                        <group name="activity">
+                            <field name="product_id"/>
+                            <field name="activity_group_id" invisible="0"/>
+                            <field name="activity_id"/>
+                        </group>
+                    </group>
+                </xpath>
             </field>
-        </record>         
+        </record>
 
         <record id="view_account_analytic_account_tree" model="ir.ui.view">
             <field name="name">account.analytic.account.tree</field>
@@ -39,9 +38,9 @@
             <field name="inherit_id" ref="account.view_account_analytic_account_tree"/>
             <field name="arch" type="xml">
                 <field name="debit" position="before">
-                	<field name="product_id" />
-                    <field name="activity_group_id" invisible="0" />
-                    <field name="activity_id" />
+                    <field name="product_id"/>
+                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_id"/>
                 </field>
             </field>
         </record>
@@ -58,32 +57,34 @@
                 </xpath>
             </field>
         </record>
-        
 
-        <record id="view_account_analytic_line_form" model="ir.ui.view" >
+        <record id="view_account_analytic_line_form" model="ir.ui.view">
             <field name="name">view.account.analytic.line.form</field>
             <field name="model">account.analytic.line</field>
             <field name="inherit_id" ref="account.view_account_analytic_line_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/group" position="inside">
-                	<group name="doc_ref" string="Doc Ref">
-               			<field name="doc_id" />
+                	<group>
+               			<field name="period_id"/>
+               			<field name="quarter"/>
                 	</group>
-                </xpath> 
+                </xpath>
             </field>
-        </record>   
-        <record id="view_account_analytic_line_tree" model="ir.ui.view" >
+        </record>
+        <record id="view_account_analytic_line_tree" model="ir.ui.view">
             <field name="name">view.account.analytic.line.tree</field>
             <field name="model">account.analytic.line</field>
             <field name="inherit_id" ref="account.view_account_analytic_line_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="inside">
-              		<field name="doc_id" />
-              		<field name="activity_group_id" invisible="1"/>
-              		<field name="activity_id" invisible="1"/>
+                    <!-- <field name="doc_id"/> -->
+                    <field name="period_id"/>
+                		<field name="quarter"/>
+                    <field name="activity_group_id" invisible="1"/>
+                    <field name="activity_id" invisible="1"/>
                 </xpath>
             </field>
-        </record>     
+        </record>
 
         <record id="view_account_analytic_line_filter" model="ir.ui.view">
             <field name="name">view.account.analytic.line.filter</field>
@@ -95,7 +96,7 @@
                     <filter string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
                 </xpath>
             </field>
-        </record>        
-            
-	</data>
+        </record>
+
+    </data>
 </openerp>

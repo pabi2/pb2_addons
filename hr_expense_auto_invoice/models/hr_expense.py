@@ -12,7 +12,7 @@ class HRExpenseExpese(models.Model):
     pay_to = fields.Selection(
         [('employee', 'Employee'),
          ('supplier', 'Supplier')],
-        string='Pay to',
+        string='Pay Type',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -240,17 +240,25 @@ class HRExpenseExpese(models.Model):
                     or all lines with zero amount.'))
         return super(HRExpenseExpese, self).expense_confirm()
 
+    @api.model
+    def _is_valid_for_invoice(self):
+        # HOOK
+        return True
+
     @api.multi
     def action_move_create(self):
         '''
         Create Supplier Invoice (instead of the old style Journal Entries)
         '''
         for expense in self:
-            if not expense.invoice_id:
-                invoice = expense._create_supplier_invoice_from_expense()
-                expense.invoice_id = invoice
-            expense.write({'account_move_id': expense.invoice_id.move_id.id,
-                           'state': 'done'})
+            if expense._is_valid_for_invoice():
+                if not expense.invoice_id:
+                    invoice = expense._create_supplier_invoice_from_expense()
+                    expense.invoice_id = invoice
+                expense.write({
+                    'account_move_id': expense.invoice_id.move_id.id,
+                    'state': 'done'
+                })
         return True
 
     @api.multi

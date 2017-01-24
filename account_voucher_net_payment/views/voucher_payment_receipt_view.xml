@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_vendor_payment_net_payment" model="ir.actions.act_window">
+            <field name="name">Supplier Payments (net AR)</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('journal_id.type', 'in', ['bank', 'cash']), ('type','=','payment')]</field>
+            <field name="context">{'type':'payment', 'allow_net_payment': True}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="account_voucher.view_voucher_filter_vendor_pay"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new supplier payment.
+                </p>
+                <p>
+                    Odoo helps you easily track payments you make and the remaining balances you need to pay your suppliers.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_vendor_payment_tree_net_payment" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_vendor_payment_net_payment"/>
+        </record>
+        <record id="action_vendor_payment_form_net_payment" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_voucher.view_vendor_payment_form"/>
+            <field name="act_window_id" ref="action_vendor_payment_net_payment"/>
+        </record>
+
+        <menuitem action="action_vendor_payment_net_payment" sequence="13" id="menu_action_vendor_paymen_net_payment" parent="account.menu_finance_payables"/>
+
+    </data>
+</openerp>

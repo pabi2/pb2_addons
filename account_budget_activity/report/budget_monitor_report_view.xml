@@ -1,73 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-<data>
-    <record id="view_budget_monitor_report_graph" model="ir.ui.view">
-         <field name="name">budget.monitor.report.graph</field>
-         <field name="model">budget.monitor.report</field>
-         <field name="arch" type="xml">
-             <graph string="Budget Monitor" type="pivot">
-                 <field name="activity_group_id" type="row"/>
-                 <field name="fiscalyear_id" type="col"/>
-                 <field name="planned_amount" type="measure"/>
-                 <field name="released_amount" type="measure"/>
-                 <field name="amount_pr_commit" type="measure"/>
-                 <field name="amount_po_commit" type="measure"/>
-                 <field name="amount_exp_commit" type="measure"/>
-                 <field name="amount_actual" type="measure"/>
-                 <field name="amount_balance" type="measure"/>
-             </graph>
-         </field>
-    </record>
-    
-    <record id="view_budget_monitor_report_tree" model="ir.ui.view">
-         <field name="name">budget.monitor.report.tree</field>
-         <field name="model">budget.monitor.report</field>
-         <field name="arch" type="xml">
-             <tree string="Budget Monitor" >
-             	 <field name="doc_ref" invisible="0"/>
-             	 <field name="doc_id"  invisible="1"/>
-                 <field name="activity_group_id" />
-                 <field name="activity_id" />
-                 <field name="user_id" />
-                 <field name="fiscalyear_id" />
-                 <field name="planned_amount" />
-                 <field name="released_amount" />
-                 <field name="amount_pr_commit" />
-                 <field name="amount_po_commit" />
-                 <field name="amount_exp_commit" />
-                 <field name="amount_actual" />
-                 <field name="amount_balance" />
-             </tree>
-         </field>
-    </record>
+    <data>
+        <record id="view_budget_monitor_report_graph" model="ir.ui.view">
+            <field name="name">budget.monitor.report.graph</field>
+            <field name="model">budget.monitor.report</field>
+            <field name="arch" type="xml">
+                <graph string="Budget Monitor" type="pivot">
+                    <field name="budget_method" type="row"/>
+                    <field name="activity_group_id" type="row"/>
+                    <field name="period_id" type="row"/>
+                    <field name="quarter" type="row"/>
+                    <field name="fiscalyear_id" type="col"/>
+                    <field name="planned_amount" type="measure"/>
+                    <field name="released_amount" type="measure"/>
+                    <field name="amount_so_commit" type="measure"/>
+                    <field name="amount_pr_commit" type="measure"/>
+                    <field name="amount_po_commit" type="measure"/>
+                    <field name="amount_exp_commit" type="measure"/>
+                    <field name="amount_actual" type="measure"/>
+                    <field name="amount_balance" type="measure"/>
+                </graph>
+            </field>
+        </record>
 
-    <record id="view_budget_monitor_report_search" model="ir.ui.view">
-        <field name="name">budget.monitor.report.search</field>
-        <field name="model">budget.monitor.report</field>
-        <field name="arch" type="xml">
-            <search string="Budget Monitor">
-                <group expand="1" string="Group By">
-                    <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/>
-                    <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
-                    <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
-                    <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
+        <record id="view_budget_monitor_report_tree" model="ir.ui.view">
+            <field name="name">budget.monitor.report.tree</field>
+            <field name="model">budget.monitor.report</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Monitor">
+                    <field name="budget_method"/>
+                    <!-- <field name="doc_ref" invisible="0"/> -->
+                    <!-- <field name="doc_id" invisible="1"/> -->
+                    <field name="period_id"/>
+                    <field name="quarter"/>
+                    <field name="activity_group_id"/>
+                    <field name="product_activity_id"/>
+                    <field name="user_id"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_amount"/>
+                    <field name="released_amount"/>
+                    <field name="amount_so_commit"/>
+                    <field name="amount_pr_commit"/>
+                    <field name="amount_po_commit"/>
+                    <field name="amount_exp_commit"/>
+                    <field name="amount_actual"/>
+                    <field name="amount_balance"/>
+                </tree>
+            </field>
+        </record>
 
-    <record id="action_budget_monitor_report" model="ir.actions.act_window">
-        <field name="name">Budget Monitor</field>
-        <field name="res_model">budget.monitor.report</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">graph,tree</field>
-        <field name="context">{}</field>
-        <field name="search_view_id" ref="view_budget_monitor_report_search"/>
-        <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
+        <record id="view_budget_monitor_report_search" model="ir.ui.view">
+            <field name="name">budget.monitor.report.search</field>
+            <field name="model">budget.monitor.report</field>
+            <field name="arch" type="xml">
+                <search string="Budget Monitor">
+                    <group expand="1" string="Group By">
+                        <filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
+                        <!-- <filter string="Document" name="doc_ref" context="{'group_by':'doc_ref', 'residual_visible':True}"/> -->
+                        <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
+                        <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+                        <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
+                        <filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Period" context="{'group_by':'period_id'}"/>
+                        <filter string="Quarter" context="{'group_by':'quarter'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
-    </record>
+        <record id="action_budget_monitor_report" model="ir.actions.act_window">
+            <field name="name">Budget Monitor</field>
+            <field name="res_model">budget.monitor.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph,tree</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="view_budget_monitor_report_search"/>
+            <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
+        </record>
 
-    <menuitem action="action_budget_monitor_report" id="menu_action_budget_monitor_report" parent="menu_action_budget_report" sequence="3"/>
+        <menuitem action="action_budget_monitor_report" id="menu_action_budget_monitor_report" parent="menu_action_budget_report" sequence="3"/>
 
-</data>
+    </data>
 </openerp>

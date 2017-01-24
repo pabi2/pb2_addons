@@ -3,7 +3,7 @@ import time
 
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, Warning as UserError
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, float_round as round
 
 
 class PurchaseOrder(models.Model):
@@ -52,8 +52,16 @@ class PurchaseOrder(models.Model):
         string='Invoice Created',
         compute='_compute_plan_invoice_created',
         store=True,
-        help="Compute whether number of invoices (not cancelled invoices) "
-        "are created as planned"
+        help="Compute whether number of invoices "
+        "(not cancelled invoices) are created as planned",
+    )
+    total_invoice_amount = fields.Float(
+        compute='_compute_plan_invoice_created',
+        string='Invoice Amount',
+    )
+    num_installment = fields.Integer(
+        string='Number of Installment',
+        default=0,
     )
 
     @api.one
@@ -62,13 +70,17 @@ class PurchaseOrder(models.Model):
         if not self.invoice_ids:
             self.plan_invoice_created = False
         else:
+            total_invoice_amt = 0
             num_valid_invoices = 0
             for i in self.invoice_ids:
                 if i.state not in ('cancel'):
                     num_valid_invoices += 1
+                if i.state in ('open', 'paid'):
+                    total_invoice_amt += i.amount_untaxed
             num_plan_invoice = len(list(set([i.installment
                                              for i in self.invoice_plan_ids])))
             self.plan_invoice_created = num_valid_invoices == num_plan_invoice
+            self.total_invoice_amount = total_invoice_amt
 
     @api.model
     def _calculate_subtotal(self, vals):
@@ -195,12 +207,8 @@ class PurchaseOrder(models.Model):
                 elif blines.is_deposit_installment:
                     advance_label = _('Deposit')
                     filter_values.update({'is_deposit': True, })
-
-                prop = self.env['ir.property'].get(
-                    'property_account_deposit_supplier', 'res.partner')
-                prop_id = prop and prop.id or False
-                account_id = self.env[
-                    'account.fiscal.position'].map_account(prop_id)
+                company = self.env.user.company_id
+                account_id = company.account_deposit_supplier.id
                 name = _("%s of %s %%") % (advance_label, percent)
                 # create the invoice
                 inv_line_values = {
@@ -249,14 +257,11 @@ class PurchaseOrder(models.Model):
                 for preline in advance.invoice_line:
                     ratio = (order.amount_untaxed and
                              (invoice.amount_untaxed /
-                              order.amount_untaxed) or
-                             1.0)
+                              order.amount_untaxed) or 1.0)
                     inv_line = preline.copy(
                         {'invoice_id': inv_id,
-                         'price_unit': -1 *
-                            preline.price_unit})
-                    inv_line.quantity = \
-                        inv_line.quantity * ratio
+                         'price_unit': -preline.price_unit * ratio})
+                    inv_line.quantity = 1.0
         invoice.button_compute()
         return True
 
@@ -300,20 +305,15 @@ class PurchaseOrder(models.Model):
                          ('state', 'in', [False, 'cancel'])])
                     if blines:
                         if installment == 0:
-                            if blines.is_advance_installment:
+                            if blines.is_advance_installment or \
+                                    blines.is_deposit_installment:
                                 inv_id = self._create_deposit_invoice(
                                     blines.deposit_percent,
                                     blines.deposit_amount,
                                     blines.date_invoice,
                                     blines)
-                            elif blines.is_deposit_installment:
-                                inv_id = self._create_deposit_invoice(
-                                    blines.deposit_percent,
-                                    blines.deposit_amount,
-                                    blines.date_invoice,
-                                    blines)
+                                invoice_ids.append(inv_id)
                             blines.write({'ref_invoice_id': inv_id})
-                            invoice_ids.append(inv_id)
                             invoice = self.env['account.invoice'].\
                                 browse(inv_id)
                             invoice.write({
@@ -348,7 +348,14 @@ class PurchaseOrder(models.Model):
                                 order.compute_deposit_line(inv_id)
             else:
                 inv_id = super(PurchaseOrder, order).action_invoice_create()
+                invoice_ids.append(inv_id)
+            order._action_invoice_create_hook(invoice_ids)  # Special Hook
         return inv_id
+
+    @api.model
+    def _action_invoice_create_hook(self, invoice_ids):
+        # For Hook
+        return
 
     @api.model
     def _prepare_inv_line(self, account_id, order_line):
@@ -372,7 +379,7 @@ class PurchaseOrder(models.Model):
                                 100,
                                 'quantity': 1.0})
             else:
-                return False
+                return {}
         return res
 
     @api.multi

@@ -16,7 +16,7 @@
     "data": [
         "data/payment_export_sequence.xml",
         'security/ir.model.access.csv',
-        "views/account_bank_view.xml",
+        "views/account_view.xml",
         "wizard/cancel_reason_view.xml",
         "views/payment_export_view.xml",
         "views/cheque_lot_view.xml",

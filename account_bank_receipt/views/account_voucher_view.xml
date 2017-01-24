@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_voucher_filter_customer_pay" model="ir.ui.view">
+            <field name="name">account.voucher.customer.pay.select</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_customer_pay"/>
+            <field name="arch" type="xml">
+                <filter icon="terp-camera_test" position="after">
+                    <separator/>
+                    <filter name="intransit" string="Bank Intransit" domain="[('intransit','=',True), ('bank_receipt_id','=',False)]" help="Payment to Bank Intransit whcih has not been cleared."/>
+                </filter>
+            </field>
+        </record>
+
+        <record id="view_vendor_receipt_form" model="ir.ui.view">
+            <field name="name">view.vendor.receipt.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/h1" position="before">
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+                                name="action_open_bank_receipt"
+                                attrs="{'invisible': [('bank_receipt_id', '=', False)]}">
+                            <field string="Bank Receipt" name="bank_receipt_name" widget="statinfo" />
+                        </button>
+                    </div>
+                </xpath>
+                <field name="journal_id" position="after">
+                    <field name="intransit" invisible="1"/>
+                    <field name="bank_receipt_id" invisible="1"/>
+                </field>
+                <button name="cancel_voucher" position="after">
+                    <button name="%(action_voucher_create_bank_receipt)d" type="action" string="Create Bank Receipt" attrs="{'invisible': ['|', '|', ('state', '!=', 'posted'), ('intransit', '=', False), ('bank_receipt_id', '!=', False)]}"/>
+                </button>
+            </field>
+        </record>
+
+    </data>
+</openerp>

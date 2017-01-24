@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_vendor_payment_form_ext" model="ir.ui.view">
+            <field name="name">view.vendor.payment.form.ext</field>
+            <field name="model">account.voucher</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="l10n_th_account.view_vendor_payment_form_ext"/>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <page string="Tax" position="after">
+                        <page string="PIT">
+                            <field name="pit_line" context="{'voucher_id': active_id, 'partner_id': partner_id, 'voucher_date': date, 'line_dr_ids': line_dr_ids, 'line_cr_ids': line_cr_ids}">
+                                <tree editable="bottom" string="PIT">
+                                    <field name="date" invisible="1"/>
+                                    <field name="calendar_year" invisible="1"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount_income"/>
+                                    <field name="amount_wht"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </page>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

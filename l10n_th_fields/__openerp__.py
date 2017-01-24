@@ -15,9 +15,11 @@
     'depends': ['account_voucher'],
     'demo': [],
     'data': [
-        'voucher_payment_receipt_view.xml',
-        'partner_view.xml',
-        'account_bank_view.xml',
+        'views/voucher_payment_receipt_view.xml',
+        'views/partner_view.xml',
+        'views/account_bank_view.xml',
+        'views/account_invoice_view.xml',
+        'views/ir_sequence_view.xml',
     ],
     'test': [
     ],

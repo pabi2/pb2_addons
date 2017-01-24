@@ -26,6 +26,19 @@ class PurchaseOrder(models.Model):
             res.update({d: order_line[d].id})
         return res
 
+    @api.model
+    def _prepare_order_line_move(self, order, order_line,
+                                 picking_id, group_id):
+        res = super(PurchaseOrder, self).\
+            _prepare_order_line_move(order, order_line,
+                                     picking_id, group_id)
+        AnayticAccount = self.env['account.analytic.account']
+        dimensions = AnayticAccount._analytic_dimensions()
+        for d in dimensions:
+            for r in res:
+                r.update({d: order_line[d].id})
+        return res
+
 
 class PurchaseOrderLine(ActivityCommon, models.Model):
     _inherit = 'purchase.order.line'
@@ -130,13 +143,14 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
             'journal_id': general_journal.po_commitment_analytic_journal_id.id,
             'ref': self.order_id.name,
             'user_id': self._uid,
-            'doc_ref': self.order_id.name,
-            'doc_id': '%s,%s' % ('purchase.order', self.order_id.id),
+            # PO
+            'purchase_id': self.order_id.id,
         }
 
     @api.one
     def _create_analytic_line(self, reverse=False):
-        if self.order_id.order_type == 'quotation':  # Not for quotation.
+        if 'order_type' in self.order_id and \
+                self.order_id.order_type == 'quotation':  # Not for quotation.
             return
         vals = self._prepare_analytic_line(reverse=reverse)
         if vals:

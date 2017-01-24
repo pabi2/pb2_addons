@@ -7,12 +7,7 @@
 
 Activity based budgetting
 
-Testing:
-* Make sure that, activity_group_id, activity_id is passed from
-  PR -> Call for Bid -> PO
-  PR -> PO
-* Make sure when confirm PR, Call for Bid, PO, Invoice, the Analyic is created
-    2 types 1) product, 2) activity
+NOte: This module provide only framework. There will be no budget check here.
 
 """,
     'author': 'Kitti U.',
@@ -20,12 +15,14 @@ Testing:
     'depends': [
         'account',
         'account_accountant',
-        'account_move_line_doc_ref',
+        # 'account_move_line_doc_ref',
+        'sale',
         'purchase',
         'purchase_requisition',
         'purchase_request',
         'purchase_request_to_requisition',
         'purchase_qty_invoiced_received',
+        'sale_qty_invoiced',
         'hr_expense',
         'hr_expense_auto_invoice',
     ],
@@ -40,6 +37,7 @@ Testing:
         'views/purchase_request_view.xml',
         'views/account_budget_view.xml',
         'views/account_activity_view.xml',
+        'views/sale_view.xml',
         'views/purchase_view.xml',
         'views/account_view.xml',
         'views/account_invoice_view.xml',

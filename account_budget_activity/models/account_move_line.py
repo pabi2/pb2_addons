@@ -27,12 +27,12 @@ class AccountMoveLine(models.Model):
         return super(AccountMoveLine, self).create(vals)
 
     @api.multi
-    def write(self, vals, check=True, update_check=True):
-        res = super(AccountMoveLine, self).write(vals, check=check,
-                                                 update_check=update_check)
-        if vals.get('doc_id', False):
-            Analytic = self.env['account.analytic.line']
-            analytics = Analytic.search([('move_id', 'in', self._ids)])
-            analytics.write({'doc_id': vals.get('doc_id'),
-                             'doc_ref': vals.get('doc_ref')})
-        return res
+    def create_analytic_lines(self):
+        """ For balance sheet item, do not create analytic line """
+        # Before create, always remove analytic line if exists
+        for move_line in self:
+            move_line.analytic_lines.unlink()
+        move_lines = self.filtered(lambda l:
+                                   l.account_id.user_type.report_type
+                                   not in ('asset', 'liability'))
+        return super(AccountMoveLine, move_lines).create_analytic_lines()

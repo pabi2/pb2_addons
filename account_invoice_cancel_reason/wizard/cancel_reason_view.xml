@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
              <form string="Reason for the cancellation" version="7.0">
                 <p class="oe_grey">
-                    Type in reason for the cancellation of the customer invoice
+                    Type in reason for the cancellation of the invoice
                 </p>
                 <group>
                     <field name="cancel_reason_txt" required="1"/>

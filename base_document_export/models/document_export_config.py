@@ -18,18 +18,17 @@ class DocumentExportConfigLine(models.Model):
     header_configure_id = fields.Many2one(
         'document.export.config',
         string='Header Configuration',
+        ondelete='cascade',
     )
     footer_configure_id = fields.Many2one(
         'document.export.config',
         string='Footer Configuration',
-    )
-    invoice_configure_id = fields.Many2one(
-        'document.export.config',
-        string='Invoice Detail Configuration',
+        ondelete='cascade',
     )
     detail_configure_id = fields.Many2one(
         'document.export.config',
         string='Detail Configuration',
+        ondelete='cascade',
     )
     sequence = fields.Integer(
         string='Sequence',
@@ -95,11 +94,6 @@ class DocumentExportConfig(models.Model):
         'footer_configure_id',
         string='Footer Configurations',
     )
-    invoice_config_line_ids = fields.One2many(
-        'document.export.config.lines',
-        'invoice_configure_id',
-        string='Invoice Configurations',
-    )
     detail_config_line_ids = fields.One2many(
         'document.export.config.lines',
         'detail_configure_id',
@@ -107,10 +101,5 @@ class DocumentExportConfig(models.Model):
     )
     delimiter_symbol = fields.Char(
         string="Joining Delimiter",
-        required=True,
-    )
-    journal_id = fields.Many2one(
-        'account.journal',
-        string='Payment Method',
         required=True,
     )

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
+                    <field name="percent_retention" invisible="1"/>
+                    <field name="fixed_retention" invisible="1"/>
+                    <field name="retention_type" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

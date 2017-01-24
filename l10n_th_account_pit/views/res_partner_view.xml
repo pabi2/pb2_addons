@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">view.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="l10n_th_account.view_partner_property_form"/>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//notebook/page[@name='thai_taxation']/group/group[@name='group2']" position="inside">
+                        <button name="%(action_print_pit_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', ('supplier', '!=', True), ('pit_line', '=', [])]}"/>
+                    </xpath>
+                    <page name="thai_taxation" position="inside">
+                        <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}">
+                            <field name="pit_line">
+                                <tree editable="bottom" string="PIT">
+                                    <field name="voucher_id"/>
+                                    <field name="posted"/>
+                                    <field name="date"/>
+                                    <field name="calendar_year"/>
+                                    <field name="amount_income"/>
+                                    <field name="amount_wht"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

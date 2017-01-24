@@ -17,7 +17,7 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
     pay_to = fields.Selection(
         [('employee', 'Employee'),
          ('supplier', 'Supplier')],
-        string='Pay to',
+        string='Pay Type',
         readonly=True,
     )
 

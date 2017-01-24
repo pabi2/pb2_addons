@@ -54,6 +54,10 @@
                             <group>
                                 <field name="use_advance"/> 
                                 <field name="use_deposit"/>
+                                <h2 >
+                                    <label for="total_invoice_amount"/>
+                                    <field name="total_invoice_amount" class="oe_inline" />
+                                </h2>
                             </group>
                         </group>
                         <field name="invoice_plan_ids"  attrs="{'invisible': ['|',('use_advance','=',True),('use_deposit','=',True)]}">

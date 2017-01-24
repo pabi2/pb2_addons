@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="account_bank_receipt_view_form" model="ir.ui.view">
+            <field name="name">account.bank.receipt.form</field>
+            <field name="model">account.bank.receipt</field>
+            <field name="arch" type="xml">
+                <form string="Bank Receipt">
+                    <header>
+                        <button name="validate_bank_receipt" states="draft"
+                                string="Validate"
+                                type="object" class="oe_highlight"/>
+                        <button name="backtodraft" states="cancel"
+                                string="Back to Draft" type="object" />
+                        <button name="cancel_bank_receipt" states="done"
+                                string="Cancel" type="object" />
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,done" />
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="Bank Receipt" />
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                        <group name="main">
+                            <group name="left">
+                                <field name="receipt_date" />
+                                <field name="journal_id"
+                                    widget="selection"/>
+                                <field name="journal_default_account_id"
+                                    invisible="1"/>
+                                <field name="currency_id"
+                                    groups="base.group_multi_currency"/>
+                                <field name="partner_bank_id"/>
+                                <field name="bank_account_id"/>
+                            </group>
+                            <group name="right">
+                                <field name="company_id"
+                                       groups="base.group_multi_company"/>
+                               <field name="company_partner_id" invisible="1"/>
+                                <field name="currency_none_same_company_id"
+                                    invisible="1"/>
+                                <field name="intransit_count"/>
+                                <field name="total_amount" widget="monetary"
+                                    options="{'currency_field': 'currency_id'}"/>
+                                <field name="move_id"/>
+                                <field name="validate_user_id"/>
+                                <field name="validate_date"/>
+                            </group>
+                        </group>
+                        <group string="Bank Intransit" name="bank_intransit">
+                            <field name="bank_intransit_ids" nolabel="1"
+                                   widget="many2many"
+                                   domain="[('reconcile_id', '=', False),
+                                            ('debit', '>', 0),
+                                            ('currency_id', '=', currency_none_same_company_id),
+                                            ('journal_id', '=', journal_id),
+                                            ('account_id', '=', journal_default_account_id)]"
+                                    context="{'currency': currency_id,
+                                        'journal_id': journal_id}" />
+                        </group>
+                        <field name="note" />
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_bank_receipt_view_tree" model="ir.ui.view">
+            <field name="name">account.bank.receipt.tree</field>
+            <field name="model">account.bank.receipt</field>
+            <field name="arch" type="xml">
+                <tree string="Bank Receipt" colors="blue:state=='draft';">
+                    <field name="name"/>
+                    <field name="receipt_date"/>
+                    <field name="journal_id"/>
+                    <field name="partner_bank_id"/>
+                    <field name="intransit_count"/>
+                    <field name="total_amount"/>
+                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="is_reconcile"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_bank_receipt_search" model="ir.ui.view">
+            <field name="name">account.bank.receipt.search</field>
+            <field name="model">account.bank.receipt</field>
+            <field name="arch" type="xml">
+                <search string="Bank Receipt Search">
+                    <field name="name" string="Bank Receipt"/>
+                    <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]" />
+                    <filter name="done" string="Done"
+                        domain="[('state', '=', 'done')]" />
+                    <group string="Group By" name="groupby">
+                        <filter name="date_groupby" string="Receipt Date"
+                            context="{'group_by': 'receipt_date'}"/>
+                        <filter name="journal_groupby" string="Journal"
+                            context="{'group_by': 'journal_id'}" />
+                        <filter name="currency_groupby" string="Currency"
+                            context="{'group_by': 'currency_id'}" />
+                        <filter name="partner_bank_groupby" string="Bank Account"
+                            context="{'group_by': 'partner_bank_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_bank_receipt_tree" model="ir.actions.act_window">
+            <field name="name">Bank Receipts</field>
+            <field name="res_model">account.bank.receipt</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="action_bank_receipt_tree"
+                  id="menu_bank_receipt_tree"
+                  parent="account.menu_finance_bank_and_cash"
+                  sequence="20"/>
+
+    </data>
+</openerp>

@@ -2,7 +2,7 @@
 
 <openerp>
     <data>
-        
+
         <record id="view_partner_form_ext" model="ir.ui.view">
             <field name="name">view.partner.form.ext</field>
             <field name="model">res.partner</field>
@@ -13,11 +13,6 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/group/group/div/div/field[@name='zip']" position="replace">
-                </xpath>
-                <xpath expr="/form/sheet/group/group/div/field[@name='street2']" position="replace">
-                </xpath>
-                <xpath expr="/form/sheet/group/group/field[@name='website']" position="before">
-                    <field name="street2" placeholder="Street (en)..."  attrs="{'readonly': [('use_parent_address','=',True)]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/group/group/div/field[@name='country_id']" position="after">
                     <field name="province_id" placeholder="Province" class="oe_no_button" options='{"no_open": True}' attrs="{'readonly': [('use_parent_address','=',True)]}"/>

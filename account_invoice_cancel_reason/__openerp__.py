@@ -11,7 +11,8 @@
     'description': """
     When an invoice is canceled, a reason must be given as text.
     """,
-    'depends': ['account'
+    'depends': ['account',
+                'account_cancel',
                 ],
     'demo': [],
     'data': ['wizard/cancel_reason_view.xml',

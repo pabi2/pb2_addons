@@ -95,6 +95,7 @@ def amount_to_text_th(number, currency):
 # Generic functions
 # -------------------------------------------------------------
 
+
 _translate_funcs = {'th': amount_to_text_th}
 
 

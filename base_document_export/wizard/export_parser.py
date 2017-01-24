@@ -6,7 +6,7 @@ import openerp
 from operator import itemgetter
 from openerp import workflow
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning
+from openerp.exceptions import ValidationError
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -36,23 +36,18 @@ class DocumentExportParser(models.TransientModel):
         active_model = self._context.get('active_model')
         export = self.env[active_model].browse(active_id)
         if export.journal_id:
-            config = self.env['document.export.config'].search(
-                [('journal_id', '=', export.journal_id.id)], limit=1)
-            if config:
-                res['config_id'] = config.id
-            if export.journal_id.file_type:
-                res['file_type'] = export.journal_id.file_type
+            res['file_type'] = export.journal_id.file_type
         return res
 
     @api.model
     def _validate_data(self, data_list):
         if not data_list:
-            raise Warning(_('There is nothing to validate'))
+            raise ValidationError(_('There is nothing to validate'))
         invalid_data_list = [d['notes'] for d in data_list
                              if d['mandatory'] and not d['value']]
         if invalid_data_list:
-            raise Warning(_('Please enter valid data for: %s'
-                            % (',\n'.join(invalid_data_list))))
+            raise ValidationError(_('Please enter valid data for: %s'
+                                  % (',\n'.join(invalid_data_list))))
         return True
 
     @api.model
@@ -76,7 +71,7 @@ class DocumentExportParser(models.TransientModel):
     @api.model
     def _generate_file_attachment(self, line_text):
         # attachment_id = False
-        raise Warning(_('Method not implemented!'))
+        raise ValidationError(_('Method not implemented!'))
 
     @api.model
     def _get_eval_context(self, active_model_id, active_id):
@@ -100,7 +95,7 @@ class DocumentExportParser(models.TransientModel):
             'model': model,
             'workflow': workflow,
             # Exceptions
-            'Warning': openerp.exceptions.Warning,
+            'ValidationError': openerp.exceptions.ValidationError,
             # record
             # deprecated and define record (active_id) and records (active_ids)
             'object': obj,
@@ -117,7 +112,7 @@ class DocumentExportParser(models.TransientModel):
 
     @api.model
     def _prepare_data(self):
-        raise Warning(_('Method not implemented!'))
+        raise ValidationError(_('Method not implemented!'))
 
     @api.multi
     def export_file(self):

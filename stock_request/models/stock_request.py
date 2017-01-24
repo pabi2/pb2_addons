@@ -4,23 +4,24 @@ import openerp.addons.decimal_precision as dp
 from openerp.exceptions import Warning as UserError, ValidationError
 
 
+_STATES = [
+    ('draft', 'Draft'),
+    ('wait_confirm', 'Waiting Confirmation'),
+    ('confirmed', 'Confirmed'),
+    ('wait_approve', 'Waiting Approval'),
+    ('approved', 'Approved'),
+    ('ready', 'Ready to Transfer'),
+    ('done', 'Transferred'),
+    ('done_return', 'Returned'),
+    ('cancel', 'Rejected'),
+]
+
+
 class StockRequest(models.Model):
     _name = 'stock.request'
     _inherit = ['mail.thread']
     _description = "Stock Request"
     _order = "id desc"
-
-    _STATES = [
-        ('draft', 'Draft'),
-        ('wait_confirm', 'Waiting Confirmation'),
-        ('confirmed', 'Confirmed'),
-        ('wait_approve', 'Waiting Approval'),
-        ('approved', 'Approved'),
-        ('ready', 'Ready to Transfer'),
-        ('done', 'Transferred'),
-        ('done_return', 'Returned'),
-        ('cancel', 'Rejected'),
-    ]
 
     name = fields.Char(
         string='Number',
@@ -185,7 +186,16 @@ class StockRequest(models.Model):
             res['arch'] = res['arch'].replace(
                 'visible="draft,done"',
                 'visible="draft,wait_confirm,confirmed,wait_approve,'
-                'approved,ready,done,return"')
+                'approved,ready,done,done_return"')
+            # For type = borrow, change name Transferred -> Waiting Return
+            if 'state' in res['fields']:
+                new_selection = []
+                for s_tuple in res['fields']['state']['selection']:
+                    s_list = list(s_tuple)
+                    if s_list[0] == 'done':
+                        s_list[1] = _('Waiting Return')
+                    new_selection.append(tuple(s_list))
+                res['fields']['state']['selection'] = new_selection
         return res
 
     @api.model
@@ -198,6 +208,17 @@ class StockRequest(models.Model):
     def _onchange_picking_type_id(self):
         self.location_id = self.picking_type_id.default_location_src_id
         self.location_dest_id = self.picking_type_id.default_location_dest_id
+
+    @api.model
+    def _check_user_from_borrow_location(self):
+        if self._context.get('default_type') == 'borrow':
+            # Only user from the borrow location can prepare
+            user_ou_ids = [g.id for g in self.env.user.operating_unit_ids]
+            origin_ou_id = self.location_borrow_view_id.operating_unit_id.id
+            if not (self.env.user.access_all_operating_unit or
+                    origin_ou_id in user_ou_ids):
+                raise UserError(_('Only user from the borrow location '
+                                  'can process this request'))
 
     # Internal Actions
     @api.multi
@@ -220,12 +241,14 @@ class StockRequest(models.Model):
         self.ensure_one()
         if not self.line_ids:
             raise UserError('No lines!')
+        self._check_user_from_borrow_location()
         self.line_ids._check_future_qty()
         self.write({'state': 'wait_approve'})
 
     @api.multi
     def action_approve(self):
         self.ensure_one()
+        self._check_user_from_borrow_location()
         self.line_ids._check_future_qty()
         self.write({'state': 'approved'})
 
@@ -235,11 +258,12 @@ class StockRequest(models.Model):
         if not self.line_ids:
             raise UserError('No lines!')
         if not self.receive_emp_id:
-            raise UserError('Please select receiver!')
+            raise UserError(_('Please select receiver!'))
+        self._check_user_from_borrow_location()
         self.sudo().create_picking('transfer')  # Create
         self.transfer_picking_id.sudo().action_confirm()  # Confirm and reserve
         self.transfer_picking_id.sudo().action_assign()
-        if self.transfer_picking_id.state != 'assigned':
+        if self.sudo().transfer_picking_id.state != 'assigned':
             raise UserError('Requested material(s) not fully available!')
         self.write({'state': 'ready'})
 
@@ -257,10 +281,11 @@ class StockRequest(models.Model):
     @api.multi
     def action_return(self):
         self.ensure_one()
+        self._check_user_from_borrow_location()
         if self.return_picking_id:
             self.return_picking_id.sudo().action_confirm()
             self.return_picking_id.sudo().action_assign()
-            if self.return_picking_id.state != 'assigned':
+            if self.sudo().return_picking_id.state != 'assigned':
                 raise UserError('Requested material(s) not fully available!')
             self.return_picking_id.sudo().action_done()
         self.write({'state': 'done_return'})
@@ -404,6 +429,12 @@ class StockRequestLine(models.Model):
     future_qty = fields.Float(
         string='Future Quantity',
         compute='_compute_product_available',
+    )
+    state = fields.Selection(
+        _STATES,
+        related='request_id.state',
+        string='Status',
+        store=True,
     )
 
     @api.one

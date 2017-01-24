@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, Warning as UserError
 from openerp.tools.float_utils import float_round as round
@@ -45,6 +48,27 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         string='Invoice Mode',
         required=True,
         default='change_quantity')
+    installment_date = fields.Date(
+        string='Installment Date',
+        default=fields.Date.context_today,
+        required=True,
+    )
+    interval = fields.Integer(
+        string='Interval',
+        default=1,
+        required=True,
+    )
+    interval_type = fields.Selection(
+        [('day', 'Day'),
+         ('month', 'Month'),
+         ('year', 'Year')],
+        string='Interval Type',
+        default='month',
+        required=True,
+    )
+    installment_amount = fields.Float(
+        string='Installment Amount',
+    )
 
     @api.onchange('use_advance')
     def _onchange_use_advance(self):
@@ -58,10 +82,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
     @api.model
     def _check_deposit_account(self):
-        prop = self.env['ir.property'].get(
-            'property_account_deposit_supplier', 'res.partner')
-        prop_id = prop and prop.id or False
-        account_id = self.env['account.fiscal.position'].map_account(prop_id)
+        company = self.env.user.company_id
+        account_id = company.account_deposit_supplier.id
         if not account_id:
             raise except_orm(
                 _('Configuration Error!'),
@@ -91,68 +113,143 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                             _('For invoice plan mode "As 1 Job", '
                               'all line quantity must equal to 1'))
 
+    @api.model
+    def _check_installment_amount(self):
+        if any([i.amount < 0 for i in self.installment_ids]):
+            raise UserError(_('Negative installment amount not allowed!'))
+
     @api.one
     def do_create_purchase_invoice_plan(self):
         self._validate_total_amount()
+        self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
             self.installment_ids)
         order = self.env['purchase.order'].browse(self._context['active_id'])
         self._check_invoice_mode(order)
         order.invoice_plan_ids.unlink()
         lines = []
-        obj_precision = self.env['decimal.precision']
-        prec = obj_precision.precision_get('Account')
 
         for install in self.installment_ids:
             if install.installment == 0:
                 self._check_deposit_account()
-                base_amount = order.amount_untaxed
                 if install.is_advance_installment:
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': False,
-                        'installment': 0,
-                        'description': install.description,
-                        'is_advance_installment': True,
-                        'date_invoice': install.date_invoice,
-                        'deposit_percent': install.percent,
-                        'deposit_amount': round(install.percent/100 *
-                                                base_amount, prec)
-                    })
+                    line_data = self._prepare_advance_line(order, install)
+                    lines.append(line_data)
                 if install.is_deposit_installment:
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': False,
-                        'installment': 0,
-                        'description': install.description,
-                        'is_deposit_installment': True,
-                        'date_invoice': install.date_invoice,
-                        'deposit_percent': install.percent,
-                        'deposit_amount': round(install.percent/100 *
-                                                base_amount, prec)
-                    })
+                    line_data = self._prepare_deposit_line(order, install)
+                    lines.append(line_data)
             elif install.installment > 0:
                 for order_line in order.order_line:
-                    subtotal = order_line.price_subtotal
-                    lines.append({
-                        'order_id': order.id,
-                        'order_line_id': order_line.id,
-                        'description': order_line.name,
-                        'installment': install.installment,
-                        'date_invoice': install.date_invoice,
-                        'invoice_percent': install.percent,
-                        'invoice_amount': round(install.percent/100 *
-                                                subtotal, prec),
-                    })
+                    line_data = self._prepare_installment_line(order,
+                                                               order_line,
+                                                               install)
+                    lines.append(line_data)
         order.invoice_plan_ids = lines
-        order.use_advance = self.use_advance
-        order.use_deposit = self.use_deposit
-        order.invoice_mode = self.invoice_mode
+        order.write({'use_advance': self.use_advance,
+                     'use_deposit': self.use_deposit,
+                     'invoice_mode': self.invoice_mode,
+                     'num_installment': self.num_installment,
+                     })
+
+    @api.model
+    def _prepare_advance_line(self, order, install):
+        return self._prepare_advance_deposit_line(order, install, True, False)
+
+    @api.model
+    def _prepare_deposit_line(self, order, install):
+        return self._prepare_advance_deposit_line(order, install, False, True)
+
+    @api.model
+    def _prepare_advance_deposit_line(self, order, install, advance, deposit):
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        base_amount = order.amount_untaxed
+        data = {
+            'order_id': order.id,
+            'order_line_id': False,
+            'installment': 0,
+            'description': install.description,
+            'is_advance_installment': advance,
+            'is_deposit_installment': deposit,
+            'date_invoice': install.date_invoice,
+            'deposit_percent': install.percent,
+            'deposit_amount': round(install.percent/100 *
+                                    base_amount, prec)
+        }
+        return data
+
+    @api.model
+    def _prepare_installment_line(self, order, order_line, install):
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        subtotal = order_line.price_subtotal
+        data = {
+            'order_id': order.id,
+            'order_line_id': order_line.id,
+            'description': order_line.name,
+            'installment': install.installment,
+            'date_invoice': install.date_invoice,
+            'invoice_percent': install.percent,
+            'invoice_amount': round(install.percent/100 *
+                                    subtotal, prec),
+        }
+        return data
+
+    @api.model
+    def _compute_installment_details(self):
+        obj_precision = self.env['decimal.precision']
+        prec = obj_precision.precision_get('Account')
+        if self.installment_ids:
+            installment_date =\
+                datetime.strptime(self.installment_date, "%Y-%m-%d")
+            count = 0
+            remaning_installment_amount = self.order_amount
+            last_line = False
+            for i in self.installment_ids:
+                if i.is_advance_installment or i.is_deposit_installment:
+                    i.date_invoice = self.installment_date
+                    continue
+                interval = self.interval
+                if count == 0:
+                    interval = 0
+                if self.interval_type == 'month':
+                    installment_date =\
+                        installment_date + relativedelta(months=+interval)
+                elif self.interval_type == 'year':
+                    installment_date =\
+                        installment_date + relativedelta(years=+interval)
+                else:
+                    installment_date =\
+                        installment_date + relativedelta(days=+interval)
+                count += 1
+                i.date_invoice = installment_date
+                if remaning_installment_amount > self.installment_amount:
+                    i.amount = self.installment_amount
+                elif remaning_installment_amount < 0:
+                    i.amount = 0
+                else:
+                    i.amount = remaning_installment_amount
+                remaning_installment_amount = (remaning_installment_amount -
+                                               self.installment_amount)
+                new_val = i.amount / self.order_amount * 100
+                if round(new_val, prec) != round(i.percent, prec):
+                    i.percent = new_val
+                last_line = i
+            if last_line and remaning_installment_amount > 0:
+                last_line.amount = (last_line.amount +
+                                    remaning_installment_amount)
+                new_val = last_line.amount / self.order_amount * 100
+                if round(new_val, prec) != round(last_line.percent, prec):
+                    last_line.percent = new_val
 
     @api.onchange('use_advance', 'num_installment', 'use_deposit')
     def _onchange_plan(self):
         order = self.env['purchase.order'].\
             browse(self._context.get('active_id'))
+
+        if self.num_installment > 0:
+            self.installment_amount = self.order_amount / self.num_installment
+
         i = 1
 
         lines = []
@@ -180,8 +277,18 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                           'amount': i == 1 and base_amount or 0,
                           'percent': i == 1 and 100 or 0})
             i += 1
+
         self.installment_ids = False
         self.installment_ids = lines
+        self._compute_installment_details()
+
+    @api.one
+    @api.onchange('installment_date',
+                  'interval_type',
+                  'interval',
+                  'installment_amount')
+    def _onchange_installment_config(self):
+        self._compute_installment_details()
 
 
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class PaymentExport(models.Model):
@@ -12,27 +12,20 @@ class PaymentExport(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
         default="/",
     )
     journal_id = fields.Many2one(
         'account.journal',
         string='Payment Method',
-        domain=[('type', '=', 'bank')],
         required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
     )
-    date_value = fields.Date(
-        string='Value/Cheque Date',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    bank_id = fields.Many2one(
-        'res.partner.bank',
-        related='journal_id.bank_id',
-        string='Bank Account',
+    transfer_type = fields.Selection(
+        [('direct', 'DIRECT'),
+         ('smart', 'SMART')
+         ],
+        string='Transfer Type',
+        help="- DIRECT is transfer within same bank.\n"
+        "- SMART is transfer is between different bank."
     )
     is_cheque_lot = fields.Boolean(
         string='Is Cheque Lot Available',
@@ -41,9 +34,15 @@ class PaymentExport(models.Model):
     cheque_lot_id = fields.Many2one(
         'cheque.lot',
         string='Cheque Lot',
-        domain="[('bank_id', '=', bank_id), "
-        "('journal_id', '=', journal_id),('state', '=', 'active')]",
+        domain="[('journal_id', '=', journal_id), "
+        "('state', '=', 'active')]",
         ondelete='restrict',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    date_value = fields.Date(
+        string='Value/Cheque Date',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -105,9 +104,25 @@ class PaymentExport(models.Model):
         store=True,
         copy=False,
     )
+    num_line = fields.Integer(
+        compute="_compute_num_line",
+        string="Num Lines",
+        copy=False,
+    )
     cancel_reason_txt = fields.Char(
         string="Description",
-        readonly=True)
+        readonly=True,
+    )
+
+    @api.onchange('transfer_type')
+    def _onchange_transfer_type(self):
+        if self.transfer_type:
+            self.cheque_lot_id = False
+
+    @api.onchange('cheque_lot_id')
+    def _onchange_cheque_lot_id(self):
+        if self.cheque_lot_id:
+            self.transfer_type = False
 
     @api.model
     def create(self, vals):
@@ -131,6 +146,12 @@ class PaymentExport(models.Model):
             export.sum_total = sum_total
 
     @api.multi
+    @api.depends('line_ids')
+    def _compute_num_line(self):
+        for export in self:
+            export.num_line = len(export.line_ids)
+
+    @api.multi
     @api.depends()
     def _compute_cheque_number(self):
         for export in self:
@@ -145,11 +166,10 @@ class PaymentExport(models.Model):
             export.cheque_number_to = res[1]
 
     @api.one
-    @api.depends('bank_id', 'journal_id')
+    @api.depends('journal_id')
     def _compute_is_cheque_lot(self):
         Lot = self.env['cheque.lot']
-        lots = Lot.search([('bank_id', '=', self.bank_id.id),
-                           ('journal_id', '=', self.journal_id.id)])
+        lots = Lot.search([('journal_id', '=', self.journal_id.id)])
         self.is_cheque_lot = lots and True or False
 
     @api.onchange('journal_id')
@@ -178,19 +198,27 @@ class PaymentExport(models.Model):
             dom.append(('id', 'not in', chequed_voucher_ids))
         else:  # Other cases, make sure it has not been exported before
             lines = ExportLine.search(
-                [('exported', '=', True),
+                [('use_export_line', '=', True),
+                 ('export_id.state', '=', 'done'),
                  ('export_id.date_value', '=', self.date_value)],
             )
             exported_voucher_ids = [x.voucher_id.id for x in lines]
             dom.append(('id', 'not in', exported_voucher_ids))
         vouchers = Voucher.search(dom, order='id',
                                   limit=self.cheque_lot_id.remaining)
+        i = 1
         for voucher in vouchers:
             export_line = ExportLine.new()
+            export_line.sequence = i
             export_line.use_export_line = True
             export_line.voucher_id = voucher
             export_line.amount = voucher.amount
             self.line_ids += export_line
+            i += 1
+
+    @api.multi
+    def action_export_payment_pack(self):
+        raise ValidationError(_('No implementation for the export function!'))
 
     @api.multi
     def action_assign_cheque_number(self):
@@ -211,20 +239,17 @@ class PaymentExport(models.Model):
         for export in self:
             if not export.line_ids:
                 raise UserError(_('No Export Lines'))
-            for line in export.line_ids:
-                if line.use_export_line:
-                    voucher = line.voucher_id
-                    export_voucher_ids =\
-                        self.env['payment.export.line'].\
-                        search([('voucher_id', '=', voucher.id)])
-                    voucher_done_export = [(e, e.voucher_id)
-                                           for e in export_voucher_ids
-                                           if e.export_id.state == 'done']
-                    if voucher_done_export:
-                        raise UserError(
-                            _("Supplier Payment %s has been exported by %s:")
-                            % (voucher_done_export[1].number,
-                               voucher_done_export[0].name))
+            voucher_ids = [x.use_export_line and x.voucher_id.id
+                           for x in export.line_ids]
+            exported_lines = self.env['payment.export.line'].\
+                search([('voucher_id', 'in', voucher_ids),
+                        ('use_export_line', '=', True),
+                        ('export_id.state', '=', 'done')])
+            if exported_lines:
+                vouchers = [x.voucher_id.number for x in exported_lines]
+                message = _('Following payment had been exported.\n%s\nPlease '
+                            'remove to continue.') % (', '.join(vouchers),)
+                raise UserError(message)
             # Case Cheque only
             if export.is_cheque_lot:
                 for line in export.line_ids:
@@ -252,13 +277,13 @@ class PaymentExport(models.Model):
                         cheque_lot = cheque_register.cheque_lot_id
                         cheque_number = cheque_register.number
                         cheque_date = export.date_value
-                        bank_name = cheque_lot.bank_id.name
-                        bank_branch = cheque_lot.bank_id.branch_cheque
+                        bank_name = cheque_lot.journal_id.bank_id.name
+                        bank_branch = cheque_lot.journal_id.bank_id.bank_branch
                         line.voucher_id.write({
                             'date_cheque': cheque_date,
                             'number_cheque': cheque_number,
                             'bank_cheque': bank_name,
-                            'branch_cheque': bank_branch,
+                            'bank_branch': bank_branch,
                         })
                         line.write({'exported': True})
         self.write({'state': 'done'})
@@ -284,6 +309,11 @@ class PaymentExportLine(models.Model):
     _name = 'payment.export.line'
     _description = 'Payment Export Line'
 
+    sequence = fields.Integer(
+        string='Sequence',
+        readonly=True,
+        default=0,
+    )
     export_id = fields.Many2one(
         'payment.export',
         string='Payment Export',

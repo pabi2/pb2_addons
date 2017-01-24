@@ -29,7 +29,3 @@ class sale_advance_payment_inv(osv.osv_memory):
         'advance_payment_method': lambda self, cr, uid, c:
             self._get_advance_payment_method(cr, uid, context=c)[0][0],
     }
-
-sale_advance_payment_inv()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="bank_intransit_journal" model="account.journal">
+            <field name="name">Bank Intransit</field>
+            <field name="code">BIN</field>
+            <field name="type">bank</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="intransit">True</field>
+        </record>
+
+    </data>
+</openerp>

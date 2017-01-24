@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
-
-import datetime
 import time
+from datetime import datetime
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 import openerp.addons.decimal_precision as dp
+from openerp.addons.l10n_th_account.models.res_partner \
+    import INCOME_TAX_FORM
+
+WHT_CERT_INCOME_TYPE = [('1', 'เงินเดือน ค่าจ้าง ฯลฯ 40 (1)'),
+                        ('2', 'เบี้ยประชุม ประเมินผล ฯลฯ 40(2)'),
+                        ('3', 'ค่าลิขสิทธิ์ ฯลฯ 40(3)'),
+                        ('5', 'เงินรางวัล ค่าเช่า ค่าโฆษณา ฯลฯ'),
+                        ('6', 'ธุรกิจพาณิชย์ เกษตร อื่นๆ')]
+
+TAX_PAYER = [('withholding', 'Withholding'),
+             ('paid_one_time', 'Paid One Time')]
 
 
 class common_voucher(object):
@@ -13,7 +23,7 @@ class common_voucher(object):
     def _to_invoice_currency(self, invoice, journal, amount):
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or
-            datetime.datetime.today())
+            datetime.today())
         company_currency = (journal.currency and
                             journal.currency.id or
                             journal.company_id.currency_id)
@@ -24,7 +34,7 @@ class common_voucher(object):
     def _to_voucher_currency(self, invoice, journal, amount):
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or
-            datetime.datetime.today())
+            datetime.today())
         company_currency = (journal.currency and
                             journal.currency.id or
                             journal.company_id.currency_id)
@@ -47,23 +57,87 @@ class AccountVoucher(common_voucher, models.Model):
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines (Normal)',
-        readonly=False,
+        readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'normal')],
     )
     tax_line_undue = fields.One2many(
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines (Undue)',
-        readonly=False,
+        readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'undue')],
     )
     tax_line_wht = fields.One2many(
         'account.voucher.tax',
         'voucher_id',
         string='Tax Lines (Withholding)',
-        readonly=False,
+        readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'wht')],
     )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        readonly=True,
+        help="Specify form for withholding tax, default with setup in supplier"
+    )
+    wht_sequence = fields.Integer(
+        string='WHT Sequence',
+        readonly=True,
+        help="Running sequence for the same period. Reset every period",
+    )
+    wht_sequence_display = fields.Char(
+        string='WHT Sequence',
+        compute='_compute_wht_sequence_display',
+        store=True,
+    )
+    wht_period_id = fields.Many2one(
+        'account.period',
+        string='WHT Period',
+        readonly=True,
+    )
+    tax_payer = fields.Selection(
+        TAX_PAYER,
+        string='Tax Payer',
+        readonly=True, states={'draft': [('readonly', False)]},
+    )
+    recognize_vat_move_id = fields.Many2one(
+        'account.move',
+        string='Recognize VAT Entry',
+        ondelete='set null',
+        readonly=True,
+    )
+    auto_recognize_vat = fields.Boolean(
+        related='company_id.auto_recognize_vat',
+        string='Auto recognize undue VAT',
+        readonly=True,
+    )
+    _sql_constraints = [
+        ('wht_seq_uunique',
+         'unique (wht_period_id, wht_sequence, income_tax_form)',
+         'WHT Sequence must be unique!'),
+    ]
+
+    @api.multi
+    @api.depends('wht_sequence')
+    def _compute_wht_sequence_display(self):
+        for rec in self:
+            if rec.wht_period_id and rec.wht_sequence:
+                date_start = rec.wht_period_id.date_start
+                mo = datetime.strptime(date_start,
+                                       '%Y-%m-%d').date().month
+                month = '{:02d}'.format(mo)
+                sequence = '{:04d}'.format(rec.wht_sequence)
+                rec.wht_sequence_display = '%s/%s' % (month, sequence)
+
+    @api.multi
+    def cancel_voucher(self):
+        for voucher in self:
+            if voucher.type == 'payment' and not voucher.auto_recognize_vat:
+                if voucher.recognize_vat_move_id:
+                    raise UserError(
+                        _('To Unreconcile this payment, you must reverse '
+                          'the Recognized VAT Entry first.'))
+        super(AccountVoucher, self).cancel_voucher()
 
     @api.model
     def _compute_writeoff_amount(self,
@@ -266,6 +340,8 @@ class AccountVoucher(common_voucher, models.Model):
 
     @api.multi
     def button_reset_taxes(self):
+        if self._context.get('no_reset_tax', False):
+            return True
         for voucher in self:
             if voucher.state == 'posted':
                 continue
@@ -287,8 +363,8 @@ class AccountVoucher(common_voucher, models.Model):
         res = super(AccountVoucher, self).write(vals)
         # When editing only tax amount, do not reset tax
         to_update = True
-        if vals.get('tax_line', False):
-            for tax_line in vals.get('tax_line'):
+        if vals.get('tax_line_normal', False):
+            for tax_line in vals.get('tax_line_normal'):
                 if tax_line[0] == 1 and 'amount' in tax_line[2]:  # 1 = update
                     to_update = False
         if to_update:
@@ -306,8 +382,9 @@ class AccountVoucher(common_voucher, models.Model):
         if voucher.type in ('receipt', 'payment'):
             net_tax = self.voucher_move_line_tax_create(
                 voucher, move_id, company_currency, current_currency)
-            net_retention = self.voucher_move_line_retention_create(
-                voucher, move_id, company_currency, current_currency)
+            if not self._context.get('recognize_vat', False):
+                net_retention = self.voucher_move_line_retention_create(
+                    voucher, move_id, company_currency, current_currency)
         line_total = line_total + net_tax + net_retention
         return line_total
 
@@ -318,7 +395,7 @@ class AccountVoucher(common_voucher, models.Model):
         move_line_obj = self.env['account.move.line']
         avt_obj = self.env['account.voucher.tax']
         # one move line per tax line
-        vtml = avt_obj.move_line_get(voucher.id)
+        vtml = avt_obj.move_line_get(voucher)
         # create gain/loss from currency between invoice and voucher
         vtml = self.compute_tax_currency_gain(voucher, vtml)
         # create one move line for the total and adjust the other lines amount
@@ -352,21 +429,22 @@ class AccountVoucher(common_voucher, models.Model):
         res = []
         self._cr.execute("""
             SELECT * FROM account_voucher_line
-            WHERE voucher_id=%s and amount_retention != 0""", (voucher.id,))
+            WHERE voucher_id=%s and amount_retention != 0
+        """, (voucher.id,))
         for t in self._cr.dictfetchall():
-            prop = voucher.type in ('sale', 'receipt') \
-                and self.env['ir.property'].get(
-                'property_account_retention_customer', 'res.partner') \
-                or self.env['ir.property'].get(
-                'property_account_retention_supplier', 'res.partner')
-            account = self.env['account.fiscal.position'].map_account(prop)
+            account_id = False
+            company = self.env.user.company_id
+            if voucher.type in ('sale', 'receipt'):
+                account_id = company.account_retention_customer.id
+            else:
+                account_id = company.account_retention_supplier.id
             res.append({
                 'type': 'src',
                 'name': _('Retention Amount'),
                 'price_unit': t['amount_retention'],
                 'quantity': 1,
                 'price': t['amount_retention'],
-                'account_id': account.id,
+                'account_id': account_id,
                 'product_id': False,
                 'uos_id': False,
                 'account_analytic_id': False,
@@ -488,8 +566,7 @@ class AccountVoucher(common_voucher, models.Model):
                     gain_account_id = income_acct.id
                     loss_account_id = expense_acct.id
                 else:
-                    raise except_orm(
-                        _('Error!'),
+                    raise ValidationError(
                         _('No gain/loss accounting defined in the system!'))
                 if debit > 0.0 or credit > 0.0:
                     sign = debit - credit < 0 and -1 or 1
@@ -530,8 +607,141 @@ class AccountVoucher(common_voucher, models.Model):
                 res['value'].update({'amount': amount})
         return res
 
+    @api.multi
+    def action_move_line_create(self):
+        """ This is the cut down version of action_move_line_create()
+            It just post the clearing between due and undue """
+        if not self.env.user.company_id.auto_recognize_vat and \
+                self._context.get('recognize_vat', False):
+            # Start its own
+            context = self._context.copy()
+            move_pool = self.env['account.move']
+            for voucher in self:
+                if voucher.recognize_vat_move_id:
+                    raise UserError(_('Recognize VAT Entry already exists'))
+                company_currency = self._get_company_currency(voucher.id)
+                current_currency = self._get_current_currency(voucher.id)
+                context = self.with_context(context)._sel_context(voucher.id)
+                move_dict = \
+                    self.with_context(context).account_move_get(voucher.id)
+                journal = self.env.user.company_id.recognize_vat_journal_id
+                today = fields.Date.context_today(self)
+                period_id = self.env['account.period'].find(self.date)[:1]
+                move_dict.update({
+                    'name': '/',
+                    'journal_id': journal.id,
+                    'date': today,
+                    'period_id': period_id.id,
+                })
+                move = move_pool.with_context(context).\
+                    create(move_dict)
+                self.with_context(context).\
+                    _finalize_line_total(voucher, 0.0, move.id,
+                                         company_currency, current_currency)
+                voucher.write({
+                    'recognize_vat_move_id': move.id,
+                })
+            # Call just to by pass in hook, but still benefit from others
+            super(AccountVoucher,
+                  self.with_context(bypass=True)).action_move_line_create()
+        else:
+            super(AccountVoucher, self).action_move_line_create()
+        return True
 
-class account_voucher_line(common_voucher, models.Model):
+    @api.multi
+    def _assign_wht_sequence(self):
+        """ Only if not assigned, this method will assign next sequence """
+        Period = self.env['account.period']
+        for voucher in self:
+            if not voucher.income_tax_form:
+                raise ValidationError(_("No Income Tax Form selected, "
+                                        "can not assign WHT Sequence"))
+            if voucher.wht_sequence:
+                continue
+            wht_period = Period.find(voucher.date_value)[:1]
+            wht_sequence = \
+                voucher._get_next_wht_sequence(voucher.income_tax_form,
+                                               wht_period)
+            voucher.write({'wht_period_id': wht_period.id,
+                           'wht_sequence': wht_sequence})
+
+    # @api.model
+    # def _get_next_wht_sequence(self, income_tax_form, wht_period_id):
+    #     self._cr.execute("""
+    #         select coalesce(max(wht_sequence), 0) + 1
+    #         from account_voucher
+    #         where wht_period_id = %s and income_tax_form = %s
+    #     """, (wht_period_id, income_tax_form))
+    #     next_sequence = self._cr.fetchone()[0]
+    #     return next_sequence
+
+    @api.model
+    def _get_seq_search_domain(self, income_tax_form, wht_period):
+        domain = [('income_tax_form', '=', income_tax_form),
+                  ('period_id', '=', wht_period.id)]
+        return domain
+
+    @api.model
+    def _get_next_wht_sequence(self, income_tax_form, wht_period):
+        Sequence = self.env['ir.sequence']
+        WHTSequence = self.env['withholding.tax.sequence']
+        domain = self._get_seq_search_domain(income_tax_form, wht_period)
+        seq = WHTSequence.search(domain, limit=1)
+        if not seq:
+            seq = self._create_sequence(income_tax_form, wht_period)
+        return int(Sequence.next_by_id(seq.sequence_id.id))
+
+    @api.model
+    def _get_seq_name(self, income_tax_form, wht_period):
+        name = 'WHT-%s-%s' % (income_tax_form, wht_period.code,)
+        return name
+
+    @api.model
+    def _prepare_wht_seq(self, income_tax_form, wht_period, new_sequence):
+        vals = {
+            'income_tax_form': income_tax_form,
+            'period_id': wht_period.id,
+            'sequence_id': new_sequence.id,
+        }
+        return vals
+
+    @api.model
+    def _create_sequence(self, income_tax_form, wht_period):
+        seq_vals = {'name': self._get_seq_name(income_tax_form, wht_period),
+                    'implementation': 'no_gap'}
+        new_sequence = self.env['ir.sequence'].create(seq_vals)
+        vals = self._prepare_wht_seq(income_tax_form, wht_period, new_sequence)
+        return self.env['withholding.tax.sequence'].create(vals)
+
+
+class WithholdingTaxSequence(models.Model):
+    _name = 'withholding.tax.sequence'
+    _description = 'Keep track of WHT sequences'
+    _rec_name = 'period_id'
+
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+    )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        readonly=True,
+        help="Specify form for withholding tax, default with setup in supplier"
+    )
+    sequence_id = fields.Many2one(
+        'ir.sequence',
+        string='Sequence',
+        ondelete='restrict',
+    )
+    number_next_actual = fields.Integer(
+        string='Next Number',
+        related='sequence_id.number_next_actual',
+        readonly=True,
+    )
+
+
+class AccountVoucherLine(common_voucher, models.Model):
 
     _inherit = 'account.voucher.line'
 
@@ -752,6 +962,13 @@ class AccountVoucherTax(common_voucher, models.Model):
     factor_tax = fields.Float(
         string='Multipication factor Tax code',
         compute='_count_factor',
+    )
+    wht_cert_income_type = fields.Selection(
+        WHT_CERT_INCOME_TYPE,
+        string='Type of Income',
+    )
+    wht_cert_income_desc = fields.Char(
+        string='Income Description',
     )
 
     @api.model
@@ -1068,11 +1285,18 @@ class AccountVoucherTax(common_voucher, models.Model):
         return tax_gps
 
     @api.model
-    def move_line_get(self, voucher_id):
+    def move_line_get(self, voucher):
         res = []
-        self._cr.execute("""
-            SELECT * FROM account_voucher_tax
-            WHERE voucher_id=%s""", (voucher_id,))
+        sql = "SELECT * FROM account_voucher_tax WHERE voucher_id=%s"
+        # For Supplier Invoice only, check 2step posting
+        if voucher.type == 'payment':
+            if not self.env.user.company_id.auto_recognize_vat:
+                # Step 2 for normal and undue
+                if self._context.get('recognize_vat', False):
+                    sql += " and tax_code_type != 'wht' "
+                else:
+                    sql += " and tax_code_type = 'wht' "
+        self._cr.execute(sql, (voucher.id,))
         for t in self._cr.dictfetchall():
             if not t['amount']:
                 continue

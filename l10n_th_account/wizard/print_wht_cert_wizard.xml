@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_print_wht_cert" model="ir.ui.view">
+            <field name="name">Print Withholding Tax Certificate</field>
+            <field name="model">print.wht.cert.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Print Withholding Tax Certificate">
+                    <group>
+                        <group>
+                            <field name="voucher_id" invisible="1"/>
+                            <field name="company_partner_id"/>
+                            <field name="company_taxid" string="Tax ID"/>
+                            <field name="company_address" string="Address"/>
+                        </group>
+                        <group>
+                            <field name="supplier_partner_id"/>
+                            <field name="supplier_taxid" string="Tax ID"/>
+                            <field name="supplier_address" string="Address"/>
+                        </group>
+                    </group>
+                    <group string="WHT Cert Options">
+                        <group>
+                            <field name="income_tax_form" widget="radio" attrs="{'readonly': [('wht_sequence_display', '!=', False)]}"/>
+                            <field name="wht_sequence_display" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="tax_payer" attrs="{'readonly': [('wht_sequence_display', '!=', False)]}"/>
+                        </group>
+                    </group>
+                    <field name="wht_line">
+                        <tree editable="bottom" create="0">
+                            <field name="voucher_tax_id" />
+                            <field name="invoice_id"/>
+                            <field name="wht_cert_income_type"/>
+                            <field name="wht_cert_income_desc" invisible="1"/>
+                            <field name="base" sum="Total Base"/>
+                            <field name="amount" sum="Total Tax"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Print" name="run_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_print_wht_cert" model="ir.actions.act_window">
+            <field name="name">Print Withholding Tax Certificate</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">print.wht.cert.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_print_wht_cert"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

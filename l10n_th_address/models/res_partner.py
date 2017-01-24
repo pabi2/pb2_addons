@@ -25,8 +25,8 @@ class ResPartner(models.Model):
         domain="[('district_id','=',district_id)]",
         ondelete='restrict'
         )
-    street = fields.Text(string='Street')
-    street2 = fields.Text(string='Address (en)')
+    street = fields.Char(translate=True)
+    street2 = fields.Char(translate=True)
 
 #     @api.onchange('zip')
 #     def _onchange_township_id(self):

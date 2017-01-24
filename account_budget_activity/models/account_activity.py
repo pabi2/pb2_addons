@@ -11,9 +11,19 @@ class AccountActivityGroup(models.Model):
     _parent_order = 'name'
     _order = 'parent_left'
 
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        default='expense',
+        required=True,
+    )
     name = fields.Char(
         string='Activity Group',
         required=True,
+    )
+    description = fields.Char(
+        string='Description',
     )
     parent_id = fields.Many2one(
         'account.activity.group',
@@ -34,22 +44,33 @@ class AccountActivityGroup(models.Model):
         string='Right Parent',
         select=True,
     )
-    activity_ids = fields.One2many(
+    activity_ids = fields.Many2many(
         'account.activity',
-        'activity_group_id',
+        'activity_group_activity_rel',
+        'activity_group_id', 'activity_id',
         string='Activities',
     )
-#     account_id = fields.Many2one(
-#         'account.account',
-#         string='Account',
-#         domain=[('type', '!=', 'view')],
-#         help="This account has less priority to activitie's account",
-#     )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
     monitor_ids = fields.One2many(
         'account.activity.group.monitor.view',
         'activity_group_id',
         string='Activity Group Monitor',
         help="Plan vs actual per fiscal year for activity group"
+    )
+    monitor_revenue_ids = fields.One2many(
+        'account.activity.group.monitor.view',
+        'activity_group_id',
+        string='Activity Group Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'account.activity.group.monitor.view',
+        'activity_group_id',
+        string='Activity Group Monitor',
+        domain=[('budget_method', '=', 'expense')],
     )
     _sql_constraints = [
         ('activity_uniq', 'unique(name)',
@@ -81,10 +102,18 @@ class AccountActivity(models.Model):
     _name = 'account.activity'
     _description = 'Activity'
 
-    activity_group_id = fields.Many2one(
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        compute='_compute_budget_method',
+        store=True,
+    )
+    activity_group_ids = fields.Many2many(
         'account.activity.group',
-        string='Activity Group',
-        ondelete='set null',
+        'activity_group_activity_rel',
+        'activity_id', 'activity_group_id',
+        string='Activity Groups',
     )
     tag_ids = fields.Many2many(
         'account.activity.tag',
@@ -100,7 +129,7 @@ class AccountActivity(models.Model):
     account_id = fields.Many2one(
         'account.account',
         string='Account',
-        required=True,
+        required=False,
         domain=[('type', '!=', 'view')],
         help="This account has higher priority to group activities's account",
     )
@@ -109,6 +138,25 @@ class AccountActivity(models.Model):
         'activity_id',
         string='Activity Monitor',
         help="Plan vs actual per fiscal year for activity"
+    )
+    monitor_revenue_ids = fields.One2many(
+        'account.activity.monitor.view',
+        'activity_id',
+        string='Activity Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'account.activity.monitor.view',
+        'activity_id',
+        string='Activity Monitor',
+        domain=[('budget_method', '=', 'expense')],
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    search_keywords = fields.Text(
+        string='Search Keywords',
     )
     _sql_constraints = [
         ('activity_uniq', 'unique(name, activity_group_id)',
@@ -125,13 +173,24 @@ class AccountActivity(models.Model):
 #                               activity.name or '-')))
 #         return result
 
-#     @api.one
-#     @api.constrains('account_id')
-#     def _check_account_id(self):
-#         if not self.account_id and not self.activity_group_id.account_id:
-#             raise UserError(
-#                 _('Please select account for activity in group %s!' %
-#                   (self.activity_group_id.name,)))
+    @api.multi
+    @api.constrains('activity_group_ids')
+    def _check_account_id(self):
+        for rec in self:
+            m = list(set([x.budget_method for x in rec.activity_group_ids]))
+            if False in m:
+                m.remove(False)
+            if len(m) > 1:
+                raise ValidationError(
+                    _('All Activity Groups of this Activity '
+                      'must use same Budget Method'))
+
+    @api.multi
+    @api.depends('activity_group_ids', 'activity_group_ids.budget_method')
+    def _compute_budget_method(self):
+        for rec in self:
+            rec.budget_method = rec.activity_group_ids and \
+                rec.activity_group_ids[0].budget_method or 'expense'
 
 
 class AccountActivityTag(models.Model):
@@ -156,7 +215,6 @@ class ActivityCommon(object):
     activity_id = fields.Many2one(
         'account.activity',
         string='Activity',
-        domain="[('activity_group_id', '=', activity_group_id)]",
     )
 
     @api.model
@@ -193,9 +251,7 @@ class ActivityCommon(object):
 
     @api.onchange('activity_group_id')
     def _onchange_activity_group_id(self):
-        return self._onchange_focus_field(focus_field='activity_group_id',
-                                          parent_field=False,
-                                          child_field='activity_id')
+        self.activity_id = False
 
     @api.multi
     @api.constrains('activity_id', 'product_id')

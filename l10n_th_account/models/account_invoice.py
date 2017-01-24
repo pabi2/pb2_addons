@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import except_orm
 
 
 class AccountInvoice(models.Model):
@@ -58,7 +57,7 @@ class AccountInvoice(models.Model):
     @api.depends('partner_id')
     def _retention_on_payment(self):
         self.retention_on_payment = \
-            self.partner_id.property_retention_on_payment
+            self.env.user.company_id.retention_on_payment
 
     @api.multi
     def invoice_pay_customer(self):
@@ -81,26 +80,19 @@ class AccountInvoiceLine(models.Model):
         if inv.amount_retention > 0.0 and not inv.retention_on_payment:
             sign = -1
             # sign = inv.type in ('out_invoice','in_invoice') and -1 or 1
-            # account code for advance
-            prop = inv.type in ('out_invoice', 'out_refund') \
-                and self.env['ir.property'].get(
-                    'property_account_retention_customer',
-                    'res.partner') \
-                or self.env['ir.property'].get(
-                    'property_account_retention_supplier',
-                    'res.partner')
-            if not prop:
-                raise except_orm(
-                    _('Error!'),
-                    _('No retention account defined in the system!'))
-            account = self.env['account.fiscal.position'].map_account(prop)
+            account_id = False
+            company = self.env.user.company_id
+            if inv.type in ('out_invoice', 'out_refund'):
+                account_id = company.account_retention_customer.id
+            else:
+                account_id = company.account_retention_supplier.id
             res.append({
                 'type': 'src',
                 'name': _('Retention Amount'),
                 'price_unit': sign * inv.amount_retention,
                 'quantity': 1,
                 'price': sign * inv.amount_retention,
-                'account_id': account.id,
+                'account_id': account_id,
                 'product_id': False,
                 'uos_id': False,
                 'account_analytic_id': False,

@@ -13,16 +13,10 @@ class ChequeLot(models.Model):
         required=True,
         copy=False,
     )
-    bank_id = fields.Many2one(
-        'res.partner.bank',
-        string='Bank',
-        required=True,
-    )
     journal_id = fields.Many2one(
         'account.journal',
         string='Payment Method',
         required=True,
-        domain="[('bank_id', '=', bank_id)]",
     )
     cheque_number_from = fields.Char(
         string='Cheque Number From',
@@ -45,10 +39,10 @@ class ChequeLot(models.Model):
         compute='_compute_next_number',
     )
     remaining = fields.Integer(
-        string='Next Cheque Number',
-        compute='_compute_state',
-        store=True,
+        string='Remainings',
+        compute='_compute_remaining',
         readonly=True,
+        store=True,
         help="This field show the remaining valid cheque to use",
     )
     state = fields.Selection(
@@ -68,20 +62,25 @@ class ChequeLot(models.Model):
         string='Cheque Registers',
     )
 
-    @api.onchange('bank_id')
-    def _onchange_bank_id(self):
-        self.journal_id = False
+    # @api.onchange('bank_id')
+    # def _onchange_bank_id(self):
+    #     self.journal_id = False
+
+    @api.multi
+    @api.depends('line_ids.void', 'line_ids.voucher_id')
+    def _compute_remaining(self):
+        Cheque = self.env['cheque.register']
+        for lot in self:
+            count = len(Cheque.search([('cheque_lot_id', '=', lot.id),
+                                      ('voucher_id', '=', False),
+                                      ('void', '!=', True)])._ids)
+            lot.remaining = count
 
     @api.multi
     @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
     def _compute_state(self):
-        Cheque = self.env['cheque.register']
         for lot in self:
-            num = Cheque.search_count([('cheque_lot_id', '=', lot.id),
-                                       ('voucher_id', '=', False),
-                                       ('void', '=', False)])
-            lot.remaining = num
-            if num > 0:
+            if lot.remaining > 0:
                 lot.state = 'active'
             else:
                 lot.state = 'inactive'
@@ -177,10 +176,10 @@ class ChequeRegister(models.Model):
         readonly=True,
         index=True,
     )
-    bank_id = fields.Many2one(
-        'res.partner.bank',
-        string='Bank Account',
-        related='cheque_lot_id.bank_id',
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        related='cheque_lot_id.journal_id',
         store=True,
         readonly=True,
     )
