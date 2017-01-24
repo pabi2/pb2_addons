@@ -69,6 +69,24 @@ class PABIPartnerDunningReport(models.Model):
         string='Print History',
     )
 
+    # @api.model
+    # def fields_view_get(self, view_id=None, view_type=False,
+    #                     toolbar=False, submenu=False):
+    #     res = super(PABIPartnerDunningReport, self).\
+    #         fields_view_get(view_id=view_id, view_type=view_type,
+    #                         toolbar=toolbar, submenu=submenu)
+    #     # Passing context to action on tree view
+    #     actions = res.get('toolbar', {}).get('action', {})
+    #     for action in actions:
+    #         # if action.get('context', False):
+    #         #     context = ast.literal_eval(action['context'])
+    #         #     context.update(
+    #         #         {'date_run': self._context.get('date_run', False)})
+    #         action['context'] = {'date_run': self._context.get('date_run', False)}
+    #     # res['context'] = {'date_run': self._context.get('date_run', False)}
+    #     print res
+    #     return res
+
     @api.multi
     @api.depends()
     def _compute_date(self):

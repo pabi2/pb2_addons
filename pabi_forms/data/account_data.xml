@@ -7,23 +7,24 @@
 
 		<!-- หนังสือรับรองการหักเงินประกันผลงาน (supplier retention form)-->
 		<record id="supplier_retention_form" model="ir.actions.report.xml">
-			<field name="string">หนังสือรับรองการหักเงินประกันผลงาน</field>
+			<field name="string">Supplier Retention Form</field>
 			<field name="auto">True</field>
-			<field name="model">account.invoice</field>
-			<field name="jasper_model_id" ref="account.model_account_invoice"/>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
 			<field name="name">Supplier Retention Form</field>
-			<field name="report_name">supplier.retention.form</field>
+			<field name="report_name">supplier_retention_form</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/supplier_retention_form.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
 		</record>
 
 		<record id="supplier_retention_form_values" model="ir.values">
 			<field name="name">Supplier Retention Form</field>
-			<field name="model">account.invoice</field>
+			<field name="model">account.voucher</field>
 			<field name="key2" eval="'client_print_multi'"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_retention_form)"/>
 		</record>
@@ -284,11 +285,11 @@
 		<!-- Invoice Voucher -->
 		<!-- KV -->
 		<record id="invoice_voucher_kv" model="ir.actions.report.xml">
-			<field name="string">KV Voucher</field>
+			<field name="string">Invoice Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">KV Voucher</field>
+			<field name="name">Invoice Voucher</field>
 			<field name="report_name">invoice.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/invoice_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -306,11 +307,11 @@
 		</record>
 		<!-- DV -->
 		<record id="invoice_voucher_dv" model="ir.actions.report.xml">
-			<field name="string">DV Voucher</field>
+			<field name="string">Invoice Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">DV Voucher</field>
+			<field name="name">Invoice Voucher</field>
 			<field name="report_name">invoice.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/invoice_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -330,11 +331,11 @@
 		<!-- Payment Voucher -->
 		<!-- PV -->
 		<record id="payment_voucher_pv" model="ir.actions.report.xml">
-			<field name="string">PV Voucher</field>
+			<field name="string">Payment Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">PV Voucher</field>
+			<field name="name">Payment Voucher</field>
 			<field name="report_name">payment.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/payment_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -352,11 +353,11 @@
 		</record>
 		<!-- RC -->
 		<record id="payment_voucher_rc" model="ir.actions.report.xml">
-			<field name="string">RC Voucher</field>
+			<field name="string">Payment Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">RC Voucher</field>
+			<field name="name">Payment Voucher</field>
 			<field name="report_name">payment.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/payment_voucher.jrxml</field>
 			<field name="menu">True</field>
@@ -377,11 +378,11 @@
 		<!-- Bank Receipt -->
 		<!-- RV -->
 		<record id="bank_receipt_voucher" model="ir.actions.report.xml">
-			<field name="string">RV Voucher</field>
+			<field name="string">Bank Receipt Voucher</field>
 			<field name="auto">True</field>
 			<field name="model">account.move</field>
 			<field name="jasper_model_id" ref="account.model_account_move"/>
-			<field name="name">RV Voucher</field>
+			<field name="name">Bank Receipt Voucher</field>
 			<field name="report_name">bank.receipt.voucher</field>
 			<field name="report_rml">pabi_forms/jrxml_reports/account/bank_receipt_voucher.jrxml</field>
 			<field name="menu">True</field>

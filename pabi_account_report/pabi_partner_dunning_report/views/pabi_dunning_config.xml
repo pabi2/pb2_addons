@@ -27,11 +27,16 @@
                     </group>
                     <group string="Alternalte Text for Dunning Letter Form" >
                         <group>
+                            <field name="litigation_contact"/>
                             <field name="signature_dunning"/>
                             <field name="signature_litigation"/>
                             <field name="account_dept_contact"/>
                         </group>
                         <group>
+                            <field name="litigation_contact_en"/>
+                            <field name="signature_dunning_en"/>
+                            <field name="signature_litigation_en"/>
+                            <field name="account_dept_contact_en"/>
                         </group>
                     </group>
                 </form>

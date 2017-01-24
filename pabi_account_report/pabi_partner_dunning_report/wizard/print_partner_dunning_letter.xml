@@ -11,6 +11,7 @@
           view_mode="form"
           key2="client_action_multi"
           target="new"
+          context="{'date_run': context.get('date_run', False)}"
           />
 
         <record id="wizard_print_partner_dunning_letter" model="ir.ui.view">
@@ -25,8 +26,10 @@
                     <group>
                         <group>
                             <field name="report_type"/>
+                            <field name="date_run"/>
                         </group>
                         <group name="extra">
+                            <field name="lang"/>
                         </group>
                     </group>
                     <footer>

@@ -10,10 +10,10 @@
                     <group>
                         <group>
                             <field name="attachment_id" domain="[('budget_template', '=', True)]" widget="selection" required="True"/>
-                            <field name="export_committed_budget"/>
                         </group>
                         <group>
-                            <field name="editable_lines"/>
+                            <field name="export_committed_budget"/>
+                            <field name="editable_lines" invisible="True"/>
                         </group>
                     </group>
                     <footer>
