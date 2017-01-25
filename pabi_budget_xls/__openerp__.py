@@ -16,7 +16,6 @@
     "installable": True,  # Mark uninstallable for now.
     "depends": [
         "account_budget_activity",
-        'web_widget_x2many_2d_matrix',
         'pabi_budget_plan',
         'pabi_budget_internal_charge',
         'pabi_attachment_helper',
