@@ -15,7 +15,6 @@
         'purchase_requisition',
         'purchase_request',
         'stock_request',
-        'document_status_history',
         # 'account_model_generate_hook',
     ],
     'data': [
