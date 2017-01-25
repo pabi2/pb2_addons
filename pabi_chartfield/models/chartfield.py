@@ -309,6 +309,12 @@ class CostControl(ResCommon, models.Model):
 
     @api.onchange('public')
     def _onchange_public(self):
+        if not self.env.user.has_group(
+                'pabi_base.group_cooperate_budget')\
+            and not self.env.user.has_group(
+                'pabi_base.group_operating_unit_budget'):
+           raise ValidationError(
+                _('Sorry! \n You are not authorized to edit this field.'))
         self.owner_level = False
         self.org_id = False
         self.sector_id = False
