@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields, _
 from openerp.addons.pabi_base.models.res_common import ResCommon
-from openerp.addons.document_status_history.models.document_history import \
-    LogCommon
 
 from openerp.exceptions import ValidationError
 
@@ -224,8 +222,9 @@ class CostControlType(ResCommon, models.Model):
     )
 
 
-class CostControl(ResCommon, LogCommon, models.Model):
+class CostControl(ResCommon, models.Model):
     _name = 'cost.control'
+    _inherit = ['mail.thread']
     _description = 'Job Order'
 
     @api.model
@@ -246,56 +245,75 @@ class CostControl(ResCommon, LogCommon, models.Model):
         'cost.control.type',
         string='Job Order Type',
         required=True,
+        track_visibility='onchange',
     )
     public = fields.Boolean(
         string="NSTDA Wide",
         copy=False,
         default=True,
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
     )
     owner_level = fields.Selection(
         string="Owner Level",
         selection=_get_owner_level_selection,
         copy=False,
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
     )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
         string='Org',
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
     )
     sector_id = fields.Many2one(
         'res.sector',
         string='Sector',
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
     )
     subsector_id = fields.Many2one(
         'res.subsector',
         string='Subsector',
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
     )
     division_id = fields.Many2one(
         'res.division',
         string='Division',
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
     )
     section_id = fields.Many2one(
         'res.section',
         string='Section',
-        read=['pabi_base.group_cooperate_budget'],
-        write=['pabi_base.group_cooperate_budget'],
+        track_visibility='onchange',
+    )
+    active = fields.Boolean(
+        track_visibility='onchange',
     )
 
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Job Order Name must be unique!'),
     ]
+
+    @api.model
+    def _check_access(self):
+        if not self.env.user.has_group(
+                'pabi_base.group_cooperate_budget')\
+            and not self.env.user.has_group(
+                'pabi_base.group_operating_unit_budget'):
+           raise ValidationError(
+                _('Sorry! \n You are not authorized to edit this field.'))
+        return True
+
+    @api.model
+    def create(self, vals):
+        if 'public' in vals:
+            self._check_access()
+        return super(CostControl, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if 'public' in vals:
+            self._check_access()
+        return super(CostControl, self).write(vals)
 
     @api.onchange('public')
     def _onchange_public(self):
