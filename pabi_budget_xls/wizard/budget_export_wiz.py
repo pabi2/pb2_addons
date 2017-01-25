@@ -415,7 +415,7 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _update_job_order_sheet(self, workbook):
         try:
-            JobOrder_Sheet = workbook.get_sheet_by_name('JorOder')
+            JobOrder_Sheet = workbook.get_sheet_by_name('Job Oder')
             JobOrder_Sheet.protection.sheet = True
             JobOrder_Sheet.protection.set_password('pabi2')
             TahomaFont = Font(bold=False, name='Tahoma', size=10)
@@ -459,7 +459,7 @@ class BudgetExportWizard(models.TransientModel):
             JobOrdeListFormula = DataValidation(
                 type="list",
                 formula1=formula1.format(
-                    quote_sheetname('JorOder')
+                    quote_sheetname('Job Oder')
                 )
             )
             SHEET_FORMULAS.update({'job_order_formula': JobOrdeListFormula})
