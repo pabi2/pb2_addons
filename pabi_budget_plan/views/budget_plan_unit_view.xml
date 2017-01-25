@@ -117,7 +117,7 @@
                             <page string="Revenue">
                                 <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'section_id': section_id, 'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
-                            <page string="Job Order">
+                            <page string="Job Order" invisible="True">
                                 <field name="cost_control_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','not in',('draft', 'submit'))]}">
                                     <tree string="Job Order" editable="bottom">
                                         <field name="cost_control_id"/>
@@ -190,7 +190,8 @@
                     <field name="fund_id" required="1"/>
 
                     <field name="activity_group_id" domain="[('budget_method', '=', budget_method)]"/>
-                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
+                    <field name="cost_control_id"/>
+                    <field name="activity_id" invisible="True" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', budget_method)]"/>
 
                     <field name="unit"/>
                     <field name="activity_unit_price"/>
