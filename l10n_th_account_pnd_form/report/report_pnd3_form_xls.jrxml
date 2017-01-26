@@ -3,7 +3,7 @@
 	<property name="ireport.zoom" value="1.7715610000000155"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="net.sf.jasperreports.export.csv.field.delimiter" value="	"/>
+	<property name="net.sf.jasperreports.export.csv.field.delimiter" value="&#009;"/>
 	<style name="style1">
 		<box>
 			<pen lineColor="#D5D5D5"/>
