@@ -8,15 +8,17 @@
 			<field name="model">pabi.partner.dunning.report</field>
 			<field name="arch" type="xml">
 				<tree string="Partner Dunning Report">
-					<field name="org_id"/>
+					<field name="taxbranch_id"/>
 					<field name="partner_id"/>
 					<field name="date_run"/>
-					<field name="move_line_id"/>
+					<field name="date" string="Invoice Date"/>
+					<field name="date_maturity"/>
+					<field name="amount_residual" string="Amount" sum="Total Amount"/>
+					<field name="move_line_id" string="Invoice"/>
 					<field name="invoice_id" invisible="1"/>
 					<field name="reconcile_id" invisible="1"/>
-					<field name="amount_residual"/>
-					<field name="date_maturity"/>
 					<field name="days_overdue"/>
+					<field name="validate_user_id"/>
 					<field name="print_ids"/>
 				</tree>
 			</field>
@@ -58,7 +60,7 @@
 			<field name="arch" type="xml">
 				<search string="Partner Dunning Report">
 					<group expand="1" string="Group By">
-						<filter string="Org" name="groupby_org" context="{'group_by':'org_id'}"/>
+						<filter string="Tax Branch" name="groupby_org" context="{'group_by':'taxbranch_id'}"/>
 						<filter string="Partner" name="groupby_partner" context="{'group_by':'partner_id'}"/>
 					</group>
 				</search>
