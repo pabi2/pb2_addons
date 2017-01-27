@@ -35,6 +35,10 @@ class PABIPartnerDunningReport(models.Model):
         string='Due Date',
         readonly=True,
     )
+    date = fields.Date(
+        string='Date',
+        readonly=True,
+    )
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
@@ -63,11 +67,24 @@ class PABIPartnerDunningReport(models.Model):
         string='Account Type',
         readonly=True,
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        compute='_compute_validate_user_id',
+        string='Validator',
+        readonly=True,
+    )
     print_ids = fields.One2many(
         'pabi.partner.dunning.print.history',
         'dunning_id',
         string='Print History',
     )
+
+    @api.multi
+    @api.depends()
+    def _compute_validate_user_id(self):
+        for line in self:
+            line.validate_user_id = \
+                line.move_line_id.document_id.validate_user_id
 
     # @api.model
     # def fields_view_get(self, view_id=None, view_type=False,
@@ -104,7 +121,7 @@ class PABIPartnerDunningReport(models.Model):
         tools.drop_view_if_exists(cr, self._table)
 
         _sql = """
-            select aml.id, aml.id as move_line_id, date_maturity,
+            select aml.id, aml.id as move_line_id, aml.date_maturity, aml.date,
             aml.taxbranch_id, aml.partner_id, aa.type account_type, new_title
             from account_move_line aml
             join account_account aa on aa.id = aml.account_id
