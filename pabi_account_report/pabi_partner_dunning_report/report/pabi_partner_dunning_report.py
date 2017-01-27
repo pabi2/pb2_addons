@@ -35,9 +35,9 @@ class PABIPartnerDunningReport(models.Model):
         string='Due Date',
         readonly=True,
     )
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Tax Branch',
         readonly=True,
     )
     partner_id = fields.Many2one(
@@ -105,7 +105,7 @@ class PABIPartnerDunningReport(models.Model):
 
         _sql = """
             select aml.id, aml.id as move_line_id, date_maturity,
-            aml.org_id, aml.partner_id, aa.type account_type, new_title
+            aml.taxbranch_id, aml.partner_id, aa.type account_type, new_title
             from account_move_line aml
             join account_account aa on aa.id = aml.account_id
             join res_partner rp on rp.id = aml.partner_id
