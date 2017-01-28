@@ -181,6 +181,22 @@ class AccountInvoice(models.Model):
         action['context'] = ctx
         return action
 
+    @api.multi
+    def finalize_invoice_move_lines(self, move_lines):
+        move_lines = super(AccountInvoice,
+                           self).finalize_invoice_move_lines(move_lines)
+        new_move_lines = []
+        # Tax Accounts
+        vats = self.env['account.tax'].search([('is_wht', '=', False)])
+        tax_account_ids = vats.mapped('account_collected_id').ids
+        tax_account_ids += vats.mapped('account_paid_id').ids
+        for line_tuple in move_lines:
+            if line_tuple[2]['account_id'] in tax_account_ids:
+                line_tuple[2]['taxinvoice_taxbranch_id'] = \
+                    self.taxbranch_id.id
+            new_move_lines.append(line_tuple)
+        return new_move_lines
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
