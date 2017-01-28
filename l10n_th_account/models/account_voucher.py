@@ -1285,6 +1285,23 @@ class AccountVoucherTax(common_voucher, models.Model):
         return tax_gps
 
     @api.model
+    def _prepare_one_move_line(self, t):
+        return {
+            'type': 'tax',
+            'name': t['name'],
+            'price_unit': t['amount'],
+            'quantity': 1,
+            'price': t['amount'] or 0.0,
+            'tax_currency_gain': t['tax_currency_gain'] or 0.0,
+            'account_id': t['account_id'],
+            'tax_code_id': t['tax_code_id'],
+            'tax_amount': t['tax_amount'],
+            'account_analytic_id': t['account_analytic_id'],
+            'tax_code_type': t['tax_code_type'],
+            'invoice_id': t['invoice_id'],  # pass for future use
+        }
+
+    @api.model
     def move_line_get(self, voucher):
         res = []
         sql = "SELECT * FROM account_voucher_tax WHERE voucher_id=%s"
@@ -1300,19 +1317,7 @@ class AccountVoucherTax(common_voucher, models.Model):
         for t in self._cr.dictfetchall():
             if not t['amount']:
                 continue
-            res.append({
-                'type': 'tax',
-                'name': t['name'],
-                'price_unit': t['amount'],
-                'quantity': 1,
-                'price': t['amount'] or 0.0,
-                'tax_currency_gain': t['tax_currency_gain'] or 0.0,
-                'account_id': t['account_id'],
-                'tax_code_id': t['tax_code_id'],
-                'tax_amount': t['tax_amount'],
-                'account_analytic_id': t['account_analytic_id'],
-                'tax_code_type': t['tax_code_type'],
-            })
+            res.append(self._prepare_one_move_line(t))
         return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

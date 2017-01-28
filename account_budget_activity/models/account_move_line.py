@@ -15,7 +15,7 @@ class AccountMoveLine(models.Model):
     )
 
     @api.model
-    def create(self, vals):
+    def _update_analytic_dimension(self, vals):
         """ Add dimension on move line """
         Analytic = self.env['account.analytic.account']
         analytic = False
@@ -24,6 +24,11 @@ class AccountMoveLine(models.Model):
         if analytic:
             domain = Analytic.get_analytic_search_domain(analytic)
             vals.update(dict((x[0], x[2]) for x in domain))
+        return vals
+
+    @api.model
+    def create(self, vals):
+        vals = self._update_analytic_dimension(vals)
         return super(AccountMoveLine, self).create(vals)
 
     @api.multi
