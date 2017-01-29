@@ -7,9 +7,9 @@ class PrintPartnerDunningLetter(models.TransientModel):
     _name = 'print.partner.dunning.letter'
 
     report_type = fields.Selection(
-        [('7', '#1 Overdue 7 Days'),
-         ('14', '#2 Overdue 14 Days'),
-         ('19', '#3 Overdue 19 Days')],
+        [('l1', '#1 Overdue 7 Days'),
+         ('l2', '#2 Overdue 14 Days'),
+         ('l3', '#3 Overdue 19 Days')],
         string='Report Type',
         required=True,
     )
@@ -32,17 +32,17 @@ class PrintPartnerDunningLetter(models.TransientModel):
     def action_print_dunning_letter(self):
         data = {'parameters': {}}
         report_name = False
-        if self.report_type == '7':
+        if self.report_type == 'l1':
             if self.lang == 'en_US':
                 report_name = 'pabi_customer_dunning_letter_1st_en'
             else:
                 report_name = 'pabi_customer_dunning_letter_1st'
-        elif self.report_type == '14':
+        elif self.report_type == 'l2':
             if self.lang == 'en_US':
                 report_name = 'pabi_customer_dunning_letter_2nd_en'
             else:
                 report_name = 'pabi_customer_dunning_letter_2nd'
-        elif self.report_type == '19':
+        elif self.report_type == 'l3':
             report_name = 'pabi_customer_dunning_letter_3rd'
         # For ORM, we search for ids, and only pass ids to parser and jasper
         if not report_name:

@@ -3,6 +3,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import api, fields, models, _
 
+OVERDUE_DAYS = {'l1': 7, 'l2': 14, 'l3': 19}
+
 
 class PABIPartnerDunningWizard(models.TransientModel):
     _name = 'pabi.partner.dunning.wizard'
@@ -13,11 +15,15 @@ class PABIPartnerDunningWizard(models.TransientModel):
         default=lambda self: fields.Date.context_today(self),
     )
     report_type = fields.Selection(
-        [('7', 'Overdue 7 Days'),
-         ('14', 'Overdue 14 Days'),
-         ('19', 'Overdue 19 Days')],
+        [('l1', 'Overdue 7 Days'),
+         ('l2', 'Overdue 14 Days'),
+         ('l3', 'Overdue 19 Days')],
         string='Type',
-        default='7',
+        default='l1',
+    )
+    show_no_stamp = fields.Boolean(
+        string='Show No-Stamped Only',
+        default=True,
     )
     account_type = fields.Selection(
         [('payable', 'Payable'),
@@ -54,7 +60,7 @@ class PABIPartnerDunningWizard(models.TransientModel):
         if self.account_type:
             domain.append(('account_type', '=', self.account_type))
         if self.report_type:
-            days = int(self.report_type)
+            days = OVERDUE_DAYS[self.report_type]
             date_due = (datetime.strptime(self.date_run, '%Y-%m-%d') -
                         relativedelta(days=days)).strftime('%Y-%m-%d')
             _ids = Report.search([('date_maturity', '=', date_due)])._ids
@@ -82,7 +88,7 @@ class PABIPartnerDunningWizard(models.TransientModel):
     @api.multi
     def run_report(self):
         self.ensure_one()
-        action = self.env.ref('pabi_account_report.'
+        action = self.env.ref('pabi_partner_dunning_report.'
                               'action_pabi_partner_dunning_report')
         result = action.read()[0]
         # Get filter
@@ -93,8 +99,9 @@ class PABIPartnerDunningWizard(models.TransientModel):
         result['context'] = {'date_run': self.date_run}
         result['context'].update(self._get_groupby())
         # Update report name
-        report_name = _('Dunning Report - %s Days Overdue') % \
-            (self.report_type)
+        report_name = self.report_type and \
+            _('%s Days Overdue') % (OVERDUE_DAYS[self.report_type]) or \
+            _('- Days Overdue')
         result.update({'display_name': report_name})
         result.update({'name': report_name})
         return result

@@ -8,7 +8,6 @@
 			<field name="model">pabi.partner.dunning.report</field>
 			<field name="arch" type="xml">
 				<tree string="Partner Dunning Report">
-					<field name="taxbranch_id"/>
 					<field name="partner_id"/>
 					<field name="date_run"/>
 					<field name="date" string="Invoice Date"/>
@@ -19,7 +18,12 @@
 					<field name="reconcile_id" invisible="1"/>
 					<field name="days_overdue"/>
 					<field name="validate_user_id"/>
-					<field name="print_ids"/>
+					<field name="l1" invisible="0"/>
+					<field name="l1_date" string=""/>
+					<field name="l2" invisible="0"/>
+					<field name="l2_date" string=""/>
+					<field name="l3" invisible="0"/>
+					<field name="l3_date" string=""/>
 				</tree>
 			</field>
 		</record>
@@ -41,15 +45,6 @@
 							<field name="days_overdue"/>
 						</group>
 					</group>
-					<group string="Print History">
-						<field name="print_ids" nolabel="1">
-							<tree>
-								<field name="report_type"/>
-								<field name="create_date"/>
-								<field name="create_uid"/>
-							</tree>
-						</field>
-					</group>
 				</form>
 			</field>
 		</record>
@@ -60,7 +55,6 @@
 			<field name="arch" type="xml">
 				<search string="Partner Dunning Report">
 					<group expand="1" string="Group By">
-						<filter string="Tax Branch" name="groupby_org" context="{'group_by':'taxbranch_id'}"/>
 						<filter string="Partner" name="groupby_partner" context="{'group_by':'partner_id'}"/>
 					</group>
 				</search>
