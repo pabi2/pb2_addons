@@ -9,7 +9,7 @@ OVERDUE_DAYS = {'l1': 7, 'l2': 14, 'l3': 19}
 
 class PABIPartnerDunningReport(models.Model):
     _name = 'pabi.partner.dunning.report'
-    _order = 'partner_id, move_line_id'
+    _order = 'partner_id, date_maturity desc'
     _auto = False
 
     move_line_id = fields.Many2one(
@@ -199,6 +199,7 @@ class PABIPartnerDunningReport(models.Model):
 
     @api.multi
     def _create_dunning_letter(self, letter_type):
+        print self
         # Sorting first
         dunnings = self.sorted(key=lambda a: (a.partner_id, a.date))
         # Create 1 letter for 1 parnter + multiple lines

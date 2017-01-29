@@ -9,6 +9,10 @@
 			<field name="arch" type="xml">
 				<tree string="Partner Dunning Letter">
 					<field name="partner_id"/>
+					<field name="number"/>
+					<field name="date_letter"/>
+					<field name="letter_type"/>
+					<field name="date_run"/>
 				</tree>
 			</field>
 		</record>

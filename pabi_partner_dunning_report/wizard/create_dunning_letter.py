@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.exceptions import Warning as UserError
 
 OVERDUE_DAYS = {'l1': 7, 'l2': 14, 'l3': 19}
 
@@ -17,6 +16,7 @@ class CreateDunningLetter(models.TransientModel):
         # - No letters created today
         today = fields.Date.context_today(self)
         for t in ['l1', 'l2', 'l3']:
+            print active_ids
             dunnings = self.env[model].browse(active_ids)
             filtered_dunning = dunnings.filtered(
                 lambda l: l.days_overdue >= OVERDUE_DAYS[t]
@@ -24,4 +24,5 @@ class CreateDunningLetter(models.TransientModel):
                 and today not in (l.l1_date, l.l2_date, l.l3_date)
             )
             filtered_dunning._create_dunning_letter(t)
+            active_ids = list(set(active_ids) - set(filtered_dunning.ids))
         return True

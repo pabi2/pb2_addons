@@ -10,23 +10,9 @@
 				<form>
 					<group>
 						<group>
-							<field name="report_type"/>
-							<field name="date_run" invisible="1"/>
-							<field name="open_item" invisible="1"/>
+							<field name="date_run"/>
 						</group>
 						<group>
-							<field name="show_no_stamp"/>
-							<field name="account_type" invisible="1"/>
-						</group>
-					</group>
-					<group>
-						<group name="filter_unit_base" string="Filters">
-							<field name="org_id"/>
-							<field name="partner_id"/>
-						</group>
-						<group name="groupby_unit_base" string="Group by">
-							<field name="groupby_org"/>
-							<field name="groupby_partner"/>
 						</group>
 					</group>
 					<footer>
