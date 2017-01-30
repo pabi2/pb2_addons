@@ -16,38 +16,53 @@ class PABIDunningConfig(models.TransientModel):
         string='Prefix Mapping',
         related='company_id.title_ids',
     )
-    litigation_contact = fields.Char(
-        string='Legal Dept. Contact',
-        related='company_id.litigation_contact',
+    # Letter 1
+    letter1_header = fields.Text(
+        string='Letter 1 Header',
+        related='company_id.letter1_header',
+        translate=True,
     )
-    signature_dunning = fields.Text(
-        string='Signature for Dunning',
-        related='company_id.signature_dunning',
+    letter1_footer = fields.Text(
+        string='Letter 1 Footer',
+        related='company_id.letter1_footer',
+        translate=True,
     )
-    signature_litigation = fields.Text(
-        string='Signature for Litigation',
-        related='company_id.signature_litigation',
+    letter1_signature = fields.Text(
+        string='Letter 1 Signature',
+        related='company_id.letter1_signature',
+        translate=True,
     )
-    account_dept_contact = fields.Text(
-        string='Account Dept. Contact',
-        related='company_id.account_dept_contact',
+    # Letter 2
+    letter2_header = fields.Text(
+        string='Letter 2 Header',
+        related='company_id.letter2_header',
+        translate=True,
     )
-    # EN
-    litigation_contact_en = fields.Char(
-        string='Legal Dept. Contact (EN)',
-        related='company_id.litigation_contact_en',
+    letter2_footer = fields.Text(
+        string='Letter 2 Footer',
+        related='company_id.letter2_footer',
+        translate=True,
     )
-    signature_dunning_en = fields.Text(
-        string='Signature for Dunning (EN)',
-        related='company_id.signature_dunning_en',
+    letter2_signature = fields.Text(
+        string='Letter 2 Signature',
+        related='company_id.letter2_signature',
+        translate=True,
     )
-    signature_litigation_en = fields.Text(
-        string='Signature for Litigation (EN)',
-        related='company_id.signature_litigation_en',
+    # Letter 3
+    letter3_header = fields.Text(
+        string='Letter 3 Header',
+        related='company_id.letter3_header',
+        translate=True,
     )
-    account_dept_contact_en = fields.Text(
-        string='Account Dept. Contact (EN)',
-        related='company_id.account_dept_contact_en',
+    letter3_footer = fields.Text(
+        string='Letter 3 Footer',
+        related='company_id.letter3_footer',
+        translate=True,
+    )
+    letter3_signature = fields.Text(
+        string='Letter 3 Signature',
+        related='company_id.letter3_signature',
+        translate=True,
     )
 
 

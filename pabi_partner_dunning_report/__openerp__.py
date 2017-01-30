@@ -18,7 +18,6 @@
         # Partner Dunning Report
         'report_data.xml',
         'wizard/pabi_partner_dunning_wizard.xml',
-        'wizard/print_partner_dunning_letter.xml',
         'wizard/create_dunning_letter.xml',
         'views/pabi_partner_dunning_report.xml',
         'views/pabi_dunning_letter_view.xml',

@@ -42,11 +42,6 @@ class PABIPartnerDunningReport(models.Model):
         string='Date',
         readonly=True,
     )
-    taxbranch_id = fields.Many2one(
-        'res.taxbranch',
-        string='Tax Branch',
-        readonly=True,
-    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
@@ -101,37 +96,12 @@ class PABIPartnerDunningReport(models.Model):
         string='#3 Date'
     )
 
-
-    # print_ids = fields.One2many(
-    #     'pabi.partner.dunning.print.history',
-    #     'dunning_id',
-    #     string='Print History',
-    # )
-
     @api.multi
     @api.depends()
     def _compute_validate_user_id(self):
         for line in self:
             line.validate_user_id = \
                 line.move_line_id.document_id.validate_user_id
-
-    # @api.model
-    # def fields_view_get(self, view_id=None, view_type=False,
-    #                     toolbar=False, submenu=False):
-    #     res = super(PABIPartnerDunningReport, self).\
-    #         fields_view_get(view_id=view_id, view_type=view_type,
-    #                         toolbar=toolbar, submenu=submenu)
-    #     # Passing context to action on tree view
-    #     actions = res.get('toolbar', {}).get('action', {})
-    #     for action in actions:
-    #         # if action.get('context', False):
-    #         #     context = ast.literal_eval(action['context'])
-    #         #     context.update(
-    #         #         {'date_run': self._context.get('date_run', False)})
-    #         action['context'] = {'date_run': self._context.get('date_run', False)}
-    #     # res['context'] = {'date_run': self._context.get('date_run', False)}
-    #     print res
-    #     return res
 
     @api.multi
     @api.depends()
@@ -156,8 +126,7 @@ class PABIPartnerDunningReport(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         _sql = """
             select aml.id, aml.id as move_line_id,
-                aml.date_maturity, aml.date,
-                aml.taxbranch_id, aml.partner_id,
+                aml.date_maturity, aml.date, aml.partner_id,
                 aa.type account_type, new_title,
                 case when letter.l1 is not null then true else false end as l1,
                 letter.l1 l1_date,
@@ -197,6 +166,12 @@ class PABIPartnerDunningReport(models.Model):
             })
         return
 
+    @api.model
+    def _new_title(self, title):
+        company = self.env['res.company'].search([])[0]
+        titles = company.title_ids.filtered(lambda l: l.title_id == title)
+        return titles and titles[0].new_title or False
+
     @api.multi
     def _create_dunning_letter(self, letter_type):
         print self
@@ -214,7 +189,7 @@ class PABIPartnerDunningReport(models.Model):
             dunning_letter = {'letter_type': letter_type,
                               'partner_id': partner.id,
                               'date_run': fields.Date.context_today(self),
-                              'to_whom_title': '???',
+                              'to_whom_title': self._new_title(partner.title),
                               'line_ids': dunning_lines,
                               }
             self.env['pabi.dunning.letter'].create(dunning_letter)

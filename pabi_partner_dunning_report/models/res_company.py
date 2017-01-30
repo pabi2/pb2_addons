@@ -10,28 +10,39 @@ class ResCompany(models.Model):
         'config_id',
         string='Prefix Mapping',
     )
-    litigation_contact = fields.Char(
-        string='Legal Dept. Contact',
+    letter1_header = fields.Text(
+        string='Letter 1 Header',
+        translate=True,
     )
-    signature_dunning = fields.Text(
-        string='Signature for Dunning',
+    letter1_footer = fields.Text(
+        string='Letter 1 Footer',
+        translate=True,
     )
-    signature_litigation = fields.Text(
-        string='Signature for Litigation',
+    letter1_signature = fields.Text(
+        string='Letter 1 Signature',
+        translate=True,
     )
-    account_dept_contact = fields.Text(
-        string='Account Dept. Contact',
+    letter2_header = fields.Text(
+        string='Letter 2 Header',
+        translate=True,
     )
-    # EN
-    litigation_contact_en = fields.Char(
-        string='Legal Dept. Contact (EN)',
+    letter2_footer = fields.Text(
+        string='Letter 2 Footer',
+        translate=True,
     )
-    signature_dunning_en = fields.Text(
-        string='Signature for Dunning (EN)',
+    letter2_signature = fields.Text(
+        string='Letter 2 Signature',
+        translate=True,
     )
-    signature_litigation_en = fields.Text(
-        string='Signature for Litigation (EN)',
+    letter3_header = fields.Text(
+        string='Letter 3 Header',
+        translate=True,
     )
-    account_dept_contact_en = fields.Text(
-        string='Account Dept. Contact (EN)',
+    letter3_footer = fields.Text(
+        string='Letter 3 Footer',
+        translate=True,
+    )
+    letter3_signature = fields.Text(
+        string='Letter 3 Signature',
+        translate=True,
     )
