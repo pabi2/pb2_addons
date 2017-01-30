@@ -70,6 +70,7 @@ class BudgetImportWizard(models.TransientModel):
                     'unit': line['unit'],
                     'activity_unit_price': line['activity_unit_price'],
                     'activity_unit': line['activity_unit'],
+                    'budget_method': line['budget_method']
                 })
                 cc_line = self.env['budget.plan.unit.cost.control.line'].\
                     create(line_vals)

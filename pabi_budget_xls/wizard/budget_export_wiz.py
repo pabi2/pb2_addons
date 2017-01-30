@@ -347,6 +347,18 @@ class BudgetExportWizard(models.TransientModel):
         self._update_sheet_header(budget, RevenueSheet)
         self._update_sheet_lines(budget, 'revenue', RevenueSheet)
 
+        # Reassign Activity Group List formula to fix issue for replace
+        ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
+        ExpenseSheet.add_data_validation(ExpenseAGFormula)
+        RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
+        RevenueSheet.add_data_validation(RevenueAGFormula)
+        startrow = 10
+        lastrow = self.editable_lines + startrow
+
+        for r in range(startrow, lastrow):
+            ExpenseAGFormula.add(ExpenseSheet.cell(row=r, column=2))
+            RevenueAGFormula.add(RevenueSheet.cell(row=r, column=2))
+
     @api.model
     def _update_activity_group_sheet(self, workbook):
         try:
@@ -354,8 +366,7 @@ class BudgetExportWizard(models.TransientModel):
             AG_Sheet = workbook.get_sheet_by_name('Activity Group')
             AG_Sheet.protection.sheet = True
             AG_Sheet.protection.set_password('pabi2')
-            expense_ags = AGObj.search([])  # todo domain based
-#             expense_ags = AGObj.search([('budget_method', '=', 'expense')])
+            expense_ags = AGObj.search([('budget_method', '=', 'expense')])
             # create lines in activity group data sheet
             expense_row = 2
             for ag in expense_ags:
@@ -370,8 +381,7 @@ class BudgetExportWizard(models.TransientModel):
                 )
             )
             SHEET_FORMULAS.update({'expense_ag_list': ActGroupList})
-            revenue_ags = AGObj.search([])  # todo domain based
-#             revenue_ags = AGObj.search([('budget_method', '=', 'revenue')])
+            revenue_ags = AGObj.search([('budget_method', '=', 'revenue')])
             # create lines in activity group data sheet
             revenue_row = expense_row + 1
             for ag in revenue_ags:
