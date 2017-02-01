@@ -9,6 +9,7 @@
     'version': '0.1.0',
     'depends': [
         'l10n_th_fields',
+        'l10n_th_address',
         'account',
         'account_voucher',
         'account_voucher_action_move_line_create_hooks',

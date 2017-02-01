@@ -173,7 +173,7 @@ class PrintWhtCertWizard(models.TransientModel):
 
     @api.model
     def _prepare_address(self, partner):
-        address_list = [partner.street, partner.street2,
+        address_list = [partner.street, partner.street2, partner.city,
                         partner.township_id.name, partner.district_id.name,
                         partner.province_id.name, partner.zip, ]
         address_list = filter(lambda x: x is not False and x != '',
@@ -219,6 +219,7 @@ class WhtCertTaxLine(models.TransientModel):
     )
     wht_cert_income_desc = fields.Char(
         string='Income Description',
+        size=50,
         required=False,
     )
     base = fields.Float(

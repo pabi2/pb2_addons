@@ -27,7 +27,6 @@
 	<parameter name="income_tax_form" class="java.lang.String"/>
 	<parameter name="wht_period_id" class="java.lang.Integer"/>
 	<parameter name="print_name" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="print_position" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="no_header" class="java.lang.Boolean" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select wht_sequence_display, number, a.date_value, tax_payer, supplier_taxid, supplier_branch,

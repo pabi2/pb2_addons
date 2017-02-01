@@ -7,11 +7,11 @@ import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
-WHT_CERT_INCOME_TYPE = [('1', 'เงินเดือน ค่าจ้าง ฯลฯ 40 (1)'),
-                        ('2', 'เบี้ยประชุม ประเมินผล ฯลฯ 40(2)'),
-                        ('3', 'ค่าลิขสิทธิ์ ฯลฯ 40(3)'),
-                        ('5', 'เงินรางวัล ค่าเช่า ค่าโฆษณา ฯลฯ'),
-                        ('6', 'ธุรกิจพาณิชย์ เกษตร อื่นๆ')]
+WHT_CERT_INCOME_TYPE = [('1', '1.เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
+                        ('2', '2.ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
+                        ('3', '3.ค่าแห่งลิขสิทธิ์ ฯลฯ 40(3)'),
+                        ('5', '5.ค่าจ้างทำของ ค่าบริการ ฯลฯ 3 เตรส'),
+                        ('6', '6.อื่นๆ')]
 
 TAX_PAYER = [('withholding', 'Withholding'),
              ('paid_one_time', 'Paid One Time')]

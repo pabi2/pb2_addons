@@ -33,7 +33,7 @@
                             <field name="voucher_tax_id" />
                             <field name="invoice_id"/>
                             <field name="wht_cert_income_type"/>
-                            <field name="wht_cert_income_desc" invisible="1"/>
+                            <field name="wht_cert_income_desc"/>
                             <field name="base" sum="Total Base"/>
                             <field name="amount" sum="Total Tax"/>
                         </tree>

@@ -32,7 +32,6 @@ class PrintPNDFormWizard(models.TransientModel):
         data = {'parameters': {}}
         data_dict = {'no_header': False}
         report_name = False
-        format = False
         if self.income_tax_form == 'pnd53':
             if self.print_format == 'pdf':
                 report_name = 'report_pnd53_form'
@@ -49,7 +48,6 @@ class PrintPNDFormWizard(models.TransientModel):
             elif self.print_format == 'csv':
                 data_dict['no_header'] = True
                 report_name = 'report_pnd3_form_csv'
-                format = 'txt'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
         data_dict['income_tax_form'] = self.income_tax_form
@@ -62,13 +60,12 @@ class PrintPNDFormWizard(models.TransientModel):
         data_dict['company_branch'] = company_branch
         data_dict['print_name'] = self.env.user.name or ''
         data_dict['print_position'] = \
-            self.env.user.employee_id.position_id.name or ''
+            self.env.user.employee_id.job_id.name or ''
         data['parameters'] = data_dict
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
             'datas': data,
-            'format': format,
             'context': {'lang': 'th_TH'},
         }
         return res
