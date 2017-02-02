@@ -129,6 +129,7 @@
             id="menu_cost_control"
             action="action_cost_control"
             parent="pabi_base.menu_open_dimension"
+            groups="pabi_base.group_budget_user"
             sequence="10"/>
 
     </data>
