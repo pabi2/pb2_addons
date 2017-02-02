@@ -9,6 +9,11 @@ class PABIDunningLetter(models.Model):
     number = fields.Char(
         string='Number',
     )
+    create_uid = fields.Many2one(
+        'res.users',
+        string='Creator',
+        readonly=True,
+    )
     date_letter = fields.Date(
         string='Letter Date'
     )
@@ -30,10 +35,6 @@ class PABIDunningLetter(models.Model):
         'res.partner',
         string='Partner',
         required=True,
-    )
-    ref_contracts = fields.Char(
-        string='Ref Contracts',
-        compute='_compute_ref_contracts',  # Test only
     )
     amount_total = fields.Float(
         string='Total',
@@ -67,13 +68,6 @@ class PABIDunningLetter(models.Model):
         for letter in self:
             amount_total = sum(letter.line_ids.mapped('amount_residual'))
             letter.amount_total = amount_total
-
-    @api.multi
-    @api.depends()
-    def _compute_ref_contracts(self):
-        """ TODO: TEST ONLY, will be revised again with myContract """
-        for letter in self:
-            letter.ref_contracts = 'Contract 1, Contract 2'
 
     @api.model
     def _eval_text(self, text, obj):

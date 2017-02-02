@@ -16,7 +16,7 @@
     ],
     'data': [
         # Partner Dunning Report
-        'report_data.xml',
+        'data/report_data.xml',
         'wizard/pabi_partner_dunning_wizard.xml',
         'wizard/create_dunning_letter.xml',
         'views/pabi_partner_dunning_report.xml',
