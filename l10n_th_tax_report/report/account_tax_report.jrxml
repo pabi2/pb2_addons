@@ -35,21 +35,21 @@
 		</box>
 	</style>
 	<parameter name="doc_type" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="tax_id" class="java.lang.Integer"/>
+	<parameter name="tax_id" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="branch_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="branch_vat" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="branch_taxbranch" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="advance_sequence" class="java.lang.Boolean"/>
-	<parameter name="report_period" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	<parameter name="advance_sequence" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="period_ids" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="period_pids" class="java.util.List" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{period_ids}.toList()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="report_period_id" class="java.lang.Integer"/>
 	<queryString>
 		<![CDATA[select * from account_tax_report
-where doc_type = $P{doc_type}
-and tax_id = $P{tax_id}
-and report_period_id in ($P{report_period})]]>
+where doc_type = 'purchase'
+and tax_id = 52
+and period_id in (2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]]>
 	</queryString>
 	<field name="doc_type" class="java.lang.String"/>
 	<field name="id" class="java.lang.Integer"/>
@@ -160,7 +160,7 @@ and report_period_id in ($P{report_period})]]>
 					<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 						<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<text><![CDATA[เดือนxx :]]></text>
+					<text><![CDATA[เดือน :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="table1" x="0" y="135" width="47" height="40"/>
@@ -248,13 +248,6 @@ and report_period_id in ($P{report_period})]]>
 						<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["หน้า "+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="242" y="0" width="126" height="15"/>
-					<textElement>
-						<font fontName="Monospaced" size="10" isBold="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{xxx}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
