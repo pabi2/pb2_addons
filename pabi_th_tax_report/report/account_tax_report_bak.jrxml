@@ -35,22 +35,19 @@
 		</box>
 	</style>
 	<parameter name="doc_type" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="tax_id" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="report_period_id" class="java.lang.Integer"/>
+	<parameter name="tax_id" class="java.lang.Integer"/>
 	<parameter name="branch_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="branch_vat" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="branch_taxbranch" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="advance_sequence" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="period_ids" class="java.lang.Object" isForPrompting="false"/>
-	<parameter name="period_pids" class="java.util.List" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{period_ids}.toList()]]></defaultValueExpression>
-	</parameter>
+	<parameter name="advance_sequence" class="java.lang.Boolean"/>
 	<parameter name="taxbranch_id" class="java.lang.Integer"/>
 	<queryString>
 		<![CDATA[select * from account_tax_report
 where doc_type = $P{doc_type}
 and tax_id = $P{tax_id}
-and $X{IN, report_period_id, period_pids}
+and report_period_id = $P{report_period_id}
 and taxbranch_id = $P{taxbranch_id}]]>
 	</queryString>
 	<field name="doc_type" class="java.lang.String"/>
@@ -58,6 +55,7 @@ and taxbranch_id = $P{taxbranch_id}]]>
 	<field name="period_id" class="java.lang.Integer"/>
 	<field name="year" class="java.lang.String"/>
 	<field name="month" class="java.lang.String"/>
+	<field name="report_period_id" class="java.lang.Integer"/>
 	<field name="tax_sequence" class="java.lang.Integer"/>
 	<field name="tax_id" class="java.lang.Integer"/>
 	<field name="tax_sequence_display" class="java.lang.String"/>
@@ -70,6 +68,7 @@ and taxbranch_id = $P{taxbranch_id}]]>
 	<field name="taxbranch" class="java.lang.String"/>
 	<field name="base" class="java.lang.Double"/>
 	<field name="amount" class="java.lang.Double"/>
+	<field name="taxbranch_id" class="java.lang.Integer"/>
 	<variable name="base" class="java.lang.Number" resetType="Group" resetGroup="period" calculation="Sum">
 		<variableExpression><![CDATA[$F{base}]]></variableExpression>
 	</variable>
