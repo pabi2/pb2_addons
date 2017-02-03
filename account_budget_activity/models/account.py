@@ -27,6 +27,7 @@ class AccountFiscalyear(models.Model):
                 for level_type in AccountBudget.BUDGET_LEVEL_TYPE.items():
                     budget_level = BudgetLevel.new()
                     budget_level.type = level_type[0]
+                    budget_level.release_interval = False
                     rec.budget_level_ids += budget_level
 
 

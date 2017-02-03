@@ -11,9 +11,12 @@
                     	<h2>
 	                    	<label string="Released: "/>
 	                    	<field name="progress" string="Released" class="oe_inline" readonly="1" />%  
-	                    </h2>     	
+	                    </h2>
                 	</div>
-                   	<group>
+                	<group>
+                	    <field name="amount_to_release"/>
+                	</group>
+                   	<!--group>
                    		<field name="release_ids" nolabel="1">
                    			<tree editable="bottom" create="0" delete="0">
                    				<field name="ready" invisible="1"/>
@@ -29,7 +32,7 @@
                    				<field name="released_amount" sum="Released"/>
                    			</tree>
                    		</field>
-                   	</group>
+                   	</group-->
                     <footer>
                         <button name="do_release" string="Release Budget" type="object" class="oe_highlight"  />
                         or

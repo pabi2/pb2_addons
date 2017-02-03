@@ -127,8 +127,9 @@ class AccountBudget(models.Model):
     # )
     released_amount = fields.Float(
         string='Released Amount',
-        compute='_compute_amount',
+#         compute='_compute_amount',
         digits_compute=dp.get_precision('Account'),
+        readonly=True,
     )
     budgeted_revenue = fields.Float(
         string='Total Revenue Budget',
@@ -351,7 +352,6 @@ class AccountBudget(models.Model):
                                       r['to_period'] == to_period), rr)
                 planned_amount += r and r[0]['planned_amount']
                 released_amount += r and r[0]['released_amount']
-                release = release or (r and r[0]['release'] or False)
             line = {'from_period': from_period,
                     'to_period': to_period,
                     'planned_amount': planned_amount,
@@ -366,7 +366,8 @@ class AccountBudget(models.Model):
         release_result = {}
         for r in releases:
             for i in range(r['from_period'], r['to_period'] + 1):
-                release_result.update({'r'+str(i): r['ready'] or r['release']})
+#                 release_result.update({'r'+str(i): r['ready'] or r['release']})
+                release_result.update({'released': True})
         return release_result
 
     @api.multi
@@ -601,9 +602,10 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     )
     released_amount = fields.Float(
         string='Released Amount',
-        compute='_compute_released_amount',
+#         compute='_compute_released_amount',
         digits_compute=dp.get_precision('Account'),
-        store=True,
+#         store=True,
+        readonly=True,
     )
     budget_state = fields.Selection(
         BUDGET_STATE,
@@ -660,6 +662,10 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         default=False,
         copy=False,
     )
+    released = fields.Boolean(
+        default=False,
+        copy=False,
+    )
     period_split_line_ids = fields.One2many(
         'account.budget.line.period.split',
         'budget_line_id',
@@ -702,48 +708,39 @@ class AccountBudgetLine(ActivityCommon, models.Model):
             rec.planned_amount = planned_amount  # from last year
 
     @api.multi
-    @api.depends('r1', 'r2', 'r3', 'r4', 'r5', 'r6',
-                 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', )
+    @api.depends('released')
     def _compute_released_amount(self):
         for rec in self:
-            released_amount = sum([(rec.m1 * rec.r1), (rec.m2 * rec.r2),
-                                   (rec.m3 * rec.r3), (rec.m4 * rec.r4),
-                                   (rec.m5 * rec.r5), (rec.m6 * rec.r6),
-                                   (rec.m7 * rec.r7), (rec.m8 * rec.r8),
-                                   (rec.m9 * rec.r9), (rec.m10 * rec.r10),
-                                   (rec.m11 * rec.r11), (rec.m12 * rec.r12),
-                                   ])
+            released_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
+                                  rec.m5, rec.m6, rec.m7, rec.m8,
+                                  rec.m9, rec.m10, rec.m11, rec.m12])
             rec.released_amount = released_amount  # from last year
 
     @api.multi
     def release_budget_line(self, release_result):
-        # Always release the former period. I.e, r6 will include r1-r5
-        periods = list({int(k[1:]): v
-                        for k, v in release_result.iteritems()
-                        if v})
-        period = periods and max(periods) or 0
-        vals = {'r'+str(i+1): (i+1) <= period for i in range(12)}
         for rec in self:
-            old_vals = {'r'+str(i+1): rec['r'+str(i+1)] for i in range(12)}
-            if old_vals != vals:
-                rec.write(vals)
+            if release_result.get('amount_to_release', 0.0):
+                if release_result['amount_to_release'] > self.planned_amount - self.released_amount:
+                    raise Warning(_('You can not release more then remaining amount!'))
+            new_release_amount = rec.released_amount + release_result['amount_to_release']
+            rec.write({'released_amount': new_release_amount})
         return
 
     @api.multi
     def _prepare_budget_line_release(self, periods):
         self.ensure_one()
         releases = []
-        if not periods:
-            return []
+#         if not periods:
+#             return []
         for period in periods:
             from_period = period[0]
             to_period = period[-1]
-            release = self['r'+str(to_period)]
+            release = 12
             planned_amount = 0.0
             released_amount = 0.0
             for i in period:
                 planned_amount += self['m'+str(i)]
-                released_amount += self['r'+str(i)] and self['m'+str(i)] or 0.0
+                released_amount += self['m'+str(i)]
             line = {'from_period': from_period,
                     'to_period': to_period,
                     'planned_amount': planned_amount,

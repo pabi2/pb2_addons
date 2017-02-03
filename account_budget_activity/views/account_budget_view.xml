@@ -122,6 +122,7 @@
                                     <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                <field name="released_amount" sum="Released Amount"/>
                             </group>
                         </group>
                         <notebook>

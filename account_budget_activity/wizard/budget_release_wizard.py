@@ -17,11 +17,17 @@ class BudgetReleaseWizard(models.TransientModel):
     progress = fields.Float(
         string='Progress',
     )
+    amount_to_release = fields.Float(
+        string="Amount To Release",
+    )
 
-    @api.onchange('release_ids')
+    @api.onchange('amount_to_release')
     def _compute_progress(self):
-        planned_amount = sum([x.planned_amount for x in self.release_ids])
-        released_amount = sum([x.released_amount for x in self.release_ids])
+        active_id = self._context.get('active_id')
+        active_model = self._context.get('active_model')
+        record = self.env[active_model].browse(active_id)
+        planned_amount = record.planned_amount
+        released_amount = record.released_amount
         if not planned_amount:
             self.progress = 0.0
         else:
@@ -39,6 +45,7 @@ class BudgetReleaseWizard(models.TransientModel):
             self.env['account.fiscalyear.budget.level'].search(domain, limit=1)
         interval = budget_level.release_interval and \
             int(budget_level.release_interval) or 1
+        interval = False #probuse
         start_period = 1  # by default
         is_auto_release = budget_level.is_auto_release
         return interval, start_period, is_auto_release
@@ -112,8 +119,8 @@ class BudgetReleaseWizard(models.TransientModel):
         res = super(BudgetReleaseWizard, self).default_get(fields)
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
-        releases = self._prepare_budget_release_table(active_model, active_id)
-        res['release_ids'] = [(0, 0, r) for r in releases]
+        record = self.env[active_model].browse(active_id)
+        res['amount_to_release'] = record.planned_amount - record.released_amount
         return res
 
     @api.multi
@@ -127,10 +134,7 @@ class BudgetReleaseWizard(models.TransientModel):
             budget_lines = BudgetLine.search([('id', '=', active_id)])
         elif active_model == 'account.budget':
             budget_lines = BudgetLine.search([('budget_id', '=', active_id)])
-        release_result = {}
-        for r in self.release_ids:
-            for i in range(r.from_period, r.to_period + 1):
-                release_result.update({'r'+str(i): r.release})
+        release_result = {'amount_to_release': self.amount_to_release}
         budget_lines.release_budget_line(release_result)
 
 
