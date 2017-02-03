@@ -10,10 +10,24 @@ class AccountTaxReportWizard(models.TransientModel):
         string='Period',
         related='calendar_period_id.period_id',
     )
+    period_type = fields.Selection(
+        [('specific', 'Specific Period'),
+         ('range', 'Period Range')],
+        string='Period Type',
+        default='specific',
+        required=True,
+    )
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
         string='Calendar Period',
-        required=True,
+    )
+    calendar_from_period_id = fields.Many2one(
+        'account.period.calendar',
+        string='Calendar Period From',
+    )
+    calendar_to_period_id = fields.Many2one(
+        'account.period.calendar',
+        string='Calendar Period To',
     )
     tax_id = fields.Many2one(
         'account.tax',
@@ -31,14 +45,30 @@ class AccountTaxReportWizard(models.TransientModel):
         required=True,
     )
 
+    @api.onchange('calendar_from_period_id','calendar_to_period_id')
+    def _onchange_calendar_from_to_period_id(self):
+        if self.calendar_from_period_id and self.calendar_to_period_id:
+            if self.calendar_from_period_id.period_id.date_start > self.calendar_to_period_id.period_id.date_start:
+                self.calendar_to_period_id = False
+
     @api.multi
     def run_report(self):
         data = {'parameters': {}}
         report_name = self.print_format == 'pdf' and \
             'account_tax_report_pdf' or 'account_tax_report_xls'
-        period = self.calendar_period_id.period_id
+        
+        param_ids = []
+        if self.period_type == 'specific':
+            param_ids = self.calendar_period_id.period_id
+        elif  self.period_type == 'range':
+            x = [('id', '>=', self.calendar_from_period_id.period_id.id),
+                 ('id', '<=', self.calendar_to_period_id.period_id.id)]
+            res = self.env['account.period'].search(x)
+            param_ids = res
+            
         # Params
-        data['parameters']['report_period_id'] = period.id
+        data['parameters']['report_period'] = ','.join(map(str, param_ids))
+        data['parameters']['report_period_id'] = param_ids.id
         data['parameters']['tax_id'] = self.tax_id.id
         data['parameters']['doc_type'] = self.tax_id.type_tax_use
         # Display Params
