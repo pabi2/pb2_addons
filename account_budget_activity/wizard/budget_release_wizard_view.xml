@@ -14,7 +14,7 @@
 	                    </h2>
                 	</div>
                 	<group>
-                	    <field name="amount_to_release"/>
+                	    <field name="amount_to_release" readonly="context.get('active_model',False) == 'account.budget' and True or False" />
                 	</group>
                    	<!--group>
                    		<field name="release_ids" nolabel="1">

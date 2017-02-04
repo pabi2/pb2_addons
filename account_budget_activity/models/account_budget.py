@@ -362,12 +362,14 @@ class AccountBudget(models.Model):
         return releases
 
     @api.model
-    def _set_release_on_ready(self, releases):
+    def _set_release_on_ready(self):
         release_result = {}
-        for r in releases:
-            for i in range(r['from_period'], r['to_period'] + 1):
-#                 release_result.update({'r'+str(i): r['ready'] or r['release']})
-                release_result.update({'released': True})
+        BudgetLine = self.env['account.budget.line']
+        for rec in self:
+            budget_lines = BudgetLine.search([('budget_id', '=', rec.id)])
+            for line in budget_lines:
+                release_result.update(
+                    {line.id : line.planned_amount - line.released_amount})
         return release_result
 
     @api.multi
@@ -377,9 +379,7 @@ class AccountBudget(models.Model):
             _, _, is_auto_release = Wizard._get_release_pattern(budget)
             if not is_auto_release:
                 continue
-            releases = Wizard._prepare_budget_release_table(budget._name,
-                                                            budget.id)
-            release_result = self._set_release_on_ready(releases)
+            release_result = budget._set_release_on_ready()
             budget.budget_line_ids.release_budget_line(release_result)
         return True
 
@@ -662,10 +662,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         default=False,
         copy=False,
     )
-    released = fields.Boolean(
-        default=False,
-        copy=False,
-    )
     period_split_line_ids = fields.One2many(
         'account.budget.line.period.split',
         'budget_line_id',
@@ -719,10 +715,10 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     @api.multi
     def release_budget_line(self, release_result):
         for rec in self:
-            if release_result.get('amount_to_release', 0.0):
-                if release_result['amount_to_release'] > self.planned_amount - self.released_amount:
-                    raise Warning(_('You can not release more then remaining amount!'))
-            new_release_amount = rec.released_amount + release_result['amount_to_release']
+            amount_to_release = release_result.get(rec.id, 0.0)
+            if amount_to_release > rec.planned_amount - rec.released_amount:
+                raise UserError(_("You don't have enough amount to release!"))
+            new_release_amount = rec.released_amount + amount_to_release
             rec.write({'released_amount': new_release_amount})
         return
 
@@ -730,8 +726,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     def _prepare_budget_line_release(self, periods):
         self.ensure_one()
         releases = []
-#         if not periods:
-#             return []
         for period in periods:
             from_period = period[0]
             to_period = period[-1]
