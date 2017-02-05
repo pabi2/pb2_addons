@@ -21,7 +21,7 @@ class PrintPNDFormWizard(models.TransientModel):
     print_format = fields.Selection(
         [('pdf', 'PDF'),
          ('xls', 'XLS'),
-         ('csv', 'CSV')],
+         ('txt_csv', 'TXT')],
         string='Print Format',
         default='pdf',
         required=True,
@@ -37,17 +37,17 @@ class PrintPNDFormWizard(models.TransientModel):
                 report_name = 'report_pnd53_form'
             elif self.print_format == 'xls':
                 report_name = 'report_pnd53_form_xls'
-            elif self.print_format == 'csv':
+            elif self.print_format == 'txt_csv':
                 data_dict['no_header'] = True
-                report_name = 'report_pnd53_form_csv'
+                report_name = 'report_pnd53_form_txt'
         if self.income_tax_form == 'pnd3':
             if self.print_format == 'pdf':
                 report_name = 'report_pnd3_form'
             elif self.print_format == 'xls':
                 report_name = 'report_pnd3_form_xls'
-            elif self.print_format == 'csv':
+            elif self.print_format == 'txt_csv':
                 data_dict['no_header'] = True
-                report_name = 'report_pnd3_form_csv'
+                report_name = 'report_pnd3_form_txt'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
         data_dict['income_tax_form'] = self.income_tax_form

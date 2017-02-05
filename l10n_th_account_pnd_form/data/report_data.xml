@@ -41,6 +41,27 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd53_form_xls)"/>
 		</record>
 
+		# PND53 (TXT)
+		<record id="report_pnd53_form_txt" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="name">PND53 Form</field>
+			<field name="report_name">report_pnd53_form_txt</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd53_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">txt_csv</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd53_form_txt_values" model="ir.values">
+			<field name="name">PND53 Form</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd53_form_txt)"/>
+		</record>
+
+		###########################################################################
 
 		# PND3
 		<record id="report_pnd3_form" model="ir.actions.report.xml">
@@ -82,24 +103,24 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_xls)"/>
 		</record>
 
-		# PND3 (CSV)
-		<record id="report_pnd3_form_csv" model="ir.actions.report.xml">
+		# PND3 (TXT)
+		<record id="report_pnd3_form_txt" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">report.pnd3.form</field>
 			<field name="name">PND3 Form</field>
-			<field name="report_name">report_pnd3_form_csv</field>
+			<field name="report_name">report_pnd3_form_txt</field>
 			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3_form_xls.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
-			<field name="jasper_output">csv</field>
+			<field name="jasper_output">txt_csv</field>
 			<field name="copies">1</field>
 		</record>
 
-		<record id="report_pnd3_form_csv_values" model="ir.values">
+		<record id="report_pnd3_form_txt_values" model="ir.values">
 			<field name="name">PND3 Form</field>
 			<field name="model">report.pnd3.form</field>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_csv)"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_txt)"/>
 		</record>
 	</data>
 </openerp>
