@@ -113,12 +113,15 @@ class ModelExtended(models.Model):
                         limit=limit, order=order,
                         count=count, access_rights_uid=access_rights_uid)
                     if not isinstance(result, list):
-                        result = [result]
+                        if not isinstance(result, long):
+                            result = [result]
                     if not isinstance(new_result, list):
-                        new_result = [new_result]
-                    result_add = [x for x in new_result if x not in result]
-                    if result_add:
-                        result.extend(result_add)
+                        if not isinstance(new_result, long):
+                            new_result = [new_result]
+                    if isinstance(result, list) and isinstance(new_result, list):
+                        result_add = [x for x in new_result if x not in result]
+                        if result_add:
+                            result.extend(result_add)
                 return result
             return _search
 
