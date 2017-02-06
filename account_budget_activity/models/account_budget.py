@@ -127,7 +127,6 @@ class AccountBudget(models.Model):
     # )
     released_amount = fields.Float(
         string='Released Amount',
-#         compute='_compute_amount',
         digits_compute=dp.get_precision('Account'),
         readonly=True,
     )
@@ -161,17 +160,6 @@ class AccountBudget(models.Model):
             amounts = rec.budget_expense_line_ids.mapped('planned_amount')
             rec.budgeted_expense = sum(amounts)
             rec.budgeted_overall = rec.budgeted_revenue - rec.budgeted_expense
-
-    @api.multi
-    def _compute_amount(self):
-        for budget in self:
-            # planned_amount = 0.0
-            released_amount = 0.0
-            for line in budget.budget_line_ids:
-                # planned_amount += line.planned_amount
-                released_amount += line.released_amount
-            # budget.planned_amount = planned_amount
-            budget.released_amount = released_amount
 
     @api.one
     @api.depends('fiscalyear_id')
@@ -335,31 +323,6 @@ class AccountBudget(models.Model):
                  '{0:,}'.format(monitors[0].amount_balance),
                  '{0:,}'.format(amount))
         return res
-
-    @api.multi
-    def _prepare_budget_release(self, periods):
-        self.ensure_one()
-        releases = []
-        for period in periods:
-            from_period = period[0]
-            to_period = period[-1]
-            planned_amount = 0.0
-            released_amount = 0.0
-            release = False
-            for budget_line in self.budget_line_ids:
-                rr = budget_line._prepare_budget_line_release(periods)
-                r = filter(lambda r: (r['from_period'] == from_period and
-                                      r['to_period'] == to_period), rr)
-                planned_amount += r and r[0]['planned_amount']
-                released_amount += r and r[0]['released_amount']
-            line = {'from_period': from_period,
-                    'to_period': to_period,
-                    'planned_amount': planned_amount,
-                    'released_amount': released_amount,
-                    'release': release,
-                    }
-            releases.append(line)
-        return releases
 
     @api.model
     def _set_release_on_ready(self):
@@ -602,9 +565,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     )
     released_amount = fields.Float(
         string='Released Amount',
-#         compute='_compute_released_amount',
         digits_compute=dp.get_precision('Account'),
-#         store=True,
         readonly=True,
     )
     budget_state = fields.Selection(
@@ -612,55 +573,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         string='Status',
         related='budget_id.state',
         store=True,
-    )
-    # Budget release flag
-    r1 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r2 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r3 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r4 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r5 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r6 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r7 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r8 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r9 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r10 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r11 = fields.Boolean(
-        default=False,
-        copy=False,
-    )
-    r12 = fields.Boolean(
-        default=False,
-        copy=False,
     )
     period_split_line_ids = fields.One2many(
         'account.budget.line.period.split',
@@ -704,15 +616,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
             rec.planned_amount = planned_amount  # from last year
 
     @api.multi
-    @api.depends('released')
-    def _compute_released_amount(self):
-        for rec in self:
-            released_amount = sum([rec.m1, rec.m2, rec.m3, rec.m4,
-                                  rec.m5, rec.m6, rec.m7, rec.m8,
-                                  rec.m9, rec.m10, rec.m11, rec.m12])
-            rec.released_amount = released_amount  # from last year
-
-    @api.multi
     def release_budget_line(self, release_result):
         for rec in self:
             amount_to_release = release_result.get(rec.id, 0.0)
@@ -721,25 +624,3 @@ class AccountBudgetLine(ActivityCommon, models.Model):
             new_release_amount = rec.released_amount + amount_to_release
             rec.write({'released_amount': new_release_amount})
         return
-
-    @api.multi
-    def _prepare_budget_line_release(self, periods):
-        self.ensure_one()
-        releases = []
-        for period in periods:
-            from_period = period[0]
-            to_period = period[-1]
-            release = 12
-            planned_amount = 0.0
-            released_amount = 0.0
-            for i in period:
-                planned_amount += self['m'+str(i)]
-                released_amount += self['m'+str(i)]
-            line = {'from_period': from_period,
-                    'to_period': to_period,
-                    'planned_amount': planned_amount,
-                    'released_amount': released_amount,
-                    'release': release,
-                    }
-            releases.append(line)
-        return releases
