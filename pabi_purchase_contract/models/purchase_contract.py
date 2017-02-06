@@ -701,14 +701,14 @@ class PurchaseContract(models.Model):
         self.env.cr.execute("SELECT Count(id) AS c"
                             " FROM purchase_contract"
                             " WHERE poc_code = '%s'"
-                            " AND state = '%s'",
+                            " AND state = '%s'" %
                             (str(self.poc_code), GENERATE))
         ctnGenerate = self.env.cr.fetchone()
         CountPOGenerate = ctnGenerate and ctnGenerate[0] or 0
         if CountPOGenerate == 0:
             self.env.cr.execute("SELECT Count(id) AS c"
                                 " FROM purchase_contract"
-                                " WHERE poc_code = '%s'",
+                                " WHERE poc_code = '%s'" %
                                 (str(self.poc_code)))
             datas = self.env.cr.fetchone()
             CountPORev = datas and datas[0] or 0
@@ -735,7 +735,7 @@ class PurchaseContract(models.Model):
                 self.reflow_uid = SUPERUSER_ID
             self.send_doc_date = datetime.datetime.now(timezone('UTC'))
             form = self.env.ref(
-                'pabi_PurchaseContract.PurchaseContract_form_view',
+                'pabi_purchase_contract.purchase_contract_form_view',
                 False
             )
             return {
@@ -763,7 +763,7 @@ class PurchaseContract(models.Model):
                          order="poc_rev desc",
                          limit=1)
         form = self.env.ref(
-            'pabi_PurchaseContract.PurchaseContract_form_view',
+            'pabi_purchase_contract.purchase_contract_form_view',
             False
         )
         return {'name': 'PO Contract',
