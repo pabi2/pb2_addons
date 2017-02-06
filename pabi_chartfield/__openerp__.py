@@ -15,11 +15,12 @@
         'purchase_requisition',
         'purchase_request',
         'stock_request',
-        'document_status_history',
         # 'account_model_generate_hook',
     ],
     'data': [
         'security/security.xml',
+        'security/security_rules_job_order.xml',
+        'security/security_rules_chartfield.xml',
         'security/ir.model.access.csv',
         'views/res_config_view.xml',
         'data/cost_control_data.xml',

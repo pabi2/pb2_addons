@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!--Owner Level = Org-->
+        <record id="rule_job_order_org_level_budget_user" model="ir.rule">
+            <field name="name">Budget User - Job Order - Org Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False), ('owner_level', '=', 'org'), ('org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
+        <record id="rule_job_order_org_level_budget_manager" model="ir.rule">
+            <field name="name">Budget Manager - Job Order - Org Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False), ('owner_level', '=', 'org'), ('org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
+        </record>
+
+        <record id="rule_job_order_org_level_org_manager" model="ir.rule">
+            <field name="name">Budget Org Manager - Job Order - Org Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('org_id', '=', user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+        </record>
+
+        <!--Owner Level = Sector-->
+        <record id="rule_job_order_sector_level_budget_user" model="ir.rule">
+            <field name="name">Budget User - Job Order - Sector Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'sector'), ('sector_id', '=', user.partner_id.employee_id.section_id.sector_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
+        <record id="rule_job_order_sector_level_budget_manager" model="ir.rule">
+            <field name="name">Budget Manager - Job Order - Sector Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'sector'), ('sector_id', '=', user.partner_id.employee_id.section_id.sector_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
+        </record>
+
+        <record id="rule_job_order_sector_level_org_manager" model="ir.rule">
+            <field name="name">Budget Org Manager - Job Order - Sector Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('sector_id.org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+        </record>
+
+        <!--Owner Level = SubSector-->
+        <record id="rule_job_order_subsector_level_budget_user" model="ir.rule">
+            <field name="name">Budget User - Job Order - Sub Sector Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'subsector'), ('subsector_id', '=', user.partner_id.employee_id.section_id.subsector_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
+        <record id="rule_job_order_subsector_level_budget_manager" model="ir.rule">
+            <field name="name">Budget Manager - Job Order - Sub Sector Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'subsector'), ('subsector_id', '=', user.partner_id.employee_id.section_id.subsector_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
+        </record>
+
+        <record id="rule_job_order_subsector_level_org_manager" model="ir.rule">
+            <field name="name">Budget Org Manager - Job Order - Sub Sector Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('subsector_id.org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+        </record>
+
+        <!--Owner Level = Division-->
+        <record id="rule_job_order_division_level_budget_user" model="ir.rule">
+            <field name="name">Budget User - Job Order - Division Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'division'), ('division_id', '=', user.partner_id.employee_id.section_id.division_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
+        <record id="rule_job_order_division_level_budget_manager" model="ir.rule">
+            <field name="name">Budget Manager - Job Order - Division Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'division'), ('division_id', '=', user.partner_id.employee_id.section_id.division_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
+        </record>
+
+        <record id="rule_job_order_division_level_org_manager" model="ir.rule">
+            <field name="name">Budget Org Manager - Job Order - Division Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('division_id.org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+        </record>
+
+        <!--Owner Level = Section-->
+        <record id="rule_job_order_section_level_budget_user" model="ir.rule">
+            <field name="name">Budget User - Job Order - Section Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'section'), ('section_id.division_id', '=', user.partner_id.employee_id.section_id.division_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
+        <record id="rule_job_order_section_level_budget_manager" model="ir.rule">
+            <field name="name">Budget Manager - Job Order - Section Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', False),('owner_level', '=', 'section'), ('section_id.division_id', '=', user.partner_id.employee_id.section_id.division_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
+        </record>
+
+        <record id="rule_job_order_section_level_org_manager" model="ir.rule">
+            <field name="name">Budget Org Manager - Job Order - Section Level</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('section_id.org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+        </record>
+
+        <record id="rule_job_order_cooperate_manager" model="ir.rule">
+            <field name="name">Budget Cooperate Manager - Job Order</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
+        </record>
+
+    </data>
+</openerp>

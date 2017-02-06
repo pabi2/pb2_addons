@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <act_window
+          id="action_create_dunning_letter"
+          name="Create Dunning Letter"
+          src_model="pabi.partner.dunning.report"
+          res_model="create.dunning.letter"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"
+          />
+
+        <record id="wizard_create_dunning_letter" model="ir.ui.view">
+            <field name="name">wizard.print.dunning.letter</field>
+            <field name="model">create.dunning.letter</field>
+            <field name="arch" type="xml">
+                <form string="Create Dunning Letters">
+                    <p>
+                      Create dunning letters based on overdue days. For example,
+                      If invoice is overdue for 7 days or over, and has not create Letter 1 before, Letter 1 will be created.
+                      No more than 1 letter can be created in the same day, although the overdue days has reached.
+                    </p>
+                    <footer>
+                        <button name="action_create_dunning_letter" type="object" string="Create Dunning Letters" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

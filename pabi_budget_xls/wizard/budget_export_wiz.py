@@ -124,16 +124,6 @@ class BudgetExportWizard(models.TransientModel):
 
     @api.model
     def _update_sheet_lines(self, budget, budget_method, Sheet):
-        ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
-        ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
-        RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
-        JobOrderFormula = SHEET_FORMULAS.get('job_order_formula', False)
-
-        Sheet.add_data_validation(ChargeTypeFormula)
-        Sheet.add_data_validation(ExpenseAGFormula)
-        Sheet.add_data_validation(RevenueAGFormula)
-        Sheet.add_data_validation(JobOrderFormula)
-
         if budget_method == 'expense':
             lines = budget.plan_expense_line_ids
         else:
@@ -156,14 +146,14 @@ class BudgetExportWizard(models.TransientModel):
                         non_job_order_lines[ag]
                 row += 1
 
-        for line in lines:
-            ChargeTypeFormula.add(Sheet.cell(row=row, column=1))
-            if budget_method == 'expense':
-                ExpenseAGFormula.add(Sheet.cell(row=row, column=2))
-            else:
-                RevenueAGFormula.add(Sheet.cell(row=row, column=2))
+        line_domain = [('id', 'not in', lines.ids),
+                       ('plan_id', '=', budget.id),
+                       ('budget_method', '=', budget_method),
+                       ('cost_control_id', '!=', False)]
+        joborderlines = self.env['budget.plan.unit.line'].search(line_domain)
+        lines = lines + joborderlines
 
-            JobOrderFormula.add(Sheet.cell(row=row, column=3))
+        for line in lines:
             charge_type =\
                 line.charge_type == 'internal' and 'Internal' or 'External'
 
@@ -193,15 +183,6 @@ class BudgetExportWizard(models.TransientModel):
             Sheet.cell(row=row, column=20, value=line.m10)
             Sheet.cell(row=row, column=21, value=line.m11)
             Sheet.cell(row=row, column=22, value=line.m12)
-            row += 1
-
-        while row < last_row:
-            ChargeTypeFormula.add(Sheet.cell(row=row, column=1))
-            if budget_method == 'expense':
-                ExpenseAGFormula.add(Sheet.cell(row=row, column=2))
-            else:
-                RevenueAGFormula.add(Sheet.cell(row=row, column=2))
-            JobOrderFormula.add(Sheet.cell(row=row, column=3))
             row += 1
 
     @api.model
@@ -249,9 +230,11 @@ class BudgetExportWizard(models.TransientModel):
         )
 
         # Cell Type
-        DecimalNumber = DataValidation(type="decimal",
-                           operator="greaterThanOrEqual",
-                           formula1=0)
+        DecimalNumber = DataValidation(
+            type="decimal",
+            operator="greaterThanOrEqual",
+            formula1=0
+        )
 
         num_format = '#,##0.00'
         ChargeTypeFormula = SHEET_FORMULAS.get('charge_type', False)
@@ -282,7 +265,10 @@ class BudgetExportWizard(models.TransientModel):
                     ChargeTypeFormula.add(Sheet.cell(row=row, column=col))
                     Sheet.cell(row=row, column=col).protection = protection
                 elif col == 2:  # Activity Group Column
-                    ExpenseAGFormula.add(Sheet.cell(row=row, column=col))
+                    if Sheet.title == 'Expense':
+                        ExpenseAGFormula.add(Sheet.cell(row=row, column=col))
+                    else:
+                        RevenueAGFormula.add(Sheet.cell(row=row, column=col))
                     Sheet.cell(row=row, column=col).protection = protection
                 elif col == 3:
                     JobOrderFormula.add(Sheet.cell(row=row, column=col))
@@ -361,6 +347,18 @@ class BudgetExportWizard(models.TransientModel):
         self._update_sheet_header(budget, RevenueSheet)
         self._update_sheet_lines(budget, 'revenue', RevenueSheet)
 
+        # Reassign Activity Group List formula to fix issue for replace
+        ExpenseAGFormula = SHEET_FORMULAS.get('expense_ag_list', False)
+        ExpenseSheet.add_data_validation(ExpenseAGFormula)
+        RevenueAGFormula = SHEET_FORMULAS.get('revenue_ag_list', False)
+        RevenueSheet.add_data_validation(RevenueAGFormula)
+        startrow = 10
+        lastrow = self.editable_lines + startrow
+
+        for r in range(startrow, lastrow):
+            ExpenseAGFormula.add(ExpenseSheet.cell(row=r, column=2))
+            RevenueAGFormula.add(RevenueSheet.cell(row=r, column=2))
+
     @api.model
     def _update_activity_group_sheet(self, workbook):
         try:
@@ -406,7 +404,7 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _update_job_order_sheet(self, workbook):
         try:
-            JobOrder_Sheet = workbook.get_sheet_by_name('JorOder')
+            JobOrder_Sheet = workbook.get_sheet_by_name('Job Oder')
             JobOrder_Sheet.protection.sheet = True
             JobOrder_Sheet.protection.set_password('pabi2')
             TahomaFont = Font(bold=False, name='Tahoma', size=10)
@@ -450,7 +448,7 @@ class BudgetExportWizard(models.TransientModel):
             JobOrdeListFormula = DataValidation(
                 type="list",
                 formula1=formula1.format(
-                    quote_sheetname('JorOder')
+                    quote_sheetname('Job Oder')
                 )
             )
             SHEET_FORMULAS.update({'job_order_formula': JobOrdeListFormula})

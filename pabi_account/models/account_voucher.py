@@ -274,3 +274,9 @@ class AccountVoucherTax(models.Model):
                 else:
                     r.update({'taxbranch_id': taxbranch_id})
         return res
+
+    @api.model
+    def _prepare_one_move_line(self, t):
+        res = super(AccountVoucherTax, self)._prepare_one_move_line(t)
+        res['taxinvoice_taxbranch_id'] = t['taxbranch_id']
+        return res

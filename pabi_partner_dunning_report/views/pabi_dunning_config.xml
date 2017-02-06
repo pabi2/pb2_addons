@@ -25,7 +25,24 @@
                         <group>
                         </group>
                     </group>
-                    <group string="Alternalte Text for Dunning Letter Form" >
+                    <notebook>
+                        <page string="Letter 1">
+                            <field name="letter1_header"/>
+                            <field name="letter1_footer"/>
+                            <field name="letter1_signature"/>
+                        </page>
+                        <page string="Letter 2">
+                            <field name="letter2_header"/>
+                            <field name="letter2_footer"/>
+                            <field name="letter2_signature"/>
+                        </page>
+                        <page string="Letter 3">
+                            <field name="letter3_header"/>
+                            <field name="letter3_footer"/>
+                            <field name="letter3_signature"/>
+                        </page>
+                    </notebook>
+                    <!-- <group string="Alternalte Text for Dunning Letter Form" >
                         <group>
                             <field name="litigation_contact"/>
                             <field name="signature_dunning"/>
@@ -38,7 +55,7 @@
                             <field name="signature_litigation_en"/>
                             <field name="account_dept_contact_en"/>
                         </group>
-                    </group>
+                    </group> -->
                 </form>
             </field>
         </record>
