@@ -150,7 +150,7 @@
                     <field name="latest_version"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
-                    <button name="%(action_budget_release_wizard)d" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <button name="%(action_budget_release_wizard)d" invisible="True" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
                     <field name="released_amount" sum="Released Amount"/>
                     <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                     <field name="creating_user_id"/>

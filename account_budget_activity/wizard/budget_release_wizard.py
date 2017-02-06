@@ -128,7 +128,8 @@ class BudgetReleaseWizard(models.TransientModel):
 
         planned_amount = sum([l.planned_amount for l in budget_lines])
         released_amount = sum([l.released_amount for l in budget_lines])
-        res['amount_to_release'] = planned_amount - released_amount
+#         res['amount_to_release'] = planned_amount - released_amount
+        res['amount_to_release'] = released_amount
         return res
 
     @api.multi

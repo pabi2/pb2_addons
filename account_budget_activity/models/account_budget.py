@@ -332,7 +332,7 @@ class AccountBudget(models.Model):
             budget_lines = BudgetLine.search([('budget_id', '=', rec.id)])
             for line in budget_lines:
                 release_result.update(
-                    {line.id : line.planned_amount - line.released_amount})
+                    {line.id : line.planned_amount})
         return release_result
 
     @api.multi
@@ -619,8 +619,8 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     def release_budget_line(self, release_result):
         for rec in self:
             amount_to_release = release_result.get(rec.id, 0.0)
-            if amount_to_release > rec.planned_amount - rec.released_amount:
+            if amount_to_release > rec.planned_amount:
                 raise UserError(_("You don't have enough amount to release!"))
-            new_release_amount = rec.released_amount + amount_to_release
+            new_release_amount = amount_to_release
             rec.write({'released_amount': new_release_amount})
         return
