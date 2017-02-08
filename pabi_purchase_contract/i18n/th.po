@@ -30,7 +30,7 @@ msgstr "Accessing"
 #. module: pabi_purchase_contract
 #: field:purchase.contract,account:0
 msgid "Account"
-msgstr "Account"
+msgstr "เลขที่บัญชี"
 
 #. module: pabi_purchase_contract
 #: field:purchase.contract,action_date:0
