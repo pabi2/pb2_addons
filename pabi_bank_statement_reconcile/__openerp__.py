@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "NSTDA :: PABI2 - Bank Reconcile",
+    'name': "NSTDA :: PABI2 - Bank Statment Reconcile",
     'summary': "",
     'author': "Ecosoft",
     'website': "http://ecosoft.co.th",
@@ -11,14 +11,14 @@
     'description': """
 
 This module find the discrepency between payment export (Cheque, DIRECT, SMART)
-and bank statement from Bank.
+and result from bank statement
 
     """,
     'depends': [
         'pabi_account',
     ],
     'data': [
-        'views/pabi_bank_reconcile_view.xml',
+        'views/pabi_bank_statement_view.xml',
     ],
     'demo': [
     ],
