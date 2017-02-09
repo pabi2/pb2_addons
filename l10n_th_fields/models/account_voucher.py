@@ -10,7 +10,6 @@ class AccountVoucher(models.Model):
     # Customer Payment
     date_cheque = fields.Date(
         string='Cheque Date',
-        default=lambda *a: time.strftime('%Y-%m-%d'),
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -32,12 +31,15 @@ class AccountVoucher(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    # Supplier Payment
     date_value = fields.Date(
         string='Value Date',  # bank transfer date
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+
+    @api.onchange('date_value')
+    def _onchange_date_value(self):
+        self.date_cheque = self.date_value
 
 
 class AccountVoucherLine(models.Model):
