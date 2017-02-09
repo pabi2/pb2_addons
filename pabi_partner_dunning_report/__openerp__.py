@@ -17,11 +17,11 @@
     'data': [
         # Partner Dunning Report
         'data/report_data.xml',
-        'wizard/pabi_partner_dunning_wizard.xml',
-        'wizard/create_dunning_letter.xml',
         'views/pabi_partner_dunning_report.xml',
         'views/pabi_dunning_letter_view.xml',
         'views/pabi_dunning_config.xml',
+        'wizard/pabi_partner_dunning_wizard.xml',
+        'wizard/create_dunning_letter.xml',
     ],
     'demo': [
     ],
