@@ -10,8 +10,9 @@
             <field name="arch" type="xml">
                 <form string="Bank Statement" class="oe_form_configuration">
                     <div class="oe_button_box oe_right">
-                        <button name="action_get_statement" string="Get Statement" type="object" class="oe_inline"/>
-                        <button name="action_reconcile" string="Reconcile" type="object" class="oe_inline"/>
+                        <button name="action_get_statement" string="Get Statement" type="object" class="oe_inline" />
+                        <button name="action_import_and_reconcile" string="Reconcile" type="object" class="oe_inline oe_highlight"
+                            attrs="{'invisible': [('import_file', '=', False)]}"/>
                     </div>
                     <div class="oe_title">
                         <h1>
@@ -21,7 +22,7 @@
                     </div>
                     <group>
                         <group string="Payment Criteria">
-                            <field name="doctype" />
+                            <field name="doctype"/>
                             <field name="payment_type"/>
                             <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')],
                                                                 'required': [('payment_type', '=', 'transfer')]}"/>
@@ -37,30 +38,34 @@
                     <notebook>
                         <page string="Statement">
                             <field name="item_ids">
-                                <tree>
+                                <tree editable="bottom" create="0" delete="0">
                                     <field name="document"/>
                                     <field name="move_line_id"/>
                                     <field name="partner_code"/>
                                     <field name="partner_name"/>
                                     <field name="cheque_number"/>
-                                    <field name="debit"/>
-                                    <field name="credit"/>
-                                    <field name="match_import_id"/>
+                                    <field name="debit" sum="Debit"/>
+                                    <field name="credit" sum="Credit"/>
+                                    <field name="match_import_id" widget="many2onebutton" string="Reconciled"/>
                                 </tree>
                             </field>
                         </page>
                         <page string="Bank Import">
                             <field name="import_ids">
-                                <tree>
+                                <tree editable="bottom" create="0" delete="0">
                                     <field name="document"/>
                                     <field name="partner_code"/>
                                     <field name="partner_name"/>
                                     <field name="cheque_number"/>
-                                    <field name="debit"/>
-                                    <field name="credit"/>
-                                    <field name="match_item_id"/>
+                                    <field name="description"/>
+                                    <field name="trans_code"/>
+                                    <field name="date_value"/>
+                                    <field name="debit" sum="Debit"/>
+                                    <field name="credit" sum="Credit"/>
+                                    <field name="match_item_id" widget="many2onebutton" string="Reconciled"/>
                                 </tree>
                             </field>
+                            <field name="import_error"/>
                         </page>
                     </notebook>
                 </form>
@@ -89,5 +94,16 @@
         </record>
 
         <menuitem action="action_pabi_bank_statement" id="menu_pabi_bank_statement" sequence="10" name="Bank Statement" parent="menu_pabi_bank_statement_main"/>
+
+        # For testing only
+        <record id="action_pabi_bank_statement_import" model="ir.actions.act_window">
+            <field name="name">Import</field>
+            <field name="res_model">pabi.bank.statement.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="action_pabi_bank_statement_import" id="menu_pabi_bank_statement_import" sequence="20" name="Bank Import" parent="menu_pabi_bank_statement_main"/>
+
     </data>
 </openerp>
