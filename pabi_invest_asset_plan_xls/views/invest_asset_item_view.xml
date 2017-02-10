@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_invest_asset_plan_form" model="ir.ui.view" >
+            <field name="name">view.invest.asset.plan.form</field>
+            <field name="model">invest.asset.plan</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_invest_asset_plan_form"/>
+            <field name="arch" type="xml">
+                <button name="button_cancel" position="after">
+                                <button name="%(action_asset_item_wizard)d"
+                                   type="action" states="draft" string="Export" class="oe_inline"/>
+                </button>
+            </field>
+        </record>
+    </data>
+</openerp>
