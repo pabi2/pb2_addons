@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
-from openerp import fields, models, api
+from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 
 
@@ -75,6 +75,17 @@ class PABIBankStatement(models.Model):
         string='Import Errors',
         readonly=True,
     )
+    _sql_constraints = [
+        ('name_unique', 'unique (name)', 'Bank Statement name must be unique!')
+    ]
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', '/') == '/':
+            name = self.env['ir.sequence'].get('pabi.bank.statement')
+            vals.update({'name': name})
+        rec = super(PABIBankStatement, self).create(vals)
+        return rec
 
     @api.multi
     @api.depends('journal_id')
@@ -185,14 +196,14 @@ class PABIBankStatement(models.Model):
             match_criteria = """
                 item.cheque_number = import.cheque_number
                 and ((item.debit > 0 and item.debit = import.credit) or
-		             (item.credit > 0 and item.credit = import.debit))
+                    (item.credit > 0 and item.credit = import.debit))
             """
         elif self.payment_type == 'transfer':
             # Match by document nubmer (PV) and amount
             match_criteria = """
                 item.document = import.document
                 and ((item.debit > 0 and item.debit = import.credit) or
-		             (item.credit > 0 and item.credit = import.debit))
+                    (item.credit > 0 and item.credit = import.debit))
             """
         return match_criteria
 
