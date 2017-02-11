@@ -20,16 +20,23 @@ class AccountVoucher(models.Model):
                                                    self.type)], limit=1)
         self.doctype_id = doctype.id
 
-    @api.model
-    def _finalize_voucher(self, voucher):
-        voucher = super(AccountVoucher, self)._finalize_voucher(voucher)
-        if voucher.doctype_id.sequence_id:
-            # Get doctype sequence for document number
-            sequence_id = voucher.doctype_id.sequence_id.id
-            fiscalyear_id = voucher.period_id.fiscalyear_id.id
-            voucher.number = self.\
-                with_context(fiscalyear_id=fiscalyear_id).\
-                env['ir.sequence'].next_by_id(sequence_id)
-            # Use document number for journal entry
-            voucher.move_id.ref = voucher.number
-        return voucher
+    @api.multi
+    def action_move_line_create(self):
+        for voucher in self:
+            voucher = voucher.with_context(doctype_id=voucher.doctype_id.id)
+            super(AccountVoucher, voucher).action_move_line_create()
+        return True
+
+    # @api.model
+    # def _finalize_voucher(self, voucher):
+    #     voucher = super(AccountVoucher, self)._finalize_voucher(voucher)
+    #     if voucher.doctype_id.sequence_id:
+    #         # Get doctype sequence for document number
+    #         sequence_id = voucher.doctype_id.sequence_id.id
+    #         fiscalyear_id = voucher.period_id.fiscalyear_id.id
+    #         voucher.number = self.\
+    #             with_context(fiscalyear_id=fiscalyear_id).\
+    #             env['ir.sequence'].next_by_id(sequence_id)
+    #         # Use document number for journal entry
+    #         voucher.move_id.ref = voucher.number
+    #     return voucher

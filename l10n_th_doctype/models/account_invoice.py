@@ -25,15 +25,19 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_move_create(self):
-        result = super(AccountInvoice, self).action_move_create()
         for invoice in self:
-            if invoice.doctype_id.sequence_id:
-                # Get doctype sequence for document number
-                sequence_id = invoice.doctype_id.sequence_id.id
-                fiscalyear_id = invoice.period_id.fiscalyear_id.id
-                invoice.number = self.\
-                    with_context(fiscalyear_id=fiscalyear_id).\
-                    env['ir.sequence'].next_by_id(sequence_id)
-                # Use document number for journal entry
-                invoice.move_id.ref = invoice.number
-        return result
+            invoice = invoice.with_context(doctype_id=invoice.doctype_id.id)
+            super(AccountInvoice, invoice).action_move_create()
+        return True
+
+        # for invoice in self:
+        #     if invoice.doctype_id.sequence_id:
+        #         # Get doctype sequence for document number
+        #         sequence_id = invoice.doctype_id.sequence_id.id
+        #         fiscalyear_id = invoice.period_id.fiscalyear_id.id
+        #         invoice.number = self.\
+        #             with_context(fiscalyear_id=fiscalyear_id).\
+        #             env['ir.sequence'].next_by_id(sequence_id)
+        #         # Use document number for journal entry
+        #         invoice.move_id.ref = invoice.number
+        # return result
