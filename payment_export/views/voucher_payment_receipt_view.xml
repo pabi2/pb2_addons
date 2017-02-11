@@ -20,7 +20,7 @@
                     <field name="supplier_bank_branch"/>
                 </field>
                 <field name="number_cheque" position="attributes">
-                    <attribute name="attrs">{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('cheque_lot_id', '!=', False)]}</attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('cheque_lot_id', '!=', False), ('number_cheque', '=', False)]}</attribute>
                 </field>
             </field>
         </record>
