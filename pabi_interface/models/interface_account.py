@@ -197,7 +197,6 @@ class InterfaceAccountEntry(models.Model):
 
     @api.multi
     def execute(self):
-        res = {}
         for interface in self:
             # Set type based on journal type
             if interface.to_reverse_entry_id:
@@ -213,24 +212,26 @@ class InterfaceAccountEntry(models.Model):
                 if interface.to_reverse_entry_id.type == 'voucher':
                     self._prepare_voucher_move_for_reversal(move)
                 # Start reverse
+                print move.name
                 rev_move = move.copy({'name': move.name + '_VOID',
                                       'ref': move.ref})
+                print rev_move.name
                 rev_move._switch_dr_cr()
                 self.env['account.move'].\
                     _reconcile_voided_entry([move.id, rev_move.id])
                 rev_move.button_validate()
                 interface.write({'move_id': rev_move.id,
                                  'state': 'done'})
-                res.update({interface.name: move.name})
+                interface.number = rev_move.name
             # 2) Invoice / Refund
             elif interface.type == 'invoice':
                 move = interface._action_invoice_entry()
-                res.update({interface.name: move.name})
+                interface.number = move.name
             # 3) Payment Receipt
             elif interface.type == 'voucher':
                 move = interface._action_payment_entry()
-                res.update({interface.name: move.name})
-        return res
+                interface.number = move.name
+        return True
 
     # ================== Sub Method by Action ==================
     @api.model
@@ -289,13 +290,26 @@ class InterfaceAccountEntry(models.Model):
         ctx = self._context.copy()
         ctx.update({'company_id': self.company_id.id})
         periods = Period.find(dt=move_date)
-        period_id = periods and periods[0].id or False
+        period = periods and periods[0] or False
+        period_id = period and period.id or False
         journal = self.journal_id
         ctx.update({
             'journal_id': journal.id,
             'period_id': period_id,
+            'fiscalyear_id': period and period.fiscalyear_id.id or False,
         })
+        move_name = "/"
+        if journal.sequence_id:
+            self = self.with_context(ctx)
+            sequence_id = journal.sequence_id.id
+            print sequence_id
+            move_name = self.env['ir.sequence'].next_by_id(sequence_id)
+            print move_name
+        else:
+            raise ValidationError(
+                _('Please define a sequence on the journal.'))
         move = AccountMove.create({
+            'name': move_name,
             'system_id': self.system_id.id,
             'ref': self.name,
             'operating_unit_id': operating_unit_id,
