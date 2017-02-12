@@ -318,12 +318,13 @@ class AccountTaxDetail(models.Model):
 
     @api.model
     def _get_next_sequence(self, period):
-        Sequence = self.env['ir.sequence']
         TaxDetailSequence = self.env['account.tax.detail.sequence']
         domain = self._get_seq_search_domain(self.doc_type, period)
         seq = TaxDetailSequence.search(domain, limit=1)
         if not seq:
             seq = self._create_sequence(self.doc_type, period)
+        self = self.with_context({'fiscalyear_id': period.fiscalyear_id.id})
+        Sequence = self.env['ir.sequence']
         return int(Sequence.next_by_id(seq.sequence_id.id))
 
     @api.model

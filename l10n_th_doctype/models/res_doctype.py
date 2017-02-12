@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2016 Kitti U.
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
-from openerp import models, fields
+from openerp import models, fields, api
 
 
 class ResDoctype(models.Model):
@@ -57,3 +54,8 @@ class ResDoctype(models.Model):
         related='sequence_id.implementation',
         string='Implementation',
     )
+
+    @api.model
+    def get_doctype(self, refer_type):
+        doctype = self.search([('refer_type', '=', refer_type)], limit=1)
+        return doctype
