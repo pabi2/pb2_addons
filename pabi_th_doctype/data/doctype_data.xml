@@ -4,6 +4,7 @@
 <openerp>
     <data noupdate="1">
         <!--
+          * Purchase Requisition
           * Work Acceptance
           * Approval Report
           * Stock Request
@@ -13,6 +14,11 @@
           * Bank Receipt
           * Account Interface
         -->
+        <record id="doctype_purchase_requisition" model="res.doctype" >
+            <field name="name">Purchase Requisition</field>
+            <field name="sequence_id" ref="doctype_purchase_requisition_seq"/>
+            <field name="refer_type">purchase_requisition</field>
+        </record>
         <record id="doctype_work_acceptance" model="res.doctype" >
             <field name="name">Work Acceptance</field>
             <field name="sequence_id" ref="doctype_work_acceptance_seq"/>

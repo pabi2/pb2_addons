@@ -52,6 +52,5 @@ class InterfaceAccountEntry(models.Model):
                         env['ir.sequence'].next_by_id(sequence_id),
                         'cancel_entry': True,
                     })
-                    print interface.move_id.name
                     interface.number = interface.move_id.name
         return res

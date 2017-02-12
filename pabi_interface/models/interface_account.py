@@ -212,10 +212,8 @@ class InterfaceAccountEntry(models.Model):
                 if interface.to_reverse_entry_id.type == 'voucher':
                     self._prepare_voucher_move_for_reversal(move)
                 # Start reverse
-                print move.name
                 rev_move = move.copy({'name': move.name + '_VOID',
                                       'ref': move.ref})
-                print rev_move.name
                 rev_move._switch_dr_cr()
                 self.env['account.move'].\
                     _reconcile_voided_entry([move.id, rev_move.id])

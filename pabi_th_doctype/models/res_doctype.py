@@ -8,7 +8,7 @@ from openerp import models, fields
 class ResDoctype(models.Model):
     _inherit = 'res.doctype'
 
-    #   * Purchase Request
+    #   * Purchase Requisition
     #   * Work Acceptance
     #   * Approval Report
     #   * Stock Request
@@ -20,7 +20,7 @@ class ResDoctype(models.Model):
 
     refer_type = fields.Selection(
         selection_add=[
-            ('purchase_request', 'Purchase Request'),
+            ('purchase_requisition', 'Purchase Requisition'),
             ('work_acceptance', 'Work Acceptance'),
             ('approval_report', 'Approval Report'),
             ('stock_request', 'Stock Request'),

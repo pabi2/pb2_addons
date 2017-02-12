@@ -2,6 +2,7 @@
 <openerp>
     <data noupdate="1">
         <!--
+          * Purchase Requisition
           * Work Acceptance
           * Approval Report
           * Stock Request
@@ -11,11 +12,11 @@
           * Bank Receipt
           * Account Interface
         -->
-        # Work Acceptance
-        <record id="doctype_work_acceptance_seq" model="ir.sequence">
-            <field name="name">DOCTYPE: Work Acceptance</field>
+        # Purchase Requisition
+        <record id="doctype_purchase_requisition_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Purchase Requisition</field>
             <field name="code"></field>
-            <field name="prefix">WA%(fy)s</field>
+            <field name="prefix">PD%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
