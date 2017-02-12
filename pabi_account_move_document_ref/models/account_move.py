@@ -74,7 +74,7 @@ class AccountMove(models.Model):
         string='Value Date',
         compute='_compute_document',
         store=True,
-        help="Value date is only applicable with some documents, i.e., Payment",
+        help="If origin document have value date. Otherwise, use move date",
     )
     invoice_ids = fields.One2many(
         'account.invoice',
@@ -204,7 +204,8 @@ class AccountMove(models.Model):
                 rec.doctype = self._get_doctype(document._name, document)
                 if 'date_value' in document._fields:
                     rec.date_value = document.date_value
-
+            if not rec.date_value:
+                rec.date_value = rec.date  # No Value Date, same as date
 
     @api.model
     def _get_doctype(self, model, document):
@@ -251,5 +252,5 @@ class AccountMoveLine(models.Model):
         related='move_id.date_value',
         store=True,
         readonly=True,
-        help="Value date is only applicable with some documents, i.e., Payment",
+        help="If origin document have value date. Otherwise, use move date",
     )

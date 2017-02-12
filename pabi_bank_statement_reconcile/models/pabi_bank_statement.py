@@ -17,9 +17,43 @@ class PABIBankStatement(models.Model):
         string='Import File (*.csv)',
         copy=False,
     )
+    report_type = fields.Selection(
+        [('payment_cheque', 'Unreconciled Cheque'),
+         ('payment_direct', 'Unreconcile DIRECT'),
+         ('payment_smart', 'Unreconcile SMART'),
+         ('bank_receipt', 'Unknown Bank Receipt'),
+         ],
+        string='Type of Report',
+        required=True,
+        help="Template used to prefill the search criteria",
+    )
+    match_method = fields.Selection(
+        [('cheque', 'Cheque Number, Amount'),
+         ('document', 'Document Number, Amount'),
+         ('date_value', 'Date Value, Amount')],
+        string='Matching By',
+        required=True,
+    )
+    match_method_readonly = fields.Selection(
+        [('cheque', 'Cheque Number, Amount'),
+         ('document', 'Document Number, Amount'),
+         ('date_value', 'Date Value, Amount')],
+        string='Matching By',
+        readonly=True,
+        related='match_method',
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        domain=[('type', '=', 'bank')],
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
     doctype = fields.Selection(
-        [('payment', 'Payment'),
-         ('receipt', 'Receipt'),
+        [('payment', 'Supplier Payment'),
+         ('bank_receipt', 'Bank Receipt'),
          ],
         string='Doctype',
         default='payment',
@@ -39,25 +73,15 @@ class PABIBankStatement(models.Model):
         help="- DIRECT is transfer within same bank.\n"
         "- SMART is transfer is between different bank."
     )
-    journal_id = fields.Many2one(
-        'account.journal',
-        string='Journal',
-        required=True,
-        domain=[('type', '=', 'bank')]
-    )
-    account_id = fields.Many2one(
-        'account.account',
-        string='Account',
-        compute='_compute_account_id',
-        store=True,
-    )
     date_from = fields.Date(
         string='From Date',
         required=True,
+        default=lambda self: fields.Date.context_today(self),
     )
     date_to = fields.Date(
         string='To Date',
         required=True,
+        default=lambda self: fields.Date.context_today(self),
     )
     item_ids = fields.One2many(
         'pabi.bank.statement.item',
@@ -87,19 +111,41 @@ class PABIBankStatement(models.Model):
         rec = super(PABIBankStatement, self).create(vals)
         return rec
 
-    @api.multi
-    @api.depends('journal_id')
-    def _compute_account_id(self):
-        for rec in self:
-            if rec.journal_id.default_debit_account_id != \
-                    rec.journal_id.default_credit_account_id:
-                rec.account_id = False
-            else:
-                rec.account_id = rec.journal_id.default_debit_account_id
+    @api.onchange('report_type')
+    def _onchange_report_type(self):
+        """ This method simply help setting default search criteia """
+        if self.report_type == 'payment_cheque':
+            self.match_method = 'cheque'
+            self.doctype = 'payment'
+            self.payment_type = 'cheque'
+            self.transfer_type = False
+        elif self.report_type == 'payment_direct':
+            self.match_method = 'document'
+            self.doctype = 'payment'
+            self.payment_type = 'transfer'
+            self.transfer_type = 'direct'
+        elif self.report_type == 'payment_direct':
+            self.match_method = 'document'
+            self.doctype = 'payment'
+            self.payment_type = 'transfer'
+            self.transfer_type = 'smart'
+        elif self.report_type == 'bank_receipt':
+            self.match_method = 'date_value'
+            self.doctype = 'bank_receipt'
+            self.payment_type = False
+            self.transfer_type = False
+        else:
+            self.doctype = False
+            self.payment_type = False
+            self.transfer_type = False
 
-    @api.onchange('payment_type')
-    def _onchange_payment_type(self):
-        self.transfer_type = False
+    @api.onchange('journal_id')
+    def _onchange_journal_id(self):
+        if self.journal_id.default_debit_account_id != \
+                self.journal_id.default_credit_account_id:
+            self.account_id = False
+        else:
+            self.account_id = self.journal_id.default_debit_account_id
 
     @api.model
     def _prepare_move_items(self, move_lines):
@@ -111,7 +157,9 @@ class PABIBankStatement(models.Model):
                 'partner_id': line.partner_id.id,
                 'partner_code': line.partner_id.search_key,
                 'partner_name': line.partner_id.name,
-                'cheque_number': line.document_id.number_cheque,
+                'cheque_number': (line.document_id and
+                                  'number_cheque' in line.document_id._fields
+                                  and line.document_id.number_cheque),
                 'debit': line.debit,
                 'credit': line.credit,
             }
@@ -124,16 +172,17 @@ class PABIBankStatement(models.Model):
         for rec in self:
             rec.item_ids.unlink()
             rec.import_error = False
-            search_domain = [
-                ('journal_id', '=', rec.journal_id.id),
-                ('account_id', '=', rec.account_id.id),
-                ('date_value', '>=', rec.date_from),
-                ('date_value', '<=', rec.date_to),
-                ]
+            # Primary filter
+            domain = [('date_value', '>=', rec.date_from),
+                      ('date_value', '<=', rec.date_to), ]
+            if rec.journal_id:
+                domain.append(('journal_id', '=', rec.journal_id.id))
+            if rec.account_id:
+                domain.append(('account_id', '=', rec.account_id.id))
             if rec.doctype:
-                search_domain.append(('doctype', '=', rec.doctype))
-            move_lines = MoveLine.search(search_domain)
-            # Filtered by payment_type, transfer_type
+                domain.append(('doctype', '=', rec.doctype))
+            move_lines = MoveLine.search(domain)
+            # Secondary filter by payment_type, transfer_type
             if rec.payment_type == 'cheque':
                 move_lines = move_lines.filtered(
                     lambda l: l.document_id.payment_type == 'cheque')
@@ -191,17 +240,24 @@ class PABIBankStatement(models.Model):
     def _get_match_criteria(self):
         self.ensure_one()
         match_criteria = False
-        if self.payment_type == 'cheque':
+        if self.match_method == 'cheque':
             # Match by cheque number and amount
             match_criteria = """
                 item.cheque_number = import.cheque_number
                 and ((item.debit > 0 and item.debit = import.credit) or
                     (item.credit > 0 and item.credit = import.debit))
             """
-        elif self.payment_type == 'transfer':
+        elif self.match_method == 'document':
             # Match by document nubmer (PV) and amount
             match_criteria = """
                 item.document = import.document
+                and ((item.debit > 0 and item.debit = import.credit) or
+                    (item.credit > 0 and item.credit = import.debit))
+            """
+        elif self.match_method == 'date_value':
+            # Match by document nubmer (PV) and amount
+            match_criteria = """
+                item.date_vallue = import.date_vallue
                 and ((item.debit > 0 and item.debit = import.credit) or
                     (item.credit > 0 and item.credit = import.debit))
             """
