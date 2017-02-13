@@ -27,6 +27,7 @@ Add more user's profile
         "hr_expense",
         "pabi_base",
         "base_name_search_improved",
+        "res_partner_ext",
     ],
     "data": [
         # security
