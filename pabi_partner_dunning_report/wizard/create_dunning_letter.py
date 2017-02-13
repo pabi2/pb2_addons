@@ -18,9 +18,8 @@ class CreateDunningLetter(models.TransientModel):
         for t in ['l1', 'l2', 'l3']:
             dunnings = self.env[model].browse(active_ids)
             filtered_dunning = dunnings.filtered(
-                lambda l: l.days_overdue >= OVERDUE_DAYS[t]
-                and not l[t]
-                and today not in (l.l1_date, l.l2_date, l.l3_date)
+                lambda l: l.days_overdue >= OVERDUE_DAYS[t] and not l[t] and
+                today not in (l.l1_date, l.l2_date, l.l3_date)
             )
             filtered_dunning._create_dunning_letter(t)
             active_ids = list(set(active_ids) - set(filtered_dunning.ids))
