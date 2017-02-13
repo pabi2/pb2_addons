@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="asset_item_export_wizard_form">
+            <field name="name">export.asset.item.form</field>
+            <field name="model">export.asset.item</field>
+            <field name="arch" type="xml">
+                <form string="Export Asset Item Form">
+                    <group>
+                        <group>
+                            <field name="attachment_id" domain="[('budget_template', '=', True)]" widget="selection" required="True"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_export" string="Export" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_asset_item_wizard">
+            <field name="name">Export Asset Item</field>
+            <field name="res_model">export.asset.item</field>
+            <field name="view_mode">form</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="asset_item_export_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>
