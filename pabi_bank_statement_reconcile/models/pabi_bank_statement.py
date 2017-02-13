@@ -160,23 +160,24 @@ class PABIBankStatement(models.Model):
             date1 = fields.Date.from_string(self.date_report)
             date2 = fields.Date.from_string(line.date_value)
             diff_days = (date1 - date2).days
+            cheque_number = line.document_id and \
+                'number_cheque' in line.document_id._fields and \
+                line.document_id.number_cheque
+            validate_user_id = line.document_id and \
+                'validate_user_id' in line.document_id._fields and \
+                line.document_id.validate_user_id.id
             line_dict = {
                 'move_line_id': line.id,
                 'document': line.document,
                 'partner_id': line.partner_id.id,
                 'partner_code': line.partner_id.search_key,
                 'partner_name': line.partner_id.name,
-                'cheque_number': (line.document_id and
-                                  'number_cheque' in line.document_id._fields
-                                  and line.document_id.number_cheque),
+                'cheque_number': cheque_number,
                 'date_value': line.date_value,
                 'days_outstanding': diff_days,
                 'debit': line.debit,
                 'credit': line.credit,
-                'validate_user_id': (line.document_id and
-                                     'validate_user_id' in
-                                     line.document_id._fields
-                                     and line.document_id.validate_user_id.id),
+                'validate_user_id': validate_user_id,
             }
             res.append((0, 0, line_dict))
         return res

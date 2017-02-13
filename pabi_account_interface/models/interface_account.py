@@ -72,7 +72,7 @@ class InterfaceAccountEntry(models.Model):
                     'operating_unit_id': u'ศว.',
                     'activity_group_id': u'ค่าวิเคราะห์และทดสอบ',
                     'activity_id': u'ให้บริการวิเคราะห์ทดสอบ/ร่วมวิจัย/'
-                    'รับจ้างวิจัย/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
+                    u'รับจ้างวิจัย/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
                     'section_id': u'Procurement Section',
                     'project_id': False,
                     'taxbranch_id': False,
