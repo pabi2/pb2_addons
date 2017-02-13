@@ -12,7 +12,6 @@ addons:
       - python-lxml  # because pip installation is slow
       - python-xlrd
       - python-openpyxl
-      - openerp-client-lib
 
 env:
   global:
