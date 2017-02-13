@@ -20,11 +20,9 @@ class HREmployee(models.Model):
     title_id = fields.Many2one(
         'res.partner.title',
         string='Title',
-        required=True,
     )
     first_name = fields.Char(
         string='First Name',
-        required=True,
         translate=True,
     )
     mid_name = fields.Char(
@@ -33,12 +31,10 @@ class HREmployee(models.Model):
     )
     last_name = fields.Char(
         string='Last Name',
-        required=True,
         translate=True,
     )
     employee_code = fields.Char(
         string='Employee ID.',
-        required=True,
     )
     section_id = fields.Many2one(
         'res.section',
@@ -67,7 +63,6 @@ class HREmployee(models.Model):
     position_id = fields.Many2one(
         'hr.position',
         string='Position',
-        required=True,
     )
     position_management_id = fields.Many2one(
         'hr.position',
