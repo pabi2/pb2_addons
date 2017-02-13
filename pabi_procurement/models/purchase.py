@@ -33,15 +33,11 @@ class PurchaseOrder(models.Model):
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
     )
-    mycontract_id = fields.Selection(
-        selection=[
-            ('1', 'from myContract'),
-            ('2', '2'),
-            ('3', '3'),
-            ('4', '4'),
-        ],
-        string='myContract',
-        default='1',
+    contract_id = fields.Many2one(
+        'purchase.contract',
+        string='Contract',
+        compute='_compute_contract_id',
+        store=True
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
@@ -143,6 +139,19 @@ class PurchaseOrder(models.Model):
     @api.one
     def _compute_dummy_quote_id(self):
         self.dummy_quote_id = self.id
+
+    @api.one
+    @api.depends('requisition_id.count_contract',
+                 'requisition_id.contract_ids.state')
+    def _compute_contract_id(self):
+        self.contract_id = False
+        if self.requisition_id:
+            Contract = self.env['purchase.contract']
+            contract = Contract.search(
+                [('id', 'in', self.requisition_id.contract_ids.ids),
+                 ('state','=','S')], order='poc_rev desc', limit=1)
+            if contract:
+                self.contract_id = contract.id
 
     @api.model
     def check_over_requisition_limit(self):
@@ -332,7 +341,7 @@ class PurchaseOrder(models.Model):
                     'payment_term_id': porder.payment_term_id.id,
                     'partner_ref': porder.partner_ref,
                     'date_reference': porder.date_reference,
-                    'mycontract_id': porder.mycontract_id,
+                    'contract_id': porder.contract_id.id,
                     'state': 'draft',
                     'order_line': {},
                     'notes': '%s' % (porder.notes or '',),
