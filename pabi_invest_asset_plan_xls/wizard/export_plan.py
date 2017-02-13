@@ -5,9 +5,8 @@ from datetime import datetime
 
 import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.styles import Protection
 from openpyxl.utils import quote_sheetname
-from openpyxl.styles import PatternFill, Border, Side, Protection, Font
-from openpyxl.utils import (_get_column_letter)
 
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
@@ -128,14 +127,13 @@ class ExportAsseItem(models.TransientModel):
 
     @api.model
     def _update_employees_sheet(self, workbook):
-#         master_employee
         try:
             EmployeeObj = self.env['hr.employee']
             Employee_Sheet = workbook.get_sheet_by_name('master_employee')
             Employee_Sheet.protection.sheet = True
             Employee_Sheet.protection.set_password('pabi2')
             employee_ids = EmployeeObj.search([])
-            # create lines in activity group data sheet
+
             row = 2
             for employee in employee_ids:
                 Employee_Sheet.cell(row=row, column=1, value=employee.name)
@@ -153,9 +151,11 @@ class ExportAsseItem(models.TransientModel):
 
     @api.model
     def _format_sheet(self, Sheet):
+        Sheet.protection.sheet = True
+        Sheet.protection.set_password('pabi2')
+
         first_row = 8
         last_row = first_row + 100
-
         Reason = DataValidation(
             type="list",
             formula1='"New,Replacement,Extra"'
@@ -174,44 +174,57 @@ class ExportAsseItem(models.TransientModel):
         Employee = SHEET_FORMULAS.get('formula_employee', False)
         Sheet.add_data_validation(Employee)
 
+        protection = Protection(locked=False)
+
         for row in range(first_row, last_row):
-            ResProgramGroup.add(Sheet.cell(row=row, column=2))
-            ResInvestAsset.add(Sheet.cell(row=row, column=3))
-            Employee.add(Sheet.cell(row=row, column=6))
-            ResSection.add(Sheet.cell(row=row, column=7))
-            ResDivision.add(Sheet.cell(row=row, column=8))
+            for col in range(1, 30):
+                if col == 2:
+                    ResProgramGroup.add(Sheet.cell(row=row, column=col))
+                if col == 3:
+                    ResInvestAsset.add(Sheet.cell(row=row, column=col))
+                    Sheet.cell(row=row, column=col).protection = protection
+                if col == 6:
+                    Employee.add(Sheet.cell(row=row, column=col))
+                if col == 7:
+                    ResSection.add(Sheet.cell(row=row, column=col))
+                if col == 8:
+                    ResDivision.add(Sheet.cell(row=row, column=col))
 
-            # Price subtotal
-            value = "=J%s*$K$%s" % (row, row)
-            Sheet.cell(row=row, column=12).value = value
-            # Price Total
-            value = "=L%s+$M$%s" % (row, row)
-            Sheet.cell(row=row, column=14).value = value
+                if col == 15:
+                    Reason.add(Sheet.cell(row=row, column=col))
 
-            Reason.add(Sheet.cell(row=row, column=15))
-
-            # Total Commitment
-            value = "=W%s+$X$%s+$Y$%s" % (row, row, row)
-            Sheet.cell(row=row, column=22).value = value
-
-            # Total Commitment + Actual
-            value = "=V%s+$Z$%s" % (row, row)
-            Sheet.cell(row=row, column=27).value = value
-
-            # Carried Forward (Total Commitment + Residual Budget)
-            value = "=V%s+$AB$%s" % (row, row)
-            Sheet.cell(row=row, column=29).value = value
+                if col == 12:
+                    # Price subtotal
+                    value = "=J%s*$K$%s" % (row, row)
+                    Sheet.cell(row=row, column=col).value = value
+                elif col == 14:
+                    # Price Total
+                    value = "=L%s+$M$%s" % (row, row)
+                    Sheet.cell(row=row, column=col).value = value
+                elif col == 22:
+                    # Total Commitment
+                    value = "=W%s+$X$%s+$Y$%s" % (row, row, row)
+                    Sheet.cell(row=row, column=col).value = value
+                elif col == 27:
+                    # Total Commitment + Actual
+                    value = "=V%s+$Z$%s" % (row, row)
+                    Sheet.cell(row=row, column=col).value = value
+                elif col == 29:
+                    # Carried Forward (Total Commitment + Residual Budget)
+                    value = "=V%s+$AB$%s" % (row, row)
+                    Sheet.cell(row=row, column=col).value = value
+                else:
+                    Sheet.cell(row=row, column=col).protection = protection
 
     @api.model
     def _update_sheet_lines(self, Sheet, lines):
-        first_row = 8
-        last_row = first_row + 100
         row = 8
         for line in lines:
             if line.program_group_id:
                 Sheet.cell(row=row, column=2, value=line.program_group_id.name)
             if line.invest_asset_categ_id:
-                Sheet.cell(row=row, column=3, value=line.invest_asset_categ_id.name)
+                Sheet.cell(row=row, column=3,
+                           value=line.invest_asset_categ_id.name)
             if line.asset_common_name:
                 Sheet.cell(row=row, column=4, value=line.asset_common_name)
             if line.asset_name:
@@ -225,7 +238,6 @@ class ExportAsseItem(models.TransientModel):
             if line.location:
                 Sheet.cell(row=row, column=9, value=line.location)
             Sheet.cell(row=row, column=10, value=line.quantity)
-            
             Sheet.cell(row=row, column=11, value=line.price_unit)
 #             Sheet.cell(row=row, column=12, value='')
             Sheet.cell(row=row, column=13, value=line.price_other)
@@ -245,7 +257,8 @@ class ExportAsseItem(models.TransientModel):
             if line.quotation_document:
                 Sheet.cell(row=row, column=19, value=line.quotation_document)
             if line.specification_summary:
-                Sheet.cell(row=row, column=20, value=line.specification_summary)
+                Sheet.cell(row=row, column=20,
+                           value=line.specification_summary)
 #             Sheet.cell(row=row, column=21, value='')
 #             Sheet.cell(row=row, column=22, value='')
             Sheet.cell(row=row, column=23, value=line.po_commitment)
