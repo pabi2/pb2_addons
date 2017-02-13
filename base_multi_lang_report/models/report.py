@@ -20,16 +20,19 @@ class Report(models.Model):
         ctx = self._context.copy()
         report_action = self.get_action(self, template, values)
         report_action = self.env['ir.actions.report.xml'].search(
-                            [('report_name', '=', template)], limit=1)
+            [('report_name', '=', template)], limit=1)
         if report_action:
             ctx.update(report_action=report_action)
-        return super(Report, self.with_context(ctx)).render(template, values=values)
+        return super(Report, self.with_context(ctx)).render(template,
+                                                            values=values)
 
-    def translate_doc(self, cr, uid, doc_id, model, lang_field, template, values, context=None):
+    def translate_doc(self, cr, uid, doc_id, model,
+                      lang_field, template, values, context=None):
         """Helper used when a report should be translated into a specific lang.
 
         <t t-foreach="doc_ids" t-as="doc_id">
-        <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', account.report_invoice_document')"/>
+        <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang',
+                                account.report_invoice_document')"/>
         </t>
 
         :param doc_id: id of the record to translate
@@ -48,12 +51,15 @@ class Report(models.Model):
 
         doc = self.pool[model].browse(cr, uid, doc_id, context=ctx)
         qcontext = values.copy()
-        # Do not force-translate if we chose to display the report in a specific lang
+        # Do not force-translate if we chose to display
+        # the report in a specific lang
         if ctx.get('translatable') is True:
             qcontext['o'] = doc
         else:
             # Reach the lang we want to translate the doc into
             if not report_action:
                 ctx['lang'] = eval('doc.%s' % lang_field, {'doc': doc})
-            qcontext['o'] = self.pool[model].browse(cr, uid, doc_id, context=ctx)
-        return self.pool['ir.ui.view'].render(cr, uid, template, qcontext, context=ctx)
+            qcontext['o'] = \
+                self.pool[model].browse(cr, uid, doc_id, context=ctx)
+        return self.pool['ir.ui.view'].render(cr, uid, template,
+                                              qcontext, context=ctx)

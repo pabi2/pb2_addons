@@ -118,7 +118,8 @@ class ModelExtended(models.Model):
                     if not isinstance(new_result, list):
                         if not isinstance(new_result, long):
                             new_result = [new_result]
-                    if isinstance(result, list) and isinstance(new_result, list):
+                    if isinstance(result, list) and \
+                            isinstance(new_result, list):
                         result_add = [x for x in new_result if x not in result]
                         if result_add:
                             result.extend(result_add)

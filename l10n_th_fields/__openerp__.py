@@ -13,7 +13,8 @@
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': ['account_voucher',
-                'account_bank_receipt',],
+                'account_bank_receipt',
+                ],
     'demo': [],
     'data': [
         'views/voucher_payment_receipt_view.xml',
