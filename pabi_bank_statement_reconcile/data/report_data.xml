@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		# PDF
+		<record id="pabi_unreconciled_report_pdf" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.bank.statement</field>
+			<field name="name">Unreconciled Report (pdf)</field>
+			<field name="report_name">unreconciled_report_pdf</field>
+			<field name="report_rml">pabi_bank_statement_reconcile/report/pabi_unreconciled_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+		</record>
+
+		<record id="pabi_unreconciled_report_pdf_values" model="ir.values">
+			<field name="name">Unreconciled Report (pdf)</field>
+			<field name="model">pabi.bank.statement</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_unreconciled_report_pdf)"/>
+		</record>
+
+		# XLS
+		<record id="pabi_unreconciled_report_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.bank.statement</field>
+			<field name="name">Unreconciled Report (xls)</field>
+			<field name="report_name">unreconciled_report_xls</field>
+			<field name="report_rml">pabi_bank_statement_reconcile/report/pabi_unreconciled_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+		</record>
+
+		<record id="pabi_unreconciled_report_xls_values" model="ir.values">
+			<field name="name">Unreconciled Report (xls)</field>
+			<field name="model">pabi.bank.statement</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_unreconciled_report_xls)"/>
+		</record>
+	</data>
+</openerp>

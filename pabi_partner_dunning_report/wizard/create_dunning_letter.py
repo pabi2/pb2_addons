@@ -16,7 +16,6 @@ class CreateDunningLetter(models.TransientModel):
         # - No letters created today
         today = fields.Date.context_today(self)
         for t in ['l1', 'l2', 'l3']:
-            print active_ids
             dunnings = self.env[model].browse(active_ids)
             filtered_dunning = dunnings.filtered(
                 lambda l: l.days_overdue >= OVERDUE_DAYS[t]

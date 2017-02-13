@@ -19,6 +19,7 @@ and result from bank statement
     ],
     'data': [
         'data/ir_sequence.xml',
+        'data/report_data.xml',
         'views/pabi_bank_statement_view.xml',
     ],
     'demo': [

@@ -78,7 +78,8 @@ data_dict = {
             'partner_id': u'Kaushik',
             'operating_unit_id': u'ศว.',
             'activity_group_id': u'ค่าวิเคราะห์และทดสอบ',
-            'activity_id': u'ให้บริการวิเคราะห์ทดสอบ/ร่วมวิจัย/รับจ้างวิจัย/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
+            'activity_id': u'ให้บริการวิเคราะห์ทดสอบ/ร่วมวิจัย/รับจ้างวิจัย'
+            u'/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
             'section_id': u'Procurement Section',
             'project_id': False,
             'taxbranch_id': False,

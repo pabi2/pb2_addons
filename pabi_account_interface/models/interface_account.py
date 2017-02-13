@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _, fields
-from openerp.exceptions import Warning as UserError
-import xmlrpclib
+from openerp import models, api, _
 
 
 class InterfaceAccountEntry(models.Model):
@@ -73,7 +71,8 @@ class InterfaceAccountEntry(models.Model):
                     'partner_id': u'Kaushik',
                     'operating_unit_id': u'ศว.',
                     'activity_group_id': u'ค่าวิเคราะห์และทดสอบ',
-                    'activity_id': u'ให้บริการวิเคราะห์ทดสอบ/ร่วมวิจัย/รับจ้างวิจัย/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
+                    'activity_id': u'ให้บริการวิเคราะห์ทดสอบ/ร่วมวิจัย/'
+                    u'รับจ้างวิจัย/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
                     'section_id': u'Procurement Section',
                     'project_id': False,
                     'taxbranch_id': False,
@@ -171,8 +170,6 @@ class InterfaceAccountEntry(models.Model):
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             res = self._create_interface_account_entry(data_dict)
-            if res['is_success'] is True:
-                interface_account_entry = self.browse(res['result']['id'])
         except Exception, e:
             res = {
                 'is_success': False,

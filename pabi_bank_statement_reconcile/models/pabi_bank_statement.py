@@ -19,8 +19,8 @@ class PABIBankStatement(models.Model):
     )
     report_type = fields.Selection(
         [('payment_cheque', 'Unreconciled Cheque'),
-         ('payment_direct', 'Unreconcile DIRECT'),
-         ('payment_smart', 'Unreconcile SMART'),
+         ('payment_direct', 'Unreconciled DIRECT'),
+         ('payment_smart', 'Unreconciled SMART'),
          ('bank_receipt', 'Unknown Bank Receipt'),
          ],
         string='Type of Report',
@@ -31,14 +31,14 @@ class PABIBankStatement(models.Model):
         [('cheque', 'Cheque Number, Amount'),
          ('document', 'Document Number, Amount'),
          ('date_value', 'Date Value, Amount')],
-        string='Matching By',
+        string='Matching Method',
         required=True,
     )
     match_method_readonly = fields.Selection(
         [('cheque', 'Cheque Number, Amount'),
          ('document', 'Document Number, Amount'),
          ('date_value', 'Date Value, Amount')],
-        string='Matching By',
+        string='Matching Method',
         readonly=True,
         related='match_method',
     )
@@ -72,6 +72,11 @@ class PABIBankStatement(models.Model):
         string='Transfer Type',
         help="- DIRECT is transfer within same bank.\n"
         "- SMART is transfer is between different bank."
+    )
+    date_report = fields.Date(
+        string='Report Date',
+        default=lambda self: fields.Date.context_today(self),
+        readonly=True,
     )
     date_from = fields.Date(
         string='From Date',
@@ -147,21 +152,32 @@ class PABIBankStatement(models.Model):
         else:
             self.account_id = self.journal_id.default_debit_account_id
 
-    @api.model
+    @api.multi
     def _prepare_move_items(self, move_lines):
+        self.ensure_one()
         res = []
         for line in move_lines:
+            date1 = fields.Date.from_string(self.date_report)
+            date2 = fields.Date.from_string(line.date_value)
+            diff_days = (date1 - date2).days
+            cheque_number = line.document_id and \
+                'number_cheque' in line.document_id._fields and \
+                line.document_id.number_cheque
+            validate_user_id = line.document_id and \
+                'validate_user_id' in line.document_id._fields and \
+                line.document_id.validate_user_id.id
             line_dict = {
                 'move_line_id': line.id,
                 'document': line.document,
                 'partner_id': line.partner_id.id,
                 'partner_code': line.partner_id.search_key,
                 'partner_name': line.partner_id.name,
-                'cheque_number': (line.document_id and
-                                  'number_cheque' in line.document_id._fields
-                                  and line.document_id.number_cheque),
+                'cheque_number': cheque_number,
+                'date_value': line.date_value,
+                'days_outstanding': diff_days,
                 'debit': line.debit,
                 'credit': line.credit,
+                'validate_user_id': validate_user_id,
             }
             res.append((0, 0, line_dict))
         return res
@@ -191,7 +207,7 @@ class PABIBankStatement(models.Model):
                     lambda l: l.document_id.payment_type == 'transfer' and
                     l.document_id.transfer_type == rec.transfer_type)
             # --
-            rec.write({'item_ids': self._prepare_move_items(move_lines)})
+            rec.write({'item_ids': rec._prepare_move_items(move_lines)})
         return
 
     @api.model
@@ -216,7 +232,7 @@ class PABIBankStatement(models.Model):
                             'description',
                             'debit', 'credit',
                             'date_value',
-                            'trans_code']
+                            'batch_code']
         for rec in self:
             rec.import_ids.unlink()
             rec.import_error = False
@@ -295,11 +311,11 @@ class PABIBankStatement(models.Model):
             """ % (rec.id, rec.id))
         return
 
-    @api.multi
-    def action_import_and_reconcile(self):
-        self.action_get_statement()
-        self.action_import_csv()
-        self.action_reconcile()
+    # @api.multi
+    # def action_import_and_reconcile(self):
+    #     self.action_get_statement()
+    #     self.action_import_csv()
+    #     self.action_reconcile()
 
 
 class PABIBankStatementItem(models.Model):
@@ -339,6 +355,10 @@ class PABIBankStatementItem(models.Model):
         string='Value Date',
         readonly=True,
     )
+    days_outstanding = fields.Integer(
+        string='Outstanding Days',
+        readonly=True,
+    )
     cheque_number = fields.Char(
         string='Cheque',
         readonly=True,
@@ -355,6 +375,11 @@ class PABIBankStatementItem(models.Model):
         'pabi.bank.statement.import',
         string='Matched ID',
         ondelete='set null',
+    )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        readonly=True,
     )
 
 
@@ -385,8 +410,8 @@ class PABIBankStatementImport(models.Model):
         string='Description',
         readonly=True,
     )
-    trans_code = fields.Char(
-        string='Trans Code',
+    batch_code = fields.Char(
+        string='Batch Code',
         readonly=True,
     )
     date_value = fields.Date(
