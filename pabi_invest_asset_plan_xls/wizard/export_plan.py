@@ -153,12 +153,12 @@ class ExportAsseItem(models.TransientModel):
 
     @api.model
     def _format_sheet(self, Sheet):
-        first_row = 10
+        first_row = 8
         last_row = first_row + 100
 
         Reason = DataValidation(
             type="list",
-            formula1='"new,replacement,extra"'
+            formula1='"New,Replacement,Extra"'
         )
         SHEET_FORMULAS.update({'reason': Reason})
         Sheet.add_data_validation(Reason)
@@ -204,11 +204,12 @@ class ExportAsseItem(models.TransientModel):
 
     @api.model
     def _update_sheet_lines(self, Sheet, lines):
-        last_row = 10 + 100
-        row = 10
+        first_row = 8
+        last_row = first_row + 100
+        row = 8
         for line in lines:
-            if line.section_id:
-                Sheet.cell(row=row, column=2, value=line.section_id.name)
+            if line.program_group_id:
+                Sheet.cell(row=row, column=2, value=line.program_group_id.name)
             if line.invest_asset_categ_id:
                 Sheet.cell(row=row, column=3, value=line.invest_asset_categ_id.name)
             if line.asset_common_name:
@@ -229,7 +230,14 @@ class ExportAsseItem(models.TransientModel):
 #             Sheet.cell(row=row, column=12, value='')
             Sheet.cell(row=row, column=13, value=line.price_other)
 #             Sheet.cell(row=row, column=14, value='')
-            Sheet.cell(row=row, column=15, value=line.reason_purchase)
+
+            if line.reason_purchase == 'new':
+                Sheet.cell(row=row, column=15, value='New')
+            elif line.reason_purchase == 'replace':
+                Sheet.cell(row=row, column=15, value='Replacement')
+            elif line.reason_purchase == 'extra':
+                Sheet.cell(row=row, column=15, value='Extra')
+
             if line.reason_purchase_text:
                 Sheet.cell(row=row, column=16, value=line.reason_purchase_text)
 #             Sheet.cell(row=row, column=17, value='')
@@ -247,6 +255,7 @@ class ExportAsseItem(models.TransientModel):
 #             Sheet.cell(row=row, column=27, value='')
             Sheet.cell(row=row, column=28, value=line.budget_residual)
             row += 1
+        return True
 
     @api.model
     def _update_header(self, Sheet, item):
@@ -257,7 +266,7 @@ class ExportAsseItem(models.TransientModel):
         Sheet.cell(row=3, column=2,
                    value=datetime.today().strftime('%d-%m-%Y'))
         Sheet.cell(row=4, column=2, value=self.env.user.name)
-        
+
     @api.model
     def _get_filename(self, item):
         template_file = self.attachment_id
@@ -295,20 +304,36 @@ class ExportAsseItem(models.TransientModel):
             self._format_sheet(Asset_Sheet)
             self._update_sheet_lines(Asset_Sheet, item.item_ids)
 
-        filename = self._get_filename(item)
-        stream1 = cStringIO.StringIO()
-        workbook.save(stream1)
+            filename = self._get_filename(item)
+            stream1 = cStringIO.StringIO()
+            workbook.save(stream1)
 
-        output_file = self.env['item.xls.output'].create({
-            'name': filename,
-            'xls_output': base64.encodestring(stream1.getvalue()),
-        })
+            attachement_id = self.env['ir.attachment'].create({
+                'name': filename,
+                'datas': stream1.getvalue().encode('base64'),
+                'datas_fname': filename,
+                'res_model': 'invest.asset.plan',
+                'res_id': item.id,
+                'invest_asset_plan_id': item.id,
+                'description': 'Export',
+            })
+            output_file = self.env['budget.xls.output'].create({
+                'name': filename,
+                'xls_output': base64.encodestring(stream1.getvalue()),
+            })
+            self.env['budget.plan.history'].create({
+                'user_id': self.env.user.id,
+                'operation_date': fields.Datetime.now(),
+                'operation_type': 'export',
+                'invest_asset_plan_id': item.id,
+                'attachement_id': attachement_id.id
+            })
 
         return {
             'context': self.env.context,
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'item.xls.output',
+            'res_model': 'budget.xls.output',
             'res_id': output_file.id,
             'type': 'ir.actions.act_window',
             'target': 'new',

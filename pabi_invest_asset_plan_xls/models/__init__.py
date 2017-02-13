@@ -2,5 +2,7 @@
 # © <YEAR(S)> <AUTHOR(S)>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from . import wizard
-from . import models
+from . import attachment
+from . import budget_plan_history
+from . import account_budget
+

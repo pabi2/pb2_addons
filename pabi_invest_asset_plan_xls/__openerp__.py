@@ -15,12 +15,12 @@
     "application": False,
     "installable": True,  # Mark uninstallable for now.
     "depends": [
-        'pabi_budget_plan',
+        'pabi_budget_xls',
     ],
     'external_dependencies': {'python': ['openpyxl']},
     "data": [
-        'wizard/output_excel_view.xml',
         'wizard/export_plan_view.xml',
+        'wizard/import_plan_view.xml',
         'views/invest_asset_item_view.xml',
     ],
 }

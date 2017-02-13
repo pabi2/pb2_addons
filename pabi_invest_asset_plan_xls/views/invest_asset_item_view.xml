@@ -7,9 +7,32 @@
             <field name="inherit_id" ref="pabi_budget_plan.view_invest_asset_plan_form"/>
             <field name="arch" type="xml">
                 <button name="button_cancel" position="after">
-                                <button name="%(action_asset_item_wizard)d"
-                                   type="action" states="draft" string="Export" class="oe_inline"/>
+                    <button name="%(action_asset_item_wizard)d" type="action" states="draft" string="Export"
+                        class="oe_inline"/>
+                    <button name="%(import_asset_item_action)d" type="action" states="draft" string="Import
+                        Plan" class="oe_inline"/>
                 </button>
+                
+                <xpath expr="//form" position="inside">
+                    <notebook>
+                    <page string="Budget Plan History">
+                        <field name="plan_history_line_ids" readonly="True"/>
+                    </page>
+                    <page string="Attachments">
+                        <field name="attachment_ids">
+                            <tree string="Attachments">
+                                <field name="type" />
+                                <field name="name" />
+                                <field name="description" />
+                                <field name="url" widget="url" invisible="1"/>
+                                <button name="%(pabi_attachment_helper.action_open_url)d" string="Open Document" type="action"
+                                    icon="gtk-justify-fill" />
+                            </tree>
+                        </field>
+                    </page>
+                    </notebook>
+                </xpath>
+                
             </field>
         </record>
     </data>
