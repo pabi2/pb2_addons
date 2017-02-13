@@ -331,8 +331,7 @@ class AccountBudget(models.Model):
         for rec in self:
             budget_lines = BudgetLine.search([('budget_id', '=', rec.id)])
             for line in budget_lines:
-                release_result.update(
-                    {line.id : line.planned_amount})
+                release_result.update({line.id: line.planned_amount})
         return release_result
 
     @api.multi

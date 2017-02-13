@@ -75,8 +75,6 @@ class AccountActivityGroup(models.Model):
     _sql_constraints = [
         ('activity_uniq', 'unique(name)',
          'Activity Group must be unique!'),
-        ('account_uniq', 'unique(account_id)',
-         'Each Activity Group must have unique account'),
     ]
 
     @api.multi

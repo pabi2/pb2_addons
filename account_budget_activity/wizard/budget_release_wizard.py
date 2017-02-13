@@ -3,7 +3,6 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import Warning as UserError
 import openerp.addons.decimal_precision as dp
-from dateutil.relativedelta import relativedelta
 
 
 class BudgetReleaseWizard(models.TransientModel):
@@ -52,7 +51,7 @@ class BudgetReleaseWizard(models.TransientModel):
             self.env['account.fiscalyear.budget.level'].search(domain, limit=1)
         interval = budget_level.release_interval and \
             int(budget_level.release_interval) or 1
-        interval = False #probuse
+        interval = False  # probuse
         start_period = 1  # by default
         is_auto_release = budget_level.is_auto_release
         return interval, start_period, is_auto_release
@@ -92,7 +91,7 @@ class BudgetReleaseWizard(models.TransientModel):
         release_result = {}
         for line in budget_lines:
             if active_model == 'account.budget.line':
-                release_result.update({line.id : self.amount_to_release})
+                release_result.update({line.id: self.amount_to_release})
             else:
                 release_result.update(
                     {line.id: line.planned_amount - line.released_amount})
@@ -117,8 +116,6 @@ class BudgetReleaseWizard(models.TransientModel):
         res = super(BudgetReleaseWizard, self).default_get(fields)
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
-        record = self.env[active_model].browse(active_id)
-
         BudgetLine = self.env['account.budget.line']
         budget_lines = False
         if active_model == 'account.budget.line':
@@ -141,14 +138,13 @@ class BudgetReleaseWizard(models.TransientModel):
             budget_lines = BudgetLine.search([('id', '=', active_id)])
         elif active_model == 'account.budget':
             budget_lines = BudgetLine.search([('budget_id', '=', active_id)])
-
         release_result = {}
         for line in budget_lines:
             if active_model == 'account.budget.line':
-                release_result.update({line.id : self.amount_to_release})
+                release_result.update({line.id: self.amount_to_release})
             else:
                 release_result.update(
-                    {line.id : line.planned_amount - line.released_amount})
+                    {line.id: line.planned_amount - line.released_amount})
         budget_lines.release_budget_line(release_result)
 
 
