@@ -300,9 +300,7 @@ class InterfaceAccountEntry(models.Model):
         if journal.sequence_id:
             self = self.with_context(ctx)
             sequence_id = journal.sequence_id.id
-            print sequence_id
             move_name = self.env['ir.sequence'].next_by_id(sequence_id)
-            print move_name
         else:
             raise ValidationError(
                 _('Please define a sequence on the journal.'))

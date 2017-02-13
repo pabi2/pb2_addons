@@ -174,7 +174,6 @@ class PABIPartnerDunningReport(models.Model):
 
     @api.multi
     def _create_dunning_letter(self, letter_type):
-        print self
         # Sorting first
         dunnings = self.sorted(key=lambda a: (a.partner_id, a.date))
         # Create 1 letter for 1 parnter + multiple lines

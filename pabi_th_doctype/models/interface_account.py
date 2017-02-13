@@ -1,25 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, api
 
 
 class InterfaceAccountEntry(models.Model):
     _inherit = 'interface.account.entry'
-    #
-    # doctype_id = fields.Many2one(
-    #     'res.doctype',
-    #     string='Doctype',
-    #     compute='_compute_doctype',
-    #     store=True,
-    #     readonly=True,
-    # )
-    #
-    # @api.one
-    # @api.depends('name')
-    # def _compute_doctype(self):
-    #     refer_type = 'interface_account'
-    #     doctype = self.env['res.doctype'].search([('refer_type', '=',
-    #                                                refer_type)], limit=1)
-    #     self.doctype_id = doctype.id
 
     @api.multi
     def execute(self):

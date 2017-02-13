@@ -16,10 +16,10 @@ class CreateDunningLetter(models.TransientModel):
         # - No letters created today
         today = fields.Date.context_today(self)
         for t in ['l1', 'l2', 'l3']:
-            print active_ids
             dunnings = self.env[model].browse(active_ids)
             filtered_dunning = dunnings.filtered(
-                lambda l: l.days_overdue >= OVERDUE_DAYS[t]
+                lambda l:
+                l.days_overdue >= OVERDUE_DAYS[t]
                 and not l[t]
                 and today not in (l.l1_date, l.l2_date, l.l3_date)
             )

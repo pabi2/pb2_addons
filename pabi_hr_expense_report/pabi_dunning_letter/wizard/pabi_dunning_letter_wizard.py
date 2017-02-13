@@ -109,13 +109,17 @@ class PABIDunnintLetterWizard(models.TransientModel):
             return True
         template_name = False
         if self.due_days == '-1':
-            template_name = 'pabi_hr_expense_report.email_template_edi_past_due_days'
+            template_name = \
+                'pabi_hr_expense_report.email_template_edi_past_due_days'
         elif self.due_days == '0':
-            template_name = 'pabi_hr_expense_report.email_template_edi_0_due_days'
+            template_name = \
+                'pabi_hr_expense_report.email_template_edi_0_due_days'
         elif self.due_days == '5':
-            template_name = 'pabi_hr_expense_report.email_template_edi_5_due_days'
+            template_name = \
+                'pabi_hr_expense_report.email_template_edi_5_due_days'
         else:
-            template_name = 'pabi_hr_expense_report.email_template_edi_10_due_days'
+            template_name = \
+                'pabi_hr_expense_report.email_template_edi_10_due_days'
 
         template = False
         try:

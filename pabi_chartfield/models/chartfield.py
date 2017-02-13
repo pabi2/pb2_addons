@@ -299,7 +299,7 @@ class CostControl(ResCommon, models.Model):
                 'pabi_base.group_cooperate_budget')\
             and not self.env.user.has_group(
                 'pabi_base.group_operating_unit_budget'):
-           raise ValidationError(
+            raise ValidationError(
                 _('Sorry! \n You are not authorized to edit this field.'))
         return True
 

@@ -157,8 +157,9 @@ class PABIBankStatement(models.Model):
         self.ensure_one()
         res = []
         for line in move_lines:
-            diff = (fields.Date.from_string(self.date_report) -
-                    fields.Date.from_string(line.date_value))
+            date1 = fields.Date.from_string(self.date_report)
+            date2 = fields.Date.from_string(line.date_value)
+            diff_days = (date1 - date2).days
             line_dict = {
                 'move_line_id': line.id,
                 'document': line.document,
@@ -169,7 +170,7 @@ class PABIBankStatement(models.Model):
                                   'number_cheque' in line.document_id._fields
                                   and line.document_id.number_cheque),
                 'date_value': line.date_value,
-                'days_outstanding': diff.days,
+                'days_outstanding': diff_days,
                 'debit': line.debit,
                 'credit': line.credit,
                 'validate_user_id': (line.document_id and
