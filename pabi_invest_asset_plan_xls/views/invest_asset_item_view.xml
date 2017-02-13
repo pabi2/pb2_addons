@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="pabi_budget_plan.view_invest_asset_plan_form"/>
             <field name="arch" type="xml">
                 <button name="button_cancel" position="after">
-                    <button name="%(action_asset_item_wizard)d" type="action" states="draft" string="Export"
+                    <button name="%(action_asset_item_wizard)d" type="action" states="draft" string="Export Plan"
                         class="oe_inline"/>
                     <button name="%(import_asset_item_action)d" type="action" states="draft" string="Import
                         Plan" class="oe_inline"/>
