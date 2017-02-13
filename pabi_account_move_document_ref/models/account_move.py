@@ -70,6 +70,12 @@ class AccountMove(models.Model):
         store=True,
         help="Use selection as refer_type in res_doctype",
     )
+    date_value = fields.Date(
+        string='Value Date',
+        compute='_compute_document',
+        store=True,
+        help="If origin document have value date. Otherwise, use move date",
+    )
     invoice_ids = fields.One2many(
         'account.invoice',
         'move_id',
@@ -196,6 +202,10 @@ class AccountMove(models.Model):
                 else:
                     rec.document = document.number
                 rec.doctype = self._get_doctype(document._name, document)
+                if 'date_value' in document._fields:
+                    rec.date_value = document.date_value
+            if not rec.date_value:
+                rec.date_value = rec.date  # No Value Date, same as date
 
     @api.model
     def _get_doctype(self, model, document):
@@ -234,5 +244,13 @@ class AccountMoveLine(models.Model):
         string='Doctype',
         related='move_id.doctype',
         store=True,
+        readonly=True,
         help="Use selection as refer_type in res_doctype",
+    )
+    date_value = fields.Date(
+        string='Value Date',
+        related='move_id.date_value',
+        store=True,
+        readonly=True,
+        help="If origin document have value date. Otherwise, use move date",
     )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
 from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class HRExpense(models.Model):
@@ -109,7 +109,7 @@ class HRExpense(models.Model):
         readonly=True,
         help="Show project, only if all lines use the same project",
     )
-    employee_section_id = fields.Many2one( # Section of Employee, for Security
+    employee_section_id = fields.Many2one(
         'res.section',
         string='Section',
         related='employee_id.section_id',
@@ -118,7 +118,7 @@ class HRExpense(models.Model):
         help="Employee Section to be used for security purposes."
         "User in group Expense Officer (restrict) will see only his sections",
     )
-    section_id = fields.Many2one( # Selected Sectoin
+    section_id = fields.Many2one(
         'res.section',
         string='Section',
         compute='_compute_project_section',
@@ -152,29 +152,30 @@ class HRExpense(models.Model):
         store=True,
     )
 
-    @api.multi
+    @api.one
     @api.constrains('line_ids')
     def _check_line_ids(self):
+        if not self.advance_expense_id:
+            return True
         chart_fields = {
-            'project_id': 
+            'project_id':
             self.advance_expense_id.line_ids.mapped('project_id')._ids,
-            'section_id': 
+            'section_id':
             self.advance_expense_id.line_ids.mapped('section_id')._ids,
-            'invest_asset_id': 
+            'invest_asset_id':
             self.advance_expense_id.line_ids.mapped('invest_asset_id')._ids,
-            'invest_construction_phase_id': 
+            'invest_construction_phase_id':
             self.advance_expense_id.line_ids.mapped(
                 'invest_construction_phase_id')._ids,
         }
         msg = _("You are selecting dimension which "
-                "has not been used in Advance %s." 
+                "has not been used in Advance %s."
                 % self.advance_expense_id.name_get()[0][1])
-
         for line in self.line_ids:
             for field in chart_fields:
                 if line[field]:
                     if line[field].id not in chart_fields[field]:
-                        raise Warning(msg)
+                        raise UserError(msg)
 
     @api.multi
     @api.depends(

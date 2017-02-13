@@ -10,6 +10,7 @@
 
 PABI2 Extension to l10n_th_doctype for,
 
+* Purchase Requisition
 * Work Acceptance
 * Approval Report
 * Stock Request
@@ -32,6 +33,7 @@ PABI2 Extension to l10n_th_doctype for,
         'pabi_procurement',
         'payment_export',
         'pabi_interface',
+        'purchase_requisition',
     ],
     "data": [
         "data/ir_sequence_data.xml",

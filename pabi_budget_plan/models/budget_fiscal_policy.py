@@ -468,7 +468,7 @@ class BudgetFiscalPolicy(models.Model):
             sum(bpia.planned_expense) as planned_expense
             from budget_plan_invest_asset bpia
             join budget_plan_template tmpl on tmpl.id = bpia.template_id
-            where tmpl.fiscalyear_id = %s and tmpl.state = 'accept_corp'
+            where tmpl.fiscalyear_id = %s and tmpl.state = 'approve'
             group by tmpl.chart_view
         """
         return sql
@@ -521,6 +521,7 @@ class BudgetFiscalPolicy(models.Model):
         self.ensure_one()
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+        Unit = self.env['budget.plan.unit']
         domain = [('fiscalyear_id', '=', self.fiscalyear_id.id),
                   ('ref_budget_policy_id', '=', self.id)]
         Breakdown_search = Breakdown.search(domain +
@@ -549,10 +550,10 @@ class BudgetFiscalPolicy(models.Model):
                 'ref_breakdown_id': ref_policy_breakdown,
             }
             breakdown = Breakdown.create(vals)
-            plans = self.env['budget.plan.unit'].\
-                search([('state', '=', 'accept_corp'),
-                        ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
-                        ('org_id', '=', breakdown.org_id.id)])
+            plans = Unit.search(
+                [('state', '=', 'accept_corp'),
+                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
+                 ('org_id', '=', breakdown.org_id.id)])
             for plan in plans:
                 vals = self._prepare_breakdown_line('unit',
                                                     plan, breakdown)
@@ -571,6 +572,7 @@ class BudgetFiscalPolicy(models.Model):
         self.ensure_one()
         Breakdown = self.env['budget.fiscal.policy.breakdown']
         BreakdownLine = self.env['budget.fiscal.policy.breakdown.line']
+        InvestAsset = self.env['budget.plan.invest.asset']
         if self.invest_asset_ids:
             unit = self.invest_asset_ids[0]  # Always only 1 line in policy
             vals = {  # TODO: Sequence Numbering ???
@@ -582,9 +584,9 @@ class BudgetFiscalPolicy(models.Model):
                 'ref_budget_policy_id': self.id,
             }
             breakdown = Breakdown.create(vals)
-            plans = self.env['budget.plan.invest.asset'].\
-                search([('state', '=', 'approve'),
-                        ('fiscalyear_id', '=', breakdown.fiscalyear_id.id)])
+            plans = InvestAsset.search(
+                [('state', '=', 'approve'),
+                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id)])
             for plan in plans:
                 vals = self._prepare_breakdown_line('invest_asset',
                                                     plan, breakdown)

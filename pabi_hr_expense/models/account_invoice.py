@@ -50,7 +50,8 @@ class AccountInvoice(models.Model):
     @api.onchange('advance_expense_id')
     def _onchange_advance_expense_id(self):
         super(AccountInvoice, self)._onchange_advance_expense_id()
-        self.taxbranch_id = self.taxbranch_ids.id
+        if len(self.taxbranch_ids) == 1:
+            self.taxbranch_id = self.taxbranch_ids[0].id
 
     @api.multi
     def confirm_paid(self):

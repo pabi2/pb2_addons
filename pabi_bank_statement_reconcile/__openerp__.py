@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "NSTDA :: PABI2 - Partner Dunning Report",
+    'name': "NSTDA :: PABI2 - Bank Statment Reconcile",
     'summary': "",
     'author': "Ecosoft",
     'website': "http://ecosoft.co.th",
@@ -10,18 +10,16 @@
 
     'description': """
 
+This module find the discrepency between payment export (Cheque, DIRECT, SMART)
+and result from bank statement
+
     """,
     'depends': [
         'pabi_account',
     ],
     'data': [
-        # Partner Dunning Report
-        'data/report_data.xml',
-        'views/pabi_partner_dunning_report.xml',
-        'views/pabi_dunning_letter_view.xml',
-        'views/pabi_dunning_config.xml',
-        'wizard/pabi_partner_dunning_wizard.xml',
-        'wizard/create_dunning_letter.xml',
+        'data/ir_sequence.xml',
+        'views/pabi_bank_statement_view.xml',
     ],
     'demo': [
     ],
