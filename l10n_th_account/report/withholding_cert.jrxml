@@ -212,7 +212,7 @@ select id from res_company limit 1;]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[((java.util.List)$P{supplier_taxid}).get(3)]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="67" y="96" width="659" height="35"/>
+				<reportElement x="67" y="96" width="847" height="35"/>
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
