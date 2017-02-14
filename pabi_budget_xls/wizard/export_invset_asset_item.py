@@ -26,7 +26,7 @@ class ExportAsseItem(models.TransientModel):
     attachment_id = fields.Many2one(
         'ir.attachment',
         string='Template Plan',
-        default=_default_plan_template,
+#         default=_default_plan_template,
     )
 
     @api.model

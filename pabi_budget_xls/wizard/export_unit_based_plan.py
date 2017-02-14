@@ -36,7 +36,7 @@ class BudgetExportWizard(models.TransientModel):
     attachment_id = fields.Many2one(
         'ir.attachment',
         string='Template Plan',
-        default=_default_plan_template,
+#         default=_default_plan_template,
     )
     editable_lines = fields.Integer(
         string='Additional Budget lines(Non JobOrder)',
