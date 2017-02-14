@@ -58,6 +58,10 @@ class PABIBankStatement(models.Model):
         string='Doctype',
         default='payment',
     )
+    no_cancel_doc = fields.Boolean(
+        string='No Cancelled Document',
+        default=True,
+    )
     payment_type = fields.Selection(
         [('cheque', 'Cheque'),
          ('transfer', 'Transfer'),
@@ -129,7 +133,7 @@ class PABIBankStatement(models.Model):
             self.doctype = 'payment'
             self.payment_type = 'transfer'
             self.transfer_type = 'direct'
-        elif self.report_type == 'payment_direct':
+        elif self.report_type == 'payment_smart':
             self.match_method = 'document'
             self.doctype = 'payment'
             self.payment_type = 'transfer'
@@ -206,6 +210,9 @@ class PABIBankStatement(models.Model):
                 move_lines = move_lines.filtered(
                     lambda l: l.document_id.payment_type == 'transfer' and
                     l.document_id.transfer_type == rec.transfer_type)
+            if rec.doctype and rec.no_cancel_doc:
+                move_lines = move_lines.filtered(
+                    lambda l: l.document_id.state != 'cancel')
             # --
             rec.write({'item_ids': rec._prepare_move_items(move_lines)})
         return
