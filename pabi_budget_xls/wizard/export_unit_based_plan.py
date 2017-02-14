@@ -7,7 +7,7 @@ import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils import quote_sheetname
 from openpyxl.styles import PatternFill, Border, Side, Protection, Font
-from openpyxl.utils import (_get_column_letter)
+from openpyxl.utils import (get_column_letter)
 
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError
@@ -30,7 +30,7 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _default_plan_template(self):
         template = self.env['ir.attachment'].\
-            search([('budget_template', '=', True)])
+            search([('budget_template', '=', True)], limit=1)
         return template
 
     attachment_id = fields.Many2one(
@@ -253,7 +253,6 @@ class BudgetExportWizard(models.TransientModel):
 
         startrow = 10
         lastrow = self.editable_lines + startrow
-
         # Formating Lines
         for row in range(startrow, lastrow):
             for col in range(1, 26):
@@ -274,24 +273,24 @@ class BudgetExportWizard(models.TransientModel):
                     JobOrderFormula.add(Sheet.cell(row=row, column=col))
                     Sheet.cell(row=row, column=col).protection = protection
                 elif col == 9:  # Total Budget Column
-                    col_F = _get_column_letter(6)
-                    col_G = _get_column_letter(7)
-                    col_H = _get_column_letter(8)
+                    col_F = get_column_letter(6)
+                    col_G = get_column_letter(7)
+                    col_H = get_column_letter(8)
                     value = "=%s%s*$%s$%s*$%s$%s" % (col_F, row,
                                                      col_G, row,
                                                      col_H, row)
                     Sheet.cell(row=row, column=col).value = value
                     Sheet.cell(row=row, column=col).number_format = num_format
                 elif col == 23:  # Total of phased entries Column
-                    col_K = _get_column_letter(11)
-                    col_V = _get_column_letter(22)
+                    col_K = get_column_letter(11)
+                    col_V = get_column_letter(22)
                     value = "=SUM(%s%s:$%s$%s)" % (col_K, row,
                                                    col_V, row)
                     Sheet.cell(row=row, column=col).value = value
                     Sheet.cell(row=row, column=col).number_format = num_format
                 elif col == 24:  # Total minus phased total Column
-                    col_I = _get_column_letter(9)
-                    col_W = _get_column_letter(23)
+                    col_I = get_column_letter(9)
+                    col_W = get_column_letter(23)
                     value = "=IF(%s%s-%s%s<>0,%s%s-%s%s,0)" % (col_I, row,
                                                                col_W, row,
                                                                col_I, row,
@@ -299,7 +298,7 @@ class BudgetExportWizard(models.TransientModel):
                     Sheet.cell(row=row, column=col).value = value
                     Sheet.cell(row=row, column=col).number_format = num_format
                 elif col == 25:  # Error Column
-                    col_X = _get_column_letter(24)
+                    col_X = get_column_letter(24)
                     value = '=IF(ABS(%s%s)>0,"Error","")' % (col_X, row)
                     Sheet.cell(row=row, column=col).value = value
                     Sheet.cell(row=row, column=col).font = TahomaRedFont
@@ -321,7 +320,7 @@ class BudgetExportWizard(models.TransientModel):
                 Sheet.cell(row=lastrow, column=col).font = TahomaBoldFont
 
             if col > 7:
-                col_letter = _get_column_letter(col)
+                col_letter = get_column_letter(col)
                 value = "=SUM(%s%s:$%s$%s)" % (col_letter, startrow,
                                                col_letter, row)
                 Sheet.cell(row=lastrow, column=col).value = value

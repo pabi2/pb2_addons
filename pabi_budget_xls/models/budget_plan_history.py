@@ -31,3 +31,8 @@ class BudgetPlanHistory(models.Model):
         string="Attachment",
         readonly=False,
     )
+    invest_asset_plan_id = fields.Many2one(
+        'invest.asset.plan',
+        string="Invest Asset Plan",
+        readonly=False,
+    )
