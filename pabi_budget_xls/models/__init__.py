@@ -3,6 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from . import budget_plan_history
-from . import account_budget
+from . import budget_plan
 from . import attachment
-from . import output_wiz
+from . import excel_output

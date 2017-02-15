@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="base.view_attachment_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='url']" position="after">
-                    <field name="budget_template"/>
+                    <field name="budget_template_type"/>
                     <field name="budget_plan_id" invisible="True"/>
                 </xpath>
             </field>

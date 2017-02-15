@@ -23,11 +23,13 @@
     'external_dependencies': {'python': ['openpyxl']},
     "data": [
         'security/ir.model.access.csv',
-        'wizard/budget_import_wiz_view.xml',
-        'wizard/budget_export_wiz_view.xml',
+        'wizard/import_unit_based_plan_view.xml',
+        'wizard/export_unit_based_plan_view.xml',
+        'wizard/export_invest_asset_item_view.xml',
+        'wizard/import_invest_asset_item_view.xml',
         'views/budget_plan_history_view.xml',
-        "views/account_budget_view.xml",
-        'views/output_xls_report.xml',
-        'views/attachment_view.xml'
+        "views/budget_plan_view.xml",
+        'views/excel_output.xml',
+        'views/attachment_view.xml',
     ],
 }
