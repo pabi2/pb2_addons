@@ -13,6 +13,7 @@
         'resource',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'wizard/print_pnd_form_wizard.xml',
         'data/report_data.xml',
     ],

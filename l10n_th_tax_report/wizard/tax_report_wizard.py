@@ -59,9 +59,9 @@ class AccountTaxReportWizard(models.TransientModel):
                 self.calendar_from_period_id = False
                 self.calendar_to_period_id = False
                 return {'warning': {
-                            'title': 'Incorrect Periods',
-                            'message': 'From period is later than to period!',
-                            }}
+                    'title': 'Incorrect Periods',
+                    'message': 'From period is later than to period!',
+                    }}
 
     @api.multi
     def run_report(self):
@@ -73,8 +73,6 @@ class AccountTaxReportWizard(models.TransientModel):
         if self.period_type == 'specific':
             period_ids = [self.calendar_period_id.period_id.id]
         elif self.period_type == 'range':
-            print self.calendar_from_period_id.period_id.id
-            print self.calendar_to_period_id.period_id.id
             domain = [('id', '>=', self.calendar_from_period_id.period_id.id),
                       ('id', '<=', self.calendar_to_period_id.period_id.id)]
             period_ids = self.env['account.period'].search(domain).ids

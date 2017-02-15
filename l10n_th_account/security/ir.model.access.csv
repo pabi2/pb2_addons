@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 group_user_model_account_voucher_tax,group_user_model_account_voucher_tax,model_account_voucher_tax,base.group_user,1,1,1,1
 group_user_model_account_period_calendar,group_user_model_account_period_calendar,model_account_period_calendar,base.group_user,1,1,1,1
 group_user_model_withholding_tax_sequence,group_user_model_withholding_tax_sequence,model_withholding_tax_sequence,base.group_user,1,1,1,1
+access_account_calendaryear,access_account_calendaryear,model_account_calendaryear,,1,0,0,0

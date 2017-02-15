@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, models, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp import api, models, fields
 import openerp.addons.decimal_precision as dp
-from dateutil.relativedelta import relativedelta
 
 
 class BudgetReleaseWizard(models.TransientModel):
@@ -52,7 +50,7 @@ class BudgetReleaseWizard(models.TransientModel):
             self.env['account.fiscalyear.budget.level'].search(domain, limit=1)
         interval = budget_level.release_interval and \
             int(budget_level.release_interval) or 1
-        interval = False #probuse
+        interval = False  # probuse
         start_period = 1  # by default
         is_auto_release = budget_level.is_auto_release
         return interval, start_period, is_auto_release
@@ -78,47 +76,45 @@ class BudgetReleaseWizard(models.TransientModel):
             periods.append(sub_period)
         return periods
 
-    @api.model
-    def _prepare_budget_release_wizard(self, plan):
-        budget_lines = False
-        if plan._name == 'account.budget.line':
-            budget_lines = BudgetLine.search([('id', '=', plan.id)])
-        elif plan._name == 'account.budget':
-            budget_lines = BudgetLine.search([('budget_id', '=', plan)])
-        else:
-            raise UserError(_('Not a budgeting model'))
-
-        BudgetLine = self.env['account.budget.line']
-        release_result = {}
-        for line in budget_lines:
-            if active_model == 'account.budget.line':
-                release_result.update({line.id : self.amount_to_release})
-            else:
-                release_result.update(
-                    {line.id: line.planned_amount - line.released_amount})
-        return release_result
-
-    @api.model
-    def _prepare_budget_release_table(self, res_model, res_id):
-        plan = False
-        if res_model == 'account.budget.line':
-            plan = self.env['account.budget.line'].browse(res_id)
-        elif res_model == 'account.budget':
-            plan = self.env['account.budget'].browse(res_id)
-        else:
-            raise UserError(_('Not a budgeting model'))
-        interval, start_period, _dummy = self._get_release_pattern(plan)
-        periods = self._calc_release_periods(interval, start_period)
-        releases = self._prepare_budget_release_wizard(periods, plan)
-        return releases
+    # @api.model
+    # def _prepare_budget_release_wizard(self, plan):
+    #     budget_lines = False
+    #     if plan._name == 'account.budget.line':
+    #         budget_lines = BudgetLine.search([('id', '=', plan.id)])
+    #     elif plan._name == 'account.budget':
+    #         budget_lines = BudgetLine.search([('budget_id', '=', plan)])
+    #     else:
+    #         raise UserError(_('Not a budgeting model'))
+    #
+    #     BudgetLine = self.env['account.budget.line']
+    #     release_result = {}
+    #     for line in budget_lines:
+    #         if active_model == 'account.budget.line':
+    #             release_result.update({line.id: self.amount_to_release})
+    #         else:
+    #             release_result.update(
+    #                 {line.id: line.planned_amount - line.released_amount})
+    #     return release_result
+    #
+    # @api.model
+    # def _prepare_budget_release_table(self, res_model, res_id):
+    #     plan = False
+    #     if res_model == 'account.budget.line':
+    #         plan = self.env['account.budget.line'].browse(res_id)
+    #     elif res_model == 'account.budget':
+    #         plan = self.env['account.budget'].browse(res_id)
+    #     else:
+    #         raise UserError(_('Not a budgeting model'))
+    #     interval, start_period, _dummy = self._get_release_pattern(plan)
+    #     periods = self._calc_release_periods(interval, start_period)
+    #     releases = self._prepare_budget_release_wizard(periods, plan)
+    #     return releases
 
     @api.model
     def default_get(self, fields):
         res = super(BudgetReleaseWizard, self).default_get(fields)
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
-        record = self.env[active_model].browse(active_id)
-
         BudgetLine = self.env['account.budget.line']
         budget_lines = False
         if active_model == 'account.budget.line':
@@ -141,14 +137,13 @@ class BudgetReleaseWizard(models.TransientModel):
             budget_lines = BudgetLine.search([('id', '=', active_id)])
         elif active_model == 'account.budget':
             budget_lines = BudgetLine.search([('budget_id', '=', active_id)])
-
         release_result = {}
         for line in budget_lines:
             if active_model == 'account.budget.line':
-                release_result.update({line.id : self.amount_to_release})
+                release_result.update({line.id: self.amount_to_release})
             else:
                 release_result.update(
-                    {line.id : line.planned_amount - line.released_amount})
+                    {line.id: line.planned_amount - line.released_amount})
         budget_lines.release_budget_line(release_result)
 
 

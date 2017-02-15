@@ -14,8 +14,8 @@
     'depends': ['account_bank_receipt'],
     'demo': [],
     'data': [
+        'wizard/cancel_reason_view.xml',
         'view/account_bank_receipt_view.xml',
-        'wizard/cancel_reason_view.xml'
     ],
     'auto_install': False,
     'installable': True,

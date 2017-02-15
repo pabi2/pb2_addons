@@ -1,39 +1,19 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, api
 
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    doctype_id = fields.Many2one(
-        'res.doctype',
-        string='Doctype',
-        compute='_compute_doctype',
-        store=True,
-        readonly=True,
-    )
-
-    @api.one
-    @api.depends('type')
-    def _compute_doctype(self):
-        ttype = self.type
-        if self.is_debitnote:
-            ttype += '_debitnote'
-        doctype = self.env['res.doctype'].search([('refer_type', '=',
-                                                   ttype)], limit=1)
-        self.doctype_id = doctype.id
-
     @api.multi
     def action_move_create(self):
-        result = super(AccountInvoice, self).action_move_create()
         for invoice in self:
-            if invoice.doctype_id.sequence_id:
-                # Get doctype sequence for document number
-                sequence_id = invoice.doctype_id.sequence_id.id
-                fiscalyear_id = invoice.period_id.fiscalyear_id.id
-                invoice.number = self.\
-                    with_context(fiscalyear_id=fiscalyear_id).\
-                    env['ir.sequence'].next_by_id(sequence_id)
-                # Use document number for journal entry
-                invoice.move_id.ref = invoice.number
-        return result
+            # Find doctype
+            refer_type = invoice.type
+            if invoice.is_debitnote:
+                refer_type += '_debitnote'
+            doctype = self.env['res.doctype'].get_doctype(refer_type)
+            # --
+            invoice = invoice.with_context(doctype_id=doctype.id)
+            super(AccountInvoice, invoice).action_move_create()
+        return True
