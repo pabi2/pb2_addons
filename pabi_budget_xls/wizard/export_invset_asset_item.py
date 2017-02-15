@@ -19,14 +19,14 @@ class ExportAsseItem(models.TransientModel):
 
     @api.model
     def _default_plan_template(self):
-        template = self.env['ir.attachment'].\
-            search([('budget_template', '=', True)], limit=1)
+        template = self.env['ir.attachment'].search(
+            [('budget_template_type', '=', 'plan_invest_asset_plan')], limit=1)
         return template
 
     attachment_id = fields.Many2one(
         'ir.attachment',
         string='Template Plan',
-#         default=_default_plan_template,
+        default=_default_plan_template,
     )
 
     @api.model
