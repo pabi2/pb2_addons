@@ -41,8 +41,11 @@
 	<parameter name="branch_taxbranch" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="advance_sequence" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="period_ids" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="period_ids" class="java.lang.Object" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
 	<parameter name="period_pids" class="java.util.List" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[$P{period_ids}.toList()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
