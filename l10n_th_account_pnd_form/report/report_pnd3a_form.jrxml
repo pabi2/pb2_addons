@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="1.0000000000000024"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3a_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.2100000000000046"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="30"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
 +"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
@@ -14,30 +14,59 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EVENTS_DATA_SOURCE" class="java.lang.Object" isForPrompting="false"/>
-	<parameter name="income_tax_form" class="java.lang.String"/>
-	<parameter name="wht_period_id" class="java.lang.Integer"/>
+	<parameter name="income_tax_form" class="java.lang.String">
+		<defaultValueExpression><![CDATA['pnd3']]></defaultValueExpression>
+	</parameter>
+	<parameter name="wht_period_ids" class="java.lang.Object"/>
+	<parameter name="wht_period_pids" class="java.util.List" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{wht_period_ids}.toList()]]></defaultValueExpression>
+	</parameter>
 	<parameter name="print_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="print_position" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[select * from report_pnd_form
-where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form}]]>
+		<![CDATA[SELECT DISTINCT
+	title,
+	title_th,
+	supplier_name,
+	supplier_name_th,
+	supplier_taxid,
+	tax_payer,
+	supplier_street,
+	supplier_street2,
+	supplier_township,
+	supplier_district,
+	supplier_zip,
+	supplier_country,
+	supplier_province,
+	report_pnd_form.STATE,
+	SUM (report_pnd_form_line.base) AS base_total,
+	SUM (report_pnd_form_line.tax) AS tax_total
+FROM
+	report_pnd_form
+INNER JOIN report_pnd_form_line ON report_pnd_form.voucher_id = report_pnd_form_line.voucher_id
+WHERE
+	$X{IN, report_pnd_form.wht_period_id, wht_period_pids}
+	AND report_pnd_form.income_tax_form = $P{income_tax_form}
+GROUP BY
+	title,
+	title_th,
+	supplier_name,
+	supplier_name_th,
+	supplier_taxid,
+	tax_payer,
+	supplier_street,
+	supplier_street2,
+	supplier_township,
+	supplier_district,
+	supplier_zip,
+	supplier_country,
+	supplier_province,
+	report_pnd_form.STATE]]>
 	</queryString>
-	<field name="id" class="java.lang.Integer"/>
-	<field name="state" class="java.lang.String"/>
-	<field name="wht_sequence_display" class="java.lang.String"/>
-	<field name="number" class="java.lang.String"/>
-	<field name="date_value" class="java.sql.Date"/>
-	<field name="income_tax_form" class="java.lang.String"/>
-	<field name="wht_period_id" class="java.lang.Integer"/>
-	<field name="voucher_id" class="java.lang.Integer"/>
 	<field name="tax_payer" class="java.lang.String"/>
 	<field name="supplier_taxid" class="java.lang.String"/>
-	<field name="supplier_branch" class="java.lang.String"/>
-	<field name="partner_id" class="java.lang.Integer"/>
 	<field name="supplier_name" class="java.lang.String"/>
-	<field name="title_id" class="java.lang.Integer"/>
 	<field name="title" class="java.lang.String"/>
-	<field name="employee_id" class="java.lang.Integer"/>
 	<field name="supplier_street" class="java.lang.String"/>
 	<field name="supplier_street2" class="java.lang.String"/>
 	<field name="supplier_township" class="java.lang.String"/>
@@ -45,10 +74,12 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<field name="supplier_province" class="java.lang.String"/>
 	<field name="supplier_zip" class="java.lang.String"/>
 	<field name="supplier_country" class="java.lang.String"/>
-	<field name="base_total" class="java.math.BigDecimal"/>
-	<field name="tax_total" class="java.math.BigDecimal"/>
 	<field name="title_th" class="java.lang.String"/>
 	<field name="supplier_name_th" class="java.lang.String"/>
+	<field name="state" class="java.lang.String"/>
+	<field name="base_total" class="java.math.BigDecimal"/>
+	<field name="tax_total" class="java.math.BigDecimal"/>
+	<field name="wht_period_id" class="java.lang.Integer"/>
 	<variable name="supplier_address" class="java.lang.String">
 		<variableExpression><![CDATA[(new Scriptlet()).getAddress(
     $F{supplier_street},
@@ -61,160 +92,160 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<variable name="tax_payer" class="java.lang.String">
 		<variableExpression><![CDATA[$F{tax_payer} == "withholding" ? "1" : "3"]]></variableExpression>
 	</variable>
-	<variable name="base_total" class="java.lang.Number" resetType="Page" calculation="Sum">
-		<variableExpression><![CDATA[$F{base_total}]]></variableExpression>
-	</variable>
-	<variable name="tax_total" class="java.lang.Number" resetType="Page" calculation="Sum">
-		<variableExpression><![CDATA[$F{tax_total}]]></variableExpression>
-	</variable>
 	<variable name="day" class="java.util.Date">
 		<variableExpression><![CDATA[new Date()]]></variableExpression>
+	</variable>
+	<variable name="base_total" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{base_total}]]></variableExpression>
+	</variable>
+	<variable name="tax_total" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{tax_total}]]></variableExpression>
 	</variable>
 	<background>
 		<band height="595" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="842" height="595"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "pnd3.png"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "pnd3a.png"]]></imageExpression>
 			</image>
 		</band>
 	</background>
 	<pageHeader>
 		<band height="110">
 			<textField isBlankWhenNull="true">
-				<reportElement x="441" y="17" width="10" height="25"/>
+				<reportElement x="485" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(2,3):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="519" y="17" width="10" height="25"/>
+				<reportElement x="563" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(8,9):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="411" y="17" width="10" height="25"/>
+				<reportElement x="455" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(0,1):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="465" y="17" width="10" height="25"/>
+				<reportElement x="509" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(4,5):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="548" y="17" width="10" height="25"/>
+				<reportElement x="592" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(10,11):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="429" y="17" width="10" height="25"/>
+				<reportElement x="473" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(1,2):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="560" y="17" width="10" height="25"/>
+				<reportElement x="604" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(11,12):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="453" y="17" width="10" height="25"/>
+				<reportElement x="497" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(3,4):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="483" y="17" width="10" height="25"/>
+				<reportElement x="527" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(5,6):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="579" y="17" width="10" height="25"/>
+				<reportElement x="623" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(12,13):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="531" y="17" width="10" height="25"/>
+				<reportElement x="575" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(9,10):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="495" y="17" width="10" height="25"/>
+				<reportElement x="539" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(6,7):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="507" y="17" width="10" height="25"/>
+				<reportElement x="551" y="26" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(7,8):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="767" y="17" width="10" height="25"/>
+				<reportElement x="760" y="10" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_branch}.length()==5?$P{company_branch}.substring(0,1):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="803" y="17" width="10" height="25"/>
+				<reportElement x="796" y="10" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_branch}.length()==5?$P{company_branch}.substring(3,4):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="815" y="17" width="10" height="25"/>
+				<reportElement x="808" y="10" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_branch}.length()==5?$P{company_branch}.substring(4,5):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="791" y="17" width="10" height="25"/>
+				<reportElement x="784" y="10" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_branch}.length()==5?$P{company_branch}.substring(2,3):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="779" y="17" width="10" height="25"/>
+				<reportElement x="772" y="10" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_branch}.length()==5?$P{company_branch}.substring(1,2):""]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="782" y="22" width="40" height="34" forecolor="#000000"/>
+				<reportElement x="772" y="18" width="40" height="34" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="689" y="22" width="39" height="34" forecolor="#000000"/>
+				<reportElement x="655" y="18" width="39" height="34" forecolor="#000000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -223,142 +254,107 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="55" splitType="Stretch">
+		<band height="57" splitType="Stretch">
 			<textField>
-				<reportElement x="76" y="9" width="579" height="25"/>
+				<reportElement x="75" y="5" width="579" height="25"/>
 				<textElement verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{title_th} == null ? $F{supplier_name_th} : $F{title_th} + " " + $F{supplier_name_th}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="171" y="3" width="10" height="25"/>
+				<reportElement x="166" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(8,9):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="81" y="3" width="10" height="25"/>
+				<reportElement x="76" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(1,2):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="212" y="3" width="10" height="25"/>
+				<reportElement x="207" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(11,12):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="159" y="3" width="10" height="25"/>
+				<reportElement x="154" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(7,8):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="200" y="3" width="10" height="25"/>
+				<reportElement x="195" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(10,11):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="117" y="3" width="10" height="25"/>
+				<reportElement x="112" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(4,5):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="93" y="3" width="10" height="25"/>
+				<reportElement x="88" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(2,3):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="105" y="3" width="10" height="25"/>
+				<reportElement x="100" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(3,4):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="63" y="3" width="10" height="25"/>
+				<reportElement x="58" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(0,1):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="135" y="3" width="10" height="25"/>
+				<reportElement x="130" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(5,6):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="231" y="3" width="10" height="25"/>
+				<reportElement x="226" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(12,13):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="183" y="3" width="10" height="25"/>
+				<reportElement x="178" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(9,10):""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="147" y="3" width="10" height="25"/>
+				<reportElement x="142" y="-1" width="10" height="25"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(6,7):""]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="323" y="3" width="10" height="25"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_branch}.length()==5?$F{supplier_branch}.substring(3,4):""]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="299" y="3" width="10" height="25"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_branch}.length()==5?$F{supplier_branch}.substring(1,2):""]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="311" y="3" width="10" height="25"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_branch}.length()==5?$F{supplier_branch}.substring(2,3):""]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="287" y="3" width="10" height="25"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_branch}.length()==5?$F{supplier_branch}.substring(0,1):""]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="335" y="3" width="10" height="25"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_branch}.length()==5?$F{supplier_branch}.substring(4,5):""]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement x="79" y="27" width="723" height="25"/>
+				<reportElement x="78" y="22" width="723" height="25"/>
 				<textElement verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -366,33 +362,18 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement x="409" y="3" width="368" height="51"/>
-				<subreportParameter name="voucher_id">
-					<subreportParameterExpression><![CDATA[$F{voucher_id}]]></subreportParameterExpression>
+				<subreportParameter name="income_tax_form">
+					<subreportParameterExpression><![CDATA[$P{income_tax_form}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="wht_period_ids">
+					<subreportParameterExpression><![CDATA[$P{wht_period_ids}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="supplier_taxid">
+					<subreportParameterExpression><![CDATA[$F{supplier_taxid}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "report_pnd3_form_subreport.jasper"]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "report_pnd3a_form_subreport.jasper"]]></subreportExpression>
 			</subreport>
-			<textField isBlankWhenNull="true">
-				<reportElement x="802" y="1" width="29" height="25"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{tax_payer}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="23" y="4" width="89" height="25"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="SansSerif" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{wht_sequence_display}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="351" y="3" width="100" height="15"/>
-				<textElement>
-					<font fontName="SansSerif" size="8" pdfFontName="Garuda.ttf"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement x="489" y="18" width="100" height="29">
 					<printWhenExpression><![CDATA[$F{state} == "cancel"]]></printWhenExpression>
@@ -402,58 +383,61 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ยกเลิก"]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="842" y="2" width="29" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{tax_payer}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
 		<band height="22">
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="558" y="2" width="141" height="18"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{base_total}]]></textFieldExpression>
+			<textField>
+				<reportElement x="624" y="2" width="100" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{base_total}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="655" y="2" width="141" height="18"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{tax_total}]]></textFieldExpression>
+			<textField>
+				<reportElement x="712" y="2" width="100" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{tax_total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
 	<pageFooter>
 		<band height="129" splitType="Stretch">
 			<textField>
-				<reportElement x="593" y="7" width="198" height="35"/>
+				<reportElement x="586" y="-6" width="198" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{print_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="589" y="42" width="206" height="35"/>
+				<reportElement x="586" y="25" width="206" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{print_position}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MMMMM" isBlankWhenNull="true">
-				<reportElement x="631" y="71" width="136" height="25"/>
+				<reportElement x="617" y="58" width="136" height="25"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$V{day}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd" isBlankWhenNull="true">
-				<reportElement x="599" y="72" width="74" height="25"/>
+				<reportElement x="585" y="59" width="74" height="25"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$V{day}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy" isBlankWhenNull="true">
-				<reportElement x="732" y="72" width="94" height="25"/>
+				<reportElement x="718" y="59" width="94" height="25"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

@@ -9,14 +9,22 @@ class PrintPNDFormWizard(models.TransientModel):
     _name = 'print.pnd.form.wizard'
 
     income_tax_form = fields.Selection(
-        INCOME_TAX_FORM,
+        [('pnd1', 'PND1'),
+         ('pnd3', 'PND3'),
+         ('pnd3a', 'PND3a'),
+         ('pnd53', 'PND53')],
         string='Income Tax Form',
         required=True,
     )
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
         string='Calendar Period',
-        required=True,
+        required=False,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscalyear',
+        required=False,
     )
     print_format = fields.Selection(
         [('pdf', 'PDF'),
@@ -48,10 +56,23 @@ class PrintPNDFormWizard(models.TransientModel):
             elif self.print_format == 'txt_csv':
                 data_dict['no_header'] = True
                 report_name = 'report_pnd3_form_txt'
+        if self.income_tax_form == 'pnd3a':
+            if self.print_format == 'pdf':
+                report_name = 'report_pnd3a_form'
+            elif self.print_format == 'xls':
+                report_name = 'report_pnd3a_form_xls'
+            elif self.print_format == 'txt_csv':
+                data_dict['no_header'] = True
+                report_name = 'report_pnd3a_form_txt'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
         data_dict['income_tax_form'] = self.income_tax_form
-        data_dict['wht_period_id'] = self.calendar_period_id.period_id.id
+        if self.income_tax_form == 'pnd3a':
+            domain = [('fiscalyear_id','=',self.fiscalyear_id.id)]
+            period = 'account.period'
+            data_dict['wht_period_ids'] = self.env[period].search(domain).ids
+        else:
+            data_dict['wht_period_id'] = self.calendar_period_id.period_id.id
         company = self.env.user.company_id.partner_id
         company_taxid = len(company.vat or '') == 13 and company.vat or ''
         company_branch = \
