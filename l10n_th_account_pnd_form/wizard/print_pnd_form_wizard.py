@@ -72,7 +72,6 @@ class PrintPNDFormWizard(models.TransientModel):
         else:
             data_dict['income_tax_form'] = self.income_tax_form
             data_dict['wht_period_id'] = self.calendar_period_id.period_id.id
-
         company = self.env.user.company_id.partner_id
         company_taxid = len(company.vat or '') == 13 and company.vat or ''
         company_branch = \
