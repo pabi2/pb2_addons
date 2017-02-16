@@ -66,13 +66,13 @@ class PrintPNDFormWizard(models.TransientModel):
                 report_name = 'report_pnd3a_form_txt'
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
-        data_dict['income_tax_form'] = self.income_tax_form
         if self.income_tax_form == 'pnd3a':
-            domain = [('fiscalyear_id','=',self.fiscalyear_id.id)]
-            period = 'account.period'
-            data_dict['wht_period_ids'] = self.env[period].search(domain).ids
+            data_dict['income_tax_form'] = 'pnd3'
+            data_dict['fiscalyear_id'] = self.fiscalyear_id.id
         else:
+            data_dict['income_tax_form'] = self.income_tax_form
             data_dict['wht_period_id'] = self.calendar_period_id.period_id.id
+
         company = self.env.user.company_id.partner_id
         company_taxid = len(company.vat or '') == 13 and company.vat or ''
         company_branch = \
