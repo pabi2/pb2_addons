@@ -11,10 +11,12 @@ class AccountInvoice(models.Model):
          ('hr.expense.expense', 'HR Expense'), ],
         string='Source Document Ref.',
         readonly=True,
+        copy=False,
     )
     source_document = fields.Char(
         string='Source Document Ref.',
         readonly=True,
+        copy=False,
     )
     source_document_type = fields.Selection(
         [('purchase', 'Purchase Order'),
