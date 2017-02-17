@@ -9,6 +9,12 @@ class ResPartner(models.Model):
     pit_line = fields.One2many(
         'personal.income.tax',
         'partner_id',
-        string='Tax Line PIT',
-        readonly=True,
+        string='PIT',
+        readonly=False,
+    )
+    pit_yearly = fields.One2many(
+        'personal.income.tax.yearly',
+        'partner_id',
+        string='PIT Yearly',
+        reaonly=True,
     )

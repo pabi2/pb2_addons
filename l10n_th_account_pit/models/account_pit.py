@@ -8,12 +8,18 @@ import datetime
 class PersonalIncomeTax(models.Model):
     _name = 'personal.income.tax'
     _description = 'Personal Income Tax'
+    _order = 'calendar_year, sequence, id'
 
+    sequence = fields.Char(
+        string='Sequence',
+        readonly=True,
+    )
     voucher_id = fields.Many2one(
         'account.voucher',
         string='Voucher',
         index=True,
         ondelete='cascade',
+        required=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -22,6 +28,16 @@ class PersonalIncomeTax(models.Model):
         index=True,
         required=True,
         ondelete='cascade',
+    )
+    posted = fields.Boolean(
+        string='Posted',
+        readonly=True,
+        help="Once posted, sequence will run and WHT will be calculated"
+    )
+    manual = fields.Boolean(
+        string='Manual',
+        default=False,
+        help="Manually add line in Supplier window",
     )
     date = fields.Date(
         string='Date',
@@ -40,20 +56,20 @@ class PersonalIncomeTax(models.Model):
         required=True,
         default=lambda self: self._default_amount_income()
     )
+    precalc_wht = fields.Float(
+        string='Precalc WHT Amount',
+        help="This field show amount of WHT if posted now!"
+    )
     amount_wht = fields.Float(
-        string='Withholding Amount',
-        required=True,
-    )
-    posted = fields.Boolean(
-        string='Posted',
-        compute='_compute_posted',
+        string='WHT Amount',
+        compute='_compute_amount_wht',
         store=True,
-        readonly=True,
+        help="This field show the real WHT amount, as posted."
     )
-    _sql_constraints = [
-        ('pit_uniq', 'unique (voucher_id, partner_id)',
-         'Duplicated supplier on PIT!'),
-    ]
+    # _sql_constraints = [
+    #     ('pit_uniq', 'unique (voucher_id, partner_id)',
+    #      'Duplicated supplier on PIT!'),
+    # ]
 
     @api.model
     def _default_amount_income(self):
@@ -65,15 +81,10 @@ class PersonalIncomeTax(models.Model):
                        sum([x.amount for x in voucher.line_cr_ids]))
         else:
             ctx = self._context.copy()
-            income += (sum([x[2]['amount'] for x in ctx.get('line_dr_ids')]) -
-                       sum([x[2]['amount'] for x in ctx.get('line_cr_ids')]))
+            income += \
+                (sum([x[2]['amount'] for x in ctx.get('line_dr_ids', [])]) -
+                 sum([x[2]['amount'] for x in ctx.get('line_cr_ids', [])]))
         return income
-
-    @api.multi
-    @api.depends('voucher_id.state')
-    def _compute_posted(self):
-        for rec in self:
-            rec.posted = rec.voucher_id.state == 'posted' and True or False
 
     @api.multi
     @api.depends('date')
@@ -87,37 +98,113 @@ class PersonalIncomeTax(models.Model):
         if not amount_income or not partner_id:
             return 0.0
         AccountPIT = self.env['account.pit']
-        PIT = self.env['personal.income.tax']
+        PITYearly = self.env['personal.income.tax.yearly']
         calendar_year = date[:4]
-        pit_lines = PIT.search([('partner_id', '=', partner_id),
-                                ('calendar_year', '=', calendar_year),
-                                ('posted', '=', True)])
-        prev_income = sum([x.amount_income for x in pit_lines])
-        prev_wht = - sum([x.amount_wht for x in pit_lines])
-        income = prev_income + amount_income
-        account_pits = AccountPIT.search(
-            [('date_effective', '<=', date)], order='date_effective desc')
-        account_pit = account_pits and account_pits[0] or False
-        if not account_pit:
-            raise ValidationError(
-                _('No PIT Rate Table found for '
-                  'calendar year %s') % (calendar_year,))
-        rate_ranges = account_pit.rate_ids.filtered(
-            lambda r: income > r.income_from and income <= r.income_to)
-        if len(rate_ranges) != 1:
-            raise ValidationError(_('No valid PIT Rate Range found'))
-        rec = rate_ranges[0]
-        expected_wht = (rec.amount_tax_max_accum - rec.amount_tax_max) + \
-            (income - rec.income_from) * rec.tax_rate / 100
-        return - (expected_wht - prev_wht)
+        # Get current WTH state of this partner of this year
+        current_pit = PITYearly.search([('partner_id', '=', partner_id),
+                                        ('calendar_year', '=', calendar_year),
+                                        ])
+        total_income = current_pit.amount_income + amount_income
+        # Calculate expected WHT for total income (on this year)
+        expected_wht = AccountPIT.calculate_wht(date, total_income)
+        return expected_wht - current_pit.amount_wht
 
-    @api.onchange('amount_income', 'partner_id')
+    @api.multi
+    @api.depends('posted')
+    def _compute_amount_wht(self):
+        for rec in self:
+            if rec.posted:
+                amount_wht = self._calculate_pit_amount_wht(rec.date,
+                                                            rec.partner_id.id,
+                                                            rec.amount_income)
+                rec.amount_wht = amount_wht
+
+    @api.onchange('amount_income', 'partner_id', 'voucher_id')
     def _onchange_partner_income(self):
         ctx = self._context.copy()
         voucher_date = self.voucher_id.date or ctx.get('voucher_date')
-        self.amount_wht = self._calculate_pit_amount_wht(voucher_date,
-                                                         self.partner_id.id,
-                                                         self.amount_income,)
+        self.precalc_wht = self._calculate_pit_amount_wht(
+            voucher_date, self.partner_id.id, self.amount_income)
+
+    @api.multi
+    def write(self, vals):
+        res = super(PersonalIncomeTax, self).write(vals)
+        for rec in self:
+            self.env['personal.income.tax.yearly'].register(rec.calendar_year,
+                                                            rec.partner_id.id)
+        return res
+
+    @api.multi
+    def unlink(self):
+        if len(self.filtered('posted')) > 0:
+            raise ValidationError(_('Posted records can not be deleted!'))
+        return super(PersonalIncomeTax, self).unlink()
+
+    @api.multi
+    def action_post(self):
+        self.ensure_one()
+        self.write({
+            'posted': True,
+            'sequence': self.env['ir.sequence'].next_by_code('pit.sequence')
+        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
+
+
+class PersonalIncomeTaxYearly(models.Model):
+    _name = 'personal.income.tax.yearly'
+    _description = 'Personal Income Tax by Year'
+
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        ondelete='cascade',
+        readonly=True,
+    )
+    calendar_year = fields.Char(
+        string='Calendar Year',
+        readonly=True,
+    )
+    amount_income = fields.Float(
+        string='Income',
+        readonly=True,
+    )
+    amount_wht = fields.Float(
+        string='Withholding Amount',
+        readonly=True,
+    )
+    _sql_constraints = [
+        ('pity_uniq', 'unique (partner_id, calendar_year)',
+         'Duplicated supplier on PIT Yearly!'),
+    ]
+
+    @api.model
+    def register(self, calendar_year, partner_id):
+        income_tax_year = self.search([('calendar_year', '=', calendar_year),
+                                       ('partner_id', '=', partner_id)])
+        if not income_tax_year:
+            income_tax_year = self.create({
+                'partner_id': partner_id,
+                'calendar_year': calendar_year,
+                })
+        income_tax_year.update_amount()
+        return True
+
+    @api.multi
+    def update_amount(self):
+        self.ensure_one()
+        income_tax_lines = self.env['personal.income.tax'].search(
+            [('calendar_year', '=', self.calendar_year),
+             ('partner_id', '=', self.partner_id.id),
+             ('posted', '=', True)])
+        amount_income = sum([x.amount_income for x in income_tax_lines])
+        amount_wht = sum([x.amount_wht for x in income_tax_lines])
+        vals = {'amount_income': amount_income,
+                'amount_wht': amount_wht}
+        self.write(vals)
+        return True
 
 
 class AccountPIT(models.Model):
@@ -174,6 +261,28 @@ class AccountPIT(models.Model):
             rate.amount_tax_max_accum = accum_tax
             i += 1
         return
+
+    @api.model
+    def calculate_wht(self, date, income):
+        calendar_year = date[:4]
+        account_pits = self.search(
+            [('date_effective', '<=', date)], order='date_effective desc')
+        account_pit = account_pits and account_pits[0] or False
+        if not account_pit:
+            raise ValidationError(
+                _('No PIT Rate Table found for '
+                  'calendar year %s') % (calendar_year,))
+        sign = income < 0 and -1 or 1
+        rate_ranges = account_pit.rate_ids.filtered(
+            lambda r:
+            abs(income) > r.income_from and
+            abs(income) <= r.income_to)
+        if len(rate_ranges) != 1:
+            raise ValidationError(_('No valid PIT Rate Range found'))
+        rec = rate_ranges[0]
+        expected_wht = (rec.amount_tax_max_accum - rec.amount_tax_max) + \
+            (abs(income) - rec.income_from) * rec.tax_rate / 100
+        return sign * expected_wht
 
 
 class AccountPITRate(models.Model):

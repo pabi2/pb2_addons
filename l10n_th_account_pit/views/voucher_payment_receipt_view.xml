@@ -2,6 +2,7 @@
 <openerp>
     <data>
 
+        # Supplier Payment
         <record id="view_vendor_payment_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.payment.form.ext</field>
             <field name="model">account.voucher</field>
@@ -12,12 +13,14 @@
                 <data>
                     <page string="Tax" position="after">
                         <page string="PIT">
-                            <field name="pit_line" context="{'voucher_id': active_id, 'partner_id': partner_id, 'voucher_date': date, 'line_dr_ids': line_dr_ids, 'line_cr_ids': line_cr_ids}">
+                            <field name="pit_line" context="{'voucher_id': active_id, voucher_date': date,
+                                                             'line_dr_ids': line_dr_ids, 'line_cr_ids': line_cr_ids, 'type': context.get('type', False)}">
                                 <tree editable="bottom" string="PIT">
                                     <field name="date" invisible="1"/>
                                     <field name="calendar_year" invisible="1"/>
                                     <field name="partner_id"/>
                                     <field name="amount_income"/>
+                                    <field name="precalc_wht" invisible="1"/>
                                     <field name="amount_wht"/>
                                 </tree>
                             </field>
@@ -27,5 +30,30 @@
             </field>
         </record>
 
+        # Customer Payment
+        <record model="ir.ui.view" id="view_vendor_receipt_form_ext">
+            <field name="name">account.voucher.receipt.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="l10n_th_account.view_vendor_receipt_form_ext"/>
+            <field name="arch" type="xml">
+                <data>
+                    <page string="Tax" position="after">
+                        <page string="PIT">
+                            <field name="pit_line" context="{'voucher_id': active_id, 'voucher_date': date,
+                                                             'line_dr_ids': line_dr_ids, 'line_cr_ids': line_cr_ids, 'type': context.get('type', False)}">
+                                <tree editable="bottom" string="PIT">
+                                    <field name="date" invisible="1"/>
+                                    <field name="calendar_year" invisible="1"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount_income"/>
+                                    <field name="precalc_wht" invisible="1"/>
+                                    <field name="amount_wht"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </page>
+                </data>
+            </field>
+        </record>
     </data>
 </openerp>
