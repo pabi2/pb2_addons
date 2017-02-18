@@ -13,7 +13,7 @@
                 <data>
                     <page string="Tax" position="after">
                         <page string="PIT">
-                            <field name="pit_line" context="{'voucher_id': active_id, voucher_date': date,
+                            <field name="pit_line" context="{'voucher_id': active_id, 'voucher_date': date,
                                                              'line_dr_ids': line_dr_ids, 'line_cr_ids': line_cr_ids, 'type': context.get('type', False)}">
                                 <tree editable="bottom" string="PIT">
                                     <field name="date" invisible="1"/>

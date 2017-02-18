@@ -21,8 +21,8 @@
                                     <field name="manual" invisible="1"/>
                                     <field name="date"/>
                                     <field name="calendar_year"/>
-                                    <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}"/>
-                                    <field name="amount_wht"/>
+                                    <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}" sum="Total Income"/>
+                                    <field name="amount_wht" sum="Total WHT"/>
                                     <field name="posted"/>
                                     <button name="action_post" type="object" string="Post" icon="gtk-apply" class="oe_highlight" attrs="{'invisible': ['|', ('manual', '=', False), ('posted', '=', True)]}" />
                                 </tree>
@@ -34,8 +34,8 @@
                                 <field name="pit_yearly" nolabel="1">
                                     <tree editable="bottom" string="PIT">
                                         <field name="calendar_year"/>
-                                        <field name="amount_income"/>
-                                        <field name="amount_wht"/>
+                                        <field name="amount_income" sum="Total Income"/>
+                                        <field name="amount_wht" sum="Total WHT"/>
                                     </tree>
                                 </field>
                             </group>
