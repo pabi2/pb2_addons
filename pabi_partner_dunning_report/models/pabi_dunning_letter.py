@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
+from openerp.tools.amount_to_text_en import amount_to_text
 
 
 class PABIDunningLetter(models.Model):
@@ -36,8 +37,17 @@ class PABIDunningLetter(models.Model):
         string='Partner',
         required=True,
     )
+    subject = fields.Char(
+        string='Subject',
+        compute='_compute_letter_text',
+        readonly=True,
+    )
     amount_total = fields.Float(
         string='Total',
+        compute='_compute_amount_total',
+    )
+    amount_total_text_en = fields.Char(
+        string='Total Amount Text',
         compute='_compute_amount_total',
     )
     line_ids = fields.One2many(
@@ -46,17 +56,17 @@ class PABIDunningLetter(models.Model):
         string='Dunning Lines'
     )
     # Printing Text
-    letter_header = fields.Text(
+    letter_header = fields.Html(
         string='Header',
         compute='_compute_letter_text',
         readonly=True,
     )
-    letter_footer = fields.Text(
+    letter_footer = fields.Html(
         string='Header',
         compute='_compute_letter_text',
         readonly=True,
     )
-    letter_signature = fields.Text(
+    letter_signature = fields.Html(
         string='Header',
         compute='_compute_letter_text',
         readonly=True,
@@ -66,8 +76,16 @@ class PABIDunningLetter(models.Model):
     @api.depends()
     def _compute_amount_total(self):
         for letter in self:
-            amount_total = sum(letter.line_ids.mapped('amount_residual'))
-            letter.amount_total = amount_total
+            self._cr.execute("""
+                select sum(amount_residual)
+                from pabi_dunning_letter_line
+                where letter_id = %s
+            """, (letter.id,))
+            letter.amount_total = self._cr.fetchone()[0]
+            letter.amount_total_text_en = amount_to_text(
+                letter.amount_total, 'en', 'Baht').replace(
+                    'and Zero Cent', 'Only').replace(
+                        'Cent', 'Satang').replace('Cents', 'Satang')
 
     @api.model
     def _eval_text(self, text, obj):
@@ -80,6 +98,7 @@ class PABIDunningLetter(models.Model):
         company = self.env['res.company'].search([])[0]
         for letter in self:
             if letter.letter_type == 'l1':
+                letter.subject = company.letter1_subject
                 letter.letter_header = \
                     self._eval_text(company.letter1_header, letter)
                 letter.letter_footer = \
@@ -87,6 +106,7 @@ class PABIDunningLetter(models.Model):
                 letter.letter_signature = \
                     self._eval_text(company.letter1_signature, letter)
             if letter.letter_type == 'l2':
+                letter.subject = company.letter2_subject
                 letter.letter_header = \
                     self._eval_text(company.letter2_header, letter)
                 letter.letter_footer = \
@@ -94,6 +114,7 @@ class PABIDunningLetter(models.Model):
                 letter.letter_signature = \
                     self._eval_text(company.letter2_signature, letter)
             if letter.letter_type == 'l3':
+                letter.subject = company.letter3_subject
                 letter.letter_header = \
                     self._eval_text(company.letter3_header, letter)
                 letter.letter_footer = \

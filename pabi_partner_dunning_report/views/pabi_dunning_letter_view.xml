@@ -35,11 +35,14 @@
 							<group>
 								<field name="letter_type"/>
 								<field name="partner_id"/>
+								<field name="subject"/>
+								<field name="to_whom_title"/>
 							</group>
 							<group>
 								<field name="date_letter"/>
 								<field name="date_run"/>
-								<field name="to_whom_title"/>
+								<field name="amount_total"/>
+								<field name="amount_total_text_en"/>
 							</group>
 						</group>
 						<group>

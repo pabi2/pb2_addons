@@ -11,7 +11,7 @@
 					<field name="jasper_model_id" ref="pabi_partner_dunning_report.model_pabi_dunning_letter"/>
 					<field name="name">Customer Dunning Letter (TH)</field>
 					<field name="report_name">pabi_customer_dunning_letter</field>
-					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter.jrxml</field>
+					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter_th.jrxml</field>
 					<field name="menu">True</field>
 					<field name="header">False</field>
 					<field name="jasper_report">True</field>
@@ -34,7 +34,7 @@
 					<field name="jasper_model_id" ref="pabi_partner_dunning_report.model_pabi_dunning_letter"/>
 					<field name="name">Customer Dunning Letter (EN)</field>
 					<field name="report_name">pabi_customer_dunning_letter_en</field>
-					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter.jrxml</field>
+					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter_en.jrxml</field>
 					<field name="menu">True</field>
 					<field name="header">False</field>
 					<field name="jasper_report">True</field>

@@ -16,6 +16,22 @@ class PABIDunningConfig(models.TransientModel):
         string='Prefix Mapping',
         related='company_id.title_ids',
     )
+    # Subject
+    letter1_subject = fields.Char(
+        string='Letter 1 Subject',
+        related='company_id.letter1_subject',
+        translate=True,
+    )
+    letter2_subject = fields.Char(
+        string='Letter 2 Subject',
+        related='company_id.letter2_subject',
+        translate=True,
+    )
+    letter3_subject = fields.Char(
+        string='Letter 3 Subject',
+        related='company_id.letter3_subject',
+        translate=True,
+    )
     # Letter 1
     letter1_header = fields.Text(
         string='Letter 1 Header',
