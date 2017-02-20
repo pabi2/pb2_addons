@@ -116,194 +116,93 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["ลงวันที่"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Date"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="border_box" positionType="FixRelativeToBottom" x="250" y="174" width="100" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["วันที่ครบกำหนด"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Due Date"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="border_box" positionType="FixRelativeToBottom" x="350" y="174" width="165" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (บาท)"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Amount (Baht)"]]></textFieldExpression>
 				</textField>
 				<image>
 					<reportElement x="388" y="0" width="124" height="42"/>
 					<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.jpg"]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement x="260" y="63" width="50" height="16">
-						<printWhenExpression><![CDATA[$P{REPORT_LOCALE}.toString() == "th_TH"]]></printWhenExpression>
-					</reportElement>
-					<textElement textAlignment="Right" lineSpacing="Single" markup="none">
-						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[วันที่]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="0" y="42" width="147" height="16"/>
+					<reportElement x="0" y="73" width="50" height="16"/>
 					<textElement lineSpacing="Single" markup="none">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<text><![CDATA[ที่      วท 5401 / ]]></text>
+					<text><![CDATA[Date]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="box" positionType="Float" x="0" y="141" width="541" height="20"/>
+					<reportElement style="box" positionType="Float" x="0" y="141" width="512" height="20"/>
 					<textElement lineSpacing="1_1_2" markup="html">
 						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{letter_header}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="330" y="63" width="171" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="45" y="73" width="171" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.util.Date"><![CDATA[$F{date_letter}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement x="102" y="42" width="100" height="20"/>
-					<textElement>
-						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="155" y="18" width="195" height="24">
-						<printWhenExpression><![CDATA[$P{REPORT_LOCALE}.toString() == "th_TH" && $F{letter_type} == "l3"]]></printWhenExpression>
-					</reportElement>
-					<textElement textAlignment="Center" lineSpacing="Single" markup="none">
-						<font size="14" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[บันทึกข้อความ]]></text>
-				</staticText>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="83" width="340" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="0" y="42" width="340" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{subject}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="false">
-					<reportElement style="box" mode="Transparent" x="35" y="108" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF">
-						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
-					</reportElement>
+					<reportElement style="box" mode="Transparent" x="0" y="104" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
 						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{to_whom_title}.toString().equals("") ? "" : $F{to_whom_title} + "\n") +
-($F{partner_title}.toString().equals("") ? "" : $F{partner_title} + " ") +
-$F{partner_name} + "\n" +
-(new Scriptlet()).getAddress($F{street},$F{street2},$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Dear Sir,"]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="0" y="113" width="147" height="16"/>
-					<textElement lineSpacing="Single" markup="none">
-						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[เรียน]]></text>
-				</staticText>
 				<textField>
 					<reportElement style="border_box" positionType="FixRelativeToBottom" x="0" y="174" width="150" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["ใบแจ้งหนี้เลขที่"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Invoice"]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="35" y="113" width="353" height="16">
-						<printWhenExpression><![CDATA[$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
-					</reportElement>
-					<textElement lineSpacing="Single" markup="none">
-						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[ผศจ. ผ่าน ผอ.ฝ่ายบริหารธุรกิจอุทยานวิทยาศาสตร์ประเทศไทย]]></text>
-				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="357">
+			<band height="269">
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="178" y="29" width="301" height="166">
-						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
-					</reportElement>
-					<textElement textAlignment="Center" lineSpacing="1_1_2" markup="none">
+					<reportElement positionType="FixRelativeToBottom" x="0" y="4" width="400" height="166"/>
+					<textElement lineSpacing="1_1_2" markup="none">
 						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<text><![CDATA[ขอแสดงความนับถือ
+					<text><![CDATA[Yours faithfully,
 
 
-(นางสาวศิรินาถ  แถบทอง)
-ผู้อำนวยการฝ่ายการเงินและบัญชี
-ปฏิบัติการแทนผู้อำนวยการ
-สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
+---------------------------------------------------
+Director of Finance and Accounting
+For and on behalf of the Executive Director
+National Science and Technology Development Agency]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="0" y="115" width="147" height="88"/>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="157" width="147" height="88"/>
 					<textElement lineSpacing="1_1_2" markup="none">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<text><![CDATA[สำนักงานกลาง
-ฝ่ายการเงินและบัญชี
-โทร. 0 2564 7000
-ต่อ 71317]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="35" y="0" width="410" height="29"/>
-					<textElement lineSpacing="1_1_2" markup="none">
-						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการ]]></text>
-				</staticText>
-				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="254" y="238" width="259" height="119" isPrintWhenDetailOverflows="true"/>
-					<textElement lineSpacing="1_1_2" markup="html">
-						<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[111 Thailand Science Park, Phahonyothin Road,Khlong Nueng,Khlong Luang, Pathum Thani 12120, Thailand.
-Tel. +66 2564 7000 Fax. +66 2564 7002-5
-http://www.nstda.ot.th]]></text>
-				</staticText>
-				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="0" y="238" width="234" height="119" isPrintWhenDetailOverflows="true"/>
-					<textElement textAlignment="Right" lineSpacing="1_1_2" markup="none">
-						<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[๑๑๑ อุทยานวิทยาศาสตร์ประเทศไทย ถ.พหลโยธิน ต.คลองหนึ่ง อ.คลองหลวง
-จ.ปทุมธานี ๑๒๑๒๐ โทรศัพท์ ๐ ๒๕๖๔ ๗๐๐๐
-โทรสาร ๐ ๒๕๖๔ ๗๐๐๒-๕]]></text>
-				</staticText>
-				<line>
-					<reportElement positionType="FixRelativeToBottom" x="0" y="207" width="513" height="1"/>
-				</line>
-				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="-37" y="216" width="271" height="20" isPrintWhenDetailOverflows="true"/>
-					<textElement textAlignment="Right" lineSpacing="1_1_2" markup="none">
-						<font size="10" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
-				</staticText>
-				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="254" y="216" width="332" height="20" isPrintWhenDetailOverflows="true"/>
-					<textElement lineSpacing="1_1_2" markup="html">
-						<font size="10" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[National Science and Technology Development Agency]]></text>
-				</staticText>
-				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="187" y="84" width="301" height="111">
-						<printWhenExpression><![CDATA[$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
-					</reportElement>
-					<textElement textAlignment="Center" lineSpacing="1_1_2" markup="none">
-						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[(นางสาวศิรินาถ แถบทอง)
-ผู้อํานวยการฝ่ายการเงินและบัญชี ]]></text>
+					<text><![CDATA[Central Office
+Finance & Account Shared Services
+Tel. 0 2564 7000 ext 71317]]></text>
 				</staticText>
 			</band>
 		</groupFooter>
@@ -327,7 +226,7 @@ http://www.nstda.ot.th]]></text>
 					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="box" x="0" y="34" width="541" height="45"/>
+					<reportElement style="box" x="0" y="34" width="512" height="45"/>
 					<textElement lineSpacing="1_1_2" markup="html">
 						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
