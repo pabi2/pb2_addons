@@ -1,0 +1,31 @@
+"id","letter1_footer","letter1_header","letter1_signature","letter1_subject","letter2_footer","letter2_header","letter2_signature","letter2_subject","letter3_footer","letter3_header","letter3_signature","letter3_subject"
+"base.main_company","<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The outstanding balance due for remittance lapsed on the above date, and we are apparently yet to receive payment. Please continue to make payments, completed within seven days from the date you receive this letter. We reserve the right to levy a fine for late payments, at the rate specified in the contract.
+</p>
+<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+If payment has been made, please disregard this reminder and accept our thanks for your kind submission of the amount referred to above.
+</p>","<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Regarding a payment of <b>${ '{:,.2f}'.format(object.amount_total)} ${ object.currency_id.name}</b> which is now overdue.  Please give this matter your earliest attention and submit a remittance by return.
+</p>","","Reminder notice #1","<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Kindly take note that the financial rate of recovery by ourselves is disproportionate in relation to lengthy repayment overdue dates. Only prompt settlement will allow us to extend your preferential treatment and special concessions, and we herein respectfully request that you submit your remittance <u><i>without further delay</i></u>.
+</p>
+</p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Please take note that in the event of continued failure to repay the above amount in full to ourselves <u>immediately</u>, we reserve the right to take legal action to recover the money, as stated in the above mentioned contract. 
+</p>
+<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+If payment has already been made, please disregard this reminder and accept our thanks for your kind submission of the amount referred to above.
+</p>","<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Following our first letter, we must inform you that we have still not received payment for the outstanding. Notice reminding you to repay this amount within seven days from the date you received a written notification of the amount owned, is now served. We reserve the right to require you to pay a fine in respect of late payments, at the rate specified in the contract.
+</p>","","Reminder notice #2","<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
+</p>","<p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ตามที่ ${object.partner_id.name} มีหนี้คงค้างชําระกับสํานักงานฯ จํานวนเงิน ${ '{:,.2f}'.format(object.amount_total)} บาท ซึ่งสํานักงานฯ ได้มีหนังสือติดตามหนี้ทวงถามไปยังบริษัทฯ แล้ว 2 ครั้ง ดังปรากฎในเอกสารแนบท้ายนี้ ขณะนี้สํานักงานฯ ยังมิได้รับชําระหนี้แต่อย่างใด โดยมีรายละเอียดดังนี้
+</p>","","ขออนุมัติดําเนินการตามขั้นตอนกฎหมาย"

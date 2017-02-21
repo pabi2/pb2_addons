@@ -43,6 +43,7 @@
 								<field name="date_run"/>
 								<field name="amount_total"/>
 								<field name="amount_total_text_en"/>
+								<field name="currency_id"/>
 							</group>
 						</group>
 						<group>

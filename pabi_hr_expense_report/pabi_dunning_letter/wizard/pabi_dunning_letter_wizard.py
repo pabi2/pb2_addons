@@ -11,15 +11,24 @@ class PABIDunnintLetterWizard(models.TransientModel):
     date_print = fields.Date(
         string='Print Date',
         default=lambda self: fields.Date.context_today(self),
-        required=True,
+        readonly=True,
     )
-    due_days = fields.Selection(
-        [('10', '10 days to due date'),
-         ('5', '5 days to due date'),
-         ('0', 'On due date'),
-         ('-1', 'Pass due date')],
-        string='Due (based on print date)',
+    type = fields.Selection(
+        [('print_email', 'Print/Email'),
+         ('view_history', 'View History')],
+        string='Type',
         required=True,
+        default='print_email',
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+    )
+    date_due_from = fields.Date(
+        string='Date Due From',
+    )
+    date_due_to = fields.Date(
+        string='Date Due To',
     )
     print_pdf = fields.Boolean(
         string='Print as PDF',
@@ -29,10 +38,24 @@ class PABIDunnintLetterWizard(models.TransientModel):
         string='Send Email',
         default=True,
     )
-    dunning_list_ids = fields.One2many(
+    show_printed_list = fields.Boolean(
+        string='Show Printed Letter',
+        default=False,
+    )
+    dunning_list_1 = fields.One2many(
         'dunning.list',
         'wizard_id',
-        string='List of Dunning',
+        string='10 days to due date',
+    )
+    dunning_list_2 = fields.One2many(
+        'dunning.list',
+        'wizard_id',
+        string='5 days to due date',
+    )
+    dunning_list_3 = fields.One2many(
+        'dunning.list',
+        'wizard_id',
+        string='On due date',
     )
     # Temporary Fields todo remove
     group_email = fields.Char(
@@ -40,36 +63,49 @@ class PABIDunnintLetterWizard(models.TransientModel):
         default="acf-adv@nstda.or.th",
     )
 
-    @api.onchange('due_days')
-    def _onchange_due_days(self):
-        self.dunning_list_ids = []
-        Line = self.env['dunning.list']
-        Expense = self.env['hr.expense.expense']
-        today = datetime.strptime(self.date_print,
-                                  '%Y-%m-%d').date()
-        date_due = today + relativedelta(days=int(self.due_days))
-        date_due = date_due.strftime('%Y-%m-%d')
-        operator = self.due_days == '-1' and '<=' or '='
-        expenses = Expense.search([('state', '=', 'paid'),
-                                   ('date_due', operator, date_due),
-                                   ('amount_to_clearing', '>', 0.0)])
-        for expense in expenses:
-            new_line = Line.new()
-            new_line.expense_id = expense
-            new_line.select = True
-
-            # Set Email-to on lines
-            if self.due_days == '10':
-                new_line.to_employee_ids = [(6, 0, [new_line.employee_id.id])]
-                new_line.cc_employee_ids = [(6, 0, [])]
-            elif self.due_days == '5':
-                new_line.to_employee_ids = [(6, 0, [])]
-                new_line.cc_employee_ids = [(6, 0, [new_line.employee_id.id])]
-            else:
-                new_line.to_employee_ids = [(6, 0, [])]
-                new_line.cc_employee_ids = [(6, 0, [new_line.employee_id.id])]
-
-            self.dunning_list_ids += new_line
+    @api.onchange('type')
+    def _onchange_type(self):
+        self.dunning_list_1 = []
+        self.dunning_list_2 = []
+        self.dunning_list_3 = []
+        for due_days in (10, 5, 0):  # Days to due date
+            if due_days == 10:
+                print_field = 'date_dunning_1'
+            if due_days == 5:
+                print_field = 'date_dunning_2'
+            if due_days == 0:
+                print_field = 'date_dunning_3'
+            Line = self.env['dunning.list']
+            Expense = self.env['hr.expense.expense']
+            today = datetime.strptime(
+                fields.Date.context_today(self), '%Y-%m-%d').date()
+            date_due = today + relativedelta(days=due_days)
+            date_due = date_due.strftime('%Y-%m-%d')
+            expenses = Expense.search([('is_employee_advance', '=', True),
+                                       ('state', '=', 'paid'),
+                                       ('amount_to_clearing', '>', 0.0),
+                                       ('date_due', '<=', date_due),
+                                       (print_field, '=', False)
+                                       ])
+            for expense in expenses:
+                new_line = Line.new()
+                new_line.expense_id = expense
+                new_line.select = True
+                # Set Email-to on lines
+                # TODO: Pending assign the correct TO and CC for each case
+                employee = new_line.employee_id
+                if due_days == 10:
+                    new_line.to_employee_ids = [(6, 0, [employee.id])]
+                    new_line.cc_employee_ids = [(6, 0, [])]
+                    self.dunning_list_1 += new_line
+                if due_days == 5:
+                    new_line.to_employee_ids = [(6, 0, [])]
+                    new_line.cc_employee_ids = [(6, 0, [employee.id])]
+                    self.dunning_list_2 += new_line
+                if due_days == 0:
+                    new_line.to_employee_ids = [(6, 0, [])]
+                    new_line.cc_employee_ids = [(6, 0, [employee.id])]
+                    self.dunning_list_3 += new_line
 
     @api.multi
     def run_report(self):
@@ -210,4 +246,16 @@ class DunningList(models.TransientModel):
         'employee_id',
         'line_id',
         string="CC",
+    )
+    date_dunning_1 = fields.Date(
+        string='Notice 1',
+        readonly=True,
+    )
+    date_dunning_2 = fields.Date(
+        string='Notice 2',
+        readonly=True,
+    )
+    date_dunning_3 = fields.Date(
+        string='Notice 3',
+        readonly=True,
     )

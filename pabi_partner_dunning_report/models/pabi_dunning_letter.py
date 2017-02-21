@@ -25,6 +25,12 @@ class PABIDunningLetter(models.Model):
         string='Type',
         required=True,
     )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        compute='_compute_letter_text',
+        readonly=True,
+    )
     date_run = fields.Date(
         string='Run Date',
         required=True,
@@ -97,6 +103,9 @@ class PABIDunningLetter(models.Model):
     def _compute_letter_text(self):
         company = self.env['res.company'].search([])[0]
         for letter in self:
+            move_line = letter.line_ids and letter.line_ids[0].move_line_id
+            letter.currency_id = move_line.currency_id or \
+                move_line.company_id.currency_id
             if letter.letter_type == 'l1':
                 letter.subject = company.letter1_subject
                 letter.letter_header = \
