@@ -21,5 +21,25 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_dunning_letter)"/>
 		</record>
 
+		# Advance Dunning Letter
+		<record id="advance_dunning_letter" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">advance.dunning.letter</field>
+			<field name="name">Advance Dunning Letter</field>
+			<field name="report_name">advance_dunning_letter</field>
+			<field name="report_rml">pabi_hr_expense_report/pabi_dunning_letter/report/advance_dunning_letter.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="advance_dunning_letter_values" model="ir.values">
+			<field name="name">Advance Dunning Letter</field>
+			<field name="model">advance.dunning.letter</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(advance_dunning_letter)"/>
+		</record>
+
 	</data>
 </openerp>

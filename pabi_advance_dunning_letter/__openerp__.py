@@ -20,12 +20,12 @@ Expense Related Reports
         'pabi_hr_expense',
     ],
     'data': [
-        'pabi_dunning_letter/edi/email_templates_-1_days.xml',
-        'pabi_dunning_letter/edi/email_templates_0_days.xml',
-        'pabi_dunning_letter/edi/email_templates_5_days.xml',
-        'pabi_dunning_letter/edi/email_templates_10_days.xml',
+        # 'pabi_dunning_letter/edi/email_templates_-1_days.xml',
+        # 'pabi_dunning_letter/edi/email_templates_0_days.xml',
+        # 'pabi_dunning_letter/edi/email_templates_5_days.xml',
+        # 'pabi_dunning_letter/edi/email_templates_10_days.xml',
         'views/hr_expense_view.xml',
-        'pabi_dunning_letter/wizard/pabi_dunning_letter_wizard.xml',
+        'wizard/pabi_dunning_letter_wizard.xml',
         'pabi_dunning_letter/data/report_data.xml',
     ],
     'demo': [

@@ -17,7 +17,7 @@
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
     <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} </span> <span style="float: right;">รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
     <p style="text-indent: 25px;">
-        ตามที่ท่าน ได้ยืมเงินทดรองจ่ายตามสัญญาเพื่อใช้ในการปฏิบัติงาน ซึ่งขณะนี้ถึงวันที่ครบกาหนดหักล้างเงินยืม ฝ่ายการเงินและบัญชีได้มีการออกจดหมายแจ้งเตือนก่อนวันครบกำหนดการสะสางเงินยืมทดรองจ่าย 2 ครั้งแล้ว 
+        ตามที่ท่าน ได้ยืมเงินทดรองจ่ายตามสัญญาเพื่อใช้ในการปฏิบัติงาน ซึ่งขณะนี้ถึงวันที่ครบกาหนดหักล้างเงินยืม ฝ่ายการเงินและบัญชีได้มีการออกจดหมายแจ้งเตือนก่อนวันครบกำหนดการสะสางเงินยืมทดรองจ่าย 2 ครั้งแล้ว
     </p>
     <p>จำนวนของจำนวนเงินกู้เป็น - ${object.amount_to_clearing}</p>
     <p style="text-indent: 25px;">

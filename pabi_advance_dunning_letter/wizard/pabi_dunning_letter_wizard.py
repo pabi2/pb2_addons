@@ -38,22 +38,18 @@ class PABIDunnintLetterWizard(models.TransientModel):
         string='Send Email',
         default=True,
     )
-    show_printed_list = fields.Boolean(
-        string='Show Printed Letter',
-        default=False,
-    )
     dunning_list_1 = fields.One2many(
-        'dunning.list',
+        'advance.dunning.letter',
         'wizard_id',
         string='10 days to due date',
     )
     dunning_list_2 = fields.One2many(
-        'dunning.list',
+        'advance.dunning.letter',
         'wizard_id',
         string='5 days to due date',
     )
     dunning_list_3 = fields.One2many(
-        'dunning.list',
+        'advance.dunning.letter',
         'wizard_id',
         string='On due date',
     )
@@ -75,7 +71,7 @@ class PABIDunnintLetterWizard(models.TransientModel):
                 print_field = 'date_dunning_2'
             if due_days == 0:
                 print_field = 'date_dunning_3'
-            Line = self.env['dunning.list']
+            Line = self.env['advance.dunning.letter']
             Expense = self.env['hr.expense.expense']
             today = datetime.strptime(
                 fields.Date.context_today(self), '%Y-%m-%d').date()
@@ -87,6 +83,7 @@ class PABIDunnintLetterWizard(models.TransientModel):
                                        ('date_due', '<=', date_due),
                                        (print_field, '=', False)
                                        ])
+            print expenses
             for expense in expenses:
                 new_line = Line.new()
                 new_line.expense_id = expense
@@ -113,24 +110,25 @@ class PABIDunnintLetterWizard(models.TransientModel):
             return {}
 
         data = {'parameters': {}}
-        report_name = 'pabi_dunning_letter'
+        report_name = 'advance_dunning_letter'
         # For ORM, we search for ids, and only pass ids to parser and jasper
-        exp_ids = [x.select and x.expense_id.id for x in self.dunning_list_ids]
-        exp_ids = list(set(exp_ids))  # remove all False
-        if False in exp_ids:
-            exp_ids.remove(False)
-        if not exp_ids:
+        dunning_list = self.dunning_list_1 + \
+            self.dunning_list_2 + self.dunning_list_3
+        dunning_ids = [x.select and x.id for x in dunning_list]
+        dunning_ids = list(set(dunning_ids))  # remove all False
+        if False in dunning_ids:
+            dunning_ids.remove(False)
+        if not dunning_ids:
             raise UserError(_('No dunning letter to print/email!'))
 
         # Send dunning letter by email to each of selected employees
-        if self.send_email:
-            self._send_dunning_letter_by_mail()
+        # if self.send_email:
+        #     self._send_dunning_letter_by_mail()
 
         if not self.print_pdf:
             return {}
-        data['parameters']['ids'] = exp_ids
-        data['parameters']['due_days'] = self.due_days
-        data['parameters']['date_print'] = self.date_print
+        data['parameters']['ids'] = dunning_ids
+        data['parameters']['date_print'] = fields.Date.context_today(self)
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
@@ -170,7 +168,7 @@ class PABIDunnintLetterWizard(models.TransientModel):
                 ctx = self.env.context.copy()
                 ctx.update({
                     'due_days': self.due_days,
-                    'date_print': self.date_print,
+                    # 'date_print': self.date_print,
                     'email_attachment': True,
                 })
                 if line.expense_id and line.select:
@@ -192,8 +190,8 @@ class PABIDunnintLetterWizard(models.TransientModel):
         return True
 
 
-class DunningList(models.TransientModel):
-    _name = 'dunning.list'
+class AdvanceDunningLetter(models.TransientModel):
+    _name = 'advance.dunning.letter'
 
     wizard_id = fields.Many2one(
         'pabi.dunning.letter.wizard',
