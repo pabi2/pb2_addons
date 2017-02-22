@@ -311,7 +311,7 @@ class BudgetFundRuleLine(models.Model):
     @api.constrains('amount')
     def _check_amount(self):
         for rec in self:
-            if not rec.amount:
+            if not rec.fund_rule_id.template and not rec.amount:
                 raise ValidationError(_('Funded Amount must not be zero!'))
 
     @api.multi

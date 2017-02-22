@@ -140,7 +140,6 @@
                                     <field name="expense_group_id"/>
                                     <field name="account_ids" widget="many2many_tags"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
-                                    <field name="max_spending_percent"/>
                                 </tree>
                             </field>
                         </page>
