@@ -30,7 +30,7 @@ class BudgetExportWizard(models.TransientModel):
     @api.model
     def _default_plan_template(self):
         template = self.env['ir.attachment'].\
-            search([('budget_template', '=', True)])
+            search([('budget_template_type', '=', 'plan_unit_based')], limit=1)
         return template
 
     attachment_id = fields.Many2one(
@@ -253,7 +253,6 @@ class BudgetExportWizard(models.TransientModel):
 
         startrow = 10
         lastrow = self.editable_lines + startrow
-
         # Formating Lines
         for row in range(startrow, lastrow):
             for col in range(1, 26):

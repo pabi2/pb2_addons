@@ -46,7 +46,8 @@ class BudgetImportWizard(models.TransientModel):
             for line in groupby_job_order_dict[joborder]:
                 # compute values for job order lines
                 line_vals = {'cost_control_line_id': costcontrol_line.id}
-                line_vals.update({'charge_type': line['charge_type'],
+                line_vals.update({
+                    'charge_type': line['charge_type'],
                     'activity_group_id': line['activity_group_id'],
                     'name': line['description'],
                     'unit': line['unit'],
@@ -96,6 +97,7 @@ class BudgetImportWizard(models.TransientModel):
     @api.multi
     def update_budget_prepare(self, budget_ids, template=None):
         joborder_lines = []
+
         def _compute_line_vals(NonCostCtrl_Sheet, common_line_vals):
             line_row = 10
             lines_to_create = []
@@ -147,13 +149,14 @@ class BudgetImportWizard(models.TransientModel):
                         break
                     col += 1
                     p += 1
-                    
+
                 cost_control = NonCostCtrl_Sheet.cell(row=row, column=3).value
                 if cost_control:
                     cost_control_id = self.env['cost.control'].search(
                         [('name', '=', tools.ustr(cost_control))])
                     if cost_control_id:
-                        line_vals.update({'cost_control_id' : cost_control_id.id})
+                        line_vals.update(
+                            {'cost_control_id': cost_control_id.id})
                     joborder_lines.append(line_vals)
                 else:
                     lines_to_create.append(line_vals)
