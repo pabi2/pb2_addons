@@ -2,14 +2,15 @@
 <openerp>
     <data>
 
-    	# Fund Rule
+        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="account_budget_activity.menu_action_account_budget_config" sequence="140"/>
+
+        # Fund Rule
         <record id="view_budget_fund_rule_tree" model="ir.ui.view">
             <field name="name">view.budget.fund.rule.tree</field>
             <field name="model">budget.fund.rule</field>
             <field name="arch" type="xml">
                 <tree string="Fund Rule">
                     <field name="name"/>
-                    <field name="fiscalyear_ids"/>
                     <field name="fund_id"/>
                     <field name="project_id"/>
                     <field name="state"/>
@@ -17,6 +18,89 @@
             </field>
         </record>
 
+        <record id="view_budget_fund_rule_form" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.form</field>
+            <field name="model">budget.fund.rule</field>
+            <field name="arch" type="xml">
+                <form string="Fund">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" states="draft" class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" type="object" states="confirmed"/>
+                        <button name="action_draft" string="Set to Draft" type="object" states="cancel"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                    </header>
+
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" readonly="1" required="0" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="fund_id"/>
+                            <field name="template" invisible="1"/>
+                            <field name="template_id" required="1"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="project_id" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Spending Rule">
+                            <field name="fund_rule_line_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="fund_rule_id" invisible="1"/>
+                                    <field name="project_id" invisible="1"/>
+                                    <field name="fund_id" invisible="1"/>
+                                    <field name="expense_group_id"/>
+                                    <field name="account_ids" widget="many2many_tags"/>
+                                    <field name="activity_ids" widget="many2many_tags"/>
+                                    <field name="amount" required="1"/>
+                                    <field name="max_spending_percent" required="1"/>
+                                    <field name="amount_consumed"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_budget_fund_rule_search" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.search</field>
+            <field name="model">budget.fund.rule</field>
+            <field name="arch" type="xml">
+                <search string="Fund">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_budget_fund_rule" model="ir.actions.act_window">
+            <field name="name">External Fund Rule</field>
+            <field name="res_model">budget.fund.rule</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_budget_fund_rule_search"/>
+            <field name="domain">[('template','=',False)]</field>
+            <field name="context">{'default_template': False}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_budget_fund_rule_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_budget_fund_rule_tree"/>
+            <field name="act_window_id" ref="action_budget_fund_rule"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_budget_fund_rule_form">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_budget_fund_rule_form"/>
+            <field name="act_window_id" ref="action_budget_fund_rule"/>
+        </record>
+
+        <menuitem name="Fund Rule" id="menu_budget_fund_rule" action="action_budget_fund_rule" parent="menu_budget_external_fund_rule" sequence="10"/>
+
+        # Fund Rule Template
         <record id="view_budget_fund_rule_template_tree" model="ir.ui.view">
             <field name="name">view.budget.fund.rule.template.tree</field>
             <field name="model">budget.fund.rule</field>
@@ -24,96 +108,127 @@
                 <tree string="Fund Rule">
                     <field name="name"/>
                     <field name="fund_id"/>
-                    <field name="state" invisible="1" />
+                    <field name="state" invisible="1"/>
                 </tree>
             </field>
         </record>
-        
-        <record id="view_budget_fund_rule_form" model="ir.ui.view">
-            <field name="name">view.budget.fund.rule.form</field>
+
+        <record id="view_budget_fund_rule_template_form" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.template.form</field>
             <field name="model">budget.fund.rule</field>
             <field name="arch" type="xml">
-	            <form string="Fund">
-	           		<header attrs="{'invisible': [('template', '=', True)]}">
-	                    <button name="action_confirm" string="Confirm" type="object" states="draft" class="oe_highlight"/>
-	                    <button name="action_acknowledge" string="Acknowledge" type="object" states="confirmed" class="oe_highlight"/>
-	                    <button name="action_cancel" string="Cancel" type="object" states="confirmed,acknowledged"/>
-	                    <button name="action_draft" string="Draft" type="object" states="cancel"/>
-	                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,acknowledged" />
-	                </header>            	
-	            	
-                    <label for="name" class="oe_edit_only"/>
+                <form string="Fund">
+                    <field name="state" invisible="1"/>
+                    <label string="Template" class="oe_edit_only"/>
                     <h1>
-                        <field name="name" attrs="{'readonly': [('template', '=', False)], 'required': [('template', '=', True)]}"
-                        	class="oe_inline" placeholder="Name"/>
+                        <field name="name" reqdonly="0" required="1" class="oe_inline" placeholder="Name"/>
                     </h1>
                     <group>
                         <group>
-		                    <field name="fiscalyear_ids" widget="many2many_tags" attrs="{'required': [('template', '=', False)], 'invisible': [('template', '=', True)]}"/>
-		                    <field name="fund_id"/>
-		                    <field name="template" invisible="1" />
-		                    <field name="template_id" attrs="{'required': [('template', '=', False)], 'invisible': [('template', '=', True)]}" />
+                            <field name="fund_id"/>
+                            <field name="template" invisible="1"/>
                         </group>
                         <group>
-                    		<field name="active"/>
-                    		<field name="project_id" attrs="{'required': [('template', '=', False)], 'invisible': [('template', '=', True)]}"/>
+                            <field name="active"/>
                         </group>
                     </group>
                     <notebook>
-	                    <page string="Spending Rule">
-		                    <field name="fund_rule_line_ids" nolabel="1" >
-		                    	<tree editable="bottom">
-		                    		<field name="fund_rule_id" invisible="1"/>
-		                    		<field name="expense_group" />
-		                    		<field name="activity_group_ids" widget="many2many_tags"/>
-		                    		<field name="max_spending_percent" />
-		                    	</tree>
-		                    </field>
-	                    </page>
+                        <page string="Spending Rule">
+                            <field name="fund_rule_line_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="fund_rule_id" invisible="1"/>
+                                    <field name="expense_group_id"/>
+                                    <field name="account_ids" widget="many2many_tags"/>
+                                    <field name="activity_ids" widget="many2many_tags"/>
+                                    <field name="max_spending_percent"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
                 </form>
             </field>
         </record>
-        
-        <record id="view_budget_fund_rule_search" model="ir.ui.view">
-            <field name="name">view.budget.fund.rule.search</field>
+
+        <record id="view_budget_fund_rule_template_search" model="ir.ui.view">
+            <field name="name">view.budget.fund.rule.template.search</field>
             <field name="model">budget.fund.rule</field>
             <field name="arch" type="xml">
                 <search string="Fund">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
-            	</search>
+                </search>
             </field>
-        </record>    
-
-        <record id="action_budget_fund_rule" model="ir.actions.act_window">
-            <field name="name">Budget Fund Rule</field>
-            <field name="res_model">budget.fund.rule</field>
-            <field name="view_type">form</field>
-            <field name="view_id" ref="view_budget_fund_rule_tree"/>
-            <field name="domain">[('template','=',False)]</field>
-            <field name="context">{'default_template': False}</field>
         </record>
 
-        <menuitem name="Budget Fund Rule"
-        	id="menu_budget_fund_rule" 
-        	action="action_budget_fund_rule" 
-        	parent="account_budget_activity.menu_action_account_budget_config" 
-        	sequence="140" />
-
         <record id="action_budget_fund_rule_template" model="ir.actions.act_window">
-            <field name="name">Fund Rule Template</field>
+            <field name="name">External Fund Rule Template</field>
             <field name="res_model">budget.fund.rule</field>
             <field name="view_type">form</field>
-            <field name="view_id" ref="view_budget_fund_rule_template_tree"/>
+            <field name="search_view_id" ref="view_budget_fund_rule_template_search"/>
             <field name="domain">[('template','=',True)]</field>
             <field name="context">{'default_template': True}</field>
         </record>
 
-        <menuitem name="Fund Rule Template"
-        	id="menu_budget_fund_rule_template" 
-        	action="action_budget_fund_rule_template" 
-        	parent="account_budget_activity.menu_action_account_budget_config" 
-        	sequence="141" />
-        	
-	</data>
+        <record model="ir.actions.act_window.view" id="action_budget_fund_rule_template_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_budget_fund_rule_template_tree"/>
+            <field name="act_window_id" ref="action_budget_fund_rule_template"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_budget_fund_rule_template_form">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_budget_fund_rule_template_form"/>
+            <field name="act_window_id" ref="action_budget_fund_rule_template"/>
+        </record>
+
+        <menuitem name="Fund Template" id="menu_budget_fund_rule_template" action="action_budget_fund_rule_template" parent="menu_budget_external_fund_rule" sequence="20"/>
+
+        # Expense Group
+        <record id="view_budget_fund_expense_group_tree" model="ir.ui.view">
+            <field name="name">view.budget.fund.expense.group.tree</field>
+            <field name="model">budget.fund.expense.group</field>
+            <field name="arch" type="xml">
+                <tree string="Expense Group">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_fund_expense_group_form" model="ir.ui.view">
+            <field name="name">view.budget.fund.expense.group.form</field>
+            <field name="model">budget.fund.expense.group</field>
+            <field name="arch" type="xml">
+                <form string="Expense Group">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group></group>
+                        <group></group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_budget_fund_expense_group_search" model="ir.ui.view">
+            <field name="name">view.budget.fund.expense.group.search</field>
+            <field name="model">budget.fund.expense.group</field>
+            <field name="arch" type="xml">
+                <search string="Fund">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_budget_fund_expense_group" model="ir.actions.act_window">
+            <field name="name">Expense Group</field>
+            <field name="res_model">budget.fund.expense.group</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_budget_fund_expense_group_tree"/>
+        </record>
+
+        <menuitem name="Expense Group" id="menu_budget_fund_expense_group" action="action_budget_fund_expense_group" parent="menu_budget_external_fund_rule" sequence="30"/>
+
+    </data>
 </openerp>

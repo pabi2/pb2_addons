@@ -7,6 +7,12 @@ class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
     @api.multi
+    def action_date_assign(self):
+        res = super(AccountInvoice, self).action_date_assign()
+        self._invoice_budget_check()
+        return res
+
+    @api.multi
     def _invoice_budget_check(self):
         Budget = self.env['account.budget']
         for invoice in self:
