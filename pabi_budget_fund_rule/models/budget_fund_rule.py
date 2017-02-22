@@ -318,7 +318,7 @@ class BudgetFundRuleLine(models.Model):
     @api.depends()
     def _compute_amount_consumed(self):
         for rec in self:
-            if not rec.activity_ids or not rec.project_id:
+            if not rec.activity_ids or not rec.project_id or not rec.fund_id:
                 rec.amount_consumed = 0.0
                 continue
             self._cr.execute("""
