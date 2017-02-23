@@ -90,11 +90,6 @@
                             <field name="date_dunning_3"/>
                         </tree>
                     </field>
-                    <footer>
-                        <button string="Execute" name="run_report" type="object" class="oe_highlight"/>
-                        or
-                        <button string="Cancel" class="oe_link" special="cancel"/>
-                    </footer>
                 </form>
             </field>
         </record>
