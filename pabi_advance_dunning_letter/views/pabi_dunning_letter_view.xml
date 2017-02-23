@@ -30,7 +30,6 @@
                     </h1>
                     <group>
                         <group>
-                            <field name="type"/>
                             <field name="date_print" attrs="{'invisible': [('type', '!=', 'print_email')]}"/>
                             <field name="employee_id" attrs="{'invisible': [('type', '!=', 'view_history')],
                                                              'required': [('type', '=', 'view_history')]}"/>

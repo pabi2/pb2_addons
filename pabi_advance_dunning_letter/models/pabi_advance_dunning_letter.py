@@ -25,13 +25,6 @@ class PABIAdvanceDunningLetter(models.Model):
         default=lambda self: fields.Date.context_today(self),
         readonly=True,
     )
-    type = fields.Selection(
-        [('print_email', 'Print/Email'),
-         ('view_history', 'View History')],
-        string='Type',
-        required=True,
-        default='print_email',
-    )
     employee_id = fields.Many2one(
         'hr.employee',
         string='Employee',
