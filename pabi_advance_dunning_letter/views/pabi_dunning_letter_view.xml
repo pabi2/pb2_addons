@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <record id="view_pabi_dunning_letter_tree" model="ir.ui.view">
+          <field name="name">view.pabi.dunning.letter.tree</field>
+          <field name="model">pabi.dunning.letter.wizard</field>
+          <field name="arch" type="xml">
+              <tree string="Print Dunning Letter">
+                  <field name="date_print"/>
+              </tree>
+          </field>
+      </record>
+
+        <record id="view_pabi_dunning_letter_form" model="ir.ui.view">
+            <field name="name">Print Dunning Letter</field>
+            <field name="model">pabi.dunning.letter.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Print Dunning Letter">
+                    <group>
+                        <group>
+                            <field name="type"/>
+                            <field name="date_print" attrs="{'invisible': [('type', '!=', 'print_email')]}"/>
+                            <field name="employee_id" attrs="{'invisible': [('type', '!=', 'view_history')],
+                                                             'required': [('type', '=', 'view_history')]}"/>
+                            <field name="date_due_from" attrs="{'invisible': [('type', '!=', 'view_history')],
+                                                             'required': [('type', '=', 'view_history')]}"/>
+                            <field name="date_due_to" attrs="{'invisible': [('type', '!=', 'view_history')],
+                                                             'required': [('type', '=', 'view_history')]}"/>
+                        </group>
+                        <group>
+                            <field name="print_pdf"/>
+                            <field name="send_email"/>
+                            <field name="group_email"/>
+                            <button name="run_report" string="Email &amp; Print" type="object" class="oe_highlight"/>
+                        </group>
+                    </group>
+                    <separator string="10 days to due date"/>
+                    <field name="dunning_list_1" nolabel="1">
+                        <tree editable="bottom" create="0" delete="0">
+                            <field name="select"/>
+                            <field name="expense_id"/>
+                            <field name="date_due"/>
+                            <field name="employee_id"/>
+                            <field name="amount_to_clearing"/>
+                            <field name="description"/>
+                            <field name="send_email" invisible="True"/>
+                            <field name="to_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="cc_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="date_dunning_1"/>
+                        </tree>
+                    </field>
+                    <separator string="5 days to due date"/>
+                    <field name="dunning_list_2" nolabel="1">
+                        <tree editable="bottom" create="0" delete="0">
+                            <field name="select"/>
+                            <field name="expense_id"/>
+                            <field name="date_due"/>
+                            <field name="employee_id"/>
+                            <field name="amount_to_clearing"/>
+                            <field name="description"/>
+                            <field name="send_email" invisible="True"/>
+                            <field name="to_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="cc_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="date_dunning_2"/>
+                        </tree>
+                    </field>
+                    <separator string="On due date"/>
+                    <field name="dunning_list_3" nolabel="1">
+                        <tree editable="bottom" create="0" delete="0">
+                            <field name="select"/>
+                            <field name="expense_id"/>
+                            <field name="date_due"/>
+                            <field name="employee_id"/>
+                            <field name="amount_to_clearing"/>
+                            <field name="description"/>
+                            <field name="send_email" invisible="True"/>
+                            <field name="to_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="cc_employee_ids" attrs="{'readonly':[('send_email', '=', False)]}" widget="many2many_tags"/>
+                            <field name="date_dunning_3"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Execute" name="run_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_dunning_letter" model="ir.actions.act_window">
+            <field name="name">Print Dunning Letter</field>
+            <field name="res_model">pabi.dunning.letter.wizard</field>
+            <field name="view_type">form</field>
+            <!-- <field name="search_view_id" ref="view_budget_fund_rule_template_search"/> -->
+            <!-- <field name="domain">[('template','=',True)]</field>
+            <field name="context">{'default_template': True}</field> -->
+        </record>
+
+
+        <menuitem id="menu_pabi_dunning_letter" action="action_pabi_dunning_letter" groups="" parent="hr.menu_hr_report" sequence="10"/>
+
+    </data>
+</openerp>

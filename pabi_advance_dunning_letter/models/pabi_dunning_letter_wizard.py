@@ -190,13 +190,15 @@ class PABIDunnintLetterWizard(models.Model):
         return True
 
 
-class AdvanceDunningLetter(models.TransientModel):
+class AdvanceDunningLetter(models.Model):
     _name = 'advance.dunning.letter'
 
     wizard_id = fields.Many2one(
         'pabi.dunning.letter.wizard',
         string='Wizard',
         readonly=True,
+        index=True,
+        ondelete='cascade',
     )
     select = fields.Boolean(
         string='Select',
