@@ -3,8 +3,8 @@ from openerp import fields, models, api
 from openerp.tools.amount_to_text_en import amount_to_text
 
 
-class PABIDunningLetter(models.Model):
-    _name = 'pabi.dunning.letter'
+class PABIPartnerDunningLetter(models.Model):
+    _name = 'pabi.partner.dunning.letter'
     _rec_name = 'number'
 
     number = fields.Char(
@@ -57,7 +57,7 @@ class PABIDunningLetter(models.Model):
         compute='_compute_amount_total',
     )
     line_ids = fields.One2many(
-        'pabi.dunning.letter.line',
+        'pabi.partner.dunning.letter.line',
         'letter_id',
         string='Dunning Lines'
     )
@@ -84,7 +84,7 @@ class PABIDunningLetter(models.Model):
         for letter in self:
             self._cr.execute("""
                 select sum(amount_residual)
-                from pabi_dunning_letter_line
+                from pabi_partner_dunning_letter_line
                 where letter_id = %s
             """, (letter.id,))
             letter.amount_total = self._cr.fetchone()[0]
@@ -132,11 +132,11 @@ class PABIDunningLetter(models.Model):
                     self._eval_text(company.letter3_signature, letter)
 
 
-class PABIDunningLetterLine(models.Model):
-    _name = 'pabi.dunning.letter.line'
+class PABIPartnerDunningLetterLine(models.Model):
+    _name = 'pabi.partner.dunning.letter.line'
 
     letter_id = fields.Many2one(
-        'pabi.dunning.letter',
+        'pabi.partner.dunning.letter',
         string='Dunning Letter',
         index=True,
         ondelete='cascade',

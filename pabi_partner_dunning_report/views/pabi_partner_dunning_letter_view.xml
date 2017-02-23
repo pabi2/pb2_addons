@@ -3,9 +3,9 @@
 <openerp>
 	<data>
 
-		<record model="ir.ui.view" id="view_pabi_dunning_letter_tree">
-			<field name="name">view.pabi.dunning.letter.tree</field>
-			<field name="model">pabi.dunning.letter</field>
+		<record model="ir.ui.view" id="view_pabi_partner_dunning_letter_tree">
+			<field name="name">view.pabi.partner.dunning.letter.tree</field>
+			<field name="model">pabi.partner.dunning.letter</field>
 			<field name="arch" type="xml">
 				<tree string="Partner Dunning Letter">
 					<field name="partner_id"/>
@@ -19,9 +19,9 @@
 			</field>
 		</record>
 
-		<record model="ir.ui.view" id="view_pabi_dunning_letter_form">
-			<field name="name">view.pabi.dunning.letter.form</field>
-			<field name="model">pabi.dunning.letter</field>
+		<record model="ir.ui.view" id="view_pabi_partner_dunning_letter_form">
+			<field name="name">view.pabi.partner.dunning.letter.form</field>
+			<field name="model">pabi.partner.dunning.letter</field>
 			<field name="arch" type="xml">
 				<form string="Dunning Report">
 					<sheet>
@@ -74,9 +74,9 @@
 			</field>
 		</record>
 
-		<record id="view_pabi_dunning_letter_search" model="ir.ui.view">
-			<field name="name">view.pabi.dunning.letter.search</field>
-			<field name="model">pabi.dunning.letter</field>
+		<record id="view_pabi_partner_dunning_letter_search" model="ir.ui.view">
+			<field name="name">view.pabi.partner.dunning.letter.search</field>
+			<field name="model">pabi.partner.dunning.letter</field>
 			<field name="arch" type="xml">
 				<search string="Dunning Letter">
 					<filter name="today" string="Today" domain="[('date_run','=',time.strftime('%%Y-%%m-%%d'))]"/>
@@ -91,16 +91,16 @@
 			</field>
 		</record>
 
-		<record id="action_pabi_dunning_letter" model="ir.actions.act_window">
+		<record id="action_pabi_partner_dunning_letter" model="ir.actions.act_window">
 			<field name="name">Dunning Letter</field>
 			<field name="type">ir.actions.act_window</field>
-			<field name="res_model">pabi.dunning.letter</field>
+			<field name="res_model">pabi.partner.dunning.letter</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="context">{'search_default_today': 1}</field>
 		</record>
 
-		<menuitem action="action_pabi_dunning_letter" id="menu_pabi_dunning_letter" sequence="20" name="Dunning Letters" parent="menu_pabi_customer_dunning"/>
+		<menuitem action="action_pabi_partner_dunning_letter" id="menu_pabi_partner_dunning_letter" sequence="20" name="Dunning Letters" parent="menu_pabi_customer_dunning"/>
 
 	</data>
 </openerp>
