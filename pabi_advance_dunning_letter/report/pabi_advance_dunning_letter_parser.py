@@ -2,7 +2,7 @@
 from openerp.addons import jasper_reports
 
 
-def advance_dunning_letter_parser(cr, uid, ids, data, context):
+def pabi_advance_dunning_letter_parser(cr, uid, ids, data, context):
     if context.get('email_attachment', False):
         return {
             'ids': ids,
@@ -21,6 +21,6 @@ def advance_dunning_letter_parser(cr, uid, ids, data, context):
 
 jasper_reports.report_jasper(
     'report.advance_dunning_letter',  # report_name in report_data.xml
-    'advance.dunning.letter',  # Model View name
-    parser=advance_dunning_letter_parser,
+    'pabi.advance.dunning.letter.line',  # Model View name
+    parser=pabi_advance_dunning_letter_parser,
 )
