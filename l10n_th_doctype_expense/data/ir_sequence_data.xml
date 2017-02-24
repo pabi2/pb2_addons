@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+      # Employee Expense
+      <record id="doctype_employee_expense_seq" model="ir.sequence">
+          <field name="name">DOCTYPE: Employee Expense</field>
+          <field name="code"></field>
+          <field name="prefix">EX%(fy)s</field>
+          <field eval="6" name="padding"/>
+          <field eval="1" name="number_next"/>
+          <field eval="1" name="number_increment"/>
+          <field name="implementation">standard</field>
+          <field name="special_type">doctype</field>
+      </record>
+
+      # Employee Advance
+      <record id="doctype_employee_advance_seq" model="ir.sequence">
+          <field name="name">DOCTYPE: Employee Advance</field>
+          <field name="code"></field>
+          <field name="prefix">AV%(fy)s</field>
+          <field eval="6" name="padding"/>
+          <field eval="1" name="number_next"/>
+          <field eval="1" name="number_increment"/>
+          <field name="implementation">standard</field>
+          <field name="special_type">doctype</field>
+      </record>
+    </data>
+</openerp>

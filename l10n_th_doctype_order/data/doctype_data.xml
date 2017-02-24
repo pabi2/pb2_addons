@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+        <!-- Order -->
+        <record id="doctype_sale_quotation" model="res.doctype" >
+            <field name="name">Sales Quoation</field>
+            <field name="sequence_id" ref="doctype_sale_quotation_seq"/>
+            <field name="refer_type">sale_quotation</field>
+        </record>
+        <record id="doctype_sale_order" model="res.doctype" >
+            <field name="name">Sales Order</field>
+            <field name="sequence_id" ref="doctype_sale_order_seq"/>
+            <field name="refer_type">sale_order</field>
+        </record>
+        <record id="doctype_purchase_quotation" model="res.doctype" >
+            <field name="name">Purchase Quotation</field>
+            <field name="sequence_id" ref="doctype_purchase_quotation_seq"/>
+            <field name="refer_type">purchase_quotation</field>
+        </record>
+        <record id="doctype_purchase_order" model="res.doctype" >
+            <field name="name">Purchase Order</field>
+            <field name="sequence_id" ref="doctype_purchase_order_seq"/>
+            <field name="refer_type">purchase_order</field>
+        </record>
+    </data>
+</openerp>

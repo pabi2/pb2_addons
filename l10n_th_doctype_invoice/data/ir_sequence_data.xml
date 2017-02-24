@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Customer Invoices
+        <record id="doctype_customer_invoice_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Customer Invoice</field>
+            <field name="code"></field>
+            <field name="prefix">CIV%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Supplier Invoices
+        <record id="doctype_supplier_invoice_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Supplier Invoice</field>
+            <field name="code"></field>
+            <field name="prefix">SIV%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Customer Refund
+        <record id="doctype_customer_refund_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Customer Refund</field>
+            <field name="code"></field>
+            <field name="prefix">CN%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Supplier Refund
+        <record id="doctype_supplier_refund_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Supplier Refund</field>
+            <field name="code"></field>
+            <field name="prefix">SCN%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Customer Debitnote
+        <record id="doctype_customer_debitnote_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Customer Debitnote</field>
+            <field name="code"></field>
+            <field name="prefix">DN%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Supplier Debitnote
+        <record id="doctype_supplier_debitnote_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Supplier Debitnote</field>
+            <field name="code"></field>
+            <field name="prefix">SDN%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+    </data>
+</openerp>

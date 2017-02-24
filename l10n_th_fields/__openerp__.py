@@ -13,7 +13,7 @@
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': ['account_voucher',
-                'account_bank_receipt',
+                # 'account_bank_receipt',
                 'hr',
                 ],
     'demo': [],
