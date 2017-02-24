@@ -25,16 +25,6 @@ class PABIAdvanceDunningLetter(models.Model):
         default=lambda self: fields.Date.context_today(self),
         readonly=True,
     )
-    employee_id = fields.Many2one(
-        'hr.employee',
-        string='Employee',
-    )
-    date_due_from = fields.Date(
-        string='Date Due From',
-    )
-    date_due_to = fields.Date(
-        string='Date Due To',
-    )
     print_pdf = fields.Boolean(
         string='Print as PDF',
         default=True,
@@ -80,6 +70,17 @@ class PABIAdvanceDunningLetter(models.Model):
         index=True,
         copy=False,
         default='draft',
+    )
+    # For search
+    expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Expense',
+        related='dunning_list.expense_id',
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        related='dunning_list.employee_id',
     )
 
     @api.model
