@@ -392,6 +392,7 @@ class AccountVoucher(common_voucher, models.Model):
     def voucher_move_line_tax_create(self, voucher, move_id,
                                      company_currency, current_currency):
         """ New Method for account.voucher.tax """
+        move_obj = self.env['account.move']
         move_line_obj = self.env['account.move.line']
         avt_obj = self.env['account.voucher.tax']
         # one move line per tax line
@@ -403,15 +404,19 @@ class AccountVoucher(common_voucher, models.Model):
                                                       company_currency,
                                                       vtml)
         # Create move line,
-        for ml in vtml:
-            ml.update({'move_id': move_id})
-            move_line_obj.create(ml)
+        lines = [(0, 0, ml) for ml in vtml]
+        move = move_obj.browse(move_id)
+        move.write({'line_id': lines})
+#         for ml in vtml:
+#             ml.update({'move_id': move_id})
+#             move_line_obj.create(ml)
         return net_tax_currency
 
     @api.model
     def voucher_move_line_retention_create(self, voucher, move_id,
                                            company_currency, current_currency):
         """ New Method for Retention """
+        move_obj = self.env['account.move']
         move_line_obj = self.env['account.move.line']
         # one move line per retention line
         vtml = self.move_line_get(voucher)
@@ -419,9 +424,12 @@ class AccountVoucher(common_voucher, models.Model):
         net_retention_currency, vtml = self.compute_net_retention(
             voucher, company_currency, vtml)
         # Create move line,
-        for ml in vtml:
-            ml.update({'move_id': move_id})
-            move_line_obj.create(ml)
+        lines = [(0, 0, ml) for ml in vtml]
+        move = move_obj.browse(move_id)
+        move.write({'line_id': lines})
+#         for ml in vtml:
+#             ml.update({'move_id': move_id})
+#             move_line_obj.create(ml)
         return net_retention_currency
 
     @api.model
