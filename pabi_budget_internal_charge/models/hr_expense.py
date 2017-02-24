@@ -195,6 +195,7 @@ class HRExpense(models.Model):
             rev_move_vals = self._prepare_move(expense, rev_journal, period)
             rev_move = AccountMove.create(rev_move_vals)
             # Credit each expense line
+            rev_move_lines = []
             for line in expense.line_ids:
                 # Find the reference revenue activity for this activity
                 activity, activity_group = \
@@ -219,7 +220,8 @@ class HRExpense(models.Model):
                                                       activity.account_id.id,
                                                       debit=0.0,
                                                       credit=line.total_amount)
-                AccountMoveLine.with_context(ctx).create(rev_cr_vals)
+                rev_move_lines.append((0, 0, rev_cr_vals))
+#                 AccountMoveLine.with_context(ctx).create(rev_cr_vals)
             # Dr: Internal Charge
             account_id = rev_journal.default_debit_account_id.id
             rev_dr_vals = self._prepare_move_line(rev_move,
@@ -229,14 +231,16 @@ class HRExpense(models.Model):
                                                   account_id,
                                                   debit=expense.amount,
                                                   credit=0.0)
-            AccountMoveLine.with_context(ctx).create(rev_dr_vals)
-
+#             AccountMoveLine.with_context(ctx).create(rev_dr_vals)
+            rev_move_lines.append((0, 0, rev_dr_vals))
+            rev_move.with_context(ctx).write({'line_id': rev_move_lines})
             # ============== Create 2nd JE for Expense ==============
             exp_journal = expense.exp_ic_journal_id
             ctx.update({'journal_id': exp_journal.id})
             # move header
             exp_move_vals = self._prepare_move(expense, exp_journal, period)
             exp_move = AccountMove.create(exp_move_vals)
+            exp_move_lines = []
             # Debit each expense line
             for line in expense.line_ids:
                 analytic_account = Analytic.create_matched_analytic(line)
@@ -247,7 +251,8 @@ class HRExpense(models.Model):
                                                       account_id,
                                                       debit=line.total_amount,
                                                       credit=0.0)
-                AccountMoveLine.with_context(ctx).create(exp_dr_vals)
+                exp_move_lines.append((0, 0, exp_dr_vals))
+#                 AccountMoveLine.with_context(ctx).create(exp_dr_vals)
 
             # Cr: Internal Charge (equel to Dr: Internal Charge)
             exp_cr_vals = rev_dr_vals.copy()
@@ -258,7 +263,8 @@ class HRExpense(models.Model):
                 'credit': rev_dr_vals['debit'],
                 'account_id': exp_journal.default_credit_account_id.id
             })
-            AccountMoveLine.with_context(ctx).create(exp_cr_vals)
-
+#             AccountMoveLine.with_context(ctx).create(exp_cr_vals)
+            exp_move_lines.append((0, 0, exp_cr_vals))
+            exp_move.with_context(ctx).write({'line_id': exp_move_lines})
             expense.write({'rev_ic_move_id': rev_move.id,
                            'exp_ic_move_id': exp_move.id})
