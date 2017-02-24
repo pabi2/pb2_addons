@@ -14,7 +14,6 @@
         'payment_export',
     ],
     "data": [
-        'security/ir.model.access.csv',
         # 'translation/ir.translation.csv',  # Error Travis
         'views/res_bank_view.xml',
     ],
