@@ -188,7 +188,7 @@ class PersonalIncomeTaxYearly(models.Model):
             income_tax_year = self.create({
                 'partner_id': partner_id,
                 'calendar_year': calendar_year,
-                })
+            })
         income_tax_year.update_amount()
         return True
 

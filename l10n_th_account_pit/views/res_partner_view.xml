@@ -16,7 +16,7 @@
                     <page name="thai_taxation" position="inside">
                         <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}" string="PIT">
                             <field name="pit_line" nolabel="1" context="{'default_manual': True}">
-                                <tree editable="bottom" string="PIT">
+                                <tree editable="bottom" string="PIT" create="0" delete="0">
                                     <field name="voucher_id" attrs="{'readonly': [('posted', '=', True)]}"/>
                                     <field name="manual" invisible="1"/>
                                     <field name="date"/>
@@ -32,7 +32,7 @@
                             <group></group>
                             <group string="Yearly Summary">
                                 <field name="pit_yearly" nolabel="1">
-                                    <tree editable="bottom" string="PIT">
+                                    <tree editable="bottom" string="PIT" create="0" delete="0">
                                         <field name="calendar_year"/>
                                         <field name="amount_income" sum="Total Income"/>
                                         <field name="amount_wht" sum="Total WHT"/>

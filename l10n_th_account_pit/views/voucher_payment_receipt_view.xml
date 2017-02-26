@@ -19,9 +19,9 @@
                                     <field name="date" invisible="1"/>
                                     <field name="calendar_year" invisible="1"/>
                                     <field name="partner_id"/>
-                                    <field name="amount_income"/>
-                                    <field name="precalc_wht" invisible="1"/>
-                                    <field name="amount_wht"/>
+                                    <field name="amount_income" />
+                                    <field name="precalc_wht" />
+                                    <field name="amount_wht" invisible="1"/>
                                 </tree>
                             </field>
                         </page>
@@ -30,7 +30,7 @@
             </field>
         </record>
 
-        # Customer Payment
+        <!-- # Customer Payment
         <record model="ir.ui.view" id="view_vendor_receipt_form_ext">
             <field name="name">account.voucher.receipt.form</field>
             <field name="model">account.voucher</field>
@@ -45,15 +45,15 @@
                                     <field name="date" invisible="1"/>
                                     <field name="calendar_year" invisible="1"/>
                                     <field name="partner_id"/>
-                                    <field name="amount_income"/>
-                                    <field name="precalc_wht" invisible="1"/>
-                                    <field name="amount_wht"/>
+                                    <field name="amount_income" />
+                                    <field name="precalc_wht" />
+                                    <field name="amount_wht" invisible="1"/>
                                 </tree>
                             </field>
                         </page>
                     </page>
                 </data>
             </field>
-        </record>
+        </record> -->
     </data>
 </openerp>
