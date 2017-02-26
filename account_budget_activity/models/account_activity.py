@@ -214,6 +214,10 @@ class ActivityCommon(object):
         'account.activity',
         string='Activity',
     )
+    product_id = fields.Many2one(  # For _check_activity_product_id
+        'product.product',
+        string='Product',
+    )
 
     @api.model
     def _onchange_focus_field(self, focus_field=False,
@@ -258,4 +262,4 @@ class ActivityCommon(object):
             if 'product_id' in rec and 'activity_id' in rec:
                 if rec.product_id and rec.activity_id:
                     raise ValidationError(
-                        _("Activity/Product can not exist together!"))
+                        _("Activity/Product can not coexist!"))

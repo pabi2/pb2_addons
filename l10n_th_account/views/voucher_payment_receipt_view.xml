@@ -77,9 +77,21 @@
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
                         <attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
                     </xpath>
-                    <xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_acc_id']" position="attributes">
-                        <attribute name="attrs">{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}</attribute>
-                    </xpath>
+                    <!-- Moving Payment Options to header -->
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_amount']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='payment_option']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_acc_id']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='comment']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='analytic_id']" position="replace"/>
+                    <field name="company_id" position="after">
+                        <separator string="Payment Options" colspan="2"/>
+                        <field name="writeoff_amount" widget='monetary' options='{"currency_field": "currency_id"}'/>
+                        <field name="payment_option" required="1"/>
+                        <field name="writeoff_acc_id" attrs="{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}" domain="[('type','=','other')]"/>
+                        <field name="comment" attrs="{'invisible':[('payment_option','!=','with_writeoff')]}"/>
+                        <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                    </field>
+                    <!-- Tax -->
                     <page string="Payment Information" position="after">
                         <page string="Tax">
 
@@ -118,8 +130,7 @@
                             context="{'recognize_vat': True}"
                             attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'posted'), ('auto_recognize_vat', '=', True),
                    						('recognize_vat_move_id', '!=', False), ('tax_line_normal', '=', [])]}"/>
-                        <button name="%(action_print_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight"
-                            attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('tax_line_wht', '=', [])]}"/>
+                        <button name="%(action_print_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('tax_line_wht', '=', [])]}"/>
                     </button>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
                         <field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
@@ -143,9 +154,22 @@
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
                         <attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
                     </xpath>
-                    <xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_acc_id']" position="attributes">
-                        <attribute name="attrs">{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}</attribute>
-                    </xpath>
+                    <!-- Moving Payment Options to header -->
+                    <xpath expr="/form/sheet/notebook/page/group//separator[@string='Payment Options']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_amount']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='payment_option']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='writeoff_acc_id']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='comment']" position="replace"/>
+                    <xpath expr="/form/sheet/notebook/page/group//field[@name='analytic_id']" position="replace"/>
+                    <field name="company_id" position="after">
+                        <separator string="Payment Options" colspan="2"/>
+                        <field name="writeoff_amount" widget='monetary' options='{"currency_field": "currency_id"}'/>
+                        <field name="payment_option" required="1"/>
+                        <field name="writeoff_acc_id" attrs="{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff'), ('writeoff_amount','!=',0)]}" domain="[('type','=','other')]"/>
+                        <field name="comment" attrs="{'invisible':[('payment_option','!=','with_writeoff')]}"/>
+                        <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                    </field>
+                    <!-- New Tax tab -->
                     <page string="Payment Information" position="after">
                         <page string="Tax">
 
