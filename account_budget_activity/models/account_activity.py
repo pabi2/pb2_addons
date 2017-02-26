@@ -156,10 +156,10 @@ class AccountActivity(models.Model):
     search_keywords = fields.Text(
         string='Search Keywords',
     )
-    _sql_constraints = [
-        ('activity_uniq', 'unique(name, activity_group_id)',
-         'Activity must be unique per group!'),
-    ]
+    # _sql_constraints = [
+    #     ('activity_uniq', 'unique(name, activity_group_id)',
+    #      'Activity must be unique per group!'),
+    # ]
 
 #     @api.multi
 #     def name_get(self):
