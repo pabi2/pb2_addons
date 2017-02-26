@@ -17,6 +17,7 @@ Thai Tax Report based on Tax Detail table
         'l10n_th_account_tax_detail',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'wizard/tax_report_wizard.xml',
         'report_data.xml',
     ],

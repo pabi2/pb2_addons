@@ -3,6 +3,7 @@ from openerp import fields, models
 
 INCOME_TAX_FORM = [('pnd1', 'PND1'),
                    ('pnd3', 'PND3'),
+                   ('pnd3a', 'PND3a'),
                    ('pnd53', 'PND53')]
 
 
