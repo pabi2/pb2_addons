@@ -28,6 +28,7 @@ PABI2 Extension to l10n_th_doctype for,
     "installable": True,
     "depends": [
         'l10n_th_doctype_base',
+        'l10n_th_doctype_reversal',
         'account_bank_receipt',
         'pabi_purchase_work_acceptance',
         'stock_request',
