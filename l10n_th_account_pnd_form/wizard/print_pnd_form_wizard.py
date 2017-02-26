@@ -9,10 +9,7 @@ class PrintPNDFormWizard(models.TransientModel):
     _name = 'print.pnd.form.wizard'
 
     income_tax_form = fields.Selection(
-        [('pnd1', 'PND1'),
-         ('pnd3', 'PND3'),
-         ('pnd3a', 'PND3a'),
-         ('pnd53', 'PND53')],
+        INCOME_TAX_FORM,
         string='Income Tax Form',
         required=True,
     )
@@ -68,7 +65,7 @@ class PrintPNDFormWizard(models.TransientModel):
             raise ValidationError(_('Selected form not found!'))
         data_dict['income_tax_form'] = self.income_tax_form
         if self.income_tax_form == 'pnd3a':
-            domain = [('fiscalyear_id','=',self.fiscalyear_id.id)]
+            domain = [('fiscalyear_id', '=', self.fiscalyear_id.id)]
             period = 'account.period'
             data_dict['wht_period_ids'] = self.env[period].search(domain).ids
         else:
