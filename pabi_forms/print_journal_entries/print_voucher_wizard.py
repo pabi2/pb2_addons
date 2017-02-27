@@ -23,7 +23,7 @@ DOCTYPE_REPORT_MAP = {'incoming_shipment': False,
                       'sale_order': False}
 
 
-class PrintVoucherWizard(models.Model):
+class PrintVoucherWizard(models.TransientModel):
     _name = 'print.voucher.wizard'
 
     doctype = fields.Selection(

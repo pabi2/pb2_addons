@@ -24,6 +24,7 @@ Expense Related Reports
         # 'pabi_dunning_letter/edi/email_templates_0_days.xml',
         # 'pabi_dunning_letter/edi/email_templates_5_days.xml',
         # 'pabi_dunning_letter/edi/email_templates_10_days.xml',
+        'security/ir.model.access.csv',
         'data/dunning_sequence.xml',
         'data/report_data.xml',
         'views/hr_expense_view.xml',

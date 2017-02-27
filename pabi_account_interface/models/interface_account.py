@@ -34,7 +34,7 @@ class InterfaceAccountEntry(models.Model):
                     'project_id': False,
                     'taxbranch_id': False,
                     'date': u'2017-01-13',
-                    'date_maturity':  u'2017-01-14',
+                    'date_maturity': u'2017-01-14',
                 },
                 {
                     'name': u'Debit Line-1',
@@ -109,7 +109,7 @@ class InterfaceAccountEntry(models.Model):
         data_array = {}
         for table in _table_fields:
             data_array[table] = False
-            data_array[table+'_fields'] = False
+            data_array[table + '_fields'] = False
             if table in fields:
                 i = fields.index(table)
                 data_array[table] = data[i] or ()  # ({'x': 1, 'y': 2}, {})
@@ -117,21 +117,21 @@ class InterfaceAccountEntry(models.Model):
                 del data[i]
                 line_count = max(line_count, len(data_array[table]))
             if data_array[table]:
-                data_array[table+'_fields'] = \
-                    [table+'/'+key for key in data_array[table][0].keys()]
-            fields += data_array[table+'_fields'] or []
+                data_array[table + '_fields'] = \
+                    [table + '/' + key for key in data_array[table][0].keys()]
+            fields += data_array[table + '_fields'] or []
         # Data
         datas = []
         for i in range(0, line_count, 1):
             record = []
             for table in _table_fields:
-                data_array[table+'_data'] = False
-                if data_array[table+'_fields']:
-                    data_array[table+'_data'] = \
+                data_array[table + '_data'] = False
+                if data_array[table + '_fields']:
+                    data_array[table + '_data'] = \
                         (len(data_array[table]) > i and data_array[table][i] or
-                         {key: False for key in data_array[table+'_fields']})
-                record += data_array[table+'_data'] and \
-                    data_array[table+'_data'].values() or []
+                         {key: False for key in data_array[table + '_fields']})
+                record += data_array[table + '_data'] and \
+                    data_array[table + '_data'].values() or []
             if i == 0:
                 datas += [tuple(data + record)]
             else:

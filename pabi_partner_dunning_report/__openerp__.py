@@ -15,6 +15,7 @@
     ],
     'data': [
         # Partner Dunning Report
+        'security/ir.model.access.csv',
         'data/report_data.xml',
         'views/pabi_partner_dunning_report.xml',
         'views/pabi_partner_dunning_letter_view.xml',

@@ -23,9 +23,9 @@ class ResPartner(models.Model):
     customer_category_id = fields.Many2one(
         track_visibility='onchange',
     )
-    tax_ids = fields.Many2many(
-        track_visibility='onchange',
-    )
+    # tax_ids = fields.Many2many(
+    #     track_visibility='onchange',
+    # )  # not exist in res.partner
     name = fields.Char(
         track_visibility='onchange',
     )

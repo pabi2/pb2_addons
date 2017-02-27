@@ -482,7 +482,7 @@ class PurchaseCommitteeType(models.Model):
     )
     code = fields.Char(
         string='Purchase Committee Type Code',
-        required=True,
+        required=False,
     )
     web_method_ids = fields.Many2many(
         string='PRWeb Method',
