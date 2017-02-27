@@ -129,7 +129,7 @@ class BudgetExportWizard(models.TransientModel):
         else:
             lines = budget.plan_revenue_line_ids
 
-        last_row = 10 + self.editable_lines
+        # last_row = 10 + self.editable_lines
         row = 10
         job_order_lines, non_job_order_lines =\
             self._compute_previous_year_amount(budget, budget_method)

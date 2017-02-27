@@ -222,8 +222,7 @@ class BudgetImportWizard(models.TransientModel):
             export_date = Non_JobOrder_Expense.cell(row=4, column=2).value
             if export_date:
                 export_date = datetime.strftime(
-                                datetime.strptime(
-                                    export_date, '%d-%m-%Y'), '%Y-%m-%d')
+                    datetime.strptime(export_date, '%d-%m-%Y'), '%Y-%m-%d')
                 vals.update({'date': export_date})
             responsible_by = Non_JobOrder_Expense.cell(row=5, column=2).value
             responsible_by_id = self.env['res.users'].search(

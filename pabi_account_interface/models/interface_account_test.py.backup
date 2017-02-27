@@ -41,7 +41,7 @@ data_dict = {
             'project_id': False,
             'taxbranch_id': False,
             'date': u'2017-01-13',
-            'date_maturity':  u'2017-01-14',
+            'date_maturity': u'2017-01-14',
         },
         {
             'name': u'Debit Line-1',
@@ -62,7 +62,7 @@ data_dict = {
             'project_id': False,
             'taxbranch_id': u'ศูนย์เทคโนโลยีโลหะและวัสดุแห่งชาติ',
             'date': u'2017-01-13',
-            'date_maturity':  u'',
+            'date_maturity': u'',
         },
         {
             'name': u'Debit Line-2',
@@ -84,7 +84,7 @@ data_dict = {
             'project_id': False,
             'taxbranch_id': False,
             'date': u'2017-01-13',
-            'date_maturity':  u'',
+            'date_maturity': u'',
         }
     ]
 }

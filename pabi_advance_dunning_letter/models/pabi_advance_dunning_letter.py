@@ -130,15 +130,14 @@ class PABIAdvanceDunningLetter(models.Model):
             fields.Date.context_today(self), '%Y-%m-%d').date()
         expense_ids = []
         for due_type in ('3', '2', '1'):  # 3 types of notice,
-            print due_type
-            res['dunning_list_'+due_type] = []
+            res['dunning_list_' + due_type] = []
             date_due = today + relativedelta(days=DUE_TYPE_DAYS[due_type])
             expenses = Expense.search(self._search_domain(due_type, date_due))
             for expense in expenses:
                 if expense.id in expense_ids:  # Send only 1 letter.
                     continue
                 line = self._prepare_line(expense, due_type)
-                res['dunning_list_'+due_type].append(line)
+                res['dunning_list_' + due_type].append(line)
                 expense_ids.append(expense.id)
         return res
 

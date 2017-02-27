@@ -50,12 +50,8 @@ class Attachment(models.Model):
             self._models_check.update(
                 {'invest.asset.plan': 'invest_asset_plan_id'})
         self._create_plan_template(
-            cr, SUPERUSER_ID,
-            type='plan_unit_based',
-            filename='BudgetPlan_UnitBased.xlsx'
-        )
+            cr, SUPERUSER_ID, 'plan_unit_based',
+            'BudgetPlan_UnitBased.xlsx')
         self._create_plan_template(
-            cr, SUPERUSER_ID,
-            type='plan_invest_asset_plan',
-            filename='BudgetPlan_InvestmentAssetItem.xlsx'
-        )
+            cr, SUPERUSER_ID, 'plan_invest_asset_plan',
+            'BudgetPlan_InvestmentAssetItem.xlsx')
