@@ -4,7 +4,6 @@ import os
 import xlrd
 import unicodecsv
 from datetime import datetime
-import time
 
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
