@@ -18,10 +18,6 @@ class PABIBankStatement(models.Model):
         default='/',
         required=True,
     )
-    import_file = fields.Binary(
-        string='Import File (*.csv)',
-        copy=False,
-    )
     import_file_xls = fields.Binary(
         string='Import File (*.xls)',
         copy=False,
@@ -283,34 +279,6 @@ class PABIBankStatement(models.Model):
             if not file_txt:
                 continue
             Import = self.env['base_import.import']
-            file_txt = self._add_statement_id_column(rec.id, file_txt)
-            imp = Import.create({
-                'res_model': 'pabi.bank.statement.import',
-                'file': file_txt,
-            })
-            [errors] = imp.do(
-                _TEMPLATE_FIELDS,
-                {'headers': True, 'separator': ',',
-                 'quoting': '"', 'encoding': 'utf-8'})
-            if errors:
-                rec.import_error = str(errors)
-
-    @api.multi
-    def action_import_csv(self):
-        _TEMPLATE_FIELDS = ['statement_id/.id',
-                            'document',
-                            'cheque_number',
-                            'description',
-                            'debit', 'credit',
-                            'date_value',
-                            'batch_code']
-        for rec in self:
-            rec.import_ids.unlink()
-            rec.import_error = False
-            if not rec.import_file:
-                continue
-            Import = self.env['base_import.import']
-            file_txt = base64.decodestring(rec.import_file)
             file_txt = self._add_statement_id_column(rec.id, file_txt)
             imp = Import.create({
                 'res_model': 'pabi.bank.statement.import',
