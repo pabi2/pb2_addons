@@ -27,11 +27,15 @@ def _extend_name_results_translation(self, domain, field_name,
     if result_count < limit:
         domain += [('id', 'not in', [x[0] for x in results])]
         trans_name = '%s,%s' % (self._model, field_name)
-        translation_ids =\
-            self.env['ir.translation'].search([('value', 'ilike', name),
-                                               ('name', '=', trans_name)],
-                                              limit=limit)
-        record_ids = [t.res_id for t in translation_ids]
+        self._cr.execute("""
+            SELECT res_id
+            FROM ir_translation
+            WHERE value ilike '%s'AND
+                name = '%s'
+            LIMIT %d
+        """% (name, trans_name, limit))
+        res = self._cr.dictfetchall()
+        record_ids = [t['res_id'] for t in res]
         record_ids = self.browse(record_ids)
         results.extend(record_ids.name_get())
         results = list(set(results))
