@@ -111,11 +111,38 @@ class AccountVoucher(common_voucher, models.Model):
         string='Auto recognize undue VAT',
         readonly=True,
     )
+    writeoff_amount = fields.Float(
+        compute='_get_writeoff_amount',
+        string='Difference Amount',
+        readonly=True,
+        help="Computed as the difference between the amount stated in the "
+        "voucher and the sum of allocation on the voucher lines.",
+    )
     _sql_constraints = [
         ('wht_seq_uunique',
          'unique (wht_period_id, wht_sequence, income_tax_form)',
          'WHT Sequence must be unique!'),
     ]
+
+    @api.model
+    def _calc_writeoff_amount(self, voucher):
+        debit, credit = 0.0, 0.0
+        sign = voucher.type == 'payment' and -1 or 1
+        for l in voucher.line_dr_ids:
+            debit += l.amount + \
+                l.amount_wht + l.amount_retention  # Fixed here
+        for l in voucher.line_cr_ids:
+            credit += l.amount + \
+                l.amount_wht + l.amount_retention  # Fixed here
+        currency = voucher.currency_id or voucher.company_id.currency_id
+        return currency.round(voucher.amount - sign * (credit - debit))
+
+    @api.multi
+    @api.depends('amount', 'line_cr_ids', 'line_dr_ids')
+    def _get_writeoff_amount(self):
+        """ Overwrite """
+        for voucher in self:
+            voucher.writeoff_amount = self._calc_writeoff_amount(voucher)
 
     @api.multi
     @api.depends('wht_sequence')
@@ -393,7 +420,6 @@ class AccountVoucher(common_voucher, models.Model):
                                      company_currency, current_currency):
         """ New Method for account.voucher.tax """
         move_obj = self.env['account.move']
-        move_line_obj = self.env['account.move.line']
         avt_obj = self.env['account.voucher.tax']
         # one move line per tax line
         vtml = avt_obj.move_line_get(voucher)
@@ -417,7 +443,6 @@ class AccountVoucher(common_voucher, models.Model):
                                            company_currency, current_currency):
         """ New Method for Retention """
         move_obj = self.env['account.move']
-        move_line_obj = self.env['account.move.line']
         # one move line per retention line
         vtml = self.move_line_get(voucher)
         # create gain/loss from currency between invoice and voucher
