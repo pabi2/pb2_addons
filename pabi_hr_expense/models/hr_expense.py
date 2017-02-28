@@ -341,8 +341,19 @@ class HRExpenseClearing(models.Model):
     validate_user_id = fields.Many2one(
         'res.users',
         string='Validated by',
-        # related='invoice_id.validate_user_id',
     )
+
+    def _sql_select_1(self):
+        sql_select = super(HRExpenseClearing, self)._sql_select_1()
+        return sql_select + ', null as validate_user_id'
+
+    def _sql_select_2(self):
+        sql_select = super(HRExpenseClearing, self)._sql_select_2()
+        return sql_select + ', validate_user_id'
+
+    def _sql_select_3(self):
+        sql_select = super(HRExpenseClearing, self)._sql_select_3()
+        return sql_select + ', ai.validate_user_id'
 
 
 class HRExpenseRule(models.Model):
