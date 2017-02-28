@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 import base64
+import os
+import xlrd
+import unicodecsv
+from datetime import datetime
+import time
+
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 
@@ -15,6 +21,10 @@ class PABIBankStatement(models.Model):
     )
     import_file = fields.Binary(
         string='Import File (*.csv)',
+        copy=False,
+    )
+    import_file_xls = fields.Binary(
+        string='Import File (*.xls)',
         copy=False,
     )
     report_type = fields.Selection(
@@ -230,6 +240,61 @@ class PABIBankStatement(models.Model):
             i += 1
         file_txt = '\n'.join(txt_lines)
         return file_txt
+
+    @api.multi
+    def action_import_xls(self):
+        _TEMPLATE_FIELDS = ['statement_id/.id',
+                            'document',
+                            'cheque_number',
+                            'description',
+                            'debit', 'credit',
+                            'date_value',
+                            'batch_code']
+        for rec in self:
+            rec.import_ids.unlink()
+            rec.import_error = False
+            decoded_data = base64.decodestring(rec.import_file_xls)
+            randms = datetime.utcnow().strftime('%H%M%S%f')[:-3]
+            f = open('temp' + randms + '.xls', 'wb+')
+            f.write(decoded_data)
+            f.seek(0)
+            f.close()
+            wb = xlrd.open_workbook(f.name)
+            st = wb.sheet_by_index(0)
+            csv_file = open('temp' + randms + '.csv', 'wb')
+            csv_out = unicodecsv.writer(csv_file,
+                                        encoding='utf-8',
+                                        quoting=unicodecsv.QUOTE_ALL)
+            for rownum in xrange(st.nrows):
+                if rownum > 0:
+                    row_values = st.row_values(rownum)
+                    if st.cell(rownum, 5).value:
+                        str_date = datetime.fromtimestamp(
+                            st.cell(rownum, 5).value / 1e3).strftime("%Y-%m-%d")
+                        row_values[5] = str_date
+                    csv_out.writerow(row_values)
+                else:
+                    csv_out.writerow(st.row_values(rownum))
+            csv_file.close()
+            csv_file = open('temp' + randms + '.csv', 'r')
+            file_txt = csv_file.read()
+            csv_file.close()
+            os.unlink('temp' + randms + '.xls')
+            os.unlink('temp' + randms + '.csv')
+            if not file_txt:
+                continue
+            Import = self.env['base_import.import']
+            file_txt = self._add_statement_id_column(rec.id, file_txt)
+            imp = Import.create({
+                'res_model': 'pabi.bank.statement.import',
+                'file': file_txt,
+            })
+            [errors] = imp.do(
+                _TEMPLATE_FIELDS,
+                {'headers': True, 'separator': ',',
+                 'quoting': '"', 'encoding': 'utf-8'})
+            if errors:
+                rec.import_error = str(errors)
 
     @api.multi
     def action_import_csv(self):
