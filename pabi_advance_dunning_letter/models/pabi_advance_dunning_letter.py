@@ -160,12 +160,14 @@ class PABIAdvanceDunningLetter(models.Model):
         list_2.mapped('expense_id').write({'date_dunning_2': today})
         list_3.mapped('expense_id').write({'date_dunning_3': today})
 
-        self.write({'state': 'done'})
-
         # Email
         # Send dunning letter by email to each of selected employees
         # if self.send_email:
         #     self._send_dunning_letter_by_mail()
+
+        self.write({'state': 'done',
+                    'send_email': False,
+                    })
 
         # Print PDF
         if not self.print_pdf:

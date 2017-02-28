@@ -18,7 +18,7 @@
             <field name="name">view.pabi.advance.dunning.letter.tree</field>
             <field name="model">pabi.advance.dunning.letter</field>
             <field name="arch" type="xml">
-                <tree string="Print Dunning Letter">
+                <tree string="Advance Dunning Letter">
                     <field name="name"/>
                     <field name="date_print"/>
                 </tree>
@@ -26,12 +26,14 @@
         </record>
 
         <record id="view_pabi_advance_dunning_letter_form" model="ir.ui.view">
-            <field name="name">Print Dunning Letter</field>
+            <field name="name">Advance Dunning Letter</field>
             <field name="model">pabi.advance.dunning.letter</field>
             <field name="arch" type="xml">
-                <form string="Print Dunning Letter">
+                <form string="Advance Dunning Letter">
                     <header>
-                        <button name="run_report" string="Email &amp; Print" type="object" class="oe_highlight oe_inline"/>
+                        <button name="run_report" string="Email &amp; Print" type="object" class="oe_highlight oe_inline" attrs="{'invisible': ['|', ('send_email', '!=', True), ('print_pdf', '!=', True)]}"/>
+                        <button name="run_report" string="Print" type="object" class="oe_highlight oe_inline" attrs="{'invisible': ['|', '&amp;', ('send_email', '=', True), ('print_pdf', '!=', True), '&amp;', ('send_email', '=', True), ('print_pdf', '=', True)]}"/>
+                        <button name="run_report" string="Email" type="object" class="oe_highlight oe_inline" attrs="{'invisible': ['|', '&amp;', ('send_email', '!=', True), ('print_pdf', '=', True), '&amp;', ('send_email', '=', True), ('print_pdf', '=', True)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <div class="oe_button_box oe_right"></div>
@@ -99,7 +101,7 @@
         </record>
 
         <record id="action_pabi_advance_dunning_letter" model="ir.actions.act_window">
-            <field name="name">Print Dunning Letter</field>
+            <field name="name">Advance Dunning Letter</field>
             <field name="res_model">pabi.advance.dunning.letter</field>
             <field name="view_type">form</field>
             <!-- <field name="search_view_id" ref="view_budget_fund_rule_template_search"/> -->
