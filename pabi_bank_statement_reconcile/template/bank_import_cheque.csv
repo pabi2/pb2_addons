@@ -1,3 +1,3 @@
-document,cheque_number,description,debit,credit,date_value,trans_code
-,"003","xxx",435,,2016-01-01,"TRF"
-,"004","xxxx",300,,2016-01-01,"TRF"
+document,cheque_number,description,debit,credit,date_value,batch_code
+,"002","xxx",400,,2016-01-01,"XXX"
+,"003","xxxx",300,,2016-01-01,"YYY"

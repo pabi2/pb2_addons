@@ -209,7 +209,7 @@ class AccountVoucher(models.Model):
         if action_id:
             action = action_id.read([])[0]
             action['domain'] =\
-                "[('id','in', ["+','.join(map(str, invoice_ids))+"])]"
+                "[('id','in', [" + ','.join(map(str, invoice_ids)) + "])]"
             return action
         return True
 

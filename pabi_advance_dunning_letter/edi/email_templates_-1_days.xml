@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data noupdate="1">
+
+        <!--Email template -->
+        <record id="email_template_edi_past_due_days" model="email.template">
+            <field name="name">Expense clearning - Past Due Reminder</field>
+            <field name="email_from">${(object.company_id.email or 'noreply@localhost')|safe}</field>
+            <field name="subject">เรื่อง จดหมายแจ้งวันครบกําหนดเงินยืมเลยกําหนด</field>
+            <field name="partner_to"></field>
+            <field name="email_to"></field>
+            <field name="model_id" ref="pabi_hr_expense.model_hr_expense_expense"/>
+            <field name="report_template" ref="pabi_hr_expense_report.pabi_dunning_letter"/>
+            <field name="report_name">Dunning Letter</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
+    <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} </span> <span style="float: right;">รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
+    <p style="text-indent: 25px;">
+        ตามที่ท่าน ได้ยืมเงินทดรองจ่ายตามสัญญาเพื่อใช้ในการปฏิบัติงาน ซึ่งขณะนี้ถึงวันที่ครบกาหนดหักล้างเงินยืม ฝ่ายการเงินและบัญชีได้มีการออกจดหมายแจ้งเตือนก่อนวันครบกำหนดการสะสางเงินยืมทดรองจ่าย 2 ครั้งแล้ว
+    </p>
+    <p>จำนวนของจำนวนเงินกู้เป็น - ${object.amount_to_clearing}</p>
+    <p style="text-indent: 25px;">
+        จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ เพื่อหักล้างเงินยืม ของท่านโดยด่วน
+    </p>
+    <p style="text-indent: 25px;">
+        กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันที่ในเอกสาร หรือ Email นี้แล้วฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้
+    </p>
+    <p>
+        <div style="text-align: right;">ฝ่ายการเงินและบัญชี สวทช.</div>
+    </p>
+</div>
+            ]]></field>
+        </record>
+    </data>
+</openerp>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-	   view_vendor_payment_form
+
         <record id="view_vendor_receipt_dialog_form" model="ir.ui.view">
             <field name="name">view.vendor.receipt.dialog.form</field>
             <field name="model">account.voucher</field>

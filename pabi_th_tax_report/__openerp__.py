@@ -13,6 +13,7 @@ Add taxbranch criteria
     'license': 'AGPL-3',
     "depends": [
         'l10n_th_tax_report',
+        'pabi_account',
     ],
     "data": [
         'wizard/tax_report_wizard.xml',

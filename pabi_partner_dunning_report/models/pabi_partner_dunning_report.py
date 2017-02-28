@@ -144,7 +144,7 @@ class PABIPartnerDunningReport(models.Model):
                 select move_line_id, l1, l2, l3
                 from crosstab('
                 select move_line_id, letter_type, date_run
-                from pabi_dunning_letter_line order by 1, 2
+                from pabi_partner_dunning_letter_line order by 1, 2
                 ') AS final_result(
                     move_line_id integer, l1 date, l2 date, l3 date)
             )as letter on letter.move_line_id = aml.id
@@ -191,7 +191,7 @@ class PABIPartnerDunningReport(models.Model):
                               'to_whom_title': self._new_title(partner.title),
                               'line_ids': dunning_lines,
                               }
-            self.env['pabi.dunning.letter'].create(dunning_letter)
+            self.env['pabi.partner.dunning.letter'].create(dunning_letter)
 
 
 class PABIPartnerDunningPrintHistory(models.Model):

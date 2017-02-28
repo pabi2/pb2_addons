@@ -149,7 +149,7 @@ class PurchaseOrder(models.Model):
             Contract = self.env['purchase.contract']
             contract = Contract.search(
                 [('id', 'in', self.requisition_id.contract_ids.ids),
-                 ('state','=','S')], order='poc_rev desc', limit=1)
+                 ('state', '=', 'S')], order='poc_rev desc', limit=1)
             if contract:
                 self.contract_id = contract.id
 
@@ -482,7 +482,7 @@ class PurchaseCommitteeType(models.Model):
     )
     code = fields.Char(
         string='Purchase Committee Type Code',
-        required=True,
+        required=False,
     )
     web_method_ids = fields.Many2many(
         string='PRWeb Method',

@@ -23,6 +23,17 @@
             <field name="implementation">standard</field>
             <field name="special_type">doctype</field>
         </record>
+        # Work Acceptance
+        <record id="doctype_work_acceptance_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Work Acceptance</field>
+            <field name="code"></field>
+            <field name="prefix">WA%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
         # Approval Report
         <record id="doctype_approval_report_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Approval Report</field>

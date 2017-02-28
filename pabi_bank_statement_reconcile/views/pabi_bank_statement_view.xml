@@ -35,7 +35,7 @@
                     <group>
                         <group string="Filtered By">
                             <field name="doctype"/>
-                            <field name="no_cancel_doc"/>
+                            <field name="no_cancel_doc" attrs="{'invisible': [('doctype', '=', False)]}"/>
                             <field name="payment_type"/>
                             <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')]}"/>
                             <field name="journal_id"/>

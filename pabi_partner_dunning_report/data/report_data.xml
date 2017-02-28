@@ -7,11 +7,11 @@
 				<record id="pabi_customer_dunning_letter" model="ir.actions.report.xml">
 					<field name="string">Customer Dunning Letter (TH)</field>
 					<field name="auto">True</field>
-					<field name="model">pabi.dunning.letter</field>
-					<field name="jasper_model_id" ref="pabi_partner_dunning_report.model_pabi_dunning_letter"/>
+					<field name="model">pabi.partner.dunning.letter</field>
+					<field name="jasper_model_id" ref="pabi_partner_dunning_report.model_pabi_partner_dunning_letter"/>
 					<field name="name">Customer Dunning Letter (TH)</field>
 					<field name="report_name">pabi_customer_dunning_letter</field>
-					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter.jrxml</field>
+					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter_th.jrxml</field>
 					<field name="menu">True</field>
 					<field name="header">False</field>
 					<field name="jasper_report">True</field>
@@ -22,7 +22,7 @@
 
 				<record id="pabi_customer_dunning_letter_values" model="ir.values">
 					<field name="name">Customer Dunning Letter (TH)</field>
-					<field name="model">pabi.dunning.letter</field>
+					<field name="model">pabi.partner.dunning.letter</field>
 					<field name="key2" eval="'client_print_multi'"/>
 					<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_customer_dunning_letter)"/>
 				</record>
@@ -30,11 +30,11 @@
 				<record id="pabi_customer_dunning_letter_en" model="ir.actions.report.xml">
 					<field name="string">Customer Dunning Letter (EN)</field>
 					<field name="auto">True</field>
-					<field name="model">pabi.dunning.letter</field>
-					<field name="jasper_model_id" ref="pabi_partner_dunning_report.model_pabi_dunning_letter"/>
+					<field name="model">pabi.partner.dunning.letter</field>
+					<field name="jasper_model_id" ref="pabi_partner_dunning_report.model_pabi_partner_dunning_letter"/>
 					<field name="name">Customer Dunning Letter (EN)</field>
 					<field name="report_name">pabi_customer_dunning_letter_en</field>
-					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter.jrxml</field>
+					<field name="report_rml">pabi_partner_dunning_report/report/pabi_customer_dunning_letter_en.jrxml</field>
 					<field name="menu">True</field>
 					<field name="header">False</field>
 					<field name="jasper_report">True</field>
@@ -45,7 +45,7 @@
 
 				<record id="pabi_customer_dunning_letter_en_values" model="ir.values">
 					<field name="name">Customer Dunning Letter (EN)</field>
-					<field name="model">pabi.dunning.letter</field>
+					<field name="model">pabi.partner.dunning.letter</field>
 					<field name="key2" eval="'client_print_multi'"/>
 					<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_customer_dunning_letter_en)"/>
 				</record>

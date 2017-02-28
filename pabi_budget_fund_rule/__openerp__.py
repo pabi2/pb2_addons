@@ -24,6 +24,7 @@ For example,
         "pabi_budget_monitor",
     ],
     "data": [
+        "data/fund_rule_data.xml",
         "data/budget_fund_rule_sequence.xml",
         "security/ir.model.access.csv",
         "views/budget_fund_rule_view.xml",

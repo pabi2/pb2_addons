@@ -10,6 +10,18 @@ class ResCompany(models.Model):
         'config_id',
         string='Prefix Mapping',
     )
+    letter1_subject = fields.Char(
+        string='Letter 1 Subject',
+        translate=True,
+    )
+    letter2_subject = fields.Char(
+        string='Letter 2 Subject',
+        translate=True,
+    )
+    letter3_subject = fields.Char(
+        string='Letter 3 Subject',
+        translate=True,
+    )
     letter1_header = fields.Text(
         string='Letter 1 Header',
         translate=True,
