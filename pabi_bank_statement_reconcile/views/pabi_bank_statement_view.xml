@@ -11,7 +11,7 @@
                 <form string="Bank Statement" class="oe_form_configuration">
                     <div class="oe_button_box oe_right">
                         <button name="action_get_statement" string="Get Statement" type="object" class="oe_inline"/>
-                        <button name="action_import_xls" string="Import Data" type="object" class="oe_inline" attrs="{'invisible': [('import_file_xls', '=', False)]}"/>
+                        <button name="action_import_xls" string="Import Data" type="object" class="oe_inline" attrs="{'invisible': [('import_file', '=', False)]}"/>
                         <button name="action_reconcile" string="Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('import_ids', '=', [])]}"/>
                     </div>
                     <div class="oe_title">
@@ -28,7 +28,7 @@
                         </group>
                         <group>
                             <field name="date_report"/>
-                            <field name="import_file_xls"/>
+                            <field name="import_file"/>
                         </group>
                     </group>
                     <group>

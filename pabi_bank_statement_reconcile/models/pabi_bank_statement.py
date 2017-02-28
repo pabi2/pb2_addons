@@ -18,7 +18,7 @@ class PABIBankStatement(models.Model):
         default='/',
         required=True,
     )
-    import_file_xls = fields.Binary(
+    import_file = fields.Binary(
         string='Import File (*.xls)',
         copy=False,
     )
@@ -238,17 +238,11 @@ class PABIBankStatement(models.Model):
 
     @api.multi
     def action_import_xls(self):
-        _TEMPLATE_FIELDS = ['statement_id/.id',
-                            'document',
-                            'cheque_number',
-                            'description',
-                            'debit', 'credit',
-                            'date_value',
-                            'batch_code']
+        data = {}
         for rec in self:
             rec.import_ids.unlink()
             rec.import_error = False
-            decoded_data = base64.decodestring(rec.import_file_xls)
+            decoded_data = base64.decodestring(rec.import_file)
             randms = datetime.utcnow().strftime('%H%M%S%f')[:-3]
             f = open('temp' + randms + '.xls', 'wb+')
             f.write(decoded_data)
@@ -278,7 +272,25 @@ class PABIBankStatement(models.Model):
             os.unlink('temp' + randms + '.csv')
             if not file_txt:
                 continue
+            rec.import_file = base64.encodestring(file_txt)
+            rec.action_import_csv()
+
+    @api.multi
+    def action_import_csv(self):
+        _TEMPLATE_FIELDS = ['statement_id/.id',
+                            'document',
+                            'cheque_number',
+                            'description',
+                            'debit', 'credit',
+                            'date_value',
+                            'batch_code']
+        for rec in self:
+            rec.import_ids.unlink()
+            rec.import_error = False
+            if not rec.import_file:
+                continue
             Import = self.env['base_import.import']
+            file_txt = base64.decodestring(rec.import_file)
             file_txt = self._add_statement_id_column(rec.id, file_txt)
             imp = Import.create({
                 'res_model': 'pabi.bank.statement.import',
