@@ -254,16 +254,16 @@ class PABIBankStatement(models.Model):
             csv_out = unicodecsv.writer(csv_file,
                                         encoding='utf-8',
                                         quoting=unicodecsv.QUOTE_ALL)
-            for rownum in xrange(st.nrows):
-                if rownum > 0:
-                    row_values = st.row_values(rownum)
-                    if st.cell(rownum, 5).value:
+            for nrow in xrange(st.nrows):
+                if nrow > 0:
+                    row_values = st.row_values(nrow)
+                    if st.cell(nrow, 5).value:
                         str_date = datetime.fromtimestamp(
-                            st.cell(rownum, 5).value / 1e3).strftime("%Y-%m-%d")
+                            st.cell(nrow, 5).value / 1e3).strftime("%Y-%m-%d")
                         row_values[5] = str_date
                     csv_out.writerow(row_values)
                 else:
-                    csv_out.writerow(st.row_values(rownum))
+                    csv_out.writerow(st.row_values(nrow))
             csv_file.close()
             csv_file = open('temp' + randms + '.csv', 'r')
             file_txt = csv_file.read()
