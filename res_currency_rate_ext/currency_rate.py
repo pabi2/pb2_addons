@@ -77,7 +77,7 @@ class ResCurrencyRate(models.Model):
         if self.currency_id.type == 'smaller':
             self.rate = self.rate_input
         else:
-            self.rate = 1/self.rate_input
+            self.rate = 1 / self.rate_input
 
     rate = fields.Float(
         string='Rate',
