@@ -52,14 +52,14 @@ class THB_getter(Currency_getter_interface):
             # check for valid exchange data
             if (dom.entries[0].cb_basecurrency == main_currency) and \
                     (dom.entries[0].cb_targetcurrency[:3] == curr):
-
-                rate = dom.entries[0].summary_detail.\
-                    value.split('\n', 1)[0].split()[0]
+                value = dom.entries[0].summary_detail.value.split('\n', 1)[0]
+                rate = value.split('\n', 1)[0].split()[0]
+                factor = value.split('=')[1].split()[0]
                 if rate:
-                    rate = float(rate)
+                    rate = float(rate) / float(factor)
                 else:
                     rate = 1.0
-                rate = 1 / rate
+                # rate = 1 / rate
 
                 rate_date_datetime =\
                     datetime.strptime(dom.entries[0].updated, '%Y-%m-%d')

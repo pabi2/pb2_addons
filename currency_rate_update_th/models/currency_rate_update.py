@@ -10,21 +10,25 @@ from ..services.currency_getter import Currency_getter_factory_THB
 import openerp.addons.currency_rate_update.\
     model.currency_rate_update as currency_rate_update
 
+from openerp.api import Environment
+from openerp import SUPERUSER_ID
+
 _logger = logging.getLogger(__name__)
 
 _intervalTypes = {
     'days': lambda interval: relativedelta(days=interval),
-    'weeks': lambda interval: relativedelta(days=7*interval),
+    'weeks': lambda interval: relativedelta(days=7 * interval),
     'months': lambda interval: relativedelta(months=interval),
 }
 
 
 THB_BOT_supported_currency_array = [
- 'USD', 'GBP', 'EUR', 'JPY', 'HKD', 'MYR', 'SGD', 'BND', 'PHP', 'IDR', 'INR',
- 'CHF', 'AUD', 'NZD', 'CAD', 'SEK', 'DKK', 'NOK', 'CNY', 'LKR', 'IQD', 'BHD',
- 'OMR', 'JOD', 'QAR', 'MVR', 'NPR', 'PGK', 'ILS', 'HUF', 'PKR', 'MXN', 'ZAR',
- 'MMK', 'KRW', 'TWD', 'KWD', 'SAR', 'AED', 'BDT', 'CZK', 'KHR', 'KES', 'LAK',
- 'RUB', 'VND', 'EGP', 'PLN',
+    'USD', 'GBP', 'EUR', 'JPY', 'HKD', 'MYR', 'SGD', 'BND', 'PHP',
+    'IDR', 'INR', 'CHF', 'AUD', 'NZD', 'CAD', 'SEK', 'DKK', 'NOK',
+    'CNY', 'LKR', 'IQD', 'BHD', 'OMR', 'JOD', 'QAR', 'MVR', 'NPR',
+    'PGK', 'ILS', 'HUF', 'PKR', 'MXN', 'ZAR', 'MMK', 'KRW', 'TWD',
+    'KWD', 'SAR', 'AED', 'BDT', 'CZK', 'KHR', 'KES', 'LAK', 'RUB',
+    'VND', 'EGP', 'PLN',
 ]
 
 currency_rate_update.supported_currecies['THB_getter'] =\
@@ -42,6 +46,11 @@ class Currency_rate_update_service(models.Model):
         ])
     )
 
+    # Using TH exchange rate, webservice show other currency as bigger rate
+    def init(self, cr):
+        env = Environment(cr, SUPERUSER_ID, {})
+        env['res.currency'].search([]).write({'type': 'bigger'})
+
     @api.one
     def refresh_currency(self):
         """Refresh the currencies rates !!for all companies now"""
@@ -58,16 +67,12 @@ class Currency_rate_update_service(models.Model):
             main_currency = curr_obj.search(
                 [('base', '=', True), ('company_id', '=', company.id)],
                 limit=1)
-
+            if not main_currency:
+                main_currency = curr_obj.search(
+                    [('base', '=', True)], limit=1)
             if main_currency.name != 'THB':
                 return super(Currency_rate_update_service,
                              self).refresh_currency()
-            if not main_currency:
-                # If we can not find a base currency for this company
-                # we look for one with no company set
-                main_currency = curr_obj.search(
-                    [('base', '=', True), ('company_id', '=', False)],
-                    limit=1)
             if not main_currency:
                 raise Warning(_('There is no base currency set!'))
             if main_currency.rate != 1:
@@ -84,7 +89,8 @@ class Currency_rate_update_service(models.Model):
                     curr_to_fetch,
                     main_currency.name,
                     self.max_delta_days
-                    )
+                )
+                print res
                 rate_name = \
                     fields.Datetime.to_string(datetime.utcnow().replace(
                         hour=0, minute=0, second=0, microsecond=0))
@@ -100,7 +106,7 @@ class Currency_rate_update_service(models.Model):
                     if do_create:
                         vals = {
                             'currency_id': curr.id,
-                            'rate': res[curr.name],
+                            'rate_input': res[curr.name],  # with Currency Ext
                             'name': rate_name
                         }
                         rate_obj.create(vals)
