@@ -43,8 +43,14 @@ class common_voucher(object):
 
 
 class AccountVoucher(common_voucher, models.Model):
-
     _inherit = 'account.voucher'
+
+    @api.multi
+    @api.depends('amount', 'line_cr_ids', 'line_dr_ids')
+    def _get_writeoff_amount(self):
+        """ Overwrite """
+        for voucher in self:
+            voucher.writeoff_amount = self._calc_writeoff_amount(voucher)
 
     # Columns
     tax_line = fields.One2many(
@@ -112,7 +118,7 @@ class AccountVoucher(common_voucher, models.Model):
         readonly=True,
     )
     writeoff_amount = fields.Float(
-        compute='_get_writeoff_amount',
+        compute=_get_writeoff_amount,
         string='Difference Amount',
         readonly=True,
         help="Computed as the difference between the amount stated in the "
@@ -136,13 +142,6 @@ class AccountVoucher(common_voucher, models.Model):
                 l.amount_wht + l.amount_retention  # Fixed here
         currency = voucher.currency_id or voucher.company_id.currency_id
         return currency.round(voucher.amount - sign * (credit - debit))
-
-    @api.multi
-    @api.depends('amount', 'line_cr_ids', 'line_dr_ids')
-    def _get_writeoff_amount(self):
-        """ Overwrite """
-        for voucher in self:
-            voucher.writeoff_amount = self._calc_writeoff_amount(voucher)
 
     @api.multi
     @api.depends('wht_sequence')

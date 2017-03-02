@@ -147,6 +147,8 @@ class PersonalIncomeTax(models.Model):
             'posted': True,
             'sequence': self.env['ir.sequence'].next_by_code('pit.sequence')
         })
+        if self.precalc_wht != self.amount_wht:
+            raise UserError(_('Invalid PIT Withholding'))
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',

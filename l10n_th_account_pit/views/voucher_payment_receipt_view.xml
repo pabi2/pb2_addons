@@ -20,7 +20,7 @@
                                     <field name="calendar_year" invisible="1"/>
                                     <field name="partner_id"/>
                                     <field name="amount_income" />
-                                    <field name="precalc_wht" />
+                                    <field name="precalc_wht" string="Withholding Amount"/>
                                     <field name="amount_wht" invisible="1"/>
                                 </tree>
                             </field>
