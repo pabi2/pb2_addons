@@ -177,7 +177,6 @@ class HRExpense(models.Model):
     @api.multi
     def create_internal_charge_move(self):
         AccountMove = self.env['account.move']
-        AccountMoveLine = self.env['account.move.line']
         Analytic = self.env['account.analytic.account']
         Expense = self.env['hr.expense.line']
         Period = self.env['account.period']
