@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_subscription_form" model="ir.ui.view">
+            <field name="name">view.subscription.form</field>
+            <field name="model">account.subscription</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_subscription_form"/>
+            <field name="arch" type="xml">
+                <field name="period_type" position="after">
+                    <field name="consider_month_end" attrs="{'invisible': [('period_type', '=', 'day')]}"/>
+                </field>
+                <field name="ref" position="after">
+                    <field name="type"/>
+                </field>
+                <group position="after">
+                    <group string="Calculation Helper" attrs="{'invisible': [('type', '!=', 'amount')]}">
+                        <group>
+                            <label for="amount"/>
+                            <div>
+                                <field name="amount" class="oe_inline"/>
+                            </div>
+                            <label for="rate_type"/>
+                            <div>
+                                <field name="rate_type" class="oe_inline"/> =
+                                <field name="rate" class="oe_inline" nolabel="1"/>
+                            </div>
+                            <field name="rate_err_message" attrs="{'invisible': [('rate_err_message', '=', False)]}" readonly="1"/>
+                        </group>
+                        <group>
+                            <button name="calculate_amount" type="object" string="Calculate Amount"/>
+                        </group>
+                    </group>
+                </group>
+            </field>
+        </record>
+        <record id="view_subscription_line_form" model="ir.ui.view">
+            <field name="name">view.subscription.line.form</field>
+            <field name="model">account.subscription.line</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_subscription_line_form"/>
+            <field name="arch" type="xml">
+                <field name="date" position="after">
+                    <field name="type" invisible="1"/>
+                    <field name="date_end" required="1"/>
+                    <field name="amount" attrs="{'readonly': [('type', '=', 'standard')]}"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_subscription_line_tree" model="ir.ui.view">
+            <field name="name">view.subscription.line.tree</field>
+            <field name="model">account.subscription.line</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_subscription_line_tree"/>
+            <field name="arch" type="xml">
+                <tree position="attributes">
+                    <attribute name="editable">bottom</attribute>
+                </tree>
+                <field name="date" position="after">
+                    <field name="type" invisible="1"/>
+                    <field name="date_end" required="1"/>
+                    <field name="amount" attrs="{'readonly': [('type', '=', 'standard')]}"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_subscription_line_form_complete" model="ir.ui.view">
+            <field name="name">view.subscription.line.form.complete</field>
+            <field name="model">account.subscription.line</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_subscription_line_form_complete"/>
+            <field name="arch" type="xml">
+                <field name="date" position="after">
+                    <field name="type" invisible="1"/>
+                    <field name="date_end" required="1"/>
+                    <field name="amount" attrs="{'readonly': [('type', '=', 'standard')]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
