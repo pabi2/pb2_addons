@@ -75,7 +75,7 @@ class AccountInvoice(models.Model):
                     'price_subtotal', 'discount',
                     'write_date', 'create_date', 'create_uid', 'write_uid',
                     'sequence', 'invoice_id', 'account_analytic_id',
-                    'partner_id',  'purchase_line_id',
+                    'partner_id', 'purchase_line_id',
                 ]
                 _fields = [f for f, _x in return_line._fields.iteritems()]
                 _copy_fields = list(set(_fields) - set(_no_copy_fields))
