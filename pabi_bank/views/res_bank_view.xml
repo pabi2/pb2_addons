@@ -10,8 +10,8 @@
             <field name="inherit_id" ref="base.view_res_bank_form" />
             <field name="arch" type="xml">
                 <field name="bic" position="before">
-                    <field name="code" />
-                    <field name="abbrev" />
+                    <field name="code" required="1"/>
+                    <field name="abbrev" required="1" />
                 </field>
             </field>
         </record>

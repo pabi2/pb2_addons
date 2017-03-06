@@ -208,8 +208,8 @@ class ResTaxbranch(ResCommon, models.Model):
         string='Print Payment Method',
         translate=True,
     )
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-        required=True,
-    )
+    # org_id = fields.Many2one(
+    #     'res.org',
+    #     string='Org',
+    #     required=True,
+    # )

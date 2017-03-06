@@ -7,11 +7,11 @@ class ResBank(models.Model):
 
     abbrev = fields.Char(
         string='Abbreviation',
-        required=True,
+        required=False,
     )
     code = fields.Char(
         string='Code',
-        required=True,
+        required=False,
     )
 
 

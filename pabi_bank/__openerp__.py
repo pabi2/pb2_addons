@@ -15,6 +15,7 @@
     ],
     "data": [
         # 'translation/ir.translation.csv',  # Error Travis
+        'security/ir.model.access.csv',
         'views/res_bank_view.xml',
     ],
     "application": False,

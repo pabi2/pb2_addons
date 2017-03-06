@@ -21,3 +21,4 @@ access_res_invest_asset,access_res_invest_asset,model_res_invest_asset,,1,0,0,0
 access_res_invest_asset_category,access_res_invest_asset_category,model_res_invest_asset_category,,1,0,0,0
 access_res_invest_construction,access_res_invest_construction,model_res_invest_construction,,1,0,0,0
 access_res_invest_construction_phase,access_res_invest_construction_phase,model_res_invest_construction_phase,,1,0,0,0
+access_res_project_prototype,access_res_project_prototype,model_res_project_prototype,,1,0,0,0
