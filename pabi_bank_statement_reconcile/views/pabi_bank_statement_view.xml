@@ -28,7 +28,8 @@
                         </group>
                         <group>
                             <field name="date_report"/>
-                            <field name="import_file"/>
+                            <field name="import_file_name" invisible="1"/>
+                            <field name="import_file" filename="import_file_name"/>
                         </group>
                     </group>
                     <group>
