@@ -4,7 +4,7 @@ import os
 import xlrd
 import unicodecsv
 from xlrd.sheet import ctype_text 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
@@ -228,16 +228,24 @@ class PABIBankStatement(models.Model):
         return
 
     @api.model
-    def _add_column(self, column_value, file_txt):
+    def _add_column(self, column_name, column_value, file_txt):
         i = 0
         txt_lines = []
         for line in file_txt.split('\n'):
-            if line and i > 0:
+            if line and i == 0:
+                line = '"' + str(column_name) + '",' + line
+            elif line:
                 line = '"' + str(column_value) + '",' + line
             txt_lines.append(line)
             i += 1
         file_txt = '\n'.join(txt_lines)
         return file_txt
+
+    def xldate_to_datetime(self, xldate):
+        tempDate = datetime(1900, 1, 1)
+        deltaDays = timedelta(days=int(xldate)-2)
+        xldate = (tempDate + deltaDays )
+        return xldate.strftime("%Y-%m-%d")
 
     def import_xls(self, model, file, column_name=None, column_value=None):
         decoded_data = base64.decodestring(file)
@@ -273,9 +281,8 @@ class PABIBankStatement(models.Model):
                             else:
                                 row_values[index] = val
                     elif type == 'xldate':
-                        str_date = datetime.fromtimestamp(
-                            st.cell(nrow, index).value).strftime(
-                                "%Y-%m-%d")
+                        str_date = self.xldate_to_datetime(
+                            st.cell(nrow, index).value)
                         row_values[index] = str_date
                     else:
                         row_values[index] = st.cell(nrow, index).value
@@ -292,7 +299,7 @@ class PABIBankStatement(models.Model):
             raise ValidationError(_(str("File Not found.")))
         if column_name and column_value:
             _HEADER_FIELDS.insert(0, str(column_name))
-            file_txt = self._add_column(column_value, file_txt)
+            file_txt = self._add_column(column_name, column_value, file_txt)
         Import = self.env['base_import.import']
         imp = Import.create({
             'res_model': model,
