@@ -276,7 +276,7 @@ class PABIBankStatement(models.Model):
                                 row_values[index] = val
                     elif type == 'xldate':
                         str_date = datetime.fromtimestamp(
-                            st.cell(nrow, index).value / 1e3).strftime(
+                            st.cell(nrow, index).value).strftime(
                                 "%Y-%m-%d")
                         row_values[index] = str_date
                     else:
