@@ -228,29 +228,27 @@ class PABIBankStatement(models.Model):
         return
 
     @api.model
-    def _add_statement_id_column(self, statement_id, file_txt):
+    def _add_column(self, column_value, file_txt):
         i = 0
         txt_lines = []
         for line in file_txt.split('\n'):
-#             if line and i == 0:
-#                 line = '"statement_id/.id",' + line
-            if line:
-                line = '"' + str(statement_id) + '",' + line
+            if line and i > 0:
+                line = '"' + str(column_value) + '",' + line
             txt_lines.append(line)
             i += 1
         file_txt = '\n'.join(txt_lines)
         return file_txt
 
-    def import_xls(self, model, file):
+    def import_xls(self, model, file, column_name=None, column_value=None):
         decoded_data = base64.decodestring(file)
-        randms = datetime.utcnow().strftime('%H%M%S%f')[:-3]
-        f = open('temp' + randms + '.xls', 'wb+')
+        ftemp = 'temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
+        f = open(ftemp + '.xls', 'wb+')
         f.write(decoded_data)
         f.seek(0)
         f.close()
         wb = xlrd.open_workbook(f.name)
         st = wb.sheet_by_index(0)
-        csv_file = open('temp' + randms + '.csv', 'wb')
+        csv_file = open(ftemp + '.csv', 'wb')
         csv_out = unicodecsv.writer(csv_file,
                                     encoding='utf-8',
                                     quoting=unicodecsv.QUOTE_ALL)
@@ -285,13 +283,16 @@ class PABIBankStatement(models.Model):
             else:
                 csv_out.writerow(st.row_values(nrow))
         csv_file.close()
-        csv_file = open('temp' + randms + '.csv', 'r')
+        csv_file = open(ftemp + '.csv', 'r')
         file_txt = csv_file.read()
         csv_file.close()
-        os.unlink('temp' + randms + '.xls')
-        os.unlink('temp' + randms + '.csv')
+        os.unlink(ftemp + '.xls')
+        os.unlink(ftemp + '.csv')
         if not file_txt:
             raise ValidationError(_(str("File Not found.")))
+        if column_name and column_value:
+            _HEADER_FIELDS.insert(0, str(column_name))
+            file_txt = self._add_column(column_value, file_txt)
         Import = self.env['base_import.import']
         imp = Import.create({
             'res_model': model,
@@ -313,7 +314,10 @@ class PABIBankStatement(models.Model):
             if not rec.import_file:
                 continue
             rec.import_file = self.import_xls(
-                'pabi.bank.statement.import', rec.import_file)
+                'pabi.bank.statement.import',
+                rec.import_file,
+                'statement_id/.id',
+                rec.id)
 
     @api.multi
     def _get_match_criteria(self):
