@@ -189,6 +189,10 @@ class AccountSubscriptionLine(models.Model):
 class AccountModel(models.Model):
     _inherit = 'account.model'
 
+    lines_id = fields.One2many(
+        copy=False,
+    )
+
     @api.multi
     def generate(self, data=None):
         if self._context.get('subline_amount', False):
