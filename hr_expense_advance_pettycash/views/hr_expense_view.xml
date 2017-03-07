@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_expenses_form_sequence" model="ir.ui.view">
+            <field name="name">view.expenses.form.sequence</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_advance_clearing.view_expenses_form_sequence"/>
+            <field name="arch" type="xml">
+                <xpath expr="//label[@string='Advance ']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('is_employee_advance', '=', False), ('is_employee_pettycash', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//label[@string='Advance ']" position="after">
+                    <label string="Petty Cash " attrs="{'invisible': [('is_employee_pettycash', '=', False)]}" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_expenses_form_advance" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_advance_clearing.view_expenses_form_advance"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_employee_advance']" position="after">
+                    <field name="is_employee_pettycash" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_expense_filter" model="ir.ui.view">
+            <field name="name">hr.expense.filter</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_advance_clearing.view_hr_expense_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='is_employee_advance']" position="attributes">
+                    <attribute name="domain">[('is_employee_advance', '=', True), ('is_employee_pettycash', '=', False)]</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_expense_advance_clearing.action_expense_advance" model="ir.actions.act_window">
+            <field name="domain">[('is_employee_advance', '=', True), ('is_employee_pettycash', '=', False)]</field>
+        </record>
+
+        <record id="action_expense_pettycash" model="ir.actions.act_window">
+            <field name="name">Petty Cash</field>
+            <field name="res_model">hr.expense.expense</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="hr_expense_advance_clearing.view_hr_expense_filter"/>
+            <field name="view_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="context">{'default_is_employee_advance':True, 'is_employee_advance':True,
+                                  'default_is_employee_pettycash':True, 'is_employee_pettycash':True}</field>
+            <field name="domain">[('is_employee_advance', '=', True), ('is_employee_pettycash', '=', True)]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register new expenses.
+              </p><p>
+                Odoo will ensure the whole process is followed; the expense
+                sheet is validated by manager(s), the employee is reimbursed
+                from his expenses, some expenses must be re-invoiced to the
+                customers.
+              </p>
+            </field>
+        </record>
+
+        <menuitem action="action_expense_pettycash"
+                  id="menu_expense_pettycash"
+                  name="Petty Cash"
+                  parent="hr_expense.next_id_49"/>
+
+    </data>
+</openerp>

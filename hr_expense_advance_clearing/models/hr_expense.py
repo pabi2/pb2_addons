@@ -41,10 +41,11 @@ class HRExpenseExpense(models.Model):
 
     is_employee_advance = fields.Boolean(
         string='Employee Advance',
-        readonly=False,
+        default=False,
     )
     is_advance_clearing = fields.Boolean(
         string='Advance Clearing',
+        default=False,
     )
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
