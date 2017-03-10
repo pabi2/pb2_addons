@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="advance_clearing_followup_wizard_view" model="ir.ui.view">
+            <field name="name">advance.clearing.followup.wizard.form</field>
+            <field name="model">advance.clearing.followup.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Advance Clearing Followup Report">
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                        </group>
+                        <group>
+                            <label for="date_from" string="Period"/>
+                            <div>
+                                <field name="date_from" class="oe_inline"/>
+                                -
+                                <field name="date_to" class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Advance Numbers">
+                        <field nolabel="1" name="expense_ids" domain="[('is_employee_advance', '=', True), ('employee_id', '=', employee_id),('date', '&gt;=', date_from),('date', '&lt;=', date_to)]">
+                            <tree string="Advance Expense">
+                                <field name="number"/>
+                                <field name="employee_id"/>
+                                <field name="operating_unit_id"/>
+                                <field name="amount"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="run_report" string="_Run" type="object" class="oe_highlight" />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_advance_clearing_followup_wizard" model="ir.actions.act_window">
+            <field name="name">Advance Clearing Followup Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">advance.clearing.followup.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="advance_clearing_followup_wizard_view"/>
+        </record>
+        
+        <menuitem action="action_advance_clearing_followup_wizard" id="menu_expense_clearing_followup_report"
+            name="Advance Clearing Followup" parent="hr.menu_hr_report"/>
+    </data>
+</openerp>
