@@ -333,3 +333,38 @@ class AccountModelType(models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Model type name must be unique!'),
     ]
+
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    model_id = fields.Many2one(
+        'account.model',
+        string='Template Model',
+        ondelete='set null',
+    )
+
+    @api.model
+    def _prepare_copy_fields(self, source_model, target_model):
+        src_fields = [f for f, _x in source_model._fields.iteritems()]
+        no_fields = [
+            'id', '__last_update',
+            'write_date', 'create_date', 'create_uid', 'write_uid',
+        ]
+        trg_fields = [f for f, _x in target_model._fields.iteritems()]
+        return list((set(src_fields) & set(trg_fields)) - set(no_fields))
+
+    @api.onchange('model_id')
+    def _onchange_model_id(self):
+        if self.state != 'draft':
+            raise ValidationError(_('Template can be used only on draft!'))
+        self.line_id = False
+        self.line_id = []
+        ModelLine = self.env['account.model.line']
+        MoveLine = self.env['account.move.line']
+        line_fields = self._prepare_copy_fields(ModelLine, MoveLine)
+        for line in self.model_id.lines_id:
+            move_line = MoveLine.new()
+            for field in line_fields:
+                move_line[field] = line[field]
+            self.line_id += move_line
