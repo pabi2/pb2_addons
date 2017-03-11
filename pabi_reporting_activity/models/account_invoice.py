@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 
 
 class AccountInvoiceLine(models.Model):
@@ -11,10 +11,6 @@ class AccountInvoiceLine(models.Model):
         required=True,
     )
 
-    @api.multi
     @api.onchange('activity_id')
     def _onchange_activity_id(self):
-        for rec in self:
-            # If activity_id is selected, rpt_activity_id always follows
-            if rec.activity_id:
-                rec.rpt_activity_id = rec.activity_id
+        self.rpt_activity_id = self.activity_id
