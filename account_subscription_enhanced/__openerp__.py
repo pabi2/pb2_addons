@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Account Subscription Enhancemnet",
+    'name': "Account Subscription Enhancement",
     'summary': "",
     'author': "Ecosoft",
     'website': "http://ecosoft.co.th",
@@ -16,13 +16,17 @@ This module enhance Define Recurring Enteries window with followings,
 * With the amount in each line, the recurring journal enteries will use this
   amount instead of what is in the model.
 
+* Model Type, and Generate Entries by Model Type
+
     """,
     'version': '0.1.0',
     'depends': [
         'account',
     ],
     'data': [
+        'data/account_data.xml',
         'views/account_view.xml',
+        'wizard/account_subscription_generate_view.xml',
     ],
     'demo': [
     ],

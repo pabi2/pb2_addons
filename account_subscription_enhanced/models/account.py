@@ -2,7 +2,8 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import except_orm, ValidationError
+import time
 
 
 class AccountSubscription(models.Model):
@@ -36,6 +37,13 @@ class AccountSubscription(models.Model):
     )
     rate_err_message = fields.Char(
         string='Error Message',
+    )
+    model_type_id = fields.Many2one(
+        'account.model.type',
+        related='model_id.model_type_id',
+        string='Model Type',
+        store=True,
+        readonly=True,
     )
 
     @api.multi
@@ -173,8 +181,15 @@ class AccountSubscriptionLine(models.Model):
     @api.multi
     def move_create(self):
         move_ids = []
-        lines_normal = self.filtered(lambda l: not l.amount)
-        lines_with_amount = self.filtered(lambda l: l.amount)
+        # Filtered by Model type, when selected
+        model_type_ids = self._context.get('model_type_ids', False)
+        sublines = self
+        if model_type_ids:
+            sublines = sublines.filtered(
+                lambda l: l.subscription_id.model_type_id.id in model_type_ids)
+        # If no model types specified, generate for all.
+        lines_normal = sublines.filtered(lambda l: not l.amount)
+        lines_with_amount = sublines.filtered(lambda l: l.amount)
         # Normal case
         _ids = super(AccountSubscriptionLine, lines_normal).move_create()
         move_ids.extend(_ids)
@@ -189,15 +204,132 @@ class AccountSubscriptionLine(models.Model):
 class AccountModel(models.Model):
     _inherit = 'account.model'
 
+    model_type_id = fields.Many2one(
+        'account.model.type',
+        string='Type',
+        ondelete='restrict',
+    )
     lines_id = fields.One2many(
         copy=False,
     )
 
     @api.multi
     def generate(self, data=None):
+        # Extra check for type amount manual
         if self._context.get('subline_amount', False):
             self.ensure_one()
             if len(self.lines_id) != 2:
                 raise ValidationError(
                     _('Model template must have only 2 item lines!'))
-        return super(AccountModel, self).generate(data=data)
+        # --
+
+        """ Overwrite for performance on create with (0,0,{...})"""
+
+        if data is None:
+            data = {}
+        move_ids = []
+        entry = {}
+        AccountMove = self.env['account.move']
+        PayTerm = self.env['account.payment.term']
+        Period = self.env['account.period']
+        context = self._context.copy()
+        if data.get('date', False):
+            context.update({'date': data['date']})
+
+        move_date = context.get('date', time.strftime('%Y-%m-%d'))
+        move_date = datetime.strptime(move_date, '%Y-%m-%d')
+        for model in self:
+            ctx = context.copy()
+            ctx.update({'company_id': model.company_id.id})
+            date = context.get('date', False)
+            period = Period.with_context(ctx).find(date)
+            ctx.update({
+                'journal_id': model.journal_id.id,
+                'period_id': period.id
+            })
+            try:
+                entry['name'] = model.name % {
+                    'year': move_date.strftime('%Y'),
+                    'month': move_date.strftime('%m'),
+                    'date': move_date.strftime('%Y-%m')}
+            except:
+                raise except_orm(
+                    _('Wrong Model!'),
+                    _('You have a wrong expression "%(...)s" in your model!'))
+            move = AccountMove.create({
+                'ref': entry['name'],
+                'period_id': period.id,
+                'journal_id': model.journal_id.id,
+                'date': context.get('date', fields.Date.context_today(self))
+            })
+            move_ids.append(move.id)
+            move_lines = []
+            for line in model.lines_id:
+                analytic_account_id = False
+                if line.analytic_account_id:
+                    if not model.journal_id.analytic_journal_id:
+                        raise except_orm(
+                            _('No Analytic Journal!'),
+                            _("You have to define an analytic journal on the "
+                              "'%s' journal!") % (model.journal_id.name,))
+                    analytic_account_id = line.analytic_account_id.id
+                val = {
+                    'journal_id': model.journal_id.id,
+                    'period_id': period.id,
+                    'analytic_account_id': analytic_account_id
+                }
+                date_maturity = context.get('date', time.strftime('%Y-%m-%d'))
+                if line.date_maturity == 'partner':
+                    if not line.partner_id:
+                        raise except_orm(
+                            _('Error!'),
+                            _("Maturity date of entry line generated by model "
+                              "line '%s' of model '%s' is based on partner "
+                              "payment term!\nPlease define partner on it!") %
+                             (line.name, model.name))
+                    payment_term_id = False
+                    if (model.journal_id.type in
+                        ('purchase', 'purchase_refund')) and \
+                            line.partner_id.property_supplier_payment_term:
+                        payment_term_id = \
+                            line.partner_id.property_supplier_payment_term.id
+                    elif line.partner_id.property_payment_term:
+                        payment_term_id =\
+                            line.partner_id.property_payment_term.id
+                    if payment_term_id:
+                        pterm_list = PayTerm.compute(payment_term_id, value=1,
+                                                     date_ref=date_maturity)
+                        if pterm_list:
+                            pterm_list = [l[0] for l in pterm_list]
+                            pterm_list.sort()
+                            date_maturity = pterm_list[-1]
+                val.update({
+                    'name': line.name,
+                    'quantity': line.quantity,
+                    'debit': line.debit,
+                    'credit': line.credit,
+                    'account_id': line.account_id.id,
+                    'partner_id': line.partner_id.id,
+                    'date': context.get('date',
+                                        fields.Date.context_today(self)),
+                    'date_maturity': date_maturity
+                })
+                move_lines.append((0, 0, val))
+            move.write({'line_id': move_lines})
+        return move_ids
+
+
+class AccountModelType(models.Model):
+    _name = 'account.model.type'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)', 'Model type name must be unique!'),
+    ]

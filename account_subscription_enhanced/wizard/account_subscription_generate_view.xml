@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_account_subscription_generate" model="ir.ui.view">
+            <field name="name">view.account.subscription.generate</field>
+            <field name="model">account.subscription.generate</field>
+            <field name="inherit_id" ref="account.view_account_subscription_generate"/>
+            <field name="arch" type="xml">
+                <field name="date" position="replace">
+                    <group>
+                        <field name="date"/>
+                    </group>
+                    <group>
+                        <field name="model_type_ids"/>
+                    </group>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

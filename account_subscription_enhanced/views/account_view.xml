@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        # Recurring Document
+        <record id="view_subscription_search" model="ir.ui.view">
+            <field name="name">view.subscription.search</field>
+            <field name="model">account.subscription</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_subscription_search"/>
+            <field name="arch" type="xml">
+                <field name="model_id" position="after">
+                    <field name="model_type_id"/>
+                </field>
+                <group position="inside">
+                    <filter string="Model Type" domain="[]" context="{'group_by':'model_type_id'}"/>
+                </group>
+            </field>
+        </record>
+
+        <record id="view_subscription_tree" model="ir.ui.view">
+            <field name="name">view.subscription.tree</field>
+            <field name="model">account.subscription</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_subscription_tree"/>
+            <field name="arch" type="xml">
+                <field name="model_id" position="after">
+                    <field name="model_type_id"/>
+                </field>
+            </field>
+        </record>
+
         <record id="view_subscription_form" model="ir.ui.view">
             <field name="name">view.subscription.form</field>
             <field name="model">account.subscription</field>
@@ -9,6 +37,9 @@
             <field name="arch" type="xml">
                 <field name="period_type" position="after">
                     <field name="consider_month_end" attrs="{'invisible': [('period_type', '=', 'day')]}"/>
+                </field>
+                <field name="model_id" position="after">
+                    <field name="model_type_id"/>
                 </field>
                 <field name="ref" position="after">
                     <field name="type"/>
@@ -22,7 +53,8 @@
                             </div>
                             <label for="rate_type"/>
                             <div>
-                                <field name="rate_type" class="oe_inline"/> =
+                                <field name="rate_type" class="oe_inline"/>
+                                =
                                 <field name="rate" class="oe_inline" nolabel="1"/>
                             </div>
                             <field name="rate_err_message" attrs="{'invisible': [('rate_err_message', '=', False)]}" readonly="1"/>
@@ -76,5 +108,97 @@
                 </field>
             </field>
         </record>
+
+        # Model Type
+        <record id="view_account_model_type_tree" model="ir.ui.view">
+            <field name="name">view.account.model.type.tree</field>
+            <field name="model">account.model.type</field>
+            <field name="arch" type="xml">
+                <tree string="Model Type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_model_type_form" model="ir.ui.view">
+            <field name="name">view.account.model.type.form</field>
+            <field name="model">account.model.type</field>
+            <field name="arch" type="xml">
+                <form string="Model Type">
+                    <!-- <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1> -->
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook></notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_model_type_search" model="ir.ui.view">
+            <field name="name">view.account.model.type.search</field>
+            <field name="model">account.model.type</field>
+            <field name="arch" type="xml">
+                <search string="Model Type">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_account_model_type" model="ir.actions.act_window">
+            <field name="name">Model Type</field>
+            <field name="res_model">account.model.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_model_type_tree"/>
+        </record>
+
+        <menuitem action="action_account_model_type" id="menu_account_model_type" parent="account.menu_finance_recurrent_entries" sequence="6"/>
+
+        # Model
+        <record id="view_model_search" model="ir.ui.view">
+            <field name="name">view.model.search</field>
+            <field name="model">account.model</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_model_search"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="model_type_id"/>
+                </field>
+                <group position="inside">
+                    <filter string="Model Type" domain="[]" context="{'group_by':'model_type_id'}"/>
+                </group>
+            </field>
+        </record>
+        <record id="view_model_tree" model="ir.ui.view">
+            <field name="name">view.model.tree</field>
+            <field name="model">account.model</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_model_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="model_type_id"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_model_form" model="ir.ui.view">
+            <field name="name">view.model.form</field>
+            <field name="model">account.model</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_model_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="model_type_id"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </openerp>
