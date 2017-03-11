@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="invoice_form" model="ir.ui.view" >
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_budget_activity.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
+                    <field name="rpt_activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'revenue')]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view" >
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_budget_activity.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
+                    <field name="rpt_activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'expense'')]"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
