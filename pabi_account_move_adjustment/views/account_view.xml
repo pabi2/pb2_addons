@@ -23,7 +23,6 @@
                             <field name="company_id" required="1" groups="base.group_multi_company"/>
                             <field name="partner_id" invisible="1"/>
                             <field name="doctype"/>
-                            <field name="adjustment_type" required="2"/>
                         </group>
                         <group>
                             <field name="ref"/>
@@ -70,8 +69,8 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="account.view_account_move_filter"/>
-            <field name="domain">[('doctype', '=', 'adjustment'), ('adjustment_type', '=', 'general_budget')]</field>
-            <field name="context" eval="{'default_journal_id': ref('journal_adj_bud'), 'default_adjustment_type': 'general_budget'}"/>
+            <field name="domain" eval="[('doctype', '=', 'adjustment'), ('journal_id', '=', ref('journal_adj_bud'))]"/>
+            <field name="context" eval="{'default_journal_id': ref('journal_adj_bud'), 'is_move_adjustment': True}"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a journal entry for general adjustment that affect budget.
@@ -123,7 +122,6 @@
                             <field name="company_id" required="1" groups="base.group_multi_company"/>
                             <field name="partner_id" invisible="1"/>
                             <field name="doctype"/>
-                            <field name="adjustment_type" required="2"/>
                         </group>
                         <group>
                             <field name="ref"/>
@@ -170,8 +168,8 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="account.view_account_move_filter"/>
-            <field name="domain">[('doctype', '=', 'adjustment'), ('adjustment_type', '=', 'general_no_budget')]</field>
-            <field name="context" eval="{'default_journal_id': ref('journal_adj_no_bud'), 'default_adjustment_type': 'general_no_budget'}"/>
+            <field name="domain" eval="[('doctype', '=', 'adjustment'), ('journal_id', '=', ref('journal_adj_no_bud'))]"/>
+            <field name="context" eval="{'default_journal_id': ref('journal_adj_no_bud'), 'is_move_adjustment': True}"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a journal entry for general adjustment that will not affect budget.
