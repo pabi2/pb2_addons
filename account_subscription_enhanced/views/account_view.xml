@@ -185,6 +185,7 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="model_type_id"/>
+                    <field name="to_be_reversed"/>
                 </field>
             </field>
         </record>
@@ -196,6 +197,7 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
                     <field name="model_type_id"/>
+                    <field name="to_be_reversed"/>
                 </field>
             </field>
         </record>

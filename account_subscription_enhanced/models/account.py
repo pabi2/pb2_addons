@@ -209,6 +209,11 @@ class AccountModel(models.Model):
         string='Type',
         ondelete='restrict',
     )
+    to_be_reversed = fields.Boolean(
+        string='To Be Reversed',
+        default=False,
+        help="Journal Entry created by this model will also be reversed",
+    )
     lines_id = fields.One2many(
         copy=False,
     )
@@ -260,7 +265,9 @@ class AccountModel(models.Model):
                 'ref': entry['name'],
                 'period_id': period.id,
                 'journal_id': model.journal_id.id,
-                'date': context.get('date', fields.Date.context_today(self))
+                'date': context.get('date', fields.Date.context_today(self)),
+                # extra
+                'to_be_reversed': model.to_be_reversed,
             })
             move_ids.append(move.id)
             move_lines = []
