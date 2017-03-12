@@ -21,6 +21,7 @@
         'stock_account',
         'purchase_cash_on_delivery',
         'pabi_interface',
+        'pabi_chartfield',
         'pabi_budget_internal_charge',
     ],
     'demo': [],

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        # Analytic Journal (General Budget)
+        <record id="analytic_journal_general_budget" model="account.analytic.journal">
+            <field name="code">JV</field>
+            <field name="name">General Budget</field>
+            <field name="type">general</field>
+            <field name="budget_method">revenue</field>
+            <field name="budget_commit_type">actual</field>
+        </record>
+
+        # Journal Adj.Bud. For adjustment type = 'general_budget'
+        <record id="seq_journal_adj_bud" model="ir.sequence">
+            <field name="name">Journal Adj.Bud.</field>
+            <field name="code"></field>
+            <field name="prefix">JV%(fy)s</field>
+            <field eval="7" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_adj_bud" model="account.journal">
+            <field name="name">Journal Adj.Bud.</field>
+            <field name="code">JV</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_adj_bud"/>
+            <field name="analytic_journal_id" ref="analytic_journal_general_budget"/>
+        </record>
+
+        # Journal Adj.No.Bud. For adjustment type = 'general_no_budget'
+        <record id="seq_journal_adj_no_bud" model="ir.sequence">
+            <field name="name">Journal Adj.No.Bud.</field>
+            <field name="code"></field>
+            <field name="prefix">JN%(fy)s</field>
+            <field eval="7" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_adj_no_bud" model="account.journal">
+            <field name="name">Journal Adj.No.Bud.</field>
+            <field name="code">JN</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_adj_no_bud"/>
+        </record>
+
+    </data>
+</openerp>

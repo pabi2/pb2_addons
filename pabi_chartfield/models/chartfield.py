@@ -129,7 +129,7 @@ CHART_SELECT = [
     'invest_asset_id',
     'invest_construction_phase_id',
     'cost_control_id',  # Non-Binding
-    ]
+]
 
 # All types of budget structure
 # This is related to chart structure
@@ -140,7 +140,7 @@ CHART_VIEW = {
     'invest_asset': ('Investment Asset', 'invest_asset_id'),
     'invest_construction': ('Investment Construction',
                             'invest_construction_id'),
-    }
+}
 
 CHART_VIEW_LIST = [(x[0], x[1][0]) for x in CHART_VIEW.items()]
 CHART_VIEW_FIELD = dict([(x[0], x[1][1]) for x in CHART_VIEW.items()])
