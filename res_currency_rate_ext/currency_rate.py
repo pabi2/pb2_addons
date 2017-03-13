@@ -59,6 +59,11 @@ class ResCurrency(models.Model):
         compute='_current_rate_input_silent',
     )
 
+    @api.onchange('base')
+    def _onchange_base(self):
+        if self.base:
+            self.type = 'bigger'
+
 
 class ResCurrencyRate(models.Model):
     _inherit = "res.currency.rate"
