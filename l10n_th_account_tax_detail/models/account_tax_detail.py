@@ -102,6 +102,11 @@ class AccountTaxDetail(models.Model):
         ondelete='cascade',
         index=True,
     )
+    move_line_id = fields.Many2one(
+        'account.move.line',
+        ondelete='cascade',
+        index=True,
+    )
     tax_id = fields.Many2one(
         'account.tax',
         ondelete='cascade',
@@ -174,7 +179,11 @@ class AccountTaxDetail(models.Model):
         default=False,
         help="If the Invoice/Voucher is set to cancelled, tax will show 0.0",
     )
-
+    ref_move_id = fields.Many2one(
+        'account.move',
+        string='Ref Journal Entry',
+        help="Referene to move_id of either Invoice / Payment / Account Move",
+    )
     _sql_constraints = [
         ('tax_sequence_uniq', 'unique(doc_type, tax_sequence, period_id)',
             'Tax Detail Sequence has been used by other user, '
@@ -206,7 +215,8 @@ class AccountTaxDetail(models.Model):
         period = Period.find(fields.Date.context_today(self))[:1]
         date_stop = datetime.strptime(period.date_stop, '%Y-%m-%d').date()
         date_start = datetime.strptime(period.date_start, '%Y-%m-%d').date()
-        date_start = date_start + relativedelta.relativedelta(months=-months+1)
+        date_start = date_start + \
+            relativedelta.relativedelta(months=-months + 1)
         return date_start, date_stop
 
     @api.model
@@ -217,11 +227,15 @@ class AccountTaxDetail(models.Model):
         period = self.env['account.period'].find(date_doc)[:1]
         invoice_date = datetime.strptime(self.invoice_date,
                                          '%Y-%m-%d').date()
+        ref_move_id = self.invoice_tax_id.invoice_id.move_id.id or \
+            self.voucher_tax_id.voucher_id.move_id.id or \
+            self.move_line_id.move_id.id or False
         if date_start <= invoice_date <= date_stop:
             next_seq = self._get_next_sequence(period)
             self.write({'tax_sequence': next_seq,
                         'period_id': period.id,
                         'date_doc': date_doc,
+                        'ref_move_id': ref_move_id,
                         })
         else:
             add_period = self.env['account.period'].find(self.invoice_date)[:1]
@@ -229,6 +243,7 @@ class AccountTaxDetail(models.Model):
             self.write({'tax_sequence': next_seq,
                         'period_id': add_period.id,
                         'date_doc': date_doc,
+                        'ref_move_id': ref_move_id,
                         'addition': True,
                         })
 
@@ -248,7 +263,8 @@ class AccountTaxDetail(models.Model):
     @api.model
     def _prepare_tax_detail_dict(self, invoice_tax_id, voucher_tax_id,
                                  doc_type, partner_id, invoice_number,
-                                 invoice_date, base, amount):
+                                 invoice_date, base, amount,
+                                 move_line_id=False):
         vals = {
             'invoice_tax_id': invoice_tax_id,
             'voucher_tax_id': voucher_tax_id,
@@ -258,6 +274,7 @@ class AccountTaxDetail(models.Model):
             'invoice_date': invoice_date,
             'base': base,
             'amount': amount,
+            'move_line_id': move_line_id,
         }
         return vals
 
