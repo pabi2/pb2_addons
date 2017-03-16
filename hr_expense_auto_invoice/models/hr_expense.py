@@ -89,6 +89,7 @@ class HRExpenseExpese(models.Model):
             'price_unit': exp_line.unit_amount or 0.0,
             'quantity': exp_line.unit_quantity,
             'product_id': exp_line.product_id.id or False,
+            'invoice_line_tax_id': [(6, 0, exp_line.tax_ids.ids)],
         }
 
     @api.model
@@ -201,7 +202,6 @@ class HRExpenseExpese(models.Model):
     def _create_supplier_invoice_from_expense(self, merge_line=False):
         self.ensure_one()
         Invoice = self.env['account.invoice']
-        InvoiceLine = self.env['account.invoice.line']
         expense = self
         invoice_vals = self._prepare_inv(expense)
         inv_line_datas = []
