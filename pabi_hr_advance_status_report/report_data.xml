@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+      # PDF hr advance status report
+
+  		<record id="pabi_hr_advance_status_report" model="ir.actions.report.xml">
+  			<field name="auto">True</field>
+  			<field name="model">hr.expense.expense</field>
+  			<field name="name">Pabi Hr Advance Status Report</field>
+  			<field name="report_name">pabi_hr_advance_status_report</field>
+  			<field name="report_rml">pabi_hr_advance_status_report/report/pabi_hr_advance_status_report.jrxml</field>
+  			<field name="menu">True</field>
+  			<field name="header">False</field>
+  			<field name="jasper_report">True</field>
+  			<field name="jasper_output">pdf</field>
+  			<field name="copies">1</field>
+  		</record>
+
+  		<record id="pabi_hr_advance_status_report_values" model="ir.values">
+  			<field name="name">Partner List</field>
+  			<field name="model">hr.expense.expense</field>
+  			<field name="key2" eval="'client_print_multi'"/>
+  			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_hr_advance_status_report)"/>
+  		</record>
+
+      # PDF hr advance status summary report
+
+  		<record id="pabi_hr_advance_status_summary_report" model="ir.actions.report.xml">
+  			<field name="auto">True</field>
+  			<field name="model">hr.expense.expense</field>
+  			<field name="name">Pabi Hr Advance Status Summary Report</field>
+  			<field name="report_name">pabi_hr_advance_status_summary_report</field>
+  			<field name="report_rml">pabi_hr_advance_status_report/report/pabi_hr_advance_status_summary_report.jrxml</field>
+  			<field name="menu">True</field>
+  			<field name="header">False</field>
+  			<field name="jasper_report">True</field>
+  			<field name="jasper_output">pdf</field>
+  			<field name="copies">1</field>
+  		</record>
+
+  		<record id="pabi_hr_advance_status_summary_report_values" model="ir.values">
+  			<field name="name">Partner List</field>
+  			<field name="model">hr.expense.expense</field>
+  			<field name="key2" eval="'client_print_multi'"/>
+  			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_hr_advance_status_summary_report)"/>
+  		</record>
+
+      # PDF hr advance status detail report
+
+  		<record id="pabi_hr_advance_status_detail_report" model="ir.actions.report.xml">
+  			<field name="auto">True</field>
+  			<field name="model">hr.expense.expense</field>
+  			<field name="name">Pabi Hr Advance Status detail Report</field>
+  			<field name="report_name">pabi_hr_advance_status_detail_report</field>
+  			<field name="report_rml">pabi_hr_advance_status_report/report/pabi_hr_advance_status_detail_report.jrxml</field>
+  			<field name="menu">True</field>
+  			<field name="header">False</field>
+  			<field name="jasper_report">True</field>
+  			<field name="jasper_output">pdf</field>
+  			<field name="copies">1</field>
+  		</record>
+
+  		<record id="pabi_hr_advance_status_detail_report_values" model="ir.values">
+  			<field name="name">Partner List</field>
+  			<field name="model">hr.expense.expense</field>
+  			<field name="key2" eval="'client_print_multi'"/>
+  			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_hr_advance_status_detail_report)"/>
+  		</record>
+    </data>
+</openerp>
