@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        # Model
+        <record id="view_model_tree" model="ir.ui.view">
+            <field name="name">view.model.tree</field>
+            <field name="model">account.model</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_model_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="use_purchase_invoice_plan"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_model_form" model="ir.ui.view">
+            <field name="name">view.model.form</field>
+            <field name="model">account.model</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_model_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="use_purchase_invoice_plan"/>
+                </field>
+                <field name="lines_id" position="attributes">
+                    <attribute name="attrs">{'invisible': [('use_purchase_invoice_plan', '=', True)]}</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
