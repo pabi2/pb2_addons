@@ -366,7 +366,8 @@ class InterfaceAccountEntry(models.Model):
                     self._get_doc_type(journal, line),
                     line.partner_id.id, line.tax_invoice_number, line.date,
                     sign * line.tax_base_amount,
-                    sign * (line.debit or line.credit)
+                    sign * (line.debit or line.credit),
+                    move_line_id=move_line.id,  # created by move line
                 )
                 tax_dict['tax_id'] = line.tax_id.id
                 tax_dict['taxbranch_id'] = line.taxbranch_id.id

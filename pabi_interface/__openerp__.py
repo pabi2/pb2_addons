@@ -18,6 +18,7 @@ This moudule provide standard interface in generice way.
         "account",
         "account_budget_activity",
         "pabi_chartfield",
+        "l10n_th_account_tax_detail"
     ],
     "data": [
         "data/interface_data.xml",
