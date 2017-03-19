@@ -8,7 +8,15 @@
             <field name="arch" type="xml">
                 <field name="date" position="replace">
                     <group>
-                        <field name="date"/>
+                        <label for="date_type"/>
+                        <div>
+                            <div>
+                                <field name="date_type" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('date_type', '=', 'last_period')]}">
+                                <field name="date" class="oe_inline"/>
+                            </div>
+                        </div>
                     </group>
                     <group>
                         <field name="model_type_ids"/>

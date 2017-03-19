@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
-import time
 
 
 class AccountSubscription(models.Model):
@@ -53,8 +53,8 @@ class AccountSubscription(models.Model):
             rec.rate_err_message = False
             if not rec.lines_id:
                 continue
-            date_min = min(rec.lines_id.mapped('date'))
-            date_max = max(rec.lines_id.mapped('date_end'))
+            date_min = min(rec.lines_id.mapped('date_start'))
+            date_max = max(rec.lines_id.mapped('date'))
             if not date_min or not date_max:
                 rec.rate = 0.0
                 continue
@@ -103,32 +103,38 @@ class AccountSubscription(models.Model):
         """ Overwrite """
         for sub in self:
             ds = sub.date_start
-            date = datetime.strptime(ds, '%Y-%m-%d')
+            date_start = datetime.strptime(ds, '%Y-%m-%d')
             date_last = self._get_date_last(sub)
             i = 0
+            sublines = []
             while i < sub.period_total:
-                line = self.env['account.subscription.line'].create({
-                    'date': date.strftime('%Y-%m-%d'),
+                line = {
+                    'date_start': date_start.strftime('%Y-%m-%d'),
                     'subscription_id': sub.id,
-                })
+                }
                 # Consider month end
                 if self.consider_month_end:
-                    if date.day != 1:
-                        date = datetime.strptime(
-                            date.strftime('%Y-%m-01'), '%Y-%m-%d')
+                    if date_start.day != 1:
+                        date_start = datetime.strptime(
+                            date_start.strftime('%Y-%m-01'), '%Y-%m-%d')
                         i -= 1
                 # --
                 if sub.period_type == 'day':
-                    date = date + relativedelta(days=sub.period_nbr)
+                    date_start = \
+                        date_start + relativedelta(days=sub.period_nbr)
                 if sub.period_type == 'month':
-                    date = date + relativedelta(months=sub.period_nbr)
+                    date_start = \
+                        date_start + relativedelta(months=sub.period_nbr)
                 if sub.period_type == 'year':
-                    date = date + relativedelta(years=sub.period_nbr)
+                    date_start = \
+                        date_start + relativedelta(years=sub.period_nbr)
                 i += 1
                 if i == sub.period_total:
-                    line.date_end = date_last - relativedelta(days=1)
+                    line['date'] = date_last - relativedelta(days=1)
                 else:
-                    line.date_end = date - relativedelta(days=1)
+                    line['date'] = date_start - relativedelta(days=1)
+                sublines.append((0, 0, line))
+            sub.write({'lines_id': sublines})
         self.write({'state': 'running'})
         return True
 
@@ -142,8 +148,8 @@ class AccountSubscription(models.Model):
             i = 0
             while i < num_line:
                 line = rec.lines_id[i]
-                date_start = datetime.strptime(line.date, '%Y-%m-%d')
-                date_end = datetime.strptime(line.date_end, '%Y-%m-%d') + \
+                date_start = datetime.strptime(line.date_start, '%Y-%m-%d')
+                date_end = datetime.strptime(line.date, '%Y-%m-%d') + \
                     relativedelta(days=1)
                 days = (date_end - date_start).days
                 r = relativedelta(date_end, date_start)
@@ -171,7 +177,11 @@ class AccountSubscriptionLine(models.Model):
         string='Type',
         related='subscription_id.type',
     )
-    date_end = fields.Date(
+    date_start = fields.Date(
+        string='From Date',
+        required=True,
+    )
+    date = fields.Date(  # change label
         string='To Date',
     )
     amount = fields.Float(
@@ -227,103 +237,129 @@ class AccountModel(models.Model):
                 raise ValidationError(
                     _('Model template must have only 2 item lines!'))
         # --
+        move_ids = self._generate(data)
+        return move_ids
 
-        """ Overwrite for performance on create with (0,0,{...})"""
-
+    @api.multi
+    def _generate(self, data=None):
+        """ Overwrite super's generate(), performance on create (0,0,{...}) """
         if data is None:
             data = {}
         move_ids = []
-        entry = {}
         AccountMove = self.env['account.move']
-        PayTerm = self.env['account.payment.term']
-        Period = self.env['account.period']
         context = self._context.copy()
         if data.get('date', False):
             context.update({'date': data['date']})
-
-        move_date = context.get('date', time.strftime('%Y-%m-%d'))
-        move_date = datetime.strptime(move_date, '%Y-%m-%d')
         for model in self:
-            ctx = context.copy()
-            ctx.update({'company_id': model.company_id.id})
-            date = context.get('date', False)
-            period = Period.with_context(ctx).find(date)
-            ctx.update({
-                'journal_id': model.journal_id.id,
-                'period_id': period.id
-            })
-            try:
-                entry['name'] = model.name % {
-                    'year': move_date.strftime('%Y'),
-                    'month': move_date.strftime('%m'),
-                    'date': move_date.strftime('%Y-%m')}
-            except:
-                raise except_orm(
-                    _('Wrong Model!'),
-                    _('You have a wrong expression "%(...)s" in your model!'))
-            move = AccountMove.create({
-                'ref': entry['name'],
-                'period_id': period.id,
-                'journal_id': model.journal_id.id,
-                'date': context.get('date', fields.Date.context_today(self)),
-                # extra
-                'to_be_reversed': model.to_be_reversed,
-            })
+            # Move
+            move_dict = self.with_context(context)._prepare_move(model)
+            move = AccountMove.create(move_dict)
             move_ids.append(move.id)
-            move_lines = []
-            for line in model.lines_id:
-                analytic_account_id = False
-                if line.analytic_account_id:
-                    if not model.journal_id.analytic_journal_id:
-                        raise except_orm(
-                            _('No Analytic Journal!'),
-                            _("You have to define an analytic journal on the "
-                              "'%s' journal!") % (model.journal_id.name,))
-                    analytic_account_id = line.analytic_account_id.id
-                val = {
-                    'journal_id': model.journal_id.id,
-                    'period_id': period.id,
-                    'analytic_account_id': analytic_account_id
-                }
-                date_maturity = context.get('date', time.strftime('%Y-%m-%d'))
-                if line.date_maturity == 'partner':
-                    if not line.partner_id:
-                        raise except_orm(
-                            _('Error!'),
-                            _("Maturity date of entry line generated by model "
-                              "line '%s' of model '%s' is based on partner "
-                              "payment term!\nPlease define partner on it!") %
-                             (line.name, model.name))
-                    payment_term_id = False
-                    if (model.journal_id.type in
-                        ('purchase', 'purchase_refund')) and \
-                            line.partner_id.property_supplier_payment_term:
-                        payment_term_id = \
-                            line.partner_id.property_supplier_payment_term.id
-                    elif line.partner_id.property_payment_term:
-                        payment_term_id =\
-                            line.partner_id.property_payment_term.id
-                    if payment_term_id:
-                        pterm_list = PayTerm.compute(payment_term_id, value=1,
-                                                     date_ref=date_maturity)
-                        if pterm_list:
-                            pterm_list = [l[0] for l in pterm_list]
-                            pterm_list.sort()
-                            date_maturity = pterm_list[-1]
-                val.update({
-                    'name': line.name,
-                    'quantity': line.quantity,
-                    'debit': line.debit,
-                    'credit': line.credit,
-                    'account_id': line.account_id.id,
-                    'partner_id': line.partner_id.id,
-                    'date': context.get('date',
-                                        fields.Date.context_today(self)),
-                    'date_maturity': date_maturity
-                })
-                move_lines.append((0, 0, val))
+            # Lines
+            move_lines = self.with_context(context)._prepare_move_line(model)
             move.write({'line_id': move_lines})
         return move_ids
+
+    @api.model
+    def _prepare_move(self, model):
+        Period = self.env['account.period']
+        context = self._context.copy()
+        date = context.get('date', False)
+        ctx = context.copy()
+        period = Period.with_context(ctx).find(date)
+        ctx.update({
+            'company_id': model.company_id.id,
+            'journal_id': model.journal_id.id,
+            'period_id': period.id
+        })
+        move_date = context.get('date', time.strftime('%Y-%m-%d'))
+        move_date = datetime.strptime(move_date, '%Y-%m-%d')
+        entry = {}
+        try:
+            entry['name'] = model.name % {
+                'year': move_date.strftime('%Y'),
+                'month': move_date.strftime('%m'),
+                'date': move_date.strftime('%Y-%m')}
+        except:
+            raise except_orm(
+                _('Wrong Model!'),
+                _('You have a wrong expression "%(...)s" in your model!'))
+        move_dict = {
+            'ref': entry['name'],
+            'period_id': period.id,
+            'journal_id': model.journal_id.id,
+            'date': context.get('date', fields.Date.context_today(self)),
+            # extra
+            'to_be_reversed': model.to_be_reversed,
+        }
+        return move_dict
+
+    @api.model
+    def _prepare_move_line(self, model):
+        PayTerm = self.env['account.payment.term']
+        Period = self.env['account.period']
+        move_lines = []
+        context = self._context.copy()
+        date = context.get('date', False)
+        ctx = context.copy()
+        period = Period.with_context(ctx).find(date)
+        ctx.update({
+            'company_id': model.company_id.id,
+            'journal_id': model.journal_id.id,
+            'period_id': period.id
+        })
+        for line in model.lines_id:
+            analytic_account_id = False
+            if line.analytic_account_id:
+                if not model.journal_id.analytic_journal_id:
+                    raise except_orm(
+                        _('No Analytic Journal!'),
+                        _("You have to define an analytic journal on the "
+                          "'%s' journal!") % (model.journal_id.name,))
+                analytic_account_id = line.analytic_account_id.id
+            val = {
+                'journal_id': model.journal_id.id,
+                'period_id': period.id,
+                'analytic_account_id': analytic_account_id
+            }
+            date_maturity = context.get('date', time.strftime('%Y-%m-%d'))
+            if line.date_maturity == 'partner':
+                if not line.partner_id:
+                    raise except_orm(
+                        _('Error!'),
+                        _("Maturity date of entry line generated by model "
+                          "line '%s' of model '%s' is based on partner "
+                          "payment term!\nPlease define partner on it!") %
+                         (line.name, model.name))
+                payment_term_id = False
+                if (model.journal_id.type in
+                    ('purchase', 'purchase_refund')) and \
+                        line.partner_id.property_supplier_payment_term:
+                    payment_term_id = \
+                        line.partner_id.property_supplier_payment_term.id
+                elif line.partner_id.property_payment_term:
+                    payment_term_id =\
+                        line.partner_id.property_payment_term.id
+                if payment_term_id:
+                    pterm_list = PayTerm.compute(payment_term_id, value=1,
+                                                 date_ref=date_maturity)
+                    if pterm_list:
+                        pterm_list = [l[0] for l in pterm_list]
+                        pterm_list.sort()
+                        date_maturity = pterm_list[-1]
+            val.update({
+                'name': line.name,
+                'quantity': line.quantity,
+                'debit': line.debit,
+                'credit': line.credit,
+                'account_id': line.account_id.id,
+                'partner_id': line.partner_id.id,
+                'date': context.get('date',
+                                    fields.Date.context_today(self)),
+                'date_maturity': date_maturity
+            })
+            move_lines.append((0, 0, val))
+        return move_lines
 
 
 class AccountModelType(models.Model):

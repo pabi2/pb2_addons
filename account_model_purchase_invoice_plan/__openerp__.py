@@ -13,6 +13,7 @@ To create recurrin entries from open invoice plan
     'version': '0.1.0',
     'depends': [
         'account',
+        'account_subscription_enhanced',
     ],
     'data': [
         'views/account_view.xml',
