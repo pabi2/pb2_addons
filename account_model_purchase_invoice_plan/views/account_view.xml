@@ -21,6 +21,7 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
                     <field name="use_purchase_invoice_plan"/>
+                    <field name="accrual_account_id" attrs="{'invisible': [('use_purchase_invoice_plan', '=', False)], 'required': [('use_purchase_invoice_plan', '=', True)]}"/>
                 </field>
                 <field name="lines_id" position="attributes">
                     <attribute name="attrs">{'invisible': [('use_purchase_invoice_plan', '=', True)]}</attribute>

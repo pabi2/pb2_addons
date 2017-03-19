@@ -11,9 +11,6 @@
         <record id="account_model_accrual_utilities" model="account.model.type">
             <field name="name">Accrual Utilities</field>
         </record>
-        <record id="account_model_purchase_invoice_plan" model="account.model.type">
-            <field name="name">Purchase Invoice Plan</field>
-        </record>
 
     </data>
 </openerp>

@@ -182,7 +182,7 @@ class PurchaseOrder(models.Model):
                 for line in invoice_lines:
                     total_amount += line.invoice_amount
                     # Validate percent
-                    if round(line.invoice_percent/100 * subtotal, prec) != \
+                    if round(line.invoice_percent / 100 * subtotal, prec) != \
                             round(line.invoice_amount, prec):
                         raise except_orm(
                             _('Invoice Plan Percent Mismatch!'),
