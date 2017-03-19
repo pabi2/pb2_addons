@@ -21,5 +21,31 @@
             </field>
         </record>
 
+        # Tax Detail on JE
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">view.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Tax Detail">
+                        <field name="tax_detail_ids">
+                            <tree readonly="1">
+                                <field name="doc_type"/>
+                                <field name="partner_id"/>
+                                <field name="period_id"/>
+                                <field name="invoice_number"/>
+                                <field name="invoice_date"/>
+                                <field name="base" sum="Base"/>
+                                <field name="amount" sum="Tax"/>
+                                <field name="tax_sequence_display"/>
+                                <field name="addition"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
     </data>
 </openerp>
