@@ -7,13 +7,12 @@
             <field name="inherit_id" ref="l10n_th_account_deduction.view_vendor_receipt_form_voucher_payment"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='analytic_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
-
-
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="before">
                     <field name="require_chartfield" invisible="1"/>
                     <field name="activity_group_id"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0])]"/>
                   </xpath>
                   <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="after">
                     <field
@@ -59,7 +58,7 @@
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="before">
                     <field name="require_chartfield" invisible="1"/>
                     <field name="activity_group_id"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0])]"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="after">
                     <field
