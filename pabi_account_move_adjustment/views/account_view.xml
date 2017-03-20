@@ -48,6 +48,7 @@
                                     <field name="section_id"/>
                                     <field name="invest_asset_id"/>
                                     <field name="invest_construction_phase_id"/>
+                                    <field name="personnel_costcenter_id"/>
                                     <field name="fund_id"/>
                                     <field name="cost_control_id" invisible="0"/>
                                     <field name="state"/>
@@ -147,6 +148,7 @@
                                     <field name="section_id"/>
                                     <field name="invest_asset_id"/>
                                     <field name="invest_construction_phase_id"/>
+                                    <field name="personnel_costcenter_id"/>
                                     <field name="fund_id"/>
                                     <field name="cost_control_id" invisible="0"/>
                                     <field name="state"/>
