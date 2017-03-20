@@ -185,15 +185,19 @@ class AccountAnalyticLine(models.Model):
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
 
-    type = fields.Selection(
-        [('view', 'Analytic View'),
-         ('normal', 'Analytic Account'),
-         ('pr_product', 'PR Product'),
-         ('product', 'Product'),
-         ('activity', 'Activity'),
-         ('contract', 'Contract or Project'),
-         ('template', 'Template of Contract')]
-    )
+    # ************************ Start ********************************
+    # Following code was used initially. But I want to experiment
+    # not using it. In PABI2, we may not need them.
+    # type = fields.Selection(
+    #     [('view', 'Analytic View'),
+    #      ('normal', 'Analytic Account'),
+    #      ('pr_product', 'PR Product'),
+    #      ('product', 'Product'),
+    #      ('activity', 'Activity'),
+    #      ('contract', 'Contract or Project'),
+    #      ('template', 'Template of Contract')]
+    # )
+    # ************************** End ********************************
     product_id = fields.Many2one(
         'product.product',
         string='Product',
@@ -230,14 +234,21 @@ class AccountAnalyticAccount(models.Model):
     @api.model
     def get_matched_analytic(self, rec):
         domain = self.get_analytic_search_domain(rec)
-        if rec._name == 'account.model.line':  # From Recurring Models
-            domain.append(('type', '=', 'normal'))
-        if rec.product_id:
-            domain.append(('type', '=', 'product'))
-        elif rec.activity_id:
-            domain.append(('type', '=', 'activity'))
-        else:  # Last possible type, from Purchase Request
-            domain.append(('type', '=', 'pr_product'))
+        # ************************ Start ********************************
+        # Following code was used initially. But I want to experiment
+        # not using it. In PABI2, we may not need them.
+        #
+        # if rec._name == 'account.model.line':  # From Recurring Models
+        #     domain.append(('type', '=', 'normal'))
+        # if rec.product_id:
+        #     domain.append(('type', '=', 'product'))
+        # elif rec.activity_id:
+        #     domain.append(('type', '=', 'activity'))
+        # else:  # Last possible type, from Purchase Request
+        #     domain.append(('type', '=', 'pr_product'))
+        #
+        domain.append(('type', '=', 'normal'))
+        # ************************ Start ********************************
         analytics = self.env['account.analytic.account'].search(domain)
         if analytics:
             return analytics[0]
@@ -264,14 +275,21 @@ class AccountAnalyticAccount(models.Model):
         # If not a valid domain, return False (domain with no values)
         if self._invalid_domain(domain):
             return False
-        if rec._name == 'account.model.line':  # Creating from Recurring Entry
-            domain.append(('type', '=', 'normal'))
-        elif rec.product_id:
-            domain.append(('type', '=', 'product'))
-        elif rec.activity_id:
-            domain.append(('type', '=', 'activity'))
-        else:
-            domain.append(('type', '=', 'pr_product'))
+        # ************************ Start ********************************
+        # Following code was used initially. But I want to experiment
+        # not using it. In PABI2, we may not need them.
+        #
+        # if rec._name == 'account.model.line':  # from Recurring Entry
+        #     domain.append(('type', '=', 'normal'))
+        # elif rec.product_id:
+        #     domain.append(('type', '=', 'product'))
+        # elif rec.activity_id:
+        #     domain.append(('type', '=', 'activity'))
+        # else:
+        #     domain.append(('type', '=', 'pr_product'))
+        domain.append(('type', '=', 'normal'))  # remove this line if use above
+        #
+        # *************************** End *******************************
         analytics = Analytic.search(domain)
         if not analytics:
             vals = dict((x[0], x[2]) for x in domain)
@@ -280,10 +298,19 @@ class AccountAnalyticAccount(models.Model):
                             ('name' in rec and rec.name) or
                             ('product_name' in rec and rec.product_name) or
                             False)
-            vals['type'] = ((rec._name == 'account.model.line' and 'normal') or
-                            (rec.product_id and 'product') or
-                            (rec.activity_id and 'activity') or
-                            'pr_product')
+            # ************************ Start ********************************
+            # Following code was used initially. But I want to experiment
+            # not using it. In PABI2, we may not need them.
+            #
+            # vals['type'] = \
+            #     ((rec._name == 'account.model.line' and 'normal') or
+            #      (rec.product_id and 'product') or
+            #      (rec.activity_id and 'activity') or
+            #      'pr_product')
+            #
+            vals['type'] = 'normal'
+            #
+            # *************************** End *******************************
             return Analytic.create(vals)
         else:
             return analytics[0]
