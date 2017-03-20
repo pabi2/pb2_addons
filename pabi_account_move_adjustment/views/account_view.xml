@@ -65,7 +65,7 @@
         </record>
 
         <record id="action_journal_adjust_budget" model="ir.actions.act_window">
-            <field name="name">Journal Adj.Bud.</field>
+            <field name="name">Journal Adj.Budget</field>
             <field name="res_model">account.move</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -165,7 +165,7 @@
         </record>
 
         <record id="action_journal_adjust_no_budget" model="ir.actions.act_window">
-            <field name="name">Journal Adj.No.Bud.</field>
+            <field name="name">Journal Adj.No.Budget</field>
             <field name="res_model">account.move</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

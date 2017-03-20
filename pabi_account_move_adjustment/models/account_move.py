@@ -2,34 +2,52 @@
 from openerp import models, fields, api
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
+MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 
-class AccountMoveLine(models.Model):
-    _inherit = 'account.move.line'
 
-    @api.multi
-    def write(self, vals, *args, **kargs):
-        res = super(AccountMoveLine, self).write(vals, *args, **kargs)
-        # Only do this if it is adjustment
-        if self._context.get('is_move_adjustment', False):
-            if not self._context.get('MyModelLoopBreaker', False):
-                self.update_related_dimension(vals)
-                for line in self:
-                    Analytic = self.env['account.analytic.account']
-                    analytic_account_id = \
-                        Analytic.create_matched_analytic(line).id
-                    line.with_context(MyModelLoopBreaker=True).write({
-                        'analytic_account_id': analytic_account_id,
-                    })
-        return res
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    @api.one
+    def copy(self, default):
+        move = super(AccountMove, self).copy(default)
+        if self.doctype == 'adjustment':
+            move.line_id.write({'analytic_account_id': False})
+            self.env['account.analytic.line'].search(
+                [('move_id', 'in', move.line_id.ids)]).unlink()
+        return move
 
     @api.model
-    def create(self, vals, *args, **kargs):
-        res = super(AccountMoveLine, self).create(vals, *args, **kargs)
-        # Only do this if it is adjustment
-        if self._context.get('is_move_adjustment', False):
-            if not self._context.get('MyModelLoopBreaker', False):
-                res.update_related_dimension(vals)
+    def _convert_move_line_to_dict(self, line):
+        values = {}
+        for name, field in line._fields.iteritems():
+            if name in MAGIC_COLUMNS:
+                continue
+            elif field.type == 'many2one':
+                values[name] = line[name].id
+            elif field.type not in ['many2many', 'one2many']:
+                values[name] = line[name]
+        return values
+
+    @api.multi
+    def button_validate(self):
+        # For case adjustment journal only, create analytic when posted
+        for move in self:
             Analytic = self.env['account.analytic.account']
-            res.analytic_account_id = \
-                Analytic.create_matched_analytic(res)
-        return res
+            if move.doctype == 'adjustment':
+                for line in move.line_id:
+                    vals = self._convert_move_line_to_dict(line)
+                    line.update_related_dimension(vals)
+                    analytic = Analytic.create_matched_analytic(line)
+                    line.analytic_account_id = analytic
+        return super(AccountMove, self).button_validate()
+
+    @api.multi
+    def button_cancel(self):
+        # For case adjustment journal only, remove analytic when cancel
+        for move in self:
+            if move.doctype == 'adjustment':
+                move.line_id.write({'analytic_account_id': False})
+                self.env['account.analytic.line'].search(
+                    [('move_id', 'in', move.line_id.ids)]).unlink()
+        return super(AccountMove, self).button_cancel()
