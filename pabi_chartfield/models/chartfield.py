@@ -209,7 +209,7 @@ CHART_FIELDS = [
                  'invest_asset',
                  'invest_construction',
                  ]),
-    ]
+]
 
 
 # Extra non-binding chartfield (similar to activity)
