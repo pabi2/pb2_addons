@@ -4,6 +4,12 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
+from openerp.tools.safe_eval import safe_eval as eval
+
+import dateutil
+import openerp
+from operator import itemgetter
+from openerp import workflow
 
 
 class AccountSubscription(models.Model):
@@ -295,6 +301,40 @@ class AccountModel(models.Model):
         return move_dict
 
     @api.model
+    def _get_eval_context(self, active_model, active_id):
+        """ Prepare the context used when evaluating python code, like the
+        condition or code server actions.
+
+        :returns: dict -- evaluation context given to (safe_)eval """
+        env = openerp.api.Environment(self._cr, self._uid, self._context)
+        model = env[str(active_model)]
+        obj = model.browse(active_id)
+        eval_context = {
+            # python libs
+            'time': time,
+            'datetime': datetime,
+            'dateutil': dateutil,
+            # orm
+            'env': env,
+            'model': model,
+            'workflow': workflow,
+            # Exceptions
+            'ValidationError': openerp.exceptions.ValidationError,
+            # record
+            # deprecated and define record (active_id) and records (active_ids)
+            'object': obj,
+            'obj': obj,
+            # Deprecated use env or model instead
+            'self': obj,
+            'pool': self.pool,
+            'cr': self._cr,
+            'uid': self._uid,
+            'context': self._context,
+            'user': env.user,
+        }
+        return eval_context
+
+    @api.model
     def _prepare_move_line(self, model):
         PayTerm = self.env['account.payment.term']
         Period = self.env['account.period']
@@ -308,7 +348,20 @@ class AccountModel(models.Model):
             'journal_id': model.journal_id.id,
             'period_id': period.id
         })
+        eval_context = self._get_eval_context(model._model, model.id)
         for line in model.lines_id:
+            name = line.name
+            if '${' in name:
+                field_code = (line.name.split('${'))[1].split('}')[0]
+                field_code = 'value=' + field_code
+                try:
+                    eval(field_code, eval_context, mode="exec", nocopy=True)
+                    name = eval_context.get('value', False)
+                except Exception:
+                    raise ValidationError(
+                        _("Wrong code (%s) defined in line\
+                        in Recurring Models: %s") % (name, model.name))
+
             analytic_account_id = False
             if line.analytic_account_id:
                 if not model.journal_id.analytic_journal_id:
@@ -348,7 +401,7 @@ class AccountModel(models.Model):
                         pterm_list.sort()
                         date_maturity = pterm_list[-1]
             val.update({
-                'name': line.name,
+                'name': name,
                 'quantity': line.quantity,
                 'debit': line.debit,
                 'credit': line.credit,
