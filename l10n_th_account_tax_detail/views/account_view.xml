@@ -29,9 +29,9 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page string="Tax Detail" attrs="{'invisible': [('tax_detail_ids', '=', [])]}">
-                        <field name="tax_detail_ids">
-                            <tree readonly="1">
-                                <field name="doc_type"/>
+                        <field name="tax_detail_ids" readonly="1">
+                            <tree>
+                                <field name="doc_type" domain="[('doc_type', '=', 'purchase')]"/>
                                 <field name="partner_id"/>
                                 <field name="period_id"/>
                                 <field name="invoice_number"/>

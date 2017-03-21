@@ -89,7 +89,7 @@ class AccountTaxDetail(models.Model):
         [('sale', 'Sales'),
          ('purchase', 'Purchase')],
         string='Document Type',
-        readonly=True,
+        readonly=False,
         required=True,
     )
     invoice_tax_id = fields.Many2one(
@@ -134,7 +134,7 @@ class AccountTaxDetail(models.Model):
         readonly=True,
     )
     addition = fields.Boolean(
-        strin='Past Period Tax',
+        string='Past Period Tax',
         default=False,
     )
     partner_id = fields.Many2one(
@@ -219,33 +219,38 @@ class AccountTaxDetail(models.Model):
             relativedelta.relativedelta(months=-months + 1)
         return date_start, date_stop
 
-    @api.model
+    @api.multi
     def _set_next_sequence(self, date_doc=None):
-        months = self.env.user.company_id.number_month_tax_addition
-        tax_months = months and int(months) or 6
-        date_start, date_stop = self._get_valid_date_range(tax_months)
-        period = self.env['account.period'].find(date_doc)[:1]
-        invoice_date = datetime.strptime(self.invoice_date,
-                                         '%Y-%m-%d').date()
-        ref_move_id = self.invoice_tax_id.invoice_id.move_id.id or \
-            self.voucher_tax_id.voucher_id.move_id.id or \
-            self.move_line_id.move_id.id or False
-        if date_start <= invoice_date <= date_stop:
-            next_seq = self._get_next_sequence(period)
-            self.write({'tax_sequence': next_seq,
-                        'period_id': period.id,
-                        'date_doc': date_doc,
-                        'ref_move_id': ref_move_id,
-                        })
-        else:
-            add_period = self.env['account.period'].find(self.invoice_date)[:1]
-            next_seq = self._get_next_sequence(add_period)
-            self.write({'tax_sequence': next_seq,
-                        'period_id': add_period.id,
-                        'date_doc': date_doc,
-                        'ref_move_id': ref_move_id,
-                        'addition': True,
-                        })
+        for rec in self:
+            if rec.tax_sequence:
+                continue
+            months = rec.env.user.company_id.number_month_tax_addition
+            tax_months = months and int(months) or 6
+            date_start, date_stop = rec._get_valid_date_range(tax_months)
+            period = self.env['account.period'].find(date_doc)[:1]
+            invoice_date = datetime.strptime(rec.invoice_date,
+                                             '%Y-%m-%d').date()
+            ref_move_id = rec.ref_move_id.id or \
+                rec.invoice_tax_id.invoice_id.move_id.id or \
+                rec.voucher_tax_id.voucher_id.move_id.id or \
+                rec.move_line_id.move_id.id or False
+            if date_start <= invoice_date <= date_stop:
+                next_seq = rec._get_next_sequence(period)
+                rec.write({'tax_sequence': next_seq,
+                           'period_id': period.id,
+                           'date_doc': date_doc,
+                           'ref_move_id': ref_move_id,
+                           })
+            else:
+                Period = self.env['account.period']
+                add_period = Period.find(rec.invoice_date)[:1]
+                next_seq = rec._get_next_sequence(add_period)
+                rec.write({'tax_sequence': next_seq,
+                           'period_id': add_period.id,
+                           'date_doc': date_doc,
+                           'ref_move_id': ref_move_id,
+                           'addition': True,
+                           })
 
     @api.model
     def _get_tax_id(self, tax_code, validate=True):

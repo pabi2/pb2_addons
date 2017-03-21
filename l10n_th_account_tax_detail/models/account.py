@@ -21,7 +21,7 @@ class AccountMove(models.Model):
         'account.tax.detail',
         'ref_move_id',
         string='Tax Detail',
-        readonly=True,
+        readonly=False,
     )
 
     def init(self, cr):
