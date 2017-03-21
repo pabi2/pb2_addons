@@ -745,6 +745,15 @@ class ChartFieldAction(ChartField):
 
     @api.multi
     def write(self, vals):
+        # For balance sheet account, alwasy no dimension
+        if vals.get('account_id', False):
+            account = self.env['account.account'].browse(vals['account_id'])
+            if account.user_type.report_type in ('asset', 'liability'):
+                vals['section_id'] = False
+                vals['project_id'] = False
+                vals['personnel_costcenter_id'] = False
+                vals['invest_asset_id'] = False
+                vals['invest_construction_phase_id'] = False
         res = super(ChartFieldAction, self).write(vals)
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
