@@ -339,16 +339,16 @@ class InterfaceAccountEntry(models.Model):
             }
             move_line = AccountMoveLine.with_context(ctx).create(vals)
             line.ref_move_line_id = move_line
-            # For balance sheet item, do not need dimension
-            report_type = line.account_id.user_type.report_type
-            if report_type not in ('asset', 'liability'):
-                move_line.update_related_dimension(vals)
-                analytic_account = Analytic.create_matched_analytic(move_line)
-                if analytic_account and not journal.analytic_journal_id:
-                    raise ValidationError(
-                        _("You have to define an analytic journal on the "
-                          "'%s' journal!") % (journal.name,))
-                move_line.analytic_account_id = analytic_account
+            # For balance sheet item, do not need dimension (kittiu: ignore)
+            # report_type = line.account_id.user_type.report_type
+            # if report_type not in ('asset', 'liability'):
+            move_line.update_related_dimension(vals)
+            analytic_account = Analytic.create_matched_analytic(move_line)
+            if analytic_account and not journal.analytic_journal_id:
+                raise ValidationError(
+                    _("You have to define an analytic journal on the "
+                      "'%s' journal!") % (journal.name,))
+            move_line.analytic_account_id = analytic_account
 
             # For Normal Tax Line, also add to account_tax_detail
             if line.tax_id and not line.tax_id.is_wht and \

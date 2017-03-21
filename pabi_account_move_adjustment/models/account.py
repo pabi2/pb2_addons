@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
+from openerp.exceptions import Warning as UserError
+
 
 MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 
@@ -35,6 +37,7 @@ class AccountMove(models.Model):
         for move in self:
             Analytic = self.env['account.analytic.account']
             if move.doctype == 'adjustment':
+                # Analytic
                 for line in move.line_id:
                     vals = self._convert_move_line_to_dict(line)
                     line.update_related_dimension(vals)
@@ -51,6 +54,11 @@ class AccountMove(models.Model):
                 self.env['account.analytic.line'].search(
                     [('move_id', 'in', move.line_id.ids)]).unlink()
         return super(AccountMove, self).button_cancel()
+
+    @api.multi
+    def action_set_tax_sequence(self):
+        for move in self:
+            move.tax_detail_ids._set_next_sequence()
 
 
 class AccountMoveLine(models.Model):

@@ -59,6 +59,22 @@
                             <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
                             <field name="line_item_summary" colspan="4" nolabel="1"/>
                         </page>
+                        <page string="Tax Detail">
+                            <button name="action_set_tax_sequence" string="Run Sequence" type="object"/>
+                            <field name="tax_detail_ids" context="{'default_doc_type': 'purchase'}">
+                                <tree editable="bottom" >
+                                    <field name="doc_type"/>
+                                    <field name="partner_id"/>
+                                    <field name="period_id"/>
+                                    <field name="invoice_number"/>
+                                    <field name="invoice_date"/>
+                                    <field name="base" sum="Base"/>
+                                    <field name="amount" sum="Tax"/>
+                                    <field name="tax_sequence_display"/>
+                                    <field name="addition"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
                 </form>
             </field>
@@ -158,6 +174,22 @@
                             </field>
                             <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
                             <field name="line_item_summary" colspan="4" nolabel="1"/>
+                        </page>
+                        <page string="Tax Detail">
+                            <button name="action_set_tax_sequence" string="Run Sequence" type="object"/>
+                            <field name="tax_detail_ids" context="{'default_doc_type': 'purchase'}">
+                                <tree editable="bottom" >
+                                    <field name="doc_type"/>
+                                    <field name="partner_id"/>
+                                    <field name="period_id"/>
+                                    <field name="invoice_number"/>
+                                    <field name="invoice_date"/>
+                                    <field name="base" sum="Base"/>
+                                    <field name="amount" sum="Tax"/>
+                                    <field name="tax_sequence_display"/>
+                                    <field name="addition"/>
+                                </tree>
+                            </field>
                         </page>
                     </notebook>
                 </form>
