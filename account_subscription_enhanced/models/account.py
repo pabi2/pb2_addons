@@ -8,7 +8,6 @@ from openerp.tools.safe_eval import safe_eval as eval
 
 import dateutil
 import openerp
-from operator import itemgetter
 from openerp import workflow
 
 
@@ -199,6 +198,8 @@ class AccountSubscriptionLine(models.Model):
         move_ids = []
         # Filtered by Model type, when selected
         model_type_ids = self._context.get('model_type_ids', False)
+        context = self._context.copy()
+        context.update({'subscription_id': self.subscription_id.id})
         sublines = self
         if model_type_ids:
             sublines = sublines.filtered(
@@ -207,12 +208,14 @@ class AccountSubscriptionLine(models.Model):
         lines_normal = sublines.filtered(lambda l: not l.amount)
         lines_with_amount = sublines.filtered(lambda l: l.amount)
         # Normal case
-        _ids = super(AccountSubscriptionLine, lines_normal).move_create()
+        _ids = super(AccountSubscriptionLine,
+                     lines_normal.with_context(context)).move_create()
         move_ids.extend(_ids)
         # Amount case
         for line in lines_with_amount:
             subline = line.with_context(subline_amount=line.amount)
-            _ids = super(AccountSubscriptionLine, subline).move_create()
+            _ids = super(AccountSubscriptionLine,
+                         subline.with_context(context)).move_create()
             move_ids.extend(_ids)
         return move_ids
 
@@ -338,6 +341,7 @@ class AccountModel(models.Model):
     def _prepare_move_line(self, model):
         PayTerm = self.env['account.payment.term']
         Period = self.env['account.period']
+        Subscription = self.env['account.subscription']
         move_lines = []
         context = self._context.copy()
         date = context.get('date', False)
@@ -348,10 +352,13 @@ class AccountModel(models.Model):
             'journal_id': model.journal_id.id,
             'period_id': period.id
         })
-        eval_context = self._get_eval_context(model._model, model.id)
+        eval_context = False
+        if ctx.get('subscription_id', False):
+            eval_context = self._get_eval_context(Subscription._model,
+                                                  ctx['subscription_id'])
         for line in model.lines_id:
             name = line.name
-            if '${' in name:
+            if '${' in name and eval_context:
                 field_code = (line.name.split('${'))[1].split('}')[0]
                 field_code = 'value=' + field_code
                 try:
@@ -361,7 +368,9 @@ class AccountModel(models.Model):
                     raise ValidationError(
                         _("Wrong code (%s) defined in line\
                         in Recurring Models: %s") % (name, model.name))
-
+            if '${' in name and not eval_context:
+                raise ValidationError(
+                    _("Sorry!, You can not use %s while creating entries from Model form!") % (name))
             analytic_account_id = False
             if line.analytic_account_id:
                 if not model.journal_id.analytic_journal_id:
