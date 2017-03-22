@@ -368,6 +368,9 @@ class AccountModel(models.Model):
                     raise ValidationError(
                         _("Wrong code (%s) defined in line\
                         in Recurring Models: %s") % (name, model.name))
+            if '${' in name and not eval_context:
+                raise ValidationError(
+                    _("Sorry!, You can not use %s while creating entries from Model form!") % (name))
             analytic_account_id = False
             if line.analytic_account_id:
                 if not model.journal_id.analytic_journal_id:
