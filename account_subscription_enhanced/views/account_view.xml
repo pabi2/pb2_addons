@@ -221,6 +221,17 @@
                 </xpath>
             </field>
         </record>
+        
+        <record id="view_model_line_tree" model="ir.ui.view">
+            <field name="name">account.model.line.tree</field>
+            <field name="model">account.model.line</field>
+            <field name="inherit_id" ref="account.view_model_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="placeholder">${object.name}</attribute>
+                </xpath>
+            </field>
+        </record>
 
     </data>
 </openerp>
