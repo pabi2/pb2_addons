@@ -236,6 +236,18 @@ class AccountModel(models.Model):
     lines_id = fields.One2many(
         copy=False,
     )
+    legend = fields.Text(
+        default=lambda self:
+        _('You can specify year, month and date in the name of the model '
+          'using the following labels:\n\n%(year)s: To Specify Year \n'
+          '%(month)s: To Specify Month \n%(date)s: Current Date\n\ne.g. '
+          'My model on %(date)s\n\n'
+          'Additionally, if the model line is called from '
+          'Define Recurring Entries (account.subscription),\nyou can use '
+          'python code to get the dynamic values from the Define Recurring '
+          'into the model line using ${object} (account.subscription),\n'
+          'e.g. ${object.name} will get the name of Define Recurring\n')
+    )
 
     @api.multi
     def generate(self, data=None):
@@ -370,7 +382,8 @@ class AccountModel(models.Model):
                         in Recurring Models: %s") % (name, model.name))
             if '${' in name and not eval_context:
                 raise ValidationError(
-                    _("Sorry!, You can not use %s while creating entries from Model form!") % (name))
+                    _("Sorry!, You can not use %s while creating entries "
+                      "from Model form!") % (name,))
             analytic_account_id = False
             if line.analytic_account_id:
                 if not model.journal_id.analytic_journal_id:
