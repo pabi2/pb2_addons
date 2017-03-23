@@ -9,7 +9,7 @@
     'version': '0.1.0',
     'depends': [
         'jasper_reports',
-        'hr_expense',
+        'pabi_hr_expense',
     ],
     'data': [
         'report_data.xml',
