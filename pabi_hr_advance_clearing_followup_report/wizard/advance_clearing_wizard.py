@@ -9,40 +9,40 @@ from openerp import models, api, fields
 class AdvanceClearingFollowupWizard(models.Model):
     _name = "advance.clearing.followup.wizard"
 
-    employee_id = fields.Many2one(
+    run_date = fields.Date(
+        string='Run Date',
+        default=lambda self: fields.Date.context_today(self),
+        readonly=True,
+    )
+    show_open_item_only = fields.Boolean(
+        string='Show open item only',
+        default=True,
+    )
+    specific_employee = fields.Boolean(
+        string='Specify Employee(s)',
+        default=False,
+        help="If unchecked, show all advance for all employees",
+    )
+    employee_ids = fields.Many2many(
         'hr.employee',
-        string="Employee",
-        required=True,
-    )
-    date_from = fields.Date(
-        string="Date From",
-        required=True,
-        default=lambda *a: time.strftime('%Y-%m-01'),
-    )
-    date_to = fields.Date(
-        string="Date To",
-        required=True,
-        default=lambda *a: str(
-            datetime.now() + relativedelta.relativedelta(
-                months=+1, day=1, days=-1))[:10],
-    )
-    expense_ids = fields.Many2many(
-        'hr.expense.expense',
-        string="Advance Number",
-        required=True,
+        string="Employees",
+        required=False,
     )
 
     @api.multi
     def run_report(self):
         self.ensure_one()
-        expenses = self.expense_ids.ids
         action = self.env.ref(
-            'pabi_hr_advance_clearing_followup_report.action_advance_clearing_followup'
+            'pabi_hr_advance_clearing_followup_report.'
+            'action_advance_clearing_followup'
         )
         action_data = action.read()[0]
-        domain = [
-            ('advance_expense_id', 'in', expenses),
-            ('employee_id', '=', self.employee_id.id),
-        ]
-        action_data['domain'] = domain
+        domain = [('is_employee_advance', '=', True), ('state', '=', 'paid')]
+        if self.show_open_item_only:
+            domain.append(('amount_to_clearing', '>', 0.0))
+        if self.specific_employee:
+            domain.append(('employee_id', 'in', self.employee_ids.ids))
+        expense_ids = self.env['hr.expense.expense'].search(domain).ids
+        print expense_ids
+        action_data['domain'] = [('advance_expense_id', 'in', expense_ids)]
         return action_data

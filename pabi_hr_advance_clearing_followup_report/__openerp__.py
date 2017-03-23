@@ -15,10 +15,11 @@ HR Expense Advance Clearing Followup report
     "application": False,
     "installable": True,
     "depends": [
-        'hr_expense_advance_clearing',
+        'pabi_hr_expense',
+        'pabi_account',
     ],
     "data": [
-        'report/advance_clearing_report_sql_view.xml',
+        'report/advance_clearing_followup_report.xml',
         'wizard/advance_clearnig_wizard_view.xml',
     ],
 }
