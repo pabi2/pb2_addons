@@ -34,6 +34,7 @@
 											<filter string="Document" name="document" context="{'group_by':'document', 'residual_visible':True}"/>
 											<filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
 											<filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+											<filter string="Activity Rpt" name="activity_rpt_id" context="{'group_by':'activity_rpt_id', 'residual_visible':True}"/>
 											<filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
 											<filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
 											<filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
@@ -49,7 +50,7 @@
 	                    <filter string="Subsector" name="groupby_subsector" context="{'group_by':'subsector_id'}"/>
 	                    <filter string="Division" name="groupby_division" context="{'group_by':'division_id'}"/>
 	                    <filter string="Section" name="groupby_section" context="{'group_by':'section_id'}"/>
-	                    <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'rpt_program_id'}"/>
+	                    <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/>
 	                </group>
                 </search>
             </xpath>

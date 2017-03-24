@@ -43,7 +43,7 @@
                     <field name="mission_id"/>
                     <field name="tag_type_id"/>
                     <field name="tag_id"/>
-                    <field name="rpt_program_id"/>
+                    <field name="program_rpt_id"/>
 
                     <field name="functional_area_id"/>
                     <field name="program_group_id"/>
