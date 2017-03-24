@@ -238,7 +238,6 @@ class PABIBankStatement(models.Model):
 
     @api.multi
     def action_import_xls(self):
-        data = {}
         for rec in self:
             rec.import_ids.unlink()
             rec.import_error = False

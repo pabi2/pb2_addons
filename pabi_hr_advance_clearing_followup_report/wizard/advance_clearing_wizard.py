@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
-from datetime import datetime
-from dateutil import relativedelta
-
 from openerp import models, api, fields
 
 
@@ -43,6 +39,5 @@ class AdvanceClearingFollowupWizard(models.Model):
         if self.specific_employee:
             domain.append(('employee_id', 'in', self.employee_ids.ids))
         expense_ids = self.env['hr.expense.expense'].search(domain).ids
-        print expense_ids
         action_data['domain'] = [('advance_expense_id', 'in', expense_ids)]
         return action_data

@@ -19,6 +19,7 @@ HR Expense Advance Clearing Followup report
         'pabi_account',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'report/advance_clearing_followup_report.xml',
         'wizard/advance_clearnig_wizard_view.xml',
     ],

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
-from openerp.addons.pabi_chartfield.models.chartfield import ChartField
-from openerp.exceptions import Warning as UserError
+from openerp import models, fields, api
 
 
 MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')

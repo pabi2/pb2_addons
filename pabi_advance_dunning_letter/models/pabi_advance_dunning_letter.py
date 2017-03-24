@@ -214,7 +214,7 @@ class PABIAdvanceDunningLetter(models.Model):
             if template:
                 ctx = self.env.context.copy()
                 ctx.update({
-                    'due_days':DUE_DAYS[line.due_type],
+                    'due_days': DUE_DAYS[line.due_type],
                     'date_print': fields.Date.context_today(self),
                     'email_attachment': True,
                     'ids': [line.id]
