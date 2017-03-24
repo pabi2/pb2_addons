@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_budget_monitor_report_tree" model="ir.ui.view">
+            <field name="name">budget.monitor.report.tree</field>
+            <field name="model">budget.monitor.report</field>
+            <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activity_id']" position="after">
+                    <field name="activity_rpt_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_budget_monitor_report_search" model="ir.ui.view">
+            <field name="name">budget.monitor.report.search</field>
+            <field name="model">budget.monitor.report</field>
+            <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='activity_id']" position="after">
+                    <filter string="Activity Rpt" name="activity_rpt_idx" context="{'group_by':'activity_rpt_id', 'residual_visible':True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

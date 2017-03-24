@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_analytic_account_form" model="ir.ui.view">
+            <field name="name">view.account.analytic.account.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activity_id']" position="after">
+                  <field name="activity_rpt_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_tree" model="ir.ui.view">
+            <field name="name">account.analytic.account.tree</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_account_tree"/>
+            <field name="arch" type="xml">
+                <field name="activity_id" position="after">
+                    <field name="activity_rpt_id"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_search" model="ir.ui.view">
+            <field name="name">account.analytic.account.search</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_account_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/group" position="inside">
+                    <filter string="Activity Rpt" domain="[]" context="{'group_by':'activity_rpt_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_line_tree" model="ir.ui.view">
+            <field name="name">view.account.analytic.line.tree</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="inside">
+                    <field name="activity_rpt_id" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_line_filter" model="ir.ui.view">
+            <field name="name">view.account.analytic.line.filter</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/group" position="inside">
+                    <filter string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
+                    <filter string="Activity Rpt" domain="[]" context="{'group_by':'activity_rpt_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
