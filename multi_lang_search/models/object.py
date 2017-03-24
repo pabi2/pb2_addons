@@ -33,7 +33,7 @@ def _extend_name_results_translation(self, domain, field_name,
             WHERE value ilike '%s'AND
                 name = '%s'
             LIMIT %d
-        """% (name, trans_name, limit))
+        """ % (name, trans_name, limit))
         res = self._cr.dictfetchall()
         record_ids = [t['res_id'] for t in res]
         record_ids = self.browse(record_ids)

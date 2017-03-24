@@ -3,7 +3,7 @@ from datetime import datetime
 from openerp import models, fields, api
 
 
-class AccountSubscriptionGenerate(models.Model):
+class AccountSubscriptionGenerate(models.TransientModel):
     _inherit = 'account.subscription.generate'
 
     date_type = fields.Selection(

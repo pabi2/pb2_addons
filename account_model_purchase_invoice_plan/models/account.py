@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import time
-from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, except_orm
 

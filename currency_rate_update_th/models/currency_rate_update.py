@@ -90,7 +90,6 @@ class Currency_rate_update_service(models.Model):
                     main_currency.name,
                     self.max_delta_days
                 )
-                print res
                 rate_name = \
                     fields.Datetime.to_string(datetime.utcnow().replace(
                         hour=0, minute=0, second=0, microsecond=0))

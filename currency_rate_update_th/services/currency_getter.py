@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp.addons.currency_rate_update.\
-    services.currency_getter import Currency_getter_factory
+    services.currency_getter import Currency_getter_factory, UnknowClassError
 
 
 class Currency_getter_factory_THB(Currency_getter_factory):

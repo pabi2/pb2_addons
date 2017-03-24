@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-import currency_rate_update
+from . import currency_rate_update
