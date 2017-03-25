@@ -11,7 +11,6 @@
           * Stock Transfer
           * Stock Borrow
           * Payment Export
-          * Bank Receipt
           * Account Interface
         -->
         <record id="doctype_purchase_requisition" model="res.doctype" >
@@ -48,11 +47,6 @@
             <field name="name">Payment Export</field>
             <field name="sequence_id" ref="doctype_payment_export_seq"/>
             <field name="refer_type">payment_export</field>
-        </record>
-        <record id="doctype_bank_receipt" model="res.doctype" >
-            <field name="name">Bank Receipt</field>
-            <field name="sequence_id" ref="doctype_bank_receipt_seq"/>
-            <field name="refer_type">bank_receipt</field>
         </record>
         <record id="doctype_interface_account" model="res.doctype" >
             <field name="name">Interface Account</field>

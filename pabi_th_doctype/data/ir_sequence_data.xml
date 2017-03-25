@@ -9,7 +9,6 @@
           * Stock Transfer
           * Stock Borrow
           * Payment Export
-          * Bank Receipt
           * Account Interface
         -->
         # Purchase Requisition
@@ -83,17 +82,6 @@
             <field name="name">DOCTYPE: Payment Export</field>
             <field name="code"></field>
             <field name="prefix">PE%(fy)s</field>
-            <field eval="6" name="padding"/>
-            <field eval="1" name="number_next"/>
-            <field eval="1" name="number_increment"/>
-            <field name="implementation">standard</field>
-            <field name="special_type">doctype</field>
-        </record>
-        # Bank Receipt
-        <record id="doctype_bank_receipt_seq" model="ir.sequence">
-            <field name="name">DOCTYPE: Bank Receipt</field>
-            <field name="code"></field>
-            <field name="prefix">RV%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

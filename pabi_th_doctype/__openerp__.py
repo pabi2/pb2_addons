@@ -17,7 +17,6 @@ PABI2 Extension to l10n_th_doctype for,
 * Stock Transfer
 * Stock Borrow
 * Payment Export
-* Bank Receipt
 * Interface Account
 
     """,
@@ -29,7 +28,6 @@ PABI2 Extension to l10n_th_doctype for,
     "depends": [
         'l10n_th_doctype_base',
         'l10n_th_doctype_reversal',
-        'account_bank_receipt',
         'pabi_purchase_work_acceptance',
         'stock_request',
         'pabi_procurement',
