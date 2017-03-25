@@ -34,12 +34,12 @@
                 </xpath>
                 <xpath expr="//field[@name='payment_option']" position="after">
                     <p colspan="2" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
-                        <b>Note: </b>Different Amount can be deducted in tab "Deductions".
+                        Different amount can be reconciled in "Payment Differences" tab.
                     </p>
                 </xpath>
                 <xpath expr="/form/sheet/notebook" position="inside">
-                    <page name="deductions" string="Deductions" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
-                        <field name="multiple_reconcile_ids" nolabel="1">
+                    <page name="deductions" string="Payment Differences">
+                        <field name="multiple_reconcile_ids" nolabel="1" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
                             <tree string="Reconcile Lines" editable="top">
                                 <field name="account_id" domain="[('type','not in',['view', 'closed'])]"/>
                                 <field name="amount" sum="Total Amount"/>
