@@ -68,6 +68,7 @@ class AccountMoveLine(models.Model):
         # Before create, always remove analytic line if exists
         for move_line in self:
             move_line.analytic_lines.unlink()
+        # Only create analytic line if adjust for budget
         move_lines = self.filtered(
             lambda l: l.journal_id.type != 'adjust_no_budget')
         return super(AccountMoveLine, move_lines).create_analytic_lines()

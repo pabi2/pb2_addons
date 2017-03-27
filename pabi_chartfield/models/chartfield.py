@@ -538,6 +538,11 @@ class ChartField(object):
         copy=True,
     )
 
+    # Required fields (to ensure no error onchange)
+    activity_id = fields.Many2one('account.activity')
+    product_id = fields.Many2one('product.product')
+    account_id = fields.Many2one('account.account')
+
     @api.model
     def _get_fund_domain(self):
         domain_str = """
@@ -725,12 +730,18 @@ class ChartFieldAction(ChartField):
                             _('More than 1 dimension selected'))
 
     @api.multi
-    @api.depends('activity_id', 'product_id')
+    @api.depends('activity_id', 'product_id', 'account_id')
     def _compute_require_chartfield(self):
         for rec in self:
-            if 'activity_id' in rec and rec.activity_group_id:
-                report_type = rec.activity_id.\
-                    account_id.user_type.report_type
+            account = False
+            if 'account_id' in rec and rec.account_id:
+                account = rec.account_id
+            elif 'activity_id' in rec and rec.activity_id:
+                account = rec.activity_id.account_id
+            elif 'product_id' in rec and rec.product_id:
+                account = rec.product_id.account_id
+            if account:
+                report_type = account.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')
             else:
@@ -745,7 +756,7 @@ class ChartFieldAction(ChartField):
 
     @api.multi
     def write(self, vals):
-        # For balance sheet account, alwasy no dimension
+        # For balance sheet account, alwasy set no dimension
         if vals.get('account_id', False):
             account = self.env['account.account'].browse(vals['account_id'])
             if account.user_type.report_type in ('asset', 'liability'):
