@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 from openerp import SUPERUSER_ID
 from openerp.api import Environment
 
@@ -32,3 +32,8 @@ class AccountMove(models.Model):
             rec.ref_move_id = rec.invoice_tax_id.invoice_id.move_id or \
                 rec.voucher_tax_id.voucher_id.move_id or \
                 rec.move_line_id.move_id
+
+    @api.multi
+    def action_set_tax_sequence(self):
+        for move in self:
+            move.tax_detail_ids._set_next_sequence()
