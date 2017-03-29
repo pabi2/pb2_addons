@@ -68,6 +68,9 @@ $F{amount_to_clearing}:0.0]]></variableExpression>
 		<variableExpression><![CDATA[new java.util.Date()-$F{date_due} > 30 == true ?
 $F{amount_to_clearing}:0.0]]></variableExpression>
 	</variable>
+	<variable name="total_net_clearing_all" class="java.lang.Float" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount_to_clearing}]]></variableExpression>
+	</variable>
 	<group name="operating">
 		<groupExpression><![CDATA[$F{operating_unit_id}]]></groupExpression>
 		<groupHeader>
@@ -81,63 +84,63 @@ $F{amount_to_clearing}:0.0]]></variableExpression>
 						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{operating_unit_id}]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 					<reportElement x="105" y="0" width="90" height="20"/>
-					<box leftPadding="1">
+					<box leftPadding="0" rightPadding="1">
 						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Float"><![CDATA[$V{sum_clearing}]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 					<reportElement x="195" y="0" width="90" height="20"/>
-					<box leftPadding="1">
+					<box leftPadding="0" rightPadding="1">
 						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Float"><![CDATA[$V{sum_clearing_1to15}]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 					<reportElement x="285" y="0" width="90" height="20"/>
-					<box leftPadding="1">
+					<box leftPadding="0" rightPadding="1">
 						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Float"><![CDATA[$V{sum_clearing_16to30}]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 					<reportElement x="375" y="0" width="90" height="20"/>
-					<box leftPadding="1">
+					<box leftPadding="0" rightPadding="1">
 						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Float"><![CDATA[$V{sum_clearing_30up}]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 					<reportElement x="465" y="0" width="90" height="20"/>
-					<box leftPadding="1">
+					<box leftPadding="0" rightPadding="1">
 						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Float"><![CDATA[$V{sum_clearing}+
@@ -165,7 +168,9 @@ $V{sum_clearing_30up}]]></textFieldExpression>
 			</staticText>
 			<textField pattern="dd MMMMM yyyy">
 				<reportElement x="259" y="20" width="100" height="20"/>
-				<textElement verticalAlignment="Top"/>
+				<textElement verticalAlignment="Top">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -178,7 +183,7 @@ $V{sum_clearing_30up}]]></textFieldExpression>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="41" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="105" height="40" backcolor="#C0C0C0"/>
 				<box>
@@ -299,69 +304,66 @@ $V{sum_clearing_30up}]]></textFieldExpression>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ยอดรวมทั้งหมด]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="105" y="0" width="90" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$V{total_net_clearing}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="#,##0.00;-#,##0.00">
 				<reportElement x="195" y="0" width="90" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$V{total_net_clearing_1to15}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="#,##0.00;-#,##0.00">
 				<reportElement x="285" y="0" width="90" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$V{total_net_clearing_16to30}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="#,##0.00;-#,##0.00">
 				<reportElement x="375" y="0" width="90" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$V{total_net_clearing_30up}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="#,##0.00;-#,##0.00">
 				<reportElement x="465" y="0" width="90" height="20"/>
-				<box leftPadding="1">
-					<leftPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Double"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				<box leftPadding="0" rightPadding="1">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Float"><![CDATA[$V{total_net_clearing}+
-$V{total_net_clearing_1to15}+
-$V{total_net_clearing_16to30}+
-$V{total_net_clearing_30up}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$V{total_net_clearing_all}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

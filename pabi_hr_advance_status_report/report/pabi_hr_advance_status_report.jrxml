@@ -45,16 +45,30 @@
 	<pageHeader>
 		<band height="47" splitType="Stretch">
 			<staticText>
-				<reportElement x="190" y="27" width="178" height="20"/>
+				<reportElement x="190" y="7" width="178" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Waree" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[รายงานสถานะลูกหนี้เงินยืมทดรองจ่าย]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="205" y="27" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สิ้นสุดวันที่]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="263" y="27" width="105" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="46" splitType="Stretch">
+		<band height="45" splitType="Stretch">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="5" width="28" height="40" backcolor="#C0C0C0"/>
 				<box topPadding="0" leftPadding="0">
@@ -209,7 +223,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{operating_unit_id}]]></textFieldExpression>
@@ -238,26 +252,26 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{employee_first_name} + "  " + $F{employee_last_name}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="280" y="0" width="55" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$F{amount_advanced} == null ? 0.0 : $F{amount_advanced}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="335" y="0" width="55" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[new java.util.Date() < $F{date_due} == true ?
@@ -275,43 +289,43 @@ $F{amount_to_clearing}:null]]></textFieldExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_id}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="390" y="0" width="55" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new java.util.Date()-$F{date_due} >= 1) && (new java.util.Date()-$F{date_due} <= 15) == true ?
+				<textFieldExpression class="java.lang.Float"><![CDATA[(new java.util.Date()-$F{date_due} >= 1) && (new java.util.Date()-$F{date_due} <= 15) == true ?
 $F{amount_to_clearing}:null]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="445" y="0" width="55" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new java.util.Date()-$F{date_due} >= 16) && (new java.util.Date()-$F{date_due} <= 30) == true ?
+				<textFieldExpression class="java.lang.Float"><![CDATA[(new java.util.Date()-$F{date_due} >= 16) && (new java.util.Date()-$F{date_due} <= 30) == true ?
 $F{amount_to_clearing}:null]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="500" y="0" width="55" height="20"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new java.util.Date()-$F{date_due} > 30 == true ?
+				<textFieldExpression class="java.lang.Float"><![CDATA[new java.util.Date()-$F{date_due} > 30 == true ?
 $F{amount_to_clearing}:null]]></textFieldExpression>
 			</textField>
 		</band>
