@@ -53,11 +53,6 @@ class AccountMove(models.Model):
                     [('move_id', 'in', move.line_id.ids)]).unlink()
         return super(AccountMove, self).button_cancel()
 
-    @api.multi
-    def action_set_tax_sequence(self):
-        for move in self:
-            move.tax_detail_ids._set_next_sequence()
-
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
