@@ -730,7 +730,7 @@ class ChartFieldAction(ChartField):
                             _('More than 1 dimension selected'))
 
     @api.multi
-    @api.depends('activity_id', 'product_id', 'account_id')
+    @api.depends('activity_id', 'account_id')
     def _compute_require_chartfield(self):
         for rec in self:
             account = False
@@ -738,8 +738,6 @@ class ChartFieldAction(ChartField):
                 account = rec.account_id
             elif 'activity_id' in rec and rec.activity_id:
                 account = rec.activity_id.account_id
-            elif 'product_id' in rec and rec.product_id:
-                account = rec.product_id.account_id
             if account:
                 report_type = account.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
