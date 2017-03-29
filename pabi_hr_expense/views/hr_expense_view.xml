@@ -292,5 +292,8 @@
 
 		<menuitem id="menu_hr_expense_rule" name="Expense Regulations" parent="hr.menu_hr_configuration" action="hr_expense_rule" sequence="50"/>
 
+		<!-- Reports -->
+		<menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="100"/>
+
 	</data>
 </openerp>

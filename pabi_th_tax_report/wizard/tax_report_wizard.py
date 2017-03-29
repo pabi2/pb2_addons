@@ -21,5 +21,7 @@ class AccountTaxReportWizard(models.TransientModel):
         res['datas']['parameters']['branch_name'] = taxbranch.name
         res['datas']['parameters']['branch_vat'] = taxbranch.taxid
         res['datas']['parameters']['branch_taxbranch'] = taxbranch.code
-        res['datas']['parameters']['advance_sequence'] = True
+        # Advance sequence
+        if res['datas']['parameters']['doc_type'] == 'purchase':
+            res['datas']['parameters']['advance_sequence'] = True
         return res

@@ -129,7 +129,7 @@ CHART_SELECT = [
     'invest_asset_id',
     'invest_construction_phase_id',
     'cost_control_id',  # Non-Binding
-    ]
+]
 
 # All types of budget structure
 # This is related to chart structure
@@ -140,7 +140,7 @@ CHART_VIEW = {
     'invest_asset': ('Investment Asset', 'invest_asset_id'),
     'invest_construction': ('Investment Construction',
                             'invest_construction_id'),
-    }
+}
 
 CHART_VIEW_LIST = [(x[0], x[1][0]) for x in CHART_VIEW.items()]
 CHART_VIEW_FIELD = dict([(x[0], x[1][1]) for x in CHART_VIEW.items()])
@@ -209,7 +209,7 @@ CHART_FIELDS = [
                  'invest_asset',
                  'invest_construction',
                  ]),
-    ]
+]
 
 
 # Extra non-binding chartfield (similar to activity)
@@ -538,6 +538,11 @@ class ChartField(object):
         copy=True,
     )
 
+    # Required fields (to ensure no error onchange)
+    activity_id = fields.Many2one('account.activity')
+    product_id = fields.Many2one('product.product')
+    account_id = fields.Many2one('account.account')
+
     @api.model
     def _get_fund_domain(self):
         domain_str = """
@@ -725,12 +730,16 @@ class ChartFieldAction(ChartField):
                             _('More than 1 dimension selected'))
 
     @api.multi
-    @api.depends('activity_id', 'product_id')
+    @api.depends('activity_id', 'account_id')
     def _compute_require_chartfield(self):
         for rec in self:
-            if 'activity_id' in rec and rec.activity_group_id:
-                report_type = rec.activity_id.\
-                    account_id.user_type.report_type
+            account = False
+            if 'account_id' in rec and rec.account_id:
+                account = rec.account_id
+            elif 'activity_id' in rec and rec.activity_id:
+                account = rec.activity_id.account_id
+            if account:
+                report_type = account.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')
             else:
@@ -745,6 +754,15 @@ class ChartFieldAction(ChartField):
 
     @api.multi
     def write(self, vals):
+        # For balance sheet account, alwasy set no dimension
+        if vals.get('account_id', False):
+            account = self.env['account.account'].browse(vals['account_id'])
+            if account.user_type.report_type in ('asset', 'liability'):
+                vals['section_id'] = False
+                vals['project_id'] = False
+                vals['personnel_costcenter_id'] = False
+                vals['invest_asset_id'] = False
+                vals['invest_construction_phase_id'] = False
         res = super(ChartFieldAction, self).write(vals)
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)

@@ -30,7 +30,9 @@ DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   # For analytic line only (budget commitment)
                   ('purchase_request', 'Purchase Request'),
                   ('purchase_order', 'Purchase Order'),
-                  ('sale_order', 'Sales Order'), ]
+                  ('sale_order', 'Sales Order'),
+                  # Non document related, adjustment
+                  ('adjustment', 'Adjustment'), ]
 
 INVOICE_DOCTYPE = {'sale': 'out_invoice',
                    'sale_refund': 'out_refund',
@@ -204,6 +206,8 @@ class AccountMove(models.Model):
                 rec.doctype = self._get_doctype(document._name, document)
                 if 'date_value' in document._fields:
                     rec.date_value = document.date_value
+            else:
+                rec.doctype = 'adjustment'  # <-- Not related to any doc
             if not rec.date_value:
                 rec.date_value = rec.date  # No Value Date, same as date
 

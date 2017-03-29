@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_advance_clearing_followup_report_graph" model="ir.ui.view">
+            <field name="name">view.advance.clearing.followup.report.graph</field>
+            <field name="model">advance.clearing.followup.report</field>
+            <field name="arch" type="xml">
+                <graph string="Advance Clearing Followup Report" type="pivot">
+                    <!-- ??? -->
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_advance_clearing_followup_report_tree" model="ir.ui.view">
+            <field name="name">view.advance.clearing.followup.report.tree</field>
+            <field name="model">advance.clearing.followup.report</field>
+            <field name="arch" type="xml">
+                <tree string="Advance Clearing Followup">
+                    <field name="advance_expense_id"/>
+                    <field name="date_advance"/>
+                    <field name="employee_code"/>
+                    <field name="employee_id"/>
+                    <field name="operating_unit_id"/>
+                    <field name="amount_advanced" invisible="1"/>
+                    <field name="amount_advanced_disp"/> <!-- related field won't sum -->
+                    <field name="date_due"/>
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="customer_invoice_id"/>
+                    <field name="date_customer_invoice"/>
+                    <field name="expense_id"/>
+                    <field name="date_expense_accepted"/>
+                    <field name="supplier_invoice_id"/>
+                    <field name="date_supplier_invoice"/>
+                    <field name="amount_credit_advance" sum="Credit"/>
+                    <field name="amount_remaining" invisible="1"/>
+                    <field name="amount_remaining_disp"/> <!-- related field won't sum -->
+                    <field name="advance_used_percent"/>
+                    <field name="date_sla_30days"/>
+                    <field name="aging_lt_15"/>
+                    <field name="aging_gt_15"/>
+                    <field name="responsible_id"/>
+                    <field name="reason"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_advance_clearing_followup_report_search" model="ir.ui.view">
+            <field name="name">view.advance.clearing.followup.report.search</field>
+            <field name="model">advance.clearing.followup.report</field>
+            <field name="arch" type="xml">
+                <search string="Advance Clearing Followup">
+                    <field name="advance_expense_id" string="Advance Doc No."/>
+                    <field name="employee_id" string="Employee"/>
+                    <field name="operating_unit_id" string="Org"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Org." name="operating_unit_id" context="{'group_by':'operating_unit_id'}"/>
+                        <filter string="Employee" name="employee_id" context="{'group_by':'employee_id'}"/>
+                        <filter string="Advance Doc No." name="advance_expense_id" context="{'group_by':'advance_expense_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_advance_clearing_followup" model="ir.actions.act_window">
+            <field name="name">Advance Clearing Followup Report</field>
+            <field name="res_model">advance.clearing.followup.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="view_advance_clearing_followup_report_search"/>
+        </record>
+    </data>
+</openerp>

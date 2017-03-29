@@ -48,7 +48,7 @@
 					<field name="section_id"/>
 					<field name="costcenter_id"/>
 					<field name="taxbranch_id"/>
-					<field name="rpt_program_id"/>
+					<field name="program_rpt_id"/>
 
 					<field name="invest_asset_id"/>
 

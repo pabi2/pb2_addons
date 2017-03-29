@@ -13,7 +13,7 @@ class BudgetConsumeReport(ChartField, models.Model):
         readonly=True,
         help="Reference to original document",
     )
-    rpt_program_id = fields.Many2one(
+    program_rpt_id = fields.Many2one(
         'res.program',
         string='Report Program',
     )
@@ -36,9 +36,9 @@ class BudgetConsumeReport(ChartField, models.Model):
         # Add dimensions for document reference
         dimensions += ', aal.document'
         dimensions += '''
-            , CASE WHEN aal.section_id is not null THEN section.rpt_program_id
-                    WHEN aal.project_id is not null THEN project.rpt_program_id
-                    END as rpt_program_id'''
+            , CASE WHEN aal.section_id is not null THEN section.program_rpt_id
+                    WHEN aal.project_id is not null THEN project.program_rpt_id
+                    END as program_rpt_id'''
         return dimensions
 
     def init(self, cr):
