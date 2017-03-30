@@ -14,17 +14,31 @@
                         <button name="%(action_print_pit_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', ('supplier', '!=', True), ('pit_line', '=', [])]}"/>
                     </xpath>
                     <page name="thai_taxation" position="inside">
-                        <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}">
-                            <field name="pit_line">
-                                <tree editable="bottom" string="PIT">
-                                    <field name="voucher_id"/>
-                                    <field name="posted"/>
+                        <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}" string="PIT">
+                            <field name="pit_line" nolabel="1" context="{'default_manual': True}">
+                                <tree editable="bottom" string="PIT" create="0" delete="0">
+                                    <field name="voucher_id" attrs="{'readonly': [('posted', '=', True)]}"/>
+                                    <field name="manual" invisible="1"/>
                                     <field name="date"/>
                                     <field name="calendar_year"/>
-                                    <field name="amount_income"/>
-                                    <field name="amount_wht"/>
+                                    <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}" sum="Total Income"/>
+                                    <field name="amount_wht" sum="Total WHT"/>
+                                    <field name="posted"/>
+                                    <button name="action_post" type="object" string="Post" icon="gtk-apply" class="oe_highlight" attrs="{'invisible': ['|', ('manual', '=', False), ('posted', '=', True)]}" />
                                 </tree>
                             </field>
+                        </group>
+                        <group attrs="{'invisible': [('supplier', '=', False)]}">
+                            <group></group>
+                            <group string="Yearly Summary">
+                                <field name="pit_yearly" nolabel="1">
+                                    <tree editable="bottom" string="PIT" create="0" delete="0">
+                                        <field name="calendar_year"/>
+                                        <field name="amount_income" sum="Total Income"/>
+                                        <field name="amount_wht" sum="Total WHT"/>
+                                    </tree>
+                                </field>
+                            </group>
                         </group>
                     </page>
                 </data>

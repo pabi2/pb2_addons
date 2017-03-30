@@ -70,6 +70,12 @@ class AccountBankReceipt(models.Model):
         string='Journal Entry',
         readonly=True,
     )
+    move_ids = fields.One2many(
+        'account.move.line',
+        related='move_id.line_id',
+        string='Journal Items',
+        readonly=True,
+    )
     company_partner_id = fields.Many2one(
         'res.partner',
         string='Company Partner',

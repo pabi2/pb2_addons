@@ -366,6 +366,7 @@ class AccountBudgetLinePeriodSplit(models.Model):
     budget_line_id = fields.Many2one(
         'account.budget.line',
         string="Budget Line",
+        ondelete='cascade',
         required=True,
     )
     period_id = fields.Many2one(

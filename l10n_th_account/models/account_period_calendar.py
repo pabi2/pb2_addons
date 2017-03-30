@@ -45,7 +45,7 @@ class AccountPeriodCalendar(models.Model):
             case when month = '01' then 'Jan-' when month = '02' then 'Feb-'
             when month = '03' then 'Mar-' when month = '04' then 'Apr-'
             when month = '05' then 'May-' when month = '06' then 'Jun-'
-            when month = '07' then 'Jul-' when month = '08' then 'Jul-'
+            when month = '07' then 'Jul-' when month = '08' then 'Aug-'
             when month = '09' then 'Sep-' when month = '10' then 'Oct-'
             when month = '11' then 'Nov-' when month = '12' then 'Dec-'
             end || year as name,

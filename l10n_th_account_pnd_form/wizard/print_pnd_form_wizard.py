@@ -9,10 +9,7 @@ class PrintPNDFormWizard(models.TransientModel):
     _name = 'print.pnd.form.wizard'
 
     income_tax_form = fields.Selection(
-        [('pnd1', 'PND1'),
-         ('pnd3', 'PND3'),
-         ('pnd3a', 'PND3a'),
-         ('pnd53', 'PND53')],
+        INCOME_TAX_FORM,
         string='Income Tax Form',
         required=True,
     )

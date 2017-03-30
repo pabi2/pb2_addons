@@ -15,7 +15,8 @@ Extension for case Cancel with Reversal (account_cancel_reversal)
     "application": False,
     "installable": True,
     "depends": [
-        'l10n_th_doctype',
+        'l10n_th_doctype_invoice',
+        'l10n_th_doctype_voucher',
         'account_cancel_reversal',
     ],
     "data": [

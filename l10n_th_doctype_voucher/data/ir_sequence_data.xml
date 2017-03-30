@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Customer Payment
+        <record id="doctype_customer_payment_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Customer Payment</field>
+            <field name="code"></field>
+            <field name="prefix">RC%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Supplier Payment
+        <record id="doctype_supplier_payment_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Supplier Payment</field>
+            <field name="code"></field>
+            <field name="prefix">PV%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Sales Receipt
+        <record id="doctype_sale_receipt_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Sales Receipt</field>
+            <field name="code"></field>
+            <field name="prefix">SRC%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Purchase Receipt
+        <record id="doctype_purchase_receipt_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Purchase Receipt</field>
+            <field name="code"></field>
+            <field name="prefix">PRC%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+    </data>
+</openerp>

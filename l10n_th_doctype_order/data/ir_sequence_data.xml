@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Purchase Quotation
+        <record id="doctype_purchase_quotation_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Purchase Quotation</field>
+            <field name="code"></field>
+            <field name="prefix">RFQ%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Purchase Order
+        <record id="doctype_purchase_order_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Purchase Order</field>
+            <field name="code"></field>
+            <field name="prefix">PO%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Sales Quotation
+        <record id="doctype_sale_quotation_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Sales Quotation</field>
+            <field name="code"></field>
+            <field name="prefix">QT%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Sales Order
+        <record id="doctype_sale_order_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Sales Order</field>
+            <field name="code"></field>
+            <field name="prefix">SO%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+    </data>
+</openerp>

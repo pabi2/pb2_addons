@@ -11,12 +11,13 @@
         'l10n_th_account',
     ],
     'data': [
+        'data/report_data.xml',
+        'data/pit_sequence.xml',
         'security/ir.model.access.csv',
         'wizard/print_pit_wht_cert_wizard.xml',
         'views/account_pit_view.xml',
         'views/voucher_payment_receipt_view.xml',
         'views/res_partner_view.xml',
-        'data/report_data.xml',
     ],
     'demo': [
     ],

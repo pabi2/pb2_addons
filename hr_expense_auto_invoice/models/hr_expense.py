@@ -89,6 +89,7 @@ class HRExpenseExpese(models.Model):
             'price_unit': exp_line.unit_amount or 0.0,
             'quantity': exp_line.unit_quantity,
             'product_id': exp_line.product_id.id or False,
+            'invoice_line_tax_id': [(6, 0, exp_line.tax_ids.ids)],
         }
 
     @api.model
@@ -200,9 +201,7 @@ class HRExpenseExpese(models.Model):
     @api.multi
     def _create_supplier_invoice_from_expense(self, merge_line=False):
         self.ensure_one()
-        inv_lines = []
         Invoice = self.env['account.invoice']
-        InvoiceLine = self.env['account.invoice.line']
         expense = self
         invoice_vals = self._prepare_inv(expense)
         inv_line_datas = []
@@ -218,10 +217,11 @@ class HRExpenseExpese(models.Model):
             inv_line_datas = \
                 self.merge_invoice_line(inv_line_datas, group_keys,
                                         sum_keys, str_keys)
+
+        invoice_lines = []
         for inv_line_data in inv_line_datas:
-            inv_line = InvoiceLine.create(inv_line_data)
-            inv_lines.append(inv_line.id)
-        invoice_vals.update({'invoice_line': [(6, 0, inv_lines)]})
+            invoice_lines.append((0, 0, inv_line_data))
+        invoice_vals.update({'invoice_line': invoice_lines})
         # Create Invoice
         invoice = Invoice.create(invoice_vals)
         # Set due date

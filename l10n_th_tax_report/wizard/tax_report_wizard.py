@@ -61,7 +61,7 @@ class AccountTaxReportWizard(models.TransientModel):
                 return {'warning': {
                     'title': 'Incorrect Periods',
                     'message': 'From period is later than to period!',
-                    }}
+                }}
 
     @api.multi
     def run_report(self):

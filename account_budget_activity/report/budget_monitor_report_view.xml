@@ -34,6 +34,7 @@
                     <field name="period_id"/>
                     <field name="quarter"/>
                     <field name="activity_group_id"/>
+                    <field name="activity_id"/>
                     <field name="product_activity_id"/>
                     <field name="user_id"/>
                     <field name="fiscalyear_id"/>

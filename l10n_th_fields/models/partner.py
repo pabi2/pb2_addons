@@ -19,10 +19,16 @@ class ResPartner(models.Model):
     )
     employee_id = fields.Many2one(
         'hr.employee',
-        sring='Employee',
+        string='Employee Name',
         compute='_compute_employee_id',
+        search='_search_employee_id',
         help="Employee represent this partner (if any)",
     )
+
+    @api.model
+    def _search_employee_id(self, operator, value):
+        users = self.env['res.users'].search([('name', 'ilike', str(value))])
+        return [('id', 'in', users.mapped('partner_id')._ids)]
 
     @api.multi
     @api.depends()

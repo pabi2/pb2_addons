@@ -17,6 +17,13 @@ class AccountTaxReport(models.Model):
         'account.period',
         string='Period',
     )
+    move_number = fields.Char(
+        string='JE Number',
+    )
+    move_ref = fields.Char(
+        string='JE Ref.',
+        help="Original Document",
+    )
     year = fields.Char(
         string='Year',
     )
@@ -68,11 +75,12 @@ class AccountTaxReport(models.Model):
 
     def _select(self):
         res = """
-            doc_type, atd.id, period_id,
+            doc_type, atd.id, atd.period_id,
+            am.name as move_number, am.ref as move_ref,
             to_char(ap.date_start, 'YYYY') as "year",
             to_char(ap.date_start, 'MM') as "month",
             report_period_id, tax_sequence, tax_id, tax_sequence_display,
-            invoice_date, invoice_number, partner_id,
+            invoice_date, invoice_number, atd.partner_id,
             case when cancel is true then ''
                 else rp.name end as partner_name,
             case when cancel is true then ''
@@ -96,6 +104,7 @@ class AccountTaxReport(models.Model):
             left outer join res_partner rp on rp.id = atd.partner_id
             left outer join res_partner_title rpt on rp.title = rpt.id
             left outer join account_period ap on atd.period_id = ap.id
+            left outer join account_move am on am.id = atd.ref_move_id
             where report_period_id is not null
             order by year, month, tax_sequence
         )""" % (self._table, self._select(), )

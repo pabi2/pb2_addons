@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Incoming Shipment
+        <record id="doctype_incoming_shipment_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Incoming Shipment</field>
+            <field name="code"></field>
+            <field name="prefix">IN%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Delivery Order
+        <record id="doctype_delivery_order_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Delivery Order</field>
+            <field name="code"></field>
+            <field name="prefix">OUT%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+        # Internal Transfer
+        <record id="doctype_internal_transfer_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Internal Transfer</field>
+            <field name="code"></field>
+            <field name="prefix">INT%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+    </data>
+</openerp>

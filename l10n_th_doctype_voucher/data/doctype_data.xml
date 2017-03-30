@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+        <!--Account Voucher Data-->
+        <record id="doctype_customer_payment" model="res.doctype" >
+            <field name="name">Customer Payment</field>
+            <field name="sequence_id" ref="doctype_customer_payment_seq"/>
+            <field name="refer_type">receipt</field>
+        </record>
+        <record id="doctype_supplier_payment" model="res.doctype" >
+            <field name="name">Supplier Payment</field>
+            <field name="sequence_id" ref="doctype_supplier_payment_seq"/>
+            <field name="refer_type">payment</field>
+        </record>
+        <record id="doctype_sale_receipt" model="res.doctype" >
+            <field name="name">Sales Receipt</field>
+            <field name="sequence_id" ref="doctype_sale_receipt_seq"/>
+            <field name="refer_type">sale</field>
+        </record>
+        <record id="doctype_purchase_receipt" model="res.doctype" >
+            <field name="name">Purchase Receipt</field>
+            <field name="sequence_id" ref="doctype_purchase_receipt_seq"/>
+            <field name="refer_type">purchase</field>
+        </record>
+    </data>
+</openerp>

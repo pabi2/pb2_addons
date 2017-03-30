@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_account_subscription_generate" model="ir.ui.view">
+            <field name="name">view.account.subscription.generate</field>
+            <field name="model">account.subscription.generate</field>
+            <field name="inherit_id" ref="account.view_account_subscription_generate"/>
+            <field name="arch" type="xml">
+                <field name="date" position="replace">
+                    <group>
+                        <label for="date_type"/>
+                        <div>
+                            <div>
+                                <field name="date_type" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('date_type', '=', 'last_period')]}">
+                                <field name="date" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
+                    <group>
+                        <field name="model_type_ids"/>
+                    </group>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

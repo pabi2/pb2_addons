@@ -100,7 +100,7 @@ class BudgetConsumeReport(models.Model):
                         and aaj.budget_method = 'expense'
                         then - aal.amount
                     when aaj.budget_commit_type = 'actual'
-                        and aaj.budget_method = 'expense'
+                        and aaj.budget_method = 'revenue'
                         then aal.amount end
                     as amount_actual,
                 -- Dimensions
