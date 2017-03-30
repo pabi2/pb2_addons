@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         # Supplier Payment
         <record id="view_vendor_payment_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.payment.form.ext</field>
@@ -11,15 +10,29 @@
             <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
             <field name="arch" type="xml">
                 <data>
+                    <button name="%(l10n_th_account.action_print_wht_cert)d" position="after">
+                        <button name="%(l10n_th_account.action_print_wht_cert)d" type="action" string="Print PIT WHT Cert." class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('pit_withhold', '=', False)]}"
+                            context="{'pit_withhold': pit_withhold}"/>
+                    </button>
                     <page string="Tax" position="after">
-                        <page string="PIT">
+                        <page string="PIT" attrs="{'invisible': [('tax_line_wht', '!=', [])]}">
+                            <group>
+                                <group>
+                                    <field name="pit_withhold"/>
+                                </group>
+                                <group>
+                                    <button name="action_pit_to_deduction" type="object" string="Create Payment Diff from PIT" class="oe_highlight"
+                                        attrs="{'invisible': ['|', ('pit_withhold', '=', False), ('state', '=', 'posted')]}" />
+                                </group>
+                            </group>
                             <field name="pit_line" context="{'voucher_id': active_id, 'voucher_date': date,
                                                              'line_dr_ids': line_dr_ids, 'line_cr_ids': line_cr_ids, 'type': context.get('type', False)}">
                                 <tree editable="bottom" string="PIT">
                                     <field name="date" invisible="1"/>
                                     <field name="calendar_year" invisible="1"/>
                                     <field name="partner_id"/>
-                                    <field name="amount_income" />
+                                    <field name="amount_income"/>
                                     <field name="precalc_wht" string="Withholding Amount"/>
                                     <field name="amount_wht" invisible="1"/>
                                 </tree>
@@ -29,7 +42,6 @@
                 </data>
             </field>
         </record>
-
         <!-- # Customer Payment
         <record model="ir.ui.view" id="view_vendor_receipt_form_ext">
             <field name="name">account.voucher.receipt.form</field>

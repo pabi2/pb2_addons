@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, ValidationError
 from openerp.tools import float_compare
-import datetime
+from openerp.addons.l10n_th_account.models.account_voucher \
+    import WHT_CERT_INCOME_TYPE
 
 
 class PersonalIncomeTax(models.Model):
@@ -66,6 +68,14 @@ class PersonalIncomeTax(models.Model):
         store=True,
         help="This field show the real WHT amount, as posted."
     )
+    wht_cert_income_type = fields.Selection(
+        WHT_CERT_INCOME_TYPE,
+        string='Type of Income',
+    )
+    wht_cert_income_desc = fields.Char(
+        string='Income Description',
+    )
+
     # _sql_constraints = [
     #     ('pit_uniq', 'unique (voucher_id, partner_id)',
     #      'Duplicated supplier on PIT!'),

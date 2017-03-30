@@ -15,7 +15,6 @@
     'depends': ['sale',
                 'account_voucher',
                 'account_bank_receipt',
-                'hr',
                 ],
     'demo': [],
     'data': [

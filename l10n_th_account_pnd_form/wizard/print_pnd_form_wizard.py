@@ -4,6 +4,20 @@ from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
+REPORT_NAMES = {
+    'pnd1': {'pdf': False,  # TODO: pnd1
+             'xls': False,
+             'txt_csv': False},
+    'pnd53': {'pdf': 'report_pnd53_form',
+              'xls': 'report_pnd53_form_xls',
+              'txt_csv': 'report_pnd53_form_txt'},
+    'pnd3': {'pdf': 'report_pnd3_form',
+             'xls': 'report_pnd3_form_xls',
+             'txt_csv': 'report_pnd3_form_txt'},
+    'pnd3a': {'pdf': 'report_pnd3a_form',
+              'xls': 'report_pnd3a_form_xls',
+              'txt_csv': 'report_pnd3a_form_txt'}, }
+
 
 class PrintPNDFormWizard(models.TransientModel):
     _name = 'print.pnd.form.wizard'
@@ -34,56 +48,29 @@ class PrintPNDFormWizard(models.TransientModel):
 
     @api.multi
     def run_report(self):
-        data = {'parameters': {}}
-        data_dict = {'no_header': False}
-        report_name = False
-        if self.income_tax_form == 'pnd53':
-            if self.print_format == 'pdf':
-                report_name = 'report_pnd53_form'
-            elif self.print_format == 'xls':
-                report_name = 'report_pnd53_form_xls'
-            elif self.print_format == 'txt_csv':
-                data_dict['no_header'] = True
-                report_name = 'report_pnd53_form_txt'
-        if self.income_tax_form == 'pnd3':
-            if self.print_format == 'pdf':
-                report_name = 'report_pnd3_form'
-            elif self.print_format == 'xls':
-                report_name = 'report_pnd3_form_xls'
-            elif self.print_format == 'txt_csv':
-                data_dict['no_header'] = True
-                report_name = 'report_pnd3_form_txt'
-        if self.income_tax_form == 'pnd3a':
-            if self.print_format == 'pdf':
-                report_name = 'report_pnd3a_form'
-            elif self.print_format == 'xls':
-                report_name = 'report_pnd3a_form_xls'
-            elif self.print_format == 'txt_csv':
-                data_dict['no_header'] = True
-                report_name = 'report_pnd3a_form_txt'
+        report_name = REPORT_NAMES[self.income_tax_form][self.print_format]
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
-        data_dict['income_tax_form'] = self.income_tax_form
-        if self.income_tax_form == 'pnd3a':
-            domain = [('fiscalyear_id', '=', self.fiscalyear_id.id)]
-            period = 'account.period'
-            data_dict['wht_period_ids'] = self.env[period].search(domain).ids
-        else:
-            data_dict['wht_period_id'] = self.calendar_period_id.period_id.id
         company = self.env.user.company_id.partner_id
         company_taxid = len(company.vat or '') == 13 and company.vat or ''
         company_branch = \
             len(company.taxbranch or '') == 5 and company.taxbranch or ''
-        data_dict['company_taxid'] = company_taxid
-        data_dict['company_branch'] = company_branch
-        data_dict['print_name'] = self.env.user.name or ''
-        data_dict['print_position'] = \
-            self.env.user.employee_id.job_id.name or ''
-        data['parameters'] = data_dict
+        # Params to Jasper
+        data_dict = {
+            'no_header': self.print_format == 'txt_csv' and True or False,
+            'income_tax_form': (self.income_tax_form == 'pnd3a' and
+                                'pnd3' or self.income_tax_form),
+            'fiscalyear_id': self.fiscalyear_id.id,
+            'wht_period_id': self.calendar_period_id.period_id.id,
+            'company_taxid': company_taxid,
+            'company_branch': company_branch,
+            'print_name': self.env.user.name or '',
+            'print_position': self.env.user.employee_id.job_id.name or ''
+        }
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
-            'datas': data,
+            'datas': {'parameters': data_dict},
             'context': {'lang': 'th_TH'},
         }
         return res
