@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountVoucher(models.Model):
@@ -48,10 +49,19 @@ class AccountVoucher(models.Model):
             pit_line.partner_id = self.partner_id
             self.pit_line += pit_line
 
+    @api.model
+    def _validate_pit_to_deduction(self, voucher):
+        if len(voucher.pit_line) != 1:
+            raise ValidationError(
+                _('> 1 PIT Line not allowed!'))
+        if voucher.partner_id != voucher.pit_line[0].partner_id:
+            raise ValidationError(
+                _('Supplier in PIT line is different from the payment!'))
+
     @api.multi
     def action_pit_to_deduction(self):
         for voucher in self:
-            print voucher.pit_line.mapped('amount_wht')
+            self._validate_pit_to_deduction(voucher)
             vals = {'voucher_id': voucher.id,
                     'account_id': 409,
                     'amount': -sum(voucher.pit_line.mapped('precalc_wht')),
