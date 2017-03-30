@@ -37,33 +37,26 @@ class PrintPNDFormWizard(models.TransientModel):
         data = {'parameters': {}}
         data_dict = {'no_header': False}
         report_name = False
-        if self.income_tax_form == 'pnd53':
-            if self.print_format == 'pdf':
-                report_name = 'report_pnd53_form'
-            elif self.print_format == 'xls':
-                report_name = 'report_pnd53_form_xls'
-            elif self.print_format == 'txt_csv':
-                data_dict['no_header'] = True
-                report_name = 'report_pnd53_form_txt'
-        if self.income_tax_form == 'pnd3':
-            if self.print_format == 'pdf':
-                report_name = 'report_pnd3_form'
-            elif self.print_format == 'xls':
-                report_name = 'report_pnd3_form_xls'
-            elif self.print_format == 'txt_csv':
-                data_dict['no_header'] = True
-                report_name = 'report_pnd3_form_txt'
-        if self.income_tax_form == 'pnd3a':
-            if self.print_format == 'pdf':
-                report_name = 'report_pnd3a_form'
-            elif self.print_format == 'xls':
-                report_name = 'report_pnd3a_form_xls'
-            elif self.print_format == 'txt_csv':
-                data_dict['no_header'] = True
-                report_name = 'report_pnd3a_form_txt'
+        REPORT_NAMES = {
+            'pnd1': {'pdf': False,  # TODO: pnd1
+                     'xls': False,
+                     'txt_csv': False},
+            'pnd53': {'pdf': 'report_pnd53_form',
+                      'xls': 'report_pnd53_form_xls',
+                      'txt_csv': 'report_pnd53_form_txt'},
+            'pnd3': {'pdf': 'report_pnd3_form',
+                     'xls': 'report_pnd3_form_xls',
+                     'txt_csv': 'report_pnd3_form_txt'},
+            'pnd3a': {'pdf': 'report_pnd3a_form',
+                      'xls': 'report_pnd3a_form_xls',
+                      'txt_csv': 'report_pnd3a_form_txt'}, }
+        report_name = REPORT_NAMES[self.income_tax_form][self.print_format]
         if not report_name:
             raise ValidationError(_('Selected form not found!'))
-        if self.income_tax_form == 'pnd3a':
+        if self.print_format == 'txt_csv':
+            data_dict['no_header'] = False
+        # SQL where
+        if self.income_tax_form == 'pnd3a':  # SQL will use pnd3, fiscalyear
             data_dict['income_tax_form'] = 'pnd3'
             data_dict['fiscalyear_id'] = self.fiscalyear_id.id
         else:
