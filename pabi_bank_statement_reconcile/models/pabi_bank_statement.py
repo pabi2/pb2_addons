@@ -3,7 +3,8 @@ import base64
 import os
 import xlrd
 import unicodecsv
-from datetime import datetime
+from xlrd.sheet import ctype_text 
+from datetime import datetime, timedelta
 
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
@@ -16,6 +17,10 @@ class PABIBankStatement(models.Model):
     name = fields.Char(
         string='Name',
         default='/',
+        required=True,
+    )
+    import_file_name = fields.Char(
+        string='FileName',
         required=True,
     )
     import_file = fields.Binary(
@@ -223,84 +228,109 @@ class PABIBankStatement(models.Model):
         return
 
     @api.model
-    def _add_statement_id_column(self, statement_id, file_txt):
+    def _add_column(self, column_name, column_value, file_txt):
         i = 0
         txt_lines = []
         for line in file_txt.split('\n'):
             if line and i == 0:
-                line = '"statement_id/.id",' + line
+                line = '"' + str(column_name) + '",' + line
             elif line:
-                line = str(statement_id) + ',' + line
+                line = '"' + str(column_value) + '",' + line
             txt_lines.append(line)
             i += 1
         file_txt = '\n'.join(txt_lines)
         return file_txt
+
+    def xldate_to_datetime(self, xldate):
+        tempDate = datetime(1900, 1, 1)
+        deltaDays = timedelta(days=int(xldate)-2)
+        xldate = (tempDate + deltaDays )
+        return xldate.strftime("%Y-%m-%d")
+
+    def import_xls(self, model, file, column_name=None, column_value=None):
+        decoded_data = base64.decodestring(file)
+        ftemp = 'temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
+        f = open(ftemp + '.xls', 'wb+')
+        f.write(decoded_data)
+        f.seek(0)
+        f.close()
+        wb = xlrd.open_workbook(f.name)
+        st = wb.sheet_by_index(0)
+        csv_file = open(ftemp + '.csv', 'wb')
+        csv_out = unicodecsv.writer(csv_file,
+                                    encoding='utf-8',
+                                    quoting=unicodecsv.QUOTE_ALL)
+        if st._cell_values:
+            _HEADER_FIELDS = st._cell_values[0]
+        for nrow in xrange(st.nrows):
+            if nrow > 0:
+                row_values = st.row_values(nrow)
+                for index, val  in enumerate(row_values):
+                    ctype = st.cell(nrow, index).ctype
+                    type = ctype_text.get(ctype, 'unknown type')
+                    if type == 'empty' or type == 'text' \
+                        or type == 'bool' or type == 'error' \
+                        or type == 'blank':
+                        row_values[index] = st.cell(nrow, index).value
+                    elif type == 'number':
+                        if not val:
+                            row_values[index] = 0
+                        else:
+                            if not str(val).isdigit():
+                                row_values[index] = int(val)
+                            else:
+                                row_values[index] = val
+                    elif type == 'xldate':
+                        str_date = self.xldate_to_datetime(
+                            st.cell(nrow, index).value)
+                        row_values[index] = str_date
+                    else:
+                        row_values[index] = st.cell(nrow, index).value
+                csv_out.writerow(row_values)
+            else:
+                csv_out.writerow(st.row_values(nrow))
+        csv_file.close()
+        csv_file = open(ftemp + '.csv', 'r')
+        file_txt = csv_file.read()
+        csv_file.close()
+        os.unlink(ftemp + '.xls')
+        os.unlink(ftemp + '.csv')
+        if not file_txt:
+            raise ValidationError(_(str("File Not found.")))
+        if column_name and column_value:
+            _HEADER_FIELDS.insert(0, str(column_name))
+            file_txt = self._add_column(column_name, column_value, file_txt)
+        Import = self.env['base_import.import']
+        imp = Import.create({
+            'res_model': model,
+            'file': file_txt,
+        })
+        [errors] = imp.do(
+            _HEADER_FIELDS,
+            {'headers': True, 'separator': ',',
+             'quoting': '"', 'encoding': 'utf-8'})
+        if errors:
+            raise ValidationError(_(str(errors[0]['message'])))
+        return file
+      
+      @api.multi
+    def action_import_xls(self):
+        for rec in self:
+            rec.import_ids.unlink()
+            rec.import_error = False
 
     @api.multi
     def action_import_xls(self):
         for rec in self:
             rec.import_ids.unlink()
             rec.import_error = False
-            decoded_data = base64.decodestring(rec.import_file)
-            randms = datetime.utcnow().strftime('%H%M%S%f')[:-3]
-            f = open('temp' + randms + '.xls', 'wb+')
-            f.write(decoded_data)
-            f.seek(0)
-            f.close()
-            wb = xlrd.open_workbook(f.name)
-            st = wb.sheet_by_index(0)
-            csv_file = open('temp' + randms + '.csv', 'wb')
-            csv_out = unicodecsv.writer(csv_file,
-                                        encoding='utf-8',
-                                        quoting=unicodecsv.QUOTE_ALL)
-            for nrow in xrange(st.nrows):
-                if nrow > 0:
-                    row_values = st.row_values(nrow)
-                    if st.cell(nrow, 5).value:
-                        str_date = datetime.fromtimestamp(
-                            st.cell(nrow, 5).value / 1e3).strftime("%Y-%m-%d")
-                        row_values[5] = str_date
-                    csv_out.writerow(row_values)
-                else:
-                    csv_out.writerow(st.row_values(nrow))
-            csv_file.close()
-            csv_file = open('temp' + randms + '.csv', 'r')
-            file_txt = csv_file.read()
-            csv_file.close()
-            os.unlink('temp' + randms + '.xls')
-            os.unlink('temp' + randms + '.csv')
-            if not file_txt:
-                continue
-            rec.import_file = base64.encodestring(file_txt)
-            rec.action_import_csv()
-
-    @api.multi
-    def action_import_csv(self):
-        _TEMPLATE_FIELDS = ['statement_id/.id',
-                            'document',
-                            'cheque_number',
-                            'description',
-                            'debit', 'credit',
-                            'date_value',
-                            'batch_code']
-        for rec in self:
-            rec.import_ids.unlink()
-            rec.import_error = False
             if not rec.import_file:
                 continue
-            Import = self.env['base_import.import']
-            file_txt = base64.decodestring(rec.import_file)
-            file_txt = self._add_statement_id_column(rec.id, file_txt)
-            imp = Import.create({
-                'res_model': 'pabi.bank.statement.import',
-                'file': file_txt,
-            })
-            [errors] = imp.do(
-                _TEMPLATE_FIELDS,
-                {'headers': True, 'separator': ',',
-                 'quoting': '"', 'encoding': 'utf-8'})
-            if errors:
-                rec.import_error = str(errors)
+            rec.import_file = self.import_xls(
+                'pabi.bank.statement.import',
+                rec.import_file,
+                'statement_id/.id',
+                rec.id)
 
     @api.multi
     def _get_match_criteria(self):
