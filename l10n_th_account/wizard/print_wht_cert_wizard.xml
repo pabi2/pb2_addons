@@ -30,7 +30,7 @@
                     </group>
                     <field name="wht_line">
                         <tree editable="bottom" create="0">
-                            <field name="voucher_tax_id" />
+                            <field name="voucher_tax_id" invisible="1"/>
                             <field name="invoice_id"/>
                             <field name="wht_cert_income_type"/>
                             <field name="wht_cert_income_desc"/>

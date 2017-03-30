@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0000000000000084"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir") + "/../../../pb2_generic/l10n_th_account/report/"]]></defaultValueExpression>
 	</parameter>
@@ -16,6 +16,7 @@
 	</parameter>
 	<parameter name="company_address" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="supplier_address" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="pnd1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="pnd3" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="pnd53" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="type_1_base" class="java.lang.Number" isForPrompting="false"/>
@@ -519,6 +520,13 @@ select id from res_company limit 1;]]>
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse($P{date_value})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="201" y="218" width="17" height="25"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="THSarabun.ttf"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{pnd1}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
