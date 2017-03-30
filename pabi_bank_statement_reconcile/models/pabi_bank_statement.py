@@ -3,7 +3,7 @@ import base64
 import os
 import xlrd
 import unicodecsv
-from xlrd.sheet import ctype_text 
+from xlrd.sheet import ctype_text
 from datetime import datetime, timedelta
 
 from openerp import fields, models, api, _
@@ -21,7 +21,7 @@ class PABIBankStatement(models.Model):
     )
     import_file_name = fields.Char(
         string='FileName',
-        required=True,
+        copy=False,
     )
     import_file = fields.Binary(
         string='Import File (*.xls)',
@@ -243,8 +243,8 @@ class PABIBankStatement(models.Model):
 
     def xldate_to_datetime(self, xldate):
         tempDate = datetime(1900, 1, 1)
-        deltaDays = timedelta(days=int(xldate)-2)
-        xldate = (tempDate + deltaDays )
+        deltaDays = timedelta(days=int(xldate) - 2)
+        xldate = (tempDate + deltaDays)
         return xldate.strftime("%Y-%m-%d")
 
     def import_xls(self, model, file, column_name=None, column_value=None):
@@ -265,12 +265,12 @@ class PABIBankStatement(models.Model):
         for nrow in xrange(st.nrows):
             if nrow > 0:
                 row_values = st.row_values(nrow)
-                for index, val  in enumerate(row_values):
+                for index, val in enumerate(row_values):
                     ctype = st.cell(nrow, index).ctype
                     type = ctype_text.get(ctype, 'unknown type')
                     if type == 'empty' or type == 'text' \
                         or type == 'bool' or type == 'error' \
-                        or type == 'blank':
+                            or type == 'blank':
                         row_values[index] = st.cell(nrow, index).value
                     elif type == 'number':
                         if not val:
@@ -312,12 +312,6 @@ class PABIBankStatement(models.Model):
         if errors:
             raise ValidationError(_(str(errors[0]['message'])))
         return file
-      
-      @api.multi
-    def action_import_xls(self):
-        for rec in self:
-            rec.import_ids.unlink()
-            rec.import_error = False
 
     @api.multi
     def action_import_xls(self):
