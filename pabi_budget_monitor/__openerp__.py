@@ -8,6 +8,7 @@
     'version': '0.1.0',
     'depends': [
         'account_budget_activity',
+        'account_budget_activity_rpt',
         'pabi_chartfield',
         'pabi_procurement',
         'pabi_account_move_document_ref',

@@ -9,9 +9,10 @@
             <field name="subject">เรื่อง จดหมายแจ้งวันครบกําหนดเงินยืมเลยกําหนด</field>
             <field name="partner_to"></field>
             <field name="email_to"></field>
-            <field name="model_id" ref="pabi_hr_expense.model_hr_expense_expense"/>
-            <field name="report_template" ref="pabi_hr_expense_report.pabi_dunning_letter"/>
-            <field name="report_name">Dunning Letter</field>
+            <field name="model_id" ref="pabi_advance_dunning_letter.model_hr_expense_expense"/>
+            <field name="report_template" ref="pabi_advance_dunning_letter.advance_dunning_letter"/>
+            <field name="report_name">Advance Dunning Letter</field>
+            <field name="lang">th_TH</field>
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
@@ -19,7 +20,7 @@
     <p style="text-indent: 25px;">
         ตามที่ท่าน ได้ยืมเงินทดรองจ่ายตามสัญญาเพื่อใช้ในการปฏิบัติงาน ซึ่งขณะนี้ถึงวันที่ครบกาหนดหักล้างเงินยืม ฝ่ายการเงินและบัญชีได้มีการออกจดหมายแจ้งเตือนก่อนวันครบกำหนดการสะสางเงินยืมทดรองจ่าย 2 ครั้งแล้ว
     </p>
-    <p>จำนวนของจำนวนเงินกู้เป็น - ${object.amount_to_clearing}</p>
+    <p>จำนวนของจำนวนเงินกู้เป็น - ${"%.2f" | format(object.amount_to_clearing)}</p>
     <p style="text-indent: 25px;">
         จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ เพื่อหักล้างเงินยืม ของท่านโดยด่วน
     </p>

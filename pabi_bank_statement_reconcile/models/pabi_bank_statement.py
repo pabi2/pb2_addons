@@ -312,6 +312,12 @@ class PABIBankStatement(models.Model):
         if errors:
             raise ValidationError(_(str(errors[0]['message'])))
         return file
+      
+      @api.multi
+    def action_import_xls(self):
+        for rec in self:
+            rec.import_ids.unlink()
+            rec.import_error = False
 
     @api.multi
     def action_import_xls(self):

@@ -162,9 +162,8 @@ class PABIAdvanceDunningLetter(models.Model):
 
         # Email
         # Send dunning letter by email to each of selected employees
-        # if self.send_email:
-        #     self._send_dunning_letter_by_mail()
-
+        if self.send_email:
+            self._send_dunning_letter_by_mail()
         self.write({'state': 'done',
                     'send_email': False,
                     })
@@ -185,37 +184,40 @@ class PABIAdvanceDunningLetter(models.Model):
 
     @api.model
     def _send_dunning_letter_by_mail(self):
-        if not self.dunning_list_ids:
+        if not self.dunning_list:
             return True
-        template_name = False
-        if self.due_days == '-1':
-            template_name = \
-                'pabi_hr_expense_report.email_template_edi_past_due_days'
-        elif self.due_days == '0':
-            template_name = \
-                'pabi_hr_expense_report.email_template_edi_0_due_days'
-        elif self.due_days == '5':
-            template_name = \
-                'pabi_hr_expense_report.email_template_edi_5_due_days'
-        else:
-            template_name = \
-                'pabi_hr_expense_report.email_template_edi_10_due_days'
 
-        template = False
-        try:
-            template = self.env.ref(template_name)
-        except:
-            pass
+        templates = {
+            '1': 'pabi_advance_dunning_letter.email_template_edi_10_due_days',
+            '2': 'pabi_advance_dunning_letter.email_template_edi_5_due_days',
+            '3': 'pabi_advance_dunning_letter.email_template_edi_0_due_days',
+        }
+
+        DUE_DAYS = {'1': 10, '2': 5, '3': 0}
+
         if not self.group_email:
             raise UserError(
                 _('Please enter valid email address for group email!'))
-        if template:
-            for line in self.dunning_list_ids:
+
+        for line in self.dunning_list:
+            template_name = templates[line.due_type]
+            template = False
+            try:
+                template = self.env.ref(template_name)
+            except:
+                pass
+
+            if not self.group_email:
+                raise UserError(
+                    _('Please enter valid email address for group email!'))
+
+            if template:
                 ctx = self.env.context.copy()
                 ctx.update({
-                    'due_days': self.due_days,
-                    # 'date_print': self.date_print,
+                    'due_days': DUE_DAYS[line.due_type],
+                    'date_print': fields.Date.context_today(self),
                     'email_attachment': True,
+                    'ids': [line.id]
                 })
                 if line.expense_id:
                     to_email = False

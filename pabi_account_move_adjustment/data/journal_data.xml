@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        # Analytic Journal (Adjust Budget)
+        <record id="analytic_journal_adjust_budget" model="account.analytic.journal">
+            <field name="code">JV</field>
+            <field name="name">Adjust Budget</field>
+            <field name="type">general</field>
+            <field name="budget_method">revenue</field>
+            <field name="budget_commit_type">actual</field>
+        </record>
+
+        # Journal Adj.Bud. For adjustment type = 'general_budget'
+        <record id="seq_journal_adjust_budget" model="ir.sequence">
+            <field name="name">Journal Adjust Budget</field>
+            <field name="code"></field>
+            <field name="prefix">JV%(fy)s</field>
+            <field eval="7" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_adjust_budget" model="account.journal">
+            <field name="name">Adjust Budget</field>
+            <field name="code">AJB</field>
+            <field name="type">adjust_budget</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_adjust_budget"/>
+            <field name="update_posted">True</field>
+            <field name="analytic_journal_id" ref="analytic_journal_adjust_budget"/> <!--With analytic journal -->
+        </record>
+
+        # Journal Adjust No Budget
+        <record id="seq_journal_adjust_no_budget" model="ir.sequence">
+            <field name="name">Journal Adjust No-Budget</field>
+            <field name="code"></field>
+            <field name="prefix">JN%(fy)s</field>
+            <field eval="7" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_adjust_no_budget" model="account.journal">
+            <field name="name">Adjust No-Budget</field>
+            <field name="code">AJN</field>
+            <field name="type">adjust_no_budget</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_adjust_no_budget"/>
+            <field name="update_posted">True</field>
+        </record>
+
+    </data>
+</openerp>

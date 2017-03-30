@@ -48,9 +48,9 @@ class PrintVoucherWizard(models.TransientModel):
         data = {'parameters': {}}
         ids = self._context.get('active_ids')
         data['parameters']['ids'] = ids
-        report_name = DOCTYPE_REPORT_MAP[self.doctype]
+        report_name = DOCTYPE_REPORT_MAP.get(self.doctype, False)
         if not report_name:
-            raise UserError(_('No for for this Doctype'))
+            raise UserError(_('No form for for this Doctype'))
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
