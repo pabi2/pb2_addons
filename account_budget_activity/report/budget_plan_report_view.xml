@@ -25,7 +25,6 @@
 <!--                    <field name="m10" type="measure"/>-->
 <!--                    <field name="m11" type="measure"/>-->
 <!--                    <field name="m12" type="measure"/>-->
-                    <field name="period_amount" type="measure"/>
                 </graph>
             </field>
         </record>
@@ -57,7 +56,6 @@
                     <field name="m10" sum="m10"/>
                     <field name="m11" sum="m11"/>
                     <field name="m12" sum="m12"/>
-                    <field name="period_amount" sum="amount"/>
                 </tree>
             </field>
         </record>

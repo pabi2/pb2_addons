@@ -27,11 +27,11 @@ class HRExpenseLine(models.Model):
             return super(HRExpenseLine, self)._get_non_product_account_id()
 
     @api.model
-    def _prepare_analytic_line(self, reverse=False):
+    def _prepare_analytic_line(self, reverse=False, currency=False):
         if self.is_advance_product_line:
             return False
         res = super(HRExpenseLine, self).\
-            _prepare_analytic_line(reverse=reverse)
+            _prepare_analytic_line(reverse=reverse, currency=currency)
         return res
 
 

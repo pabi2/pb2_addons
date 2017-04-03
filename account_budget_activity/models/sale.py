@@ -103,7 +103,7 @@ class SaleOrderLine(ActivityCommon, models.Model):
         return cur.round(taxes['total'])
 
     @api.model
-    def _prepare_analytic_line(self, reverse=False):
+    def _prepare_analytic_line(self, reverse=False, currency=False):
         # general_account_id = self._get_account_id_from_po_line()
         general_journal = self.env['account.journal'].search(
             [('type', '=', 'sale'),
@@ -129,13 +129,16 @@ class SaleOrderLine(ActivityCommon, models.Model):
         if not line_qty:
             return False
         sign = reverse and 1 or -1  # opposite of purchase side
+        company_currency = self.env.user.company_id.currency_id
+        currency = currency or company_currency
         return {
             'name': self.name,
             'product_id': self.product_id.id,
             'account_id': self.account_analytic_id.id,
             'unit_amount': line_qty,
             'product_uom_id': self.product_uom.id,
-            'amount': sign * self._price_subtotal(line_qty),
+            'amount': currency.compute(sign * self._price_subtotal(line_qty),
+                                       company_currency),
             'general_account_id': general_account_id,
             'journal_id': general_journal.so_commitment_analytic_journal_id.id,
             'ref': self.order_id.name,
@@ -149,7 +152,8 @@ class SaleOrderLine(ActivityCommon, models.Model):
         if 'order_type' in self.order_id and \
                 self.order_id.order_type == 'quotation':  # Not for quotation.
             return
-        vals = self._prepare_analytic_line(reverse=reverse)
+        vals = self._prepare_analytic_line(
+            reverse=reverse, currency=self.order_id.currency_id)
         if vals:
             self.env['account.analytic.line'].create(vals)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class AccountAnalyticJournal(models.Model):
@@ -162,8 +162,9 @@ class AccountAnalyticLine(models.Model):
                 domain = Analytic.get_analytic_search_domain(analytic)
                 vals.update(dict((x[0], x[2]) for x in domain))
         # Prepare period_id for reporting purposes
-        if vals.get('date', False):
-            periods = self.env['account.period'].find(vals['date'])
+        date = vals.get('date', fields.Date.context_today(self))
+        if date:
+            periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
         # --
@@ -298,6 +299,9 @@ class AccountAnalyticAccount(models.Model):
                             ('name' in rec and rec.name) or
                             ('product_name' in rec and rec.product_name) or
                             False)
+            if not vals['name']:
+                raise ValidationError(
+                    _('No valid name for creating Analytic Account'))
             # ************************ Start ********************************
             # Following code was used initially. But I want to experiment
             # not using it. In PABI2, we may not need them.

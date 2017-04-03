@@ -93,9 +93,6 @@ class BudgetPlanReport(models.Model):
         'account.period',
         string="Period",
     )
-    period_amount = fields.Float(
-        string="Period Amount",
-    )
     quarter = fields.Selection(
         [('Q1', 'Q1'),
          ('Q2', 'Q2'),
@@ -109,8 +106,6 @@ class BudgetPlanReport(models.Model):
         sql_view = """
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.fiscalyear_id, ab.id as budget_id,
-                ------> ab.name as doc_ref,
-                ablps.amount as period_amount,
                 -- Amount
                 case when ablps.sequence = 1
                     then ablps.amount  end as m1,
@@ -136,7 +131,8 @@ class BudgetPlanReport(models.Model):
                     then ablps.amount  end as m11,
                 case when ablps.sequence = 12
                     then ablps.amount  end as m12,
-                abl.planned_amount, abl.released_amount,
+                ablps.amount as planned_amount,
+                abl.released_amount/12 as released_amount,
                 abl.budget_state as state,
                 -- Dimensions
                 %s
