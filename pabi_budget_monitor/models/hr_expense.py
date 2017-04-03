@@ -12,9 +12,15 @@ class HRExpenseExpense(models.Model):
         for expense in self:
             doc_date = expense.date
             doc_lines = Budget.convert_lines_to_doc_lines(expense.line_ids)
-            res = Budget.document_check_budget(doc_date,
-                                               doc_lines,
-                                               'total_amount')
+            res = Budget.post_commit_budget_check(doc_date, doc_lines)
             if not res['budget_ok']:
                 raise UserError(res['message'])
         return True
+
+    @api.multi
+    def write(self, vals):
+        res = super(HRExpenseExpense, self).write(vals)
+        # Commit budget as soon as Draft (approved by AP Web), so budget check
+        if vals.get('state', False) == 'draft':
+            self._expense_budget_check()
+        return res

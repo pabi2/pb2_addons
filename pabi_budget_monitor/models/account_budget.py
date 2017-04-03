@@ -110,30 +110,6 @@ class AccountBudget(models.Model):
                 _get_budget_monitor(fiscal, budget_type,
                                     budget_level, resource)
 
-#     @api.model
-#     def get_document_query(self, head_table, line_table):
-#         query = """
-#             select %(sel_fields)s,
-#                 coalesce(sum(l.price_subtotal), 0.0) amount
-#             from """ + line_table + """ l
-#             join """ + head_table + """ h on h.id = l.invoice_id
-#             where h.id = %(active_id)s
-#             group by %(sel_fields)s
-#         """
-#         return query
-
-
-#     @api.model
-#     def get_fiscal_and_budget_level(self, budget_date=False):
-#         if not budget_date:
-#             budget_date = fields.Date.context_today(self)
-#         Fiscal = self.env['account.fiscalyear']
-#         fiscal_id = Fiscal.find(budget_date)
-#         res = {'fiscal_id': fiscal_id}
-#         for level in Fiscal.browse(fiscal_id).budget_level_ids:
-#             res[level.type] = level.budget_level
-#         return res
-
     @api.model
     def _get_doc_field_combination(self, doc_lines, args):
         combinations = []
@@ -146,7 +122,28 @@ class AccountBudget(models.Model):
         return combinations
 
     @api.model
-    def document_check_budget(self, doc_date, doc_lines, amount_field):
+    def pre_commit_budget_check(self, doc_date, doc_lines,
+                                amount_field, doc_currency=False):
+        """ Use this to check budget BEFORE commitment """
+        currency_id = False
+        if doc_currency:
+            Currency = self.env['res.currency']
+            currency = Currency.search([('name', '=', doc_currency)])
+            currency_id = currency and currency[0].id or False
+        if doc_currency and not currency_id:
+            return {'budget_ok': False,
+                    'message': _('Not valid currency on budget check')}
+        return self.with_context(currency_id=currency_id).\
+            document_check_budget(doc_date, doc_lines,
+                                  amount_field=amount_field)
+
+    @api.model
+    def post_commit_budget_check(self, doc_date, doc_lines):
+        """ Use this to check budget AFTER commitment """
+        return self.document_check_budget(doc_date, doc_lines)
+
+    @api.model
+    def document_check_budget(self, doc_date, doc_lines, amount_field=False):
         res = {'budget_ok': True,
                'message': False}
         Budget = self.env['account.budget']
@@ -182,18 +179,34 @@ class AccountBudget(models.Model):
                                             f in l and l[f] and l[f] == val[i],
                                             filtered_lines)
                     i += 1
-                amount = sum(map(lambda l: l[amount_field], filtered_lines))
                 # For funding case, add more dimension
                 if len(sel_fields) == 2:
                     ext_res_id = val[1]
                     ext_field = sel_fields[1]
-                res = Budget.check_budget(fiscal_id,
-                                          budget_type,  # eg, project_base
-                                          budget_level,  # eg, project_id
-                                          res_id,
-                                          amount,
-                                          ext_field=ext_field,
-                                          ext_res_id=ext_res_id)
+                if amount_field:  # Case check before commit budget
+                    amount = sum(map(lambda l:
+                                     l[amount_field], filtered_lines))
+                    if self._context.get('currency_id', False):
+                        currency_id = self._context.get('currency_id')
+                        currency = self.env['res.currency'].browse(currency_id)
+                        company_currency = self.env.user.company_id.currency_id
+                        if company_currency != currency:
+                            amount = currency.compute(amount, company_currency)
+                    res = Budget.check_budget(fiscal_id,
+                                              budget_type,  # eg, project_base
+                                              budget_level,  # eg, project_id
+                                              res_id,
+                                              amount,
+                                              ext_field=ext_field,
+                                              ext_res_id=ext_res_id)
+                else:  # Case check after commit budget
+                    res = Budget.check_budget(fiscal_id,
+                                              budget_type,  # eg, project_base
+                                              budget_level,  # eg, project_id
+                                              res_id,
+                                              0.0,  # no amount, check asof now
+                                              ext_field=ext_field,
+                                              ext_res_id=ext_res_id)
                 if not res['budget_ok']:
                     return res
         return res

@@ -7,8 +7,8 @@ class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
     @api.multi
-    def action_date_assign(self):
-        res = super(AccountInvoice, self).action_date_assign()
+    def action_move_create(self):
+        res = super(AccountInvoice, self).action_move_create()
         self._invoice_budget_check()
         return res
 
@@ -20,9 +20,7 @@ class AccountInvoice(models.Model):
                 continue
             doc_date = invoice.date_invoice
             doc_lines = Budget.convert_lines_to_doc_lines(invoice.invoice_line)
-            res = Budget.document_check_budget(doc_date,
-                                               doc_lines,
-                                               'price_subtotal')
+            res = Budget.post_commit_budget_check(doc_date, doc_lines)
             if not res['budget_ok']:
                 raise UserError(res['message'])
         return True
