@@ -44,7 +44,7 @@ class AccountAnalyticLine(models.Model):
             elif rec.purchase_request_id:
                 rec.document = rec.purchase_request_id.name
                 rec.document_id = \
-                    '%s,%s' % ('purchase.request', rec.purchase_request.id)
+                    '%s,%s' % ('purchase.request', rec.purchase_request_id.id)
                 rec.doctype = 'purchase_request'
             elif rec.purchase_id:
                 rec.document = rec.purchase_id.name
