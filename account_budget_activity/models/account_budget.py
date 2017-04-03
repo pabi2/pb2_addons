@@ -282,6 +282,8 @@ class AccountBudget(models.Model):
     def check_budget(self, fiscal_id, budget_type,
                      budget_level, budget_level_res_id, amount,
                      ext_field=False, ext_res_id=False):
+        """ Amount mustbe in company currency only
+        If amount = 0.0, will check current balance from montor report """
         res = {'budget_ok': True,
                'message': False, }
         AccountFiscalyear = self.env['account.fiscalyear']
@@ -316,12 +318,18 @@ class AccountBudget(models.Model):
             return res
         if amount > monitors[0].amount_balance:
             res['budget_ok'] = False
-            res['message'] = _('%s\n'
-                               '[%s] remaining budget is %s,\n'
-                               'but the requested budget is %s') % \
-                (fiscal.name, resource.name_get()[0][1],
-                 '{0:,}'.format(monitors[0].amount_balance),
-                 '{0:,}'.format(amount))
+            if amount == 0.0:
+                res['message'] = _('%s\n'
+                                   '%s, not enough budget, ฿%s over!') % \
+                    (fiscal.name, resource.name_get()[0][1],
+                     '{0:,}'.format(-monitors[0].amount_balance))
+            else:
+                res['message'] = _('%s\n'
+                                   '%s, remaining budget is %s,\n'
+                                   'but the requested budget is %s') % \
+                    (fiscal.name, resource.name_get()[0][1],
+                     '{0:,}'.format(monitors[0].amount_balance),
+                     '{0:,}'.format(amount))
         return res
 
     @api.model

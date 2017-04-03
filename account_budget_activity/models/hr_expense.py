@@ -7,70 +7,6 @@ from .account_activity import ActivityCommon
 class HRExpenseExpense(models.Model):
     _inherit = 'hr.expense.expense'
 
-    # Budget checking will be done in Budget Monitor module
-    # =====================================================
-    # @api.multi
-    # def _expense_budget_check(self):
-    #     AccountBudget = self.env['account.budget']
-    #     for expense in self:
-    #         # Get budget level type resources
-    #         r = AccountBudget.get_fiscal_and_budget_level(expense.date)
-    #         fiscal_id = r['fiscal_id']
-    #         budget_type = 'check_budget'
-    #         if budget_type not in r:
-    #             raise ValidationError(_('Budget level is not set!'))
-    #         budget_level = r[budget_type]  # specify what to check
-    #         # Find amount in this expense to check against budget
-    #         self._cr.execute("""
-    #             select %(budget_level)s,
-    #                 coalesce(sum(hel.total_amount / cr.rate), 0.0) amount
-    #             from hr_expense_line hel
-    #             join hr_expense_expense he on he.id = hel.expense_id
-    #             -- to base currency
-    #            JOIN res_currency_rate cr ON (cr.currency_id = he.currency_id)
-    #                 AND
-    #                 cr.id IN (SELECT id
-    #                   FROM res_currency_rate cr2
-    #                   WHERE (cr2.currency_id = he.currency_id)
-    #                       AND ((he.date IS NOT NULL
-    #                               AND cr2.name <= he.date)
-    #                     OR (he.date IS NULL AND cr2.name <= NOW()))
-    #                   ORDER BY name DESC LIMIT 1)
-    #             --
-    #             where he.id = %(expense_id)s
-    #             group by %(budget_level)s
-    #         """ % {'budget_level': budget_level,
-    #                'expense_id': expense.id}
-    #         )
-    #         context = self._context.copy()
-    #         context.update(call_from='hr_expense_expense')
-    #         # Check budget at this budgeting level
-    #         for r in self._cr.dictfetchall():
-    #             res = AccountBudget.\
-    #                 with_context(context).\
-    #                 check_budget(fiscal_id,
-    #                              budget_type,
-    #                              budget_level,
-    #                              r[budget_level],
-    #                              r['amount'])
-    #             if not res['budget_ok']:
-    #                 raise UserError(res['message'])
-    #     return True
-    # @api.multi
-    # def expense_confirm(self):
-    #     for expense in self:
-    #         expense._expense_budget_check()
-    #     return super(HRExpenseExpense, self).expense_confirm()
-
-    @api.multi
-    def expense_accept(self):
-        for expense in self:
-            for line in expense.line_ids:
-                Analytic = self.env['account.analytic.account']
-                line.analytic_account = \
-                    Analytic.create_matched_analytic(line)
-        return super(HRExpenseExpense, self).expense_accept()
-
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
         res = super(HRExpenseExpense, self)._prepare_inv_line(account_id,
@@ -83,8 +19,6 @@ class HRExpenseExpense(models.Model):
 
     @api.multi
     def write(self, vals):
-        # Commit budget as soon as Draft (approved by AP Web)
-        # TODO: will only AP and not AV be in commitment?
         if vals.get('state', False) == 'draft':
             for expense in self:
                 for line in expense.line_ids:
