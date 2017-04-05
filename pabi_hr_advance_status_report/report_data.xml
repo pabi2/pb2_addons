@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-      # PDF hr advance status report
+      # XLS hr advance status report
 
   		<record id="pabi_hr_advance_status_report" model="ir.actions.report.xml">
   			<field name="auto">True</field>
@@ -12,7 +12,7 @@
   			<field name="menu">True</field>
   			<field name="header">False</field>
   			<field name="jasper_report">True</field>
-  			<field name="jasper_output">pdf</field>
+  			<field name="jasper_output">xls</field>
   			<field name="copies">1</field>
         <field name="force_locale">th_TH</field>
   		</record>
