@@ -101,9 +101,9 @@ class AccountBankReceipt(models.Model):
             receipt.writeoff_amount = total - receipt.total_amount
 
     @api.model
-    def _create_writeoff_move_line_hook(self, move):
-        writeoflines = super(AccountBankReceipt, self).\
-            _create_writeoff_move_line_hook(move)
+    def _create_writeoff_move_line(self, move):
+        writeoflines = super(AccountBankReceipt,
+                             self)._create_writeoff_move_line(move)
         if self.writeoff_amount != 0.0 and self.multiple_reconcile_ids:
             if len(self.bank_intransit_ids) > 1\
                     and self.writeoff_amount != 0.0:
@@ -118,14 +118,14 @@ class AccountBankReceipt(models.Model):
         return writeoflines
 
     @api.model
-    def _do_reconcile_hook(self, to_reconcile_lines):
+    def _do_reconcile(self, to_reconcile_lines):
         if self.writeoff_amount != 0.0 and self.multiple_reconcile_ids:
             for reconcile_lines in to_reconcile_lines:
                 reconcile_lines.reconcile_partial(type='manual')
             return True
         else:
             return super(AccountBankReceipt,
-                         self)._do_reconcile_hook(to_reconcile_lines)
+                         self)._do_reconcile(to_reconcile_lines)
 
     @api.onchange('writeoff_amount')
     def onchange_writeoff_amount(self):

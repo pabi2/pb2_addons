@@ -277,6 +277,16 @@ class AccountBankReceipt(models.Model):
             'amount_currency': total_amount_currency,
         }
 
+    @api.model
+    def _create_writeoff_move_line(self, move):
+        return self.env['account.move.line'].browse()
+
+    @api.model
+    def _do_reconcile(self, to_reconcile_lines):
+        for reconcile_lines in to_reconcile_lines:
+            reconcile_lines.reconcile()
+        return True
+
     @api.multi
     def validate_bank_receipt(self):
         am_obj = self.env['account.move']
@@ -293,6 +303,7 @@ class AccountBankReceipt(models.Model):
                 line_vals = self._prepare_move_line_vals(line)
                 line_vals['move_id'] = move.id
                 move_line = aml_obj.create(line_vals)
+                receipt._create_writeoff_move_line(move)
                 to_reconcile_lines.append(line + move_line)
 
             # Create counter-part
@@ -315,8 +326,7 @@ class AccountBankReceipt(models.Model):
                            'validate_date': fields.Date.context_today(self),
                            })
             # We have to reconcile after post()
-            for reconcile_lines in to_reconcile_lines:
-                reconcile_lines.reconcile()
+            receipt._do_reconcile(to_reconcile_lines)
         return True
 
     @api.onchange('company_id')
