@@ -35,7 +35,7 @@
   			<field name="menu">True</field>
   			<field name="header">False</field>
   			<field name="jasper_report">True</field>
-  			<field name="jasper_output">pdf</field>
+  			<field name="jasper_output">xls</field>
   			<field name="copies">1</field>
         <field name="force_locale">th_TH</field>
   		</record>
@@ -58,7 +58,7 @@
   			<field name="menu">True</field>
   			<field name="header">False</field>
   			<field name="jasper_report">True</field>
-  			<field name="jasper_output">pdf</field>
+  			<field name="jasper_output">xls</field>
   			<field name="copies">1</field>
         <field name="force_locale">th_TH</field>
   		</record>

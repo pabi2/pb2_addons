@@ -32,7 +32,7 @@ class ProjectProject(models.Model):
     fund_id = fields.Many2one(
         'res.fund',
         string='Source of Fund',
-        readonly=True,
+        # readonly=True,
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
     month_duration = fields.Integer(
@@ -51,7 +51,7 @@ class ProjectProject(models.Model):
         string='Project Readiness',
     )
     reason = fields.Text(
-        string='Project Readiness',
+        string='Reason',
     )
     expected_result = fields.Text(
         string='Expected Result',
