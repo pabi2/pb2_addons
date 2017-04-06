@@ -86,6 +86,8 @@ class AccountBankReceipt(models.Model):
     @api.multi
     @api.depends(
         'total_amount',
+        'multiple_reconcile_ids',
+        'multiple_reconcile_ids.amount'
     )
     def _compute_writeoff_amount(self):
         for receipt in self:
@@ -98,23 +100,29 @@ class AccountBankReceipt(models.Model):
                     total += line.amount_currency
                 else:
                     total += line.debit
-            receipt.writeoff_amount = total - receipt.total_amount
+            writeoffline_amount = 0.0
+            if receipt.multiple_reconcile_ids:
+                writeoffline_amount =\
+                    sum([l.amount for l in receipt.multiple_reconcile_ids])
+            receipt.writeoff_amount =\
+                total - receipt.total_amount - writeoffline_amount
 
     @api.model
     def _create_writeoff_move_line(self, move):
         writeoflines = super(AccountBankReceipt,
                              self)._create_writeoff_move_line(move)
-        if self.writeoff_amount != 0.0 and self.multiple_reconcile_ids:
+        if self.writeoff_amount != 0.0:
             if len(self.bank_intransit_ids) > 1\
                     and self.writeoff_amount != 0.0:
                 raise UserError(
                     _('You can use write-off only for\
                         single bank intransit line!'))
             aml_obj = self.env['account.move.line']
-            for writeofline in self.multiple_reconcile_ids:
-                move_line_val = self._prepare_writeoff_move_line(writeofline)
-                move_line_val['move_id'] = move.id
-                writeoflines += aml_obj.create(move_line_val)
+            if self.multiple_reconcile_ids:
+                for writeofline in self.multiple_reconcile_ids:
+                    move_line_val = self._prepare_writeoff_move_line(writeofline)
+                    move_line_val['move_id'] = move.id
+                    writeoflines += aml_obj.create(move_line_val)
         return writeoflines
 
     @api.model
