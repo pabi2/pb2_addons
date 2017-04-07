@@ -199,24 +199,29 @@ class AccountSubscriptionLine(models.Model):
         # Filtered by Model type, when selected
         model_type_ids = self._context.get('model_type_ids', False)
         context = self._context.copy()
-        context.update({'subscription_id': self.subscription_id.id})
-        sublines = self
-        if model_type_ids:
-            sublines = sublines.filtered(
-                lambda l: l.subscription_id.model_type_id.id in model_type_ids)
-        # If no model types specified, generate for all.
-        lines_normal = sublines.filtered(lambda l: not l.amount)
-        lines_with_amount = sublines.filtered(lambda l: l.amount)
-        # Normal case
-        _ids = super(AccountSubscriptionLine,
-                     lines_normal.with_context(context)).move_create()
-        move_ids.extend(_ids)
-        # Amount case
-        for line in lines_with_amount:
-            subline = line.with_context(subline_amount=line.amount)
+        subscriptions = self.mapped('subscription_id')
+        for subscription in subscriptions:
+            context.update({'subscription_id': subscription.id})
+            # Subline for this subscription
+            sublines = self.filtered(lambda l:
+                                     l.subscription_id == subscription)
+            if model_type_ids:
+                sublines = sublines.filtered(
+                    lambda l: l.subscription_id.model_type_id.id in
+                    model_type_ids)
+            # If no model types specified, generate for all.
+            lines_normal = sublines.filtered(lambda l: not l.amount)
+            lines_with_amount = sublines.filtered(lambda l: l.amount)
+            # Normal case
             _ids = super(AccountSubscriptionLine,
-                         subline.with_context(context)).move_create()
+                         lines_normal.with_context(context)).move_create()
             move_ids.extend(_ids)
+            # Amount case
+            for line in lines_with_amount:
+                subline = line.with_context(subline_amount=line.amount)
+                _ids = super(AccountSubscriptionLine,
+                             subline.with_context(context)).move_create()
+                move_ids.extend(_ids)
         return move_ids
 
 
@@ -232,6 +237,17 @@ class AccountModel(models.Model):
         string='To Be Reversed',
         default=False,
         help="Journal Entry created by this model will also be reversed",
+    )
+    reverse_type = fields.Selection(
+        [('manual', 'Manual (by user)'),
+         ('auto', 'Auto (1st following month)')],
+        string='Reverse Type',
+        required=True,
+        default='manual',
+        help="* Manual: Journal Entry created will be marked for Reversal but "
+        "user will have to do it manually.\n"
+        "* Auto: As soon as Recurring Entry is created, the reveral will be "
+        "auto created, and use 1st date of follwing month as entry date.",
     )
     lines_id = fields.One2many(
         copy=False,
@@ -251,13 +267,14 @@ class AccountModel(models.Model):
 
     @api.multi
     def generate(self, data=None):
+        if data is None:
+            data = {}
         # Extra check for type amount manual
         if self._context.get('subline_amount', False):
             self.ensure_one()
             if len(self.lines_id) != 2:
                 raise ValidationError(
                     _('Model template must have only 2 item lines!'))
-        # --
         move_ids = self._generate(data)
         return move_ids
 
@@ -285,6 +302,10 @@ class AccountModel(models.Model):
     def _prepare_move(self, model):
         Period = self.env['account.period']
         context = self._context.copy()
+        # kittiu:Change date of JE, if end_period_date is passed from wizard
+        if context.get('end_period_date', False):
+            context.update({'date': context.get('end_period_date')})
+        # --
         date = context.get('date', False)
         ctx = context.copy()
         period = Period.with_context(ctx).find(date)

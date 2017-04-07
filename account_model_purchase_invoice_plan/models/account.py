@@ -70,9 +70,12 @@ class AccountModel(models.Model):
             'journal_id': model.journal_id.id,
             'period_id': period.id
         })
-        invoice_plans = InvoicePlan.search([('ref_invoice_id', '!=', False),
-                                            ('state', '=', 'draft'),
-                                            ('date_invoice', '<', date)])
+        invoice_plans = InvoicePlan.search([
+            ('ref_invoice_id', '!=', False),
+            ('state', '=', 'draft'),
+            ('date_invoice', '<', date),
+            ('order_id.state', '=', 'approved'),
+        ])
         for line in invoice_plans:
             if line.installment == 0:
                 continue
@@ -100,8 +103,6 @@ class AccountModel(models.Model):
             po_currency = po_line.order_id.currency_id
             company_currency = self.env.user.company_id.currency_id
             if company_currency != po_currency:
-                po_currency = po_currency.with_context(
-                    date=date or fields.Date.context_today(self))
                 amount_currency = line.invoice_amount
                 amount = po_currency.compute(line.invoice_amount,
                                              company_currency)
@@ -130,7 +131,7 @@ class AccountModel(models.Model):
             val2.update({
                 'analytic_account_id': False,
                 'debit': False,
-                'credit': line.invoice_amount,
+                'credit': amount,
                 'account_id': model.accrual_account_id.id,
                 'amount_currency': -amount_currency,
             })

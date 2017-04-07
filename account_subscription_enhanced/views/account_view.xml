@@ -192,6 +192,7 @@
                 <field name="name" position="after">
                     <field name="model_type_id"/>
                     <field name="to_be_reversed"/>
+                    <field name="reverse_type"/>
                 </field>
             </field>
         </record>
@@ -204,6 +205,7 @@
                 <field name="journal_id" position="after">
                     <field name="model_type_id"/>
                     <field name="to_be_reversed"/>
+                    <field name="reverse_type"/>
                 </field>
             </field>
         </record>
@@ -221,7 +223,7 @@
                 </xpath>
             </field>
         </record>
-        
+
         <record id="view_model_line_tree" model="ir.ui.view">
             <field name="name">account.model.line.tree</field>
             <field name="model">account.model.line</field>
