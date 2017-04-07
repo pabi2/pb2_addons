@@ -75,6 +75,7 @@ class AccountModel(models.Model):
             ('state', '=', 'draft'),
             ('date_invoice', '<', date),
             ('order_id.state', '=', 'approved'),
+            ('order_id.is_fin_lease', '=', False),
         ])
         for line in invoice_plans:
             if line.installment == 0:
