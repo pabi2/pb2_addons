@@ -10,15 +10,16 @@
                     <field name="manual_total_amount"/>
                 </xpath>
                 <xpath expr="//field[@name='validate_date']" position="after">
+                    <field name="payment_difference_amount"/>
                     <field name="writeoff_amount"/>
                     <field name="payment_option"/>
-                    <p colspan="2" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
+                    <p colspan="2" attrs="{'invisible': [('payment_difference_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
                         Different amount can be reconciled in "Payment Differences" tab.
                     </p>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="deductions" string="Payment Differences">
-                        <field name="multiple_reconcile_ids" nolabel="1"  attrs="{'invisible': [('writeoff_amount', '=', 0)]}">
+                        <field name="multiple_reconcile_ids" nolabel="1"  attrs="{'invisible': [('payment_difference_amount', '=', 0)]}">
                             <tree string="Reconcile Lines" editable="top">
                                 <field name="account_id" domain="[('type','not in',['view', 'closed'])]"/>
                                 <field name="amount" sum="Total Amount"/>
