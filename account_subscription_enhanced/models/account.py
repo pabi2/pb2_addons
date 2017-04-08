@@ -290,6 +290,15 @@ class AccountModel(models.Model):
         for model in self:
             move = self.with_context(context)._create_move(model)
             move_ids.append(move.id)
+            # Reversal if auto
+            if model.to_be_reversed and model.reverse_type == 'auto':
+                if context.get('end_period_date', False):
+                    context.update({'date': context.get('end_period_date')})
+                date = context.get('date', False)
+                date = (datetime.strptime(date, '%Y-%m-%d') +
+                        relativedelta(days=1)).strftime('%Y-%m-%d')
+                reversed_move_ids = move.create_reversals(date)
+                move_ids += reversed_move_ids
         return move_ids
 
     @api.model

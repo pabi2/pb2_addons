@@ -63,7 +63,7 @@ class BudgetReleaseWizard(models.TransientModel):
         sub_period = []
         next_period = start_period
         for i in range(12):  # Max 12 months
-            mo = i+1
+            mo = i + 1
             if mo < start_period:
                 continue
             if mo == next_period:
