@@ -23,6 +23,7 @@ Note: following are arequiremen for system to properly create analytic line
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': [
+        'account_subscription_enhanced',
         'pabi_account_move_document_ref',
     ],
     'demo': [],
