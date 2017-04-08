@@ -204,8 +204,11 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
                     <field name="model_type_id"/>
-                    <field name="to_be_reversed"/>
-                    <field name="reverse_type"/>
+                    <label for="to_be_reversed"/>
+                    <div>
+                        <field name="to_be_reversed" class="oe_inline"/>
+                        <field name="reverse_type" class="oe_inline" attrs="{'invisible': [('to_be_reversed', '=', False)]}"/>
+                    </div>
                 </field>
             </field>
         </record>

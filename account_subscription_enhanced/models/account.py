@@ -284,19 +284,22 @@ class AccountModel(models.Model):
         if data is None:
             data = {}
         move_ids = []
-        AccountMove = self.env['account.move']
         context = self._context.copy()
         if data.get('date', False):
             context.update({'date': data['date']})
         for model in self:
-            # Move
-            move_dict = self.with_context(context)._prepare_move(model)
-            move = AccountMove.create(move_dict)
+            move = self.with_context(context)._create_move(model)
             move_ids.append(move.id)
-            # Lines
-            move_lines = self.with_context(context)._prepare_move_line(model)
-            move.write({'line_id': move_lines})
         return move_ids
+
+    @api.model
+    def _create_move(self, model):
+        AccountMove = self.env['account.move']
+        move_dict = self._prepare_move(model)
+        move_lines = self._prepare_move_line(model)
+        move_dict['line_id'] = move_lines
+        move = AccountMove.create(move_dict)
+        return move
 
     @api.model
     def _prepare_move(self, model):

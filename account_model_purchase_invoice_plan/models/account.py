@@ -24,37 +24,12 @@ class AccountModel(models.Model):
             self.lines_id = []
             self.lines_id = False
 
-    @api.multi
-    def generate(self, data=None):
-        move_ids = []
-        # For recurring by invoice plan, it require different way
-        inv_models = self.filtered('use_purchase_invoice_plan')
-        move_ids += inv_models._generate_by_inovice_plan(data)
-        # Normal models
-        models = self - inv_models
-        move_ids += super(AccountModel, models).generate(data)
-        return move_ids
-
-    @api.multi
-    def _generate_by_inovice_plan(self, data=None):
-        """ Gnerate Journal Entries based on Purchase invoice Plan data """
-        if data is None:
-            data = {}
-        move_ids = []
-        AccountMove = self.env['account.move']
-        context = self._context.copy()
-        if data.get('date', False):
-            context.update({'date': data['date']})
-        for model in self:
-            # Move
-            move_dict = self.with_context(context)._prepare_move(model)
-            move = AccountMove.create(move_dict)
-            move_ids.append(move.id)
-            # Lines
-            move_lines = self.with_context(
-                context)._prepare_move_line_by_invoice_plan(model)
-            move.write({'line_id': move_lines})
-        return move_ids
+    @api.model
+    def _prepare_move_line(self, model):
+        if model.use_purchase_invoice_plan:  # Case invoice plan
+            return self._prepare_move_line_by_invoice_plan(model)
+        else:
+            return super(AccountModel, self)._prepare_move_line(model)
 
     @api.model
     def _prepare_move_line_by_invoice_plan(self, model):
