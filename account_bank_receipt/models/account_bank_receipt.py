@@ -239,8 +239,8 @@ class AccountBankReceipt(models.Model):
     @api.model
     def _prepare_account_move_vals(self, receipt):
         date = receipt.receipt_date
-        period_obj = self.env['account.period']
-        period_ids = period_obj.find(dt=date)
+        Period = self.env['account.period']
+        period_ids = Period.find(dt=date)
         # period_ids will always have a value, cf the code of find()
         move_vals = {
             'journal_id': receipt.journal_id.id,
@@ -278,8 +278,8 @@ class AccountBankReceipt(models.Model):
         }
 
     @api.model
-    def _create_writeoff_move_line(self, move):
-        return self.env['account.move.line'].browse()
+    def _create_writeoff_move_line_hook(self, move):
+        return True
 
     @api.model
     def _do_reconcile(self, to_reconcile_lines):
@@ -289,11 +289,21 @@ class AccountBankReceipt(models.Model):
 
     @api.multi
     def validate_bank_receipt(self):
-        am_obj = self.env['account.move']
-        aml_obj = self.env['account.move.line']
+        Move = self.env['account.move']
+        MoveLine = self.env['account.move.line']
         for receipt in self:
+            # Check
+            if not receipt.bank_intransit_ids:
+                raise UserError(_('No lines!'))
+            if not receipt.partner_bank_id:
+                raise UserError(_("Missing Bank Account"))
+            if not receipt.bank_account_id:
+                raise UserError(
+                    _("Missing Account for Bank Receipt on the journal '%s'.")
+                    % receipt.partner_bank_id.journal_id.name)
+            # --
             move_vals = self._prepare_account_move_vals(receipt)
-            move = am_obj.create(move_vals)
+            move = Move.create(move_vals)
             total_debit = 0.0
             total_amount_currency = 0.0
             to_reconcile_lines = []
@@ -302,23 +312,15 @@ class AccountBankReceipt(models.Model):
                 total_amount_currency += line.amount_currency
                 line_vals = self._prepare_move_line_vals(line)
                 line_vals['move_id'] = move.id
-                move_line = aml_obj.create(line_vals)
-                receipt._create_writeoff_move_line(move)
+                move_line = MoveLine.create(line_vals)
                 to_reconcile_lines.append(line + move_line)
-
+            # Prepare for hook
+            receipt._create_writeoff_move_line_hook(move)
             # Create counter-part
-            if not receipt.partner_bank_id:
-                raise UserError(_("Missing Bank Account"))
-            if not receipt.bank_account_id:
-                raise UserError(
-                    _("Missing Account for Bank Receipt on the journal '%s'.")
-                    % receipt.partner_bank_id.journal_id.name)
-
             counter_vals = self._prepare_counterpart_move_lines_vals(
                 receipt, total_debit, total_amount_currency)
             counter_vals['move_id'] = move.id
-            aml_obj.create(counter_vals)
-
+            MoveLine.create(counter_vals)
             move.post()
             receipt.write({'state': 'done',
                            'move_id': move.id,
@@ -341,6 +343,7 @@ class AccountBankReceipt(models.Model):
 
     @api.onchange('journal_id')
     def onchange_journal_id(self):
+        self.bank_intransit_ids = False
         if self.journal_id:
             if self.journal_id.currency:
                 self.currency_id = self.journal_id.currency

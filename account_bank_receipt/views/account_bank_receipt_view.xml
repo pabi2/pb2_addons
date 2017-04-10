@@ -2,6 +2,24 @@
 <openerp>
     <data>
 
+        <!-- shorten version of move line -->
+        <record id="view_account_move_line_tree" model="ir.ui.view">
+            <field name="name">view.account.move.line.tree</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="period_id" readonly="1"/>
+                    <field name="date" readonly="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="ref" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="account_id" readonly="1"/>
+                    <field name="debit" sum="Total Debit" readonly="1"/>
+                    <field name="credit" sum="Total Credit" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="account_bank_receipt_view_form" model="ir.ui.view">
             <field name="name">account.bank.receipt.form</field>
             <field name="model">account.bank.receipt</field>
@@ -50,7 +68,8 @@
                                               ('journal_id', '=', journal_id),
                                               ('account_id', '=', journal_default_account_id)]"
                                     context="{'currency': currency_id,
-                                          'journal_id': journal_id}"/>
+                                          'journal_id': journal_id,
+                                          'tree_view_ref': 'account_bank_receipt.view_account_move_line_tree'}" />
                                 <field name="note"/>
                             </page>
                             <page string="Journal Items" attrs="{'invisible': [('state','in', ('draft'))]}">
@@ -63,8 +82,8 @@
                                         <field name="partner_id"/>
                                         <field name="account_id"/>
                                         <field name="name"/>
-                                        <field name="debit"/>
-                                        <field name="credit"/>
+                                        <field name="debit" sum="Total Debit"/>
+                                        <field name="credit" sum="Total Credit"/>
                                         <field name="state"/>
                                         <field name="reconcile_id"/>
                                         <field name="amount_currency" groups="base.group_multi_currency"/>
