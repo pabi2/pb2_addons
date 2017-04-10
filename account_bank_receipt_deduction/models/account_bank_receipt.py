@@ -43,6 +43,14 @@ class AccountBankReceipt(models.Model):
         states={'draft': [('readonly', False)]},
     )
     writeoff_amount = fields.Float(
+        string="Writeoff Amount",
+        readonly=True,
+        compute="_compute_writeoff_amount",
+        help="Computed as the difference between the amount\
+        stated in the voucher and the sum of allocation\
+        on the voucher lines.",
+    )
+    payment_difference_amount = fields.Float(
         string="Difference Amount",
         readonly=True,
         compute="_compute_writeoff_amount",
@@ -104,6 +112,7 @@ class AccountBankReceipt(models.Model):
             if receipt.multiple_reconcile_ids:
                 writeoffline_amount =\
                     sum([l.amount for l in receipt.multiple_reconcile_ids])
+            receipt.payment_difference_amount = total - receipt.total_amount
             receipt.writeoff_amount =\
                 total - receipt.total_amount - writeoffline_amount
 
@@ -111,9 +120,9 @@ class AccountBankReceipt(models.Model):
     def _create_writeoff_move_line(self, move):
         writeoflines = super(AccountBankReceipt,
                              self)._create_writeoff_move_line(move)
-        if self.writeoff_amount != 0.0:
+        if self.payment_difference_amount != 0.0:
             if len(self.bank_intransit_ids) > 1\
-                    and self.writeoff_amount != 0.0:
+                    and self.payment_difference_amount != 0.0:
                 raise UserError(
                     _('You can use write-off only for\
                         single bank intransit line!'))
@@ -127,7 +136,7 @@ class AccountBankReceipt(models.Model):
 
     @api.model
     def _do_reconcile(self, to_reconcile_lines):
-        if self.writeoff_amount != 0.0 and self.multiple_reconcile_ids:
+        if self.payment_difference_amount != 0.0 and self.multiple_reconcile_ids:
             for reconcile_lines in to_reconcile_lines:
                 reconcile_lines.reconcile_partial(type='manual')
             return True
@@ -144,7 +153,7 @@ class AccountBankReceipt(models.Model):
     @api.model
     def _prepare_move_line_vals(self, line):
         vals = super(AccountBankReceipt, self)._prepare_move_line_vals(line)
-        if self.writeoff_amount != 0.0 and self.multiple_reconcile_ids:
+        if self.payment_difference_amount != 0.0 and self.multiple_reconcile_ids:
             vals['credit'] = self.total_amount
         return vals
 
@@ -152,7 +161,7 @@ class AccountBankReceipt(models.Model):
     def _prepare_writeoff_move_line(self, writeofline):
         credit = 0.0
         debit = 0.0
-        if self.writeoff_amount > 0.0:
+        if self.payment_difference_amount > 0.0:
             credit = writeofline.amount
         else:
             debit = writeofline.amount
