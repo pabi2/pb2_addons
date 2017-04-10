@@ -23,6 +23,7 @@ This module enhance Define Recurring Enteries window with followings,
     'depends': [
         'account',
         'account_reversal',
+        'l10n_th_account',
     ],
     'data': [
         'data/account_data.xml',

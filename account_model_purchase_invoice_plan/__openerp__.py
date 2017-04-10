@@ -17,6 +17,7 @@ To create recurrin entries from open invoice plan
     ],
     'data': [
         'views/account_view.xml',
+        'views/purchase_view.xml',
     ],
     'demo': [
     ],

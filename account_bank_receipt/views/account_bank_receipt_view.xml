@@ -51,6 +51,7 @@
                                               ('account_id', '=', journal_default_account_id)]"
                                     context="{'currency': currency_id,
                                           'journal_id': journal_id}"/>
+                                <field name="note"/>
                             </page>
                             <page string="Journal Items" attrs="{'invisible': [('state','in', ('draft'))]}">
                                 <field name="move_ids" readonly="1">
@@ -72,7 +73,6 @@
                                 </field>
                             </page>
                         </notebook>
-                        <field name="note"/>
                     </sheet>
                 </form>
             </field>

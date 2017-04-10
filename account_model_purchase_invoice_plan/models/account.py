@@ -24,37 +24,12 @@ class AccountModel(models.Model):
             self.lines_id = []
             self.lines_id = False
 
-    @api.multi
-    def generate(self, data=None):
-        move_ids = []
-        # For recurring by invoice plan, it require different way
-        inv_models = self.filtered('use_purchase_invoice_plan')
-        move_ids += inv_models._generate_by_inovice_plan(data)
-        # Normal models
-        models = self - inv_models
-        move_ids += super(AccountModel, models).generate(data)
-        return move_ids
-
-    @api.multi
-    def _generate_by_inovice_plan(self, data=None):
-        """ Gnerate Journal Entries based on Purchase invoice Plan data """
-        if data is None:
-            data = {}
-        move_ids = []
-        AccountMove = self.env['account.move']
-        context = self._context.copy()
-        if data.get('date', False):
-            context.update({'date': data['date']})
-        for model in self:
-            # Move
-            move_dict = self.with_context(context)._prepare_move(model)
-            move = AccountMove.create(move_dict)
-            move_ids.append(move.id)
-            # Lines
-            move_lines = self.with_context(
-                context)._prepare_move_line_by_invoice_plan(model)
-            move.write({'line_id': move_lines})
-        return move_ids
+    @api.model
+    def _prepare_move_line(self, model):
+        if model.use_purchase_invoice_plan:  # Case invoice plan
+            return self._prepare_move_line_by_invoice_plan(model)
+        else:
+            return super(AccountModel, self)._prepare_move_line(model)
 
     @api.model
     def _prepare_move_line_by_invoice_plan(self, model):
@@ -70,9 +45,13 @@ class AccountModel(models.Model):
             'journal_id': model.journal_id.id,
             'period_id': period.id
         })
-        invoice_plans = InvoicePlan.search([('ref_invoice_id', '!=', False),
-                                            ('state', '=', 'draft'),
-                                            ('date_invoice', '<', date)])
+        invoice_plans = InvoicePlan.search([
+            ('ref_invoice_id', '!=', False),
+            ('state', '=', 'draft'),
+            ('date_invoice', '<', date),
+            ('order_id.state', '=', 'approved'),
+            ('order_id.is_fin_lease', '=', False),
+        ])
         for line in invoice_plans:
             if line.installment == 0:
                 continue
@@ -100,8 +79,6 @@ class AccountModel(models.Model):
             po_currency = po_line.order_id.currency_id
             company_currency = self.env.user.company_id.currency_id
             if company_currency != po_currency:
-                po_currency = po_currency.with_context(
-                    date=date or fields.Date.context_today(self))
                 amount_currency = line.invoice_amount
                 amount = po_currency.compute(line.invoice_amount,
                                              company_currency)
@@ -130,7 +107,7 @@ class AccountModel(models.Model):
             val2.update({
                 'analytic_account_id': False,
                 'debit': False,
-                'credit': line.invoice_amount,
+                'credit': amount,
                 'account_id': model.accrual_account_id.id,
                 'amount_currency': -amount_currency,
             })
