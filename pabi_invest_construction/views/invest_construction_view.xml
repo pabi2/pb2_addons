@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Top menu item -->
+        <menuitem name="Project (C)" id="menu_main_construction" groups="" sequence="40"/>
+
+        <menuitem name="Construction Projects" id="menu_construction" parent="menu_main_construction" groups="" sequence="1"/>
+
+        <menuitem name="Reports" id="menu_construction_report" parent="menu_main_construction" groups="" sequence="60"/>
+
+        <!-- Phase -->
+        <record id="view_invest_construction_phase_search" model="ir.ui.view">
+            <field name="name">view.invest.construction.phase.search</field>
+            <field name="model">res.invest.construction.phase</field>
+            <field name="arch" type="xml">
+                <search string="Phases">
+                    <field name="code" string="Phase Number"/>
+                    <field name="phase" string="Phase Number"/>
+                    <field name="invest_construction_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Project (C)" name="project" context="{'group_by':'invest_construction_id'}"/>
+                        <filter string="Phase" name="phase" context="{'group_by':'phase'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_invest_construction_phase_all" model="ir.actions.act_window">
+            <field name="name">Phases</field>
+            <field name="res_model">res.invest.construction.phase</field>
+            <field name="view_mode">tree,form,gantt</field>
+            <field name="context">{'search_default_invest_construction_id': [active_id]}</field>
+            <field name="search_view_id" ref="view_invest_construction_phase_search"/>
+        </record>
+        <record id="action_invest_construction_phase_report" model="ir.actions.act_window">
+            <field name="name">Phase Report</field>
+            <field name="res_model">res.invest.construction.phase.plan</field>
+            <field name="view_mode">graph</field>
+            <field name="context">{'search_default_invest_construction_id': [active_id], 'search_default_fiscal': 1, 'search_default_period': 1 }</field>
+            <field name="search_view_id" ref="view_invest_construction_phase_plan_search"/>
+        </record>
+
+        <!-- Project -->
+        <record id="view_invest_construction_form" model="ir.ui.view">
+            <field name="name">project.project.form</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+                <form string="Project">
+                    <header>
+                        <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
+                        <button name="action_approve" string="Approve" type="object" states="submit" class="oe_highlight"/>
+                        <button name="action_reject" string="Reject" type="object" states="submit"/>
+                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
+                        <button name="action_delete" string="Delete" type="object" states="approve"/>
+                        <button name="action_cancel" string="Cancel" type="object" states="approve"/>
+                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
+                    </header>
+                    <sheet string="Project (C)">
+                        <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
+                            <button name="action_create_phase" string="Create Phases" type="object" attrs="{'invisible': [('phase_ids', '!=', [])]}"/>
+                            <button class="oe_inline oe_stat_button" type="action" string="5 Phases" attrs="{'invisible':[('phase_ids','=', [])]}" name="%(action_invest_construction_phase_all)d" icon="fa-tasks"/>
+                            <button class="oe_inline oe_stat_button" type="action" string="Phase Report" attrs="{'invisible':[('phase_ids','=', [])]}" name="%(action_invest_construction_phase_report)d" icon="fa-bar-chart"/>
+                        </div>
+                        <h1>
+                            <label string="Construction Project: "/>
+                            <field name="code" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <label string="Name: "/>
+                            <field name="name" class="oe_inline"/>
+                        </h2>
+                        <group>
+                            <group>
+                                <field name="amount_budget_plan"/>
+                                <field name="amount_budget_approve"/>
+                            </group>
+                            <group>
+                                <field name="fund_ids" widget="many2many_tags"/>
+                                <field name="mission_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="month_duration"/>
+                                <field name="date_start"/>
+                                <field name="date_end" required="1"/>
+                                <field name="date_expansion"/>
+                            </group>
+                            <group>
+                                <field name="pm_employee_id"/>
+                                <field name="section_id"/>
+                                <field name="org_id"/>
+                                <field name="costcenter_id" required="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Other Info">
+                                <group>
+                                    <field name="operation_area"/>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="approval_info"/>
+                                        <field name="project_readiness"/>
+                                    </group>
+                                    <group>
+                                        <field name="reason"/>
+                                        <field name="expected_result"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Budget Planning">
+                                <field name="budget_plan_ids">
+                                    <tree editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="amount_plan" sum="Total Plan"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Phases">
+                                <field name="phase_ids">
+                                    <tree editable="bottom">
+                                        <field name="code"/>
+                                        <field name="phase" readonly="1"/>
+                                        <field name="amount_phase_approve" sum="Total Phase Approved"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_invest_construction_search" model="ir.ui.view">
+            <field name="name">view.invest.construction.search</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+                <search string="Tasks">
+                    <field name="name" string="Project (C)"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Org" name="org" context="{'group_by':'org_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_invest_construction_tree" model="ir.ui.view">
+            <field name="name">view.invest.construction.tree</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+                <tree string="Projects">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="pm_employee_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_invest_construction_gantt" model="ir.ui.view">
+            <field name="name">view.invest.construction.gantt</field>
+            <field name="model">res.invest.construction</field>
+            <field name="arch" type="xml">
+                <gantt date_start="date_start" date_stop="date_stop" string="Projects"></gantt>
+            </field>
+        </record>
+
+        <record id="action_invest_construction" model="ir.actions.act_window">
+            <field name="name">Projects (C)</field>
+            <field name="res_model">res.invest.construction</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,form,gantt</field>
+            <field name="search_view_id" ref="view_invest_construction_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to start a new project.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_invest_construction_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_invest_construction_form"/>
+            <field name="act_window_id" ref="action_invest_construction"/>
+        </record>
+
+        <record id="action_invest_construction_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_invest_construction_tree"/>
+            <field name="act_window_id" ref="action_invest_construction"/>
+        </record>
+
+        <menuitem action="action_invest_construction" id="menu_invest_construction" name="Projects" parent="menu_construction" sequence="1"/>
+
+        <!-- Phases -->
+        <record id="view_invest_construction_phase_form" model="ir.ui.view">
+            <field name="name">view.invest.construction.phase.form</field>
+            <field name="model">res.invest.construction.phase</field>
+            <field name="arch" type="xml">
+                <form string="Phase" create="0">
+                    <header>
+                        <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
+                        <button name="action_approve" string="Approve" type="object" states="submit" class="oe_highlight"/>
+                        <button name="action_reject" string="Reject" type="object" states="submit"/>
+                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
+                        <button name="action_delete" string="Delete" type="object" states="approve"/>
+                        <button name="action_cancel" string="Cancel" type="object" states="approve"/>
+                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
+                    </header>
+                    <sheet string="Phase">
+                        <h1>
+                            <label string="Construction Project: "/>
+                            <field name="code" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <label string="Phase: "/>
+                            <field name="phase" class="oe_inline" readonly="1"/>
+                        </h2>
+                        <div class="oe_right oe_button_box" name="buttons" groups="base.group_user"></div>
+                        <group>
+                            <group>
+                                <field name="amount_phase_approve"/>
+                            </group>
+                            <group>
+                                <field name="amount_phase_plan"/>
+                                <field name="amount_phase_diff"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="month_duration"/>
+                                <field name="date_start"/>
+                                <field name="date_end" required="1"/>
+                                <field name="date_expansion"/>
+                            </group>
+                            <group>
+                                <field name="contract_day_duration"/>
+                                <field name="contract_date_start"/>
+                                <field name="contract_date_end"/>
+                                <field name="contract_number"/>
+                            </group>
+                        </group>
+                        <separator string="Monthly Budget Plan"/>
+                        <field name="phase_plan_ids">
+                            <tree editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="calendar_period_id"/>
+                                <field name="amount_plan" sum="Total Plan"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_invest_construction_phase_tree" model="ir.ui.view">
+            <field name="name">view.invest.construction.tree.phase</field>
+            <field name="model">res.invest.construction.phase</field>
+            <field name="arch" type="xml">
+                <tree string="Phases" create="0">
+                    <field name="code"/>
+                    <field name="phase"/>
+                    <field name="invest_construction_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_invest_construction_phase_gantt" model="ir.ui.view">
+            <field name="name">view.invest.construction.phase.gantt</field>
+            <field name="model">res.invest.construction.phase</field>
+            <field name="arch" type="xml">
+                <gantt date_start="date_start" date_stop="date_stop" string="Projects"></gantt>
+            </field>
+        </record>
+
+        <record id="action_invest_construction_phase" model="ir.actions.act_window">
+            <field name="name">Phases</field>
+            <field name="res_model">res.invest.construction.phase</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,form,gantt</field>
+            <field name="search_view_id" ref="view_invest_construction_phase_search"/>
+            <field name="context">{'search_default_project': 1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to start a new phase.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_invest_construction_phase_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_invest_construction_phase_form"/>
+            <field name="act_window_id" ref="action_invest_construction_phase"/>
+        </record>
+
+        <record id="action_invest_construction_phase_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_invest_construction_phase_tree"/>
+            <field name="act_window_id" ref="action_invest_construction_phase"/>
+        </record>
+
+        <menuitem action="action_invest_construction_phase" id="menu_invest_construction_phase" name="Phases" parent="menu_construction" sequence="3"/>
+
+
+        # Reports
+        <!-- Project Plan Phase-->
+        <record id="view_invest_construction_budget_plan_search" model="ir.ui.view">
+            <field name="name">view.invest.construction.budget.plan.search</field>
+            <field name="model">res.invest.construction.budget.plan</field>
+            <field name="arch" type="xml">
+                <search string="Project Plan Report">
+                    <field name="invest_construction_id" string="Project"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Project (C)" name="project" context="{'group_by':'invest_construction_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_invest_construction_budget_plan_graph" model="ir.ui.view">
+             <field name="name">view.invest.construction.budget.plan.graph</field>
+             <field name="model">res.invest.construction.budget.plan</field>
+             <field name="arch" type="xml">
+                 <graph string="Project Plan Report" type="pivot">
+                     <field name="invest_construction_id" type="row"/>
+                     <field name="fiscalyear_id" type="col"/>
+                     <field name="amount_plan" type="measure"/>
+                 </graph>
+             </field>
+        </record>
+        <record id="action_invest_construction_budget_plan" model="ir.actions.act_window">
+            <field name="name">Project Plan Report</field>
+            <field name="res_model">res.invest.construction.budget.plan</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">graph</field>
+            <field name="search_view_id" ref="view_invest_construction_budget_plan_search"/>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem action="action_invest_construction_budget_plan" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"/>
+
+        <!-- Phase Report -->
+        <record id="view_invest_construction_phase_plan_search" model="ir.ui.view">
+            <field name="name">view.invest.construction.phase.plan.search</field>
+            <field name="model">res.invest.construction.phase.plan</field>
+            <field name="arch" type="xml">
+                <search string="Phase Report">
+                    <field name="invest_construction_id" string="Project"/>">
+                    <field name="invest_construction_phase_id" string="Phase"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Project (C)" name="project" context="{'group_by':'invest_construction_id'}"/>
+                        <filter string="Phase" name="phase" context="{'group_by':'invest_construction_phase_id'}"/>
+                        <filter string="Fiscal" name="fiscal" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Period" name="period" context="{'group_by':'calendar_period_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="view_invest_construction_phase_plan_graph" model="ir.ui.view">
+             <field name="name">view.invest.construction.phase.plan.graph</field>
+             <field name="model">res.invest.construction.phase.plan</field>
+             <field name="arch" type="xml">
+                 <graph string="Phase Report" type="pivot">
+                     <field name="invest_construction_phase_id" type="col"/>
+                     <field name="amount_plan" type="measure"/>
+                 </graph>
+             </field>
+        </record>
+        <record id="action_invest_construction_phase_plan" model="ir.actions.act_window">
+            <field name="name">Phase Report</field>
+            <field name="res_model">res.invest.construction.phase.plan</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">graph</field>
+            <field name="search_view_id" ref="view_invest_construction_phase_plan_search"/>
+            <field name="context">{'search_default_project': 1, 'search_default_fiscal': 1, 'search_default_period': 1}</field>
+        </record>
+
+        <menuitem action="action_invest_construction_phase_plan" id="menu_invest_construction_phase_plan" name="Project Phase Report" parent="menu_construction_report" sequence="2"/>
+
+    </data>
+</openerp>

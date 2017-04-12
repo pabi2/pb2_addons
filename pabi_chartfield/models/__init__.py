@@ -17,5 +17,6 @@ from . import stock_request  # IN PROGRESS
 from . import account
 from . import account_budget_job_order
 from . import account_budget_summary
+from . import res_fund
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

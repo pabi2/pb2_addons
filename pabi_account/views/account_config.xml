@@ -10,8 +10,8 @@
                 <field name="purchase_refund_journal_id" position="after">
                     <separator string="Journal Tax Move"/>
                     <group name="journal_tax_move">
-		            	<field name="tax_move_by_taxbranch" class="oe_inline"/>
-		            	<field name="wht_taxbranch_id" class="oe_inline"/>
+                        <field name="tax_move_by_taxbranch" class="oe_inline"/>
+                        <field name="wht_taxbranch_id" class="oe_inline"/>
                     </group>
                 </field>
             </field>
