@@ -124,6 +124,19 @@
             <field name="view_id" ref="view_res_invest_asset_category_tree"/>
         </record>
 
+        <record id="action_view_res_invest_asset_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_res_invest_asset_form"/>
+            <field name="act_window_id" ref="action_res_invest_asset"/>
+        </record>
+        <record id="action_view_res_invest_asset_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_res_invest_asset_tree"/>
+            <field name="act_window_id" ref="action_res_invest_asset"/>
+        </record>
+
         <menuitem name="Asset Category" id="menu_res_invest_asset_category" action="action_res_invest_asset_category" parent="menu_investment_structure" sequence="10"/>
 
         # Investment Construction
@@ -163,7 +176,17 @@
                             </tree>
                         </field>
                     </group>
-                    <notebook></notebook>
+                    <notebook>
+                        <page string="Source of Funds">
+                            <field name="fund_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                    <field name="type" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </form>
             </field>
         </record>
@@ -187,6 +210,19 @@
             <field name="res_model">res.invest.construction</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_res_invest_construction_tree"/>
+        </record>
+
+        <record id="action_view_res_invest_construction_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_res_invest_construction_form"/>
+            <field name="act_window_id" ref="action_res_invest_construction"/>
+        </record>
+        <record id="action_view_res_invest_construction_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_res_invest_construction_tree"/>
+            <field name="act_window_id" ref="action_res_invest_construction"/>
         </record>
 
         <menuitem name="Investment Construction" id="menu_res_invest_construction" action="action_res_invest_construction" parent="menu_investment_structure" sequence="30"/>

@@ -18,4 +18,5 @@ class ResPersonnelCostcenter(ResCommon, models.Model):
         'res_fund_personnel_costcenter_rel',
         'personnel_costcenter_id', 'fund_id',
         string='Funds',
+        default=lambda self: self.env.ref('base.fund_nstda'),
     )

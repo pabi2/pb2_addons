@@ -138,6 +138,7 @@ class ResSection(ResCommon, models.Model):
         'res_fund_section_rel',
         'section_id', 'fund_id',
         string='Funds',
+        default=lambda self: self.env.ref('base.fund_nstda'),
     )
 
 

@@ -2,6 +2,14 @@
 from openerp import fields, models, api
 from openerp.addons.pabi_base.models.res_common import ResCommon
 
+CONSTRUCTION_PHASE = {
+    '1-design': '1-Design',
+    '2-control': '2-Control',
+    '3-construct': '3-Construct',
+    '4-procure': '4-Procurement',
+    '5-other': '5-Others',
+}
+
 
 # Investment - Asset
 class ResInvestAsset(ResCommon, models.Model):
@@ -30,6 +38,7 @@ class ResInvestAsset(ResCommon, models.Model):
         'res_fund_invest_asset_rel',
         'invest_asset_id', 'fund_id',
         string='Funds',
+        default=lambda self: self.env.ref('base.fund_nstda'),
     )
 
 
@@ -58,18 +67,19 @@ class ResInvestConstruction(ResCommon, models.Model):
         string='Costcenter',
         required=True,
     )
+    fund_ids = fields.Many2many(
+        'res.fund',
+        'res_fund_invest_construction_rel',
+        'invest_construction_id', 'fund_id',
+        string='Funds',
+        default=lambda self: self.env.ref('base.fund_nstda'),
+    )
 
 
 class ResInvestConstructionPhase(models.Model):
     _name = 'res.invest.construction.phase'
     _description = 'Investment Construction Phase'
     _order = 'sequence, id'
-
-    PHASE = {'design': 'Design',
-             'control': 'Control',
-             'construct': 'Construct',
-             'procure': 'Procurement',
-             'other': 'Others'}
 
     sequence = fields.Integer(
         string='Sequence',
@@ -78,17 +88,17 @@ class ResInvestConstructionPhase(models.Model):
     invest_construction_id = fields.Many2one(
         'res.invest.construction',
         string='Investment Construction',
-        required=True,
+        index=True,
+        ondelete='cascade',
     )
     phase = fields.Selection(
-        PHASE.items(),
+        sorted(CONSTRUCTION_PHASE.items()),
         string='Phase',
         required=True,
     )
     fund_ids = fields.Many2many(
         'res.fund',
-        'res_fund_invest_construction_phase_rel',
-        'invest_construction_phase_id', 'fund_id',
+        related='invest_construction_id.fund_ids',
         string='Funds',
     )
     _sql_constraints = [
@@ -100,7 +110,8 @@ class ResInvestConstructionPhase(models.Model):
     def name_get(self):
         result = []
         for rec in self:
-            result.append((rec.id, "%s - %s" %
-                           (rec.invest_construction_id.name_get(),
-                            self.PHASE[rec.phase])))
+            result.append((rec.id, "[%s] %s - %s" %
+                           (rec.invest_construction_id.code,
+                            rec.invest_construction_id.name,
+                            CONSTRUCTION_PHASE[rec.phase])))
         return result

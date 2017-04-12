@@ -258,6 +258,7 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
         'res_fund_project_rel',
         'project_id', 'fund_id',
         string='Funds',
+        default=lambda self: self.env.ref('base.fund_nstda'),
     )
     # prototype_ids = fields.One2many(
     #     'res.project.prototype',
