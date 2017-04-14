@@ -11,7 +11,6 @@ addons:
       - expect-dev  # provides unbuffer utility
       - python-lxml  # because pip installation is slow
       - python-xlrd
-      - python-unicodecsv
       - python-openpyxl
 
 env:
@@ -28,6 +27,7 @@ virtualenv:
 
 install:
   - pip install xlutils
+  - pip install unicodecsv
   - git clone --depth=1 https://github.com/OCA/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly

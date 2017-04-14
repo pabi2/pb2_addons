@@ -55,7 +55,7 @@ class ResInvestConstruction(models.Model):
     _inherit = 'res.invest.construction'
 
     fund_ids = fields.Many2many(
-        domain="[('invest_asset', '=', True)]",
+        domain="[('invest_construction', '=', True)]",
     )
 
 
@@ -63,5 +63,5 @@ class ResInvestAsset(models.Model):
     _inherit = 'res.invest.asset'
 
     fund_ids = fields.Many2many(
-        domain="[('invest_construction', '=', True)]",
+        domain="[('invest_asset', '=', True)]",
     )
