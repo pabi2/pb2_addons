@@ -278,7 +278,6 @@ class RestInvestConstructionPhase(models.Model):
         if vals.get('code', '/') == '/':
             prefix = 'N/A-'
             if vals.get('invest_construction_id', False):
-                print vals
                 project = self.env['res.invest.construction'].\
                     browse(vals.get('invest_construction_id'))
                 prefix = str(project.code) + '-'
@@ -298,12 +297,9 @@ class RestInvestConstructionPhase(models.Model):
         Period = self.env['account.period']
         Plan = self.env['res.invest.construction.phase.plan']
         date = date_start
-        print date_start
-        print date_end
         if date and date_end:
             while date <= date_end:
                 period = Period.find(date)
-                print period
                 plan = Plan.new()
                 plan.calendar_period_id = period.id
                 plan.amount_plan = 0.0

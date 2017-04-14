@@ -24,6 +24,7 @@ PABI2 - Procurement Module
         "pabi_web_config",
         "pabi_user_profile",
         "pabi_chartfield",
+        "pabi_purchase_contract",
         "web_tree_many2one_clickable",
         "purchase_double_validation",
         "purchase_request_to_requisition",
