@@ -30,14 +30,14 @@
             <field name="name">Phases</field>
             <field name="res_model">res.invest.construction.phase</field>
             <field name="view_mode">tree,form,gantt</field>
-            <field name="context">{'search_default_invest_construction_id': [active_id]}</field>
+            <field name="context">{'search_default_invest_construction_id': [active_id], 'active_test': 0}</field>
             <field name="search_view_id" ref="view_invest_construction_phase_search"/>
         </record>
         <record id="action_invest_construction_phase_report" model="ir.actions.act_window">
             <field name="name">Phase Report</field>
             <field name="res_model">res.invest.construction.phase.plan</field>
             <field name="view_mode">graph</field>
-            <field name="context">{'search_default_invest_construction_id': [active_id], 'search_default_fiscal': 1, 'search_default_period': 1 }</field>
+            <field name="context">{'search_default_invest_construction_id': [active_id], 'search_default_fiscal': 1, 'search_default_period': 1, 'active_test': 0}</field>
             <field name="search_view_id" ref="view_invest_construction_phase_plan_search"/>
         </record>
 
@@ -217,6 +217,10 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
                     </header>
                     <sheet string="Phase">
+                        <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
+                            <field name="active" class="oe_inline" readonly="1"/>
+                            <label string="Active" class="oe_inline"/>
+                        </div>
                         <h1>
                             <label string="Construction Project: "/>
                             <field name="code" class="oe_inline" readonly="1"/>
@@ -225,10 +229,10 @@
                             <label string="Phase: "/>
                             <field name="phase" class="oe_inline" readonly="1"/>
                         </h2>
-                        <div class="oe_right oe_button_box" name="buttons" groups="base.group_user"></div>
                         <group>
                             <group>
                                 <field name="amount_phase_approve"/>
+                                <field name="org_id" invisible="1"/>
                             </group>
                             <group>
                                 <field name="amount_phase_plan"/>
@@ -249,14 +253,45 @@
                                 <field name="contract_number"/>
                             </group>
                         </group>
-                        <separator string="Monthly Budget Plan"/>
-                        <field name="phase_plan_ids">
-                            <tree editable="bottom">
-                                <field name="fiscalyear_id"/>
-                                <field name="calendar_period_id"/>
-                                <field name="amount_plan" sum="Total Plan"/>
-                            </tree>
-                        </field>
+                        <notebook>
+                            <page string="Monthly Budget Plan">
+                                <group>
+                                    <group>
+                                        <field name="fiscalyear_ids" widget="many2many_tags"/>
+                                    </group>
+                                    <group>
+                                        <field name="to_sync" invisible="1"/>
+                                        <button name="action_sync_phase_to_budget_line" string="Push Changes to Budget Control" type="object" class="oe_highlight" attrs="{'invisible': [('to_sync', '=', False)]}"/>
+                                    </group>
+                                </group>
+
+                                <field name="phase_plan_ids">
+                                    <tree editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="calendar_period_id"/>
+                                        <field name="amount_plan" sum="Total Plan"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Syncronize Status">
+                                <p>
+                                    The button
+                                    <b>Push Changes to Budget Control</b>
+                                    will be clickable only if there are records in Sync Status.<br/>
+                                    For Sync Status of each Fiscal Year to appear here, make sure it first synced (pull) from Budget Control.<br/>
+                                    Note: It is intended that, syncing will only occur after budget control has been created.
+                                </p>
+                                <field name="sync_ids">
+                                    <tree editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="budget_id"/>
+                                        <field name="sync_budget_line_id" invisible="1"/>
+                                        <field name="last_sync"/>
+                                        <field name="synced"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
@@ -290,7 +325,7 @@
             <field name="domain">[]</field>
             <field name="view_mode">tree,form,gantt</field>
             <field name="search_view_id" ref="view_invest_construction_phase_search"/>
-            <field name="context">{'search_default_project': 1}</field>
+            <field name="context">{'search_default_project': 1, 'active_test': 0}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to start a new phase.
@@ -314,7 +349,6 @@
 
         <menuitem action="action_invest_construction_phase" id="menu_invest_construction_phase" name="Phases" parent="menu_construction" sequence="3"/>
 
-
         # Reports
         <!-- Project Plan Phase-->
         <record id="view_invest_construction_budget_plan_search" model="ir.ui.view">
@@ -331,15 +365,15 @@
         </record>
 
         <record id="view_invest_construction_budget_plan_graph" model="ir.ui.view">
-             <field name="name">view.invest.construction.budget.plan.graph</field>
-             <field name="model">res.invest.construction.budget.plan</field>
-             <field name="arch" type="xml">
-                 <graph string="Project Plan Report" type="pivot">
-                     <field name="invest_construction_id" type="row"/>
-                     <field name="fiscalyear_id" type="col"/>
-                     <field name="amount_plan" type="measure"/>
-                 </graph>
-             </field>
+            <field name="name">view.invest.construction.budget.plan.graph</field>
+            <field name="model">res.invest.construction.budget.plan</field>
+            <field name="arch" type="xml">
+                <graph string="Project Plan Report" type="pivot">
+                    <field name="invest_construction_id" type="row"/>
+                    <field name="fiscalyear_id" type="col"/>
+                    <field name="amount_plan" type="measure"/>
+                </graph>
+            </field>
         </record>
         <record id="action_invest_construction_budget_plan" model="ir.actions.act_window">
             <field name="name">Project Plan Report</field>
@@ -371,14 +405,14 @@
             </field>
         </record>
         <record id="view_invest_construction_phase_plan_graph" model="ir.ui.view">
-             <field name="name">view.invest.construction.phase.plan.graph</field>
-             <field name="model">res.invest.construction.phase.plan</field>
-             <field name="arch" type="xml">
-                 <graph string="Phase Report" type="pivot">
-                     <field name="invest_construction_phase_id" type="col"/>
-                     <field name="amount_plan" type="measure"/>
-                 </graph>
-             </field>
+            <field name="name">view.invest.construction.phase.plan.graph</field>
+            <field name="model">res.invest.construction.phase.plan</field>
+            <field name="arch" type="xml">
+                <graph string="Phase Report" type="pivot">
+                    <field name="invest_construction_phase_id" type="col"/>
+                    <field name="amount_plan" type="measure"/>
+                </graph>
+            </field>
         </record>
         <record id="action_invest_construction_phase_plan" model="ir.actions.act_window">
             <field name="name">Phase Report</field>

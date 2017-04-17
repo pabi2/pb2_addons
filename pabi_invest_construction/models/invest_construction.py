@@ -192,10 +192,23 @@ class ResInvestConstruction(models.Model):
 class RestInvestConstructionPhase(models.Model):
     _inherit = 'res.invest.construction.phase'
 
+    active = fields.Boolean(
+        string='Active',
+        compute='_compute_active',
+        store=True,
+        help="Phase is activated only when approved",
+    )
     code = fields.Char(
         readonly=True,
         default='/',
         copy=False,
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        related='invest_construction_id.org_id',
+        store=True,
+        readonly=True,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -259,10 +272,62 @@ class RestInvestConstructionPhase(models.Model):
         'invest_construction_phase_id',
         string='Budget Planning (Phase)',
     )
+    fiscalyear_ids = fields.Many2many(
+        'account.fiscalyear',
+        'invest_construction_fiscalyear_rel',
+        'invest_construction_id', 'fiscalyear_id',
+        string='Related Fiscal Years',
+        compute='_compute_fiscalyear_ids',
+        store=True,
+        help="All related fiscal years for this phases"
+    )
+    to_sync = fields.Boolean(
+        string='To Sync',
+        compute='_compute_to_sync',
+        store=True,
+        help="Some changes left to be synced"
+    )
+    sync_ids = fields.One2many(
+        'res.invest.construction.phase.sync',
+        'phase_id',
+        string='Sync History',
+        copy=False,
+    )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
          'Constuction Phase Code must be unique!'),
     ]
+
+    @api.model
+    def _get_changed_plan_fiscalyear(self, vals):
+        # For changes, find the related fiscalyear_ids and update the sync
+        PhasePlan = self.env['res.invest.construction.phase.plan']
+        # Update (1)
+        changed_plans = filter(lambda x: x[0] == 1,
+                               vals.get('phase_plan_ids'))
+        plan_ids = map(lambda x: x[1], changed_plans)
+        plans = PhasePlan.browse(plan_ids)
+        year_ids = [x.fiscalyear_id.id for x in plans]
+        # Create (0)
+        changed_plans = filter(lambda x: x[0] == 0 and x[1] is False,
+                               vals.get('phase_plan_ids'))
+        year_ids += map(lambda x: x[2].get('fiscalyear_id'), changed_plans)
+        return year_ids
+
+    @api.multi
+    def write(self, vals):
+        if vals.get('phase_plan_ids', False):
+            year_ids = self._get_changed_plan_fiscalyear(vals)
+            for phase in self:
+                phase.sync_ids.filtered(lambda l: l.fiscalyear_id.id
+                                        in year_ids).write({'synced': False})
+        return super(RestInvestConstructionPhase, self).write(vals)
+
+    @api.multi
+    @api.depends('state')
+    def _compute_active(self):
+        for rec in self:
+            rec.active = rec.state == 'approve'
 
     @api.multi
     @api.depends('phase_plan_ids.amount_plan')
@@ -310,6 +375,77 @@ class RestInvestConstructionPhase(models.Model):
                     raise UserError(
                         _('No period configured for the target end date'))
         return True
+
+    @api.multi
+    @api.depends('phase_plan_ids.fiscalyear_id')
+    def _compute_fiscalyear_ids(self):
+        for phase in self:
+            fiscalyear_ids = [x.fiscalyear_id.id
+                              for x in phase.phase_plan_ids]
+            phase.fiscalyear_ids = list(set(fiscalyear_ids))
+
+    @api.multi
+    @api.depends('sync_ids.synced')
+    def _compute_to_sync(self):
+        for phase in self:
+            fiscalyear_ids = [x.fiscalyear_id.id
+                              for x in phase.phase_plan_ids]
+            phase.fiscalyear_ids = list(set(fiscalyear_ids))
+            to_syncs = phase.sync_ids.filtered(lambda l: l.synced is False)
+            phase.to_sync = len(to_syncs) > 0 and True or False
+
+    @api.model
+    def _prepare_mo_dict(self, fiscalyear):
+        month = int(fiscalyear.date_start[5:7])
+        mo_dict = {}
+        for i in range(12):
+            mo_dict.update({month: 'm' + str(i + 1)})
+            month += 1
+            if month > 12:
+                month = 1
+        vals = dict([(v, False) for v in mo_dict.values()])
+        return (mo_dict, vals)
+
+    @api.multi
+    def sync_phase_to_budget_line(self, fiscalyear_ids=False):
+        """
+        fiscalyear_ids specify which year to sync, otherwise, all sync.
+        only sync if synced=False
+        """
+        for phase in self:
+            print fiscalyear_ids
+            print phase.sync_ids
+            # Find phase with vaild sync history (has been pulled before)
+            phase_syncs = not fiscalyear_ids and phase.sync_ids or \
+                phase.sync_ids.filtered(lambda l: l.fiscalyear_id.id
+                                        in fiscalyear_ids)
+            print phase_syncs
+            if not phase_syncs:
+                continue
+            for sync in phase_syncs:
+                print sync
+                # No valid budate line reference, or already synced, ignore it
+                # (need to pull from budget control first)
+                if not sync.sync_budget_line_id or sync.synced:
+                    continue
+                # Prepare update dict
+                fiscalyear = sync.fiscalyear_id
+                mo_dict, vals = self._prepare_mo_dict(fiscalyear)
+                # Update it
+                for plan in phase.phase_plan_ids.filtered(
+                        lambda l: l.fiscalyear_id.id == fiscalyear.id):
+                    period = plan.calendar_period_id.period_id
+                    month = int(period.date_start[5:7])
+                    vals[mo_dict[month]] = plan.amount_plan
+                sync.sync_budget_line_id.write(vals)
+                # Mark synced
+                sync.write({'synced': True,
+                            'last_sync': fields.Datetime.now()})
+        return True
+
+    @api.multi
+    def action_sync_phase_to_budget_line(self):
+        return self.sync_phase_to_budget_line(fiscalyear_ids=False)  # do all
 
     # Statuses
     @api.multi
@@ -403,4 +539,45 @@ class ResInvestConstructionPhasePlan(models.Model):
     amount_plan = fields.Float(
         string='Amount',
         required=True,
+    )
+
+
+class ResInvestConstructionPhaseSync(models.Model):
+    _name = 'res.invest.construction.phase.sync'
+    _description = 'Investment Construction Phase Sync History'
+    _order = 'fiscalyear_id'
+
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+        required=True,
+        readonly=True,
+    )
+    phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        string='Phase',
+        index=True,
+        ondelete='cascade',
+    )
+    sync_budget_line_id = fields.Many2one(
+        'account.budget.line',
+        string='Budget Line Ref',
+        index=True,
+        ondelete='set null',
+    )
+    budget_id = fields.Many2one(
+        'account.budget',
+        related='sync_budget_line_id.budget_id',
+        string='Budget Control',
+        readonly=True,
+    )
+    last_sync = fields.Datetime(
+        string='Last Sync',
+        help="Latest syncing date/time",
+    )
+    synced = fields.Boolean(
+        string='Synced',
+        default=False,
+        help="Checked when it is synced. Unchecked when phase is updated"
+        "then it will be synced again",
     )

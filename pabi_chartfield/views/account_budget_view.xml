@@ -25,8 +25,8 @@
                 </tree>
             </field>
         </record>
-        
-        
+
+
         <record id="account_budget_view_form" model="ir.ui.view" >
             <field name="name">account.budget.view.form</field>
             <field name="model">account.budget</field>
@@ -111,7 +111,7 @@
                         <field name="budget_summary_revenue_line_ids"
                                 colspan="4" nolabel="1"
                                 context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
-                                    
+
                     </page>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
