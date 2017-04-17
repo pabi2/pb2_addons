@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 
 

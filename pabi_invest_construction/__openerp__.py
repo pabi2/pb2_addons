@@ -14,6 +14,7 @@
         "l10n_th_account",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "data/invest_construction_sequence.xml",
         "views/invest_construction_view.xml",
     ],

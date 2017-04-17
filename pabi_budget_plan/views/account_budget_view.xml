@@ -11,7 +11,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/group//field[@name='company_id']" position="after">
                 	<field name="prev_planned_amount" />
-                	<field name="policy_amount" />       
+                	<field name="policy_amount" />
                 	<field name="ref_budget_id"/>
                 	<field name="ref_breakdown_id"/>
                 	<field name="currency_id" groups="base.group_multi_currency"/>
@@ -37,6 +37,9 @@
                 <xpath expr="//div[@name='buttons']/button[1]" position="attributes">
                     <attribute name="type">object</attribute>
                     <attribute name="name">get_all_version</attribute>
+                </xpath>
+                <xpath expr="//notebook" position="before">
+                    <button name="sync_budget_invest_construction" string="Sync with Construction Plan" class="oe_right oe_highlight" type="object" attrs="{'invisibile': [('chart_view', '=', 'invest_construction')]}"/>
                 </xpath>
             </field>
         </record>
