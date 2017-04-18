@@ -5,19 +5,23 @@
     'author': 'Ecosoft',
     'summary': 'Journal Entries Adjustmnet Doctypes',
     'description': """
-This module add more chartfields in table mutiple deduction in account.voucher
+This module add more chartfields in table mutiple deduction in
+- account.voucher
+- account.bank.receipt
     """,
     'category': 'Accounting',
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': [
         'l10n_th_account_deduction',
-        'account_budget_activity',
+        'account_budget_activity_rpt',
         'pabi_chartfield',
+        'account_bank_receipt_deduction',
     ],
     'demo': [],
     'data': [
         'views/account_voucher_view.xml',
+        'views/account_bank_receipt_view.xml',
     ],
     'test': [
     ],

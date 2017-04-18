@@ -7,14 +7,14 @@ from openerp.addons.pabi_chartfield.models.chartfield \
 from openerp.exceptions import ValidationError
 
 
-class AccuontVoucherMultipleReconcile(ActivityCommon,
-                                      ChartFieldAction,
-                                      models.Model):
-    _inherit = 'account.voucher.multiple.reconcile'
+class AccuontBankReceiptMultipleReconcile(ActivityCommon,
+                                          ChartFieldAction,
+                                          models.Model):
+    _inherit = 'account.bank.receipt.multiple.reconcile'
 
     @api.model
     def create(self, vals):
-        res = super(AccuontVoucherMultipleReconcile, self).create(vals)
+        res = super(AccuontBankReceiptMultipleReconcile, self).create(vals)
         res.update_related_dimension(vals)
         return res
 
@@ -32,15 +32,15 @@ class AccuontVoucherMultipleReconcile(ActivityCommon,
                 _('Payment Diff, AG/A is required for Non-Balance Sheet'))
 
 
-class AccountVoucher(models.Model):
-    _inherit = 'account.voucher'
+class AccountBankReceipt(models.Model):
+    _inherit = 'account.bank.receipt'
 
     @api.multi
-    def action_move_line_create(self):
-        for voucher in self:
-            for line in voucher.multiple_reconcile_ids:
+    def validate_bank_receipt(self):
+        for receipt in self:
+            for line in receipt.multiple_reconcile_ids:
                 Analytic = self.env['account.analytic.account']
                 line.analytic_id = \
                     Analytic.create_matched_analytic(line)
-        res = super(AccountVoucher, self).action_move_line_create()
+        res = super(AccountBankReceipt, self).validate_bank_receipt()
         return res
