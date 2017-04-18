@@ -8,10 +8,6 @@ from openerp.addons.account_budget_activity_rpt.models.account_activity \
 #     _inherit = "account.budget.line"
 
 
-class AccuontVoucherMultipleReconcile(ActivityCommon, models.Model):
-    _inherit = 'account.voucher.multiple.reconcile'
-
-
 class AccountInvoiceLine(ActivityCommon, models.Model):
     _inherit = 'account.invoice.line'
 

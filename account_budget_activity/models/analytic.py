@@ -298,6 +298,7 @@ class AccountAnalyticAccount(models.Model):
                             rec.activity_id.name or
                             ('name' in rec and rec.name) or
                             ('product_name' in rec and rec.product_name) or
+                            ('note' in rec and rec.note) or
                             False)
             if not vals['name']:
                 raise ValidationError(

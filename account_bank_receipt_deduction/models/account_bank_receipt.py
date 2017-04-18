@@ -172,4 +172,6 @@ class AccountBankReceipt(models.Model):
             'partner_id': False,
             'currency_id': False,
             'amount_currency': False,
+            'analytic_account_id': writeofline.analytic_id and
+            writeofline.analytic_id.id or False,
         }
