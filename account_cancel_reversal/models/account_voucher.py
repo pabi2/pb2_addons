@@ -21,8 +21,16 @@ class AccountVoucher(models.Model):
                               'ref': move.ref})
         rev_move._switch_dr_cr()
         voucher.cancel_move_id = rev_move
-        self.env['account.move'].\
-            _reconcile_voided_entry([move.id, rev_move.id])
+        # Delete reconcile, and receconcile with reverse entry
+        move.line_id.filtered('reconcile_id').reconcile_id.unlink()
+        accounts = move.line_id.mapped('account_id')
+        for account in accounts:
+            self.env['account.move'].\
+                _reconcile_voided_entry_by_account([move.id, rev_move.id],
+                                                   account.id)
+
+        # self.env['account.move'].\
+        #     _reconcile_voided_entry([move.id, rev_move.id])
         return
 
     @api.model

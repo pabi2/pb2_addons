@@ -14,6 +14,13 @@ class AccountJournal(models.Model):
     )
 
 
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+
+    bank_receipt_id = fields.Many2one(
+        'account.bank.receipt', string='Bank Receipt', copy=False)
+
+
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
@@ -29,10 +36,12 @@ class AccountMove(models.Model):
     @api.depends('line_id.bank_receipt_id')
     def _compute_bank_receipt(self):
         for move in self:
-            bank_receipt_line = move.line_id.filtered('bank_receipt_id')
-            move.bank_receipt_id = bank_receipt_line.bank_receipt_id
-            if move.bank_receipt_id:
+            if move.bank_receipt_id:  # Not yet assigned
                 break
+            move_lines = move.line_id.filtered('bank_receipt_id')
+            bank_receipts = move_lines.mapped('bank_receipt_id')
+            if bank_receipts:
+                move.bank_receipt_id = bank_receipts[0]
 
     @api.multi
     def create_bank_receipt(self, receipt_date):

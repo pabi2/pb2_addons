@@ -67,6 +67,7 @@ class AccountBankReceipt(models.Model):
     manual_total_amount = fields.Float(
         string="Total Amount",
         readonly=True,
+        default=0.0,
         states={'draft': [('readonly', False)]},
         required=True,
     )

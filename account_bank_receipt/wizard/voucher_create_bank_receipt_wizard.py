@@ -17,5 +17,8 @@ class VoucherCreateBankReceiptWizard(models.TransientModel):
         active_model = self._context.get('active_model')
         active_ids = self._context.get('active_ids')
         moves = self.env[active_model].browse(active_ids).mapped('move_id')
-        moves.create_bank_receipt(self.receipt_date)
-        return
+        bank_receipt_id = moves.create_bank_receipt(self.receipt_date)
+        action = self.env.ref('account_bank_receipt.action_bank_receipt_tree')
+        result = action.read()[0]
+        result['domain'] = [('id', '=', bank_receipt_id)]
+        return result

@@ -16,6 +16,7 @@
                     <field name="account_id" readonly="1"/>
                     <field name="debit" sum="Total Debit" readonly="1"/>
                     <field name="credit" sum="Total Credit" readonly="1"/>
+                    <field name="reconcile_id" readonly="1"/>
                 </tree>
             </field>
         </record>

@@ -16,6 +16,7 @@ class AccountBankReceipt(models.Model):
         size=64,
         readonly=True,
         default='/',
+        copy=False,
     )
     bank_intransit_ids = fields.One2many(
         'account.move.line',
@@ -349,10 +350,3 @@ class AccountBankReceipt(models.Model):
                 self.currency_id = self.journal_id.currency
             else:
                 self.currency_id = self.journal_id.company_id.currency_id
-
-
-class AccountMoveLine(models.Model):
-    _inherit = "account.move.line"
-
-    bank_receipt_id = fields.Many2one(
-        'account.bank.receipt', string='Bank Receipt', copy=False)

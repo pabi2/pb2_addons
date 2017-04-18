@@ -22,7 +22,6 @@ class AccountBankReceiptCancel(models.TransientModel):
         assert len(bank_receipt_ids) == 1, "Only 1 sale ID expected"
         BankReceipt = self.env['account.bank.receipt']
         bank_receipt = BankReceipt.browse(bank_receipt_ids[0])
-        bank_receipt.write({'cancel_reason_txt': self.cancel_reason_txt,
-                            'state': 'cancel',
-                            })
+        bank_receipt.write({'cancel_reason_txt': self.cancel_reason_txt})
+        bank_receipt.cancel_bank_receipt()
         return act_close

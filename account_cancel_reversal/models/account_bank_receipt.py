@@ -24,7 +24,7 @@ class AccountBankReceipt(models.Model):
                               'ref': move.ref})
         rev_move._switch_dr_cr()
         self.cancel_move_id = rev_move
-        # As accounto n both DR and CR are balance sheet item, do one by one
+        # As account both DR and CR are balance sheet item, do one by one
         accounts = move.line_id.mapped('account_id')
         for account in accounts:
             self.env['account.move'].\
