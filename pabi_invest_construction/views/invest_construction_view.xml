@@ -26,6 +26,23 @@
             </field>
         </record>
 
+        <record id="view_invest_construction_phase_plan_search" model="ir.ui.view">
+            <field name="name">view.invest.construction.phase.plan.search</field>
+            <field name="model">res.invest.construction.phase.plan</field>
+            <field name="arch" type="xml">
+                <search string="Phase Report">
+                    <field name="invest_construction_id" string="Project"/>">
+                    <field name="invest_construction_phase_id" string="Phase"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Project (C)" name="project" context="{'group_by':'invest_construction_id'}"/>
+                        <filter string="Phase" name="phase" context="{'group_by':'invest_construction_phase_id'}"/>
+                        <filter string="Fiscal" name="fiscal" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Period" name="period" context="{'group_by':'calendar_period_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="action_invest_construction_phase_all" model="ir.actions.act_window">
             <field name="name">Phases</field>
             <field name="res_model">res.invest.construction.phase</field>
@@ -388,22 +405,6 @@
         <menuitem action="action_invest_construction_budget_plan" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"/>
 
         <!-- Phase Report -->
-        <record id="view_invest_construction_phase_plan_search" model="ir.ui.view">
-            <field name="name">view.invest.construction.phase.plan.search</field>
-            <field name="model">res.invest.construction.phase.plan</field>
-            <field name="arch" type="xml">
-                <search string="Phase Report">
-                    <field name="invest_construction_id" string="Project"/>">
-                    <field name="invest_construction_phase_id" string="Phase"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Project (C)" name="project" context="{'group_by':'invest_construction_id'}"/>
-                        <filter string="Phase" name="phase" context="{'group_by':'invest_construction_phase_id'}"/>
-                        <filter string="Fiscal" name="fiscal" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Period" name="period" context="{'group_by':'calendar_period_id'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
         <record id="view_invest_construction_phase_plan_graph" model="ir.ui.view">
             <field name="name">view.invest.construction.phase.plan.graph</field>
             <field name="model">res.invest.construction.phase.plan</field>
