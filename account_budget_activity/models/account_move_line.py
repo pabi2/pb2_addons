@@ -33,11 +33,16 @@ class AccountMoveLine(models.Model):
 
     @api.multi
     def create_analytic_lines(self):
-        """ For balance sheet item, do not create analytic line """
+        """ Create Analytic Line only when,
+            - Is not BS and has (Activity or Product) """
         # Before create, always remove analytic line if exists
         for move_line in self:
             move_line.analytic_lines.unlink()
-        move_lines = self.filtered(lambda l:
-                                   l.account_id.user_type.report_type
-                                   not in ('asset', 'liability'))
+
+        move_lines = self.filtered(
+            lambda l:
+            (l.account_id.user_type.report_type  # Not BS account
+             not in ('asset', 'liability')) and
+            (l.activity_id or l.product_id)  # Is Activity or Product
+        )
         return super(AccountMoveLine, move_lines).create_analytic_lines()
