@@ -267,26 +267,26 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
     # )
 
 
-class ResProjectPrototype(models.Model):
-    # TODO: remove this class, no longer use (just for avoid upgrade error)
-    _name = 'res.project.prototype'
-
-    project_id = fields.Many2one(
-        string='Project',
-        index=True,
-        ondelete='restrict',
-    )
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    code = fields.Char(
-        string='Code',
-        required=False,
-    )
-    prototype_type = fields.Selection(
-        [('research', 'Research'),
-         ('deliver', 'Deliver')],
-        string='Prototype Type',
-        required=True,
-    )
+# class ResProjectPrototype(models.Model):
+#     # TODO: remove this class, no longer use (just for avoid upgrade error)
+#     _name = 'res.project.prototype'
+#
+#     project_id = fields.Many2one(
+#         string='Project',
+#         index=True,
+#         ondelete='restrict',
+#     )
+#     name = fields.Char(
+#         string='Name',
+#         required=True,
+#     )
+#     code = fields.Char(
+#         string='Code',
+#         required=False,
+#     )
+#     prototype_type = fields.Selection(
+#         [('research', 'Research'),
+#          ('deliver', 'Deliver')],
+#         string='Prototype Type',
+#         required=True,
+#     )
