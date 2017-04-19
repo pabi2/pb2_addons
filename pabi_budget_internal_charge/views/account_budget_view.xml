@@ -37,7 +37,7 @@
             <field name="model">account.budget</field>
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/notebook/page[@string='Expense']/field[@name='budget_expense_line_ids']" position="before">
+                <xpath expr="/form/sheet/notebook/page[@string='Expense']/div[@name='extra']" position="inside">
                     <group>
                         <group>
                             <field name="budgeted_expense_external" string="External"/>
@@ -47,7 +47,7 @@
                         </group>
                     </group>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Revenue']/field[@name='budget_revenue_line_ids']" position="before">
+                <xpath expr="/form/sheet/notebook/page[@string='Revenue']/div[@name='extra']" position="inside">
                     <group>
                         <group>
                             <field name="budgeted_revenue_external" string="External"/>
