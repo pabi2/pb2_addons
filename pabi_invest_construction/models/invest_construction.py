@@ -2,7 +2,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 from openerp.addons.pabi_base.models.res_investment_structure \
     import CONSTRUCTION_PHASE
 
@@ -136,6 +136,9 @@ class ResInvestConstruction(models.Model):
             fiscal_end_id = Fiscal.find(date_end)
             fiscal_start = Fiscal.browse(fiscal_start_id)
             fiscal_end = Fiscal.browse(fiscal_end_id)
+            if not fiscal_start.name.isdigit():
+                raise ValidationError(
+                    _("Fiscalyear's name do not represet a year integer!"))
             fiscal_year = int(fiscal_start.name)
             while fiscal_year <= int(fiscal_end.name):
                 fiscal = Fiscal.search([('name', '=', str(fiscal_year))])
