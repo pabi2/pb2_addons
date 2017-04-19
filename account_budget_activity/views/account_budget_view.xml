@@ -126,13 +126,13 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Expense">
-                                <div name="extra"></div>
+                            <page string="Expense" name="expense">
+                                <div name="expense_extra"></div>
                                 <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id}"/>
                             </page>
-                            <page string="Revenue">
-                                <div name="extra"></div>
+                            <page string="Revenue" name="revenue">
+                                <div name="revenue_extra"></div>
                                 <field name="budget_revenue_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
                             </page>
