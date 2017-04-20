@@ -60,7 +60,9 @@ class PurchaseRequest(models.Model):
         self.env.cr.execute(request_sql)
 
     @api.model
-    def generate_purchase_request(self, data_dict):
+    def generate_purchase_request(self, data_dict, test=False):
+        if not test and not self.env.user.company_id.pabiweb_active:
+            raise UserError(_('Odoo/PABIWeb Disconnected!'))
         ret = {}
         data_dict = self.sudo()._get_request_info(data_dict)
         fields = data_dict.keys()
@@ -210,7 +212,7 @@ class PurchaseWebInterface(models.Model):
     def encode_base64(self, filename):
         current_path = inspect.getfile(inspect.currentframe())
         directory_path = os.path.dirname(os.path.abspath(current_path))
-        path = os.path.expanduser(directory_path+'/../data/'+filename)
+        path = os.path.expanduser(directory_path + '/../data/' + filename)
         with open(path) as f:
             encoded = base64.b64encode(f.read())
             return encoded

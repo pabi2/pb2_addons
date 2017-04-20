@@ -81,7 +81,7 @@ class HRExpense(models.Model):
                 },
             ]
         }
-        return self.generate_hr_expense(data_dict)
+        return self.generate_hr_expense(data_dict, test=True)
 
     @api.model
     def test_generate_hr_expense_expense(self):  # Expense / Advance
@@ -186,7 +186,7 @@ class HRExpense(models.Model):
                 },
             ]
         }
-        return self.generate_hr_expense(data_dict)
+        return self.generate_hr_expense(data_dict, test=True)
 
     @api.model
     def _pre_process_hr_expense(self, data_dict):
@@ -257,7 +257,9 @@ class HRExpense(models.Model):
         expense.signal_workflow('confirm')
 
     @api.model
-    def generate_hr_expense(self, data_dict):
+    def generate_hr_expense(self, data_dict, test=False):
+        if not test and not self.env.user.company_id.pabiweb_active:
+            raise UserError(_('Odoo/PABIWeb Disconnected!'))
         try:
             prepare_code = data_dict.get('preparer_code')
             data_dict = self._pre_process_hr_expense(data_dict)
@@ -316,7 +318,7 @@ class HRExpense(models.Model):
         data_array = {}
         for table in _table_fields:
             data_array[table] = False
-            data_array[table+'_fields'] = False
+            data_array[table + '_fields'] = False
             if table in fields:
                 i = fields.index(table)
                 data_array[table] = data[i] or ()  # ({'x': 1, 'y': 2}, {})
@@ -324,21 +326,21 @@ class HRExpense(models.Model):
                 del data[i]
                 line_count = max(line_count, len(data_array[table]))
             if data_array[table]:
-                data_array[table+'_fields'] = \
-                    [table+'/'+key for key in data_array[table][0].keys()]
-            fields += data_array[table+'_fields'] or []
+                data_array[table + '_fields'] = \
+                    [table + '/' + key for key in data_array[table][0].keys()]
+            fields += data_array[table + '_fields'] or []
         # Data
         datas = []
         for i in range(0, line_count, 1):
             record = []
             for table in _table_fields:
-                data_array[table+'_data'] = False
-                if data_array[table+'_fields']:
-                    data_array[table+'_data'] = \
+                data_array[table + '_data'] = False
+                if data_array[table + '_fields']:
+                    data_array[table + '_data'] = \
                         (len(data_array[table]) > i and data_array[table][i] or
-                         {key: False for key in data_array[table+'_fields']})
-                record += data_array[table+'_data'] and \
-                    data_array[table+'_data'].values() or []
+                         {key: False for key in data_array[table + '_fields']})
+                record += data_array[table + '_data'] and \
+                    data_array[table + '_data'].values() or []
             if i == 0:
                 datas += [tuple(data + record)]
             else:
