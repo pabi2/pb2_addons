@@ -276,10 +276,7 @@ class PurchaseRequest(models.Model):
             fields.append('line_ids/fund_id')
             return fields, new_data
         else:
-            Fund = self.env['res.fund']
-            fund = Fund.search([
-                ('name', '=', 'NSTDA'),
-            ])
+            fund = self.env.ref('base.fund_nstda')  # NSTDA Fund
             fund_idx = fields.index('line_ids/fund_id.id')
             new_data = []
             for data_line in data:
