@@ -10,7 +10,7 @@ class AccountConfigSettings(models.TransientModel):
         string='AR Late payment Penalty Activity',
         related="company_id.ar_late_payment_penalty_activity_id",
         domain="[('activity_group_ids', 'in',"
-               "[ar_late_payment_penalty_activity_group_id or 0])]",
+               "[ar_late_payment_penalty_activity_group_id or -1])]",
     )
     ar_late_payment_penalty_activity_group_id = fields.Many2one(
         'account.activity.group',

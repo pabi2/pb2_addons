@@ -138,7 +138,7 @@ class ResInvestConstruction(models.Model):
             fiscal_end = Fiscal.browse(fiscal_end_id)
             if not fiscal_start.name.isdigit():
                 raise ValidationError(
-                    _("Fiscalyear's name do not represet a year integer!"))
+                    _("Config: Fiscalyear name not represent a year integer!"))
             fiscal_year = int(fiscal_start.name)
             while fiscal_year <= int(fiscal_end.name):
                 fiscal = Fiscal.search([('name', '=', str(fiscal_year))])

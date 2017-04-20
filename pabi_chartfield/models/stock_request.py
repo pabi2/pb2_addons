@@ -17,8 +17,8 @@ class StockRequest(models.Model):
         'res.fund',
         string='Fund',
         domain="['|',"
-        "('project_ids', 'in', [project_id or 0]),"
-        "('section_ids', 'in', [section_id or 0]),"
+        "('project_ids', 'in', [project_id or -1]),"
+        "('section_ids', 'in', [section_id or -1]),"
         "]",
     )
 

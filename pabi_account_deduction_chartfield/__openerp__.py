@@ -3,7 +3,7 @@
     'name': 'NSTDA :: PABI2 - Multi Deduction Chartfields',
     'version': '8.0.1.0.0',
     'author': 'Ecosoft',
-    'summary': 'Journal Entries Adjustmnet Doctypes',
+    'summary': 'Add chartfields in payment differences',
     'description': """
 This module add more chartfields in table mutiple deduction in
 - account.voucher

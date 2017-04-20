@@ -12,7 +12,7 @@
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="before">
                     <field name="require_chartfield" invisible="1"/>
                     <field name="activity_group_id"/>
-                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0])]"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                   </xpath>
                   <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="after">
                     <field
@@ -58,7 +58,7 @@
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="before">
                     <field name="require_chartfield" invisible="1"/>
                     <field name="activity_group_id"/>
-                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0])]"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='deductions']/field/tree/field[@name='account_id']" position="after">
                     <field

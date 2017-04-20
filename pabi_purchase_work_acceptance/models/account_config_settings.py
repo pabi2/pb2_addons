@@ -10,7 +10,7 @@ class AccountConfigSettings(models.TransientModel):
         string='Delivery Penalty Activity',
         related="company_id.delivery_penalty_activity_id",
         domain="[('activity_group_ids', 'in',"
-               "[delivery_penalty_activity_group_id or 0])]",
+               "[delivery_penalty_activity_group_id or -1])]",
     )
     delivery_penalty_activity_group_id = fields.Many2one(
         'account.activity.group',

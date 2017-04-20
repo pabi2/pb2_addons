@@ -547,13 +547,13 @@ class ChartField(object):
     def _get_fund_domain(self):
         domain_str = """
             ['|', '|', '|', '|',
-            ('project_ids', 'in', [project_id or 0]),
-            ('section_ids', 'in', [section_id or 0]),
-            ('invest_asset_ids', 'in', [invest_asset_id or 0]),
+            ('project_ids', 'in', [project_id or -1]),
+            ('section_ids', 'in', [section_id or -1]),
+            ('invest_asset_ids', 'in', [invest_asset_id or -1]),
             ('invest_construction_phase_ids', 'in',
-                [invest_construction_phase_id or 0]),
+                [invest_construction_phase_id or -1]),
             ('personnel_costcenter_ids', 'in',
-                [personnel_costcenter_id or 0])]
+                [personnel_costcenter_id or -1])]
         """
         return domain_str
 

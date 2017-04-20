@@ -54,7 +54,7 @@ class PABIARLatePaymentPenalty(models.TransientModel):
         required=True,
         default=lambda self: self.env.user.company_id.
         ar_late_payment_penalty_activity_id,
-        domain="[('activity_group_ids', 'in', [activity_group_id or 0])]",
+        domain="[('activity_group_ids', 'in', [activity_group_id or -1])]",
     )
     activity_group_id = fields.Many2one(
         'account.activity.group',
