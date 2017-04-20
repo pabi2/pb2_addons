@@ -8,10 +8,10 @@
             <field name="inherit_id" ref="account_budget_activity.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
-                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'revenue')]"/>
+                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'revenue')]"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/form/group/group/field[@name='activity_id']" position="after">
-                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'revenue')]"/>
+                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'revenue')]"/>
                 </xpath>
             </field>
         </record>

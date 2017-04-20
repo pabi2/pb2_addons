@@ -8,11 +8,11 @@
             <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
-                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'expense')]"
+                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense')]"
                       attrs="{'readonly': [('is_editable','=', False)]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/form//field[@name='activity_id']" position="after">
-                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or 0]), ('budget_method', '=', 'expense')]"
+                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense')]"
                       attrs="{'readonly': [('is_editable','=', False)]}"/>
                 </xpath>
             </field>

@@ -132,7 +132,8 @@ class BudgetPlanReport(models.Model):
                 case when ablps.sequence = 12
                     then ablps.amount  end as m12,
                 ablps.amount as planned_amount,
-                abl.released_amount/12 as released_amount,
+                case when ablps.sequence = 1  -- Release amount on m1
+                    then abl.released_amount else 0.0 end as released_amount,
                 abl.budget_state as state,
                 -- Dimensions
                 %s

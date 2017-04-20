@@ -7,7 +7,7 @@
 
 Activity based budgetting
 
-NOte: This module provide only framework. There will be no budget check here.
+Note: This module provide only framework. There will be no budget check here.
 
 """,
     'author': 'Kitti U.',

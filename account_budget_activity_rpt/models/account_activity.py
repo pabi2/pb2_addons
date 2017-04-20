@@ -28,3 +28,8 @@ class ActivityCommon(ActivityCommon):
         if self.activity_id:
             self.activity_rpt_id = self.activity_id
         return super(ActivityCommon, self)._onchange_activity_id()
+
+    @api.onchange('activity_group_id')
+    def _onchange_activity_group_id(self):
+        self.activity_rpt_id = False
+        return super(ActivityCommon, self)._onchange_activity_group_id()
