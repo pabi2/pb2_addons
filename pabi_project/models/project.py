@@ -45,7 +45,7 @@ class ProjectProject(models.Model):
         string='Expansion Date',
     )
     approval_info = fields.Text(
-        string='Approval info',
+        string='Approval Info',
     )
     project_readiness = fields.Text(
         string='Project Readiness',

@@ -91,7 +91,7 @@ class AccountBudget(models.Model):
                             budget_level, resource,
                             ext_field=False,
                             ext_res_id=False):
-        # For funding level, we go deeper
+        # For funding level, we go deeper, ext is required.
         if budget_level == 'fund_id':
             budget_type_dict = {
                 'unit_base': 'monitor_section_ids',
@@ -145,68 +145,131 @@ class AccountBudget(models.Model):
     @api.model
     def document_check_budget(self, doc_date, doc_lines, amount_field=False):
         res = {'budget_ok': True,
+               'budget_status': {},
                'message': False}
-        Budget = self.env['account.budget']
-        budget_level_info = Budget.get_fiscal_and_budget_level(doc_date)
-        if False in budget_level_info.values():
-            raise ValidationError(_('Budget level is not set!'))
-        fiscal_id = budget_level_info['fiscal_id']
+        fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
+        # Validate Budget Level
+        if not self._validate_budget_levels(budget_levels):
+            return {'budget_ok': False,
+                    'budget_status': {},
+                    'message': 'Budget level(s) is not set!'}
         # Check for all budget types
-        for budget_type in dict(Budget.BUDGET_LEVEL_TYPE).keys():
-            if budget_type not in budget_level_info:
-                raise ValidationError(_('Budget level is not set!'))
-            budget_level = budget_level_info[budget_type]
-            sel_fields = [budget_level]
-            if budget_level == 'fund_id':
-                budget_type_dict = {
-                    'unit_base': 'section_id',
-                    'project_base': 'project_id',
-                    'personnel': 'personnel_costcenter_id',
-                    'invest_asset': 'investment_asset_id',
-                    'invest_construction': 'invest_construction_phase_id'}
-                sel_fields.append(budget_type_dict[budget_type])
+        for budget_type in dict(self.BUDGET_LEVEL_TYPE).keys():
+            budget_level = budget_levels[budget_type]
+            sel_fields = self._prepare_sel_budget_fields(budget_type,
+                                                         budget_level)
+            # For document only
             group_vals = self._get_doc_field_combination(doc_lines, sel_fields)
             for val in group_vals:
-                res_id = val[0]
-                ext_field = False
-                ext_res_id = False
+                res_id, ext_field, ext_res_id, filtered_lines = \
+                    self._prepare_resource_fields(sel_fields, val, doc_lines)
                 if not res_id:
                     continue
-                filtered_lines = doc_lines
-                i = 0
-                for f in sel_fields:
-                    filtered_lines = filter(lambda l:
-                                            f in l and l[f] and l[f] == val[i],
-                                            filtered_lines)
-                    i += 1
-                # For funding case, add more dimension
-                if len(sel_fields) == 2:
-                    ext_res_id = val[1]
-                    ext_field = sel_fields[1]
-                if amount_field:  # Case check before commit budget
+                amount = 0.0
+                if amount_field:
                     amount = sum(map(lambda l:
                                      l[amount_field], filtered_lines))
-                    if self._context.get('currency_id', False):
-                        currency_id = self._context.get('currency_id')
-                        currency = self.env['res.currency'].browse(currency_id)
-                        company_currency = self.env.user.company_id.currency_id
-                        if company_currency != currency:
-                            amount = currency.compute(amount, company_currency)
-                    res = Budget.check_budget(fiscal_id,
-                                              budget_type,  # eg, project_base
-                                              budget_level,  # eg, project_id
-                                              res_id,
-                                              amount,
-                                              ext_field=ext_field,
-                                              ext_res_id=ext_res_id)
-                else:  # Case check after commit budget
-                    res = Budget.check_budget(fiscal_id,
-                                              budget_type,  # eg, project_base
-                                              budget_level,  # eg, project_id
-                                              res_id,
-                                              0.0,  # no amount, check asof now
-                                              ext_field=ext_field,
-                                              ext_res_id=ext_res_id)
+                    amount = self._calc_amount_company_currenty(amount)
+                res = self.check_budget(fiscal_id,
+                                        budget_type,  # eg, project_base
+                                        budget_level,  # eg, project_id
+                                        res_id,
+                                        amount,
+                                        ext_field=ext_field,
+                                        ext_res_id=ext_res_id)
                 if not res['budget_ok']:
                     return res
         return res
+
+    @api.model
+    def simple_check_budget(self, doc_date, budget_type,
+                            amount, res_id, ext_res_id):
+        """ This method is used to check budget of one type and one res_id
+            If the budget level is not below basic 5 structure, i.e.,
+            For project_base, with level = project_id,
+                res_id = project_id (int)
+            If level = Fund,
+                res_id = fund_id and ext_res_id = project_id
+
+            :param date: doc_date, document date or date to check budget
+            :param budget_type: 1 of the 5 budget types
+            :param amount: Check amount, If don't know, use 0.0
+            :param res_id: resource's id, differ for each type of budget
+            :param ext_res_id: if budget level = fund, go deeper
+            :return: dict of result
+        """
+        res = {'budget_ok': True,
+               'budget_status': {},
+               'message': False}
+        fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
+        # Validate Budget Level
+        if not self._validate_budget_levels(budget_levels):
+            return {'budget_ok': False,
+                    'budget_status': {},
+                    'message': 'Budget level(s) is not set!'}
+        # Check for single budget type
+        budget_level = budget_levels[budget_type]
+        sel_fields = self._prepare_sel_budget_fields(budget_type,
+                                                     budget_level)
+        ext_field = len(sel_fields) == 2 and sel_fields[1] or False
+        amount = self._calc_amount_company_currenty(amount)
+        res = self.check_budget(fiscal_id,
+                                budget_type,  # eg, project_base
+                                budget_level,  # eg, project_id
+                                res_id,
+                                amount,
+                                ext_field=ext_field,
+                                ext_res_id=ext_res_id)
+        return res
+
+    @api.model
+    def _validate_budget_levels(self, budget_levels):
+        """ Simply validate that all budget level are setup properly """
+        if False in budget_levels.values():
+            return False
+        for budget_type in dict(self.BUDGET_LEVEL_TYPE).keys():
+            if budget_type not in budget_levels:
+                return False
+        return True
+
+    @api.model
+    def _prepare_sel_budget_fields(self, budget_type, budget_level):
+        """ For level fund, will be 2 fields comination to check budget """
+        sel_fields = [budget_level]
+        if budget_level == 'fund_id':
+            budget_type_dict = {
+                'unit_base': 'section_id',
+                'project_base': 'project_id',
+                'personnel': 'personnel_costcenter_id',
+                'invest_asset': 'investment_asset_id',
+                'invest_construction': 'invest_construction_phase_id'}
+            sel_fields.append(budget_type_dict[budget_type])
+        return sel_fields
+
+    @api.model
+    def _calc_amount_company_currency(self, amount):
+        currency_id = self._context.get('currency_id', False)
+        if currency_id:
+            currency = self.env['res.currency'].browse(currency_id)
+            company_currency = self.env.user.company_id.currency_id
+            if company_currency != currency:
+                amount = currency.compute(amount, company_currency)
+        return amount
+
+    @api.model
+    def _prepare_resource_fields(sel_fields, val, doc_lines):
+        res_id = val[0]
+        ext_field = False
+        ext_res_id = False
+        filtered_lines = doc_lines
+        i = 0
+        for f in sel_fields:
+            filtered_lines = filter(lambda l:
+                                    f in l and l[f] and l[f] == val[i],
+                                    filtered_lines)
+            i += 1
+        # For funding case, add more dimension
+        if len(sel_fields) == 2:
+            ext_res_id = val[1]
+            ext_field = sel_fields[1]
+        return (res_id, ext_field, ext_res_id, filtered_lines)
