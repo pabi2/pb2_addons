@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+            <record id="access_form_view" model="ir.ui.view">
+                <field name="name">access.form.view</field>
+                <field name="model">access.access</field>
+                <field name="arch" type="xml">
+                    <form string="Groups Definition">
+                        <sheet>
+                            <group>
+                                <field name="name"/>
+                                <field name="groups_id"/>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record id="access_tree_view" model="ir.ui.view">
+                <field name="name">access.tree.view</field>
+                <field name="model">access.access</field>
+                <field name="arch" type="xml">
+                    <tree string="Group Definition">
+                        <field name="name"/>
+                        <field name="groups_id"/>
+                    </tree>
+                </field>
+            </record>
+
+
+            <record model="ir.actions.act_window" id="access_form_action">
+            <field name="name">Meta Groups</field>
+            <field name="res_model">access.access</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="access_right" name="Meta Groups" parent="base.menu_users" action="access_form_action" sequence="5"/>
+    </data>
+</openerp>
