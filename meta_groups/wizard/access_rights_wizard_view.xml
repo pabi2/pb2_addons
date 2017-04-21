@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_access_wizard_form" model="ir.ui.view">
+            <field name="name">view.access.wizard.form</field>
+            <field name="model">access.right</field>
+            <field name="arch" type="xml">
+                <form string="Group Assignment">
+                    <group>
+                        <field name="access_right" widget="selection"/>
+                    </group>
+                    <footer>
+                        <button name="apply_access" string="Apply" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            name="Assign Meta Group"
+            res_model="access.right"
+            src_model="res.users"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            id="action_access"
+            />
+        </data>
+</openerp>
