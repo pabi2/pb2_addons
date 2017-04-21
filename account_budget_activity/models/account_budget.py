@@ -251,10 +251,10 @@ class AccountBudget(models.Model):
             budget_date = fields.Date.context_today(self)
         Fiscal = self.env['account.fiscalyear']
         fiscal_id = Fiscal.find(budget_date)
-        res = {'fiscal_id': fiscal_id}
+        budget_levels = {}
         for level in Fiscal.browse(fiscal_id).budget_level_ids:
-            res[level.type] = level.budget_level
-        return res
+            budget_levels[level.type] = level.budget_level
+        return (fiscal_id, budget_levels)
 
     @api.model
     def _get_budget_resource(self, fiscal, budget_type,
@@ -281,11 +281,20 @@ class AccountBudget(models.Model):
     @api.model
     def check_budget(self, fiscal_id, budget_type,
                      budget_level, budget_level_res_id, amount,
-                     ext_field=False, ext_res_id=False):
-        """ Amount mustbe in company currency only
-        If amount = 0.0, will check current balance from montor report """
-        res = {'budget_ok': True,
-               'message': False, }
+                     ext_field=False, ext_res_id=False,):
+        """ Amount must be in company currency only
+        If amount = 0.0, will check current balance from monitor report """
+        res = {  # current balance, and result after new amount is applied!
+            'budget_ok': True,
+            'budget_status': {
+                'planned_amount': 0.0,
+                'released_amount': 0.0,
+                'amount_pr_commit': 0.0,
+                'amount_po_commit': 0.0,
+                'amount_exp_commmit': 0.0,
+                'amount_actual': 0.0,
+                'amount_balance': 0.0, },
+            'message': False, }
         AccountFiscalyear = self.env['account.fiscalyear']
         BudgetLevel = self.env['account.fiscalyear.budget.level']
         fiscal = AccountFiscalyear.browse(fiscal_id)
@@ -296,6 +305,7 @@ class AccountBudget(models.Model):
         if not blevel.is_budget_control:
             return res
 
+        # Only for expense document, we check for exp_budget_control setup
         if self._context.get('call_from', '') == 'hr_expense_expense':
             if not blevel.exp_budget_control:
                 return res
@@ -316,6 +326,16 @@ class AccountBudget(models.Model):
                 (fiscal.name, resource.name_get()[0][1],
                  '{0:,}'.format(amount))
             return res
+        else:  # Current Budget Status
+            res['budget_status'].update({
+                'planned_amount': monitors[0].planned_amount,
+                'released_amount': monitors[0].released_amount,
+                'amount_pr_commit': monitors[0].amount_pr_commit,
+                'amount_po_commit': monitors[0].amount_po_commit,
+                'amount_exp_commmit': monitors[0].amount_exp_commmit,
+                'amount_actual': monitors[0].amount_actual,
+                'amount_balance': monitors[0].amount_balance,
+            })
         if amount > monitors[0].amount_balance:
             res['budget_ok'] = False
             if amount == 0.0:
