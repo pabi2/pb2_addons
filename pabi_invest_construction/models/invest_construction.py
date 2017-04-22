@@ -437,7 +437,7 @@ class RestInvestConstructionPhase(models.Model):
                 # Update it
                 for plan in phase.phase_plan_ids.filtered(
                         lambda l: l.fiscalyear_id.id == fiscalyear.id):
-                    period = plan.calendar_period_id.period_id
+                    period = plan.calendar_period_id
                     month = int(period.date_start[5:7])
                     vals[mo_dict[month]] = plan.amount_plan
                 sync.sync_budget_line_id.write(vals)
@@ -514,14 +514,14 @@ class ResInvestConstructionPhasePlan(models.Model):
     _order = 'calendar_period_id'
 
     calendar_period_id = fields.Many2one(
-        'account.period.calendar',
+        'account.period',
         string='Calendar Period',
         required=True,
         readonly=True,
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
-        related='calendar_period_id.period_id.fiscalyear_id',
+        related='calendar_period_id.fiscalyear_id',
         string='Fiscal Year',
         required=True,
         readonly=True,

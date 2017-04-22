@@ -285,7 +285,7 @@
                                 <field name="phase_plan_ids">
                                     <tree editable="bottom">
                                         <field name="fiscalyear_id"/>
-                                        <field name="calendar_period_id"/>
+                                        <field name="calendar_period_id" context="{'use_calendar_name': True}"/>
                                         <field name="amount_plan" sum="Total Plan"/>
                                     </tree>
                                 </field>
