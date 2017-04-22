@@ -104,14 +104,42 @@ class ir_test_action(models.TransientModel):
         else:
             raise Warning("Model '%s' does not exist." % model_name)
 
+        return res
+
+    @api.multi
+    def execute(self):
+        res = self._callback(self.model, self.function, self.args)
+
+        message = self._get_message(res)
+
+        if message:
+            self.write({'state': 'ok',
+                        'message': message})
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'ir.test.action',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': self.id,
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
+
+    @api.model
+    def _get_message(self, res):
+        message = False
+        # Boolean
         if isinstance(res, types.BooleanType):
             if res is True:
-                return True
+                message = _('Last execution was successful!')
 
         if isinstance(res, types.DictType):
+            # Generic
             if 'is_success' in res:
+                if res.get('is_success', False):
+                    message = _('Last execution was successful!')
                 # Failure, show message
-                if not res.get('is_success', False):
+                else:
                     message = False
                     if res.get('messages', False):
                         for msg in res.get('messages', False):
@@ -124,20 +152,7 @@ class ir_test_action(models.TransientModel):
                     elif res.get('exception', False):
                         raise except_orm(_('Exception Error'),
                                          _(res.get('exception', False)))
-                return True
-
-    @api.multi
-    def execute(self):
-        res = self._callback(self.model, self.function, self.args)
-        if res:
-            self.write({'state': 'ok',
-                        'message': _('Last execution was successful!')})
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'ir.test.action',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'res_id': self.id,
-            'views': [(False, 'form')],
-            'target': 'new',
-        }
+            # Budget Check
+            if 'budget_ok' in res:
+                message = res
+        return message

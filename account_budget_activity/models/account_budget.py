@@ -291,7 +291,7 @@ class AccountBudget(models.Model):
                 'released_amount': 0.0,
                 'amount_pr_commit': 0.0,
                 'amount_po_commit': 0.0,
-                'amount_exp_commmit': 0.0,
+                'amount_exp_commit': 0.0,
                 'amount_actual': 0.0,
                 'amount_balance': 0.0, },
             'message': False, }
@@ -302,8 +302,6 @@ class AccountBudget(models.Model):
                                     ('type', '=', budget_type),
                                     ('budget_level', '=', budget_level)],
                                     limit=1)
-        if not blevel.is_budget_control:
-            return res
 
         # Only for expense document, we check for exp_budget_control setup
         if self._context.get('call_from', '') == 'hr_expense_expense':
@@ -322,7 +320,7 @@ class AccountBudget(models.Model):
             res['budget_ok'] = False
             res['message'] = _('%s\n'
                                '[%s] the requested budget is %s,\n'
-                               'but there is no budget plan for it.') % \
+                               'but there is no budget control for it.') % \
                 (fiscal.name, resource.name_get()[0][1],
                  '{0:,}'.format(amount))
             return res
@@ -332,24 +330,28 @@ class AccountBudget(models.Model):
                 'released_amount': monitors[0].released_amount,
                 'amount_pr_commit': monitors[0].amount_pr_commit,
                 'amount_po_commit': monitors[0].amount_po_commit,
-                'amount_exp_commmit': monitors[0].amount_exp_commmit,
+                'amount_exp_commit': monitors[0].amount_exp_commit,
                 'amount_actual': monitors[0].amount_actual,
                 'amount_balance': monitors[0].amount_balance,
             })
-        if amount > monitors[0].amount_balance:
+        if amount > 0.0 and amount > monitors[0].amount_balance:
             res['budget_ok'] = False
-            if amount == 0.0:
-                res['message'] = _('%s\n'
-                                   '%s, not enough budget, ฿%s over!') % \
-                    (fiscal.name, resource.name_get()[0][1],
-                     '{0:,}'.format(-monitors[0].amount_balance))
-            else:
-                res['message'] = _('%s\n'
-                                   '%s, remaining budget is %s,\n'
-                                   'but the requested budget is %s') % \
-                    (fiscal.name, resource.name_get()[0][1],
-                     '{0:,}'.format(monitors[0].amount_balance),
-                     '{0:,}'.format(amount))
+            # If no amount, we consider it status check!
+            # if amount == 0.0:
+            #     res['message'] = _('%s\n'
+            #                        '%s, not enough budget, ฿%s over!') % \
+            #         (fiscal.name, resource.name_get()[0][1],
+            #          '{0:,}'.format(-monitors[0].amount_balance))
+            # else:
+            res['message'] = _('%s\n'
+                               '%s, remaining budget is %s,\n'
+                               'but the requested budget is %s') % \
+                (fiscal.name, resource.name_get()[0][1],
+                 '{0:,}'.format(monitors[0].amount_balance),
+                 '{0:,}'.format(amount))
+
+        if not blevel.is_budget_control:
+            res['budget_ok'] = True  # No control, just return information
         return res
 
     @api.model
