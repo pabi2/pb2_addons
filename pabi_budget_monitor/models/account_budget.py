@@ -169,7 +169,7 @@ class AccountBudget(models.Model):
                 if amount_field:
                     amount = sum(map(lambda l:
                                      l[amount_field], filtered_lines))
-                    amount = self._calc_amount_company_currenty(amount)
+                    amount = self._calc_amount_company_currency(amount)
                 res = self.check_budget(fiscal_id,
                                         budget_type,  # eg, project_base
                                         budget_level,  # eg, project_id
@@ -183,7 +183,7 @@ class AccountBudget(models.Model):
 
     @api.model
     def simple_check_budget(self, doc_date, budget_type,
-                            amount, res_id, ext_res_id):
+                            amount, res_id, fund_id=False):
         """ This method is used to check budget of one type and one res_id
             If the budget level is not below basic 5 structure, i.e.,
             For project_base, with level = project_id,
@@ -193,9 +193,9 @@ class AccountBudget(models.Model):
 
             :param date: doc_date, document date or date to check budget
             :param budget_type: 1 of the 5 budget types
-            :param amount: Check amount, If don't know, use 0.0
+            :param amount: Check amount, to just check status, use False
             :param res_id: resource's id, differ for each type of budget
-            :param ext_res_id: if budget level = fund, go deeper
+            :param fund_id: Fund
             :return: dict of result
         """
         res = {'budget_ok': True,
@@ -211,8 +211,20 @@ class AccountBudget(models.Model):
         budget_level = budget_levels[budget_type]
         sel_fields = self._prepare_sel_budget_fields(budget_type,
                                                      budget_level)
-        ext_field = len(sel_fields) == 2 and sel_fields[1] or False
-        amount = self._calc_amount_company_currenty(amount)
+        ext_res_id = False
+        ext_field = False
+        if len(sel_fields) > 1 and 'fund_id' in sel_fields:
+            if not fund_id:
+                return {'budget_ok': False,
+                        'budget_status': {},
+                        'message': 'Fund is not selected!'}
+            else:
+                ext_field = len(sel_fields) == 2 and sel_fields[1] or False
+                # Reassign
+                ext_res_id = res_id
+                res_id = fund_id
+
+        amount = self._calc_amount_company_currency(amount)
         res = self.check_budget(fiscal_id,
                                 budget_type,  # eg, project_base
                                 budget_level,  # eg, project_id
