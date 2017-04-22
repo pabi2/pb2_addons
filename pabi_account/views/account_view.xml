@@ -21,6 +21,9 @@
                 <xpath expr="/form/notebook/page/field[@name='narration']" position="after">
                   <field name="line_item_summary" colspan="4" nolabel="1"/>
                 </xpath>
+                <xpath expr="/form/notebook/page/field[@name='line_id']/tree" position="attributes">
+                  <attribute name="default_order">move_id, debit desc, credit desc, account_id</attribute>
+                </xpath>
             </field>
         </record>
 
