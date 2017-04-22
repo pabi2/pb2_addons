@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <field name="date" position="replace">
                     <group>
-                        <field name="calendar_period_id"/>
+                        <field name="calendar_period_id" context="{'use_calendar_name': True}"/>
                         <field name="date" invisible="1"/>
                         <field name="message" nolabel="1" colspan="2"/>
                     </group>

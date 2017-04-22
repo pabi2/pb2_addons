@@ -28,7 +28,7 @@ class PrintPNDFormWizard(models.TransientModel):
         required=True,
     )
     calendar_period_id = fields.Many2one(
-        'account.period.calendar',
+        'account.period',
         string='Calendar Period',
         required=False,
     )
@@ -61,7 +61,7 @@ class PrintPNDFormWizard(models.TransientModel):
             'income_tax_form': (self.income_tax_form == 'pnd3a' and
                                 'pnd3' or self.income_tax_form),
             'fiscalyear_id': self.fiscalyear_id.id,
-            'wht_period_id': self.calendar_period_id.period_id.id,
+            'wht_period_id': self.calendar_period_id.id,
             'company_taxid': company_taxid,
             'company_branch': company_branch,
             'print_name': self.env.user.name or '',

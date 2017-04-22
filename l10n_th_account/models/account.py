@@ -154,3 +154,52 @@ class AccountPeriod(models.Model):
         'period_id',
         string='WHT Sequence',
     )
+    calendar_name = fields.Char(
+        string='Calendar Name',
+        compute='_compute_calendar_name',
+        readonly=True,
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('date_start')
+    def _compute_calendar_name(self):
+        mo_dict = {'01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
+                   '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
+                   '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec', }
+        for rec in self:
+            rec.calendar_name = 'N/A'
+            if rec.date_start:
+                year = rec.date_start and rec.date_start[:4] or '????'
+                month = rec.date_start and rec.date_start[5:7] or '??'
+                rec.calendar_name = '%s-%s' % (mo_dict[month], year)
+
+    @api.multi
+    def name_get(self):
+        res = super(AccountPeriod, self).name_get()
+        if self._context.get('use_calendar_name', False):
+            res = []
+            for rec in self:
+                res.append((rec.id, rec.calendar_name))
+        return res
+
+
+class AccountFiscalyear(models.Model):
+    _inherit = 'account.fiscalyear'
+
+    @api.multi
+    @api.depends('date_start')
+    def _compute_calendar_name(self):
+        for rec in self:
+            rec.calendar_name = 'N/A'
+            if rec.date_start:
+                rec.calendar_name = rec.date_start[:4]
+
+    @api.multi
+    def name_get(self):
+        res = super(AccountPeriod, self).name_get()
+        if self._context.get('use_calendar_name', False):
+            res = []
+            for rec in self:
+                res.append((rec.id, rec.calendar_name))
+        return res

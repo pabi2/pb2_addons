@@ -70,7 +70,7 @@ class PrintPITWhtCertWizard(models.TransientModel):
             return
         WHTLine = self.env['pit.wht.cert.tax.line']
         pit_lines = self.supplier_partner_id.pit_line.filtered(
-            lambda l: l.calendar_year == self.calendaryear_id.name)
+            lambda l: l.calendar_year == self.calendaryear_id.calendar_name)
         for line in pit_lines:
             wht_line = WHTLine.new()
             wht_line.voucher_id = line.voucher_id
@@ -109,7 +109,7 @@ class PrintPITWhtCertWizard(models.TransientModel):
         data['supplier_taxid'] = list(supplier_taxid)
         data['company_address'] = self.company_address
         data['supplier_address'] = self.supplier_address
-        data['buddha_year'] = int(self.calendaryear_id.name) + 543
+        data['buddha_year'] = int(self.calendaryear_id.calendar_name) + 543
         data['total_base'] = self._get_summary_by_type('base')
         data['total_tax'] = self._get_summary_by_type('tax')
         data['signature'] = self.with_context(TH).env.user.name_get()[0][1]

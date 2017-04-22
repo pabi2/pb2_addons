@@ -8,7 +8,7 @@ class AccountSubscriptionGenerate(models.TransientModel):
     _inherit = 'account.subscription.generate'
 
     calendar_period_id = fields.Many2one(
-        'account.period.calendar',
+        'account.period',
         string='For Period',
         required=True,
     )
@@ -27,7 +27,7 @@ class AccountSubscriptionGenerate(models.TransientModel):
         self.date = False
         self.message = False
         if self.calendar_period_id:
-            self.date = self.calendar_period_id.period_id.date_stop
+            self.date = self.calendar_period_id.date_stop
             dt = datetime.strptime(self.date, '%Y-%m-%d').strftime('%d/%m/%Y')
             message = _('\n This will generate recurring entries '
                         'before or equal to "%s".\n'
