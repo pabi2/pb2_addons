@@ -261,7 +261,7 @@ class AccountBudget(models.Model):
     @api.model
     def _calc_amount_company_currency(self, amount):
         currency_id = self._context.get('currency_id', False)
-        if currency_id:
+        if currency_id and amount is not False:
             currency = self.env['res.currency'].browse(currency_id)
             company_currency = self.env.user.company_id.currency_id
             if company_currency != currency:
@@ -269,7 +269,7 @@ class AccountBudget(models.Model):
         return amount
 
     @api.model
-    def _prepare_resource_fields(sel_fields, val, doc_lines):
+    def _prepare_resource_fields(self, sel_fields, val, doc_lines):
         res_id = val[0]
         ext_field = False
         ext_res_id = False

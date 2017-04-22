@@ -734,8 +734,12 @@ class ChartFieldAction(ChartField):
     def _compute_require_chartfield(self):
         for rec in self:
             account = False
-            if 'account_id' in rec and rec.account_id:
+            is_alyt_line = rec._name in ('account.analytic.line')  # Special
+            if not is_alyt_line and 'account_id' in rec and rec.account_id:
                 account = rec.account_id
+            elif is_alyt_line and 'general_account_id' in rec \
+                    and rec.general_account_id:
+                account = rec.general_account_id
             elif 'activity_id' in rec and rec.activity_id:
                 account = rec.activity_id.account_id
             if account:

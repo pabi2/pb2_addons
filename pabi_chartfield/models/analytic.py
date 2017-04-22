@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from openerp import api, models
+from openerp import api, models, fields
 from .chartfield import CHART_FIELDS, ChartFieldAction
 
 
 class AccountAnalyticLine(ChartFieldAction, models.Model):
     _inherit = 'account.analytic.line'
+
+    # ChartfieldAction changed account_id = account.account, must change back
+    account_id = fields.Many2one('account.analytic.account')
 
 
 class AccountAnalyticAccount(ChartFieldAction, models.Model):

@@ -34,7 +34,7 @@ class PABIUnreconciledReport(models.Model):
                 from pabi_bank_statement_import
                 where match_item_id is null
                 order by date_value, document, cheque_number)
-            union
+            union all
                 (select statement_id, 'nstda' as source, document,
                     null as batch_code,
                     cheque_number, date_value, credit-debit as amount,
