@@ -27,7 +27,7 @@ class ProductActivity(models.Model):
             p.id temp_product_id, null temp_activity_id,
             p.name_template as name
             from product_product p)
-        union (
+        union all (
             select 2000000 + a.id,
             null temp_product_id, a.id temp_activity_id,
             a.name as name

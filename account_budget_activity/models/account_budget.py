@@ -334,21 +334,23 @@ class AccountBudget(models.Model):
                 'amount_actual': monitors[0].amount_actual,
                 'amount_balance': monitors[0].amount_balance,
             })
-        if amount > 0.0 and amount > monitors[0].amount_balance:
+        # If amount is False, we don't check.
+        if amount is not False and amount > monitors[0].amount_balance:
             res['budget_ok'] = False
-            # If no amount, we consider it status check!
-            # if amount == 0.0:
-            #     res['message'] = _('%s\n'
-            #                        '%s, not enough budget, ฿%s over!') % \
-            #         (fiscal.name, resource.name_get()[0][1],
-            #          '{0:,}'.format(-monitors[0].amount_balance))
-            # else:
-            res['message'] = _('%s\n'
-                               '%s, remaining budget is %s,\n'
-                               'but the requested budget is %s') % \
-                (fiscal.name, resource.name_get()[0][1],
-                 '{0:,}'.format(monitors[0].amount_balance),
-                 '{0:,}'.format(amount))
+            if amount == 0.0:  # 0.0 mean post check
+                print monitors[0].amount_balance
+                res['message'] = _('%s\n'
+                                   '%s, not enough budget, this transaction '
+                                   'will result in ฿%s over budget!') % \
+                    (fiscal.name, resource.name_get()[0][1],
+                     '{0:,}'.format(-monitors[0].amount_balance))
+            else:
+                res['message'] = _('%s\n'
+                                   '%s, remaining budget is %s,\n'
+                                   'but the requested budget is %s') % \
+                    (fiscal.name, resource.name_get()[0][1],
+                     '{0:,}'.format(monitors[0].amount_balance),
+                     '{0:,}'.format(amount))
 
         if not blevel.is_budget_control:
             res['budget_ok'] = True  # No control, just return information

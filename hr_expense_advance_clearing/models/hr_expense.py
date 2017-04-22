@@ -287,7 +287,7 @@ class HRExpenseClearing(models.Model):
         (select %s
             from hr_expense_expense
             where state = 'accepted' and advance_expense_id is not null)
-        UNION
+        UNION ALL
             (select %s
             from (
                 select %s

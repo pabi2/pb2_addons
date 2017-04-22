@@ -107,7 +107,7 @@ class BudgetMonitorReport(models.Model):
             %s
             from budget_plan_report
             where state in ('validate', 'done')
-            UNION
+            UNION ALL
             select budget_method, user_id, fiscalyear_id,
             ------> doc_ref, doc_id,
             0.0 as planned_amount, 0.0 as released_amount,
