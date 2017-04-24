@@ -187,6 +187,13 @@ class AccountPeriod(models.Model):
 class AccountFiscalyear(models.Model):
     _inherit = 'account.fiscalyear'
 
+    calendar_name = fields.Char(
+        string='Calendar Name',
+        compute='_compute_calendar_name',
+        readonly=True,
+        store=True,
+    )
+
     @api.multi
     @api.depends('date_start')
     def _compute_calendar_name(self):
@@ -197,7 +204,7 @@ class AccountFiscalyear(models.Model):
 
     @api.multi
     def name_get(self):
-        res = super(AccountPeriod, self).name_get()
+        res = super(AccountFiscalyear, self).name_get()
         if self._context.get('use_calendar_name', False):
             res = []
             for rec in self:
