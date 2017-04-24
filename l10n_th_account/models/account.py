@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp import tools
 from openerp.exceptions import ValidationError
 
 
@@ -174,14 +175,18 @@ class AccountPeriod(models.Model):
                 month = rec.date_start and rec.date_start[5:7] or '??'
                 rec.calendar_name = '%s-%s' % (mo_dict[month], year)
 
-    @api.multi
-    def name_get(self):
-        res = super(AccountPeriod, self).name_get()
-        if self._context.get('use_calendar_name', False):
-            res = []
-            for rec in self:
-                res.append((rec.id, rec.calendar_name))
-        return res
+
+class AccountPeriodCalendar(models.Model):
+    _name = 'account.period.calendar'
+    _inherit = 'account.period'
+    _auto = False
+    _rec_name = 'calendar_name'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" %
+            (self._table, "select * from account_period",))
 
 
 class AccountFiscalyear(models.Model):
@@ -202,11 +207,15 @@ class AccountFiscalyear(models.Model):
             if rec.date_start:
                 rec.calendar_name = rec.date_start[:4]
 
-    @api.multi
-    def name_get(self):
-        res = super(AccountFiscalyear, self).name_get()
-        if self._context.get('use_calendar_name', False):
-            res = []
-            for rec in self:
-                res.append((rec.id, rec.calendar_name))
-        return res
+
+class AccountFiscalyearCalendar(models.Model):
+    _name = 'account.fiscalyear.calendar'
+    _inherit = 'account.fiscalyear'
+    _auto = False
+    _rec_name = 'calendar_name'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" %
+            (self._table, "select * from account_fiscalyear",))

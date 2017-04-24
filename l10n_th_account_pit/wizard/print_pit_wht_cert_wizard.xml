@@ -20,7 +20,7 @@
                     </group>
                     <group>
                         <group string="Please select calendar year">
-                            <field name="calendaryear_id" context="{'use_calendar_name': True}"/>
+                            <field name="calendaryear_id" />
                         </group>
                         <group>
                         </group>
