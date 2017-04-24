@@ -12,10 +12,12 @@
     "depends": [
         "pabi_base",
         "l10n_th_account",
+        "document_status_history",
     ],
     "data": [
         "security/ir.model.access.csv",
         "data/invest_construction_sequence.xml",
+        "data/invest_construction_history_rule.xml",
         "views/invest_construction_view.xml",
     ],
     "application": False,

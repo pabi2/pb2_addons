@@ -7,7 +7,7 @@ class AccountSubscriptionGenerate(models.TransientModel):
     _inherit = 'account.subscription.generate'
 
     calendar_period_id = fields.Many2one(
-        'account.period',
+        'account.period.calendar',
         string='For Period',
         required=True,
     )

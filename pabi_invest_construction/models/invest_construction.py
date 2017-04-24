@@ -5,9 +5,11 @@ from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError, ValidationError
 from openerp.addons.pabi_base.models.res_investment_structure \
     import CONSTRUCTION_PHASE
+from openerp.addons.document_status_history.models.document_history import \
+    LogCommon
 
 
-class ResInvestConstruction(models.Model):
+class ResInvestConstruction(LogCommon, models.Model):
     _inherit = 'res.invest.construction'
 
     code = fields.Char(
@@ -30,24 +32,41 @@ class ResInvestConstruction(models.Model):
         copy=False,
         default='draft',
     )
+    month_duration = fields.Integer(
+        string='Duration (months)',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+    )
     date_start = fields.Date(
         string='Start Date',
         required=True,
-        default=lambda self: fields.Date.context_today(self),
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     date_end = fields.Date(
         string='End Date',
         required=False,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     pm_employee_id = fields.Many2one(
         'hr.employee',
         string='Project Manager',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     section_id = fields.Many2one(
         'res.section',
         string='Project Manager Section',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     org_id = fields.Many2one(
         'res.org',
@@ -60,17 +79,26 @@ class ResInvestConstruction(models.Model):
         'res.mission',
         string='Core Mission',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     amount_budget_plan = fields.Float(
         string='Planned Budget',
         compute='_compute_amount_budget_plan',
+        readonly=True,
     )
     amount_budget_approve = fields.Float(
         string='Approved Budget',
         default=0.0,
+        readonly=True,
+        states={'submit': [('readonly', False)]},
+        write=['pabi_base.group_cooperate_budget'],  # Only Corp can edit
     )
-    month_duration = fields.Integer(
-        string='Duration (months)',
+    amount_phase_approve = fields.Float(
+        string='Approved Budget (Phases)',
+        compute='_compute_amount_phase_approve',
+        store=True,
     )
     operation_area = fields.Char(
         string='Operation Area',
@@ -95,10 +123,38 @@ class ResInvestConstruction(models.Model):
         'invest_construction_id',
         string='Budget Planning',
     )
+    phase_ids = fields.One2many(
+        domain=['|', ('active', '=', True), ('active', '=', False)],
+    )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
          'Constuction Project Code must be unique!'),
     ]
+
+    @api.multi
+    @api.depends('phase_ids.amount_phase_approve')
+    def _compute_amount_phase_approve(self):
+        for rec in self:
+            amount_total = sum([x.amount_phase_approve for x in rec.phase_ids])
+            if amount_total and amount_total != rec.amount_budget_approve:
+                raise ValidationError(
+                    _('Phases Approved Amount != Project Approved Amount'))
+            rec.amount_phase_approve = amount_total
+
+    @api.multi
+    @api.constrains('date_expansion', 'date_start', 'date_end')
+    def _check_date(self):
+        for rec in self:
+            # Date End must >= Date Start
+            if rec.date_end and rec.date_start and \
+                    rec.date_end < rec.date_start:
+                raise ValidationError(
+                    _('End Date must start after than Start Date!'))
+            # Expansion Date must >= End date
+            if rec.date_expansion and rec.date_end and \
+                    rec.date_expansion < rec.date_end:
+                raise ValidationError(
+                    _('Expansion Date must start after than End Date!'))
 
     @api.multi
     @api.depends('budget_plan_ids.amount_plan')
@@ -110,7 +166,9 @@ class ResInvestConstruction(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('code', '/') == '/':
+            fiscalyear_id = self.env['account.fiscalyear'].find()
             vals['code'] = self.env['ir.sequence'].\
+                with_context(fiscalyear_id=fiscalyear_id).\
                 next_by_code('invest.construction')
         return super(ResInvestConstruction, self).create(vals)
 
@@ -119,11 +177,14 @@ class ResInvestConstruction(models.Model):
         employee = self.pm_employee_id
         self.section_id = employee.section_id
 
-    @api.onchange('month_duration', 'date_start')
+    @api.onchange('month_duration', 'date_start', 'date_end')
     def _onchange_date(self):
-        date_start = datetime.strptime(self.date_start, '%Y-%m-%d').date()
-        date_end = date_start + relativedelta(months=self.month_duration)
-        self.date_end = date_end.strftime('%Y-%m-%d')
+        if not self.month_duration or not self.date_start:
+            self.date_end = False
+        else:
+            date_start = datetime.strptime(self.date_start, '%Y-%m-%d').date()
+            date_end = date_start + relativedelta(months=self.month_duration)
+            self.date_end = date_end.strftime('%Y-%m-%d')
         self._prepare_budget_plan_line(self.date_start, self.date_end)
 
     @api.model
@@ -153,6 +214,7 @@ class ResInvestConstruction(models.Model):
     @api.multi
     def action_create_phase(self):
         for rec in self:
+            print rec.phase_ids
             if rec.phase_ids:
                 continue
             phases = []
@@ -169,6 +231,7 @@ class ResInvestConstruction(models.Model):
 
     @api.multi
     def action_approve(self):
+        self.action_create_phase()
         self.write({'state': 'approve'})
 
     @api.multi
@@ -192,7 +255,7 @@ class ResInvestConstruction(models.Model):
         self.write({'state': 'draft'})
 
 
-class RestInvestConstructionPhase(models.Model):
+class RestInvestConstructionPhase(LogCommon, models.Model):
     _inherit = 'res.invest.construction.phase'
 
     active = fields.Boolean(
@@ -212,6 +275,8 @@ class RestInvestConstructionPhase(models.Model):
         related='invest_construction_id.org_id',
         store=True,
         readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -231,44 +296,61 @@ class RestInvestConstructionPhase(models.Model):
     amount_phase_approve = fields.Float(
         string='Approved Budget (Phase)',
         default=0.0,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     amount_phase_plan = fields.Float(
         string='Planned Budget (Phase)',
         compute='_compute_amount_phase_plan',
+        readonly=True,
     )
     amount_phase_diff = fields.Float(
         string='Unplanned Budget (Phase)',
         compute='_compute_amount_phase_plan',
+        readonly=True,
     )
     month_duration = fields.Integer(
         string='Duration (months)',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     date_start = fields.Date(
         string='Start Date',
-        required=True,
-        default=lambda self: fields.Date.context_today(self),
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     date_end = fields.Date(
         string='End Date',
-        required=False,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
     )
     date_expansion = fields.Date(
         string='Date Expansion',
     )
     contract_day_duration = fields.Integer(
         string='Contract Duration (days)',
+        readonly=True,
+        states={'approve': [('readonly', False)], },
     )
     contract_date_start = fields.Date(
         string='Contract Start Date',
-        required=True,
-        default=lambda self: fields.Date.context_today(self),
+        readonly=True,
+        states={'approve': [('readonly', False)], },
     )
     contract_date_end = fields.Date(
         string='Contract End Date',
-        required=False,
+        readonly=True,
+        states={'approve': [('readonly', False)], },
     )
-    contract_number = fields.Char(
+    contract_ids = fields.Many2many(
+        'purchase.contract',
         string='Contract Number',
+        readonly=True,
+        states={'approve': [('readonly', False)], },
     )
     phase_plan_ids = fields.One2many(
         'res.invest.construction.phase.plan',
@@ -277,11 +359,8 @@ class RestInvestConstructionPhase(models.Model):
     )
     fiscalyear_ids = fields.Many2many(
         'account.fiscalyear',
-        'invest_construction_fiscalyear_rel',
-        'invest_construction_id', 'fiscalyear_id',
         string='Related Fiscal Years',
         compute='_compute_fiscalyear_ids',
-        store=True,
         help="All related fiscal years for this phases"
     )
     to_sync = fields.Boolean(
@@ -300,6 +379,39 @@ class RestInvestConstructionPhase(models.Model):
         ('number_uniq', 'unique(code)',
          'Constuction Phase Code must be unique!'),
     ]
+
+    @api.multi
+    @api.constrains('date_expansion', 'date_start', 'date_end')
+    def _check_date(self):
+        for rec in self:
+            # Date End must >= Date Start
+            if rec.date_end and rec.date_start and \
+                    rec.date_end < rec.date_start:
+                raise ValidationError(
+                    _('End Date must start after than Start Date!'))
+            # Expansion Date must >= End date
+            if rec.date_expansion and rec.date_end and \
+                    rec.date_expansion < rec.date_end:
+                raise ValidationError(
+                    _('Expansion Date must start after than End Date!'))
+            # -- Check with Project -- #
+            c = rec.invest_construction_id
+            # Date Start must >= Project's Date start
+            if rec.date_start and c.date_start and \
+                    rec.date_start < c.date_start:
+                raise ValidationError(
+                    _('Start Date must start after than Project Start Date!'))
+            # Date End must <= Project's Date End/Expansion
+            if rec.date_end and (c.date_expansion or c.date_end) and \
+                    rec.date_end > (c.date_expansion or c.date_end):
+                raise ValidationError(
+                    _('End Date must end before Project End Date!'))
+            # Date Expansion must <= Project's Date End/Expansion
+            if rec.date_expansion and (c.date_expansion or c.date_end) and \
+                    rec.date_expansion > (c.date_expansion or c.date_end):
+                raise ValidationError(
+                    _('Expansion Date must end before '
+                      'Project Expansion Date!'))
 
     @api.model
     def _get_changed_plan_fiscalyear(self, vals):
@@ -352,11 +464,14 @@ class RestInvestConstructionPhase(models.Model):
             vals['code'] = prefix + '{:02d}'.format(vals.get('sequence', 0))
         return super(RestInvestConstructionPhase, self).create(vals)
 
-    @api.onchange('month_duration', 'date_start')
+    @api.onchange('month_duration', 'date_start', 'date_end')
     def _onchange_date(self):
-        date_start = datetime.strptime(self.date_start, '%Y-%m-%d').date()
-        date_end = date_start + relativedelta(months=self.month_duration)
-        self.date_end = date_end.strftime('%Y-%m-%d')
+        if not self.month_duration or not self.date_start:
+            self.date_end = False
+        else:
+            date_start = datetime.strptime(self.date_start, '%Y-%m-%d').date()
+            date_end = date_start + relativedelta(months=self.month_duration)
+            self.date_end = date_end.strftime('%Y-%m-%d')
         self._prepare_phase_plan_line(self.date_start, self.date_end)
 
     @api.model
@@ -489,7 +604,6 @@ class ResInvestConstructionBudgetPlan(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-        readonly=True,
     )
     invest_construction_id = fields.Many2one(
         'res.invest.construction',
@@ -503,7 +617,7 @@ class ResInvestConstructionBudgetPlan(models.Model):
     )
     _sql_constraints = [
         ('construction_plan_uniq',
-         'unique(invest_construction_id, fiscalyar_id)',
+         'unique(invest_construction_id, fiscalyear_id)',
          'Fiscal year must be unique for a construction project!'),
     ]
 
@@ -514,16 +628,14 @@ class ResInvestConstructionPhasePlan(models.Model):
     _order = 'calendar_period_id'
 
     calendar_period_id = fields.Many2one(
-        'account.period',
+        'account.period.calendar',
         string='Calendar Period',
         required=True,
-        readonly=True,
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         related='calendar_period_id.fiscalyear_id',
         string='Fiscal Year',
-        required=True,
         readonly=True,
         store=True,
     )
@@ -543,6 +655,24 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Amount',
         required=True,
     )
+    _sql_constraints = [
+        ('construction_phase_plan_uniq',
+         'unique(invest_construction_phase_id, calendar_period_id)',
+         'Period must be unique for a construction phase!'),
+    ]
+
+    @api.multi
+    @api.constrains('calendar_period_id')
+    def _check_calendar_period_id(self):
+        for rec in self:
+            # Start date and end date of period must between Start and End
+            date_start = rec.invest_construction_phase_id.date_start
+            date_end = rec.invest_construction_phase_id.date_expansion or \
+                rec.invest_construction_phase_id.date_end
+            if rec.calendar_period_id.date_stop < date_start or \
+                    rec.calendar_period_id.date_start > date_end:
+                raise ValidationError(
+                    _('Period must be within start and date!'))
 
 
 class ResInvestConstructionPhaseSync(models.Model):

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="invest_construction_history_rule" model="auditlog.rule">
+            <field name="name">Invest Construction Rule</field>
+            <field name="model_id" ref="pabi_base.model_res_invest_construction"/>
+            <field name="log_read"></field>
+            <field name="log_write">True</field>
+            <field name="log_unlink">True</field>
+            <field name="log_create">True</field>
+            <field name="log_type">full</field>
+            <field name="state">draft</field>
+        </record>
+
+        <record id="invest_construction_phase_history_rule" model="auditlog.rule">
+            <field name="name">Invest Construction Phase Rule</field>
+            <field name="model_id" ref="pabi_base.model_res_invest_construction_phase"/>
+            <field name="log_read"></field>
+            <field name="log_write">True</field>
+            <field name="log_unlink">True</field>
+            <field name="log_create">True</field>
+            <field name="log_type">full</field>
+            <field name="state">draft</field>
+        </record>
+
+    </data>
+</openerp>

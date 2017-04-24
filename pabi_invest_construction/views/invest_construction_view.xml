@@ -76,7 +76,7 @@
                     </header>
                     <sheet string="Project (C)">
                         <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
-                            <button name="action_create_phase" string="Create Phases" type="object" attrs="{'invisible': [('phase_ids', '!=', [])]}"/>
+                            <button name="action_create_phase" string="Create Phases" type="object" invisible="1"/>
                             <button class="oe_inline oe_stat_button" type="action" string="5 Phases" attrs="{'invisible':[('phase_ids','=', [])]}" name="%(action_invest_construction_phase_all)d" icon="fa-tasks"/>
                             <button class="oe_inline oe_stat_button" type="action" string="Phase Report" attrs="{'invisible':[('phase_ids','=', [])]}" name="%(action_invest_construction_phase_report)d" icon="fa-bar-chart"/>
                         </div>
@@ -146,11 +146,29 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Status History">
+                                <field name="auditlog_line_ids"/>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
             </field>
         </record>
+
+        <!-- <record id="view_invest_construction_form_edit_by_corp" model="ir.ui.view">
+            <field name="name">view.invest.construction.form</field>
+            <field name="model">res.invest.construction</field>
+            <field name="inherit_id" ref="view_invest_construction_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('pabi_base.group_cooperate_budget')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount_budget_approve']" position="attributes">
+                    <attribute name="readonly">False</attribute>
+                </xpath>
+                <xpath expr="//field[@name='mission_id']" position="attributes">
+                    <attribute name="readonly">False</attribute>
+                </xpath>
+            </field>
+        </record> -->
 
         <record id="view_invest_construction_search" model="ir.ui.view">
             <field name="name">view.invest.construction.search</field>
@@ -158,6 +176,12 @@
             <field name="arch" type="xml">
                 <search string="Tasks">
                     <field name="name" string="Project (C)"/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]" />
+                    <filter name="submit" string="Submitted" domain="[('state','=','submit')]" />
+                    <filter name="approve" string="Approved" domain="[('state','=','approve')]" />
+                    <filter name="reject" string="Rejected" domain="[('state','=','reject')]" />
+                    <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]" />
+                    <filter name="close" string="Closed" domain="[('state','=','close')]" />
                     <group expand="0" string="Group By">
                         <filter string="Org" name="org" context="{'group_by':'org_id'}"/>
                     </group>
@@ -173,6 +197,9 @@
                     <field name="code"/>
                     <field name="name"/>
                     <field name="pm_employee_id"/>
+                    <field name="amount_budget_plan" sum="Total Plan"/>
+                    <field name="amount_budget_approve" sum="Total Approved Budget"/>
+                    <field name="amount_phase_approve" sum="Total Approved Phases Budget"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -248,18 +275,17 @@
                         </h2>
                         <group>
                             <group>
-                                <field name="amount_phase_approve"/>
+                                <field name="amount_phase_approve" readonly="1"/>
                                 <field name="org_id" invisible="1"/>
                             </group>
                             <group>
                                 <field name="amount_phase_plan"/>
-                                <field name="amount_phase_diff"/>
                             </group>
                         </group>
                         <group>
                             <group>
                                 <field name="month_duration"/>
-                                <field name="date_start"/>
+                                <field name="date_start" required="1"/>
                                 <field name="date_end" required="1"/>
                                 <field name="date_expansion"/>
                             </group>
@@ -267,7 +293,7 @@
                                 <field name="contract_day_duration"/>
                                 <field name="contract_date_start"/>
                                 <field name="contract_date_end"/>
-                                <field name="contract_number"/>
+                                <field name="contract_ids" widget="many2many_tags"/>
                             </group>
                         </group>
                         <notebook>
@@ -278,14 +304,15 @@
                                     </group>
                                     <group>
                                         <field name="to_sync" invisible="1"/>
+                                        <field name="amount_phase_diff"/>
                                         <button name="action_sync_phase_to_budget_line" string="Push Changes to Budget Control" type="object" class="oe_highlight" attrs="{'invisible': [('to_sync', '=', False)]}"/>
                                     </group>
                                 </group>
 
                                 <field name="phase_plan_ids">
                                     <tree editable="bottom">
-                                        <field name="fiscalyear_id"/>
-                                        <field name="calendar_period_id" context="{'use_calendar_name': True}"/>
+                                        <field name="fiscalyear_id" invisible="1"/>
+                                        <field name="calendar_period_id"/>
                                         <field name="amount_plan" sum="Total Plan"/>
                                     </tree>
                                 </field>
@@ -308,6 +335,9 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Status History">
+                                <field name="auditlog_line_ids"/>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -322,6 +352,7 @@
                     <field name="code"/>
                     <field name="phase"/>
                     <field name="invest_construction_id"/>
+                    <field name="amount_phase_approve" sum="Total Approved Phases Budget"/>
                     <field name="state"/>
                 </tree>
             </field>
