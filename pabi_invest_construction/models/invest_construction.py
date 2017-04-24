@@ -474,6 +474,18 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
             self.date_end = date_end.strftime('%Y-%m-%d')
         self._prepare_phase_plan_line(self.date_start, self.date_end)
 
+    @api.onchange('contract_day_duration', 'contract_date_start',
+                  'contract_date_end')
+    def _onchange_contract_date(self):
+        if not self.contract_day_duration or not self.contract_date_start:
+            self.contract_date_end = False
+        else:
+            date_start = \
+                datetime.strptime(self.contract_date_start, '%Y-%m-%d').date()
+            date_end = \
+                date_start + relativedelta(days=self.contract_day_duration)
+            self.contract_date_end = date_end.strftime('%Y-%m-%d')
+
     @api.model
     def _prepare_phase_plan_line(self, date_start, date_end):
         self.phase_plan_ids = False
