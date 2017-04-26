@@ -2,6 +2,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
+from openerp import tools
 from openerp.exceptions import Warning as UserError, ValidationError
 from openerp.addons.pabi_base.models.res_investment_structure \
     import CONSTRUCTION_PHASE
@@ -380,6 +381,12 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         string='Sync History',
         copy=False,
     )
+    summary_ids = fields.One2many(
+        'invest.construction.phase.summary',
+        'phase_id',
+        string='Phase Summary',
+        readonly=True,
+    )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
          'Constuction Phase Code must be unique!'),
@@ -473,7 +480,6 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         for rec in self:
             to_sync_fiscals = rec.sync_ids.filtered(
                 lambda l: not l.synced).mapped('fiscalyear_id')
-            # Find available budget for the needed sync year
             budgets = self.find_active_construction_budget(
                 to_sync_fiscals.ids, [rec.org_id.id])
             rec.budget_to_sync_count = len(budgets)
@@ -617,13 +623,36 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                     'synced': False,
                 })
 
+    @api.model
+    def _check_access(self):
+        if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
+            raise UserError(
+                _('You are not authorized see construction budget control!'))
+        return True
+
     @api.multi
     def action_open_budget_control(self):
         self.ensure_one()
+        self._check_access()
         action = self.env.ref('pabi_chartfield.'
                               'act_account_budget_view_invest_construction')
         result = action.read()[0]
         budgets = self.find_active_construction_budget(self.fiscalyear_ids.ids,
+                                                       [self.org_id.id])
+        dom = [('id', 'in', budgets.ids)]
+        result.update({'domain': dom})
+        return result
+
+    @api.multi
+    def action_open_to_sync_budget_control(self):
+        self.ensure_one()
+        self._check_access()
+        action = self.env.ref('pabi_chartfield.'
+                              'act_account_budget_view_invest_construction')
+        result = action.read()[0]
+        to_sync_fiscals = self.sync_ids.filtered(
+            lambda l: not l.synced).mapped('fiscalyear_id')
+        budgets = self.find_active_construction_budget(to_sync_fiscals.ids,
                                                        [self.org_id.id])
         dom = [('id', 'in', budgets.ids)]
         result.update({'domain': dom})
@@ -693,10 +722,17 @@ class ResInvestConstructionPhasePlan(models.Model):
     _description = 'Investment Construction Phase Plan'
     _order = 'calendar_period_id'
 
+    id = fields.Integer(
+        string='ID',
+    )
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
         string='Calendar Period',
         required=True,
+    )
+    amount_readonly = fields.Boolean(
+        string='Readonly',
+        compute='_compute_amount_readonly',
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -732,6 +768,16 @@ class ResInvestConstructionPhasePlan(models.Model):
     ]
 
     @api.multi
+    @api.depends('calendar_period_id')
+    def _compute_amount_readonly(self):
+        for rec in self:
+            today = fields.Date.context_today(self)
+            if rec.calendar_period_id.date_start < today:
+                rec.amount_readonly = True
+            else:
+                rec.amount_readonly = False
+
+    @api.multi
     @api.constrains('calendar_period_id')
     def _check_calendar_period_id(self):
         for rec in self:
@@ -743,6 +789,16 @@ class ResInvestConstructionPhasePlan(models.Model):
                     rec.calendar_period_id.date_start > date_end:
                 raise ValidationError(
                     _('Period must be within start and date!'))
+
+    @api.multi
+    def write(self, vals):
+        if 'amount_plan' in vals:
+            for rec in self:
+                today = fields.Date.context_today(self)
+                if rec.calendar_period_id.date_start < today:
+                    raise UserError(_('You are not allowed to change '
+                                      'amount in the past period!'))
+        return super(ResInvestConstructionPhasePlan, self).write(vals)
 
 
 class ResInvestConstructionPhaseSync(models.Model):
@@ -784,3 +840,39 @@ class ResInvestConstructionPhaseSync(models.Model):
         help="Checked when it is synced. Unchecked when phase is updated"
         "then it will be synced again",
     )
+
+
+class InvestConstructionPhaseSummary(models.Model):
+    _name = 'invest.construction.phase.summary'
+    _auto = False
+    _rec_name = 'fiscalyear_id'
+    _description = 'Fiscal Year summary of each phase amount'
+
+    phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        string='Construction Phase',
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='fiscalyear',
+        readonly=True,
+    )
+    amount = fields.Float(
+        string='Amount',
+        readonly=True,
+    )
+
+    def init(self, cr):
+
+        _sql = """
+            select min(id) as id, invest_construction_phase_id as phase_id,
+                    fiscalyear_id, sum(amount_plan) as amount
+            from res_invest_construction_phase_plan
+            group by invest_construction_phase_id, fiscalyear_id
+        """
+
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" %
+            (self._table, _sql,))

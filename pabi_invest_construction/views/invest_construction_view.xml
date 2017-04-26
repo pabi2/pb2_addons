@@ -267,7 +267,7 @@
                                 <field string="All Budgets" name="budget_count" widget="statinfo"/>
                             </button>
                             <button class="oe_inline oe_stat_button" type="object" context="{}"
-                                name="action_open_budget_control" icon="fa-refresh"
+                                name="action_open_to_sync_budget_control" icon="fa-refresh"
                                 attrs="{'invisible': [('budget_to_sync_count', '=', 0), ('budget_count', '>', 0)]}">
                                 <field string="Need Sync" name="budget_to_sync_count" widget="statinfo"/>
                             </button>
@@ -321,15 +321,27 @@
                                             string="Push Changes to Budget Control" type="object" class="oe_highlight"/>
                                     </group>
                                 </group>
-
                                 <field name="phase_plan_ids">
                                     <tree editable="bottom">
+                                        <field name="id" invisible="1"/>
                                         <field name="fiscalyear_id" invisible="1"/>
-                                        <field name="calendar_period_id"/>
+                                        <field name="calendar_period_id" attrs="{'readonly': [('id', '!=', False)]}"/>
                                         <field name="amount_plan_init" sum="Total Plan"/>
-                                        <field name="amount_plan" sum="Total Plan"/>
+                                        <field name="amount_readonly" invisible="1"/>
+                                        <field name="amount_plan" sum="Total Plan" attrs="{'readonly': [('amount_readonly', '=', True)]}"/>
                                     </tree>
                                 </field>
+                                <group>
+                                    <group></group>
+                                    <group string="Yearly Summary">
+                                        <field name="summary_ids" nolabel="1">
+                                            <tree editable="bottom" string="Summary" create="0" delete="0">
+                                                <field name="fiscalyear_id"/>
+                                                <field name="amount" sum="Total Amount"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
                             </page>
                             <page string="Syncronize Status">
                                 <p>
