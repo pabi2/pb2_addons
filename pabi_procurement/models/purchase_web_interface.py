@@ -93,14 +93,14 @@ class PurchaseRequest(models.Model):
                     },
                     'messages': _('PR has been created.'),
                 }
-                res.state = 'to_approve'
+                res.button_to_approve()
                 self.sudo().rewrite_create_uid(res)
             self._cr.commit()
         except Exception, e:
             ret = {
                 'is_success': False,
                 'result': False,
-                'messages': _(str(e)),
+                'messages': e,
             }
             self._cr.rollback()
         return ret
