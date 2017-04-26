@@ -214,7 +214,6 @@ class ResInvestConstruction(LogCommon, models.Model):
     @api.multi
     def action_create_phase(self):
         for rec in self:
-            print rec.phase_ids
             if rec.phase_ids:
                 continue
             phases = []
@@ -363,11 +362,17 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         compute='_compute_fiscalyear_ids',
         help="All related fiscal years for this phases"
     )
+    budget_count = fields.Integer(
+        string='Budget Control Count',
+        compute='_compute_budget_count',
+    )
+    budget_to_sync_count = fields.Integer(
+        string='Budget Need Sync Count',
+        compute='_compute_budget_to_sync_count',
+    )
     to_sync = fields.Boolean(
         string='To Sync',
-        compute='_compute_to_sync',
-        store=True,
-        help="Some changes left to be synced"
+        compute='_compute_budget_to_sync_count',
     )
     sync_ids = fields.One2many(
         'res.invest.construction.phase.sync',
@@ -444,6 +449,36 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         for rec in self:
             rec.active = rec.state == 'approve'
 
+    @api.model
+    def find_active_construction_budget(self, fiscalyear_ids, org_ids):
+        budgets = self.env['account.budget'].search([
+            ('chart_view', '=', 'invest_construction'),
+            ('latest_version', '=', True),
+            ('fiscalyear_id', 'in', fiscalyear_ids),
+            ('org_id', 'in', org_ids)])
+        return budgets
+
+    @api.multi
+    @api.depends()
+    def _compute_budget_count(self):
+        for rec in self:
+            # Show all budget control with the same org and same fiscalyear
+            budgets = self.find_active_construction_budget(
+                rec.fiscalyear_ids.ids, [rec.org_id.id])
+            rec.budget_count = len(budgets)
+
+    @api.multi
+    @api.depends('sync_ids')
+    def _compute_budget_to_sync_count(self):
+        for rec in self:
+            to_sync_fiscals = rec.sync_ids.filtered(
+                lambda l: not l.synced).mapped('fiscalyear_id')
+            # Find available budget for the needed sync year
+            budgets = self.find_active_construction_budget(
+                to_sync_fiscals.ids, [rec.org_id.id])
+            rec.budget_to_sync_count = len(budgets)
+            rec.to_sync = len(budgets) > 0 and True or False
+
     @api.multi
     @api.depends('phase_plan_ids.amount_plan')
     def _compute_amount_phase_plan(self):
@@ -514,16 +549,6 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                               for x in phase.phase_plan_ids]
             phase.fiscalyear_ids = list(set(fiscalyear_ids))
 
-    @api.multi
-    @api.depends('sync_ids.synced')
-    def _compute_to_sync(self):
-        for phase in self:
-            fiscalyear_ids = [x.fiscalyear_id.id
-                              for x in phase.phase_plan_ids]
-            phase.fiscalyear_ids = list(set(fiscalyear_ids))
-            to_syncs = phase.sync_ids.filtered(lambda l: l.synced is False)
-            phase.to_sync = len(to_syncs) > 0 and True or False
-
     @api.model
     def _prepare_mo_dict(self, fiscalyear):
         month = int(fiscalyear.date_start[5:7])
@@ -543,17 +568,13 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         only sync if synced=False
         """
         for phase in self:
-            print fiscalyear_ids
-            print phase.sync_ids
             # Find phase with vaild sync history (has been pulled before)
             phase_syncs = not fiscalyear_ids and phase.sync_ids or \
                 phase.sync_ids.filtered(lambda l: l.fiscalyear_id.id
                                         in fiscalyear_ids)
-            print phase_syncs
             if not phase_syncs:
                 continue
             for sync in phase_syncs:
-                print sync
                 # No valid budate line reference, or already synced, ignore it
                 # (need to pull from budget control first)
                 if not sync.sync_budget_line_id or sync.synced:
@@ -577,6 +598,37 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def action_sync_phase_to_budget_line(self):
         return self.sync_phase_to_budget_line(fiscalyear_ids=False)  # do all
 
+    @api.multi
+    def _set_amount_plan_init(self):
+        for phase in self:
+            for plan in phase.phase_plan_ids:
+                plan.amount_plan_init = plan.amount_plan
+
+    @api.multi
+    def _create_phase_sync(self):
+        # Create phase sync of all fiscalyear_ids
+        PhaseSync = self.env['res.invest.construction.phase.sync']
+        for phase in self:
+            for fiscalyear in phase.fiscalyear_ids:
+                PhaseSync.create({
+                    'phase_id': phase.id,
+                    'fiscalyear_id': fiscalyear.id,
+                    'last_sync': False,
+                    'synced': False,
+                })
+
+    @api.multi
+    def action_open_budget_control(self):
+        self.ensure_one()
+        action = self.env.ref('pabi_chartfield.'
+                              'act_account_budget_view_invest_construction')
+        result = action.read()[0]
+        budgets = self.find_active_construction_budget(self.fiscalyear_ids.ids,
+                                                       [self.org_id.id])
+        dom = [('id', 'in', budgets.ids)]
+        result.update({'domain': dom})
+        return result
+
     # Statuses
     @api.multi
     def action_submit(self):
@@ -584,6 +636,8 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
 
     @api.multi
     def action_approve(self):
+        self._set_amount_plan_init()
+        self._create_phase_sync()
         self.write({'state': 'approve'})
 
     @api.multi
@@ -662,6 +716,10 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Investment Construction',
         related='invest_construction_phase_id.invest_construction_id',
         store=True,
+    )
+    amount_plan_init = fields.Float(
+        string='Init Amount',
+        readonly=True,
     )
     amount_plan = fields.Float(
         string='Amount',

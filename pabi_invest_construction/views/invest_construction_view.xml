@@ -176,12 +176,12 @@
             <field name="arch" type="xml">
                 <search string="Tasks">
                     <field name="name" string="Project (C)"/>
-                    <filter name="draft" string="Draft" domain="[('state','=','draft')]" />
-                    <filter name="submit" string="Submitted" domain="[('state','=','submit')]" />
-                    <filter name="approve" string="Approved" domain="[('state','=','approve')]" />
-                    <filter name="reject" string="Rejected" domain="[('state','=','reject')]" />
-                    <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]" />
-                    <filter name="close" string="Closed" domain="[('state','=','close')]" />
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                    <filter name="submit" string="Submitted" domain="[('state','=','submit')]"/>
+                    <filter name="approve" string="Approved" domain="[('state','=','approve')]"/>
+                    <filter name="reject" string="Rejected" domain="[('state','=','reject')]"/>
+                    <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
+                    <filter name="close" string="Closed" domain="[('state','=','close')]"/>
                     <group expand="0" string="Group By">
                         <filter string="Org" name="org" context="{'group_by':'org_id'}"/>
                     </group>
@@ -262,8 +262,19 @@
                     </header>
                     <sheet string="Phase">
                         <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
-                            <field name="active" class="oe_inline" readonly="1"/>
-                            <label string="Active" class="oe_inline"/>
+                            <button class="oe_inline oe_stat_button" type="object" context="{}"
+                                name="action_open_budget_control" icon="fa-dollar">
+                                <field string="All Budgets" name="budget_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_inline oe_stat_button" type="object" context="{}"
+                                name="action_open_budget_control" icon="fa-refresh"
+                                attrs="{'invisible': [('budget_to_sync_count', '=', 0), ('budget_count', '>', 0)]}">
+                                <field string="Need Sync" name="budget_to_sync_count" widget="statinfo"/>
+                            </button>
+                            <p>
+                                <field name="active" class="oe_inline" readonly="1"/>
+                                <label string="IN USE" class="oe_inline"/>
+                            </p>
                         </div>
                         <h1>
                             <label string="Construction Project: "/>
@@ -305,7 +316,9 @@
                                     <group>
                                         <field name="to_sync" invisible="1"/>
                                         <field name="amount_phase_diff"/>
-                                        <button name="action_sync_phase_to_budget_line" string="Push Changes to Budget Control" type="object" class="oe_highlight" attrs="{'invisible': [('to_sync', '=', False)]}"/>
+                                        <!-- Set Push Sync Invisible, move to use Smart Button -->
+                                        <button name="action_sync_phase_to_budget_line" invisible="1"
+                                            string="Push Changes to Budget Control" type="object" class="oe_highlight"/>
                                     </group>
                                 </group>
 
@@ -313,6 +326,7 @@
                                     <tree editable="bottom">
                                         <field name="fiscalyear_id" invisible="1"/>
                                         <field name="calendar_period_id"/>
+                                        <field name="amount_plan_init" sum="Total Plan"/>
                                         <field name="amount_plan" sum="Total Plan"/>
                                     </tree>
                                 </field>
@@ -353,6 +367,7 @@
                     <field name="phase"/>
                     <field name="invest_construction_id"/>
                     <field name="amount_phase_approve" sum="Total Approved Phases Budget"/>
+                    <field name="to_sync"/>
                     <field name="state"/>
                 </tree>
             </field>
