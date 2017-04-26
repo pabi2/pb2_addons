@@ -240,10 +240,10 @@ class PurchaseRequest(models.Model):
                     i = fields.index('line_ids')
                     del fields[i]
                     del data[i]
-                    fields += ['line_ids/'+key for key in line.keys()]
+                    fields += ['line_ids/' + key for key in line.keys()]
                     # collect child key index
                     for key in line.keys():
-                        found_idx = fields.index('line_ids/'+key)
+                        found_idx = fields.index('line_ids/' + key)
                         if found_idx:
                             line_ids_index.append(found_idx)
                 datas += [tuple(data + line.values())]
