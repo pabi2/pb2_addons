@@ -27,6 +27,7 @@
                         <group>
                             <field name="invest_asset_categ_id"/>
                             <field name="name_common"/>
+                            <field name="objective"/>
                         </group>
                         <group>
                             <field name="code"/>

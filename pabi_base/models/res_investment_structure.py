@@ -40,6 +40,9 @@ class ResInvestAsset(ResCommon, models.Model):
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
+    objective = fields.Char(
+        string='Objective',
+    )
 
 
 class ResInvestAssetCategory(ResCommon, models.Model):
