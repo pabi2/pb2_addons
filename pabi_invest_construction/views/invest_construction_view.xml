@@ -66,7 +66,8 @@
                 <form string="Project">
                     <header>
                         <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
-                        <button name="action_approve" string="Approve" type="object" states="submit" class="oe_highlight"/>
+                        <button name="action_approve" string="Approve" type="object" states="submit,unapprove" class="oe_highlight" groups="pabi_base.group_cooperate_budget"/>
+                        <button name="action_unapprove" string="Un-Approve" type="object" states="approve" />
                         <button name="action_reject" string="Reject" type="object" states="submit"/>
                         <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
                         <button name="action_delete" string="Delete" type="object" states="approve"/>
@@ -101,7 +102,7 @@
                         <group>
                             <group>
                                 <field name="month_duration"/>
-                                <field name="date_start"/>
+                                <field name="date_start" required="1"/>
                                 <field name="date_end" required="1"/>
                                 <field name="date_expansion"/>
                             </group>
@@ -252,7 +253,8 @@
                 <form string="Phase" create="0">
                     <header>
                         <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
-                        <button name="action_approve" string="Approve" type="object" states="submit" class="oe_highlight"/>
+                        <button name="action_approve" string="Approve" type="object" states="submit,unapprove" class="oe_highlight" groups="pabi_base.group_cooperate_budget"/>
+                        <button name="action_unapprove" string="Un-Approve" type="object" states="approve" />
                         <button name="action_reject" string="Reject" type="object" states="submit"/>
                         <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
                         <button name="action_delete" string="Delete" type="object" states="approve"/>
@@ -345,11 +347,10 @@
                             </page>
                             <page string="Syncronize Status">
                                 <p>
-                                    The button
-                                    <b>Push Changes to Budget Control</b>
-                                    will be clickable only if there are records in Sync Status.<br/>
-                                    For Sync Status of each Fiscal Year to appear here, make sure it first synced (pull) from Budget Control.<br/>
-                                    Note: It is intended that, syncing will only occur after budget control has been created.
+                                    When palnning amount is approved and/or updated, the
+                                    <b>Need Sync</b> button will appear.<br/>
+                                    Clicking the Need Sync button will link you to the Budget Control,
+                                    which allow user to <b>Pull</b> the updates.
                                 </p>
                                 <field name="sync_ids">
                                     <tree editable="bottom">

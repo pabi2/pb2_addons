@@ -3,6 +3,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
 from openerp import tools
+from openerp.tools import float_compare
 from openerp.exceptions import Warning as UserError, ValidationError
 from openerp.addons.pabi_base.models.res_investment_structure \
     import CONSTRUCTION_PHASE
@@ -21,6 +22,7 @@ class ResInvestConstruction(LogCommon, models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('submit', 'Submitted'),
+         ('unapprove', 'Un-Approved'),
          ('approve', 'Approved'),
          ('reject', 'Rejected'),
          ('delete', 'Deleted'),
@@ -37,21 +39,25 @@ class ResInvestConstruction(LogCommon, models.Model):
         string='Duration (months)',
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
+        copy=False,
     )
     date_start = fields.Date(
         string='Start Date',
-        required=True,
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
+        copy=False,
     )
     date_end = fields.Date(
         string='End Date',
-        required=False,
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
+        copy=False,
     )
     pm_employee_id = fields.Many2one(
         'hr.employee',
@@ -93,7 +99,8 @@ class ResInvestConstruction(LogCommon, models.Model):
         string='Approved Budget',
         default=0.0,
         readonly=True,
-        states={'submit': [('readonly', False)]},
+        states={'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
         write=['pabi_base.group_cooperate_budget'],  # Only Corp can edit
     )
     amount_phase_approve = fields.Float(
@@ -132,12 +139,21 @@ class ResInvestConstruction(LogCommon, models.Model):
          'Constuction Project Code must be unique!'),
     ]
 
+    @api.model
+    def _check_cooperate_access(self):
+        if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
+            raise UserError(
+                _('Only Cooperate Budget user is allowed!'))
+        return True
+
     @api.multi
     @api.depends('phase_ids.amount_phase_approve')
     def _compute_amount_phase_approve(self):
         for rec in self:
             amount_total = sum([x.amount_phase_approve for x in rec.phase_ids])
-            if amount_total and amount_total != rec.amount_budget_approve:
+            if amount_total and float_compare(amount_total,
+                                              rec.amount_budget_approve,
+                                              precision_digits=2) != 0:
                 raise ValidationError(
                     _('Phases Approved Amount != Project Approved Amount'))
             rec.amount_phase_approve = amount_total
@@ -231,8 +247,17 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def action_approve(self):
+        self._check_cooperate_access()
         self.action_create_phase()
         self.write({'state': 'approve'})
+
+    @api.multi
+    def action_unapprove(self):
+        # Unapprove all phases, only those in Approved state
+        for rec in self:
+            rec.phase_ids.filtered(
+                lambda l: l.state == 'approve').action_unapprove()
+        self.write({'state': 'unapprove'})
 
     @api.multi
     def action_reject(self):
@@ -281,6 +306,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('submit', 'Submitted'),
+         ('unapprove', 'Un-Approved'),
          ('approve', 'Approved'),
          ('reject', 'Rejected'),
          ('delete', 'Deleted'),
@@ -298,7 +324,8 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         default=0.0,
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
     )
     amount_phase_plan = fields.Float(
         string='Planned Budget (Phase)',
@@ -314,19 +341,22 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         string='Duration (months)',
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
     )
     date_start = fields.Date(
         string='Start Date',
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
     )
     date_end = fields.Date(
         string='End Date',
         readonly=True,
         states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
     )
     date_expansion = fields.Date(
         string='Date Expansion',
@@ -608,32 +638,37 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def _set_amount_plan_init(self):
         for phase in self:
             for plan in phase.phase_plan_ids:
-                plan.amount_plan_init = plan.amount_plan
+                if not plan.amount_plan_init:
+                    plan.amount_plan_init = plan.amount_plan
+
+    @api.multi
+    def _check_amount_plan_approve(self):
+        for phase in self:
+            if float_compare(phase.amount_phase_plan,
+                             phase.amount_phase_approve,
+                             precision_digits=2) != 0:
+                raise UserError(
+                    _('Planned amount not equal to approved amount!'))
 
     @api.multi
     def _create_phase_sync(self):
-        # Create phase sync of all fiscalyear_ids
-        PhaseSync = self.env['res.invest.construction.phase.sync']
+        # Create phase sync of all fiscalyear_ids (if not exists)
         for phase in self:
+            syncs = []
+            exist_fiscal_ids = [x.fiscalyear_id.id for x in phase.sync_ids]
             for fiscalyear in phase.fiscalyear_ids:
-                PhaseSync.create({
-                    'phase_id': phase.id,
-                    'fiscalyear_id': fiscalyear.id,
-                    'last_sync': False,
-                    'synced': False,
-                })
-
-    @api.model
-    def _check_access(self):
-        if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
-            raise UserError(
-                _('You are not authorized see construction budget control!'))
-        return True
+                # Not already exists, create it.
+                if fiscalyear.id not in exist_fiscal_ids:
+                    sync = {'fiscalyear_id': fiscalyear.id,
+                            'last_sync': False,
+                            'synced': False, }
+                    syncs.append((0, 0, sync))
+            phase.write({'sync_ids': syncs})
 
     @api.multi
     def action_open_budget_control(self):
         self.ensure_one()
-        self._check_access()
+        self.env['res.invest.construction']._check_cooperate_access()
         action = self.env.ref('pabi_chartfield.'
                               'act_account_budget_view_invest_construction')
         result = action.read()[0]
@@ -646,7 +681,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     @api.multi
     def action_open_to_sync_budget_control(self):
         self.ensure_one()
-        self._check_access()
+        self.env['res.invest.construction']._check_cooperate_access()
         action = self.env.ref('pabi_chartfield.'
                               'act_account_budget_view_invest_construction')
         result = action.read()[0]
@@ -665,9 +700,15 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
 
     @api.multi
     def action_approve(self):
+        self.env['res.invest.construction']._check_cooperate_access()
+        self._check_amount_plan_approve()
         self._set_amount_plan_init()
         self._create_phase_sync()
         self.write({'state': 'approve'})
+
+    @api.multi
+    def action_unapprove(self):
+        self.write({'state': 'unapprove'})
 
     @api.multi
     def action_reject(self):
