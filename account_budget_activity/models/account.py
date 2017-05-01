@@ -27,8 +27,21 @@ class AccountFiscalyear(models.Model):
                 for level_type in AccountBudget.BUDGET_LEVEL_TYPE.items():
                     budget_level = BudgetLevel.new()
                     budget_level.type = level_type[0]
-                    budget_level.release_interval = False
+                    # budget_level.release_interval = False
                     rec.budget_level_ids += budget_level
+
+    @api.multi
+    def get_fiscal_month_vs_period(self):
+        """ return {peirod: month, ...}, as {1: 10, ... 12: 9} """
+        self.ensure_one()
+        month = int(self.date_start[5:7])
+        result = {}
+        for i in range(12):
+            result[month] = i + 1
+            month += 1
+            if month > 12:
+                month = 1
+        return result
 
 
 class AccountFiscalyearBudgetLevel(models.Model):
@@ -54,30 +67,38 @@ class AccountFiscalyearBudgetLevel(models.Model):
         string='Control',
         default=False,
     )
-#     pr_budget_control = fields.Boolean(
-#         string='Control on PR',
-#         default=False,
-#     )
-#     po_budget_control = fields.Boolean(
-#         string='Control on PO',
-#         default=False,
-#     )
-    exp_budget_control = fields.Boolean(
-        string='Control on Expense',
-        default=False,
+    budget_release = fields.Selection(
+        [('manual', 'Manual Release'),
+         ('auto', 'Auto Release (past actual + future plan)'), ],
+        string='Budget Check Type',
+        default='manual',
+        required=True,
     )
-    release_interval = fields.Selection(
-        [('1', '1 Month'),
-         ('3', '3 Months'),
-         ('6', '6 Months'),
-         ('12', '12 Months'), ],
-        string='Budget Release Interval',
-        default='1'
-    )
-    is_auto_release = fields.Boolean(
-        string='Auto Release',
-        default=False,
-    )
+    # release_interval = fields.Selection(
+    #     [('1', '1 Month'),
+    #      ('3', '3 Months'),
+    #      ('6', '6 Months'),
+    #      ('12', '12 Months'), ],
+    #     string='Budget Release Interval',
+    #     default='1'
+    # )
+    # pr_budget_control = fields.Boolean(
+    #     string='Control on PR',
+    #     default=False,
+    # )
+    # po_budget_control = fields.Boolean(
+    #     string='Control on PO',
+    #     default=False,
+    # )
+    # exp_budget_control = fields.Boolean(
+    #     string='Control on Expense',
+    #     default=False,
+    # )
+    # kittiu: removed
+    # is_auto_release = fields.Boolean(
+    #     string='Auto Release',
+    #     default=False,
+    # )
 
     @api.onchange('is_budget_control')
     def onchange_is_budget_control(self):

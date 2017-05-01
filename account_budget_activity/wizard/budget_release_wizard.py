@@ -7,20 +7,21 @@ import openerp.addons.decimal_precision as dp
 class BudgetReleaseWizard(models.TransientModel):
     _name = "budget.release.wizard"
 
-    release_ids = fields.One2many(
-        'budget.release.line',
-        'wizard_id',
-        string='Release Lines',
-    )
+    # release_ids = fields.One2many(
+    #     'budget.release.line',
+    #     'wizard_id',
+    #     string='Release Lines',
+    # )
     progress = fields.Float(
         string='Progress',
+        readonly=True,
     )
     amount_to_release = fields.Float(
         string="Amount To Release",
     )
 
     @api.onchange('amount_to_release')
-    def _compute_progress(self):
+    def _onchange_amount_to_release(self):
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
         BudgetLine = self.env['account.budget.line']
@@ -31,50 +32,48 @@ class BudgetReleaseWizard(models.TransientModel):
             budget_lines = BudgetLine.search([('budget_id', '=', active_id)])
 
         planned_amount = sum([l.planned_amount for l in budget_lines])
-        released_amount = sum([l.released_amount for l in budget_lines])
-
         if not planned_amount:
             self.progress = 0.0
         else:
-            self.progress = released_amount / planned_amount * 100
+            self.progress = self.amount_to_release / planned_amount * 100
 
-    # TODO: Should move to budget plan object?
-    @api.model
-    def _domain_release_pattern(self, plan):
-        return [('fiscal_id', '=', plan.fiscalyear_id.id)]
+    # # TODO: Should move to budget plan object?
+    # @api.model
+    # def _domain_release_pattern(self, plan):
+    #     return [('fiscal_id', '=', plan.fiscalyear_id.id)]
 
-    @api.model
-    def _get_release_pattern(self, plan):
-        domain = self._domain_release_pattern(plan)
-        budget_level = \
-            self.env['account.fiscalyear.budget.level'].search(domain, limit=1)
-        interval = budget_level.release_interval and \
-            int(budget_level.release_interval) or 1
-        interval = False  # probuse
-        start_period = 1  # by default
-        is_auto_release = budget_level.is_auto_release
-        return interval, start_period, is_auto_release
+    # @api.model
+    # def _get_release_pattern(self, plan):
+    #     domain = self._domain_release_pattern(plan)
+    #     budget_level = \
+    #       self.env['account.fiscalyear.budget.level'].search(domain, limit=1)
+    #     interval = budget_level.release_interval and \
+    #         int(budget_level.release_interval) or 1
+    #     interval = False  # probuse
+    #     start_period = 1  # by default
+    #     is_auto_release = budget_level.is_auto_release
+    #     return interval, start_period, is_auto_release
 
-    @api.model
-    def _calc_release_periods(self, interval, start_period):
-        # i.e., if interval = 3 and start_period = 3
-        # return [[3,4,5], [6,7,8], [9,10,11], [12]]
-        periods = []
-        sub_period = []
-        next_period = start_period
-        for i in range(12):  # Max 12 months
-            mo = i + 1
-            if mo < start_period:
-                continue
-            if mo == next_period:
-                next_period += interval
-                if sub_period:
-                    periods.append(sub_period)
-                    sub_period = []
-            sub_period.append(mo)
-        if sub_period:
-            periods.append(sub_period)
-        return periods
+    # @api.model
+    # def _calc_release_periods(self, interval, start_period):
+    #     # i.e., if interval = 3 and start_period = 3
+    #     # return [[3,4,5], [6,7,8], [9,10,11], [12]]
+    #     periods = []
+    #     sub_period = []
+    #     next_period = start_period
+    #     for i in range(12):  # Max 12 months
+    #         mo = i + 1
+    #         if mo < start_period:
+    #             continue
+    #         if mo == next_period:
+    #             next_period += interval
+    #             if sub_period:
+    #                 periods.append(sub_period)
+    #                 sub_period = []
+    #         sub_period.append(mo)
+    #     if sub_period:
+    #         periods.append(sub_period)
+    #     return periods
 
     # @api.model
     # def _prepare_budget_release_wizard(self, plan):
@@ -146,54 +145,54 @@ class BudgetReleaseWizard(models.TransientModel):
                     {line.id: line.planned_amount - line.released_amount})
         budget_lines.release_budget_line(release_result)
 
-
-class BudgetReleaseLine(models.TransientModel):
-    _name = "budget.release.line"
-
-    wizard_id = fields.Many2one(
-        'budget.release.wizard',
-        string='Wizard',
-        readonly=True,
-    )
-    from_period = fields.Integer(
-        string='From Period',
-        readonly=True,
-    )
-    to_period = fields.Integer(
-        string='To Period',
-        readonly=True,
-    )
-    from_date = fields.Date(
-        string='From Date',
-        readonly=True,
-    )
-    to_date = fields.Date(
-        string='To Date',
-        readonly=True,
-    )
-    planned_amount = fields.Float(
-        string='Planned Amount',
-        digits_compute=dp.get_precision('Account'),
-        readonly=True,
-    )
-    released_amount = fields.Float(
-        string='Released Amount',
-        digits_compute=dp.get_precision('Account'),
-        readonly=True,
-    )
-    release = fields.Boolean(
-        string='Release',
-        default=False,
-    )
-    ready = fields.Boolean(
-        string='Ready to release',
-        help="Whether budget should be released according to release interval",
-    )
-    past = fields.Boolean(
-        string='Past release',
-        help="Whether this is past release, and can't be unreleased",
-    )
-
-    @api.onchange('release')
-    def _onchange_release(self):
-        self.released_amount = self.release and self.planned_amount or 0.0
+#
+# class BudgetReleaseLine(models.TransientModel):
+#     _name = "budget.release.line"
+#
+#     wizard_id = fields.Many2one(
+#         'budget.release.wizard',
+#         string='Wizard',
+#         readonly=True,
+#     )
+#     from_period = fields.Integer(
+#         string='From Period',
+#         readonly=True,
+#     )
+#     to_period = fields.Integer(
+#         string='To Period',
+#         readonly=True,
+#     )
+#     from_date = fields.Date(
+#         string='From Date',
+#         readonly=True,
+#     )
+#     to_date = fields.Date(
+#         string='To Date',
+#         readonly=True,
+#     )
+#     planned_amount = fields.Float(
+#         string='Planned Amount',
+#         digits_compute=dp.get_precision('Account'),
+#         readonly=True,
+#     )
+#     released_amount = fields.Float(
+#         string='Released Amount',
+#         digits_compute=dp.get_precision('Account'),
+#         readonly=True,
+#     )
+#     release = fields.Boolean(
+#         string='Release',
+#         default=False,
+#     )
+#     ready = fields.Boolean(
+#         string='Ready to release',
+#         help="Whether budget should be released according to release interval",
+#     )
+#     past = fields.Boolean(
+#         string='Past release',
+#         help="Whether this is past release, and can't be unreleased",
+#     )
+#
+#     @api.onchange('release')
+#     def _onchange_release(self):
+#         self.released_amount = self.release and self.planned_amount or 0.0
