@@ -139,6 +139,15 @@ class ResInvestConstruction(LogCommon, models.Model):
          'Constuction Project Code must be unique!'),
     ]
 
+    @api.multi
+    @api.constrains('budget_plan_ids')
+    def _check_fiscalyear_unique(self):
+        for rec in self:
+            fiscalyear_ids = [x.fiscalyear_id.id for x in rec.budget_plan_ids]
+            for x in fiscalyear_ids:
+                if fiscalyear_ids.count(x) > 1:
+                    raise ValidationError(_('Duplicate fiscalyear plan'))
+
     @api.model
     def _check_cooperate_access(self):
         if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
@@ -389,8 +398,10 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     )
     fiscalyear_ids = fields.Many2many(
         'account.fiscalyear',
+        'construction_phase_fiscalyear_rel', 'phase_id', 'fiscalyear_id',
         string='Related Fiscal Years',
         compute='_compute_fiscalyear_ids',
+        store=True,
         help="All related fiscal years for this phases"
     )
     budget_count = fields.Integer(
@@ -421,6 +432,16 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         ('number_uniq', 'unique(code)',
          'Constuction Phase Code must be unique!'),
     ]
+
+    @api.multi
+    @api.constrains('phase_plan_ids')
+    def _check_fiscalyear_unique(self):
+        for rec in self:
+            period_ids = [x.calendar_period_id.id for x in rec.phase_plan_ids]
+            for x in period_ids:
+                if period_ids.count(x) > 1:
+                    raise ValidationError(
+                        _('Duplicate period in budget plan!'))
 
     @api.multi
     @api.constrains('date_expansion', 'date_start', 'date_end')
@@ -586,11 +607,12 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
             phase.fiscalyear_ids = list(set(fiscalyear_ids))
 
     @api.model
-    def _prepare_mo_dict(self, fiscalyear):
+    def _prepare_mo_dict(self, fiscalyear, prefix):
+        """ {1: 'm10', ..., 12: 'm9'}, {'m1': False, ..., 'm12': False} """
         month = int(fiscalyear.date_start[5:7])
         mo_dict = {}
         for i in range(12):
-            mo_dict.update({month: 'm' + str(i + 1)})
+            mo_dict.update({month: prefix + str(i + 1)})
             month += 1
             if month > 12:
                 month = 1
@@ -617,7 +639,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                     continue
                 # Prepare update dict
                 fiscalyear = sync.fiscalyear_id
-                mo_dict, vals = self._prepare_mo_dict(fiscalyear)
+                mo_dict, vals = self._prepare_mo_dict(fiscalyear, 'm')
                 # Update it
                 for plan in phase.phase_plan_ids.filtered(
                         lambda l: l.fiscalyear_id.id == fiscalyear.id):
@@ -751,11 +773,11 @@ class ResInvestConstructionBudgetPlan(models.Model):
         string='Amount',
         required=True,
     )
-    _sql_constraints = [
-        ('construction_plan_uniq',
-         'unique(invest_construction_id, fiscalyear_id)',
-         'Fiscal year must be unique for a construction project!'),
-    ]
+    # _sql_constraints = [
+    #     ('construction_plan_uniq',
+    #      'unique(invest_construction_id, fiscalyear_id)',
+    #      'Fiscal year must be unique for a construction project!'),
+    # ]
 
 
 class ResInvestConstructionPhasePlan(models.Model):
@@ -771,9 +793,23 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Calendar Period',
         required=True,
     )
-    amount_readonly = fields.Boolean(
+    period_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('done', 'Done'), ],
+        string='Period Status',
+        related='calendar_period_id.state',
+    )
+    past_period_le = fields.Boolean(
         string='Readonly',
-        compute='_compute_amount_readonly',
+        compute='_compute_past_period',
+        help="These peirods are less or equal to Today.\n"
+        "Used for making amount readonly",
+    )
+    past_period_lt = fields.Boolean(
+        string='Readonly',
+        compute='_compute_past_period',
+        help="These peirods are less then Today.\n"
+        "Used for calculate rolling amount.",
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -795,28 +831,63 @@ class ResInvestConstructionPhasePlan(models.Model):
         store=True,
     )
     amount_plan_init = fields.Float(
-        string='Init Amount',
+        string='Initial Plan',
         readonly=True,
     )
     amount_plan = fields.Float(
-        string='Amount',
+        string='Current Plan',
         required=True,
     )
-    _sql_constraints = [
-        ('construction_phase_plan_uniq',
-         'unique(invest_construction_phase_id, calendar_period_id)',
-         'Period must be unique for a construction phase!'),
-    ]
+    amount_actual = fields.Float(
+        string='Actual',
+        compute='_compute_amount_actual_rolling',
+        help="Actual amount from related budget line",
+    )
+    amount_rolling = fields.Float(
+        string='Rolling',
+        compute='_compute_amount_actual_rolling',
+        help="- Actual amount from  for closed period\n"
+        "- Plan amount for future period",
+    )
+    # _sql_constraints = [
+    #     ('construction_phase_plan_uniq',
+    #      'unique(invest_construction_phase_id, calendar_period_id)',
+    #      'Period must be unique for a construction phase!'),
+    # ]
 
     @api.multi
-    @api.depends('calendar_period_id')
-    def _compute_amount_readonly(self):
+    @api.depends()
+    def _compute_past_period(self):
         for rec in self:
             today = fields.Date.context_today(self)
-            if rec.calendar_period_id.date_start < today:
-                rec.amount_readonly = True
-            else:
-                rec.amount_readonly = False
+            rec.past_period_le = \
+                rec.calendar_period_id.date_start <= today or False
+            rec.past_period_lt = \
+                rec.calendar_period_id.date_stop < today or False
+
+    @api.multi
+    @api.depends()
+    def _compute_amount_actual_rolling(self):
+        Phase = self.env['res.invest.construction.phase']
+        Sync = self.env['res.invest.construction.phase.sync']
+        for plan in self:
+            syncs = Sync.search([
+                ('phase_id', '=', plan.invest_construction_phase_id.id),
+                ('fiscalyear_id', '=', plan.fiscalyear_id.id), ])
+            if not syncs:
+                continue
+            if len(syncs) > 1:
+                raise ValidationError(_('> 1 sync for a phase fiscal!'))
+            budget_line = syncs[0].sync_budget_line_id
+            if not budget_line:
+                continue
+            phase_month = int(plan.calendar_period_id.date_start[5:7])
+            # get actual amount from column a1...a12 on budget_line
+            mo_dict, _x = Phase._prepare_mo_dict(plan.fiscalyear_id, 'a')
+            plan.amount_actual = budget_line[mo_dict[phase_month]]
+            # rolling = actual (past period) + plan (future)
+            plan.amount_rolling = \
+                plan.past_period_lt and plan.amount_actual or plan.amount_plan
 
     @api.multi
     @api.constrains('calendar_period_id')
@@ -864,6 +935,7 @@ class ResInvestConstructionPhaseSync(models.Model):
         string='Budget Line Ref',
         index=True,
         ondelete='set null',
+        help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(
         'account.budget',
@@ -899,16 +971,24 @@ class InvestConstructionPhaseSummary(models.Model):
         string='fiscalyear',
         readonly=True,
     )
-    amount = fields.Float(
-        string='Amount',
+    amount_plan = fields.Float(
+        string='Plan',
         readonly=True,
+    )
+    amount_actual = fields.Float(
+        string='Actual',
+        compute='_compute_amount_summary',
+    )
+    amount_rolling = fields.Float(
+        string='Rolling',
+        compute='_compute_amount_summary',
     )
 
     def init(self, cr):
 
         _sql = """
             select min(id) as id, invest_construction_phase_id as phase_id,
-                    fiscalyear_id, sum(amount_plan) as amount
+                    fiscalyear_id, sum(amount_plan) as amount_plan
             from res_invest_construction_phase_plan
             group by invest_construction_phase_id, fiscalyear_id
         """
@@ -917,3 +997,14 @@ class InvestConstructionPhaseSummary(models.Model):
         cr.execute(
             """CREATE or REPLACE VIEW %s as (%s)""" %
             (self._table, _sql,))
+
+    @api.multi
+    @api.depends()
+    def _compute_amount_summary(self):
+        for rec in self:
+            rec.amount_actual = sum(
+                [x.amount_actual for x in rec.phase_id.phase_plan_ids
+                 if x.fiscalyear_id == rec.fiscalyear_id])
+            rec.amount_rolling = sum(
+                [x.amount_rolling for x in rec.phase_id.phase_plan_ids
+                 if x.fiscalyear_id == rec.fiscalyear_id])

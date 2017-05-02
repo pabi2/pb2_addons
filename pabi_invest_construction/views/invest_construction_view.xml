@@ -210,7 +210,7 @@
             <field name="name">view.invest.construction.gantt</field>
             <field name="model">res.invest.construction</field>
             <field name="arch" type="xml">
-                <gantt date_start="date_start" date_stop="date_stop" string="Projects"></gantt>
+                <gantt date_start="date_start" date_stop="date_stop" string="Projects" create="0"></gantt>
             </field>
         </record>
 
@@ -329,8 +329,11 @@
                                         <field name="fiscalyear_id" invisible="1"/>
                                         <field name="calendar_period_id" attrs="{'readonly': [('id', '!=', False)]}"/>
                                         <field name="amount_plan_init" sum="Total Plan"/>
-                                        <field name="amount_readonly" invisible="1"/>
-                                        <field name="amount_plan" sum="Total Plan" attrs="{'readonly': [('amount_readonly', '=', True)]}"/>
+                                        <field name="past_period_le" invisible="1"/>
+                                        <field name="amount_plan" sum="Total Plan" attrs="{'readonly': [('past_period_le', '=', True)]}"/>
+                                        <field name="amount_actual" sum="Actual"/>
+                                        <field name="past_period_lt" invisible="1"/>
+                                        <field name="amount_rolling" sum="Rolling"/>
                                     </tree>
                                 </field>
                                 <group>
@@ -339,7 +342,9 @@
                                         <field name="summary_ids" nolabel="1">
                                             <tree editable="bottom" string="Summary" create="0" delete="0">
                                                 <field name="fiscalyear_id"/>
-                                                <field name="amount" sum="Total Amount"/>
+                                                <field name="amount_plan" sum="Total Plan"/>
+                                                <field name="amount_actual" sum="Total Actual"/>
+                                                <field name="amount_rolling" sum="Total Rolling"/>
                                             </tree>
                                         </field>
                                     </group>
@@ -390,7 +395,7 @@
             <field name="name">view.invest.construction.phase.gantt</field>
             <field name="model">res.invest.construction.phase</field>
             <field name="arch" type="xml">
-                <gantt date_start="date_start" date_stop="date_stop" string="Projects"></gantt>
+                <gantt date_start="date_start" date_stop="date_stop" string="Projects" create="0"></gantt>
             </field>
         </record>
 

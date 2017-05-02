@@ -44,7 +44,7 @@
             </field>
         </record>
 
-        <record id="account_budget_view_tree" model="ir.ui.view" >
+        <!-- <record id="account_budget_view_tree" model="ir.ui.view" >
             <field name="name">account.budget.view.tree</field>
             <field name="model">account.budget</field>
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_tree"/>
@@ -53,7 +53,7 @@
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         <record id="view_account_budget_line_tree" model="ir.ui.view" >
             <field name="name">account.budget.line.tree</field>

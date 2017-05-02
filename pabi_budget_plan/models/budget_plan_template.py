@@ -248,68 +248,43 @@ class BudgetPlanLineTemplate(ChartField, models.Model):
     )
     m1 = fields.Float(
         string='Oct',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m2 = fields.Float(
         string='Nov',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m3 = fields.Float(
         string='Dec',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m4 = fields.Float(
         string='Jan',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m5 = fields.Float(
         string='Feb',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m6 = fields.Float(
         string='Mar',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m7 = fields.Float(
         string='Apr',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m8 = fields.Float(
         string='May',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m9 = fields.Float(
         string='Jun',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m10 = fields.Float(
         string='Jul',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m11 = fields.Float(
         string='Aug',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     m12 = fields.Float(
         string='Sep',
-        required=False,
-        digits_compute=dp.get_precision('Account'),
     )
     planned_amount = fields.Float(
         string='Planned Amount',
         compute='_compute_planned_amount',
-        digits_compute=dp.get_precision('Account'),
         store=True,
     )
     description = fields.Char(

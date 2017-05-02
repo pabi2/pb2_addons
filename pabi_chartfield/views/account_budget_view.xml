@@ -128,6 +128,7 @@
             </field>
         </record>
 
+        # Tree Views for all Structue
         <record id="unit_base_tree_view" model="ir.ui.view">
             <field name="name">unit.base.tree.view</field>
             <field name="model">account.budget.line</field>
@@ -169,10 +170,11 @@
                     <field name="activity_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
+                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -190,7 +192,6 @@
                             string="Split Budget Line Period Wise"
                             type="action" invisible="1"
                             icon="gtk-justify-fill" />
-
                 </tree>
             </field>
         </record>
@@ -236,10 +237,11 @@
                     <field name="activity_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
+                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -293,10 +295,11 @@
                     <field name="activity_group_id" invisible="0"/>
                     <field name="activity_id" invisible="0"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
+                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -352,10 +355,11 @@
                     <field name="activity_group_id" invisible="1"/>
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
+                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -415,10 +419,11 @@
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
+                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>

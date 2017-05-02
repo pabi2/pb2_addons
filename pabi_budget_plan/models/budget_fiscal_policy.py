@@ -405,9 +405,10 @@ class BudgetFiscalPolicy(models.Model):
     def prepare_fiscal_budget_policy(self):
         self.ensure_one()
         self.line_ids.unlink()  # Delete all
-        self._prepare_project_budget_policy()
-        self._prepare_unit_budget_policy()
-        self._prepare_invest_asset_budget_policy()
+        self.prepare_project_budget_policy()
+        self.prepare_unit_budget_policy()
+        self.prepare_invest_asset_budget_policy()
+        # self.prepare_invest_construction_budget_policy()
 
     @api.model
     def _get_project_budget_policy_sql(self):
@@ -420,7 +421,7 @@ class BudgetFiscalPolicy(models.Model):
         return sql
 
     @api.model
-    def _prepare_project_budget_policy(self):
+    def prepare_project_budget_policy(self):
         self.ensure_one()
         # Projects
         self._cr.execute(self._get_project_budget_policy_sql() %
@@ -447,7 +448,7 @@ class BudgetFiscalPolicy(models.Model):
         return sql
 
     @api.multi
-    def _prepare_unit_budget_policy(self):
+    def prepare_unit_budget_policy(self):
         self.ensure_one()
         # Unit Base, group by Org
         self._cr.execute(self._get_unit_budget_policy_sql() %
@@ -474,7 +475,7 @@ class BudgetFiscalPolicy(models.Model):
         return sql
 
     @api.model
-    def _prepare_invest_asset_budget_policy(self):
+    def prepare_invest_asset_budget_policy(self):
         self.ensure_one()
         # Investment Asset, group by Org
         self._cr.execute(self._get_invest_asset_budget_policy_sql() %
