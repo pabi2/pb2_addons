@@ -690,8 +690,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         today = fields.Date.context_today(self)
         for r in self:
             fiscalyear = r.fiscalyear_id
-            print r
-            print fiscalyear
             rolling_amount = 0.0
             if today > fiscalyear.date_stop:
                 rolling_amount = sum(r.a1, r.a2, r.a3, r.a4, r.a5, r.a6,
@@ -711,13 +709,18 @@ class AccountBudgetLine(ActivityCommon, models.Model):
             if r.rolling_amount != rolling_amount:  # For performance
                 r.rolling_amount = rolling_amount
             # If budget release is auto (rolling), update to released_amount
-            budget_level = fiscalyear.budget_level_ids.filtered(
-                lambda l: l.type == r.chart_view)
+            budget_level_type = self._get_budget_level_type_hook(r)
+            budget_level = self.budget_level_ids.filtered(
+                lambda l: l.type == budget_level_type)
             if r.id and budget_level.budget_release == 'auto':
                 self._cr.execute("""
                     update account_budget_line set released_amount = %s
                     where id = %s
                 """, (rolling_amount, r.id))
+
+    @api.model
+    def _get_budget_level_type_hook(self, budget_line):
+        return 'check_budget'
 
     @api.multi
     def release_budget_line(self, release_result):

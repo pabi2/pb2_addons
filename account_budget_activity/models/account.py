@@ -43,6 +43,17 @@ class AccountFiscalyear(models.Model):
                 month = 1
         return result
 
+    @api.multi
+    def _get_budget_level(self, ttype='check_budget'):
+        """
+        Get budget level by fiscalyear.
+        If type not specified, use 'check_budget', which is default type.
+        """
+        self.ensure_one()
+        budget_level = self.budget_level_ids.filtered(
+            lambda l: l.type == ttype)
+        return budget_level
+
 
 class AccountFiscalyearBudgetLevel(models.Model):
     _name = 'account.fiscalyear.budget.level'
