@@ -17,11 +17,11 @@ class AccountTaxReportWizard(models.TransientModel):
         string='Calendar Period',
     )
     calendar_from_period_id = fields.Many2one(
-        'account.period',
+        'account.period.calendar',
         string='Calendar Period From',
     )
     calendar_to_period_id = fields.Many2one(
-        'account.period',
+        'account.period.calendar',
         string='Calendar Period To',
     )
     tax_id = fields.Many2one(
