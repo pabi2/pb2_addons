@@ -223,6 +223,13 @@ class AccountBudgetLine(ChartField, models.Model):
         string='Breakdown Job Order Line ref.',
     )
 
+    @api.model
+    def _get_budget_level_type_hook(self, budget_line):
+        if 'chart_view' in budget_line and budget_line.chart_view:
+            return budget_line.chart_view
+        return super(AccountBudgetLine, self).\
+            _get_budget_level_type_hook(budget_line)
+
     @api.multi
     @api.depends()
     def _compute_display_name(self):
