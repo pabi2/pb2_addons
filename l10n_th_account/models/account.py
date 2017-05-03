@@ -186,7 +186,7 @@ class AccountPeriodCalendar(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute(
             """CREATE or REPLACE VIEW %s as (%s)""" %
-            (self._table, "select * from account_period",))
+            (self._table, "select * from account_period where special=false",))
 
 
 class AccountFiscalyear(models.Model):
