@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.tools.float_utils import float_round as round
 from openerp.exceptions import Warning as UserError
 from openerp.addons.l10n_th_account.models.account_voucher \
     import WHT_CERT_INCOME_TYPE, TAX_PAYER
@@ -169,9 +170,9 @@ class PrintWhtCertWizard(models.TransientModel):
             wht_lines = wht_lines.filtered(lambda l:
                                            l.wht_cert_income_type == ttype)
         if column == 'base':
-            return sum([x.base for x in wht_lines])
+            return round(sum([x.base for x in wht_lines]), 2)
         if column == 'tax':
-            return sum([x.amount for x in wht_lines])
+            return round(sum([x.amount for x in wht_lines]), 2)
         if column == 'desc':
             descs = [x.wht_cert_income_desc for x in wht_lines]
             descs = filter(lambda x: x is not False and x != '', descs)
