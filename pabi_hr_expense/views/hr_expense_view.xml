@@ -10,7 +10,7 @@
 			<field name="inherit_id" ref="hr_expense_advance_clearing.view_expenses_form_advance"/>
 			<field name="arch" type="xml">
 				<xpath expr="//field[@name='advance_clearing_ids']/tree/field[@name='invoiced_amount']" position="after">
-					<field name="validate_user_id" />
+					<field name="validate_user_id"/>
 				</xpath>
 			</field>
 		</record>
@@ -263,6 +263,21 @@
 		</record>
 
 		<!-- Expense Regulations -->
+		<record id="view_hr_expense_rule_search" model="ir.ui.view">
+				<field name="name">view.hr.expense.rule.search</field>
+				<field name="model">hr.expense.rule</field>
+				<field name="arch" type="xml">
+						<search string="Search for Expense Regulations">
+								<field name="activity_id" string="Activity" />
+								<field name="position" string="Position" />
+								<separator/>
+								<group expand="0" string="Group By">
+										<filter name="group_by_activity" string="Activity" context="{'group_by':'activity_id'}"/>
+								</group>
+					 </search>
+				</field>
+		</record>
+
 		<record id="view_hr_expense_rule_tree" model="ir.ui.view">
 			<field name="name">view.hr.expense.rule.tree</field>
 			<field name="model">hr.expense.rule</field>
