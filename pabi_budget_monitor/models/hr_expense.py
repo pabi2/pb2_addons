@@ -10,6 +10,8 @@ class HRExpenseExpense(models.Model):
     def _expense_budget_check(self):
         Budget = self.env['account.budget']
         for expense in self:
+            if expense.is_employee_advance:  # For AV, no budget check
+                continue
             doc_date = expense.date
             doc_lines = Budget.convert_lines_to_doc_lines(expense.line_ids)
             res = Budget.post_commit_budget_check(doc_date, doc_lines)
