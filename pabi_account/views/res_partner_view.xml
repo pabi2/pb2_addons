@@ -10,20 +10,24 @@
                 <xpath expr="//field[@name='bank_ids']/tree/field[@name='owner_name']" position="after">
                     <field name="active"/>
                     <field name="default"/>
-          					<button name="%(action_approve_bank_account)d" type="action" string="Approve Bank Account" icon="gtk-ok"/>
+                    <button name="%(action_approve_bank_account)d" type="action" string="Approve Bank Account" icon="gtk-ok"/>
                 </xpath>
                 <xpath expr="//field[@name='bank_ids']" position="after">
-                    <separator string="Bank Account Change History" />
-                    <field name="bank_account_history_ids" >
-                        <tree editable="bottom" >
-                            <field name="partner_id" invisible="1" />
-                            <field name="bank_account" />
-                            <field name="write_uid" />
-                            <field name="write_date" />
-                            <field name="action" />
-                            <field name="note" />
-                        </tree>
-                    </field>
+                    <group>
+                        <group name="account_change_history" string="Bank Account Change History">
+                            <field name="bank_account_history_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="partner_id" invisible="1"/>
+                                    <field name="bank_account"/>
+                                    <field name="write_uid"/>
+                                    <field name="write_date"/>
+                                    <field name="action"/>
+                                    <field name="note"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group name="account_extra" />
+                    </group>
                 </xpath>
             </field>
         </record>
