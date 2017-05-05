@@ -589,8 +589,8 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     )
     rolling_amount = fields.Float(
         string='Rolling Amount',
-        compute='_compute_rolling_amount',
-        store=True,
+        # compute='_compute_rolling_amount',
+        # store=True,
         help="Computed real time from past actual (a1-a12) and future plan "
         "(m1-m12) depend on current timing. And if budget level's is set as "
         "auto release, it will immediately update released amount"
