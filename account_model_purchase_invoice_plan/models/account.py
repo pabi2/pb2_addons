@@ -58,6 +58,7 @@ class AccountModel(models.Model):
             po_line = line.order_line_id
             analytic_account_id = False
             if po_line.account_analytic_id:
+                # kittiu: Can't check, because in pabi, we will have JN
                 # if not model.journal_id.analytic_journal_id:
                 #     raise except_orm(
                 #         _('No Analytic Journal!'),
