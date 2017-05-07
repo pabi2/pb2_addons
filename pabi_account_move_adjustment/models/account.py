@@ -88,3 +88,12 @@ class AccountJournal(models.Model):
             if vals.get('type') == 'adjust_no_budget':
                 vals['analytic_journal_id'] = False
         return super(AccountJournal, self).write(vals)
+
+
+class AccountModel(models.Model):
+    _inherit = 'account.model'
+
+    journal_id = fields.Many2one(
+        domain=[('type', 'in', ('adjust_budget', 'adjust_no_budget'))],
+        help="In PABI2, only 2 type of journal is allowed for adjustment",
+    )
