@@ -50,7 +50,7 @@ class AccountModel(models.Model):
             ('state', '=', 'draft'),
             ('date_invoice', '<', date),
             ('order_id.state', '=', 'approved'),
-            ('order_id.is_fin_lease', '=', False),
+            ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
         ])
         for line in invoice_plans:
             if line.installment == 0:
@@ -58,11 +58,11 @@ class AccountModel(models.Model):
             po_line = line.order_line_id
             analytic_account_id = False
             if po_line.account_analytic_id:
-                if not model.journal_id.analytic_journal_id:
-                    raise except_orm(
-                        _('No Analytic Journal!'),
-                        _("You have to define an analytic journal on the "
-                          "'%s' journal!") % (model.journal_id.name,))
+                # if not model.journal_id.analytic_journal_id:
+                #     raise except_orm(
+                #         _('No Analytic Journal!'),
+                #         _("You have to define an analytic journal on the "
+                #           "'%s' journal!") % (model.journal_id.name,))
                 analytic_account_id = po_line.account_analytic_id.id
             product = po_line.product_id
             account = product.property_account_expense or \
