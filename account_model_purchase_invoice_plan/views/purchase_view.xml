@@ -7,8 +7,8 @@
             <field name="inherit_id" ref="purchase_invoice_plan.purchase_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet//label[@for='use_invoice_plan']" position="after">
-                    <field name="is_fin_lease" attrs="{'invisible': [('use_invoice_plan', '=', False)]}" groups="account.group_account_user"/>
-                    <label for="is_fin_lease" attrs="{'invisible': [('use_invoice_plan', '=', False)]}" groups="account.group_account_user"/>
+                    <field name="is_fin_lease" attrs="{'invisible': [('is_fin_lease', '=', False)]}" />
+                    <label for="is_fin_lease" attrs="{'invisible': [('is_fin_lease', '=', False)]}" />
                 </xpath>
             </field>
         </record>

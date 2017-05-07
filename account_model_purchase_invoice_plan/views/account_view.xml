@@ -9,7 +9,7 @@
             <field name="inherit_id" ref="account.view_model_tree"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
-                    <field name="use_purchase_invoice_plan"/>
+                    <field name="special_type"/>
                 </field>
             </field>
         </record>
@@ -20,11 +20,13 @@
             <field name="inherit_id" ref="account.view_model_form"/>
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
-                    <field name="use_purchase_invoice_plan"/>
-                    <field name="accrual_account_id" attrs="{'invisible': [('use_purchase_invoice_plan', '=', False)], 'required': [('use_purchase_invoice_plan', '=', True)]}"/>
+                    <field name="special_type"/>
+                    <field name="accrual_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan')], 'required': [('special_type', '=', 'invoice_plan')]}"/>
+                    <field name="debit_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan_fin_lease')], 'required': [('special_type', '=', 'invoice_plan_fin_lease')]}"/>
+                    <field name="credit_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan_fin_lease')], 'required': [('special_type', '=', 'invoice_plan_fin_lease')]}"/>
                 </field>
                 <field name="lines_id" position="attributes">
-                    <attribute name="attrs">{'invisible': [('use_purchase_invoice_plan', '=', True)]}</attribute>
+                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
                 </field>
             </field>
         </record>

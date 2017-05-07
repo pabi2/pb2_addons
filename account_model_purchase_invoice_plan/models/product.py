@@ -19,5 +19,6 @@ class ProductTemplate(models.Model):
         string='Financial Lease',
         related='categ_id.is_fin_lease',
         store=True,
+        readonly=True,
         help='This will be used in purchase.order to compute is_fin_lease',
     )

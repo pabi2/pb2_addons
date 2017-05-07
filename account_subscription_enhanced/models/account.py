@@ -240,7 +240,7 @@ class AccountModel(models.Model):
     )
     reverse_type = fields.Selection(
         [('manual', 'Manual (by user)'),
-         ('auto', 'Auto (1st following month)')],
+         ('auto', 'Auto (1st day, following month)')],
         string='Reverse Type',
         required=True,
         default='manual',

@@ -7,29 +7,112 @@ from openerp.exceptions import Warning as UserError, except_orm
 class AccountModel(models.Model):
     _inherit = 'account.model'
 
-    use_purchase_invoice_plan = fields.Boolean(
-        string='Use Purchase Invoice Plan',
-        default=False,
+    special_type = fields.Selection(
+        [('invoice_plan', 'Purchase Invoice Plan'),
+         ('invoice_plan_fin_lease', 'Purchase Invoice Plan (Fin Lease)')],
+        string='Special Type',
         help="With this selection, journal entrires will be created based "
         "on due/draft purchase invoice plan."
     )
     accrual_account_id = fields.Many2one(
         'account.account',
         string='Accrual Account',
+        domain=[('type', '!=', 'view')]
+    )
+    debit_account_id = fields.Many2one(
+        'account.account',
+        string='Debit Account',
+        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+    )
+    credit_account_id = fields.Many2one(
+        'account.account',
+        string='Credit Account',
+        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
     )
 
-    @api.onchange('use_purchase_invoice_plan')
-    def _onchange_use_purchase_invoice_plan(self):
-        if self.use_purchase_invoice_plan:
+    @api.onchange('special_type')
+    def _onchange_special_type(self):
+        if self.special_type:
             self.lines_id = []
             self.lines_id = False
 
     @api.model
     def _prepare_move_line(self, model):
-        if model.use_purchase_invoice_plan:  # Case invoice plan
+        if model.special_type == 'invoice_plan':  # Case invoice plan
             return self._prepare_move_line_by_invoice_plan(model)
+        elif model.special_type == 'invoice_plan_fin_lease':
+            return self._prepare_move_line_by_invoice_plan_fin_lease(model)
         else:
             return super(AccountModel, self)._prepare_move_line(model)
+
+    @api.model
+    def _prepare_move_line_by_invoice_plan_fin_lease(self, model):
+        Period = self.env['account.period']
+        Purchase = self.env['purchase.order']
+        move_lines = []
+        context = self._context.copy()
+        date = context.get('date', False)
+        ctx = context.copy()
+        period = Period.with_context(ctx).find(date)
+        ctx.update({
+            'company_id': model.company_id.id,
+            'journal_id': model.journal_id.id,
+            'period_id': period.id
+        })
+        purchases = Purchase.search([
+            ('order_type', '=', 'purchase_order'),
+            ('state', '=', 'approved'),
+            ('is_fin_lease', '=', True),
+        ])
+        for purchase in purchases:
+            debit_account = model.debit_account_id
+            credit_account = model.credit_account_id
+            if not debit_account or not credit_account:
+                raise except_orm(
+                    _('No Account Configured!'),
+                    _("Model '%s' has no dr/cr account code defined!") %
+                    (model.name,))
+            # Currency
+            amount_currency = False
+            amount = 0.0
+            currency_id = False
+            po_currency = purchase.currency_id
+            company_currency = self.env.user.company_id.currency_id
+            if company_currency != po_currency:
+                amount_currency = purchase.amount_untaxed
+                amount = po_currency.compute(amount_currency,
+                                             company_currency)
+                currency_id = po_currency.id
+            else:
+                amount = purchase.amount_untaxed
+            # Debit
+            val = {
+                'journal_id': model.journal_id.id,
+                'period_id': period.id,
+                'analytic_account_id': False,
+                'name': '%s' % (purchase.name,),
+                'quantity': False,
+                'amount_currency': amount_currency,
+                'currency_id': currency_id,
+                'debit': amount,
+                'credit': False,
+                'account_id': model.debit_account_id.id,
+                'partner_id': purchase.partner_id.id,
+                'date': context.get('date', fields.Date.context_today(self)),
+                'date_maturity': context.get('date', time.strftime('%Y-%m-%d'))
+            }
+            move_lines.append((0, 0, val))
+            # Credit Accrual Account
+            val2 = val.copy()
+            val2.update({
+                'analytic_account_id': False,
+                'debit': False,
+                'credit': amount,
+                'account_id': model.accrual_account_id.id,
+                'amount_currency': -amount_currency,
+            })
+            move_lines.append((0, 0, val2))
+        return move_lines
 
     @api.model
     def _prepare_move_line_by_invoice_plan(self, model):
@@ -50,6 +133,7 @@ class AccountModel(models.Model):
             ('state', '=', 'draft'),
             ('date_invoice', '<', date),
             ('order_id.state', '=', 'approved'),
+            ('order_id.order_type', '=', 'purchase_order'),
             ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
         ])
         for line in invoice_plans:
@@ -123,8 +207,9 @@ class AccountSubscription(models.Model):
     def _validate_model_invoice_plan_type(self, vals):
         if vals.get('model_id', False) or vals.get('type', False):
             for rec in self:
-                if rec.model_id.use_purchase_invoice_plan and \
-                        rec.type != 'standard':
+                if rec.model_id.special_type in ('invoice_plan',
+                                                 'invoice_plan_fin_lease') \
+                        and rec.type != 'standard':
                     raise UserError(
                         _('Model "%s" is using invoice plan,\n'
                           'only valid type is "Standard"') %
