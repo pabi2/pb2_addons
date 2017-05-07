@@ -96,7 +96,7 @@ class AccountModel(models.Model):
                 'currency_id': currency_id,
                 'debit': amount,
                 'credit': False,
-                'account_id': model.debit_account_id.id,
+                'account_id': debit_account.id,
                 'partner_id': purchase.partner_id.id,
                 'date': context.get('date', fields.Date.context_today(self)),
                 'date_maturity': context.get('date', time.strftime('%Y-%m-%d'))
@@ -108,7 +108,7 @@ class AccountModel(models.Model):
                 'analytic_account_id': False,
                 'debit': False,
                 'credit': amount,
-                'account_id': model.accrual_account_id.id,
+                'account_id': credit_account.id,
                 'amount_currency': -amount_currency,
             })
             move_lines.append((0, 0, val2))
