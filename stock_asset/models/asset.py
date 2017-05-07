@@ -25,7 +25,7 @@ from openerp import models, fields, api
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    financial_asset = fields.Boolean(string='Is a financial Asset')
+    financial_asset = fields.Boolean(string='Is a financial asset')
 
 
 class StockMove(models.Model):
