@@ -51,7 +51,7 @@ class AccountModel(models.Model):
         Purchase = self.env['purchase.order']
         move_lines = []
         context = self._context.copy()
-        date = context.get('date', False)
+        date = context.get('date', fields.Date.context_today(self))
         ctx = context.copy()
         period = Period.with_context(ctx).find(date)
         ctx.update({
@@ -61,6 +61,7 @@ class AccountModel(models.Model):
         })
         purchases = Purchase.search([
             ('order_type', '=', 'purchase_order'),
+            ('date_contract_start', '<=', date),
             ('state', '=', 'approved'),
             ('is_fin_lease', '=', True),
         ])
@@ -98,8 +99,8 @@ class AccountModel(models.Model):
                 'credit': False,
                 'account_id': debit_account.id,
                 'partner_id': purchase.partner_id.id,
-                'date': context.get('date', fields.Date.context_today(self)),
-                'date_maturity': context.get('date', time.strftime('%Y-%m-%d'))
+                'date': date,
+                'date_maturity': date,
             }
             move_lines.append((0, 0, val))
             # Credit Accrual Account
@@ -120,7 +121,7 @@ class AccountModel(models.Model):
         InvoicePlan = self.env['purchase.invoice.plan']
         move_lines = []
         context = self._context.copy()
-        date = context.get('date', False)
+        date = context.get('date', fields.Date.context_today(self))
         ctx = context.copy()
         period = Period.with_context(ctx).find(date)
         ctx.update({
@@ -183,8 +184,8 @@ class AccountModel(models.Model):
                 'credit': False,
                 'account_id': account.id,
                 'partner_id': line.order_id.partner_id.id,
-                'date': context.get('date', fields.Date.context_today(self)),
-                'date_maturity': context.get('date', time.strftime('%Y-%m-%d'))
+                'date': date,
+                'date_maturity': date,
             }
             move_lines.append((0, 0, val))
             # Credit Accrual Account

@@ -6,6 +6,10 @@ from openerp.exceptions import ValidationError
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    date_contract_start = fields.Date(
+        string='Contract Start Date',
+        help="Hook Date",
+    )
     is_fin_lease = fields.Boolean(
         string='Financial Lease',
         compute='_compute_is_fin_lease',
