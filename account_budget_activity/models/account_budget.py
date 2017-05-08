@@ -127,7 +127,6 @@ class AccountBudget(models.Model):
     # )
     released_amount = fields.Float(
         string='Released Amount',
-        digits_compute=dp.get_precision('Account'),
         readonly=True,
     )
     budgeted_revenue = fields.Float(
@@ -148,6 +147,26 @@ class AccountBudget(models.Model):
         store=True,
         help="All Revenue - All Expense",
     )
+    budget_release = fields.Selection(
+        [('manual', 'Manual Release'),
+         ('auto', 'Full Auto Release'), ],
+        string='Budget Release Type',
+        compute='_compute_budget_release',
+        store=True,
+    )
+
+    @api.model
+    def _get_budget_level_type_hook(self, budget):
+        return 'check_budget'
+
+    @api.multi
+    @api.depends('fiscalyear_id')
+    def _compute_budget_release(self):
+        for budget in self:
+            budget_level_type = self._get_budget_level_type_hook(budget)
+            budget_level = budget.fiscalyear_id.budget_level_ids.filtered(
+                lambda l: l.type == budget_level_type)
+            budget.budget_release = budget_level.budget_release
 
     @api.multi
     @api.depends('budget_line_ids',
@@ -542,42 +561,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     m12 = fields.Float(
         string='Sep',
     )
-    a1 = fields.Float(
-        string='Oct Actual',
-    )
-    a2 = fields.Float(
-        string='Nov Actual',
-    )
-    a3 = fields.Float(
-        string='Dec Actual',
-    )
-    a4 = fields.Float(
-        string='Jan Actual',
-    )
-    a5 = fields.Float(
-        string='Feb Actual',
-    )
-    a6 = fields.Float(
-        string='Mar Actual',
-    )
-    a7 = fields.Float(
-        string='Apr Actual',
-    )
-    a8 = fields.Float(
-        string='May Actual',
-    )
-    a9 = fields.Float(
-        string='Jun Actual',
-    )
-    a10 = fields.Float(
-        string='Jul Actual',
-    )
-    a11 = fields.Float(
-        string='Aug Actual',
-    )
-    a12 = fields.Float(
-        string='Sep Actual',
-    )
     planned_amount = fields.Float(
         string='Planned Amount',
         compute='_compute_planned_amount',
@@ -586,19 +569,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     released_amount = fields.Float(
         string='Released Amount',
         readonly=True,
-    )
-    rolling_amount = fields.Float(
-        string='Rolling Amount',
-        # compute='_compute_rolling_amount',
-        # store=True,
-        help="Computed real time from past actual (a1-a12) and future plan "
-        "(m1-m12) depend on current timing. And if budget level's is set as "
-        "auto release, it will immediately update released amount"
-    )
-    actual_amount = fields.Float(
-        string='Actual Amount',
-        compute='_compute_actual_amount',
-        store=True,
     )
     budget_state = fields.Selection(
         BUDGET_STATE,
@@ -669,54 +639,13 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                 rec.m1, rec.m2, rec.m3, rec.m4, rec.m5, rec.m6,
                 rec.m7, rec.m8, rec.m9, rec.m10, rec.m11, rec.m12])
             rec.planned_amount = planned_amount
-
-    @api.multi
-    @api.depends('a1', 'a2', 'a3', 'a4', 'a5', 'a6',
-                 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',)
-    def _compute_actual_amount(self):
-        for rec in self:
-            actual_amount = sum([
-                rec.a1, rec.a2, rec.a3, rec.a4, rec.a5, rec.a6,
-                rec.a7, rec.a8, rec.a9, rec.a10, rec.a11, rec.a12])
-            rec.actual_amount = actual_amount
-
-    @api.multi
-    @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
-                 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
-                 'a1', 'a2', 'a3', 'a4', 'a5', 'a6',
-                 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',)
-    def _compute_rolling_amount(self):
-        Period = self.env['account.period']
-        today = fields.Date.context_today(self)
-        for r in self:
-            fiscalyear = r.fiscalyear_id
-            rolling_amount = 0.0
-            if today > fiscalyear.date_stop:
-                rolling_amount = sum(r.a1, r.a2, r.a3, r.a4, r.a5, r.a6,
-                                     r.a7, r.a8, r.a9, r.a10, r.a11, r.a12)
-            elif today >= fiscalyear.date_start:
-                mo_dict = fiscalyear.get_fiscal_month_vs_period()
-                current_period = Period.find(today)
-                month = int(current_period.date_start[5:7])  # i..e, 9
-                num_period = mo_dict[month]  # i.e., 12
-                # if num_period > 1:
-                for i in range(12):   # i.e., m1..m11
-                    if (i + 1) < num_period:
-                        rolling_amount += r['a' + str(i + 1)]  # Actual
-                    else:
-                        rolling_amount += r['m' + str(i + 1)]  # Plan
-            # If there is change in rolling amount
-            if r.rolling_amount != rolling_amount:  # For performance
-                r.rolling_amount = rolling_amount
-            # If budget release is auto (rolling), update to released_amount
-            budget_level_type = self._get_budget_level_type_hook(r)
-            budget_level = self.budget_level_ids.filtered(
-                lambda l: l.type == budget_level_type)
-            if r.id and budget_level.budget_release == 'auto':
+            # If budget release is auto, update to released_amount
+            budget_release = rec.budget_id.budget_release
+            if rec.id and budget_release == 'auto':
                 self._cr.execute("""
                     update account_budget_line set released_amount = %s
                     where id = %s
-                """, (rolling_amount, r.id))
+                """, (planned_amount, rec.id))
 
     @api.model
     def _get_budget_level_type_hook(self, budget_line):
@@ -724,12 +653,8 @@ class AccountBudgetLine(ActivityCommon, models.Model):
 
     @api.multi
     def release_budget_line(self, release_result):
+        # TODO: release amount must >= actual+commit and <= planned_amount
         for rec in self:
             amount_to_release = release_result.get(rec.id, 0.0)
-            if amount_to_release > rec.rolling_amount:
-                raise UserError(_("Not enough amount to release!"))
-            if amount_to_release < rec.actual_amount:
-                raise UserError(_("Released amount can't less than actuals!"))
-            new_release_amount = amount_to_release
-            rec.write({'released_amount': new_release_amount})
+            rec.write({'released_amount': amount_to_release})
         return

@@ -80,8 +80,8 @@ class AccountFiscalyearBudgetLevel(models.Model):
     )
     budget_release = fields.Selection(
         [('manual', 'Manual Release'),
-         ('auto', 'Auto Release (past actual + future plan)'), ],
-        string='Budget Check Type',
+         ('auto', 'Full Auto Release'), ],
+        string='Budget Release Type',
         default='manual',
         required=True,
     )

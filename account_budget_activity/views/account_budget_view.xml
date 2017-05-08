@@ -77,46 +77,6 @@
             </field>
         </record>
 
-        <record id="budget_line_tree_view_actual" model="ir.ui.view">
-            <field name="name">budget.line.tree.view.actual</field>
-            <field name="model">account.budget.line</field>
-            <field name="arch" type="xml">
-                <tree string="Budget Lines" editable="bottom" >
-                    <field name="budget_method"/>
-                    <field name="actual_amount" sum="Actual"/>
-                    <field name="a1" sum="a1"/>
-                    <field name="a2" sum="a2"/>
-                    <field name="a3" sum="a3"/>
-                    <field name="a4" sum="a"/>
-                    <field name="a5" sum="a1"/>
-                    <field name="a6" sum="a1"/>
-                    <field name="a7" sum="a1"/>
-                    <field name="a8" sum="a1"/>
-                    <field name="a9" sum="a1"/>
-                    <field name="a10" sum="a1"/>
-                    <field name="a11" sum="a1"/>
-                    <field name="a12" sum="a1"/>
-                </tree>
-            </field>
-        </record>
-        <record model="ir.actions.act_window" id="action_budget_line_tree_expense_actual">
-            <field name="name">Expense Actual Amount</field>
-            <field name="res_model">account.budget.line</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="budget_line_tree_view_actual"/>
-            <field name="context">{}</field>
-            <field name="domain">[('budget_id', '=', active_id), ('budget_method', '=', 'expense')]</field>
-        </record>
-        <record model="ir.actions.act_window" id="action_budget_line_tree_revenue_actual">
-            <field name="name">Revenue Actual Amount</field>
-            <field name="res_model">account.budget.line</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="budget_line_tree_view_actual"/>
-            <field name="context">{}</field>
-            <field name="domain">[('budget_id', '=', active_id), ('budget_method', '=', 'revenue')]</field>
-        </record>
 
         <record model="ir.ui.view" id="account_budget_view_form">
             <field name="name">account.budget.view.form</field>
@@ -153,6 +113,7 @@
                                 <field name="budgeted_revenue" />
                                 <field name="budgeted_expense" />
                                 <field name="budgeted_overall" />
+                                <field name="budget_release"/>
                             </group>
                             <group>
                                 <field name="fiscalyear_id"/>
@@ -168,13 +129,11 @@
                         </group>
                         <notebook>
                             <page string="Expense" name="expense">
-                                <button name="%(action_budget_line_tree_expense_actual)d" type="action" string="Actual Spending" class="oe_right"/>
                                 <div name="expense_extra"></div>
                                 <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id}"/>
                             </page>
                             <page string="Revenue" name="revenue">
-                                <button name="%(action_budget_line_tree_revenue_actual)d" type="action" string="Actual Spending" class="oe_right"/>
                                 <div name="revenue_extra"></div>
                                 <field name="budget_revenue_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
@@ -262,7 +221,6 @@
                     <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(action_budget_release_wizard)d" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
                     <field name="released_amount" sum="Released"/>
-                    <field name="rolling_amount" sum="Rolling"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
