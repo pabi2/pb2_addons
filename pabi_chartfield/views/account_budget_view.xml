@@ -174,7 +174,6 @@
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -241,7 +240,6 @@
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -299,7 +297,6 @@
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -359,7 +356,6 @@
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>
@@ -423,7 +419,6 @@
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="rolling_amount" sum="Rolling Amount"/>
                     <field name="m1" sum="m1"/>
                     <field name="m2" sum="m2"/>
                     <field name="m3" sum="m3"/>

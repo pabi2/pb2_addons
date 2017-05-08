@@ -799,18 +799,18 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Period Status',
         related='calendar_period_id.state',
     )
-    past_period_le = fields.Boolean(
-        string='Readonly',
-        compute='_compute_past_period',
-        help="These peirods are less or equal to Today.\n"
-        "Used for making amount readonly",
-    )
-    past_period_lt = fields.Boolean(
-        string='Readonly',
-        compute='_compute_past_period',
-        help="These peirods are less then Today.\n"
-        "Used for calculate rolling amount.",
-    )
+    # past_period_le = fields.Boolean(
+    #     string='Readonly',
+    #     compute='_compute_past_period',
+    #     help="These peirods are less or equal to Today.\n"
+    #     "Used for making amount readonly",
+    # )
+    # past_period_lt = fields.Boolean(
+    #     string='Readonly',
+    #     compute='_compute_past_period',
+    #     help="These peirods are less then Today.\n"
+    #     "Used for calculate rolling amount.",
+    # )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         related='calendar_period_id.fiscalyear_id',
@@ -838,56 +838,21 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Current Plan',
         required=True,
     )
-    amount_actual = fields.Float(
-        string='Actual',
-        compute='_compute_amount_actual_rolling',
-        help="Actual amount from related budget line",
-    )
-    amount_rolling = fields.Float(
-        string='Rolling',
-        compute='_compute_amount_actual_rolling',
-        help="- Actual amount from  for closed period\n"
-        "- Plan amount for future period",
-    )
     # _sql_constraints = [
     #     ('construction_phase_plan_uniq',
     #      'unique(invest_construction_phase_id, calendar_period_id)',
     #      'Period must be unique for a construction phase!'),
     # ]
 
-    @api.multi
-    @api.depends()
-    def _compute_past_period(self):
-        for rec in self:
-            today = fields.Date.context_today(self)
-            rec.past_period_le = \
-                rec.calendar_period_id.date_start <= today or False
-            rec.past_period_lt = \
-                rec.calendar_period_id.date_stop < today or False
-
-    @api.multi
-    @api.depends()
-    def _compute_amount_actual_rolling(self):
-        Phase = self.env['res.invest.construction.phase']
-        Sync = self.env['res.invest.construction.phase.sync']
-        for plan in self:
-            syncs = Sync.search([
-                ('phase_id', '=', plan.invest_construction_phase_id.id),
-                ('fiscalyear_id', '=', plan.fiscalyear_id.id), ])
-            if not syncs:
-                continue
-            if len(syncs) > 1:
-                raise ValidationError(_('> 1 sync for a phase fiscal!'))
-            budget_line = syncs[0].sync_budget_line_id
-            if not budget_line:
-                continue
-            phase_month = int(plan.calendar_period_id.date_start[5:7])
-            # get actual amount from column a1...a12 on budget_line
-            mo_dict, _x = Phase._prepare_mo_dict(plan.fiscalyear_id, 'a')
-            plan.amount_actual = budget_line[mo_dict[phase_month]]
-            # rolling = actual (past period) + plan (future)
-            plan.amount_rolling = \
-                plan.past_period_lt and plan.amount_actual or plan.amount_plan
+    # @api.multi
+    # @api.depends()
+    # def _compute_past_period(self):
+    #     for rec in self:
+    #         today = fields.Date.context_today(self)
+    #         rec.past_period_le = \
+    #             rec.calendar_period_id.date_start <= today or False
+    #         rec.past_period_lt = \
+    #             rec.calendar_period_id.date_stop < today or False
 
     @api.multi
     @api.constrains('calendar_period_id')
@@ -975,14 +940,6 @@ class InvestConstructionPhaseSummary(models.Model):
         string='Plan',
         readonly=True,
     )
-    amount_actual = fields.Float(
-        string='Actual',
-        compute='_compute_amount_summary',
-    )
-    amount_rolling = fields.Float(
-        string='Rolling',
-        compute='_compute_amount_summary',
-    )
 
     def init(self, cr):
 
@@ -997,14 +954,3 @@ class InvestConstructionPhaseSummary(models.Model):
         cr.execute(
             """CREATE or REPLACE VIEW %s as (%s)""" %
             (self._table, _sql,))
-
-    @api.multi
-    @api.depends()
-    def _compute_amount_summary(self):
-        for rec in self:
-            rec.amount_actual = sum(
-                [x.amount_actual for x in rec.phase_id.phase_plan_ids
-                 if x.fiscalyear_id == rec.fiscalyear_id])
-            rec.amount_rolling = sum(
-                [x.amount_rolling for x in rec.phase_id.phase_plan_ids
-                 if x.fiscalyear_id == rec.fiscalyear_id])

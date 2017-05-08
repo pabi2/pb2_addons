@@ -329,11 +329,7 @@
                                         <field name="fiscalyear_id" invisible="1"/>
                                         <field name="calendar_period_id" attrs="{'readonly': [('id', '!=', False)]}"/>
                                         <field name="amount_plan_init" sum="Total Plan"/>
-                                        <field name="past_period_le" invisible="1"/>
-                                        <field name="amount_plan" sum="Total Plan" attrs="{'readonly': [('past_period_le', '=', True)]}"/>
-                                        <field name="amount_actual" sum="Actual"/>
-                                        <field name="past_period_lt" invisible="1"/>
-                                        <field name="amount_rolling" sum="Rolling"/>
+                                        <field name="amount_plan" sum="Total Plan"/>
                                     </tree>
                                 </field>
                                 <group>
@@ -343,8 +339,6 @@
                                             <tree editable="bottom" string="Summary" create="0" delete="0">
                                                 <field name="fiscalyear_id"/>
                                                 <field name="amount_plan" sum="Total Plan"/>
-                                                <field name="amount_actual" sum="Total Actual"/>
-                                                <field name="amount_rolling" sum="Total Rolling"/>
                                             </tree>
                                         </field>
                                     </group>

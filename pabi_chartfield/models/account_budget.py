@@ -117,6 +117,13 @@ class AccountBudget(ChartField, models.Model):
         track_visibility='onchange',
     )
 
+    @api.model
+    def _get_budget_level_type_hook(self, budget):
+        if 'chart_view' in budget and budget.chart_view:
+            return budget.chart_view
+        return super(AccountBudgetLine, self).\
+            _get_budget_level_type_hook(budget)
+
     @api.multi
     def budget_validate(self):
         for budget in self:
