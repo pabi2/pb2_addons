@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        # Chartfield View
+        <record id="view_chartfield_view_tree" model="ir.ui.view">
+            <field name="name">view.chartfield.view.tree</field>
+            <field name="model">chartfield.view</field>
+            <field name="arch" type="xml">
+                <tree string="Budget">
+                    <field name="type"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="name_short"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_chartfield_view_form" model="ir.ui.view">
+            <field name="name">view.chartfield.view.form</field>
+            <field name="model">chartfield.view</field>
+            <field name="arch" type="xml">
+                <form string="Budget" edit="0">
+                    <label for="name" class="oe_edit_only"/>
+                    <h2>
+                        <field name="code" class="oe_inline" readonly="1"/>
+                        -
+                        <field name="name" class="oe_inline" readonly="1"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="type" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="name_short" readonly="1"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_chartfield_view_search" model="ir.ui.view">
+            <field name="name">view.chartfield.view.search</field>
+            <field name="model">chartfield.view</field>
+            <field name="arch" type="xml">
+                <search string="Budget">
+                    <field name="name" string="Budget" filter_domain="['|', '|', ('name','ilike',self), ('code','ilike',self),  ('name_short','ilike',self)]"/>
+                    <filter name="project" string="Project" domain="[('model','=','res.project')]"/>
+                    <filter name="section" string="Section" domain="[('model','=','res.section')]"/>
+                    <filter name="asset" string="Invest Asset" domain="[('model','=','res.invest.asset')]"/>
+                    <filter name="phase" string="Construction Phase" domain="[('model','=','res.invest.construction.phase')]"/>
+                    <filter name="personnel" string="Personnel" domain="[('model','=','res.personnel.costcenter')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_type" string="Type" context="{'group_by':'type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</openerp>

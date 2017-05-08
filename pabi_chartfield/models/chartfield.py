@@ -716,7 +716,7 @@ class ChartFieldAction(ChartField):
 
     @api.multi
     def write(self, vals):
-        # For balance sheet account, alwasy set no dimension
+        # For balance sheet account, always set no dimension
         if vals.get('account_id', False):
             account = self.env['account.account'].browse(vals['account_id'])
             if account.user_type.report_type in ('asset', 'liability'):
