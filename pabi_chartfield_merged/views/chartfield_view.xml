@@ -11,6 +11,7 @@
                     <field name="code"/>
                     <field name="name"/>
                     <field name="name_short"/>
+                    <field name="costcenter_id"/>
                 </tree>
             </field>
         </record>
@@ -46,8 +47,8 @@
                     <field name="name" string="Budget" filter_domain="['|', '|', ('name','ilike',self), ('code','ilike',self),  ('name_short','ilike',self)]"/>
                     <filter name="project" string="Project" domain="[('model','=','res.project')]"/>
                     <filter name="section" string="Section" domain="[('model','=','res.section')]"/>
-                    <filter name="asset" string="Invest Asset" domain="[('model','=','res.invest.asset')]"/>
-                    <filter name="phase" string="Construction Phase" domain="[('model','=','res.invest.construction.phase')]"/>
+                    <filter name="asset" string="Asset" domain="[('model','=','res.invest.asset')]"/>
+                    <filter name="phase" string="C-Phase" domain="[('model','=','res.invest.construction.phase')]"/>
                     <filter name="personnel" string="Personnel" domain="[('model','=','res.personnel.costcenter')]"/>
                     <separator/>
                     <group expand="0" string="Group By">

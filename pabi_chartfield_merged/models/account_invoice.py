@@ -8,4 +8,5 @@ class AccountInvoiceLine(MergedChartField, models.Model):
 
     chartfield_id = fields.Many2one(
         domain=False,
+        help="For invoice, display all dimensions",
     )

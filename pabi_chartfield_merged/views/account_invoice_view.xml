@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="pabi_chartfield.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='invest_asset_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='invest_construction_phase_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='personnel_costcenter_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_invoice_line_form" model="ir.ui.view">
+            <field name="name">view.invoice.line.form</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.view_invoice_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='chartfield']" position="inside">
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//group[@name='chartfield']/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='chartfield']/field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='chartfield']/field[@name='invest_asset_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='chartfield']/field[@name='invest_construction_phase_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='chartfield']/field[@name='personnel_costcenter_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="pabi_chartfield.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='invest_asset_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='invest_construction_phase_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='personnel_costcenter_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

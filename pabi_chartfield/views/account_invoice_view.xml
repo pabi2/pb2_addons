@@ -112,7 +112,7 @@
                 </xpath>
                 <xpath expr="//group" position="inside">
 
-                    <group string="Chartfields">
+                    <group name="chartfield" string="Chartfields">
 
                         <field name="require_chartfield" invisible="1"/>
 

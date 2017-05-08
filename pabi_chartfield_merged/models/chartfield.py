@@ -41,18 +41,18 @@ class MergedChartField(ChartField):
     def _compute_chartfield(self):
         for rec in self:
             model, res_id = False, False
-            if self.section_id:
-                model, res_id = ('res.section', self.section_id.id)
-            if self.project_id:
-                model, res_id = ('res.project', self.project_id.id)
-            if self.invest_asset_id:
-                model, res_id = ('res.invest.asset', self.invest_asset_id.id)
-            if self.invest_construction_phase_id:
+            if rec.section_id:
+                model, res_id = ('res.section', rec.section_id.id)
+            if rec.project_id:
+                model, res_id = ('res.project', rec.project_id.id)
+            if rec.invest_asset_id:
+                model, res_id = ('res.invest.asset', rec.invest_asset_id.id)
+            if rec.invest_construction_phase_id:
                 model, res_id = ('res.invest.construction.phase',
-                                 self.invest_construction_phase_id.id)
-            if self.personnel_costcenter_id:
+                                 rec.invest_construction_phase_id.id)
+            if rec.personnel_costcenter_id:
                 model, res_id = ('res.personnel.costcenter',
-                                 self.personnel_costcenter_id.id)
+                                 rec.personnel_costcenter_id.id)
             if res_id:
                 Chart = self.env['chartfield.view']
                 rec.chartfield_id = Chart.search([('model', '=', model),
@@ -137,7 +137,7 @@ class ChartfieldView(models.Model):
         id+2000000 as id, id as res_id, code, name, name_short, costcenter_id
         from res_project where active=true)
             union all
-        (select 3 seq, 'ic:' as type, 'res.invest.construction.phase' as model,
+        (select 3 seq, 'cp:' as type, 'res.invest.construction.phase' as model,
         p.id+3000000 as id, p.id as res_id, p.code, c.name as name,
         phase as name_short, costcenter_id
         from res_invest_construction_phase p join res_invest_construction c on

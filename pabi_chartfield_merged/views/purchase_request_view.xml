@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="pabi_purchase_request_form" model="ir.ui.view">
+            <field name="name">view.purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="pabi_chartfield.pabi_purchase_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='invest_asset_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='invest_construction_phase_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='personnel_costcenter_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- 2nd -->
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group//group[@name='chartfield']" position="inside">
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group//group[@name='chartfield']/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group//group[@name='chartfield']/field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group//group[@name='chartfield']/field[@name='invest_asset_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group//group[@name='chartfield']/field[@name='invest_construction_phase_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group//group[@name='chartfield']/field[@name='personnel_costcenter_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="pabi_purchase_request_line_form" model="ir.ui.view">
+            <field name="name">purchase.request.line.form</field>
+            <field name="model">purchase.request.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.pabi_purchase_request_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group//field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group//field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group//field[@name='invest_asset_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group//field[@name='invest_construction_phase_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group//field[@name='personnel_costcenter_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -3,5 +3,5 @@ from openerp import models
 from .chartfield import MergedChartField
 
 
-class PurchaseOrderLine(MergedChartField, models.Model):
-    _inherit = 'purchase.order.line'
+class SaleOrderLine(MergedChartField, models.Model):
+    _inherit = 'sale.order.line'

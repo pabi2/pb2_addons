@@ -12,8 +12,14 @@
     'data': [
         'security/ir.model.access.csv',
         'name_search/ir.model.csv',
+        'views/account_invoice_view.xml',
         'views/chartfield_view.xml',
+        'views/hr_expense_view.xml',
+        'views/purchase_request_line_make_purchase_requisition_view.xml',
+        'views/purchase_request_view.xml',
+        'views/purchase_requisition_view.xml',
         'views/purchase_view.xml',
+        'views/sale_view.xml',
     ],
     'demo': [
     ],
