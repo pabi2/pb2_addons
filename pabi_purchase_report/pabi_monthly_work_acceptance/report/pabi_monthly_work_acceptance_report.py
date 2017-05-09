@@ -66,7 +66,7 @@ class PabiMonthlyWorkAcceptanceReport(models.Model):
         ) as requested_by,
         po.name po_name,
         po.date_order po_date_order,
-        pm.name method,
+        pm.name as method,
         CONCAT((SELECT pt.name FROM purchase_type pt
             WHERE pt.id = pd.purchase_type_id),' ',pd.objective) reason,
         po.amount_total,
