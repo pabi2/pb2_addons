@@ -88,8 +88,8 @@ class HRExpenseLine(ActivityCommon, models.Model):
         general_account_id = general_journal.exp_commitment_account_id.id
         journal_id = general_journal.exp_commitment_analytic_journal_id.id
         line_qty = 0.0
-        if 'diff_invoiced_qty' in self._context:
-            line_qty = self._context.get('diff_invoiced_qty')
+        if 'diff_qty' in self._context:
+            line_qty = self._context.get('diff_qty')
         else:
             line_qty = self.unit_quantity - self.open_invoiced_qty
         if not line_qty:
@@ -133,10 +133,10 @@ class HRExpenseLine(ActivityCommon, models.Model):
     #         """, (rec.id,))
     #         result = self._cr.fetchone()
     #         temp_invoiced_qty = result and result[0] or 0.0
-    #         diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
+    #         diff_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
     #         if rec.expense_state not in ('cancelled',):
     #             x = 1
-    #             rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
+    #             rec.with_context(diff_qty=diff_qty).\
     #                 _create_analytic_line(reverse=False)
     #         rec.temp_invoiced_qty = rec.open_invoiced_qty
 

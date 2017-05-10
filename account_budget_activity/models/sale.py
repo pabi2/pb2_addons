@@ -34,16 +34,16 @@ class SaleOrderLine(ActivityCommon, models.Model):
         'account.analytic.account',
         string='Analytic Account',
     )
-    temp_invoiced_qty = fields.Float(
-        string='Temporary Invoiced Quantity',
-        digits=(12, 6),
-        compute='_compute_temp_invoiced_qty',
-        store=True,
-        copy=False,
-        default=0.0,
-        help="This field is used to keep the previous invoice qty, "
-        "for calculate release commitment amount",
-    )
+    # temp_invoiced_qty = fields.Float(
+    #     string='Temporary Invoiced Quantity',
+    #     digits=(12, 6),
+    #     compute='_compute_temp_invoiced_qty',
+    #     store=True,
+    #     copy=False,
+    #     default=0.0,
+    #     help="This field is used to keep the previous invoice qty, "
+    #     "for calculate release commitment amount",
+    # )
 
     @api.multi
     def name_get(self):
@@ -122,8 +122,8 @@ class SaleOrderLine(ActivityCommon, models.Model):
         general_account_id = general_journal.so_commitment_account_id.id
 
         line_qty = 0.0
-        if 'diff_invoiced_qty' in self._context:
-            line_qty = self._context.get('diff_invoiced_qty')
+        if 'diff_qty' in self._context:
+            line_qty = self._context.get('diff_qty')
         else:
             line_qty = self.product_uos_qty - self.open_invoiced_qty
         if not line_qty:
@@ -174,23 +174,23 @@ class SaleOrderLine(ActivityCommon, models.Model):
                 _create_analytic_line(reverse=False)
         return super(SaleOrderLine, self).write(vals)
 
-    # When partial open_invoiced_qty
-    @api.multi
-    @api.depends('open_invoiced_qty')
-    def _compute_temp_invoiced_qty(self):
-        # As inoviced_qty increased, release the commitment
-        for rec in self:
-            # On compute filed of temp_invoiced_qty, ORM is not working
-            self._cr.execute("""
-                select temp_invoiced_qty
-                from sale_order_line where id = %s
-            """, (rec.id,))
-            result = self._cr.fetchone()
-            temp_invoiced_qty = result and result[0] or 0.0
-            diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
-            if rec.state not in ('done', 'draft', 'cancel'):
-                rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
-                    _create_analytic_line(reverse=False)
-            rec.temp_invoiced_qty = rec.open_invoiced_qty
+    # # When partial open_invoiced_qty
+    # @api.multi
+    # @api.depends('open_invoiced_qty')
+    # def _compute_temp_invoiced_qty(self):
+    #     # As inoviced_qty increased, release the commitment
+    #     for rec in self:
+    #         # On compute filed of temp_invoiced_qty, ORM is not working
+    #         self._cr.execute("""
+    #             select temp_invoiced_qty
+    #             from sale_order_line where id = %s
+    #         """, (rec.id,))
+    #         result = self._cr.fetchone()
+    #         temp_invoiced_qty = result and result[0] or 0.0
+    #         diff_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
+    #         if rec.state not in ('done', 'draft', 'cancel'):
+    #             rec.with_context(diff_qty=diff_qty).\
+    #                 _create_analytic_line(reverse=False)
+    #         rec.temp_invoiced_qty = rec.open_invoiced_qty
 
     # ======================================================
