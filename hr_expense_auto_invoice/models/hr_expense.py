@@ -359,7 +359,7 @@ class HRExpenseLine(models.Model):
             for invoice_line in expense_line.invoice_line_ids:
                 invoice = invoice_line.invoice_id
                 if invoice.state and invoice.state not in ['draft', 'cancel']:
-                    # Invoiced Qty in PO Line's UOM
+                    # Invoiced Qty in Exp Line's UOM
                     open_invoiced_qty += \
                         Uom._compute_qty(invoice_line.uos_id.id,
                                          invoice_line.quantity,

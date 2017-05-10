@@ -25,7 +25,7 @@ class HRExpenseExpense(models.Model):
                     Analytic = self.env['account.analytic.account']
                     line.analytic_account = \
                         Analytic.create_matched_analytic(line)
-            self.line_ids._create_analytic_line(reverse=True)
+                expense.line_ids._create_analytic_line(reverse=True)
         # Create negative amount for the remain product_qty - open_invoiced_qty
         if vals.get('state') in ('cancelled',):
             self.filtered(lambda x: x.state not in ('cancelled',)).\
@@ -36,16 +36,16 @@ class HRExpenseExpense(models.Model):
 class HRExpenseLine(ActivityCommon, models.Model):
     _inherit = 'hr.expense.line'
 
-    temp_invoiced_qty = fields.Float(
-        string='Temporary Invoiced Quantity',
-        digits=(12, 6),
-        compute='_compute_temp_invoiced_qty',
-        store=True,
-        copy=False,
-        default=0.0,
-        help="This field is used to keep the previous invoice qty, "
-        "for calculate release commitment amount",
-    )
+    # temp_invoiced_qty = fields.Float(
+    #     string='Temporary Invoiced Quantity',
+    #     digits=(12, 6),
+    #     compute='_compute_temp_invoiced_qty',
+    #     store=True,
+    #     copy=False,
+    #     default=0.0,
+    #     help="This field is used to keep the previous invoice qty, "
+    #     "for calculate release commitment amount",
+    # )
 
     @api.model
     def _get_non_product_account_id(self):
@@ -120,23 +120,24 @@ class HRExpenseLine(ActivityCommon, models.Model):
         if vals:
             self.env['account.analytic.line'].create(vals)
 
-    # When partial open_invoiced_qty
-    @api.multi
-    @api.depends('open_invoiced_qty')
-    def _compute_temp_invoiced_qty(self):
-        # As inoviced_qty increased, release the commitment
-        for rec in self:
-            # On compute filed of temp_purchased_qty, ORM is not working
-            self._cr.execute("""
-                select temp_invoiced_qty
-                from hr_expense_line where id = %s
-            """, (rec.id,))
-            result = self._cr.fetchone()
-            temp_invoiced_qty = result and result[0] or 0.0
-            diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
-            if rec.expense_state not in ('cancelled',):
-                rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
-                    _create_analytic_line(reverse=False)
-            rec.temp_invoiced_qty = rec.open_invoiced_qty
+    # # When partial open_invoiced_qty
+    # @api.multi
+    # @api.depends('open_invoiced_qty')
+    # def _compute_temp_invoiced_qty(self):
+    #     # As inoviced_qty increased, release the commitment
+    #     for rec in self:
+    #         # On compute filed of temp_purchased_qty, ORM is not working
+    #         self._cr.execute("""
+    #             select temp_invoiced_qty
+    #             from hr_expense_line where id = %s
+    #         """, (rec.id,))
+    #         result = self._cr.fetchone()
+    #         temp_invoiced_qty = result and result[0] or 0.0
+    #         diff_invoiced_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
+    #         if rec.expense_state not in ('cancelled',):
+    #             x = 1
+    #             rec.with_context(diff_invoiced_qty=diff_invoiced_qty).\
+    #                 _create_analytic_line(reverse=False)
+    #         rec.temp_invoiced_qty = rec.open_invoiced_qty
 
     # ======================================================
