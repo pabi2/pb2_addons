@@ -232,25 +232,22 @@ class HRExpense(models.Model):
 
     @api.multi
     def action_recreate_invoice(self):
-        for expense in self:
-            for invoice in expense.invoice_ids:
-                if invoice.state == 'cancel' and not invoice.invoice_ref_id:
-                    root_invoice = invoice
-                    while root_invoice.invoice_ref_id:
-                        root_invoice = root_invoice.invoice_ref_id
-
-                    new_invoice_val = root_invoice.copy_data()[0]
-                    new_invoice_val.update({
-                        'amount_expense_request':
-                            root_invoice.amount_expense_request,
-                        'expense_id': root_invoice.expense_id.id,
-                        'invoice_ref_id': invoice.id,
-                    })
-                    new_invoice = self.env['account.invoice'].\
-                        create(new_invoice_val)
-                    expense.invoice_id = new_invoice
-            expense.signal_workflow('except_to_done')
-        return True
+        self.ensure_one()
+        expense = self
+        root_invoice = False
+        for invoice in expense.invoice_ids:
+            if invoice.state == 'cancel' and not invoice.invoice_ref_id:
+                root_invoice = invoice
+        invoice = expense._create_supplier_invoice_from_expense()
+        invoice.write({
+            'amount_expense_request':
+                root_invoice.amount_expense_request,
+            'expense_id': root_invoice.expense_id.id,
+            'invoice_ref_id': invoice.id,
+        })
+        expense.invoice_id = invoice
+        expense.signal_workflow('except_to_done')
+        return invoice
 
 
 class HRExpenseAdvanceDueHistory(models.Model):
