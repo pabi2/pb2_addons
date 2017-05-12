@@ -351,7 +351,22 @@
             <field name="name">Project</field>
             <field name="res_model">res.project</field>
             <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_res_project_search"/>
             <field name="view_id" ref="view_res_project_tree"/>
+        </record>
+
+        <record id="action_res_project_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_res_project_form"/>
+            <field name="act_window_id" ref="action_res_project"/>
+        </record>
+
+        <record id="action_res_project_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_res_project_tree"/>
+            <field name="act_window_id" ref="action_res_project"/>
         </record>
 
         <menuitem name="Project" id="menu_res_project" action="action_res_project" parent="menu_spa_structure" sequence="15"/>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, api, models
+from openerp import fields, api, models, _
 
 
 class ResCommon(object):
@@ -32,3 +32,10 @@ class ResCommon(object):
                            (rec.code and '[' + rec.code + '] ' or '',
                             name_short or name or '')))
         return result
+
+    @api.one
+    def copy_data(self, default=None):
+        if default is None:
+            default = {}
+        tmp_default = dict(default, name=_("%s (Copy)") % self.name)
+        return super(ResCommon, self).copy_data(default=tmp_default)
