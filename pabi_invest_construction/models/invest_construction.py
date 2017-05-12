@@ -67,7 +67,7 @@ class ResInvestConstruction(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
     )
-    section_id = fields.Many2one(
+    pm_section_id = fields.Many2one(
         'res.section',
         string='Project Manager Section',
         required=True,
@@ -75,10 +75,10 @@ class ResInvestConstruction(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
     )
-    org_id = fields.Many2one(
+    pm_org_id = fields.Many2one(
         'res.org',
         string='Project Manager Org',
-        related='section_id.org_id',
+        related='pm_section_id.org_id',
         store=True,
         readonly=True,
     )
