@@ -39,7 +39,12 @@
                     <attribute name="name">get_all_version</attribute>
                 </xpath>
                 <xpath expr="//notebook" position="before">
-                    <button name="sync_budget_invest_construction" string="Sync with Construction Plan" class="oe_right oe_highlight" type="object" attrs="{'invisibile': [('chart_view', '=', 'invest_construction')]}"/>
+                    <button name="sync_budget_invest_construction" string="Sync with Construction Plan" class="oe_right oe_highlight" type="object" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}"/>
+                    <button name="sync_budget_my_project" string="Sync with Project Plan" class="oe_right oe_highlight" type="object" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
+                    <p>
+                        <field name="project_auto_sync" class="oe_right oe_inline"/>
+                        <label for="project_auto_sync" class="oe_right oe_inline"/>
+                    </p>
                 </xpath>
             </field>
         </record>

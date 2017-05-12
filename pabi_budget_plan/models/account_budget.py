@@ -22,10 +22,6 @@ class AccountBudget(models.Model):
         string='Policy Amount',
         readonly=False,  # TODO: change back to True
     )
-    # planned_amount = fields.Float(
-    #     string='Current Amount',  # Existing field, change label only
-    #     help="Current Planned Amount",
-    # )
     ref_budget_id = fields.Many2one(
         'account.budget',
         string="Previous Budget",
@@ -172,7 +168,6 @@ class AccountBudget(models.Model):
                     phase_sync.sync_budget_line_id = \
                         BudgetLine.create(budget_line_dict)
             phase.sync_phase_to_budget_line([fiscalyear_id])
-
         return True
 
 

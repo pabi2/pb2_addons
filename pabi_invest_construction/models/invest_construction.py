@@ -201,7 +201,7 @@ class ResInvestConstruction(LogCommon, models.Model):
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
         employee = self.pm_employee_id
-        self.section_id = employee.section_id
+        self.pm_section_id = employee.section_id
 
     @api.onchange('month_duration', 'date_start', 'date_end')
     def _onchange_date(self):

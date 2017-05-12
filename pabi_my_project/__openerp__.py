@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "NSTDA :: PABI2 - Invest Construction Master",
+    "name": "NSTDA :: PABI2 - myProject Master / Interface",
     "summary": "",
     "version": "1.0",
     "category": "Accounting & Finance",
@@ -12,14 +12,12 @@
     "depends": [
         "pabi_base",
         "account_budget_activity",
-        "l10n_th_account",  # use account.period.calendar
         "document_status_history",
     ],
     "data": [
+        "data/project_history_rule.xml",
         "security/ir.model.access.csv",
-        "data/invest_construction_sequence.xml",
-        "data/invest_construction_history_rule.xml",
-        "views/invest_construction_view.xml",
+        "views/res_project_view.xml",
     ],
     "application": False,
     "installable": True,
