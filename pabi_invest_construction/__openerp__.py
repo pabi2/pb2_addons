@@ -11,7 +11,7 @@
     "license": "AGPL-3",
     "depends": [
         "pabi_base",
-        "l10n_th_account",
+        "l10n_th_account",  # use account.period.calendar
         "document_status_history",
     ],
     "data": [
