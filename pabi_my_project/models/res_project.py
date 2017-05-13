@@ -178,14 +178,15 @@ class ResProject(LogCommon, models.Model):
     @api.multi
     @api.constrains('budget_plan_ids')
     def _trigger_auto_sync(self):
-        for rec in self:
-            to_sync_fiscals = rec.budget_plan_ids.filtered(
+        for project in self:
+            to_sync_fiscals = project.budget_plan_ids.filtered(
                 lambda l: not l.synced).mapped('fiscalyear_id')
             budgets = self.find_active_project_budget(to_sync_fiscals.ids,
-                                                      [rec.program_id.id])
+                                                      [project.program_id.id])
             for budget in budgets:
                 if budget.project_auto_sync:
-                    budget.sync_budget_my_project()
+                    budget.with_context(
+                        project_id=project.id).sync_budget_my_project()
 
 
 class ResProjectBudgetPlan(models.Model):

@@ -33,13 +33,16 @@ class AccountBudget(models.Model):
         BudgetLine = self.env['account.budget.line']
         projects = Project.search([
             ('program_id', '=', self.program_id.id),
-            ('fiscalyear_ids', 'in', self.fiscalyear_id.id),
         ])
         # Clear budget_line without sync ref (myproject, we can't create here)
         prj_budget_lines = self.project_plan_ids.mapped('sync_budget_line_id')
         diff_lines = self.budget_line_ids - prj_budget_lines
         diff_lines.unlink()
         for project in projects:
+            # If sync only 1 specific project, passed from res.project
+            if 'project_id' in self._context and \
+                    project.id != self._context.get('project_id'):
+                continue
             for project_plan in project.budget_plan_ids.\
                     filtered(lambda l: l.fiscalyear_id == self.fiscalyear_id):
                 # Create budget control line if not exists

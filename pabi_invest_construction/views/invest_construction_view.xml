@@ -109,7 +109,7 @@
                             <group>
                                 <field name="pm_employee_id"/>
                                 <field name="pm_section_id"/>
-                                <field name="pm_org_id"/>
+                                <field name="org_id"/>
                                 <field name="costcenter_id" required="1"/>
                             </group>
                         </group>

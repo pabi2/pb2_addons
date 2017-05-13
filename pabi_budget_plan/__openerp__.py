@@ -11,8 +11,6 @@
         'pabi_chartfield',
         'pabi_procurement',
         'document_status_history',
-        'pabi_invest_construction',  # Budget Control will pull from
-        'pabi_my_project',  # Budget Control will pull from
     ],
     'data': [
         'security/security_groups.xml',

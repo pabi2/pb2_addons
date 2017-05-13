@@ -12,6 +12,7 @@
     "depends": [
         "pabi_base",
         "account_budget_activity",
+        "pabi_budget_plan",
         "l10n_th_account",  # use account.period.calendar
         "document_status_history",
     ],
@@ -20,6 +21,7 @@
         "data/invest_construction_sequence.xml",
         "data/invest_construction_history_rule.xml",
         "views/invest_construction_view.xml",
+        "views/account_budget_view.xml",
     ],
     "application": False,
     "installable": True,

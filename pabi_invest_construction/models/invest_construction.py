@@ -75,12 +75,15 @@ class ResInvestConstruction(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
     )
-    pm_org_id = fields.Many2one(
+    org_id = fields.Many2one(
         'res.org',
-        string='Project Manager Org',
-        related='pm_section_id.org_id',
-        store=True,
+        string='Org',
+        required=True,
         readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)]},
+        help="Org where this construction project belong to. "
+        "Use default as PM's org, but changable."
     )
     mission_id = fields.Many2one(
         'res.mission',
@@ -202,6 +205,7 @@ class ResInvestConstruction(LogCommon, models.Model):
     def _onchange_user_id(self):
         employee = self.pm_employee_id
         self.pm_section_id = employee.section_id
+        self.org_id = employee.org_id
 
     @api.onchange('month_duration', 'date_start', 'date_end')
     def _onchange_date(self):
@@ -752,6 +756,19 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def action_draft(self):
         self.write({'state': 'draft'})
 
+    @api.multi
+    @api.constrains('sync_ids', 'state')
+    def _trigger_auto_sync(self):
+        for phase in self:
+            to_sync_fiscals = phase.sync_ids.filtered(
+                lambda l: not l.synced).mapped('fiscalyear_id')
+            budgets = self.find_active_construction_budget(to_sync_fiscals.ids,
+                                                           [phase.org_id.id])
+            for budget in budgets:
+                if budget.construction_auto_sync:
+                    budget.with_context(
+                        phase=phase.id).sync_budget_invest_construction()
+
 
 class ResInvestConstructionBudgetPlan(models.Model):
     _name = 'res.invest.construction.budget.plan'
@@ -906,6 +923,7 @@ class ResInvestConstructionPhaseSync(models.Model):
         'account.budget',
         related='sync_budget_line_id.budget_id',
         string='Budget Control',
+        store=True,
         readonly=True,
     )
     last_sync = fields.Datetime(
