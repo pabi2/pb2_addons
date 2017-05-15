@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields
+from openerp import models, api, fields, _
+from openerp import tools
+from openerp.exceptions import Warning as UserError
 from openerp.addons.document_status_history.models.document_history import \
     LogCommon
 
@@ -55,6 +57,11 @@ class ResProject(LogCommon, models.Model):
         'project_id',
         string='Budget Lines',
     )
+    budget_release_ids = fields.One2many(
+        'res.project.budget.release',
+        'project_id',
+        string='Budget Release History',
+    )
     fiscalyear_ids = fields.Many2many(
         'account.fiscalyear',
         'res_project_fiscalyear_rel', 'project_id', 'fiscalyear_id',
@@ -70,6 +77,12 @@ class ResProject(LogCommon, models.Model):
     budget_to_sync_count = fields.Integer(
         string='Budget Need Sync Count',
         compute='_compute_budget_to_sync_count',
+    )
+    summary_ids = fields.One2many(
+        'res.project.budget.summary',
+        'project_id',
+        string='Project Summary',
+        readonly=True,
     )
 
     @api.onchange('pm_employee_id')
@@ -187,6 +200,39 @@ class ResProject(LogCommon, models.Model):
                 if budget.project_auto_sync:
                     budget.with_context(
                         project_id=project.id).sync_budget_my_project()
+
+    @api.multi
+    def _release_fiscal_budget(self, fiscalyear, released_amount):
+        """ Distribute budget released to all AG of the same year
+            by distribute to the first AG first,
+            show warning if released amoutnt > planned amout
+        """
+        for project in self:
+            budget_plans = project.budget_plan_ids.\
+                filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            if not budget_plans:
+                raise UserError(
+                    _('Not allow to release budget for project without plan!'))
+            planned_amount = sum([x.planned_amount for x in budget_plans])
+            if released_amount > planned_amount:
+                raise UserError(
+                    _('Releasing budget > planned!'))
+            budget_plans.write({'released_amount': 0.0})  # Set zero
+            remaining = released_amount
+            update_vals = []
+            for budget_plan in budget_plans:
+                if remaining > budget_plan.planned_amount:
+                    update = {'released_amount': budget_plan.planned_amount}
+                    remaining -= budget_plan.planned_amount
+                    update_vals.append((1, budget_plan.id, update))
+                else:
+                    update = {'released_amount': remaining}
+                    remaining = 0.0
+                    update_vals.append((1, budget_plan.id, update))
+                    break
+            if update_vals:
+                project.write({'budget_plan_ids': update_vals})
+        return True
 
 
 class ResProjectBudgetPlan(models.Model):
@@ -315,3 +361,106 @@ class ResProjectBudgetPlan(models.Model):
         if len(set(changes).intersection(test_keys)) > 0:
             vals.update({'synced': False})  # Line updated
         return super(ResProjectBudgetPlan, self).write(vals)
+
+
+class ResProjectBudgetSummary(models.Model):
+    _name = 'res.project.budget.summary'
+    _auto = False
+    _rec_name = 'fiscalyear_id'
+    _description = 'Fiscal Year summary of each phase amount'
+
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='fiscalyear',
+        readonly=True,
+    )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+        readonly=True,
+    )
+    released_amount = fields.Float(
+        string='Released Amount',
+        readonly=True,
+    )
+
+    def init(self, cr):
+
+        _sql = """
+            select min(id) as id, project_id, fiscalyear_id,
+                sum(m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12) as planned_amount,
+                sum(released_amount) as released_amount
+            from res_project_budget_plan
+            group by project_id, fiscalyear_id
+        """
+
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" %
+            (self._table, _sql,))
+
+
+class ResProjectBudgetRelease(models.Model):
+    _name = 'res.project.budget.release'
+    _description = 'History of budget release (interface with myProject)'
+
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscalyear',
+        required=True,
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        required=True,
+    )
+    dummy_project_id = fields.Many2one(
+        related='project_id',
+        help="Dummy project_id, used to calculate init amount release",
+    )
+    released_amount = fields.Float(
+        string='Released Amount',
+        default=0.0,
+        required=True,
+    )
+    user_id = fields.Many2one(
+        'res.users',
+        string='User',
+        default=lambda self: self.env.user,
+        readonly=True,
+        required=True,
+    )
+    write_date = fields.Datetime(
+        readonly=True,
+    )
+
+    @api.onchange('fiscalyear_id', 'project_id')
+    def _onchange_project_fiscal(self):
+        BudgetSummary = self.env['res.project.budget.summary']
+        project_id = \
+            self._context.get('project_id', False) or self.project_id.id
+        summary = BudgetSummary.search([
+            ('project_id', '=', project_id),
+            ('fiscalyear_id', '=', self.fiscalyear_id.id)])
+        self.released_amount = summary and summary[0].released_amount or 0.0
+
+    @api.model
+    def create(self, vals):
+        rec = super(ResProjectBudgetRelease, self).create(vals)
+        if 'released_amount' in vals:
+            rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
+                                                  rec.released_amount)
+        return rec
+
+    @api.multi
+    def write(self, vals):
+        result = super(ResProjectBudgetRelease, self).write(vals)
+        if 'released_amount' in vals:
+            for rec in self:
+                rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
+                                                      rec.released_amount)
+        return result

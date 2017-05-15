@@ -4,8 +4,10 @@
 
         <!-- Top menu item -->
         <menuitem name="myProjects" id="menu_main_project" groups="" sequence="39"/>
-
+        <!-- Projects -->
         <menuitem name="Projects" id="menu_project" parent="menu_main_project" groups="" sequence="1"/>
+        <!-- Interface -->
+        <menuitem name="Interfaces" id="menu_project_interface" parent="menu_main_project" groups="" sequence="2"/>
 
         <!-- Project -->
         <record id="view_project_form" model="ir.ui.view">
@@ -86,6 +88,28 @@
                                         <field name="planned_amount" sum="Total Planned"/>
                                         <field name="released_amount" sum="Total Released"/>
                                         <field name="synced"/>
+                                    </tree>
+                                </field>
+                                <group>
+                                    <group></group>
+                                    <group string="Yearly Summary">
+                                        <field name="summary_ids" nolabel="1">
+                                            <tree editable="bottom" string="Summary" create="0" delete="0">
+                                                <field name="fiscalyear_id"/>
+                                                <field name="planned_amount" sum="Total Plan"/>
+                                                <field name="released_amount" sum="Total Release"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Budget Release History">
+                                <field name="budget_release_ids" context="{'project_id': active_id}">
+                                    <tree editable="bottom">
+                                        <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                        <field name="user_id"/>
+                                        <field name="released_amount" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                        <field name="write_date"/>
                                     </tree>
                                 </field>
                             </page>
@@ -171,6 +195,65 @@
         </record>
 
         <menuitem action="action_project" id="menu_my_project" name="myProjects" parent="menu_project" sequence="1"/>
+
+        <!-- Release Budget by Fiscal -->
+        <record id="view_project_budget_release_tree" model="ir.ui.view">
+            <field name="name">view.project.budget.release.tree</field>
+            <field name="model">res.project.budget.release</field>
+            <field name="arch" type="xml">
+                <tree string="Project" create="0" delete="0">
+                    <field name="fiscalyear_id"/>
+                    <field name="project_id"/>
+                    <field name="released_amount"/>
+                    <field name="user_id"/>
+                    <field name="write_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_project_budget_release_form" model="ir.ui.view">
+            <field name="name">view.project.budget.release.form</field>
+            <field name="model">res.project.budget.release</field>
+            <field name="arch" type="xml">
+                <form string="Budget Release" edit="0" create="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="project_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                <field name="user_id"/>
+                                <field name="write_date" invisible="1"/>
+                            </group>
+                            <group>
+                                <h1>
+                                    <label string="Released Amount" />
+                                    <field name="released_amount" class="oe_inline" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                </h1>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_release_project_budget_by_fiscal" model="ir.actions.act_window">
+            <field name="name">Release Budget by Fiscal</field>
+            <field name="res_model">res.project.budget.release</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">form,tree</field>
+            <field name="search_view_id" ref=""/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to release project budget by fiscalyear.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="action_release_project_budget_by_fiscal" id="menu_release_project_budget_by_fiscal" name="Release Budget" parent="menu_project_interface" sequence="1"/>
+
+
 
     </data>
 </openerp>
