@@ -22,5 +22,5 @@ class AccountMove(models.Model):
                     # Because we have doctype_id, so we can pass False
                     name = self.env['ir.sequence'].next_by_id(False)
                     move.name = name
-                    invoice.number = name
+                    invoice.write({'number': name, 'internal_number': name})
         return super(AccountMove, self).post()
