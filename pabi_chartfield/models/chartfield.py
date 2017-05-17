@@ -84,18 +84,18 @@ CHART_STRUCTURE = \
             },
         },
         'personnel_costcenter_id': {
-            'section_id': {
-                'division_id': {
-                    'subsector_id': {
-                        'sector_id': {
-                            'org_id': {}
-                        },
-                    },
-                },
-                'mission_id': {},
-                'costcenter_id': {
-                    'taxbranch_id': {}
-                },
+            # 'section_id': {
+            #     'division_id': {
+            #         'subsector_id': {
+            #             'sector_id': {
+            #                 'org_id': {}
+            #             },
+            #         },
+            #     },
+            # },
+            # 'mission_id': {},
+            'costcenter_id': {
+                'taxbranch_id': {}
             },
         },
         'invest_asset_id': {

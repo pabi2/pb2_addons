@@ -62,6 +62,7 @@
         <record id="view_invest_construction_form" model="ir.ui.view">
             <field name="name">project.project.form</field>
             <field name="model">res.invest.construction</field>
+            <field name="priority">200</field>
             <field name="arch" type="xml">
                 <form string="Project">
                     <header>
@@ -249,6 +250,7 @@
         <record id="view_invest_construction_phase_form" model="ir.ui.view">
             <field name="name">view.invest.construction.phase.form</field>
             <field name="model">res.invest.construction.phase</field>
+            <field name="priority">200</field>
             <field name="arch" type="xml">
                 <form string="Phase" create="0">
                     <header>

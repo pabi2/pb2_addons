@@ -5,6 +5,7 @@ from . import account_budget
 from . import account_invoice
 from . import account_move_line
 from . import hr_expense
+from . import hr_salary
 from . import sale
 from . import procurement
 from . import purchase

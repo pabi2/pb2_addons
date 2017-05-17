@@ -62,7 +62,7 @@ class AccountBudget(models.Model):
         'section_id': 'res.section',
         'costcenter_id': 'res.costcenter',
         # Personnel
-        'personnel_costcenter_id': 'res.personnel.costceter',
+        'personnel_costcenter_id': 'res.personnel.costcenter',
         # Investment
         # - Asset
         # 'invest_asset_categ_id': 'res.invest.asset.category',
