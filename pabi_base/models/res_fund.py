@@ -38,7 +38,7 @@ class ResFund(ResCommon, models.Model):
         string='Investment Construction Phases',
     )
     personnel_costcenter_ids = fields.Many2many(
-        'res.project',
+        'res.personnel.costcenter',
         'res_fund_personnel_costcenter_rel',
         'fund_id', 'personnel_costcenter_id',
         string='Personnel Costcenters',

@@ -8,11 +8,11 @@ class ResPersonnelCostcenter(ResCommon, models.Model):
     _name = 'res.personnel.costcenter'
     _description = 'Personnel Budget'
 
-    section_id = fields.Many2one(
-        'res.section',
-        string='Section',
-        required=False,
-    )
+    # section_id = fields.Many2one(
+    #     'res.section',
+    #     string='Section',
+    #     required=False,
+    # )
     fund_ids = fields.Many2many(
         'res.fund',
         'res_fund_personnel_costcenter_rel',
