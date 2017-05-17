@@ -25,6 +25,7 @@ Note: This module provide only framework. There will be no budget check here.
         'sale_qty_invoiced',
         'hr_expense',
         'hr_expense_auto_invoice',
+        'hr_salary',
     ],
     'data': [
         'data/account_data.xml',
@@ -44,6 +45,7 @@ Note: This module provide only framework. There will be no budget check here.
         'views/account_move_line_view.xml',
         'views/analytic_view.xml',
         'views/hr_expense_view.xml',
+        'views/hr_salary_view.xml',
         'views/account_journal_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
         'workflow/account_budget_workflow.xml',

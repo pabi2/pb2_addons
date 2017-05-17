@@ -28,6 +28,10 @@ class HRExpenseLine(ActivityCommon, models.Model):
     _inherit = 'hr.expense.line'
 
 
+class HRSalaryLine(ActivityCommon, models.Model):
+    _inherit = 'hr.salary.line'
+
+
 class PurchaseOrderLine(ActivityCommon, models.Model):
     _inherit = 'purchase.order.line'
 

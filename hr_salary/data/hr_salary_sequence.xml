@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="seq_type_hr_salary_expense" model="ir.sequence.type">
+            <field name="name">Salary Expense</field>
+            <field name="code">hr.salary.expense</field>
+        </record>
+
+        <record id="seq_hr_salary_expense" model="ir.sequence">
+            <field name="name">Salary Expense</field>
+            <field name="code">hr.salary.expense</field>
+            <field name="prefix">SLR/</field>
+            <field name="padding">3</field>
+        </record>
+
+    </data>
+</openerp>

@@ -13,6 +13,7 @@
 
     """,
     "data": [
+        "data/hr_salary_sequence.xml",
         "views/hr_salary_view.xml",
     ],
     'installable': True,
