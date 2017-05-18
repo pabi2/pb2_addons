@@ -191,11 +191,6 @@ class HRSalaryExpense(models.Model):
     def action_cancel(self):
         moves = self.mapped('move_id')
         for move in moves:
-            # paid_lines = move.line_id.filtered(
-            #     lambda l: l.reconcile_id or l.reconcile_partial_id)
-            # if paid_lines:
-            #     raise UserError(
-            #         _('Cancel not allowed, some line already reconciled'))
             move.button_cancel()
             move.unlink()
         self.write({'state': 'cancel'})
@@ -238,8 +233,6 @@ class HRSalaryExpense(models.Model):
         accounting entries related to an salary expense """
         AccountMove = self.env['account.move']
         for salary in self:
-            # property_account_payable
-            # property_account_receivable
             move_dict = salary._prepare_move()
             move_lines = salary._prepare_move_lines()
             move_dict.update({'line_id': move_lines})
@@ -327,8 +320,12 @@ class HRSalaryExpense(models.Model):
         """ As is_paid is triggered, so do the state """
         for rec in self:
             if 'is_paid' in vals:
-                if vals['is_paid'] is True:
+                print rec.state
+                if rec.state == 'open' and vals['is_paid'] is True:
                     vals['state'] = 'paid'
+                if rec.state == 'paid' and vals['is_paid'] is False:
+                    vals['state'] = 'open'
+                print vals
         return super(HRSalaryExpense, self)._write(vals)
 
 
