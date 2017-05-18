@@ -7,6 +7,7 @@ REFERENCE_SELECT = [('account.invoice', 'Invoice'),
                     ('stock.picking', 'Picking'),
                     ('interface.account.entry', 'Account Interface'),
                     ('hr.expense.expense', 'Employee Expense'),
+                    ('hr.salary.expense', 'Salary Expense'),
                     # For analytic line only (budget commitment)
                     ('purchase.request', 'Purchase Request'),
                     ('purchase.order', 'Purchase Order'),
@@ -26,6 +27,7 @@ DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   ('receipt', 'Customer Payment'),
                   ('payment', 'Supplier Payment'),
                   ('employee_expense', 'Employee Expense'),
+                  ('salary_expense', 'Salary Expense'),
                   ('interface_account', 'Account Interface'),
                   # For analytic line only (budget commitment)
                   ('purchase_request', 'Purchase Request'),
@@ -126,6 +128,18 @@ class AccountMove(models.Model):
         string='Bank Receipt Cancel',
         readonly=True,
     )
+    salary_expense_ids = fields.One2many(
+        'hr.salary.expense',
+        'move_id',
+        string='Salary Expense',
+        readonly=True,
+    )
+    salary_expense_cancel_ids = fields.One2many(
+        'hr.salary.expense',
+        'cancel_move_id',
+        string='Salary Expense Cancel',
+        readonly=True,
+    )
     expense_rev_ic_ids = fields.One2many(
         'hr.expense.expense',
         'rev_ic_move_id',
@@ -154,6 +168,8 @@ class AccountMove(models.Model):
                  'voucher_recognize_vat_ids.number',
                  'bank_receipt_ids.name',
                  'bank_receipt_cancel_ids.name',
+                 'salary_expense_ids.name',
+                 'salary_expense_cancel_ids.name',
                  'expense_rev_ic_ids.number',
                  'expense_exp_ic_ids.number',
                  'account_interface_ids.number',
@@ -181,6 +197,11 @@ class AccountMove(models.Model):
                 document = rec.bank_receipt_ids[0]
             elif rec.bank_receipt_cancel_ids:
                 document = rec.bank_receipt_cancel_ids[0]
+            # Salary Expense
+            elif rec.salary_expense_ids:
+                document = rec.salary_expense_ids[0]
+            elif rec.salary_expense_cancel_ids:
+                document = rec.salary_expense_cancel_ids[0]
             # Expense IC
             elif rec.expense_rev_ic_ids:
                 document = rec.expense_rev_ic_ids[0]
@@ -221,6 +242,8 @@ class AccountMove(models.Model):
             return 'bank_receipt'
         if model == 'hr.expense.expense':
             return 'employee_expense'
+        if model == 'hr.salary.expense':
+            return 'salary_expense'
         if model == 'stock.picking':
             return PICKING_DOCTYPE[document.picking_type_id.code]
         if model == 'interface.account.entry':
