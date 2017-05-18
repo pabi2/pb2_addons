@@ -5,6 +5,16 @@ from openerp import models, api
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    @api.model
+    def _switch_move_dict_dr_cr(self, move_dict):
+        move_lines = []
+        for line_dict in move_dict['line_id']:
+            line_dict[2].update({'credit': line_dict[2]['debit'],
+                                 'debit': line_dict[2]['credit'],
+                                 })
+            move_lines.append((0, 0, line_dict[2]))
+        return move_dict
+
     @api.multi
     def _switch_dr_cr(self):
         self.ensure_one()

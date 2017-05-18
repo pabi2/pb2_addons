@@ -4,12 +4,10 @@
     'version': '1.0',
     'author': 'Ecosoft',
     'summary': """
-
-Cancel Invoice / Voucher / Bank receipt by create reversed journal entry
-
+Cancel Invoice / Voucher / Bank receipt / Salary Expense
+by create reversed journal entry
     """,
     'description': """
-
 This module put more accounting control into invoice cancellation.
 
 As-Is:
@@ -38,12 +36,14 @@ To-Be:
         'account_invoice_cancel_hooks',
         'account_voucher_cancel_hooks',
         'account_bank_receipt',
+        'hr_salary',
     ],
     'demo': [],
     'data': [
         'views/voucher_payment_receipt_view.xml',
         'views/account_invoice_view.xml',
         'views/account_bank_receipt_view.xml',
+        'views/hr_salary_view.xml',
     ],
     'test': [
     ],

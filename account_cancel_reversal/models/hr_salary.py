@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields
+from openerp import models, api, fields, _
+from openerp.exceptions import Warning as UserError
 
 
-class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+class HRSalaryExpense(models.Model):
+    _inherit = 'hr.salary.expense'
 
     cancel_move_id = fields.Many2one(
         'account.move',
@@ -22,13 +23,18 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_cancel(self):
-        res = super(AccountInvoice, self).action_cancel()
+        res = super(HRSalaryExpense, self).action_cancel()
         period = self.env['account.period'].find()
         # First, set the invoices as cancelled and detach the move ids
-        for inv in self:  # For each cancel invoice with internal_number
-            move = inv.move_id
+        for salary in self:  # For each cancel invoice with internal_number
+            move = salary.move_id
             if move:
                 AccountMove = self.env['account.move']
+                if move.line_id.filtered(lambda l: l.reconcile_id or
+                                         l.reconcile_partial_id):
+                    raise UserError(
+                        _('This salary expensed has been partially '
+                          'reconciles, cancellaion not allowed!'))
                 move_dict = move.copy_data({
                     'name': move.name + '_VOID',
                     'ref': move.ref,
@@ -36,18 +42,7 @@ class AccountInvoice(models.Model):
                     'date': fields.Date.context_today(self), })[0]
                 move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
                 rev_move = AccountMove.create(move_dict)
-                AccountMove.\
-                    _reconcile_voided_entry([move.id, rev_move.id])
+                AccountMove._reconcile_voided_entry([move.id, rev_move.id])
                 rev_move.button_validate()
-                inv.cancel_move_id = rev_move
-        # For invoice from DO, reset invoice_state to 2binvoiced
-        Picking = self.env['stock.picking']
-        Move = self.env['stock.move']
-        for inv in self:
-            pickings = Picking.search([('name', '=', inv.origin)])
-            if pickings:
-                pickings.write({'invoice_state': '2binvoiced'})
-                moves = Move.search([('picking_id', 'in', pickings._ids)])
-                moves.write({'invoice_state': '2binvoiced'})
-
+                salary.cancel_move_id = rev_move
         return res

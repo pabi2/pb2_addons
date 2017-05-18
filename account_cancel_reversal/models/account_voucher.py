@@ -18,17 +18,21 @@ class AccountVoucher(models.Model):
     def voucher_move_cancel_hook(self, voucher):
         move = voucher.move_id
         period = self.env['account.period'].find()
-        rev_move = move.copy({'name': move.name + '_VOID',
-                              'ref': move.ref,
-                              'period_id': period.id,
-                              'date': fields.Date.context_today(self)})
-        rev_move._switch_dr_cr()
+        AccountMove = self.env['account.move']
+        move_dict = move.copy_data({
+            'name': move.name + '_VOID',
+            'ref': move.ref,
+            'period_id': period.id,
+            'date': fields.Date.context_today(self), })[0]
+        move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
+        rev_move = AccountMove.create(move_dict)
+
         voucher.cancel_move_id = rev_move
         # Delete reconcile, and receconcile with reverse entry
         move.line_id.filtered('reconcile_id').reconcile_id.unlink()
         accounts = move.line_id.mapped('account_id')
         for account in accounts:
-            self.env['account.move'].\
+            AccountMove.\
                 _reconcile_voided_entry_by_account([move.id, rev_move.id],
                                                    account.id)
 

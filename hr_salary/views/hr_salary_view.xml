@@ -147,7 +147,7 @@
             </field>
         </record>
 
-        <menuitem action="action_hr_salary_expense" id="menu_hr_salary_expense" name="Salary Expense" parent="menu_hr_salary_root"/>
+        <menuitem action="action_hr_salary_expense" id="menu_hr_salary_expense" name="Salary Expense" parent="menu_hr_salary_root" groups="base.group_hr_manager"/>
 
     </data>
 </openerp>

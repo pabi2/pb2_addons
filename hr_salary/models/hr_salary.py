@@ -8,6 +8,7 @@ class HRSalaryExpense(models.Model):
     _name = "hr.salary.expense"
     _inherit = ['mail.thread']
     _description = "Salary Expense"
+    _rec_name = 'number'
     _order = "id desc"
 
     number = fields.Char(
@@ -35,26 +36,31 @@ class HRSalaryExpense(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         default=lambda self: fields.Date.context_today(self),
+        copy=False,
     )
     date_submit = fields.Date(
         string='Submitted Date',
         index=True,
         readonly=True,
+        copy=False,
     )
     submit_user_id = fields.Many2one(
         'res.users',
         string='Submited By',
         readonly=True,
+        copy=False,
     )
     date_approve = fields.Date(
         string='Approved Date',
         index=True,
         readonly=True,
+        copy=False,
     )
     approve_user_id = fields.Many2one(
         'res.users',
         string='Approved By',
         readonly=True,
+        copy=False,
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -169,6 +175,14 @@ class HRSalaryExpense(models.Model):
         else:
             return True
 
+    @api.multi
+    def action_cancel_hook(self, moves=False):
+        self.write({'state': 'cancel', 'move_id': False})
+        if moves:
+            moves.button_cancel()
+            moves.unlink()
+        return
+
     @api.model
     def create(self, vals):
         if vals.get('number', '/') == '/':
@@ -190,10 +204,7 @@ class HRSalaryExpense(models.Model):
     @api.multi
     def action_cancel(self):
         moves = self.mapped('move_id')
-        for move in moves:
-            move.button_cancel()
-            move.unlink()
-        self.write({'state': 'cancel'})
+        self.action_cancel_hook(moves)
         return True
 
     @api.multi
@@ -320,12 +331,10 @@ class HRSalaryExpense(models.Model):
         """ As is_paid is triggered, so do the state """
         for rec in self:
             if 'is_paid' in vals:
-                print rec.state
                 if rec.state == 'open' and vals['is_paid'] is True:
                     vals['state'] = 'paid'
                 if rec.state == 'paid' and vals['is_paid'] is False:
                     vals['state'] = 'open'
-                print vals
         return super(HRSalaryExpense, self)._write(vals)
 
 
@@ -370,28 +379,3 @@ class HRSalaryLine(models.Model):
         'account.analytic.account',
         string='Analytic Account',
     )
-
-
-# class AccountMoveLine(models.Model):
-#     _inherit = "account.move.line"
-#
-#     def reconcile(self, cr, uid, ids, type='auto', writeoff_acc_id=False, writeoff_period_id=False, writeoff_journal_id=False, context=None):
-#         res = super(account_move_line, self).reconcile(cr, uid, ids, type=type, writeoff_acc_id=writeoff_acc_id, writeoff_period_id=writeoff_period_id, writeoff_journal_id=writeoff_journal_id, context=context)
-#         #when making a full reconciliation of account move lines 'ids', we may need to recompute the state of some hr.expense
-#         account_move_ids = [aml.move_id.id for aml in self.browse(cr, uid, ids, context=context)]
-#         expense_obj = self.pool.get('hr.expense.expense')
-#         currency_obj = self.pool.get('res.currency')
-#         if account_move_ids:
-#             expense_ids = expense_obj.search(cr, uid, [('account_move_id', 'in', account_move_ids)], context=context)
-#             for expense in expense_obj.browse(cr, uid, expense_ids, context=context):
-#                 if expense.state == 'done':
-#                     #making the postulate it has to be set paid, then trying to invalidate it
-#                     new_status_is_paid = True
-#                     for aml in expense.account_move_id.line_id:
-#                         if aml.account_id.type == 'payable' and not currency_obj.is_zero(cr, uid, expense.company_id.currency_id, aml.amount_residual):
-#                             new_status_is_paid = False
-#                     if new_status_is_paid:
-#                         expense_obj.write(cr, uid, [expense.id], {'state': 'paid'}, context=context)
-#         return res
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
