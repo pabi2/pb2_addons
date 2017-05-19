@@ -230,7 +230,9 @@ class HRExpense(models.Model):
                         print merged_line
                     else:
                         merged_line['name'] += ', ' + line_dict['name']
-                        merged_line['unit_amount'] += line_dict['unit_amount']
+                        merged_line['unit_amount'] = \
+                            float(merged_line['unit_amount']) + \
+                            float(line_dict['unit_amount'])
                     i += 1
                 merged_line['uom_id.id'] = ExpenseLine._get_uom_id()
                 data_dict['line_ids'] = [merged_line]
