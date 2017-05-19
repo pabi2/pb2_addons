@@ -225,11 +225,11 @@ class HRExpenseExpese(models.Model):
             inv_line_datas = \
                 self.merge_invoice_line(inv_line_datas, group_keys,
                                         sum_keys, str_keys)
-            if len(inv_line_datas) > 1:
-                # With multiple line, we still can't link to expense_line YET!
-                # It could with more effort, but this case shouldn't happen
-                raise ValidationError(
-                    _('Merging into multiple invoice lines is not supported!'))
+            # if len(inv_line_datas) > 1:
+            #     # With multiple line, we still can't link to expense_line YET!
+            #     # It could with more effort, but this case shouldn't happen
+            #     raise ValidationError(
+            #         _('Merging into multiple invoice lines is not supported!'))
             inv_line_data = inv_line_datas[0]
             for exp_line in expense.line_ids:
                 inv_line = InvoiceLine.create(inv_line_data)
