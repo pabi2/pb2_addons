@@ -191,6 +191,7 @@ class HRExpense(models.Model):
     @api.model
     def _pre_process_hr_expense(self, data_dict):
         Employee = self.env['hr.employee']
+        ExpenseLine = self.env['hr.expense.line']
         # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
         employee = Employee.search(domain)
@@ -216,11 +217,21 @@ class HRExpense(models.Model):
         employee = Employee.search(domain)
         data_dict['approver_id.id'] = employee.user_id.id or u''
         del data_dict['approver_code']
-        # Advance product if required
+        # Advance Case, mrege lines
         if data_dict.get('is_employee_advance', u'False') == u'True' and \
                 'line_ids' in data_dict:
-            for data in data_dict['line_ids']:
-                data['uom_id.id'] = self.env['hr.expense.line']._get_uom_id()
+            if len(data_dict['line_ids']) > 0:  # >1 lines, merge ignore detail
+                i = 0
+                merged_line = {}
+                for line_dict in data_dict['line_ids']:
+                    if i == 0:
+                        merged_line = line_dict.copy()
+                    else:
+                        merged_line['name'] += ', ' + line_dict['name']
+                        merged_line['unit_amount'] += line_dict['unit_amount']
+                    i += 1
+                merged_line['uom_id.id'] = ExpenseLine._get_uom_id()
+                data_dict['line_ids'] = [merged_line]
         if 'line_ids' in data_dict:
             for data in data_dict['line_ids']:
                 if not data.get('name', False):
