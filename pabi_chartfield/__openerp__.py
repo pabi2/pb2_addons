@@ -17,6 +17,7 @@
         'stock_request',
         'auditlog',
         # 'account_model_generate_hook',
+        'web_tree_dynamic_colored_field',
     ],
     'data': [
         'security/security.xml',

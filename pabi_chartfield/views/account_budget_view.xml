@@ -174,18 +174,19 @@
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                         string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="m1" sum="m1"/>
-                    <field name="m2" sum="m2"/>
-                    <field name="m3" sum="m3"/>
-                    <field name="m4" sum="m4"/>
-                    <field name="m5" sum="m5"/>
-                    <field name="m6" sum="m6"/>
-                    <field name="m7" sum="m7"/>
-                    <field name="m8" sum="m8"/>
-                    <field name="m9" sum="m9"/>
-                    <field name="m10" sum="m10"/>
-                    <field name="m11" sum="m11"/>
-                    <field name="m12" sum="m12"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
                     <field name="period_split_line_ids" invisible="1"/>
                     <button name="%(account_budget_activity.act_account_budget_line_split_period_view)d"
                             string="Split Budget Line Period Wise"

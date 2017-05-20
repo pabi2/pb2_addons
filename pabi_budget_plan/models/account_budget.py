@@ -86,9 +86,9 @@ class AccountBudget(models.Model):
     def _validate_plan_amount(self):
         self.ensure_one()
         if self.budget_level_id.check_plan_with_released_amount:
-            if self.budgeted_expense != self.released_amount:
+            if self.rolling > self.released_amount:
                 raise UserError(
-                    _('New Budgeted Expense must equal to Policy Amount'))
+                    _('New rolling plan must not exceed released amount'))
         return True
 
     @api.multi
