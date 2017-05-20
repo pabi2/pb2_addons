@@ -43,6 +43,41 @@ class AccountBudget(models.Model):
     company_id = fields.Many2one(
         readonly=True,
     )
+    release_follow_policy = fields.Boolean(
+        string='Release Amount follow Policy',
+        compute='_compute_release_follow_policy',
+    )
+
+    @api.model
+    def create(self, vals):
+        budget = super(AccountBudget, self).create(vals)
+        if budget.budget_release == 'manual_header' and \
+                budget.release_follow_policy and \
+                'policy_amount' in vals:
+            vals['to_release_amount'] = vals['policy_amount']
+            budget.write(vals)
+        return budget
+
+    @api.multi
+    def write(self, vals):
+        if 'policy_amount' in vals:
+            for budget in self:
+                if budget.budget_release == 'manual_header' and \
+                        budget.release_follow_policy:
+                    vals['to_release_amount'] = vals['policy_amount']
+                super(AccountBudget, budget).write(vals)
+        else:
+            super(AccountBudget, self).write(vals)
+        return True
+
+    @api.multi
+    @api.depends('fiscalyear_id')
+    def _compute_release_follow_policy(self):
+        for budget in self:
+            budget_level_type = self._get_budget_level_type_hook(budget)
+            budget_level = budget.fiscalyear_id.budget_level_ids.filtered(
+                lambda l: l.type == budget_level_type)
+            budget.release_follow_policy = budget_level.release_follow_policy
 
     @api.one
     @api.constrains('fiscalyear_id', 'section_id')
