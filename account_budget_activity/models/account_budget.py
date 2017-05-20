@@ -156,10 +156,61 @@ class AccountBudget(models.Model):
         compute='_compute_budget_level',
         store=True,
     )
-    spending_ytd = fields.Float(
-        string='Spending YTD',
-        compute='_compute_spending_ytd',
+    budget_release = fields.Selection(
+        [('manual_line', 'Budget Line'),
+         ('manual_header', 'Budget Header'),
+         ('auto', 'Auto Release as Planned'), ],
+        string='Budget Release',
+        related='budget_level_id.budget_release',
     )
+    past_actual = fields.Float(
+        string='Past Actual',
+        compute='_compute_past_future_rolling',
+        help="Commitment + Actual for the past months",
+    )
+    future_plan = fields.Float(
+        string='Future Plan',
+        compute='_compute_past_future_rolling',
+        help="Future plan amount, including this month",
+    )
+    rolling = fields.Float(
+        string='Rolling',
+        compute='_compute_past_future_rolling',
+        help="Past Actual + Future Plan",
+    )
+
+    @api.multi
+    def _get_past_actual_domain(self):
+        self.ensure_one()
+        Period = self.env['account.period']
+        current_period = Period.find()
+        dom = [('fiscalyear_id', '=', self.fiscalyear_id.id),
+               ('period_id', '<', current_period.id)]
+        return dom
+
+    @api.multi
+    def _get_future_plan_amount(self):
+        self.ensure_one()
+        Period = self.env['account.period']
+        period_num = Period.get_num_period_by_period()  # Now
+        future_plan = 0.0
+        for line in self.budget_expense_line_ids:
+            for i in range(period_num, 13):
+                future_plan += line['m%s' % (i,)]
+        return future_plan
+
+    @api.multi
+    @api.depends()
+    def _compute_past_future_rolling(self):
+        Consume = self.env['budget.consume.report']
+        for budget in self:
+            # Past
+            dom = budget._get_past_actual_domain()
+            budget.past_actual = sum(Consume.search(dom).mapped('amount'))
+            # Future
+            budget.future_plan = budget._get_future_plan_amount()
+            # Rolling
+            budget.rolling = budget.past_actual + budget.future_plan
 
     @api.multi
     def write(self, vals):

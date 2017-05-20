@@ -175,6 +175,18 @@ class AccountPeriod(models.Model):
                 month = rec.date_start and rec.date_start[5:7] or '??'
                 rec.calendar_name = '%s-%s' % (mo_dict[month], year)
 
+    @api.model
+    def get_num_period_by_period(self, period_id=False):
+        """ Convert from month 10 to period 1... month 9  to period 12 """
+        period = False
+        if period_id:
+            period = self.browse(period_id)
+        else:
+            period = self.find()
+        x = int(period.fiscalyear_id.date_start[5:7]) - 1
+        num_period = (12 + int(period.date_start[5:7]) - x) % 12
+        return num_period
+
 
 class AccountPeriodCalendar(models.Model):
     _name = 'account.period.calendar'

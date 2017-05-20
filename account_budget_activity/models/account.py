@@ -86,8 +86,14 @@ class AccountFiscalyearBudgetLevel(models.Model):
         string='Release Type',
         default='manual_line',
         required=True,
+        help="* Budget Line: to release budget at budget line\n"
+        "* Budget Header: to release budget at budget header, "
+        "it will then release that full amount in 1st budget line\n"
+        "* Auto Release as Planned: always set released "
+        "amount equal to plan amount"
     )
     check_plan_with_released_amount = fields.Boolean(
+        string='Check Plan with Release',
         help="When confirm budget control, check that sum "
         "planned amount not exceed the released amount"
     )
