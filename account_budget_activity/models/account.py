@@ -79,9 +79,10 @@ class AccountFiscalyearBudgetLevel(models.Model):
         default=False,
     )
     budget_release = fields.Selection(
-        [('manual', 'Manual Release'),
-         ('auto', 'Full Auto Release'), ],
-        string='Budget Release Type',
+        [('manual_line', 'Manual Release by Budget Line'),
+         ('manual_header', 'Manual Release by Budget Header'),
+         ('auto', 'Auto Full Release as Planned'), ],
+        string='Release Type',
         default='manual',
         required=True,
     )
@@ -110,11 +111,6 @@ class AccountFiscalyearBudgetLevel(models.Model):
     #     string='Auto Release',
     #     default=False,
     # )
-
-    @api.onchange('is_budget_control')
-    def onchange_is_budget_control(self):
-        for record in self:
-            record.exp_budget_control = record.is_budget_control
 
 
 class AccountJournal(models.Model):

@@ -124,7 +124,9 @@
                                     <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company" widget="selection"/>
-                                <field name="released_amount" sum="Released Amount"/>
+                                <field name="released_amount" attrs="{'invisible': [('budget_release', '=', 'manual_header')]}"/>
+                                <field name="to_release_amount"
+                                  attrs="{'invisible': [('budget_release', '!=', 'manual_header')], 'required': [('budget_release', '=', 'manual_header')]}"/>
                             </group>
                         </group>
                         <notebook>
@@ -244,8 +246,8 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="planned_amount" sum="Planned Amount"/>
-                                <field name="released_amount" sum="Released Amount"/>
+                                <field name="planned_amount" />
+                                <field name="released_amount" />
                             </group>
                             <group>
                                 <field name="m1" sum="m1"/>

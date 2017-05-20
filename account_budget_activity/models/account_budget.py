@@ -125,9 +125,12 @@ class AccountBudget(models.Model):
     #     compute='_compute_amount',
     #     digits_compute=dp.get_precision('Account'),
     # )
+    to_release_amount = fields.Float(
+        string='Released Amount',
+    )
     released_amount = fields.Float(
         string='Released Amount',
-        readonly=True,
+        compute='_compute_released_amount',
     )
     budgeted_revenue = fields.Float(
         string='Total Revenue Budget',
@@ -148,12 +151,31 @@ class AccountBudget(models.Model):
         help="All Revenue - All Expense",
     )
     budget_release = fields.Selection(
-        [('manual', 'Manual Release'),
-         ('auto', 'Full Auto Release'), ],
+        [('manual_line', 'Manual Release by Budget Line'),
+         ('manual_header', 'Manual Release by Budget Header'),
+         ('auto', 'Auto Full Release as Planned'), ],
         string='Budget Release Type',
         compute='_compute_budget_release',
         store=True,
     )
+
+    @api.multi
+    def write(self, vals):
+        res = super(AccountBudget, self).write(vals)
+        for budget in self:
+            if budget.budget_release == 'manual_header':  # release down lines
+                if budget.budget_expense_line_ids:
+                    budget.budget_expense_line_ids.write(
+                        {'released_amount': 0.0})
+                    budget.budget_expense_line_ids[0].write(
+                        {'released_amount': budget.to_release_amount})
+        return res
+
+    @api.multi
+    def _compute_released_amount(self):
+        for budget in self:
+            budget.released_amount = \
+                sum(budget.budget_expense_line_ids.mapped('released_amount'))
 
     @api.model
     def _get_budget_level_type_hook(self, budget):
