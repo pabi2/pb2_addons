@@ -113,7 +113,7 @@
                                 <field name="budgeted_revenue" />
                                 <field name="budgeted_expense" />
                                 <field name="budgeted_overall" />
-                                <field name="budget_release"/>
+                                <field name="budget_level_id"/>
                             </group>
                             <group>
                                 <field name="fiscalyear_id"/>
@@ -124,9 +124,11 @@
                                     <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company" widget="selection"/>
-                                <field name="released_amount" attrs="{'invisible': [('budget_release', '=', 'manual_header')]}"/>
+                                <field name="released_amount"
+                                  attrs="{'invisible': [('budget_level_id.budget_release', '=', 'manual_header')]}"/>
                                 <field name="to_release_amount"
-                                  attrs="{'invisible': [('budget_release', '!=', 'manual_header')], 'required': [('budget_release', '=', 'manual_header')]}"/>
+                                  attrs="{'invisible': [('budget_level_id.budget_release', '!=', 'manual_header')],
+                                          'required': [('budget_level_id.budget_release', '=', 'manual_header')]}"/>
                             </group>
                         </group>
                         <notebook>

@@ -57,6 +57,7 @@ class AccountFiscalyear(models.Model):
 
 class AccountFiscalyearBudgetLevel(models.Model):
     _name = 'account.fiscalyear.budget.level'
+    _rec_name = 'budget_level'
 
     fiscal_id = fields.Many2one(
         'account.fiscalyear',
@@ -79,38 +80,17 @@ class AccountFiscalyearBudgetLevel(models.Model):
         default=False,
     )
     budget_release = fields.Selection(
-        [('manual_line', 'Manual Release by Budget Line'),
-         ('manual_header', 'Manual Release by Budget Header'),
-         ('auto', 'Auto Full Release as Planned'), ],
+        [('manual_line', 'Budget Line'),
+         ('manual_header', 'Budget Header'),
+         ('auto', 'Auto Release as Planned'), ],
         string='Release Type',
-        default='manual',
+        default='manual_line',
         required=True,
     )
-    # release_interval = fields.Selection(
-    #     [('1', '1 Month'),
-    #      ('3', '3 Months'),
-    #      ('6', '6 Months'),
-    #      ('12', '12 Months'), ],
-    #     string='Budget Release Interval',
-    #     default='1'
-    # )
-    # pr_budget_control = fields.Boolean(
-    #     string='Control on PR',
-    #     default=False,
-    # )
-    # po_budget_control = fields.Boolean(
-    #     string='Control on PO',
-    #     default=False,
-    # )
-    # exp_budget_control = fields.Boolean(
-    #     string='Control on Expense',
-    #     default=False,
-    # )
-    # kittiu: removed
-    # is_auto_release = fields.Boolean(
-    #     string='Auto Release',
-    #     default=False,
-    # )
+    check_plan_with_released_amount = fields.Boolean(
+        help="When confirm budget control, check that sum "
+        "planned amount not exceed the released amount"
+    )
 
 
 class AccountJournal(models.Model):

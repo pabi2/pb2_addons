@@ -150,20 +150,22 @@ class AccountBudget(models.Model):
         store=True,
         help="All Revenue - All Expense",
     )
-    budget_release = fields.Selection(
-        [('manual_line', 'Manual Release by Budget Line'),
-         ('manual_header', 'Manual Release by Budget Header'),
-         ('auto', 'Auto Full Release as Planned'), ],
-        string='Budget Release Type',
-        compute='_compute_budget_release',
+    budget_level_id = fields.Many2one(
+        'account.fiscalyear.budget.level',
+        string='Budget Level',
+        compute='_compute_budget_level',
         store=True,
+    )
+    spending_ytd = fields.Float(
+        string='Spending YTD',
+        compute='_compute_spending_ytd',
     )
 
     @api.multi
     def write(self, vals):
         res = super(AccountBudget, self).write(vals)
         for budget in self:
-            if budget.budget_release == 'manual_header':  # release down lines
+            if budget.budget_level_id.budget_release == 'manual_header':
                 if budget.budget_expense_line_ids:
                     budget.budget_expense_line_ids.write(
                         {'released_amount': 0.0})
@@ -183,12 +185,12 @@ class AccountBudget(models.Model):
 
     @api.multi
     @api.depends('fiscalyear_id')
-    def _compute_budget_release(self):
+    def _compute_budget_level(self):
         for budget in self:
             budget_level_type = self._get_budget_level_type_hook(budget)
             budget_level = budget.fiscalyear_id.budget_level_ids.filtered(
                 lambda l: l.type == budget_level_type)
-            budget.budget_release = budget_level.budget_release
+            budget.budget_level_id = budget_level
 
     @api.multi
     @api.depends('budget_line_ids',
@@ -662,7 +664,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                 rec.m7, rec.m8, rec.m9, rec.m10, rec.m11, rec.m12])
             rec.planned_amount = planned_amount
             # If budget release is auto, update to released_amount
-            budget_release = rec.budget_id.budget_release
+            budget_release = rec.budget_id.budget_level_id.budget_release
             if rec.id and budget_release == 'auto':
                 self._cr.execute("""
                     update account_budget_line set released_amount = %s

@@ -43,7 +43,7 @@ class BudgetReleaseWizard(models.TransientModel):
         res = super(BudgetReleaseWizard, self).default_get(fields)
         active_id = self._context.get('active_id')
         budget_line = self.env['account.budget.line'].browse(active_id)
-        budget_release = budget_line.budget_id.budget_release
+        budget_release = budget_line.budget_id.budget_level_id.budget_release
         if budget_release != 'manual_line':
             raise UserError(_('Manual budget released not allowed!'))
         res['amount_to_release'] = budget_line.released_amount
@@ -54,7 +54,7 @@ class BudgetReleaseWizard(models.TransientModel):
         self.ensure_one()
         active_id = self._context.get('active_id')
         budget_line = self.env['account.budget.line'].browse(active_id)
-        budget_release = budget_line.budget_id.budget_release
+        budget_release = budget_line.budget_id.budget_level_id.budget_release
         if budget_release != 'manual_line':
             raise UserError(_('Manual budget released not allowed!'))
         release_result = {}
