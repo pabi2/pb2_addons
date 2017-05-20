@@ -205,7 +205,7 @@ class ResProject(LogCommon, models.Model):
     def _release_fiscal_budget(self, fiscalyear, released_amount):
         """ Distribute budget released to all AG of the same year
             by distribute to the first AG first,
-            show warning if released amoutnt > planned amout
+            show warning if released amount > planned amout
         """
         for project in self:
             budget_plans = project.budget_plan_ids.\
