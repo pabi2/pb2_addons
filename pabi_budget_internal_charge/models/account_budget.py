@@ -60,11 +60,14 @@ class AccountBudget(models.Model):
             rec.budgeted_expense_external = expense_external
             rec.budgeted_expense_internal = expense_internal
 
-    @api.model
-    def _check_amount_with_policy(self):
-        if self.budgeted_expense_external != self.policy_amount:
-            raise UserError(
-                _('New External Budgeted Expense must equal to Policy Amount'))
+    @api.multi
+    def _validate_plan_amount(self):
+        self.ensure_one()
+        if self.budget_level_id.check_plan_with_released_amount:
+            if self.budgeted_expense_external != self.policy_amount:
+                raise UserError(
+                    _('New External Budgeted Expense must '
+                      'equal to Policy Amount'))
         return True
 
 

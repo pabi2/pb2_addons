@@ -43,16 +43,13 @@ class AccountBudget(models.Model):
     company_id = fields.Many2one(
         readonly=True,
     )
-    release_follow_policy = fields.Boolean(
-        string='Release Amount follow Policy',
-        compute='_compute_release_follow_policy',
-    )
 
     @api.model
     def create(self, vals):
         budget = super(AccountBudget, self).create(vals)
-        if budget.budget_release == 'manual_header' and \
-                budget.release_follow_policy and \
+        budget_level = budget.budget_level_id
+        if budget_level.budget_release == 'manual_header' and \
+                budget_level.release_follow_policy and \
                 'policy_amount' in vals:
             vals['to_release_amount'] = vals['policy_amount']
             budget.write(vals)
@@ -62,22 +59,14 @@ class AccountBudget(models.Model):
     def write(self, vals):
         if 'policy_amount' in vals:
             for budget in self:
-                if budget.budget_release == 'manual_header' and \
-                        budget.release_follow_policy:
+                budget_level = budget.budget_level_id
+                if budget_level.budget_release == 'manual_header' and \
+                        budget_level.release_follow_policy:
                     vals['to_release_amount'] = vals['policy_amount']
                 super(AccountBudget, budget).write(vals)
         else:
             super(AccountBudget, self).write(vals)
         return True
-
-    @api.multi
-    @api.depends('fiscalyear_id')
-    def _compute_release_follow_policy(self):
-        for budget in self:
-            budget_level_type = self._get_budget_level_type_hook(budget)
-            budget_level = budget.fiscalyear_id.budget_level_ids.filtered(
-                lambda l: l.type == budget_level_type)
-            budget.release_follow_policy = budget_level.release_follow_policy
 
     @api.one
     @api.constrains('fiscalyear_id', 'section_id')
@@ -93,17 +82,19 @@ class AccountBudget(models.Model):
                     _('You can not have duplicate budget control for '
                       'same fiscalyear, section and version.'))
 
-    @api.model
-    def _check_amount_with_policy(self):
-        if self.budgeted_expense != self.policy_amount:
-            raise UserError(
-                _('New Budgeted Expense must equal to Policy Amount'))
+    @api.multi
+    def _validate_plan_amount(self):
+        self.ensure_one()
+        if self.budget_level_id.check_plan_with_released_amount:
+            if self.budgeted_expense != self.released_amount:
+                raise UserError(
+                    _('New Budgeted Expense must equal to Policy Amount'))
         return True
 
     @api.multi
     def budget_confirm(self):
         for rec in self:
-            rec._check_amount_with_policy()
+            rec._validate_plan_amount()
             name = self.env['ir.sequence'].next_by_code('budget.control.unit')
             rec.write({'name': name})
             rec.ref_budget_id.budget_cancel()
