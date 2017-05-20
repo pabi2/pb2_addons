@@ -20,8 +20,11 @@ class AccountBankReceipt(models.Model):
             if line.reconcile_id:
                 line.reconcile_id.unlink()
         move = self.move_id
+        period = self.env['account.period'].find()
         rev_move = move.copy({'name': move.name + '_VOID',
-                              'ref': move.ref})
+                              'ref': move.ref,
+                              'period_id': period.id,
+                              'date': fields.Date.context_today(self)})
         rev_move._switch_dr_cr()
         self.cancel_move_id = rev_move
         # As account both DR and CR are balance sheet item, do one by one

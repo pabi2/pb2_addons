@@ -17,8 +17,11 @@ class AccountVoucher(models.Model):
     @api.model
     def voucher_move_cancel_hook(self, voucher):
         move = voucher.move_id
+        period = self.env['account.period'].find()
         rev_move = move.copy({'name': move.name + '_VOID',
-                              'ref': move.ref})
+                              'ref': move.ref,
+                              'period_id': period.id,
+                              'date': fields.Date.context_today(self)})
         rev_move._switch_dr_cr()
         voucher.cancel_move_id = rev_move
         # Delete reconcile, and receconcile with reverse entry

@@ -23,12 +23,15 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_cancel(self):
         res = super(AccountInvoice, self).action_cancel()
+        period = self.env['account.period'].find()
         # First, set the invoices as cancelled and detach the move ids
         for inv in self:  # For each cancel invoice with internal_number
             move = inv.move_id
             if move:
                 rev_move = move.copy({'name': move.name + '_VOID',
-                                      'ref': move.ref})
+                                      'ref': move.ref,
+                                      'period_id': period.id,
+                                      'date': fields.Date.context_today(self)})
                 rev_move._switch_dr_cr()
                 self.env['account.move'].\
                     _reconcile_voided_entry([move.id, rev_move.id])
