@@ -85,7 +85,6 @@ class AccountFiscalyearBudgetLevel(models.Model):
          ('auto', 'Auto Release as Planned'), ],
         string='Release Type',
         default='manual_line',
-        required=True,
         help="* Budget Line: to release budget at budget line\n"
         "* Budget Header: to release budget at budget header, "
         "it will then release that full amount in 1st budget line\n"
@@ -98,7 +97,7 @@ class AccountFiscalyearBudgetLevel(models.Model):
         "planned amount not exceed the released amount"
     )
     adjust_past_plan = fields.Boolean(
-        string='Adjust past plan',
+        string='Adjust Past Plan',
         default=False,
         help="Allow user to adjust past period budget plan line amount",
     )

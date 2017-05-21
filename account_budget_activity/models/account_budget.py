@@ -161,7 +161,8 @@ class AccountBudget(models.Model):
          ('manual_header', 'Budget Header'),
          ('auto', 'Auto Release as Planned'), ],
         string='Budget Release',
-        related='budget_level_id.budget_release',
+        compute='_compute_budget_level',
+        store=True,
     )
     past_actual = fields.Float(
         string='Past Actual',
@@ -242,6 +243,7 @@ class AccountBudget(models.Model):
             budget_level = budget.fiscalyear_id.budget_level_ids.filtered(
                 lambda l: l.type == budget_level_type)
             budget.budget_level_id = budget_level
+            budget.budget_release = budget_level.budget_release
 
     @api.multi
     @api.depends('budget_line_ids',
@@ -599,6 +601,13 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         related='budget_id.fiscalyear_id',
         store=True,
         readonly=True,
+    )
+    budget_release = fields.Selection(
+        [('manual_line', 'Budget Line'),
+         ('manual_header', 'Budget Header'),
+         ('auto', 'Auto Release as Planned'), ],
+        string='Budget Release',
+        related='budget_id.budget_release',
     )
     current_period = fields.Integer(
         string='Current Period',
