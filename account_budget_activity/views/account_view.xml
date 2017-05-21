@@ -27,6 +27,7 @@
                             <field name="is_budget_control"/>
                             <field name="budget_release"/>
                             <field name="check_plan_with_released_amount"/>
+                            <field name="adjust_past_plan"/>
                         </tree>
                     </field>
                 </form>

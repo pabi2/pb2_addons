@@ -57,18 +57,19 @@
                     <field name="fiscalyear_id" invisible="1"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="m1" sum="m1"/>
-                    <field name="m2" sum="m2"/>
-                    <field name="m3" sum="m3"/>
-                    <field name="m4" sum="m4"/>
-                    <field name="m5" sum="m5"/>
-                    <field name="m6" sum="m6"/>
-                    <field name="m7" sum="m7"/>
-                    <field name="m8" sum="m8"/>
-                    <field name="m9" sum="m9"/>
-                    <field name="m10" sum="m10"/>
-                    <field name="m11" sum="m11"/>
-                    <field name="m12" sum="m12"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
                     <button name="%(act_account_budget_line_split_period_view)d" string="Split Budget Line Period Wise" type="action" icon="gtk-justify-fill"/>
                 </tree>
             </field>
@@ -133,8 +134,8 @@
                                 <group>
                                     <group></group>
                                     <group class="oe_subtotal_footer oe_right">
-                                        <field name="past_actual" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
-                                        <field name="future_plan" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
+                                        <field name="past_actual" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                                        <field name="future_plan" widget="monetary" options="{'currency_field': 'currency_id'}" />
                                         <field name="rolling" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
                                     </group>
                                 </group>
@@ -207,17 +208,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_account_budget_control" id="menu_act_account_budget_view" action="act_account_budget_view" sequence="1"/>
 
-        <!--record id="view_account_budget_line_search" model="ir.ui.view">
-            <field name="name">account.budget.line.search</field>
-            <field name="model">account.budget.line</field>
-            <field name="arch" type="xml">
-                <search string="Budget Lines">
-                    <field name="analytic_account_id"/>
-                </search>
-            </field>
-        </record-->
+        <menuitem parent="menu_action_account_budget_control" id="menu_act_account_budget_view" action="act_account_budget_view" sequence="1"/>
 
         <record model="ir.ui.view" id="view_account_budget_line_tree">
             <field name="name">account.budget.line.tree</field>
@@ -231,18 +223,19 @@
                     <field name="planned_amount" sum="Planned Amount"/>
                     <button name="%(action_budget_release_wizard)d" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
                     <field name="released_amount" sum="Released"/>
-                    <field name="m1" sum="m1"/>
-                    <field name="m2" sum="m2"/>
-                    <field name="m3" sum="m3"/>
-                    <field name="m4" sum="m4"/>
-                    <field name="m5" sum="m5"/>
-                    <field name="m6" sum="m6"/>
-                    <field name="m7" sum="m7"/>
-                    <field name="m8" sum="m8"/>
-                    <field name="m9" sum="m9"/>
-                    <field name="m10" sum="m10"/>
-                    <field name="m11" sum="m11"/>
-                    <field name="m12" sum="m12"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
                 </tree>
             </field>
         </record>
@@ -258,18 +251,19 @@
                                 <field name="released_amount"/>
                             </group>
                             <group>
-                                <field name="m1" sum="m1"/>
-                                <field name="m2" sum="m2"/>
-                                <field name="m3" sum="m3"/>
-                                <field name="m4" sum="m4"/>
-                                <field name="m5" sum="m5"/>
-                                <field name="m6" sum="m6"/>
-                                <field name="m7" sum="m7"/>
-                                <field name="m8" sum="m8"/>
-                                <field name="m9" sum="m9"/>
-                                <field name="m10" sum="m10"/>
-                                <field name="m11" sum="m11"/>
-                                <field name="m12" sum="m12"/>
+                              <field name="current_period" invisible="1"/>
+                              <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                              <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                              <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                              <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                              <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                              <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                              <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                              <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                              <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                              <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                              <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                              <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
                             </group>
                         </group>
                     </sheet>

@@ -600,6 +600,10 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    current_period = fields.Integer(
+        string='Current Period',
+        compute='_compute_current_period',
+    )
     m1 = fields.Float(
         string='Oct',
     )
@@ -657,6 +661,28 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         string="Period Split Lines",
         default=lambda self: self._default_period_split_lines(),
     )
+
+    @api.multi
+    def write(self, vals):
+        for rec in self:
+            if not rec.budget_id.budget_level_id.adjust_past_plan:
+                x = rec.current_period + 1
+                for i in range(1, x):
+                    m = 'm%s' % (i,)
+                    if m in vals:
+                        raise UserError(
+                            _('Adjusting past plan amount is not allowed!'))
+        return super(AccountBudgetLine, self).write(vals)
+
+    @api.multi
+    @api.depends()
+    def _compute_current_period(self):
+        Period = self.env['account.period']
+        for rec in self:
+            if rec.budget_id.budget_level_id.adjust_past_plan:
+                rec.current_period = 0
+            else:
+                rec.current_period = Period.get_num_period_by_period()
 
     @api.model
     def _default_period_split_lines(self):

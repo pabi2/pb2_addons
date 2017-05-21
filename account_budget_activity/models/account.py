@@ -97,6 +97,11 @@ class AccountFiscalyearBudgetLevel(models.Model):
         help="When confirm budget control, check that sum "
         "planned amount not exceed the released amount"
     )
+    adjust_past_plan = fields.Boolean(
+        string='Adjust past plan',
+        default=False,
+        help="Allow user to adjust past period budget plan line amount",
+    )
 
 
 class AccountJournal(models.Model):
