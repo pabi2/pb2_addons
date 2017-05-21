@@ -171,9 +171,12 @@
 
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
-                        string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="released_amount" sum="Released Amount"/>
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
@@ -238,9 +241,12 @@
 
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
-                        string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="released_amount" sum="Released Amount"/>
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
@@ -295,9 +301,12 @@
                     <field name="activity_id" invisible="0"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="0"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
-                        string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="released_amount" sum="Released Amount"/>
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
@@ -355,9 +364,12 @@
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
-                        string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="released_amount" sum="Released Amount"/>
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
@@ -418,10 +430,14 @@
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- PERIOD -->
+
                     <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
-                        string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr" />
-                    <field name="released_amount" sum="Released Amount"/>
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
