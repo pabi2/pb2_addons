@@ -227,10 +227,6 @@ class AccountBudgetLine(ChartField, models.Model):
         related='budget_id.chart_view',
         store=True,
     )
-    current_period = fields.Integer(
-        string='Current Period',
-        compute='_compute_current_period',
-    )
     item_id = fields.Many2one(
         'invest.asset.plan.item',
         string='Asset Info',
@@ -247,13 +243,6 @@ class AccountBudgetLine(ChartField, models.Model):
         'budget.unit.job.order.line',
         string='Breakdown Job Order Line ref.',
     )
-
-    @api.multi
-    @api.depends()
-    def _compute_current_period(self):
-        Period = self.env['account.period']
-        for rec in self:
-            rec.current_period = Period.get_num_period_by_period()
 
     @api.model
     def _get_budget_level_type_hook(self, budget_line):

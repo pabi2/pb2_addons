@@ -6,7 +6,7 @@ class AccountFiscalyearBudgetLevel(models.Model):
     _inherit = 'account.fiscalyear.budget.level'
 
     release_follow_policy = fields.Boolean(
-        string='Release Amount by Policy',
+        string='Release by Policy',
         default=False,
         help="Change released amount with policy amount",
     )

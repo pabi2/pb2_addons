@@ -7,7 +7,7 @@
             <field name="model">account.fiscalyear</field>
             <field name="inherit_id" ref="account_budget_activity.view_fiscalyear_budget_level_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/field/tree/field[@name='budget_level_id']" position="after">
+                <xpath expr="/form/field/tree/field[@name='budget_release']" position="after">
                 	<field name="release_follow_policy" />
                 </xpath>
             </field>
