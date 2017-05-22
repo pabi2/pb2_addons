@@ -5,10 +5,10 @@ from openerp import models, fields, api
 class AccountActivityGroup(models.Model):
     _inherit = "account.activity.group"
 
-    has_expense_rule = fields.Boolean(
-        string='Has Expense Rule',
-        default=False,
-    )
+    # has_expense_rule = fields.Boolean(
+    #     string='Has Expense Rule',
+    #     default=False,
+    # )
     special_workflow_emotion = fields.Boolean(
         string='Special Workflow Emotion',
         default=False,
@@ -64,10 +64,10 @@ class AccountActivityGroup(models.Model):
 class AccountActivity(models.Model):
     _inherit = "account.activity"
 
-    has_expense_rule = fields.Boolean(
-        string='Has Expense Rule',
-        default=False,
-    )
+    # has_expense_rule = fields.Boolean(
+    #     string='Has Expense Rule',
+    #     default=False,
+    # )
     special_workflow = fields.Selection(
         [('fringe', 'Fringe'),
          ('recreation', 'Recreation'),

@@ -12,7 +12,7 @@
                     <field name="wf_emotion_section_ids" widget="many2many_tags" attrs="{'invisible': [('special_workflow_emotion', '=', False)]}"/>
                 </xpath>
                 <xpath expr="/form/notebook/page/field/tree/field[@name='name']" position="after">
-                    <field name="has_expense_rule"/>
+                    <!-- <field name="has_expense_rule"/> -->
                     <field name="special_workflow"/>
                 </xpath>
             </field>
@@ -24,7 +24,7 @@
             <field name="inherit_id" ref="account_budget_activity.view_account_activity_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="has_expense_rule"/>
+                    <!-- <field name="has_expense_rule"/> -->
                     <field name="special_workflow"/>
                 </xpath>
             </field>
