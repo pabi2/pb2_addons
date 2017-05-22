@@ -233,7 +233,7 @@ class StockRequest(models.Model):
         self.ensure_one()
         if not self.line_ids:
             raise UserError('No lines!')
-        self.line_ids._check_future_qty()
+        # self.line_ids._check_future_qty()
         self.write({'state': 'confirmed'})
 
     @api.multi
