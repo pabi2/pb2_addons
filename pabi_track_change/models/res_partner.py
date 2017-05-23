@@ -107,10 +107,10 @@ class ResPartner(models.Model):
     property_account_position = fields.Many2one(
         track_visibility='onchange',
     )
-    property_purchase_position = fields.Many2one(
-        track_visibility='onchange',
-    )
-    property_account_receivalble = fields.Many2one(
+    # property_purchase_position = fields.Many2one(
+    #     track_visibility='onchange',
+    # )
+    property_account_receivable = fields.Many2one(
         track_visibility='onchange',
     )
     property_account_payable = fields.Many2one(
@@ -125,7 +125,7 @@ class ResPartner(models.Model):
     property_supplier_payment_term = fields.Many2one(
         track_visibility='onchange',
     )
-    supplier_invoice_method = fields.Many2one(
+    supplier_invoice_method = fields.Selection(
         track_visibility='onchange',
     )
     credit_limit = fields.Float(
