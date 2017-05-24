@@ -48,7 +48,7 @@
                                     <tree string="Section Transfer Lines" editable="top">
                                         <field name="from_section_id"/>
                                         <field name="from_org_id"/>
-                                        <field name="amount_transfer"/>
+                                        <field name="amount_transfer" sum="Total Amount"/>
                                         <field name="to_section_id"/>
                                         <field name="to_org_id"/>
                                         <field name="notes"/>
@@ -79,6 +79,10 @@
                 <tree string="Section Budget Transfer">
                     <field name="name"/>
                     <field name="fiscalyear_id"/>
+                    <field name="date_prepare"/>
+                    <field name="date_approve"/>
+                    <field name="date_transfer"/>
+                    <field name="total_transfer_amt" sum="Transferred Amount"/>
                     <field name="state"/>
                 </tree>
             </field>

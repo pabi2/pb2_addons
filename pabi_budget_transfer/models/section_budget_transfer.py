@@ -83,7 +83,7 @@ class SectionBudgetTransfer(models.Model):
         string="Additional Information",
     )
     total_transfer_amt = fields.Float(
-        string="Transfer Amount",
+        string="Transferred Amount",
         compute="_compute_total_transfer_amt",
     )
 
@@ -199,7 +199,7 @@ class SectionBudgetTransferLine(models.Model):
     def _get_section_budget(self, fiscalyear, section):
         AccountBudget = self.env['account.budget']
         budget = AccountBudget.search([
-            ('latest_version', '=', True),
+            ('active', '=', True),
             ('fiscalyear_id', '=', fiscalyear.id),
             ('section_id', '=', section.id),
             ('state', 'not in', ('draft', 'cancel'))])

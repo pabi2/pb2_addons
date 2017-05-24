@@ -31,7 +31,7 @@
         'views/invest_asset_plan_view.xml',
         'views/account_budget_view.xml',
         'views/account_view.xml',
-        'views/report_section_budget_transfer_view.xml',
+        # 'views/report_section_budget_transfer_view.xml',
         'views/budget_plan_report.xml'
     ],
     'demo': [

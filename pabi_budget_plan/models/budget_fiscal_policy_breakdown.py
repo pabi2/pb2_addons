@@ -289,7 +289,7 @@ class BudgetFiscalPolicyBreakdown(models.Model):
                     self.env['account.budget'].search(
                         [('section_id', '=', line.section_id.id),
                          ('chart_view', '=', self.chart_view),
-                         ('latest_version', '=', True),
+                         ('active', '=', True),
                          ('ref_breakdown_id', '=', old_breakdown.id)],
                         order='version desc').ids
                 if previous_budget:

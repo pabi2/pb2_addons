@@ -15,27 +15,23 @@
                 	<field name="ref_budget_id"/>
                 	<field name="ref_breakdown_id"/>
                 </xpath>
-                <xpath expr="//button[@name='confirm']" position="attributes">
+                <xpath expr="//button[@name='budget_confirm']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
-                <xpath expr="//button[@name='validate']" position="attributes">
+                <xpath expr="//button[@name='budget_validate']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
-                <xpath expr="//button[@name='done']" position="attributes">
+                <xpath expr="//button[@name='budget_done']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
-                <xpath expr="//button[@name='draft']" position="attributes">
+                <xpath expr="//button[@name='budget_draft']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
-                <xpath expr="//button[@name='cancel']" position="attributes">
+                <xpath expr="//button[@name='budget_cancel']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
                 <xpath expr="//button[@name='new_minor_revision']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
-                </xpath>
-                <xpath expr="//div[@name='buttons']/button[1]" position="attributes">
-                    <attribute name="type">object</attribute>
-                    <attribute name="name">get_all_version</attribute>
                 </xpath>
             </field>
         </record>

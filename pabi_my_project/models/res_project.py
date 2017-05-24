@@ -94,7 +94,7 @@ class ResProject(LogCommon, models.Model):
     def find_active_project_budget(self, fiscalyear_ids, program_ids):
         budgets = self.env['account.budget'].search([
             ('chart_view', '=', 'project_base'),
-            ('latest_version', '=', True),
+            ('active', '=', True),
             ('fiscalyear_id', 'in', fiscalyear_ids),
             ('program_id', 'in', program_ids)])
         return budgets

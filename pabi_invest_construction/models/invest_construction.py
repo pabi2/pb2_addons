@@ -515,7 +515,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def find_active_construction_budget(self, fiscalyear_ids, org_ids):
         budgets = self.env['account.budget'].search([
             ('chart_view', '=', 'invest_construction'),
-            ('latest_version', '=', True),
+            ('active', '=', True),
             ('fiscalyear_id', 'in', fiscalyear_ids),
             ('org_id', 'in', org_ids)])
         return budgets

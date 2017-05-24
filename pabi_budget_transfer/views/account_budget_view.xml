@@ -12,8 +12,9 @@
                             <group string="IN">
                                 <field name="in_unit_transfer_ids" nolabel="1">
                                     <tree editable="bottom">
+                                        <field name="transfer_id" string="Reference"/>
                                         <field name="from_section_id"/>
-                                        <field name="amount_transfer"/>
+                                        <field name="amount_transfer" sum="Total Amount"/>
                                         <field name="notes"/>
                                     </tree>
                                 </field>
@@ -21,8 +22,9 @@
                             <group string="OUT">
                                 <field name="out_unit_transfer_ids" nolabel="1">
                                     <tree editable="bottom">
+                                        <field name="transfer_id" string="Reference"/>
                                         <field name="to_section_id"/>
-                                        <field name="amount_transfer"/>
+                                        <field name="amount_transfer" sum="Total Amount"/>
                                         <field name="notes"/>
                                     </tree>
                                 </field>
