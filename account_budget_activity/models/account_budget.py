@@ -38,7 +38,11 @@ class AccountBudget(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        default="/",
         states={'done': [('readonly', True)]},
+    )
+    create_date = fields.Datetime(
+        readonly=True,
     )
     creating_user_id = fields.Many2one(
         'res.users',
@@ -68,14 +72,14 @@ class AccountBudget(models.Model):
         index=True,
         required=True,
         readonly=True,
-        copy=False,
+        # copy=False,
     )
     budget_line_ids = fields.One2many(
         'account.budget.line',
         'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
-        copy=True,
+        # copy=True,
     )
     budget_revenue_line_ids = fields.One2many(
         'account.budget.line',
@@ -83,7 +87,7 @@ class AccountBudget(models.Model):
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         domain=[('budget_method', '=', 'revenue')],
-        copy=True,
+        # copy=True,
     )
     budget_expense_line_ids = fields.One2many(
         'account.budget.line',
@@ -91,24 +95,23 @@ class AccountBudget(models.Model):
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         domain=[('budget_method', '=', 'expense')],
-        copy=True,
+        # copy=True,
     )
     company_id = fields.Many2one(
         'res.company',
         string='Company',
         required=True,
-        default=lambda self: self.env[
-            'res.company']._company_default_get('account.budget')
+        default=lambda self: self.env.user.company_id,
     )
     version = fields.Float(
-        string='Version',
+        string='Revision',
         readonly=True,
-        default=1.0,
+        default=0.0,
         digits=(2, 1),
         help="Indicate revision of the same budget plan. "
         "Only latest one is used",
     )
-    latest_version = fields.Boolean(
+    active = fields.Boolean(
         string='Current',
         readonly=True,
         default=True,
@@ -179,6 +182,14 @@ class AccountBudget(models.Model):
         string='Rolling',
         compute='_compute_past_future_rolling',
         help="Past Actual + Future Plan",
+    )
+    prev_revision_ids = fields.One2many(
+        'account.budget',
+        'ref_budget_id',
+        string='Previous Reivisions',
+        domain=['|', ('active', '=', True), ('active', '=', False)],
+        readonly=True,
+        copy=False,
     )
 
     @api.multi
@@ -333,14 +344,28 @@ class AccountBudget(models.Model):
     @api.multi
     def new_minor_revision(self):
         self.ensure_one()
-        budget = self.copy()
-        self.latest_version = False
-        budget.latest_version = True
-        budget.version = self.version + 0.1
+        new_budget = self
+        # Existing one will be the new one
+        new_version = new_budget.version + 0.1
+        if round(new_version % 1, 2) == 0.0:
+            raise ValidationError(_('You reach minor revision limit!'))
+        prev_budget = new_budget.copy({'active': False})
+        prev_budget.write({
+            'ref_budget_id': new_budget.id,
+            'to_release_amount': new_budget.to_release_amount,
+            'state': new_budget.state,
+            'active': False,
+        })
+        new_budget.version = new_version
+        return True
+
+    @api.multi
+    def get_all_version(self):
+        self.ensure_one()
         action = self.env.ref('account_budget_activity.'
                               'act_account_budget_view')
         result = action.read()[0]
-        dom = [('id', '=', budget.id)]
+        dom = ['|', ('ref_budget_id', '=', self.id), ('id', '=', self.id)]
         result.update({'domain': dom})
         return result
 

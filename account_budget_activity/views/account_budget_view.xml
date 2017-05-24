@@ -81,12 +81,12 @@
             <field name="arch" type="xml">
                 <form string="Budget" duplicate="false">
                     <header>
-                        <button string="Confirm" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
-                        <button string="Approve" name="validate" states="confirm" type="workflow" class="oe_highlight"/>
-                        <button string="Done" name="done" states="validate" type="workflow" class="oe_highlight"/>
-                        <button name="draft" states="cancel" string="Reset to Draft" type="workflow"/>
-                        <button string="Cancel Budget" name="cancel" states="confirm,validate" type="workflow"/>
-                        <button string="Minor Revision" name="new_minor_revision" type="object" attrs="{'invisible': ['|', ('latest_version', '=', False), ('state', 'not in', ('validate'))]}"/>
+                        <button string="Confirm" name="budget_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="budget_validate" states="confirm" type="object" class="oe_highlight"/>
+                        <button string="Done" name="budget_done" states="validate" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="budget_draft" states="cancel" type="object"/>
+                        <button string="Cancel Budget" name="budget_cancel" states="confirm,validate" type="object"/>
+                        <button string="Minor Revision" name="new_minor_revision" type="object" attrs="{'invisible': ['|', ('active', '=', False), ('state', 'not in', ('validate'))]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
                     </header>
                     <sheet string="Budget">
@@ -97,11 +97,12 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button class="oe_inline oe_stat_button" icon="fa-bookmark-o">
+                            <button name="get_all_version" type="object" class="oe_inline oe_stat_button"
+                              icon="fa-bookmark-o" context="{'active_test': False}">
                                 <field name="version" widget="statinfo"/>
                             </button>
-                            <field name="latest_version" invisible="1"/>
-                            <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up" string="Latest" attrs="{'invisible': [('latest_version', '=', False)]}"/>
+                            <field name="active" invisible="1"/>
+                            <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up" string="Latest" attrs="{'invisible': [('active', '=', False)]}"/>
                         </div>
                         <group>
                             <group>
@@ -150,6 +151,17 @@
                                     attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
                             </page>
+                            <page string="Revisions" name="revisions">
+                                <field name="prev_revision_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="version"/>
+                                        <field name="create_date"/>
+                                        <field name="released_amount"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -163,7 +175,7 @@
                 <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
                     <field name="name"/>
                     <field name="version"/>
-                    <field name="latest_version"/>
+                    <field name="active"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="released_amount" sum="Released Amount"/>
