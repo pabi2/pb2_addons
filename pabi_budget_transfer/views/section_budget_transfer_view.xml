@@ -10,54 +10,52 @@
                         <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
                         <button string="Approve" name="button_approve" states="confirm" type="object" class="oe_highlight"/>
                         <button string="Transfer" name="button_transfer" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Cancel" name="button_cancel" states="draft,confirm" type="object" />
+                        <button string="Cancel" name="button_cancel" states="draft,confirm,approve" type="object"/>
                         <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,transfer,cancel"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,transfer"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" />
+                                <field name="name"/>
                             </h1>
                         </div>
                         <group>
                             <group>
-                                <field name="fiscalyear_id" />
+                                <field name="fiscalyear_id"/>
+                            </group>
+                            <group>
+                                <field name="currency_id" invisible="1"/>
                             </group>
                             <group/>
-                       </group>
+                        </group>
                         <group>
                             <group>
-                                <field name="date_prepare" />
-                                <field name="date_approve" />
-                                <field name="date_receive" />
+                                <field name="date_prepare"/>
+                                <field name="date_approve"/>
+                                <field name="date_transfer"/>
                             </group>
                             <group>
-                                <field name="preparer_user_id" />
-                                <field name="approver_user_id" />
-                                <field name="receiver_user_id"/>
+                                <field name="preparer_user_id"/>
+                                <field name="approver_user_id"/>
+                                <field name="transfer_user_id"/>
                             </group>
-                       </group>
+                        </group>
                         <notebook>
                             <page string="Section Transfer Lines">
-                                <field name="section_budget_transfer_line_ids">
+                                <field name="transfer_line_ids">
                                     <tree string="Section Transfer Lines" editable="top">
                                         <field name="from_section_id"/>
-                                        <field name="from_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', from_section_id), ('latest_version', '=', True)]"/> 
-                                        <field name="from_budget_control_line_id"  domain="[('budget_id', '=', from_budget_control_id)]"/> 
-                                        <field name="from_period"/>
                                         <field name="from_org_id"/>
-                                        <field name="amount_to_transfer"/>
-                                        <field name="to_section_id" domain="[('org_id', '=', from_org_id)]" />
-                                        <field name="to_budget_control_id" domain="[('state', 'not in', ('cancel',)),('chart_view', '=', 'unit_base'), ('section_id', '=', to_section_id), ('latest_version', '=', True)]"/> 
-                                        <field name="to_budget_control_line_id" domain="[('budget_id', '=', to_budget_control_id)]"/> 
-                                        <field name="to_period"/>
+                                        <field name="amount_transfer"/>
+                                        <field name="to_section_id"/>
+                                        <field name="to_org_id"/>
                                         <field name="notes"/>
                                     </tree>
                                 </field>
                                 <group class="oe_subtotal_footer oe_right">
-                                    <field name="total_transferred_amt"/>
+                                    <field name="total_transfer_amt" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
                                 </group>
                                 <div class="oe_clear">
                                     <label for="notes"/>
@@ -73,13 +71,13 @@
                 </form>
             </field>
         </record>
-        
+
         <record model="ir.ui.view" id="view_section_budget_transfer_tree">
             <field name="name">view.section.budget.transfer.tree</field>
             <field name="model">section.budget.transfer</field>
             <field name="arch" type="xml">
-               <tree string="Section Budget Transfer">
-                    <field name="name" />
+                <tree string="Section Budget Transfer">
+                    <field name="name"/>
                     <field name="fiscalyear_id"/>
                     <field name="state"/>
                 </tree>
@@ -87,10 +85,10 @@
         </record>
 
         <record id="view_section_budget_transfer_search" model="ir.ui.view">
-           <field name="name">view.section.budget.transfer.search</field>
-           <field name="model">section.budget.transfer</field>
-           <field name="arch" type="xml">
-               <search string="Section Budget Transfer">
+            <field name="name">view.section.budget.transfer.search</field>
+            <field name="model">section.budget.transfer</field>
+            <field name="arch" type="xml">
+                <search string="Section Budget Transfer">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Section Budget Transfer"/>
                     <field name="state"/>
                     <field name="fiscalyear_id"/>
@@ -110,14 +108,12 @@
             <field name="view_id" ref="view_section_budget_transfer_tree"/>
             <field name="search_view_id" ref="view_section_budget_transfer_search"/>
             <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to create a new section budget transfer.
-              </p>
+                <p class="oe_view_nocontent_create">
+                    Click to create a new section budget transfer.
+                </p>
             </field>
         </record>
 
-        <menuitem parent="account_budget_activity.menu_action_account_budget_control"
-            id="menu_section_budget_transfer" 
-            action="action_section_budget_transfer" sequence="20" />
+        <menuitem parent="account_budget_activity.menu_action_account_budget_control" id="menu_section_budget_transfer" action="action_section_budget_transfer" sequence="20"/>
     </data>
 </openerp>

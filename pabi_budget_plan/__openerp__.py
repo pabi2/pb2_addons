@@ -26,14 +26,11 @@
         'views/budget_plan_project_view.xml',
         'views/budget_plan_personnel_view.xml',
         'views/budget_plan_invest_asset_view.xml',
-        # 'views/budget_plan_invest_construction_view.xml',
         'view/budget_plan_invest_construction_view.xml',
         'views/budget_fiscal_policy_view.xml',
         'views/invest_asset_plan_view.xml',
         'views/account_budget_view.xml',
         'views/account_view.xml',
-        # 'views/budget_transfer_view.xml', ?What is this used for?
-        'views/section_budget_transfer_view.xml',
         'views/report_section_budget_transfer_view.xml',
         'views/budget_plan_report.xml'
     ],

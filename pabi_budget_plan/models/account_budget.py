@@ -8,12 +8,6 @@ class AccountBudget(models.Model):
     _inherit = 'account.budget'
     _order = 'create_date desc'
 
-    @api.model
-    def _get_currency(self):
-        company = self.env.user.company_id
-        currency = company.currency_id
-        return currency
-
     prev_planned_amount = fields.Float(
         string='Planned Amount',
         readonly=True,
@@ -32,12 +26,6 @@ class AccountBudget(models.Model):
         'budget.fiscal.policy.breakdown',
         string="Breakdown Reference",
         copy=True,
-        readonly=True,
-    )
-    currency_id = fields.Many2one(
-        'res.currency',
-        string="Currency",
-        default=_get_currency,
         readonly=True,
     )
     company_id = fields.Many2one(
@@ -83,18 +71,8 @@ class AccountBudget(models.Model):
                       'same fiscalyear, section and version.'))
 
     @api.multi
-    def _validate_plan_amount(self):
-        self.ensure_one()
-        if self.budget_level_id.check_plan_with_released_amount:
-            if self.rolling > self.released_amount:
-                raise UserError(
-                    _('New rolling plan must not exceed released amount'))
-        return True
-
-    @api.multi
     def budget_confirm(self):
         for rec in self:
-            rec._validate_plan_amount()
             name = self.env['ir.sequence'].next_by_code('budget.control.unit')
             rec.write({'name': name})
             rec.ref_budget_id.budget_cancel()

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!--Section Budget Transfer Sequence-->
+        <record id="section_budget_transfer_sequence_type" model="ir.sequence.type">
+            <field name="name">Section Budget Transfer</field>
+            <field name="code">section.budget.transfer</field>
+        </record>
+        <record id="section_budget_transfer_sequence" model="ir.sequence">
+            <field name="code">section.budget.transfer</field>
+            <field name="name">Section Budget Transfer</field>
+            <field name="prefix">SBT%(fy)s</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</openerp>

@@ -14,7 +14,6 @@
                 	<field name="policy_amount" />
                 	<field name="ref_budget_id"/>
                 	<field name="ref_breakdown_id"/>
-                	<field name="currency_id" groups="base.group_multi_currency"/>
                 </xpath>
                 <xpath expr="//button[@name='confirm']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
