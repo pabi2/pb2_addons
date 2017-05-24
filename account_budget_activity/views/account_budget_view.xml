@@ -114,6 +114,7 @@
                             </group>
                             <group>
                                 <field name="fiscalyear_id"/>
+                                <field name="currency_id"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
                                     <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>

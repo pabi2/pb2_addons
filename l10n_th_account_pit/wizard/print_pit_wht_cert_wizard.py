@@ -42,7 +42,7 @@ class PrintPITWhtCertWizard(models.TransientModel):
         string='Withholding Line',
     )
     calendaryear_id = fields.Many2one(
-        'account.calendaryear',
+        'account.fiscalyear.calendar',
         string='Calendar Year',
         required=True,
     )

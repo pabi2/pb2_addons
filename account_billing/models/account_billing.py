@@ -50,7 +50,8 @@ class AccountBilling(models.Model):
         'res.currency',
         string='Currency',
         states={'draft': [('readonly', False)]},
-        default=lambda self: self.env.user.company_id.currency_id.id)
+        default=lambda self: self.env.user.company_id.currency_id,
+    )
     company_id = fields.Many2one(
         'res.company',
         string='Company',

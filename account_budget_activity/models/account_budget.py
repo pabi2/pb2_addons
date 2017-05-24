@@ -3,7 +3,7 @@ from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp import SUPERUSER_ID
 from openerp.api import Environment
-from openerp.exceptions import except_orm, Warning as UserError
+from openerp.exceptions import except_orm, ValidationError
 from .account_activity import ActivityCommon
 
 
@@ -120,11 +120,12 @@ class AccountBudget(models.Model):
         string='Fiscal Year',
         required=True,
     )
-    # planned_amount = fields.Float(
-    #     string='Planned Amount',
-    #     compute='_compute_amount',
-    #     digits_compute=dp.get_precision('Account'),
-    # )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string="Currency",
+        default=lambda self: self.env.user.company_id.currency_id,
+        readonly=True,
+    )
     to_release_amount = fields.Float(
         string='Released Amount',
     )
@@ -269,12 +270,13 @@ class AccountBudget(models.Model):
         for budget in self:
             fiscal = budget.fiscalyear_id
             if not fiscal.budget_level_ids:
-                raise UserError(_('No budget level configured '
-                                  'for this fiscal year'))
+                raise ValidationError(_('No budget level configured '
+                                        'for this fiscal year'))
             budget_level = fiscal.budget_level_ids.\
                 filtered(lambda x: x.type == budget_type)[0].budget_level
             if not budget_level:
-                raise UserError(_('Budget Level is not setup properly'))
+                raise ValidationError(
+                    _('Budget Level is not setup properly'))
             count = len(self.env['account.budget.line'].search(
                 [('budget_id', '=', budget.id), (budget_level, '=', False)]))
             if count:
@@ -293,8 +295,22 @@ class AccountBudget(models.Model):
         return True
 
     @api.multi
+    def _validate_plan_vs_release(self):
+        for budget in self:
+            if budget.budget_level_id.check_plan_with_released_amount:
+                if budget.rolling > budget.released_amount:
+                    raise ValidationError(
+                        _('Rolling plan (%s) will exceed released amount (%s) '
+                          'on budget control - %s') %
+                        (budget.rolling,
+                         budget.released_amount,
+                         budget.name_get()[0][1]))
+        return True
+
+    @api.multi
     def budget_confirm(self):
         self._validate_budget_level()
+        self._validate_plan_vs_release()
         self.write({'state': 'confirm'})
         return True
 
@@ -679,7 +695,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                 for i in range(1, x):
                     m = 'm%s' % (i,)
                     if m in vals:
-                        raise UserError(
+                        raise ValidationError(
                             _('Adjusting past plan amount is not allowed!'))
         return super(AccountBudgetLine, self).write(vals)
 
