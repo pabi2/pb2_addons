@@ -41,6 +41,12 @@ class AccountBudget(models.Model):
         default="/",
         states={'done': [('readonly', True)]},
     )
+    ref_budget_id = fields.Many2one(
+        'account.budget',
+        string="Previous Budget",
+        copy=False,
+        readonly=True,
+    )
     create_date = fields.Datetime(
         readonly=True,
     )
