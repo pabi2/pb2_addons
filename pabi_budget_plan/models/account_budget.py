@@ -16,12 +16,6 @@ class AccountBudget(models.Model):
         string='Policy Amount',
         readonly=False,  # TODO: change back to True
     )
-    ref_budget_id = fields.Many2one(
-        'account.budget',
-        string="Previous Budget",
-        copy=False,
-        readonly=True,
-    )
     ref_breakdown_id = fields.Many2one(
         'budget.fiscal.policy.breakdown',
         string="Breakdown Reference",

@@ -269,6 +269,8 @@ class BudgetFiscalPolicyBreakdown(models.Model):
 
     @api.multi
     def prepare_budget_control(self):
+        # TODO: This seem to be the first time convert only.
+        # Please check for the following minor revision also.
         self.ensure_one()
         data = {'unit_base': ('budget.plan.unit',
                               'budget_plan_unit_id'),
