@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="action_accept_to_paid" model="ir.actions.server">
+            <field name="name">AV: Action -> Paid</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_hr_expense_expense" />
+            <field name="state">code</field>
+            <field name="code">self.action_accept_to_paid(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+    </data>
+</openerp>

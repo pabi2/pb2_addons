@@ -19,5 +19,6 @@
         "account_invoice_create_payment",
     ],
     "data": [
+        "data/server_action.xml",
     ],
 }
