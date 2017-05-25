@@ -79,7 +79,7 @@ class AccountInvoice(models.Model):
                             relativedelta(days=30))
             else:
                 raise ValidationError(_('Can not calculate due date. '
-                                  'No Advance Type vs Due Date Rule'))
+                                        'No Advance Type vs Due Date Rule'))
             if date_due:
                 History.create({
                     'expense_id': expense.id,
