@@ -2,7 +2,7 @@
 from itertools import groupby
 from operator import itemgetter
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 from openerp.addons import decimal_precision as dp
 
 
@@ -105,7 +105,7 @@ class HRExpenseExpese(models.Model):
                                       ('company_id', '=',
                                        expense.company_id.id)])
             if not journal:
-                raise UserError(
+                raise ValidationError(
                     _("No expense journal found. Please make sure you "
                       "have a journal with type 'purchase' configured."))
             journal_id = journal[0].id
@@ -144,11 +144,11 @@ class HRExpenseExpese(models.Model):
         # Partner, account_id, payment_term
         if expense.pay_to == 'employee':
             if not expense.employee_id.user_id.partner_id:
-                raise UserError(
+                raise ValidationError(
                     _('The employee must have a valid user in system'))
             if not expense.employee_id.user_id.partner_id.\
                     property_account_payable:
-                raise UserError(
+                raise ValidationError(
                     _('The employee must have a payable account '
                       'set on referred user/partner.'))
         partner = (expense.pay_to == 'employee' and
@@ -166,7 +166,7 @@ class HRExpenseExpese(models.Model):
                 categ = exp_line.product_id.categ_id
                 account_id = categ.property_account_expense_categ.id
             if not account_id:
-                raise UserError(
+                raise ValidationError(
                     _('Define an expense account for this '
                       'product: "%s" (id:%d).') %
                     (exp_line.product_id.name, exp_line.product_id.id,))
@@ -250,7 +250,7 @@ class HRExpenseExpese(models.Model):
         for expense in self:
             if 'is_advance_clearing' not in expense:
                 if expense.amount <= 0.0:
-                    raise UserError(_('This expense have no lines,\
+                    raise ValidationError(_('This expense have no lines,\
                     or all lines with zero amount.'))
         return super(HRExpenseExpese, self).expense_confirm()
 

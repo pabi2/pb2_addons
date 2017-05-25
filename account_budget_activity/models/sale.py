@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from .account_activity import ActivityCommon
 
 
@@ -114,7 +114,7 @@ class SaleOrderLine(ActivityCommon, models.Model):
             return False
         if not general_journal.so_commitment_analytic_journal_id or \
                 not general_journal.so_commitment_account_id:
-            raise UserError(
+            raise ValidationError(
                 _("No analytic journal for SO commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
 

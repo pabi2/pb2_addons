@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 from openerp import tools
 import ast
@@ -19,7 +19,7 @@ class HRExpenseLine(models.Model):
             advance_account = \
                 self.env.user.company_id.employee_advance_account_id
             if not advance_account:
-                raise UserError(
+                raise ValidationError(
                     _('No Employee Advance Code setup!'))
             else:
                 return advance_account.id
@@ -180,7 +180,7 @@ class HRExpenseExpense(models.Model):
     def expense_confirm(self):
         for expense in self:
             if not expense.is_advance_clearing and expense.amount <= 0.0:
-                raise UserError(_('This expense have no lines,\
+                raise ValidationError(_('This expense have no lines,\
                 or all lines with zero amount.'))
         return super(HRExpenseExpense, self).expense_confirm()
 
@@ -192,7 +192,7 @@ class HRExpenseExpense(models.Model):
                 expense.advance_expense_id.amount_to_clearing
         invoice_line = expense.advance_expense_id.invoice_id.invoice_line
         if not invoice_line:
-            raise UserError(_('No advance product line to reference'))
+            raise ValidationError(_('No advance product line to reference'))
         advance_line = invoice_line[0]
         advance_line.copy({'invoice_id': invoice.id,
                            'price_unit': -employee_advance,

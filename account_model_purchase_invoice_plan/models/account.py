@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError, except_orm
+from openerp.exceptions import ValidationError, except_orm
 
 
 class AccountModel(models.Model):
@@ -211,7 +211,7 @@ class AccountSubscription(models.Model):
                 if rec.model_id.special_type in ('invoice_plan',
                                                  'invoice_plan_fin_lease') \
                         and rec.type != 'standard':
-                    raise UserError(
+                    raise ValidationError(
                         _('Model "%s" is using invoice plan,\n'
                           'only valid type is "Standard"') %
                         (rec.model_id.name, ))

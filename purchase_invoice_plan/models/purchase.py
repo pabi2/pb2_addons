@@ -2,7 +2,7 @@
 import time
 
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning as UserError
+from openerp.exceptions import except_orm, ValidationError
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, float_round as round
 
 
@@ -169,7 +169,7 @@ class PurchaseOrder(models.Model):
             if self.invoice_mode == 'change_price':
                 for order_line in self.order_line:
                     if order_line.product_qty != 1:
-                        raise UserError(
+                        raise ValidationError(
                             _('For invoice plan mode "As 1 Job", '
                               'all line quantity must equal to 1'))
             obj_precision = self.env['decimal.precision']
@@ -288,7 +288,7 @@ class PurchaseOrder(models.Model):
     def action_invoice_create(self):
         self._check_invoice_plan()
         if self.plan_invoice_created:
-            raise UserError(_('Create more invoices not allowed!'))
+            raise ValidationError(_('Create more invoices not allowed!'))
         invoice_ids = []
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:

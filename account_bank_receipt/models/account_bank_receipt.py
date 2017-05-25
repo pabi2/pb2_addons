@@ -3,7 +3,6 @@
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
-from openerp.exceptions import Warning as UserError
 
 
 class AccountBankReceipt(models.Model):
@@ -203,7 +202,7 @@ class AccountBankReceipt(models.Model):
     def unlink(self):
         for receipt in self:
             if receipt.state == 'done':
-                raise UserError(
+                raise ValidationError(
                     _("The receipt '%s' is in valid state, so you must "
                       "cancel it before deleting it.") % receipt.name)
         return super(AccountBankReceipt, self).unlink()
@@ -295,11 +294,11 @@ class AccountBankReceipt(models.Model):
         for receipt in self:
             # Check
             if not receipt.bank_intransit_ids:
-                raise UserError(_('No lines!'))
+                raise ValidationError(_('No lines!'))
             if not receipt.partner_bank_id:
-                raise UserError(_("Missing Bank Account"))
+                raise ValidationError(_("Missing Bank Account"))
             if not receipt.bank_account_id:
-                raise UserError(
+                raise ValidationError(
                     _("Missing Account for Bank Receipt on the journal '%s'.")
                     % receipt.partner_bank_id.journal_id.name)
             # --

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 class HRSalaryExpense(models.Model):
@@ -193,7 +193,7 @@ class HRSalaryExpense(models.Model):
     @api.multi
     def unlink(self):
         if self.filtered(lambda l: l.state != 'draft'):
-            raise UserError(_('You can only delete draft document'))
+            raise ValidationError(_('You can only delete draft document'))
         return super(HRSalaryExpense, self).unlink()
 
     @api.multi

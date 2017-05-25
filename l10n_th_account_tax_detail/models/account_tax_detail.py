@@ -2,7 +2,7 @@
 from datetime import datetime
 from dateutil import relativedelta
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp import SUPERUSER_ID
 
 
@@ -55,7 +55,7 @@ class InvoiceVoucherTaxDetail(object):
                     if (not detail.partner_id or
                             not detail.invoice_number or
                             not detail.invoice_date):
-                        raise UserError(
+                        raise ValidationError(
                             _('Some data in Tax Detail is not filled!'))
         return True
 

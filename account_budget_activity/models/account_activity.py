@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 class AccountActivityGroup(models.Model):
@@ -82,7 +82,7 @@ class AccountActivityGroup(models.Model):
     def _check_recursion(self):
         if self.parent_id and \
                 not super(AccountActivityGroup, self)._check_recursion():
-            raise UserError(
+            raise ValidationError(
                 _('You cannot create recursive Activity Group!'))
 
 #     @api.one
@@ -92,7 +92,7 @@ class AccountActivityGroup(models.Model):
 #                 self.env['account.activity'].search_count(
 #                     [('activity_group_id', '=', self.id),
 #                      ('account_id', '=', False)]) > 0:
-#             raise UserError(
+#             raise ValidationError(
 #                 _('Please select account in group or in activity!'))
 
 

@@ -2,7 +2,7 @@
 import time
 from datetime import datetime
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
@@ -160,7 +160,7 @@ class AccountVoucher(common_voucher, models.Model):
         for voucher in self:
             if voucher.type == 'payment' and not voucher.auto_recognize_vat:
                 if voucher.recognize_vat_move_id:
-                    raise UserError(
+                    raise ValidationError(
                         _('To Unreconcile this payment, you must reverse '
                           'the Recognized VAT Entry first.'))
         super(AccountVoucher, self).cancel_voucher()
@@ -650,7 +650,7 @@ class AccountVoucher(common_voucher, models.Model):
             move_pool = self.env['account.move']
             for voucher in self:
                 if voucher.recognize_vat_move_id:
-                    raise UserError(_('Recognize VAT Entry already exists'))
+                    raise ValidationError(_('Recognize VAT Entry already exists'))
                 company_currency = self._get_company_currency(voucher.id)
                 current_currency = self._get_current_currency(voucher.id)
                 context = self.with_context(context)._sel_context(voucher.id)
@@ -1126,7 +1126,7 @@ class AccountVoucherTax(common_voucher, models.Model):
                 # First: Do the Cr: with Non-Undue Account
                 refer_tax = tax1.refer_tax_id
                 if not refer_tax:
-                    raise UserError(
+                    raise ValidationError(
                         _('Undue Tax require Counterpart Tax when setup'))
                 # Change name to refer_tax_id
                 val['name'] = refer_tax.name

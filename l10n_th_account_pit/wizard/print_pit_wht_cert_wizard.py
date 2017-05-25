@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PrintPITWhtCertWizard(models.TransientModel):
@@ -100,7 +100,7 @@ class PrintPITWhtCertWizard(models.TransientModel):
         company = self.env.user.company_id.partner_id
         supplier = self.supplier_partner_id
         if not company.vat or not supplier.vat:
-            raise UserError(_('No Tax ID on Company or Supplier'))
+            raise ValidationError(_('No Tax ID on Company or Supplier'))
         data['company_name'] = company.name_get()[0][1]
         data['supplier_name'] = supplier.name_get()[0][1]
         company_taxid = len(company.vat) == 13 and company.vat or ''

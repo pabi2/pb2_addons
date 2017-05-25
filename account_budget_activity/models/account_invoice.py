@@ -51,7 +51,7 @@ class AccountInvoice(models.Model):
     #                                              r[budget_level],
     #                                              r['amount'])
     #             if not res['budget_ok']:
-    #                 raise UserError(res['message'])
+    #                 raise ValidationError(res['message'])
     #     return True
     # @api.multi
     # def action_date_assign(self):

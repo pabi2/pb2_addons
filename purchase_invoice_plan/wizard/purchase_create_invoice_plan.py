@@ -3,7 +3,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning as UserError
+from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.float_utils import float_round as round
 import openerp.addons.decimal_precision as dp
 
@@ -109,14 +109,14 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             if self.invoice_mode == 'change_price':
                 for order_line in order.order_line:
                     if order_line.product_qty != 1:
-                        raise UserError(
+                        raise ValidationError(
                             _('For invoice plan mode "As 1 Job", '
                               'all line quantity must equal to 1'))
 
     @api.model
     def _check_installment_amount(self):
         if any([i.amount < 0 for i in self.installment_ids]):
-            raise UserError(_('Negative installment amount not allowed!'))
+            raise ValidationError(_('Negative installment amount not allowed!'))
 
     @api.one
     def do_create_purchase_invoice_plan(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseCreateInvoicePlan(models.TransientModel):
@@ -29,7 +29,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         prop_id = prop and prop.id or False
         account_id = self.env['account.fiscal.position'].map_account(prop_id)
         if not account_id:
-            raise UserError(
+            raise ValidationError(
                 _('There is no retention customer account defined.')
             )
 

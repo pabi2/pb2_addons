@@ -2,7 +2,7 @@
 import time
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountDebitNote(models.Model):
@@ -78,7 +78,7 @@ class AccountDebitNote(models.Model):
             journal_id = form.journal_id.id
             for inv in inv_obj.browse(self.env.context.get('active_ids')):
                 if inv.state in ['draft', 'proforma2', 'cancel']:
-                    raise UserError(_(''' Cannot create debit note for
+                    raise ValidationError(_(''' Cannot create debit note for
                                  draft/proforma/cancel invoice.'''))
                 if form.period.id:
                     period = form.period.id
@@ -129,7 +129,7 @@ class AccountDebitNote(models.Model):
                     description = inv.name
 
                 if not period:
-                    raise UserError(_('No period found on the invoice.'))
+                    raise ValidationError(_('No period found on the invoice.'))
 
                 debitnote = inv.debitnote(date,
                                           period,

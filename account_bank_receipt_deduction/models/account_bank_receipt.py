@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccuontBankReceiptMultipleReconcile(models.Model):
@@ -76,7 +76,7 @@ class AccountBankReceipt(models.Model):
     def validate_bank_receipt(self):
         for receipt in self:
             if receipt.writeoff_amount != 0.0:
-                raise UserError(_('Wrieteoff Amount must be 0.0 to validate!'))
+                raise ValidationError(_('Wrieteoff Amount must be 0.0 to validate!'))
         res = super(AccountBankReceipt, self).validate_bank_receipt()
         return res
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 from openerp.addons.l10n_th_account.models.account_voucher \
     import WHT_CERT_INCOME_TYPE
@@ -158,7 +158,7 @@ class PersonalIncomeTax(models.Model):
             'sequence': self.env['ir.sequence'].next_by_code('pit.sequence')
         })
         if self.precalc_wht != self.amount_wht:
-            raise UserError(_('Invalid PIT Withholding'))
+            raise ValidationError(_('Invalid PIT Withholding'))
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
@@ -262,10 +262,10 @@ class AccountPIT(models.Model):
         accum_tax = 0.0
         for rate in self.rate_ids:
             if i == 0 and rate.income_from != 0.0:
-                raise UserError(_('Income amount must start from 0.0'))
+                raise ValidationError(_('Income amount must start from 0.0'))
             if i > 0 and \
                     float_compare(rate.income_from, prev_income_to, 2) != 0:
-                raise UserError(
+                raise ValidationError(
                     _('Discontinued income range!\n'
                       'Please make sure Income From = Previous Income To'))
             prev_income_to = rate.income_to

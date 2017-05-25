@@ -2,7 +2,7 @@
 
 from openerp import api, models, fields, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class BudgetReleaseWizard(models.TransientModel):
@@ -45,7 +45,7 @@ class BudgetReleaseWizard(models.TransientModel):
         budget_line = self.env['account.budget.line'].browse(active_id)
         budget_release = budget_line.budget_id.budget_level_id.budget_release
         if budget_release != 'manual_line':
-            raise UserError(_('Manual budget released not allowed!'))
+            raise ValidationError(_('Manual budget released not allowed!'))
         res['amount_to_release'] = budget_line.released_amount
         return res
 
@@ -56,7 +56,7 @@ class BudgetReleaseWizard(models.TransientModel):
         budget_line = self.env['account.budget.line'].browse(active_id)
         budget_release = budget_line.budget_id.budget_level_id.budget_release
         if budget_release != 'manual_line':
-            raise UserError(_('Manual budget released not allowed!'))
+            raise ValidationError(_('Manual budget released not allowed!'))
         release_result = {}
         release_result.update({budget_line.id: self.amount_to_release})
         budget_line.release_budget_line(release_result)

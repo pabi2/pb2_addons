@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class account_invoice(models.Model):
@@ -33,7 +33,7 @@ class account_invoice(models.Model):
             if inv.is_advance or inv.is_deposit:
                 for invoice in inv.purchase_ids.invoice_ids:
                     if invoice.state not in ('draft', 'cancel'):
-                        raise UserError(
+                        raise ValidationError(
                             _("""Cancellation of advance invoice is not allowed!
                             Please cancel all following invoices first."""))
         res = super(account_invoice, self).action_cancel()

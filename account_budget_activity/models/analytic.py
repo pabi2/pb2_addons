@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 class AccountAnalyticJournal(models.Model):
@@ -268,7 +268,7 @@ class AccountAnalyticAccount(models.Model):
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
-                raise UserError(_('Select both Product and '
+                raise ValidationError(_('Select both Product and '
                                   'Activity is prohibited'))
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account']

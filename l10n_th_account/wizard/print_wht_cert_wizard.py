@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.tools.float_utils import float_round as round
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.account_voucher \
     import WHT_CERT_INCOME_TYPE, TAX_PAYER
 from openerp.addons.l10n_th_account.models.res_partner \
@@ -130,7 +130,7 @@ class PrintWhtCertWizard(models.TransientModel):
         company = self.with_context(TH).env.user.company_id.partner_id
         supplier = voucher.partner_id
         if not company.vat or not supplier.vat:
-            raise UserError(_('No Tax ID on Company or Supplier'))
+            raise ValidationError(_('No Tax ID on Company or Supplier'))
         data['company_name'] = company.name_get()[0][1]
         data['supplier_name'] = supplier.name_get()[0][1]
         company_taxid = len(company.vat) == 13 and company.vat or ''

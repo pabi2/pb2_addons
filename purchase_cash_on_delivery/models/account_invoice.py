@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -102,7 +102,7 @@ class AccountInvoice(models.Model):
     def clear_prepaid(self):
         for invoice in self:
             if not all(x for x in invoice.purchase_ids.mapped('shipped')):
-                raise UserError(
+                raise ValidationError(
                     _('Not all items in related order has been shipped!'))
             invoice.action_move_create()
 

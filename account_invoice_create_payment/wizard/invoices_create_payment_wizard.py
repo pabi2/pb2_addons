@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class InovicesCreatePaymentWizard(models.TransientModel):
@@ -28,10 +28,10 @@ class InovicesCreatePaymentWizard(models.TransientModel):
         # Same partner
         partner_ids = list(set(invoices.mapped('partner_id').ids))
         if len(partner_ids) > 1:
-            raise UserError(_('Please select invoice(s) from same partner!'))
+            raise ValidationError(_('Please select invoice(s) from same partner!'))
         states = list(set(invoices.mapped('state')))
         if len(states) != 1 or states[0] != 'open':
-            raise UserError(_('Please select only Open invoice(s)'))
+            raise ValidationError(_('Please select only Open invoice(s)'))
         return True
 
     @api.multi

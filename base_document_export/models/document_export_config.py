@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class DocumentExportConfigLine(models.Model):
@@ -11,9 +11,9 @@ class DocumentExportConfigLine(models.Model):
     def _check_sequence(self):
         for line in self:
             if line.sequence <= 0:
-                raise UserError(_('Sequence must be greater then zero.'))
+                raise ValidationError(_('Sequence must be greater then zero.'))
             if line.length <= 0:
-                raise UserError(_('Length must be greater then zero.'))
+                raise ValidationError(_('Length must be greater then zero.'))
 
     header_configure_id = fields.Many2one(
         'document.export.config',

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -36,7 +36,7 @@ class PurchaseOrder(models.Model):
                 if not purchase.invoiced or \
                     False in [x.state == 'paid' and True or False
                               for x in purchase.invoice_ids]:
-                    raise UserError(
+                    raise ValidationError(
                         _('For cash on delivery (COD), tranfer is allowed '
                           'only when all invoice(s) are fully paid!'))
         return True

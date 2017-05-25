@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class DocumentExportParser(models.TransientModel):
@@ -29,6 +29,6 @@ class DocumentExportParser(models.TransientModel):
         if configs:
             res['config_id'] = configs[0].config_id.id
         else:
-            raise UserError(
+            raise ValidationError(
                 _('Not Export Config for %s') % (export.journal_id.name,))
         return res

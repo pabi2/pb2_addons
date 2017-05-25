@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 class PaymentExport(models.Model):
@@ -238,7 +238,7 @@ class PaymentExport(models.Model):
     def action_done(self):
         for export in self:
             if not export.line_ids:
-                raise UserError(_('No Export Lines'))
+                raise ValidationError(_('No Export Lines'))
             voucher_ids = [x.use_export_line and x.voucher_id.id
                            for x in export.line_ids]
             exported_lines = self.env['payment.export.line'].\
@@ -249,23 +249,23 @@ class PaymentExport(models.Model):
                 vouchers = [x.voucher_id.number for x in exported_lines]
                 message = _('Following payment had been exported.\n%s\nPlease '
                             'remove to continue.') % (', '.join(vouchers),)
-                raise UserError(message)
+                raise ValidationError(message)
             # Case Cheque only
             if export.is_cheque_lot:
                 for line in export.line_ids:
                     if line.use_export_line:
                         if not line.cheque_register_id:
-                            raise UserError(
+                            raise ValidationError(
                                 _('Some Payments is not assigned with Cheque '
                                   'Number!\nPlease click Assign Cheque Number.'
                                   ))
                         if line.cheque_register_id.voucher_id:
-                            raise UserError(
+                            raise ValidationError(
                                 _('Cheque Number %s is occupied, \
                                     please reassign again!')
                                 % (line.cheque_register_id.number))
                         if line.cheque_register_id.void:
-                            raise UserError(
+                            raise ValidationError(
                                 _('Cheque Number %s is voided, please reassign'
                                   ' again!')
                                 % (line.cheque_register_id.number))

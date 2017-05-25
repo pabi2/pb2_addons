@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 
 
 _STATES = [
@@ -164,7 +164,7 @@ class StockRequest(models.Model):
     @api.constrains('location_id', 'location_dest_id')
     def _check_location(self):
         if self.location_dest_id == self.location_id:
-            raise UserError(_('Source and Destination Location '
+            raise ValidationError(_('Source and Destination Location '
                               'can not be the same location'))
 
     @api.model
@@ -217,7 +217,7 @@ class StockRequest(models.Model):
             origin_ou_id = self.location_borrow_view_id.operating_unit_id.id
             if not (self.env.user.access_all_operating_unit or
                     origin_ou_id in user_ou_ids):
-                raise UserError(_('Only user from the borrow location '
+                raise ValidationError(_('Only user from the borrow location '
                                   'can process this request'))
 
     # Internal Actions
@@ -225,14 +225,14 @@ class StockRequest(models.Model):
     def action_request(self):
         self.ensure_one()
         if not self.line_ids:
-            raise UserError('No lines!')
+            raise ValidationError('No lines!')
         self.write({'state': 'wait_confirm'})
 
     @api.multi
     def action_confirm(self):
         self.ensure_one()
         if not self.line_ids:
-            raise UserError('No lines!')
+            raise ValidationError('No lines!')
         # self.line_ids._check_future_qty()
         self.write({'state': 'confirmed'})
 
@@ -240,7 +240,7 @@ class StockRequest(models.Model):
     def action_verify(self):
         self.ensure_one()
         if not self.line_ids:
-            raise UserError('No lines!')
+            raise ValidationError('No lines!')
         self._check_user_from_borrow_location()
         self.line_ids._check_future_qty()
         self.write({'state': 'wait_approve'})
@@ -256,22 +256,22 @@ class StockRequest(models.Model):
     def action_prepare(self):
         self.ensure_one()
         if not self.line_ids:
-            raise UserError('No lines!')
+            raise ValidationError('No lines!')
         if not self.receive_emp_id:
-            raise UserError(_('Please select receiver!'))
+            raise ValidationError(_('Please select receiver!'))
         self._check_user_from_borrow_location()
         self.sudo().create_picking('transfer')  # Create
         self.transfer_picking_id.sudo().action_confirm()  # Confirm and reserve
         self.transfer_picking_id.sudo().action_assign()
         if self.sudo().transfer_picking_id.state != 'assigned':
-            raise UserError('Requested material(s) not fully available!')
+            raise ValidationError('Requested material(s) not fully available!')
         self.write({'state': 'ready'})
 
     @api.multi
     def action_transfer(self):
         self.ensure_one()
         if self._uid != self.receive_emp_id.user_id.id:
-            raise UserError('You must be receiver to click "Transfer".')
+            raise ValidationError('You must be receiver to click "Transfer".')
         if self.transfer_picking_id:
             self.transfer_picking_id.sudo().action_done()
         self.write({'state': 'done'})
@@ -286,7 +286,7 @@ class StockRequest(models.Model):
             self.return_picking_id.sudo().action_confirm()
             self.return_picking_id.sudo().action_assign()
             if self.sudo().return_picking_id.state != 'assigned':
-                raise UserError('Requested material(s) not fully available!')
+                raise ValidationError('Requested material(s) not fully available!')
             self.return_picking_id.sudo().action_done()
         self.write({'state': 'done_return'})
 
@@ -347,7 +347,7 @@ class StockRequest(models.Model):
         move_obj = self.env['stock.move']
         if all(t == 'service'
                for t in self.line_ids.mapped('product_id.type')):
-            raise UserError('Requested material(s) not of type stockable!')
+            raise ValidationError('Requested material(s) not of type stockable!')
         picking = picking_obj.create(self._prepare_picking(self))
         location_id = False
         location_dest_id = False
@@ -477,4 +477,4 @@ class StockRequestLine(models.Model):
     def _check_future_qty(self):
         for line in self:
             if line.product_uom_qty > line.future_qty:
-                raise UserError(_('%s is not enough!') % line.product_id.name)
+                raise ValidationError(_('%s is not enough!') % line.product_id.name)

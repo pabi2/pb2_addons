@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class HRSalaryExpense(models.Model):
@@ -32,7 +32,7 @@ class HRSalaryExpense(models.Model):
                 AccountMove = self.env['account.move']
                 if move.line_id.filtered(lambda l: l.reconcile_id or
                                          l.reconcile_partial_id):
-                    raise UserError(
+                    raise ValidationError(
                         _('This salary expensed has been partially '
                           'reconciles, cancellaion not allowed!'))
                 move_dict = move.copy_data({

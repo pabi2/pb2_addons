@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from .account_activity import ActivityCommon
 
 
@@ -51,7 +51,7 @@ class HRExpenseLine(ActivityCommon, models.Model):
     def _get_non_product_account_id(self):
         if 'activity_id' in self:
             if not self.activity_id.account_id:
-                raise UserError(
+                raise ValidationError(
                     _('No Account Code assigned to Activity - %s') %
                     (self.activity_id.name,))
             else:
@@ -80,7 +80,7 @@ class HRExpenseLine(ActivityCommon, models.Model):
             return False
         if not general_journal.exp_commitment_analytic_journal_id or \
                 not general_journal.exp_commitment_account_id:
-            raise UserError(
+            raise ValidationError(
                 _("No analytic journal for expense commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
 

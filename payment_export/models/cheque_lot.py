@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class ChequeLot(models.Model):
@@ -154,7 +154,7 @@ class ChequeLot(models.Model):
         """, (cheque_lot_id, limit,))
         res = [x[0] for x in self._cr.fetchall()]
         if len(res) < limit:
-            raise UserError(_('Not enough draft Cheque on this lot'))
+            raise ValidationError(_('Not enough draft Cheque on this lot'))
         return res
 
 
