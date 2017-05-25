@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountBudget(models.Model):
@@ -27,7 +27,7 @@ class AccountBudget(models.Model):
         """
         self.ensure_one()  # Make sure it is synced one by one
         if self.chart_view != 'project_base':
-            raise UserError(_('Not a project based budget control'))
+            raise ValidationError(_('Not a project based budget control'))
         # Find matched phases for this budget control
         Project = self.env['res.project']
         BudgetLine = self.env['account.budget.line']

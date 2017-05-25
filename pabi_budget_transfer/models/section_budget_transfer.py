@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class SectionBudgetTransfer(models.Model):
@@ -113,7 +113,7 @@ class SectionBudgetTransfer(models.Model):
         fiscalyear_id = self.env['account.fiscalyear'].find()
         for record in self:
             if not record.transfer_line_ids:
-                raise UserError(
+                raise ValidationError(
                     _('You can not confirm without transfer lines!'))
             name = self.env['ir.sequence'].\
                 with_context(fiscalyear_id=fiscalyear_id).\
@@ -142,7 +142,7 @@ class SectionBudgetTransfer(models.Model):
     def unlink(self):
         for rec in self:
             if rec.state != 'draft':
-                raise UserError(_('You can not delete non-draft records!'))
+                raise ValidationError(_('You can not delete non-draft records!'))
         return super(SectionBudgetTransfer, self).unlink()
 
 
@@ -204,13 +204,13 @@ class SectionBudgetTransferLine(models.Model):
             ('section_id', '=', section.id),
             ('state', 'not in', ('draft', 'cancel'))])
         if not budget:
-            raise UserError(
+            raise ValidationError(
                 _("No active budget control for section %s") %
                 (section.name_get()[0][1], ))
         if len(budget) == 1:
             return budget
         else:
-            raise UserError(
+            raise ValidationError(
                 _("Strange!, there are > 1 active budget control "
                   "for section %s") % (section.name_get(), ))
 

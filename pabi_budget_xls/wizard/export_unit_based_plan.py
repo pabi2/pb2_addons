@@ -10,7 +10,7 @@ from openpyxl.styles import PatternFill, Border, Side, Protection, Font
 from openpyxl.utils import (get_column_letter)
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 SHEET_FORMULAS = {}
 
@@ -468,9 +468,9 @@ class BudgetExportWizard(models.TransientModel):
     @api.multi
     def update_budget_xls(self, budget_ids, template_id=None):
         if not template_id:
-            raise UserError(_('Please add .xlsx template.'))
+            raise ValidationError(_('Please add .xlsx template.'))
         if not budget_ids:
-            raise UserError(_('No budget to export.'))
+            raise ValidationError(_('No budget to export.'))
         budgets = self.env['budget.plan.unit'].browse(budget_ids)
 
         for budget in budgets:

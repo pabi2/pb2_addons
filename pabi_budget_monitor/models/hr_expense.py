@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class HRExpenseExpense(models.Model):
@@ -16,7 +16,7 @@ class HRExpenseExpense(models.Model):
             doc_lines = Budget.convert_lines_to_doc_lines(expense.line_ids)
             res = Budget.post_commit_budget_check(doc_date, doc_lines)
             if not res['budget_ok']:
-                raise UserError(res['message'])
+                raise ValidationError(res['message'])
         return True
 
     @api.multi

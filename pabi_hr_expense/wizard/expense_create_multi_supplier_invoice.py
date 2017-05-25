@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import api, models, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class ExpenseCreateMultiSupplierInvoiceLine(models.TransientModel):
@@ -57,17 +57,17 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         if not self.multi_supplier_invoice_line:
-            raise UserError(_('No person in the Supplier List table!'))
+            raise ValidationError(_('No person in the Supplier List table!'))
         else:
             expense_id = self._context.get('expense_id', False)
             date_invoice = self._context.get('date_invoice', False)
             expense = self.env['hr.expense.expense'].browse(expense_id)
             alloc = sum([x.amount for x in self.multi_supplier_invoice_line])
             if self.amount_untaxed != alloc:
-                raise UserError(_('Allocation amount mismatched.'))
+                raise ValidationError(_('Allocation amount mismatched.'))
             for supplier_info_line in self.multi_supplier_invoice_line:
                 if not supplier_info_line.partner_id:
-                    raise UserError(_('Please define supplier.'))
+                    raise ValidationError(_('Please define supplier.'))
                 # Invoice Head
                 invoice_vals = self._prepare_inv(supplier_info_line, expense)
                 invoice_vals['date_invoice'] = date_invoice

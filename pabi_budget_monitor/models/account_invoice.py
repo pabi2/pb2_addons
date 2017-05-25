@@ -3,7 +3,7 @@
 # TEMPORARY MOVED to account.py (account.move)
 
 # from openerp import api, models
-# from openerp.exceptions import Warning as UserError
+# from openerp.exceptions import ValidationError
 #
 #
 # class AccountInvoice(models.Model):
@@ -26,5 +26,5 @@
 #                 Budget.convert_lines_to_doc_lines(invoice.invoice_line)
 #             res = Budget.post_commit_budget_check(doc_date, doc_lines)
 #             if not res['budget_ok']:
-#                 raise UserError(res['message'])
+#                 raise ValidationError(res['message'])
 #         return True

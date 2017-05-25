@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class LoanBankMOU(models.Model):
@@ -384,7 +384,7 @@ class LoanCustomerAgreement(models.Model):
                                   ('company_id', '=', company_id)],
                                  limit=1)
         if not journal:
-            raise UserError(
+            raise ValidationError(
                 _("No purchase journal found. Please make sure you "
                   "have a journal with type 'purchase' configured."))
         journal_id = journal[0].id

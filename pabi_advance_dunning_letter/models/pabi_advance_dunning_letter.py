@@ -2,7 +2,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 DUE_TYPES = [('1', 'Due in 10 days'),
              ('2', 'Due in 5 days'),
@@ -149,7 +149,7 @@ class PABIAdvanceDunningLetter(models.Model):
 
         line_ids = [x.id for x in self.dunning_list]
         if not line_ids:
-            raise UserError(_('No dunning letter to print/email!'))
+            raise ValidationError(_('No dunning letter to print/email!'))
 
         # Update date for each advance
         list_1 = self.dunning_list.filtered(lambda l: l.due_type == '1')
@@ -196,7 +196,7 @@ class PABIAdvanceDunningLetter(models.Model):
         DUE_DAYS = {'1': 10, '2': 5, '3': 0}
 
         if not self.group_email:
-            raise UserError(
+            raise ValidationError(
                 _('Please enter valid email address for group email!'))
 
         for line in self.dunning_list:
@@ -208,7 +208,7 @@ class PABIAdvanceDunningLetter(models.Model):
                 pass
 
             if not self.group_email:
-                raise UserError(
+                raise ValidationError(
                     _('Please enter valid email address for group email!'))
 
             if template:

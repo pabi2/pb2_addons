@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseRequestLineClose(models.TransientModel):
@@ -14,7 +14,7 @@ class PurchaseRequestLineClose(models.TransientModel):
     @api.one
     def close_line(self):
         if not self.confirm_close:
-            raise UserError(
+            raise ValidationError(
                 _("Can't close purchase request lines."
                   " Please check the confirm box.")
             )
@@ -23,12 +23,12 @@ class PurchaseRequestLineClose(models.TransientModel):
         lines = ReqLine.search([('id', 'in', active_ids)])
         for line in lines:
             if line.state == 'close':
-                raise UserError(
+                raise ValidationError(
                     _("Can't close purchase request lines."
                       " Some lines are already closed.")
                 )
             elif line.requisition_state != 'none':
-                raise UserError(
+                raise ValidationError(
                     _("Each Request bid status should be 'No Bid' : %s"
                       % (line.request_id.name,))
                 )

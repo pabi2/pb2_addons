@@ -9,7 +9,7 @@ from openpyxl.styles import Protection
 from openpyxl.utils import quote_sheetname
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 SHEET_FORMULAS = {}
 
@@ -297,9 +297,9 @@ class ExportAsseItem(models.TransientModel):
         items = self.env[active_model].browse(active_ids)
 
         if not self.attachment_id:
-            raise UserError(_('Please add .xlsx template.'))
+            raise ValidationError(_('Please add .xlsx template.'))
         if not items:
-            raise UserError(_('No items to export.'))
+            raise ValidationError(_('No items to export.'))
 
         for item in items:
             export_file = self.attachment_id.datas.decode('base64')

@@ -5,7 +5,7 @@ import datetime
 import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
     import amount_to_text_th
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseWorkAcceptance(models.Model):
@@ -134,7 +134,7 @@ class PurchaseWorkAcceptance(models.Model):
                 is_consumable = line.product_id.categ_id.is_consumable
                 break
                 # if check_type != line.product_id.type:
-                #     raise UserError(
+                #     raise ValidationError(
                 #         _("All products must have the same type. %s"
                 #           % (self.name,)))
         return type, is_consumable
@@ -539,7 +539,7 @@ class PurchaseWorkAcceptance(models.Model):
             for accpt in paid_accpts:
                 wa_total_payment += accpt.amount_total
             if wa_total_payment+self.amount_total > order.amount_total:
-                raise UserError(
+                raise ValidationError(
                     _("""Can't evaluate this acceptance.
                          This WA's total amount is over PO's total amount.""")
                 )
@@ -548,7 +548,7 @@ class PurchaseWorkAcceptance(models.Model):
     def action_evaluate(self):
         self.ensure_one()
         if len(self.acceptance_line_ids) == 0:
-            raise UserError(
+            raise ValidationError(
                 _("Can't evaluate the acceptance with no line.")
             )
         self.validate_amount_total_with_order()
@@ -678,7 +678,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     @api.constrains('to_receive_qty')
     def _check_over_qty(self):
         if self.to_receive_qty > self.balance_qty:
-            raise UserError(
+            raise ValidationError(
                 _("To receive quantity can't be over than "
                   "balance quantity.")
             )

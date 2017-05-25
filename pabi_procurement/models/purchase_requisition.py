@@ -5,7 +5,7 @@ import time
 import re
 from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 
 
@@ -387,19 +387,19 @@ class PurchaseRequisition(models.Model):
     def _check_product_type(self):
         self.ensure_one()
         if len(self.line_ids) == 0:
-            raise UserError(
+            raise ValidationError(
                 _('Product line cannot be empty.')
             )
         for line in self.line_ids:
             if not line.product_id:
-                raise UserError(
+                raise ValidationError(
                     _("You have to specify products first.")
                 )
         types = [(l.product_id.type in ('product', 'consu') and
                   'stock' or
                   l.product_id.type) for l in self.line_ids]
         if len(list(set(types))) > 1:
-            raise UserError(
+            raise ValidationError(
                 _('All products must be of the same type')
             )
         return True
@@ -438,7 +438,7 @@ class PurchaseRequisition(models.Model):
         rfqs = Order.search([('requisition_id', '=', self.id)])
         if self.purchase_method_id.require_rfq:
             if len(rfqs) == 0:
-                raise UserError(
+                raise ValidationError(
                     _("You haven't create the Request to Quotation yet.")
                 )
             else:
@@ -447,7 +447,7 @@ class PurchaseRequisition(models.Model):
                     if rfq.state == 'confirmed':
                         state_confirmed += 1
                 if state_confirmed == 0:
-                    raise UserError(
+                    raise ValidationError(
                         _("At least one RfQ must be confirmed.")
                     )
         return True
@@ -543,7 +543,7 @@ class PurchaseRequisition(models.Model):
             total = sum([o.amount_total for o in requisition.purchase_ids])
             if float_compare(total, requisition.amount_total,
                              precision) == 1:
-                raise UserError(
+                raise ValidationError(
                     _('Total quotation amount exceed Call for Bid amount')
                 )
         return True
@@ -554,7 +554,7 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise UserError("Cant' get PD Document Type.")
+            raise ValidationError("Cant' get PD Document Type.")
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
@@ -596,7 +596,7 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise UserError(_("Cant' get PD Document Type."))
+            raise ValidationError(_("Cant' get PD Document Type."))
         report_name = 'purchase.requisition_'+doc_type.name.lower()
         return self.env['report'].get_action(self, report_name)
 

@@ -9,7 +9,7 @@ import openpyxl
 
 from openerp import tools
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class ImportAsseItem(models.TransientModel):
@@ -29,16 +29,16 @@ class ImportAsseItem(models.TransientModel):
         try:
             workbook = openpyxl.load_workbook(stream)
         except IOError as e:
-            raise UserError(_(e.strerror))
+            raise ValidationError(_(e.strerror))
         except ValueError as e:
-            raise UserError(_(e.strerror))
+            raise ValidationError(_(e.strerror))
         except:
             e = sys.exc_info()[0]
-            raise UserError(_('Wrong file format. Please enter .xlsx file.'))
+            raise ValidationError(_('Wrong file format. Please enter .xlsx file.'))
         Plans = self.env[active_model].browse(active_ids)
         for plan in Plans:
             if plan.state != 'draft':
-                raise UserError(
+                raise ValidationError(
                     _('You can update budget plan only in draft state!'))
 
             Asset_Sheet = workbook.get_sheet_by_name('Assets')
@@ -46,7 +46,7 @@ class ImportAsseItem(models.TransientModel):
             plan_id = Asset_Sheet.cell(row=1, column=5).value
             # if we trying to import sheet of other record then raise error
             if plan.id != plan_id:
-                raise UserError(
+                raise ValidationError(
                     _('Please import the correct file for this plan')
                 )
             # get fiscal year from sheet

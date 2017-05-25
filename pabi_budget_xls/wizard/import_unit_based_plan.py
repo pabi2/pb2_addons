@@ -9,7 +9,7 @@ import openpyxl
 
 from openerp import tools
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class BudgetImportWizard(models.TransientModel):
@@ -139,7 +139,7 @@ class BudgetImportWizard(models.TransientModel):
                 while p != 13:
                     val = NonCostCtrl_Sheet.cell(row=row, column=col).value
                     if val and not isinstance(val, long):
-                        raise UserError(
+                        raise ValidationError(
                             _('Please insert float value on\
                              row: %s - column: %s') % (row, col))
                     if val:
@@ -163,9 +163,9 @@ class BudgetImportWizard(models.TransientModel):
             return lines_to_create
 
         if not template:
-            raise UserError(_('Please add .xlsx template.'))
+            raise ValidationError(_('Please add .xlsx template.'))
         if not budget_ids:
-            raise UserError(_('No budget to import.'))
+            raise ValidationError(_('No budget to import.'))
 
         imp_file = template.decode('base64')
         stream = cStringIO.StringIO(imp_file)
@@ -173,17 +173,17 @@ class BudgetImportWizard(models.TransientModel):
         try:
             workbook = openpyxl.load_workbook(stream)
         except IOError as e:
-            raise UserError(_(e.strerror))
+            raise ValidationError(_(e.strerror))
         except ValueError as e:
-            raise UserError(_(e.strerror))
+            raise ValidationError(_(e.strerror))
         except:
             e = sys.exc_info()[0]
-            raise UserError(_('Wrong file format. Please enter .xlsx file.'))
+            raise ValidationError(_('Wrong file format. Please enter .xlsx file.'))
         budgets = self.env['budget.plan.unit'].browse(budget_ids)
         for budget in budgets:
             # if we are trying to import after draft state then restrict him
             if budget.state != 'draft':
-                raise UserError(
+                raise ValidationError(
                     _('You can update budget plan only in draft state!'))
 
             Non_JobOrder_Expense = \
@@ -193,7 +193,7 @@ class BudgetImportWizard(models.TransientModel):
             bg_id = Non_JobOrder_Expense.cell(row=1, column=5).value
             # if we trying to import sheet of other record then raise error
             if budget.id != bg_id:
-                raise UserError(
+                raise ValidationError(
                     _('Please import the correct file for this plan')
                 )
             # get fiscal year from sheet
@@ -288,4 +288,4 @@ class BudgetImportWizard(models.TransientModel):
                 else:
                     msg = msg + '\n' + line['message']
             if msg:
-                raise UserError(_('%s') % (msg,))
+                raise ValidationError(_('%s') % (msg,))

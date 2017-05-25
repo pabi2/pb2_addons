@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 from openerp.osv.orm import browse_record_list, browse_record, browse_null
 
@@ -168,7 +168,7 @@ class PurchaseOrder(models.Model):
             over_rate = (self.requisition_id.amount_total * 10) / 100
             cfb_total_amount = self.requisition_id.amount_total + over_rate
             if po_total_payment + self.amount_total > cfb_total_amount:
-                raise UserError(
+                raise ValidationError(
                     _("""Can't evaluate this acceptance.
                          This RfQ total amount is over than
                          call for bids total amount.""")
@@ -178,7 +178,7 @@ class PurchaseOrder(models.Model):
     @api.model
     def _check_request_for_quotation(self):
         if self.requisition_id.purchase_method_id.require_rfq:
-            raise UserError(
+            raise ValidationError(
                 _("Can't convert to order. Have to wait for PD approval.")
             )
         self.check_over_requisition_limit()
@@ -250,7 +250,7 @@ class PurchaseOrder(models.Model):
                 if float_compare(po.amount_total,
                                  requisition.amount_total,
                                  precision) == 1:
-                    raise UserError(
+                    raise ValidationError(
                         _('Confirmed amount exceed Call for Bid amount')
                     )
         return True
@@ -405,7 +405,7 @@ class PurchaseOrderLine(models.Model):
     def unlink(self):
         for rec in self:
             if not rec.order_id.is_central_purchase:
-                raise UserError(
+                raise ValidationError(
                     _('Deletion of purchase order line is not allowed,\n'
                       'please discard changes!'))
         return super(PurchaseOrderLine, self).unlink()

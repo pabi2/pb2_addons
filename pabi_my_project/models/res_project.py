@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
 from openerp import tools
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.document_status_history.models.document_history import \
     LogCommon
 
@@ -211,11 +211,11 @@ class ResProject(LogCommon, models.Model):
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
             if not budget_plans:
-                raise UserError(
+                raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
             if released_amount > planned_amount:
-                raise UserError(
+                raise ValidationError(
                     _('Releasing budget > planned!'))
             budget_plans.write({'released_amount': 0.0})  # Set zero
             remaining = released_amount

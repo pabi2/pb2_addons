@@ -2,7 +2,7 @@
 from openerp import models, api, _
 from openerp import SUPERUSER_ID
 from openerp.api import Environment
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountFiscalyear(models.Model):
@@ -38,5 +38,5 @@ class AccountMove(models.Model):
                 doc_lines = Budget.convert_lines_to_doc_lines(analytic_lines)
                 res = Budget.post_commit_budget_check(doc_date, doc_lines)
                 if not res['budget_ok']:
-                    raise UserError(res['message'])
+                    raise ValidationError(res['message'])
         return True

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
@@ -329,7 +329,7 @@ class BudgetFiscalPolicy(models.Model):
     def button_confirm(self):
         for policy in self:
             if not policy.line_ids:
-                raise UserError(_('Can not confirm without lines!'))
+                raise ValidationError(_('Can not confirm without lines!'))
             name = self.env['ir.sequence'].next_by_code('fiscal.budget.policy')
             policy.write({
                 'name': name,
@@ -529,7 +529,7 @@ class BudgetFiscalPolicy(models.Model):
                                             [('chart_view', '=', 'unit_base'),
                                              ('state', '!=', 'cancel')])
         if Breakdown_search:
-            raise UserError(_('Breakdowns already created.'))
+            raise ValidationError(_('Breakdowns already created.'))
         for unit in self.unit_base_ids:
             ref_policy_id = unit.budget_policy_id.ref_policy_id
             ref_policy_breakdown = False
@@ -563,7 +563,7 @@ class BudgetFiscalPolicy(models.Model):
             sum_planned_amount = sum([l.planned_amount
                                       for l in breakdown.line_ids])
             if breakdown.planned_overall != sum_planned_amount:
-                raise UserError(
+                raise ValidationError(
                     _('For policy breakdown of Org: %s, \n'
                       'the overall planned amount is not equal to the '
                       'sum of all its sections') % (breakdown.org_id.name))
@@ -596,7 +596,7 @@ class BudgetFiscalPolicy(models.Model):
             sum_planned_amount = sum([l.planned_amount
                                       for l in breakdown.line_ids])
             if breakdown.planned_overall != sum_planned_amount:
-                raise UserError(
+                raise ValidationError(
                     _('The overall planned amount is '
                       'not equal to the sum of all Orgs'))
 

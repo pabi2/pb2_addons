@@ -4,7 +4,7 @@ from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 import datetime
 import re
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseBilling(models.Model):
@@ -104,12 +104,12 @@ class PurchaseBilling(models.Model):
                     not in date_list:
                 date_list.append(int(final_check_day))
             else:
-                raise UserError(
+                raise ValidationError(
                     _("""Wrong due date configuration.
                          Please check the due date setting.""")
                 )
         if day not in date_list:
-            raise UserError(
+            raise ValidationError(
                 _("""You specified wrong due date.
                      It has to be in %s
                 """ % (date_list,))

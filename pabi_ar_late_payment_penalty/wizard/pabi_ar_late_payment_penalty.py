@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PABIARLatePaymentPenalty(models.TransientModel):
@@ -269,12 +269,12 @@ class PABIARLatePaymentPenalty(models.TransientModel):
     @api.model
     def _pre_validate(self, selected_lines):
         if not selected_lines:
-            raise UserError(_('Please selecte at least one line!'))
+            raise ValidationError(_('Please selecte at least one line!'))
         if self.section_id and self.project_id:
-            raise UserError(_('Section or Project, not both!'))
+            raise ValidationError(_('Section or Project, not both!'))
         operating_unit_ids = selected_lines.mapped('operating_unit_id.id')
         if len(operating_unit_ids) > 1:
-            raise UserError(_('Can not mix between different OU!'))
+            raise ValidationError(_('Can not mix between different OU!'))
 
     @api.multi
     def create_invoice(self):

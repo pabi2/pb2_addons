@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import fields, models, api, _, exceptions
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 import ast
 
 
@@ -147,7 +147,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                 if 'None' not in cur_ref:
                     cur_ref.append('None')
         if len(cur_ref) > 1:
-            raise UserError(
+            raise ValidationError(
                 _("Can't create CfBs by PR lines with many references.")
             )
         return True
@@ -217,39 +217,39 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     def check_status_request_line(self):
         for item in self.item_ids:
             if item.request_id.state != 'approved':
-                raise UserError(
+                raise ValidationError(
                     _("Some Request hasn't been accepted yet : %s"
                       % (item.request_id.name,))
                 )
             elif item.line_id.requisition_state != 'none':
-                raise UserError(
+                raise ValidationError(
                     _("Each Request bid status should be 'No Bid' : %s"
                       % (item.request_id.name,))
                 )
             elif item.line_id.state != 'open':
-                raise UserError(
+                raise ValidationError(
                     _("Some request line is already closed' : %s"
                       % (item.request_id.name,))
                 )
             elif item.line_id.requisition_state != 'none':
-                raise UserError(
+                raise ValidationError(
                     _("Each Request bid status should be 'No Bid' : %s"
                       % (item.request_id.name,))
                 )
             elif item.line_id.request_id.request_ref_id:
                 if not self.purchase_requisition_id:
-                    raise UserError(
+                    raise ValidationError(
                         _("You can't create new CfBs from the PR line with"
                           " PR reference : %s" % (item.request_id.name,))
                     )
                 elif not item.product_id:
-                    raise UserError(
+                    raise ValidationError(
                         _("You have to select the product if the request has a"
                           " PR reference : %s" % (item.request_id.name,))
                     )
             elif not item.line_id.request_id.request_ref_id \
                     and self.purchase_requisition_id:
-                raise UserError(
+                raise ValidationError(
                     _("You cannot add PR Line with no PR reference to CfBs."
                       " PR reference : %s" % (item.request_id.name,))
                 )

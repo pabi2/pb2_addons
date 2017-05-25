@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class HRExpense(models.Model):
@@ -125,7 +125,7 @@ class HRExpense(models.Model):
     def _prepare_move(self, expense, journal, period):
         # The Internal Charge journal must consume budget
         if not journal.analytic_journal_id:
-            raise UserError(
+            raise ValidationError(
                 _("You have to define an analytic journal on "
                   "the '%s' journal!") %
                 (journal.name, ))

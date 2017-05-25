@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_account_move_document_ref.models.account_move \
     import DOCTYPE_SELECT
 
@@ -39,7 +39,7 @@ class PrintVoucherWizard(models.TransientModel):
         account_moves = self.env['account.move'].browse(active_ids)
         doctypes = list(set(account_moves.mapped('doctype')))
         if len(doctypes) > 1:
-            raise UserError(
+            raise ValidationError(
                 _('Not allow selecting document with > 1 Doctypes'))
         return doctypes[0]
 
@@ -50,7 +50,7 @@ class PrintVoucherWizard(models.TransientModel):
         data['parameters']['ids'] = ids
         report_name = DOCTYPE_REPORT_MAP.get(self.doctype, False)
         if not report_name:
-            raise UserError(_('No form for for this Doctype'))
+            raise ValidationError(_('No form for for this Doctype'))
         res = {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,

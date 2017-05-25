@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from openerp import models, api, fields, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -118,7 +118,7 @@ class AccountInvoice(models.Model):
                 ('loan_agreement_id', '=', loan_agreement_id),
             ]
             if len(self.search(dom)._ids) > 0:
-                raise UserError(
+                raise ValidationError(
                     _('You are not allowed to validate '
                       'invoice plan in advance!'))
         return

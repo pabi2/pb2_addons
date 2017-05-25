@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -82,7 +82,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         )
         for plan in plans:
             if len(plan.ref_invoice_id) == 0:
-                raise UserError(_("You have to create invoices first."))
+                raise ValidationError(_("You have to create invoices first."))
             for inv_line in plan.ref_invoice_id.invoice_line:
                 if not inv_line.product_id.id:
                     continue
@@ -132,7 +132,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             if order_line.invoiced_qty >= order_line.product_qty:
                 completed_line += 1
         if completed_line == len(order_lines):
-            raise UserError(
+            raise ValidationError(
                 _("""Can't create new work acceptance.
                 This order's shipments may be completed.
                 """)
@@ -180,7 +180,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             order_lines = OrderLine.search([('order_id', 'in', order_ids)])
             for line in order_lines:
                 if not hasattr(line, 'product_uom'):
-                    raise UserError(
+                    raise ValidationError(
                         _("Unit of Measure is missing in some PO line."))
                 items.append([0, 0, self._prepare_item(line)])
         res['order_id'] = order.id

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class AccountBudget(models.Model):
@@ -22,7 +22,7 @@ class AccountBudget(models.Model):
         """
         self.ensure_one()  # Make sure it is synced one by one
         if self.chart_view != 'invest_construction':
-            raise UserError(_('Not an invest construction budget control'))
+            raise ValidationError(_('Not an invest construction budget control'))
         # Find matched phases for this budget control
         Phase = self.env['res.invest.construction.phase']
         PhaseSync = self.env['res.invest.construction.phase.sync']

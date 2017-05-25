@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -14,7 +14,7 @@ class PurchaseOrder(models.Model):
             doc_lines = Budget.convert_lines_to_doc_lines(purchase.order_line)
             res = Budget.post_commit_budget_check(doc_date, doc_lines)
             if not res['budget_ok']:
-                raise UserError(res['message'])
+                raise ValidationError(res['message'])
         return True
 
     @api.multi

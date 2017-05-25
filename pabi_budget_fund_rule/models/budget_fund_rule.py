@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.tools import float_round as round
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class BudgetFundExpenseGroup(models.Model):
@@ -104,12 +104,12 @@ class BudgetFundRule(models.Model):
             if len(self.search([('template', '=', True),
                                 ('name', '=', self.name),
                                 ('fund_id', '=', self.fund_id.id)])) > 1:
-                raise UserError(_('Duplicated Template Name'))
+                raise ValidationError(_('Duplicated Template Name'))
         else:
             if len(self.search([('template', '=', False),
                                 ('project_id', '=', self.project_id.id),
                                 ('fund_id', '=', self.fund_id.id)])) > 1:
-                raise UserError(_('Duplicated Fund Rule'))
+                raise ValidationError(_('Duplicated Fund Rule'))
 
     @api.one
     @api.constrains('fund_rule_line_ids',
@@ -119,7 +119,7 @@ class BudgetFundRule(models.Model):
         for line in self.fund_rule_line_ids:
             if len(set(line.account_ids._ids).
                    intersection(account_ids)) > 0:
-                raise UserError(_('Duplicated GL Account'))
+                raise ValidationError(_('Duplicated GL Account'))
             else:
                 account_ids += line.account_ids._ids
 

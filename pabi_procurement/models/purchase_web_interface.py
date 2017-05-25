@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 import xmlrpclib
 import base64
 import os
@@ -62,7 +62,7 @@ class PurchaseRequest(models.Model):
     @api.model
     def generate_purchase_request(self, data_dict, test=False):
         if not test and not self.env.user.company_id.pabiweb_active:
-            raise UserError(_('Odoo/PABIWeb Disconnected!'))
+            raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
         ret = {}
         data_dict = self.sudo()._get_request_info(data_dict)
         fields = data_dict.keys()
@@ -287,7 +287,7 @@ class PurchaseWebInterface(models.Model):
             ('name', 'ilike', '_main_form.pdf'),
         ])
         if len(pd_file) != 1:
-            raise UserError(
+            raise ValidationError(
                 _("Only 1 Requisition Form could be done at a time.")
             )
         doc_name = pd_file.name
@@ -334,11 +334,11 @@ class PurchaseWebInterface(models.Model):
         try:
             result = alfresco.ord.action(arg)
         except Exception:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : PRWeb Authentication Failed")
             )
         if not result['success']:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         else:
@@ -361,7 +361,7 @@ class PurchaseWebInterface(models.Model):
             send_act = "X2"
         result = alfresco.req.action(request_name, send_act, user_name)
         if not result['success']:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         return result
@@ -389,7 +389,7 @@ class PurchaseWebInterface(models.Model):
         }
         result = alfresco.ord.action(arg)
         if not result['success']:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         return result
@@ -412,7 +412,7 @@ class PurchaseWebInterface(models.Model):
         comment = request.reject_reason_txt or ''
         result = alfresco.req.action(request.name, send_act, comment, username)
         if not result['success']:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         return result

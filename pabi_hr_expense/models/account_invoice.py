@@ -3,7 +3,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 
 
@@ -78,7 +78,7 @@ class AccountInvoice(models.Model):
                 date_due = (datetime.strptime(date_back, '%Y-%m-%d') +
                             relativedelta(days=30))
             else:
-                raise UserError(_('Can not calculate due date. '
+                raise ValidationError(_('Can not calculate due date. '
                                   'No Advance Type vs Due Date Rule'))
             if date_due:
                 History.create({
@@ -103,11 +103,11 @@ class AccountInvoice(models.Model):
         result = super(AccountInvoice, self).action_move_create()
         for invoice in self:
             if invoice.diff_expense_amount_flag == 1:
-                raise UserError(
+                raise ValidationError(
                     _('New amount over expense is not allowed!'))
             if invoice.diff_expense_amount_flag == -1 and \
                     not invoice.diff_expense_amount_reason:
-                raise UserError(
+                raise ValidationError(
                     _('Total amount is changed from Expense Request Amount.\n'
                       'Please provide Amount Diff Reason'))
         return result

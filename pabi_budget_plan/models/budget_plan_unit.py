@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import tools
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from .budget_plan_template import BudgetPlanCommon
 from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
@@ -164,7 +164,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     def unlink(self):
         for rec in self:
             if rec.state != 'draft':
-                raise UserError(_('You can not delete non-draft records!'))
+                raise ValidationError(_('You can not delete non-draft records!'))
             rec.plan_line_ids.mapped('template_id').unlink()
         self.mapped('template_id').unlink()
         return super(BudgetPlanUnit, self).unlink()
@@ -200,7 +200,7 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
             elif user.id == SUPERUSER_ID:
                 continue
             else:
-                raise UserError(
+                raise ValidationError(
                     _('You can approve only budget plans in division %s.') %
                     (employee.section_id.division_id.name,))
         return True

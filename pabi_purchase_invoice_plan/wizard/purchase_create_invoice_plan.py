@@ -3,7 +3,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp.tools import float_round as round
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
@@ -93,7 +93,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             browse(self._context.get('active_id'))
         if order.by_fiscalyear:
             if any([not l.fiscalyear_id for l in order.order_line]):
-                raise UserError(_('Please set fiscal year on product line'))
+                raise ValidationError(_('Please set fiscal year on product line'))
         return order.by_fiscalyear
 
     by_fiscalyear = fields.Boolean(
@@ -147,7 +147,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
             if self.installment_date > last_fy.date_stop or\
                     self.installment_date < first_fy.date_start:
-                raise UserError(_('Installment date out of range!'))
+                raise ValidationError(_('Installment date out of range!'))
 
     @api.one
     @api.onchange('installment_date',
@@ -156,7 +156,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                   'installment_amount')
     def _onchange_installment_config(self):
         if self.interval < 0:
-            raise UserError('Negative interval not allowed!')
+            raise ValidationError('Negative interval not allowed!')
         return super(PurchaseCreateInvoicePlan,
                      self)._onchange_installment_config()
 
@@ -216,7 +216,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     number_of_lines = 1
                 else:
                     if l not in line_of_fy.keys():
-                        raise UserError(
+                        raise ValidationError(
                             _('Please enter valid installment \
                                 number and installment date .'))
                     number_of_lines = line_of_fy[l]

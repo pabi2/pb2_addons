@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class BudgetPlanUnitAccept(models.TransientModel):
@@ -14,7 +14,7 @@ class BudgetPlanUnitAccept(models.TransientModel):
             if plan.state in ('submit'):
                 plan.button_accept()
             else:
-                raise UserError(
+                raise ValidationError(
                     _("Selected budget plan cannot be approved\
                     as they are not in 'Submitted' state."))
 
@@ -30,7 +30,7 @@ class BudgetPlanUnitVerify(models.TransientModel):
             if plan.state in ('accept'):
                 plan.button_approve()
             else:
-                raise UserError(
+                raise ValidationError(
                     _("Selected budget plan cannot be verified "
                       "as they are not in 'Approved' state."))
 
@@ -46,6 +46,6 @@ class BudgetPlanUnitAccepteCorp(models.TransientModel):
             if plan.state in ('approve'):
                 plan.button_accept_corp()
             else:
-                raise UserError(
+                raise ValidationError(
                     _("Selected budget plan cannot be verified "
                       "as they are not in 'Verified' state."))

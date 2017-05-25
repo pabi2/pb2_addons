@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class HRExpense(models.Model):
@@ -175,7 +175,7 @@ class HRExpense(models.Model):
             for field in chart_fields:
                 if line[field]:
                     if line[field].id not in chart_fields[field]:
-                        raise UserError(msg)
+                        raise ValidationError(msg)
 
     @api.multi
     @api.depends(

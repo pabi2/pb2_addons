@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class ApproveBankAccountWizard(models.TransientModel):
@@ -19,7 +19,7 @@ class ApproveBankAccountWizard(models.TransientModel):
     def _validate_approve_user(self):
         if self.env.user not in \
                 self.env.user.company_id.bank_account_approver_ids:
-            raise UserError(
+            raise ValidationError(
                 _('You are not allowed to approve / unapprove bank account!'))
         return
 

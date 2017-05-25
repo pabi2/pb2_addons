@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import ast
 from openerp import models, api, fields, _
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
@@ -139,7 +139,7 @@ class AccountInvoice(models.Model):
                            'validate_date': fields.Date.today()})
             # Not allow negative amount
             if invoice.amount_total < 0.0:
-                raise UserError(_('Negative total amount not allowed!'))
+                raise ValidationError(_('Negative total amount not allowed!'))
         return result
 
     @api.model

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.exceptions import ValidationError, Warning as UserError
+from openerp.exceptions import ValidationError
 import xmlrpclib
 
 
@@ -273,7 +273,7 @@ class HRExpense(models.Model):
     @api.model
     def generate_hr_expense(self, data_dict, test=False):
         if not test and not self.env.user.company_id.pabiweb_active:
-            raise UserError(_('Odoo/PABIWeb Disconnected!'))
+            raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
         try:
             prepare_code = data_dict.get('preparer_code')
             data_dict = self._pre_process_hr_expense(data_dict)
@@ -415,7 +415,7 @@ class HRExpense(models.Model):
             arg.update({'exNo': self.number})
             result = alfresco.use.action(arg)
         if not result['success']:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         return result
@@ -441,7 +441,7 @@ class HRExpense(models.Model):
             arg.update({'exNo': self.number})
             result = alfresco.use.history(arg)
         if not result['success']:
-            raise UserError(
+            raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         return result

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class InovicesCreatePaymentWizard(models.TransientModel):
@@ -12,7 +12,7 @@ class InovicesCreatePaymentWizard(models.TransientModel):
         # Same Payment Type
         types = list(set(invoices.mapped('payment_type')))
         if len(types) > 1:
-            raise UserError(
+            raise ValidationError(
                 _('Please select invoice(s) with same payment type!'))
         return res
 

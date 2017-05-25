@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
 from openerp import tools
 from openerp.tools import float_compare
-from openerp.exceptions import Warning as UserError, ValidationError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_base.models.res_investment_structure \
     import CONSTRUCTION_PHASE
 from openerp.addons.document_status_history.models.document_history import \
@@ -154,7 +154,7 @@ class ResInvestConstruction(LogCommon, models.Model):
     @api.model
     def _check_cooperate_access(self):
         if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
-            raise UserError(
+            raise ValidationError(
                 _('Only Cooperate Budget user is allowed!'))
         return True
 
@@ -598,7 +598,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                 next_period = Period.next(period, 1)
                 date = next_period.date_start
                 if not next_period:
-                    raise UserError(
+                    raise ValidationError(
                         _('No period configured for the target end date'))
         return True
 
@@ -673,7 +673,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
             if float_compare(phase.amount_phase_plan,
                              phase.amount_phase_approve,
                              precision_digits=2) != 0:
-                raise UserError(
+                raise ValidationError(
                     _('Planned amount not equal to approved amount!'))
 
     @api.multi
@@ -890,7 +890,7 @@ class ResInvestConstructionPhasePlan(models.Model):
             for rec in self:
                 today = fields.Date.context_today(self)
                 if rec.calendar_period_id.date_start < today:
-                    raise UserError(_('You are not allowed to change '
+                    raise ValidationError(_('You are not allowed to change '
                                       'amount in the past period!'))
         return super(ResInvestConstructionPhasePlan, self).write(vals)
 

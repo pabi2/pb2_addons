@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 
 
 class PurchaseRequest(models.Model):
@@ -333,7 +333,7 @@ class PurchaseRequest(models.Model):
     def button_to_approve(self):
         for rec in self:
             if not rec.line_ids:
-                raise UserError(
+                raise ValidationError(
                     _(('You cannot confirm a request without any line.')))
         res = super(PurchaseRequest, self).button_to_approve()
         return res
