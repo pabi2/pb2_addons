@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import ValidationError
 from openerp.addons.pabi_base.models.res_common import ResCommon
 
 # SPA Structure:
@@ -71,7 +71,7 @@ class ResSpa(models.Model):
         if not self.begin_period_id or not self.end_period_id:
             return True
         if self.begin_date >= self.end_date:
-            raise UserError(_('Date range error!'))
+            raise ValidationError(_('Date range error!'))
         # Duplicated range?
         overlaps1 = len(self.search([('begin_date', '<=', self.begin_date),
                                     ('end_date', '>=', self.begin_date),
@@ -80,7 +80,7 @@ class ResSpa(models.Model):
                                     ('end_date', '>=', self.end_date),
                                     ('id', '!=', self.id)])._ids)
         if overlaps1 or overlaps2:
-            raise UserError(_('This SPA has overlap period with other SPA!'))
+            raise ValidationError(_('This SPA has overlap period with other SPA!'))
 
 
 class ResMission(models.Model):
