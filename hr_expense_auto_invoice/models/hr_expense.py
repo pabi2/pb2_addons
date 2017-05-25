@@ -199,42 +199,42 @@ class HRExpenseExpese(models.Model):
         return result
 
     @api.multi
-    def _create_supplier_invoice_from_expense(self, merge_line=False):
+    def _create_supplier_invoice_from_expense(self):
         self.ensure_one()
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         expense = self
         invoice_vals = self._prepare_inv(expense)
         inv_line_ids = []
-        inv_line_datas = []
+        # inv_line_datas = []
         for exp_line in expense.line_ids:
             account_id = self._choose_account_from_exp_line(
                 exp_line, invoice_vals['fiscal_position'])
             inv_line_data = self._prepare_inv_line(account_id, exp_line)
-            if not merge_line:
-                inv_line = InvoiceLine.create(inv_line_data)
-                inv_line_ids.append(inv_line.id)
-                exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
-            else:
-                inv_line_datas.append(inv_line_data)
-        if merge_line and inv_line_datas:
-            keys = inv_line_datas[0].keys()
-            sum_keys = ['quantity']  # This field will be summed
-            str_keys = ['name']  # This field will be concatenate
-            group_keys = list(set(keys) - set(sum_keys) - set(str_keys))
-            inv_line_datas = \
-                self.merge_invoice_line(inv_line_datas, group_keys,
-                                        sum_keys, str_keys)
-            # if len(inv_line_datas) > 1:
-            #     # With multiple line, we still can't link to expense_line YET!
-            #     # It could with more effort, but this case shouldn't happen
-            #     raise ValidationError(
-            #         _('Merging into multiple invoice lines is not supported!'))
-            inv_line_data = inv_line_datas[0]
-            for exp_line in expense.line_ids:
-                inv_line = InvoiceLine.create(inv_line_data)
-                inv_line_ids.append(inv_line.id)
-                exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
+            # if not merge_line:
+            inv_line = InvoiceLine.create(inv_line_data)
+            inv_line_ids.append(inv_line.id)
+            exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
+            # else:
+            #     inv_line_datas.append(inv_line_data)
+        # if merge_line and inv_line_datas:
+        #     keys = inv_line_datas[0].keys()
+        #     sum_keys = ['quantity']  # This field will be summed
+        #     str_keys = ['name']  # This field will be concatenate
+        #     group_keys = list(set(keys) - set(sum_keys) - set(str_keys))
+        #     inv_line_datas = \
+        #         self.merge_invoice_line(inv_line_datas, group_keys,
+        #                                 sum_keys, str_keys)
+        #     # if len(inv_line_datas) > 1:
+        #     #     # With multiple line, we still can't link to expense_line YET!
+        #     #     # It could with more effort, but this case shouldn't happen
+        #     #     raise ValidationError(
+        #     #         _('Merging into multiple invoice lines is not supported!'))
+        #     inv_line_data = inv_line_datas[0]
+        #     for exp_line in expense.line_ids:
+        #         inv_line = InvoiceLine.create(inv_line_data)
+        #         inv_line_ids.append(inv_line.id)
+        #         exp_line.write({'invoice_line_ids': [(4, inv_line.id)]})
         invoice_vals.update({'invoice_line': [(6, 0, inv_line_ids)]})
         # Create Invoice
         invoice = Invoice.create(invoice_vals)
