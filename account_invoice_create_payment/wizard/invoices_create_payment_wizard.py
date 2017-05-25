@@ -28,7 +28,8 @@ class InovicesCreatePaymentWizard(models.TransientModel):
         # Same partner
         partner_ids = list(set(invoices.mapped('partner_id').ids))
         if len(partner_ids) > 1:
-            raise ValidationError(_('Please select invoice(s) from same partner!'))
+            raise ValidationError(
+                _('Please select invoice(s) from same partner!'))
         states = list(set(invoices.mapped('state')))
         if len(states) != 1 or states[0] != 'open':
             raise ValidationError(_('Please select only Open invoice(s)'))
