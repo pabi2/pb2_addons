@@ -30,17 +30,34 @@ class StockTransferDetails(models.TransientModel):
 
     @api.one
     def do_detailed_transfer(self):
-        Picking = self.env['stock.picking']
-        picking_ids = self.env.context['active_ids'] or []
-        picking = Picking.browse(picking_ids)
+        picking = self.picking_id
         if picking.picking_type_code == 'incoming':
-            for item in self.item_ids:
-                for wa_line in picking.acceptance_id.acceptance_line_ids:
-                    if wa_line.product_id.id == item.product_id.id:
-                        if item.quantity > wa_line.to_receive_qty:
-                            raise ValidationError(
-                                _("Can't receive product's quantity over than "
-                                  "work acceptance's quantity.")
-                            )
+            # Build product: quantity list for transfer wizard
+            incoming_qty = {}
+            products = self.item_ids.mapped('product_id')
+            for product in products:
+                lines = self.item_ids.filtered(lambda l:
+                                               l.product_id.id == product.id)
+                incoming_qty[product.id] = sum(lines.mapped('quantity'))
+            # Build product: quantity list for WA
+            wa_qty = {}
+            wa_lines = picking.acceptance_id.acceptance_line_ids
+            products = wa_lines.mapped('product_id')
+            for product in products:
+                lines = wa_lines.filtered(lambda l:
+                                          l.product_id.id == product.id)
+                wa_qty[product.id] = sum(lines.mapped('to_receive_qty'))
+            # Check incoming with WA
+            print incoming_qty
+            print wa_qty
+            for product_id, quantity in incoming_qty.items():
+                if product_id not in wa_qty:
+                    raise ValidationError(
+                        _('Product not in work acceptance list.'))
+                if quantity > wa_qty[product.id]:
+                    raise ValidationError(
+                        _("Can't receive product's quantity over than "
+                          "work acceptance's quantity.")
+                    )
         res = super(StockTransferDetails, self).do_detailed_transfer()
         return res
