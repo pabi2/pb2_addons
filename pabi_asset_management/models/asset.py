@@ -10,8 +10,14 @@ class AccountAssetAsset(models.Model):
         string='Code',  # Rename
         required=True,
         default='/',
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+        domain=[('asset_category_id', '!=', False)],
         readonly=True,
         states={'draft': [('readonly', False)]},
+        help="This asset is created from this product class",
     )
     move_id = fields.Many2one(
         'stock.move',
@@ -24,15 +30,6 @@ class AccountAssetAsset(models.Model):
         related='move_id.picking_id',
         store=True,
         readonly=True,
-    )
-    product_id = fields.Many2one(
-        'product.product',
-        string='Product',
-        domain=[('asset_category_id', '!=', False)],
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        help="This asset is created from this product class",
     )
     # Additional Info
     owner_id = fields.Many2one(
@@ -95,7 +92,7 @@ class AccountAssetAsset(models.Model):
         states={'draft': [('readonly', False)]},
     )
     _sql_constraints = [('code_uniq', 'unique(code)',
-                        'Asset Code must be unique!')]
+                         'Asset Code must be unique!')]
 
     @api.model
     def create(self, vals):
@@ -105,10 +102,10 @@ class AccountAssetAsset(models.Model):
             if product_id:
                 product = self.env['product.product'].browse(product_id)
                 sequence = product.sequence_id
-            if not sequence:
-                raise ValidationError(
-                    _('No asset sequence setup for selected product!'))
-            vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
+                if not sequence:
+                    raise ValidationError(
+                        _('No asset sequence setup for selected product!'))
+                vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
         return super(AccountAssetAsset, self).create(vals)
 
     @api.multi
@@ -131,5 +128,17 @@ class AccountAssetCategory(models.Model):
         string='Product Category',
         ondelete='restrict',
         required=True,
-        help="Parent category of this asset category",
+        help="Grouping of this asset category",
     )
+
+    @api.multi
+    def write(self, vals):
+        res = super(AccountAssetCategory, self).write(vals)
+        if 'product_categ_id' in vals:
+            Product = self.env['product.product']
+            for asset_categ in self:
+                products = Product.search([
+                    ('asset', '=', True),
+                    ('asset_category_id', '=', asset_categ.id)])
+                products.write({'categ_id': asset_categ.product_categ_id.id})
+        return res

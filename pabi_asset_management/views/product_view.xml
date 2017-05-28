@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="product_template_form_view" model="ir.ui.view">
+            <field name="name">product.template.common.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook//page[@string='Accounting']/group" position="before">
+                    <field name="asset"/><label for="asset" class="oe_inline"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook//page[@string='Accounting']/group" position="attributes">
+                    <attribute name="attrs">{'readonly': [('asset', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook//page[@string='Accounting']/group" position="after">
+                    <group string="Asset Class" attrs="{'invisible': [('asset', '=', False)]}">
+                        <group>
+                            <field name="asset_category_id" attrs="{'required': [('asset', '=', True)]}"/>
+                            <field name="sequence_id" attrs="{'required': [('asset', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <field name="stock_valuation_account_id"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

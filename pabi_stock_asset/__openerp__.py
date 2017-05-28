@@ -7,7 +7,7 @@
     "description": """
 
 PABI2 - Stock Asset
-================================
+===================
 
   * Customize for generating asset serial number according to product category.
   * Use asset serial number as product lot for asset
@@ -19,13 +19,16 @@ PABI2 - Stock Asset
     "application": False,
     "installable": True,
     "depends": [
+        "account_asset",
         "purchase_requisition",
-        "stock_asset",
     ],
     "data": [
-        "views/asset_view.xml",
-        "views/purchase_requisition_view.xml",
         # "wizards/stock_transfer_details_view.xml",
+        "views/asset_view.xml",
+        "views/product_view.xml",
+        "views/purchase_requisition_view.xml",
+        "views/stock_view.xml",
+        "views/account_invoice_view.xml",
     ],
 }
 
