@@ -4,8 +4,8 @@ from openerp import models
 
 
 class PabiFixedAssetNonStandardReport(models.Model):
-    _name = 'pabi.fixed.asset.non.standard.report'
-    _description = 'Pabi Fixed Asset Non Standard Report'
+    _name = 'pabi.fixed.asset.standard.report'
+    _description = 'Pabi Fixed Asset Standard Report'
     _auto = False
 
     # purchase_type_id = fields.Many2one(
@@ -49,6 +49,6 @@ class PabiFixedAssetNonStandardReport(models.Model):
         LEFT JOIN purchase_request_line prql
             ON prprl.purchase_request_line_id = prql.id
         WHERE po.order_type = 'purchase_order'
-            and prl.is_standard_asset != True
+            and prl.is_standard_asset = True
         ORDER BY po.name, pol.id
         )""" % (self._table, ))

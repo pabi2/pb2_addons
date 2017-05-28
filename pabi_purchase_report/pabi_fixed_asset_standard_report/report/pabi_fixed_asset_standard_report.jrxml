@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_summarize_report" language="groovy" pageWidth="1417" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1377" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="0.5644739300537798"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="363"/>
 	<property name="ireport.y" value="0"/>
 	<style name="THfont" isDefault="true" fill="Solid" hAlign="Left" vAlign="Middle" rotation="None" lineSpacing="Single" isBlankWhenNull="true" fontSize="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 	<style name="table" lineSpacing="Single">
@@ -110,7 +110,7 @@ province,
 warranty,
 note,
 description
-FROM pabi_fixed_asset_non_standard_report
+FROM pabi_fixed_asset_standard_report
 WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 	</queryString>
 	<field name="product_name" class="java.lang.String"/>
@@ -151,7 +151,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 				<textElement textAlignment="Right" lineSpacing="Single">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
 				</textElement>
-				<text><![CDATA[รายการผลการจัดซื้อครุภัณฑ์นอกมาตรฐาน ตั้งแต่ 10,000 บาท จนถึง 100,000 บาท ตั้งแต่วันที่]]></text>
+				<text><![CDATA[รายการผลการจัดซื้อครุภัณฑ์มาตรฐาน ตั้งแต่ 10,000 บาท จนถึง 100,000 บาท ตั้งแต่วันที่]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="887" y="34" width="33" height="35"/>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		# PDF
+
+		<record id="pabi_fixed_asset_standard_report" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.fixed.asset.standard.report</field>
+			<field name="name">Pabi Fixed Asset Standard Report</field>
+			<field name="report_name">pabi_fixed_asset_standard_report</field>
+			<field name="report_rml">pabi_purchase_report/pabi_fixed_asset_standard_report/report/pabi_fixed_asset_standard_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="pabi_fixed_asset_standard_report_values" model="ir.values">
+			<field name="name">Pabi Fixed Asset Standard Report</field>
+			<field name="model">pabi.fixed.asset.standard.report</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_fixed_asset_standard_report)"/>
+		</record>
+
+		# XLS (change jasper output format and report name)
+		<!-- XLS -->
+		<record id="pabi_fixed_asset_standard_report_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">pabi.fixed.asset.standard.report</field>
+			<field name="name">Pabi Fixed Asset Standard Report</field>
+			<!-- XLS -->
+			<field name="report_name">pabi_fixed_asset_standard_report_xls</field>
+			<field name="report_rml">pabi_purchase_report/pabi_fixed_asset_standard_report/report/pabi_fixed_asset_standard_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<!-- XLS -->
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+
+		<!-- XLS -->
+		<record id="pabi_fixed_asset_standard_report_xls_values" model="ir.values">
+			<field name="name">Pabi Fixed Asset Standard Report</field>
+			<field name="model">pabi.fixed.asset.standard.report</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_fixed_asset_standard_report_xls)"/>
+		</record>
+
+	</data>
+</openerp>
