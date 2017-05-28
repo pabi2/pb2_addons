@@ -49,9 +49,40 @@ class ProductTemplate(models.Model):
 
     @api.model
     def get_product_accounts(self, product_id):
-        res = super(ProductTemplate, self).get_product_accounts(product_id)
-        product = self.browse(product_id)
-        if product.stock_valuation_account_id:
-            res['property_stock_valuation_account_id'] = \
-                product.stock_valuation_account_id.id
-        return res
+        """ Overwrite """
+        """ To get the stock input account, stock output account and stock
+        journal related to product.
+        @param product_id: product id
+        @return: dictionary which contains information regarding stock input
+        account, stock output account and stock journal
+        """
+        product = self.env['product.product'].browse(product_id)
+        stock_input_acc = product.property_stock_account_input or \
+            product.categ_id.property_stock_account_input_categ
+        stock_output_acc = product.property_stock_account_output or \
+            product.categ_id.property_stock_account_output_categ
+        journal = product.categ_id.property_stock_journal
+        account_valuation = product.stock_valuation_account_id or \
+            product.categ_id.property_stock_valuation_account_id
+        if not all([stock_input_acc, stock_output_acc,
+                    account_valuation, journal]):
+            raise ValidationError(
+                _('One of the following information is missing on the product '
+                  'or product category and prevents the accounting valuation '
+                  'entries to be created:\n'
+                  'Product: %s\n'
+                  'Stock Input Account: %s\n'
+                  'Stock Output Account: %s\n'
+                  'Stock Valuation Account: %s\n'
+                  'Stock Journal: %s') %
+                (product.name_get()[0][1],
+                 stock_input_acc.name_get()[0][1],
+                 stock_output_acc.name_get()[0][1],
+                 account_valuation.name_get()[0][1],
+                 journal.name_get()[0][1]))
+        return {
+            'stock_account_input': stock_input_acc.id,
+            'stock_account_output': stock_output_acc.id,
+            'stock_journal': journal.id,
+            'property_stock_valuation_account_id': account_valuation.id
+        }
