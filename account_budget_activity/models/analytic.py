@@ -269,7 +269,7 @@ class AccountAnalyticAccount(models.Model):
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
                 raise ValidationError(_('Select both Product and '
-                                  'Activity is prohibited'))
+                                        'Activity is prohibited'))
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account']
         domain = self.get_analytic_search_domain(rec)
