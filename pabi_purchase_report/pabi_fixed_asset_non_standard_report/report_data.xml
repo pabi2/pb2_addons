@@ -8,7 +8,7 @@
 			<field name="auto">True</field>
 			<field name="model">pabi.fixed.asset.non.standard.report</field>
 			<field name="name">Pabi Fixed Asset Non Standard Report</field>
-			<field name="report_name">pabi_asset_non_standard_report</field>
+			<field name="report_name">pabi_fixed_asset_non_standard_report</field>
 			<field name="report_rml">pabi_purchase_report/pabi_fixed_asset_non_standard_report/report/pabi_fixed_asset_non_standard_report.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
