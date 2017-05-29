@@ -130,6 +130,9 @@ class AccountAssetCategory(models.Model):
         required=True,
         help="Grouping of this asset category",
     )
+    account_asset_id = fields.Many2one(
+        domain=[('type', '=', 'other'), ('user_type.for_asset', '=', True)],
+    )
 
     @api.multi
     def write(self, vals):

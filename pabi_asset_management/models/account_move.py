@@ -25,3 +25,13 @@ class AccountMoveLine(models.Model):
                                       'move_id': move_line.stock_move_id.id,
                                       'code': code, })
         return move_line
+
+    @api.multi
+    def _budget_eligible_move_lines(self):
+        move_lines = super(AccountMoveLine, self)._budget_eligible_move_lines()
+        # Add move line with fixed asset account
+        move_lines += self.filtered(
+            lambda l: l.account_id.user_type.for_asset and
+            (l.activity_id or l.product_id)  # Is Activity or Product
+        )
+        return move_lines

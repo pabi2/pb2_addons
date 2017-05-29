@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_account_type_form">
+            <field name="name">view.account.type.form</field>
+            <field name="model">account.account.type</field>
+            <field name="inherit_id" ref="account.view_account_type_form"/>
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                    <field name="for_asset"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="account.data_account_type_fixed_assets" model="account.asset.type">
+            <field name="for_asset">True</field>
+        </record>
+    </data>
+</openerp>

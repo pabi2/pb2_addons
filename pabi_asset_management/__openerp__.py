@@ -10,12 +10,15 @@
         "stock_account",
         "account_anglo_saxon",
         "pabi_purchase_work_acceptance",
+        "account_budget_activity",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
     """,
     "data": [
+        "data/account_data.xml",
         "views/account_invoice_view.xml",
+        "views/account_view.xml",
         "views/asset_view.xml",
         "views/product_view.xml",
         "views/purchase_requisition_view.xml",

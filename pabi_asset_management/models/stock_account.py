@@ -11,17 +11,23 @@ class StockQuant(models.Model):
         res = super(StockQuant, self).\
             _prepare_account_move_line(move, qty, cost,
                                        credit_account_id, debit_account_id)
-        Account = self.env['account.account']
-        debit_acct = Account.browse(debit_account_id)
-        credit_acct = Account.browse(credit_account_id)
-        debit_line = res[0][2]
-        credit_line = res[1][2]
+        # For PABI2 case, we use different approach in determining asset_categ
+        # As such, we need to clear it first and reassign again.
+        for r in res:
+            r[2].update({'asset_category_id': False,
+                         'analytic_account_id': False, })
         # If stock valuation account used, it means this is an asset
         asset_category_id = move.product_id.asset_category_id.id
-        if move.product_id.stock_valuation_account_id == debit_acct:
-            debit_line['asset_category_id'] = asset_category_id
-            debit_line['stock_move_id'] = move.id
-        if move.product_id.stock_valuation_account_id == credit_acct:
-            credit_line['asset_category_id'] = asset_category_id
-            credit_line['stock_move_id'] = move.id
-        return [(0, 0, debit_line), (0, 0, credit_line)]
+        stock_account_id = move.product_id.stock_valuation_account_id.id
+        for r in res:
+            if r[2]['account_id'] == stock_account_id:
+                r[2]['asset_category_id'] = asset_category_id
+                r[2]['stock_move_id'] = move.id
+        # Recalculate analytic
+        Analytic = self.env['account.analytic.account']
+        for r in res:
+            if r[2]['asset_category_id']:
+                analytic_account = Analytic.create_matched_analytic(move)
+                if analytic_account:
+                    r[2]['analytic_account_id'] = analytic_account.id
+        return res
