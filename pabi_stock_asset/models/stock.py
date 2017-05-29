@@ -25,7 +25,6 @@ class StockPicking(models.Model):
         assets = Asset.search([('picking_id', '=', self.id)])
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom})
-        print result
         return result
 
     @api.multi

@@ -13,7 +13,6 @@ class HRExpense(models.Model):
     def action_accept_to_paid(self):
         # Start with confirm status
         expenses = self.filtered(lambda l: l.is_employee_advance)
-        print expenses
         # for expense in expenses:
         for expense in expenses:
             try:

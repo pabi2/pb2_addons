@@ -48,8 +48,6 @@ class StockTransferDetails(models.TransientModel):
                                           l.product_id.id == product.id)
                 wa_qty[product.id] = sum(lines.mapped('to_receive_qty'))
             # Check incoming with WA
-            print incoming_qty
-            print wa_qty
             for product_id, quantity in incoming_qty.items():
                 if product_id not in wa_qty:
                     raise ValidationError(

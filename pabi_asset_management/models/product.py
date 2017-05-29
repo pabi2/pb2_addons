@@ -56,7 +56,7 @@ class ProductTemplate(models.Model):
         @return: dictionary which contains information regarding stock input
         account, stock output account and stock journal
         """
-        product = self.env['product.product'].browse(product_id)
+        product = self.browse(product_id)
         stock_input_acc = product.property_stock_account_input or \
             product.categ_id.property_stock_account_input_categ
         stock_output_acc = product.property_stock_account_output or \
@@ -75,11 +75,11 @@ class ProductTemplate(models.Model):
                   'Stock Output Account: %s\n'
                   'Stock Valuation Account: %s\n'
                   'Stock Journal: %s') %
-                (product.name_get()[0][1],
-                 stock_input_acc.name_get()[0][1],
-                 stock_output_acc.name_get()[0][1],
-                 account_valuation.name_get()[0][1],
-                 journal.name_get()[0][1]))
+                (product.name,
+                 stock_input_acc.code,
+                 stock_output_acc.code,
+                 account_valuation.code,
+                 journal.name))
         return {
             'stock_account_input': stock_input_acc.id,
             'stock_account_output': stock_output_acc.id,

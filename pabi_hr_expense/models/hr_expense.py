@@ -139,8 +139,9 @@ class HRExpense(models.Model):
         readonly=True,
     )
     reason_bypass_procure = fields.Char(
-        string='Reason purchase bypass procurement',
+        string='Reason bypass procurement',
         readonly=True,
+        help="Reason purchase by pass procurement",
     )
     remark = fields.Text(
         string='Note for Advance',
