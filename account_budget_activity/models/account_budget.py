@@ -479,7 +479,6 @@ class AccountBudget(models.Model):
         if amount is not False and amount > monitors[0].amount_balance:
             res['budget_ok'] = False
             if amount == 0.0:  # 0.0 mean post check
-                print monitors[0].amount_balance
                 res['message'] = _('%s\n'
                                    '%s, not enough budget, this transaction '
                                    'will result in ฿%s over budget!') % \

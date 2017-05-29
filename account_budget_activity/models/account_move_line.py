@@ -38,11 +38,15 @@ class AccountMoveLine(models.Model):
         # Before create, always remove analytic line if exists
         for move_line in self:
             move_line.analytic_lines.unlink()
+        move_lines = self._budget_eligible_move_lines()
+        return super(AccountMoveLine, move_lines).create_analytic_lines()
 
+    @api.multi
+    def _budget_eligible_move_lines(self):
         move_lines = self.filtered(
             lambda l:
             (l.account_id.user_type.report_type  # Not BS account
              not in ('asset', 'liability')) and
             (l.activity_id or l.product_id)  # Is Activity or Product
         )
-        return super(AccountMoveLine, move_lines).create_analytic_lines()
+        return move_lines

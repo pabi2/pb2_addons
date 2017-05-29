@@ -114,7 +114,6 @@ class TestAccountBilling(common.TransactionCase):
             self.eur_currency_id, 'receipt', self.date_25)
         # still match 2 invoice
         self.assertEquals(len(res['value']['line_cr_ids']), 2)
-        print res
         res = self.voucher_obj.with_context(
             billing_id=billing.id).onchange_billing_id(
                 self.partner_id, journal_id, 0.0,
