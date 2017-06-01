@@ -23,6 +23,8 @@ class StockQuant(models.Model):
             if r[2]['account_id'] == stock_account_id:
                 r[2]['asset_category_id'] = asset_category_id
                 r[2]['stock_move_id'] = move.id
+                r[2]['parent_asset_id'] = \
+                    move.purchase_line_id.parent_asset_id.id
         # Recalculate analytic
         Analytic = self.env['account.analytic.account']
         for r in res:

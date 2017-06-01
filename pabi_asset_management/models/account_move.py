@@ -12,18 +12,27 @@ class AccountMoveLine(models.Model):
         readonly=True,
         help="When account is created by a stock move (anglo saxon).",
     )
+    parent_asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='Parent Asset',
+        readonly=True,
+        help="If in purchase order line, parent asset is specified.",
+    )
 
     @api.model
     def create(self, vals):
         move_line = super(AccountMoveLine, self).create(vals)
-        if move_line.asset_id:
+        if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
             sequence = move_line.product_id.sequence_id
             if not sequence:
                 raise ValidationError(_('No asset sequence setup!'))
             code = self.env['ir.sequence'].next_by_id(sequence.id)
-            move_line.asset_id.write({'product_id': move_line.product_id.id,
-                                      'move_id': move_line.stock_move_id.id,
-                                      'code': code, })
+            move_line.asset_id.write({
+                'product_id': move_line.product_id.id,
+                'move_id': move_line.stock_move_id.id,
+                'parent_id': move_line.parent_asset_id.id,
+                'code': code,
+            })
         return move_line
 
     @api.multi

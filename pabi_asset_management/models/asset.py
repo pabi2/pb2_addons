@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.addons.pabi_chartfield.models.chartfield \
+    import ChartFieldAction
 
 
-class AccountAssetAsset(models.Model):
+class AccountAssetAsset(ChartFieldAction, models.Model):
     _inherit = 'account.asset.asset'
+    # _inherit = ['mail.thread', 'account.asset.asset']
 
     code = fields.Char(
         string='Code',  # Rename
@@ -13,7 +16,7 @@ class AccountAssetAsset(models.Model):
     )
     product_id = fields.Many2one(
         'product.product',
-        string='Product',
+        string='Asset Type',
         domain=[('asset_category_id', '!=', False)],
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -31,6 +34,18 @@ class AccountAssetAsset(models.Model):
         store=True,
         readonly=True,
     )
+    purchase_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+        related='move_id.purchase_line_id.order_id',
+        store=True,
+        readonly=True,
+    )
+    no_depreciation = fields.Boolean(
+        string='No Depreciation',
+        related='category_id.no_depreciation',
+        readonly=True,
+    )
     # Additional Info
     owner_id = fields.Many2one(
         'res.users',
@@ -38,17 +53,20 @@ class AccountAssetAsset(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    section_id = fields.Many2one(
-        'res.section',
-        string='Section',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    org_id = fields.Many2one(
-        'res.org',
-        releated='section_id.org_id',
-        string='Org',
-        readonly=True,
+    # section_id = fields.Many2one(
+    #     'res.section',
+    #     string='Section',
+    #     readonly=True,
+    #     states={'draft': [('readonly', False)]},
+    # )
+    # org_id = fields.Many2one(
+    #     'res.org',
+    #     releated='section_id.org_id',
+    #     string='Org',
+    #     readonly=True,
+    # )
+    purchase_value = fields.Float(
+        default=0.0,  # to avoid false
     )
     requester = fields.Many2one(
         'res.users',
@@ -106,18 +124,25 @@ class AccountAssetAsset(models.Model):
                     raise ValidationError(
                         _('No asset sequence setup for selected product!'))
                 vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
-        return super(AccountAssetAsset, self).create(vals)
+        res = super(AccountAssetAsset, self).create(vals)
+        res.update_related_dimension(vals)
+        return res
 
     @api.multi
     def name_get(self):
         res = []
         for record in self:
-            if record.code:
+            if record.code and record.code != '/':
                 name = "[%s] %s" % (record.code, record.name)
             else:
                 name = record.name
             res.append((record.id, name))
         return res
+
+    @api.multi
+    def compute_depreciation_board(self):
+        assets = self.filtered(lambda l: not l.no_depreciation)
+        return super(AccountAssetAsset, assets).compute_depreciation_board()
 
 
 class AccountAssetCategory(models.Model):
@@ -132,6 +157,10 @@ class AccountAssetCategory(models.Model):
     )
     account_asset_id = fields.Many2one(
         domain=[('type', '=', 'other'), ('user_type.for_asset', '=', True)],
+    )
+    no_depreciation = fields.Boolean(
+        string='No Depreciation',
+        default=False,
     )
 
     @api.multi

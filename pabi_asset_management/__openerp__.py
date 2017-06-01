@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Stock Asset Management",
+    "name": "NSTDA :: PABI2 - Asset Management",
     "version": "0.1",
     "author": "Ecosoft",
     "website": "http://ecosoft.co.th",
@@ -20,9 +20,11 @@ This module allow creating asset during incoming shipment.
         "views/account_invoice_view.xml",
         "views/account_view.xml",
         "views/asset_view.xml",
+        "views/asset_transfer_view.xml",
         "views/product_view.xml",
         "views/purchase_requisition_view.xml",
         "views/stock_view.xml",
+        "views/purchase_view.xml",
     ],
     'installable': True,
     'active': True,

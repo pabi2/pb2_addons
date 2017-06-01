@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <record id="account.data_account_type_fixed_assets" model="account.asset.type">
-            <field name="for_asset">True</field>
-        </record>
+
+        <function model="account.account.type" name="write">
+            <function model="account.account.type" name="search"
+              eval="[['|', ('name','ilike','fixed asset'), ('code', 'ilike', 'fixed asset')]]"/>
+            <value eval="{'for_asset': True}"/>
+        </function>
     </data>
 </openerp>
