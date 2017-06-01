@@ -28,34 +28,41 @@ class StockTransferDetails(models.TransientModel):
             res['item_ids'] = new_item_ids
         return res
 
+    @api.model
+    def _product_summary_qty(self, product_lines, qty_field):
+        summary_qty = {}
+        products = product_lines.mapped('product_id')
+        for product in products:
+            lines = product_lines.filtered(lambda l:
+                                           l.product_id.id == product.id)
+            summary_qty[product.id] = sum(lines.mapped(qty_field))
+        return summary_qty
+
     @api.one
     def do_detailed_transfer(self):
         picking = self.picking_id
         if picking.picking_type_code == 'incoming':
-            # Build product: quantity list for transfer wizard
-            incoming_qty = {}
-            products = self.item_ids.mapped('product_id')
-            for product in products:
-                lines = self.item_ids.filtered(lambda l:
-                                               l.product_id.id == product.id)
-                incoming_qty[product.id] = sum(lines.mapped('quantity'))
-            # Build product: quantity list for WA
-            wa_qty = {}
-            wa_lines = picking.acceptance_id.acceptance_line_ids
-            products = wa_lines.mapped('product_id')
-            for product in products:
-                lines = wa_lines.filtered(lambda l:
-                                          l.product_id.id == product.id)
-                wa_qty[product.id] = sum(lines.mapped('to_receive_qty'))
-            # Check incoming with WA
-            for product_id, quantity in incoming_qty.items():
-                if product_id not in wa_qty:
+            transfer_qty = self._product_summary_qty(self.item_ids,
+                                                     'quantity')
+            stock_move_qty = self._product_summary_qty(picking.move_lines,
+                                                       'product_uom_qty')
+            wa_qty = self._product_summary_qty(picking.acceptance_id.
+                                               acceptance_line_ids,
+                                               'to_receive_qty')
+            # Check transfer with WA
+            for product_id, quantity in transfer_qty.items():
+                if product_id not in wa_qty or quantity > wa_qty[product_id]:
                     raise ValidationError(
-                        _('Product not in work acceptance list.'))
-                if quantity > wa_qty[product.id]:
-                    raise ValidationError(
-                        _("Can't receive product's quantity over than "
+                        _("Can't receive product's quantity over "
                           "work acceptance's quantity.")
+                    )
+            # Check transfer with picking line
+            for product_id, quantity in transfer_qty.items():
+                if product_id not in stock_move_qty or \
+                        quantity > stock_move_qty[product_id]:
+                    raise ValidationError(
+                        _("Can't receive product's quantity over "
+                          "stock move's quantity.")
                     )
             # Stamp WA accept date
             picking.acceptance_id.date_accept = fields.Date.context_today(self)
