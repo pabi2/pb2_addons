@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, _
+from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
@@ -57,5 +57,7 @@ class StockTransferDetails(models.TransientModel):
                         _("Can't receive product's quantity over than "
                           "work acceptance's quantity.")
                     )
+            # Stamp WA accept date
+            picking.acceptance_id.date_accept = fields.Date.context_today(self)
         res = super(StockTransferDetails, self).do_detailed_transfer()
         return res

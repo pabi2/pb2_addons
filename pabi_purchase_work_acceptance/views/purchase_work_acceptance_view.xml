@@ -23,7 +23,7 @@
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name ="order_id"/>
+                            <field name="order_id"/>
                             <field name="date_contract_start" readonly="1"/>
                             <field name="date_scheduled_end" string="Contract End Date" readonly="1"/>
                             <field name="date_contract_end" invisible="1"/>
@@ -41,6 +41,8 @@
                             <field name="supplier_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_receive" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_accept" attrs="{'readonly': ['|', ('order_method', '=', 'picking'), ('state','in',('done','cancel'))],
+                                                              'required': [('order_method', '!=', 'picking'), ('state','=',('evaluation'))]}"/>
                         </group>
                     </group>
                     <field name="acceptance_line_ids" attrs="{'readonly': [('state','!=','draft')]}">

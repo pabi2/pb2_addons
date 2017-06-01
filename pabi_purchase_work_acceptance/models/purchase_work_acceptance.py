@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from openerp import fields, models, api, _
 import datetime
 import openerp.addons.decimal_precision as dp
@@ -174,7 +173,7 @@ class PurchaseWorkAcceptance(models.Model):
                         product=line.product_id,
                     )
                     line_tax += sum([tax['amount'] for tax in taxes['taxes']])
-                    fine_per_day = (fine_rate*0.01) * \
+                    fine_per_day = (fine_rate * 0.01) * \
                                    ((to_receive_qty * unit_price) + line_tax)
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * overdue_day * fine_per_day
@@ -240,7 +239,7 @@ class PurchaseWorkAcceptance(models.Model):
                         product=line.product_id,
                     )
                     line_tax += sum([tax['amount'] for tax in taxes['taxes']])
-                    fine_per_day = (fine_rate*0.01) * \
+                    fine_per_day = (fine_rate * 0.01) * \
                                    ((to_receive_qty * unit_price) + line_tax)
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * overdue_day * fine_per_day
@@ -288,7 +287,7 @@ class PurchaseWorkAcceptance(models.Model):
                         product=line.product_id,
                     )
                     line_tax += sum([tax['amount'] for tax in taxes['taxes']])
-                    fine_per_day = (fine_rate*0.01) * \
+                    fine_per_day = (fine_rate * 0.01) * \
                                    ((to_receive_qty * unit_price) + line_tax)
                     fine_per_day = 100.0 if 0 < fine_per_day < 100.0 \
                         else fine_per_day
@@ -338,6 +337,9 @@ class PurchaseWorkAcceptance(models.Model):
     date_receive = fields.Date(
         string="Receive Date",
         default=lambda self: fields.Date.context_today(self),
+    )
+    date_accept = fields.Date(
+        string="Acceptance Date",
     )
     is_manual_fine = fields.Boolean(
         string="Use Manual Fine",
@@ -538,7 +540,7 @@ class PurchaseWorkAcceptance(models.Model):
             )
             for accpt in paid_accpts:
                 wa_total_payment += accpt.amount_total
-            if wa_total_payment+self.amount_total > order.amount_total:
+            if wa_total_payment + self.amount_total > order.amount_total:
                 raise ValidationError(
                     _("""Can't evaluate this acceptance.
                          This WA's total amount is over PO's total amount.""")
