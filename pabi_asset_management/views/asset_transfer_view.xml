@@ -52,9 +52,7 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,transfer"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box oe_right">
-                            <button name="open_asset" string="New Asset" type="object" class="oe_inline"/>
-                        </div>
+                        <div class="oe_button_box oe_right"></div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
