@@ -9,9 +9,13 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     _inherit = 'account.asset.asset'
     # _inherit = ['mail.thread', 'account.asset.asset']
 
+    type = fields.Selection(
+        # Need this way of doing default, because default_type in context will
+        # cause problem compute depreciation table, it set line type wrongly
+        default=lambda self: self._context.get('type') or 'normal',
+    )
     code = fields.Char(
         string='Code',  # Rename
-        required=True,
         default='/',
     )
     product_id = fields.Many2one(
@@ -53,18 +57,6 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    # section_id = fields.Many2one(
-    #     'res.section',
-    #     string='Section',
-    #     readonly=True,
-    #     states={'draft': [('readonly', False)]},
-    # )
-    # org_id = fields.Many2one(
-    #     'res.org',
-    #     releated='section_id.org_id',
-    #     string='Org',
-    #     readonly=True,
-    # )
     purchase_value = fields.Float(
         default=0.0,  # to avoid false
     )
@@ -109,8 +101,44 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    # Transfer Asset
+    target_asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='Transferred to Asset',
+        help="In case of transfer, this field show asset created by this one",
+    )
+    source_asset_count = fields.Integer(
+        string='Source Asset Count',
+        compute='_compute_source_asset_count',
+    )
+    source_asset_ids = fields.One2many(
+        'account.asset.asset',
+        'target_asset_id',
+        string='Source Assets',
+        help="List of source asset that has been transfer to this one",
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
+
+    @api.multi
+    def open_source_asset(self):
+        self.ensure_one()
+        action = self.env.ref('account_asset_management.'
+                              'action_account_asset_asset_form')
+        result = action.read()[0]
+        assets = self.with_context(active_test=False).\
+            search([('target_asset_id', '=', self.id)])
+        dom = [('id', 'in', assets.ids)]
+        result.update({'domain': dom, 'context': {'active_test': False}})
+        return result
+
+    @api.multi
+    @api.depends()
+    def _compute_source_asset_count(self):
+        for asset in self:
+            _ids = self.with_context(active_test=False).\
+                search([('target_asset_id', '=', asset.id)])._ids
+            asset.source_asset_count = len(_ids)
 
     @api.model
     def create(self, vals):
@@ -174,3 +202,18 @@ class AccountAssetCategory(models.Model):
                     ('asset_category_id', '=', asset_categ.id)])
                 products.write({'categ_id': asset_categ.product_categ_id.id})
         return res
+
+
+class AccountAssetDepreciationLine(models.Model):
+    _inherit = 'account.asset.depreciation.line'
+
+    def _setup_move_line_data(self, depreciation_line, depreciation_date,
+                              period_id, account_id, type, move_id, context):
+        move_line_data = super(AccountAssetDepreciationLine, self).\
+            _setup_move_line_data(depreciation_line, depreciation_date,
+                                  period_id, account_id, type,
+                                  move_id, context)
+        asset = depreciation_line.asset_id
+        move_line_data.update({'section_id': asset.section_id.id,
+                               'project_id': asset.project_id.id})
+        return move_line_data

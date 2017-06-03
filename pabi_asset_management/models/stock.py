@@ -23,7 +23,8 @@ class StockPicking(models.Model):
         action = self.env.ref('account_asset_management.'
                               'action_account_asset_asset_form')
         result = action.read()[0]
-        assets = Asset.search([('picking_id', '=', self.id)])
+        assets = Asset.with_context(active_test=False).search([('picking_id',
+                                                                '=', self.id)])
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom})
         return result

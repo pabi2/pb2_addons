@@ -35,12 +35,14 @@
             <field name="inherit_id" ref="account_asset_management.view_account_asset_asset_form"/>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <!-- <sheet postion="after">
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
-                </sheet> -->
+                <button name="open_entries" position="replace">
+                    <button name="open_entries" class="oe_stat_button" icon="fa-book" type="object">
+                        <div>Journal<br/>Entries</div>
+                    </button>
+                    <button type="object" name="open_source_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('source_asset_count', '=', 0)]}">
+                        <field name="source_asset_count" widget="statinfo" string="Source Assets"/>
+                    </button>
+                </button>
                 <xpath expr="//form/sheet/group/field[@name='code']" position="replace"/>
                 <xpath expr="//form/sheet/div/h1" position="after">
                     <label for="code" class="oe_edit_only"/>
@@ -52,10 +54,13 @@
                     <attribute name="invisible">1</attribute>
                 </field>
                 <field name="parent_id" position="attributes">
-                    <attribute name="required">0</attribute>
+                    <attribute name="attrs"></attribute>
                 </field>
                 <field name="value_depreciated" position="before">
                     <field name="no_depreciation" invisible="1"/>
+                </field>
+                <field name="value_residual" position="after">
+                    <field name="target_asset_id" attrs="{'invisible': [('target_asset_id', '=', False)]}"/>
                 </field>
                 <xpath expr="//form/sheet/notebook/page[@string='General']//field[@name='partner_id']" position="after">
                     <field name="product_id"/>
@@ -68,13 +73,15 @@
                     <page string="Owner">
                         <group>
                             <group>
-                                <field name="owner_id"/>
                                 <field name="section_id"/>
-                                <field name="org_id"/>
+                                <field name="project_id"/>
+                                <field name="costcenter_id"/>
+                            </group>
+                            <group>
+                                <field name="owner_id"/>
                                 <field name="location_id"/>
                                 <field name="room"/>
                             </group>
-                            <group/>
                         </group>
                     </page>
                 </notebook>
@@ -96,7 +103,7 @@
 
         <record model="ir.actions.act_window" id="account_asset_management.action_account_asset_asset_form">
             <field name="domain">[('type', '=', 'normal')]</field>
-            <field name="context">{'default_type': 'normal'}</field>
+            <field name="context">{'type': 'normal'}</field>
         </record>
 
         <!-- Asset Category -->
@@ -109,6 +116,9 @@
                 <field name="name" position="after">
                     <field name="product_categ_id"/>
                 </field>
+                <field name="parent_id" position="attributes">
+                    <attribute name="required">0</attribute>
+                </field>
                 <field name="parent_id" position="after">
                     <field name="no_depreciation"/>
                 </field>
@@ -116,7 +126,6 @@
         </record>
 
         <!-- Parent Asset -->
-
         <record model="ir.ui.view" id="view_account_asset_parent_form">
             <field name="name">view.account.asset.parent.form</field>
             <field name="model">account.asset.asset</field>
@@ -179,7 +188,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('type', '=', 'view'), ('parent_id', '=', False)]</field>
-            <field name="context">{'default_type': 'view'}</field>
+            <field name="context">{'type': 'view'}</field>
         </record>
 
         <record id="action_account_asset_parent_form_view1" model="ir.actions.act_window.view">

@@ -23,16 +23,20 @@ class AccountMoveLine(models.Model):
     def create(self, vals):
         move_line = super(AccountMoveLine, self).create(vals)
         if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
-            sequence = move_line.product_id.sequence_id
-            if not sequence:
-                raise ValidationError(_('No asset sequence setup!'))
-            code = self.env['ir.sequence'].next_by_id(sequence.id)
-            move_line.asset_id.write({
-                'product_id': move_line.product_id.id,
-                'move_id': move_line.stock_move_id.id,
-                'parent_id': move_line.parent_asset_id.id,
-                'code': code,
-            })
+            if move_line.asset_category_id and move_line.asset_id:
+                sequence = move_line.product_id.sequence_id
+                if not sequence:
+                    raise ValidationError(_('No asset sequence setup!'))
+                code = self.env['ir.sequence'].next_by_id(sequence.id)
+                move_line.asset_id.write({
+                    'product_id': move_line.product_id.id,
+                    'move_id': move_line.stock_move_id.id,
+                    'parent_id': move_line.parent_asset_id.id,
+                    'code': code,
+                    # Owner
+                    'section_id': move_line.section_id.id,
+                    'project_id': move_line.project_id.id,
+                })
         return move_line
 
     @api.multi
