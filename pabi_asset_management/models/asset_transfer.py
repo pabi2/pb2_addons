@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 
 class AccountAssetTransfer(models.Model):
     _name = 'account.asset.transfer'
+    _description = 'Transfer types - 1. Change Owner 2. New Asset'
     _order = 'name desc'
 
     name = fields.Char(
@@ -100,7 +101,7 @@ class AccountAssetTransfer(models.Model):
     )
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('transfer', 'Transferred'),
+         ('done', 'Transferred'),
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
@@ -159,13 +160,13 @@ class AccountAssetTransfer(models.Model):
         self.write({'state': 'draft'})
 
     @api.multi
-    def action_transfer(self):
+    def action_done(self):
         for rec in self:
             if rec.transfer_type == 'new_asset':
                 rec._transfer_new_asset()
             if rec.transfer_type == 'change_owner':
                 rec._transfer_change_owner()
-        self.write({'state': 'transfer'})
+        self.write({'state': 'done'})
 
     @api.multi
     def action_cancel(self):
@@ -251,10 +252,10 @@ class AccountAssetTransfer(models.Model):
         * Inactive source assets
         Accoun Moves
         ============
-        Dr Accumu depreciation of transferring assets (for each asset, if any)
+        Dr Accumulated depreciation of transfer assets (for each asset, if any)
             Cr Asset Value of trasferring assets (for each asset)
         Dr Asset Value to the new asset
-            Cr Accum Depreciation of to the new asset (if any)
+            Cr Accumulated Depreciation of to the new asset (if any)
         """
         self.ensure_one()
         AccountMove = self.env['account.move']
@@ -325,10 +326,10 @@ class AccountAssetTransfer(models.Model):
         * Source and target owner must be different, otherwise, warning.
         Accoun Moves
         ============
-        Dr Accumu depreciation of transferring asset
+        Dr Accumulated depreciation of transferring asset (if any)
             Cr Asset Value of trasferring asset
         Dr Asset Value to the new owner
-            Cr Accum Depreciation of to the new owner (if any)
+            Cr Accumulated Depreciation of to the new owner (if any)
         """
         self.ensure_one()
         AccountMove = self.env['account.move']

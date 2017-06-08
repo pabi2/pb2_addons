@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp import tools
+from openerp.modules.module import get_module_resource
 from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
@@ -17,6 +19,10 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     code = fields.Char(
         string='Code',  # Rename
         default='/',
+    )
+    code2 = fields.Char(
+        string='Code (legacy)',
+        help="Code in Legacy System",
     )
     product_id = fields.Many2one(
         'product.product',
@@ -38,10 +44,22 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         store=True,
         readonly=True,
     )
+    date_picking = fields.Datetime(
+        string='Picking Date',
+        related='move_id.picking_id.date_done',
+        readonly=True,
+    )
     purchase_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
         related='move_id.purchase_line_id.order_id',
+        store=True,
+        readonly=True,
+    )
+    uom_id = fields.Many2one(
+        'product.uom',
+        string='Unit of Measure',
+        related='move_id.product_uom',
         store=True,
         readonly=True,
     )
@@ -51,16 +69,47 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         readonly=True,
     )
     # Additional Info
-    owner_id = fields.Many2one(
+    pr_requester_id = fields.Many2one(
         'res.users',
-        string='Owner',
+        string='Requester',
+        related='move_id.purchase_line_id.requisition_line_id.'
+        'purchase_request_lines.request_id.requested_by',
+        # TODO: will change to move_id.purchase_line_id.quo_line_id.req...
+        # as issue 1504 is ready
+        help="PR Requester of this asset",
+    )
+    date_issue = fields.Date(
+        string='Date Issues',
+        readonly=True,
+        help="Asset issued date by issue document",
+    )
+    doc_issue_id = fields.Many2one(
+        'account.asset.issue',
+        string='Issue Document',
+        readonly=True,
+    )
+    responsible_user_id = fields.Many2one(
+        'res.users',
+        string='Responsible Person',
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    owner_project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        readonly=True,
+        help="Owner project of the budget structure",
+    )
+    owner_section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        readonly=True,
+        help="Owner section of the budget structure",
     )
     purchase_value = fields.Float(
         default=0.0,  # to avoid false
     )
-    requester = fields.Many2one(
+    requester_id = fields.Many2one(
         'res.users',
         string='Requester',
         readonly=True,
@@ -82,11 +131,6 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    warranty = fields.Integer(
-        string='Warranty (Month)',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
     warranty_start_date = fields.Date(
         string='Warranty Start Date',
         default=lambda self: fields.Date.context_today(self),
@@ -100,6 +144,12 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         track_visibility='onchange',
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    # Purchase Method
+    pr_purchase_method_id = fields.Many2one(
+        'purchase.method',
+        string='Purchase Method',
+        # TODO: This should be a compute field back to PR
     )
     # Transfer Asset
     target_asset_id = fields.Many2one(
@@ -116,6 +166,25 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         'target_asset_id',
         string='Source Assets',
         help="List of source asset that has been transfer to this one",
+    )
+    issued = fields.Boolean(
+        string='Issued',
+        default=False,
+        help="True, if has been issued by account.asset.issue",
+    )
+    image = fields.Binary(
+        string='Image',
+    )
+    repair_note_ids = fields.One2many(
+        'asset.repair.note',
+        'asset_id',
+        string='Repair Notes',
+    )
+    depreciation_summary_ids = fields.One2many(
+        'account.asset.depreciation.summary',
+        'asset_id',
+        string='Depreciation Summary',
+        readonly=True,
     )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
@@ -152,9 +221,13 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
                     raise ValidationError(
                         _('No asset sequence setup for selected product!'))
                 vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
-        res = super(AccountAssetAsset, self).create(vals)
-        res.update_related_dimension(vals)
-        return res
+        asset = super(AccountAssetAsset, self).create(vals)
+        asset.update_related_dimension(vals)
+        # Init Salvage Value from Category
+        if self._context.get('create_asset_from_move_line', False):
+            if not asset.category_id.no_depreciation:
+                asset.salvage_value = asset.category_id.salvage_value
+        return asset
 
     @api.multi
     def name_get(self):
@@ -171,6 +244,14 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     def compute_depreciation_board(self):
         assets = self.filtered(lambda l: not l.no_depreciation)
         return super(AccountAssetAsset, assets).compute_depreciation_board()
+
+    @api.multi
+    def onchange_category_id(self, category_id):
+        res = super(AccountAssetAsset, self).onchange_category_id(category_id)
+        asset_category = self.env['account.asset.category'].browse(category_id)
+        if asset_category and not asset_category.no_depreciation:
+            res['value']['salvage_value'] = asset_category.salvage_value
+        return res
 
 
 class AccountAssetCategory(models.Model):
@@ -190,6 +271,11 @@ class AccountAssetCategory(models.Model):
         string='No Depreciation',
         default=False,
     )
+    salvage_value = fields.Float(
+        string='Salvage Value',
+        default=0.0,
+        help="Default salvage value used when create asset from move line",
+    )
 
     @api.multi
     def write(self, vals):
@@ -207,6 +293,20 @@ class AccountAssetCategory(models.Model):
 class AccountAssetDepreciationLine(models.Model):
     _inherit = 'account.asset.depreciation.line'
 
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscalyear',
+        compute='_compute_fiscalyear_id',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('line_date')
+    def _compute_fiscalyear_id(self):
+        Fiscal = self.env['account.fiscalyear']
+        for rec in self:
+            rec.fiscalyear_id = Fiscal.find(dt=rec.line_date)
+
     def _setup_move_line_data(self, depreciation_line, depreciation_date,
                               period_id, account_id, type, move_id, context):
         move_line_data = super(AccountAssetDepreciationLine, self).\
@@ -214,6 +314,62 @@ class AccountAssetDepreciationLine(models.Model):
                                   period_id, account_id, type,
                                   move_id, context)
         asset = depreciation_line.asset_id
-        move_line_data.update({'section_id': asset.section_id.id,
-                               'project_id': asset.project_id.id})
+        move_line_data.update({'section_id': asset.owner_section_id.id,
+                               'project_id': asset.owner_project_id.id})
         return move_line_data
+
+
+class AssetRepairNote(models.Model):
+    _name = 'asset.repair.note'
+
+    asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='Asset',
+        ondelete='cascade',
+        index=True,
+    )
+    date = fields.Date(
+        string='Date',
+        default=lambda self: fields.Date.context_today(self),
+    )
+    note = fields.Text(
+        string='Note',
+    )
+
+
+class AccountAssetDepreciationSummary(models.Model):
+    _name = 'account.asset.depreciation.summary'
+    _auto = False
+    _rec_name = 'fiscalyear_id'
+    _description = 'Fiscal Year depreciation summary of asset'
+    _order = 'fiscalyear_id'
+
+    asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='Asset',
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='fiscalyear',
+        readonly=True,
+    )
+    amount_depreciate = fields.Float(
+        string='Depreciation Amount',
+        readonly=True,
+    )
+
+    def init(self, cr):
+
+        _sql = """
+            select min(id) as id, asset_id, fiscalyear_id,
+            sum(amount) as amount_depreciate
+            from account_asset_depreciation_line a
+            where type = 'depreciate' and fiscalyear_id is not null
+            group by asset_id, fiscalyear_id
+        """
+
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" %
+            (self._table, _sql,))

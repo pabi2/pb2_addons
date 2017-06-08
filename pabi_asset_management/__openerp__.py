@@ -11,6 +11,7 @@
         "account_anglo_saxon",
         "pabi_purchase_work_acceptance",
         "account_budget_activity",
+        "pabi_invest_construction",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
@@ -22,7 +23,9 @@ This module allow creating asset during incoming shipment.
         "views/account_invoice_view.xml",
         "views/account_view.xml",
         "views/asset_view.xml",
+        "views/asset_issue_view.xml",
         "views/asset_transfer_view.xml",
+        "views/asset_removal_view.xml",
         "views/product_view.xml",
         "views/purchase_requisition_view.xml",
         "views/stock_view.xml",

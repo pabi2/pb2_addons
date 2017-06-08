@@ -250,6 +250,20 @@ class ResInvestConstructionMonitorView(models.Model):
         self._create_monitor_view(cr, self._dimension)
 
 
+class ResInvestConstructionPhaseMonitorView(models.Model):
+    _name = 'res.invest.construction.phase.monitor.view'
+    _inherit = 'monitor.view'
+    _auto = False
+    _dimension = 'invest_construction_phase_id'
+
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        'Investment Construction Phase', readonly=True)
+
+    def init(self, cr):
+        self._create_monitor_view(cr, self._dimension)
+
+
 # ------------------ Job Order ------------------
 class ResCostControlMonitorView(models.Model):
     _name = 'res.cost.control.monitor.view'

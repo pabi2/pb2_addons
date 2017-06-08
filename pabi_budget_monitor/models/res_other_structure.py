@@ -95,3 +95,25 @@ class ResInvestConstruction(models.Model):
         string='Investment Construction Monitor',
         domain=[('budget_method', '=', 'expense')],
     )
+
+
+class ResInvestConstructionPhase(models.Model):
+    _inherit = 'res.invest.construction.phase'
+
+    monitor_ids = fields.One2many(
+        'res.invest.construction.phase.monitor.view',
+        'invest_construction_phase_id',
+        string='Investment Construction Phase Monitor',
+    )
+    monitor_revenue_ids = fields.One2many(
+        'res.invest.construction.phase.monitor.view',
+        'invest_construction_phase_id',
+        string='Investment Construction Phase Monitor',
+        domain=[('budget_method', '=', 'revenue')],
+    )
+    monitor_expense_ids = fields.One2many(
+        'res.invest.construction.phase.monitor.view',
+        'invest_construction_phase_id',
+        string='Investment Construction Phase Monitor',
+        domain=[('budget_method', '=', 'expense')],
+    )

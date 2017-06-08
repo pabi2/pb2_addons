@@ -2,6 +2,7 @@
 <openerp>
     <data noupdate="1">
 
+        <!-- Asset Transfer -->
         <record id="seq_type_account_asset_transfer" model="ir.sequence.type">
             <field name="name">Asset Transfer</field>
             <field name="code">account.asset.transfer</field>
@@ -15,5 +16,32 @@
             <field name="company_id" eval="False"/>
         </record>
 
+        <!-- Asset Issue -->
+        <record id="seq_type_account_asset_issue" model="ir.sequence.type">
+            <field name="name">Asset Issue</field>
+            <field name="code">account.asset.issue</field>
+        </record>
+
+        <record id="seq_account_asset_issue" model="ir.sequence">
+            <field name="name">Asset Issue</field>
+            <field name="code">account.asset.issue</field>
+            <field name="prefix">AI%(fy)s</field>
+            <field name="padding">7</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Asset Receive -->
+        <record id="seq_type_account_asset_removal" model="ir.sequence.type">
+            <field name="name">Asset Removal</field>
+            <field name="code">account.asset.removal</field>
+        </record>
+
+        <record id="seq_account_asset_removal" model="ir.sequence">
+            <field name="name">Asset Removal</field>
+            <field name="code">account.asset.removal</field>
+            <field name="prefix">AR%(fy)s</field>
+            <field name="padding">7</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </openerp>

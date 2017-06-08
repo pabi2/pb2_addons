@@ -20,23 +20,48 @@ class AccountMoveLine(models.Model):
     )
 
     @api.model
+    def _prepare_asset_vals(self, move_line):
+        sequence = move_line.product_id.sequence_id
+        if not sequence:
+            raise ValidationError(_('No asset sequence setup!'))
+        code = self.env['ir.sequence'].next_by_id(sequence.id)
+        vals = {
+            'product_id': move_line.product_id.id,
+            'move_id': move_line.stock_move_id.id,
+            'parent_id': move_line.parent_asset_id.id,
+            'code': code,
+            # Budget Source, from 4 structure
+            'section_id': move_line.section_id.id,
+            'project_id': move_line.project_id.id,
+            'invest_asset_id': move_line.invest_asset_id.id,
+            'invest_construction_phase_id':
+            move_line.invest_construction_phase_id.id,
+            # Owner
+            # - project -> project
+            # - section -> section
+            # - invest_asset, invest_construction_phase -> section
+            'owner_section_id': move_line.section_id.id or
+            move_line.invest_construction_id.pm_section_id.id or
+            move_line.invest_asset_id.owner_section_id.id,
+            'owner_project_id': move_line.project_id.id,
+        }
+        if not (vals['section_id'] or vals['project_id'] or
+                vals['invest_asset_id'] or
+                vals['invest_construction_phase_id']):
+            raise ValidationError(
+                _('Soure of budget is not specified!'))
+        if not (vals['owner_section_id'] or vals['owner_project_id']):
+            raise ValidationError(
+                _('Project/Section owner of asset not specified!'))
+        return vals
+
+    @api.model
     def create(self, vals):
         move_line = super(AccountMoveLine, self).create(vals)
         if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
             if move_line.asset_category_id and move_line.asset_id:
-                sequence = move_line.product_id.sequence_id
-                if not sequence:
-                    raise ValidationError(_('No asset sequence setup!'))
-                code = self.env['ir.sequence'].next_by_id(sequence.id)
-                move_line.asset_id.write({
-                    'product_id': move_line.product_id.id,
-                    'move_id': move_line.stock_move_id.id,
-                    'parent_id': move_line.parent_asset_id.id,
-                    'code': code,
-                    # Owner
-                    'section_id': move_line.section_id.id,
-                    'project_id': move_line.project_id.id,
-                })
+                vals = self._prepare_asset_vals(move_line)
+                move_line.asset_id.write(vals)
         return move_line
 
     @api.multi

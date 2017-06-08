@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Asset Removal -->
+        <record model="ir.ui.view" id="view_account_asset_removal_form">
+            <field name="name">account.asset.removal.form</field>
+            <field name="model">account.asset.removal</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <header>
+                        <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
+                        <button name="action_done" states="draft" string="Remove Assets" type="object" groups="account.group_account_manager" class="oe_highlight"/>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object" groups="account.group_account_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                              <field name="user_id"/>
+                            </group>
+                            <group>
+                              <field name="date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Asset to Remove">
+                                <field name="removal_asset_ids" context="{'default_date_remove': date}">
+                                    <tree editable="bottom">
+                                        <field name="asset_id"/>
+                                        <field name="date_remove"/>
+                                        <field name="posting_regime"/>
+                                        <field name="account_plus_value_id" attrs="{'required': [('posting_regime', '!=', 'residual_value')]}"/>
+                                        <field name="account_min_value_id" attrs="{'required': [('posting_regime', '!=', 'residual_value')]}"/>
+                                        <field name="account_residual_value_id" attrs="{'required': [('posting_regime', '=', 'residual_value')]}"/>
+                                        <field name="sale_value"/>
+                                        <field name="account_sale_id" attrs="{'required': [('sale_value', '>', 0.0)]}"/>
+                                        <field name="period_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_removal_tree">
+            <field name="name">account.asset.removal.tree</field>
+            <field name="model">account.asset.removal</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Removal">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_removal_search" model="ir.ui.view">
+            <field name="name">account.asset.removal.search</field>
+            <field name="model">account.asset.removal</field>
+            <field name="arch" type="xml">
+                <search string="Removal Asset">
+                    <field name="name" string="Asset Removal"/>
+                    <field name="user_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Responsible" domain="" context="{'group_by':'user_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_removal_form">
+            <field name="name">Asset Removal</field>
+            <field name="res_model">account.asset.removal</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_asset_removal_tree"/>
+            <field name="search_view_id" ref="view_account_asset_removal_search"/>
+        </record>
+
+        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_removal_form" action="action_account_asset_removal_form"/>
+
+    </data>
+</openerp>

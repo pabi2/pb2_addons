@@ -53,6 +53,9 @@
                 <field name="type" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="parent_id" position="after">
+                    <field name="code2"/>
+                </field>
                 <field name="parent_id" position="attributes">
                     <attribute name="attrs"></attribute>
                 </field>
@@ -64,21 +67,51 @@
                 </field>
                 <xpath expr="//form/sheet/notebook/page[@string='General']//field[@name='partner_id']" position="after">
                     <field name="product_id"/>
+                    <field name="uom_id"/>
                     <field name="picking_id"/>
+                    <field name="date_picking"/>
+                    <field name="purchase_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']" position="attributes">
                     <attribute name="attrs">{'invisible': [('no_depreciation', '=', True)]}</attribute>
                 </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']" position="after">
+                    <group>
+                        <group></group>
+                        <group string="Yearly Summary">
+                            <field name="depreciation_summary_ids" nolabel="1">
+                                <tree editable="bottom" string="Depreciation Summary" create="0" delete="0">
+                                    <field name="fiscalyear_id"/>
+                                    <field name="amount_depreciate" sum="Total Depreciation"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/separator[@string='Other Information']" position="before">
+                    <group string="Source of Budget">
+                        <group>
+                            <field name="section_id"/>
+                            <field name="project_id"/>
+                        </group>
+                        <group>
+                            <field name="invest_asset_id"/>
+                            <field name="invest_construction_phase_id"/>
+                        </group>
+                    </group>
+                </xpath>
                 <notebook colspan="4" position="inside">
                     <page string="Owner">
                         <group>
-                            <group>
-                                <field name="section_id"/>
-                                <field name="project_id"/>
-                                <field name="costcenter_id"/>
+                            <group string="Depreciation On">
+                                <field name="owner_section_id"/>
+                                <field name="owner_project_id"/>
                             </group>
-                            <group>
-                                <field name="owner_id"/>
+                            <group string="Responsible By">
+                                <field name="pr_requester_id"/>
+                                <field name="date_issue"/>
+                                <field name="doc_issue_id"/>
+                                <field name="responsible_user_id"/>
                                 <field name="location_id"/>
                                 <field name="room"/>
                             </group>
@@ -86,16 +119,23 @@
                     </page>
                 </notebook>
                 <notebook colspan="4">
-                    <page string="Product Information">
+                    <page string="Other Info">
                         <group>
-                            <group>
+                            <group string="Warranty">
                                 <field name="serial_number"/>
-                                <field name="warranty"/>
                                 <field name="warranty_start_date"/>
                                 <field name="warranty_expire_date"/>
                             </group>
-                            <group/>
+                            <group string="Repair Notes">
+                                <field name="repair_note_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="date"/>
+                                        <field name="note"/>
+                                    </tree>
+                                </field>
+                            </group>
                         </group>
+                        <field name="image" widget="image"/>
                     </page>
                 </notebook>
             </field>
@@ -121,6 +161,7 @@
                 </field>
                 <field name="parent_id" position="after">
                     <field name="no_depreciation"/>
+                    <field name="salvage_value"/>
                 </field>
             </field>
         </record>
