@@ -26,6 +26,7 @@ Note: This module provide only framework. There will be no budget check here.
         'hr_expense',
         'hr_expense_auto_invoice',
         'hr_salary',
+        'stock',
     ],
     'data': [
         'data/account_data.xml',
