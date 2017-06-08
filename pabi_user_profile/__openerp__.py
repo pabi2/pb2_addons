@@ -26,7 +26,6 @@ Add more user's profile
     "depends": [
         "hr_expense",
         "pabi_base",
-        "base_name_search_improved",
         "res_partner_ext",
     ],
     "data": [
@@ -35,8 +34,6 @@ Add more user's profile
         # views
         'views/hr_position_view.xml',
         'views/hr_employee_view.xml',
-        # name_search
-        'name_search/ir.model.csv',
         'views/res_partner_view.xml',
     ],
 }

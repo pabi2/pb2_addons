@@ -43,6 +43,12 @@ class ResInvestAsset(ResCommon, models.Model):
     objective = fields.Char(
         string='Objective',
     )
+    owner_section_id = fields.Many2one(
+        'res.section',
+        string='Owner Section',
+        help="Not related to budgeting, this field hold the "
+        "section owner of this asset",
+    )
 
 
 class ResInvestAssetCategory(ResCommon, models.Model):

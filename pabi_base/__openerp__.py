@@ -32,7 +32,6 @@ org -> sector -> subsector -> division -> section -> costcenter
         "base",
         "account",
         "operating_unit",
-        "base_name_search_improved",
     ],
     "data": [
         # Data
@@ -48,8 +47,6 @@ org -> sector -> subsector -> division -> section -> costcenter
         'views/res_personnel_structure_view.xml',
         'views/res_investment_structure_view.xml',
         'views/res_dimension_view.xml',
-        # name_search
-        'name_search/ir.model.csv',
     ],
     "demo": [
     ]
