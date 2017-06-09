@@ -20,3 +20,8 @@ class ResPersonnelCostcenter(ResCommon, models.Model):
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        required=True,
+    )
