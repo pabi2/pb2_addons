@@ -24,15 +24,17 @@
                         </div>
                         <group>
                             <group>
-                              <field name="user_id"/>
+                                <field name="user_id"/>
                             </group>
                             <group>
-                              <field name="date"/>
+                                <field name="date_remove"/>
+                                <field name="target_status"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Asset to Remove">
-                                <field name="removal_asset_ids" context="{'default_date_remove': date}">
+                                <field name="removal_asset_ids" context="{'default_date_remove': date_remove,
+                                                                          'default_target_status': target_status}">
                                     <tree editable="bottom">
                                         <field name="asset_id"/>
                                         <field name="date_remove"/>
@@ -42,7 +44,8 @@
                                         <field name="account_residual_value_id" attrs="{'required': [('posting_regime', '=', 'residual_value')]}"/>
                                         <field name="sale_value"/>
                                         <field name="account_sale_id" attrs="{'required': [('sale_value', '>', 0.0)]}"/>
-                                        <field name="period_id"/>
+                                        <field name="period_id" invisible="1"/>
+                                        <field name="target_status"/>
                                     </tree>
                                 </field>
                             </page>
@@ -58,7 +61,7 @@
             <field name="arch" type="xml">
                 <tree string="Asset Removal">
                     <field name="name"/>
-                    <field name="date"/>
+                    <field name="date_remove"/>
                     <field name="user_id"/>
                     <field name="state"/>
                 </tree>

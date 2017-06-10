@@ -9,10 +9,25 @@
             <field name="inherit_id" ref="account_asset_management.view_account_asset_search"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
+                <search position="inside">
+                    <filter string="ใช้งานปกติ" name="normal" domain="[('status','=','normal')]"/>
+                    <filter string="ส่งมอบ" name="deliver" domain="[('status','=','deliver')]"/>
+                    <filter string="โอนเป็นครุภัณฑ์" name="transfer" domain="[('status','=','transfer')]"/>
+                    <filter string="ชำรุด" name="break" domain="[('status','=','break')]"/>
+                    <filter string="รอจำหน่าย" name="to_dispose" domain="[('status','=','to_dispose')]"/>
+                    <filter string="จำหน่าย" name="dispose" domain="[('status','=','dispose')]"/>
+                    <filter string="สูญหาย" name="lost" domain="[('status','=','lost')]"/>
+                    <filter string="หมดอายุการใช้งาน" name="expire" domain="[('status','=','expire')]"/>
+                    <filter string="ยกเลิก" name="cancel" domain="[('status','=','cancel')]"/>
+                </search>
                 <field name="partner_id" position="after">
                     <field name="product_id"/>
                     <field name="picking_id"/>
+                    <field name="status"/>
                 </field>
+                <group position="inside">
+                    <filter string="Asset Status" context="{'group_by':'status'}"/>
+                </group>
             </field>
         </record>
 
@@ -22,9 +37,12 @@
             <field name="inherit_id" ref="account_asset_management.view_account_asset_asset_tree"/>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <field name="state" position="after">
+                <field name="state" position="before">
                     <field name="product_id"/>
                     <field name="picking_id"/>
+                </field>
+                <field name="state" position="after">
+                    <field name="status"/>
                 </field>
             </field>
         </record>
@@ -43,28 +61,40 @@
                         <field name="source_asset_count" widget="statinfo" string="Source Assets"/>
                     </button>
                 </button>
-                <xpath expr="//form/sheet/group/field[@name='code']" position="replace"/>
+                <group colspan="4" col="4" position="replace">
+                    <group name="asset_status">
+                        <group>
+                            <field name="type" on_change="onchange_type(type)" invisible="1"/>
+                            <field name="parent_id"/>
+                            <field name="code2"/>
+                            <field name="target_asset_id" attrs="{'invisible': [('target_asset_id', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                            <field name="company_currency_id" groups="base.group_multi_currency" invisible="1"/>
+                            <field name="move_line_check" invisible="1"/>
+                            <field name="status"/>
+                            <field name="deliver_to" attrs="{'invisible': [('status', '!=', 'deliver')], 'required': [('status', '=', 'deliver')]}"/>
+                            <field name="deliver_date" attrs="{'invisible': [('status', '!=', 'deliver')], 'required': [('status', '=', 'deliver')]}"/>
+                        </group>
+                    </group>
+                    <group name="asset_value">
+                        <group>
+                            <field name="asset_value" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                            <field name="no_depreciation" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="value_depreciated" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                            <field name="value_residual" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                        </group>
+                    </group>
+                </group>
                 <xpath expr="//form/sheet/div/h1" position="after">
                     <label for="code" class="oe_edit_only"/>
                     <h2>
                         <field name="code" class="oe_inline"/>
                     </h2>
                 </xpath>
-                <field name="type" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="parent_id" position="after">
-                    <field name="code2"/>
-                </field>
-                <field name="parent_id" position="attributes">
-                    <attribute name="attrs"></attribute>
-                </field>
-                <field name="value_depreciated" position="before">
-                    <field name="no_depreciation" invisible="1"/>
-                </field>
-                <field name="value_residual" position="after">
-                    <field name="target_asset_id" attrs="{'invisible': [('target_asset_id', '=', False)]}"/>
-                </field>
                 <xpath expr="//form/sheet/notebook/page[@string='General']//field[@name='partner_id']" position="after">
                     <field name="product_id"/>
                     <field name="uom_id"/>

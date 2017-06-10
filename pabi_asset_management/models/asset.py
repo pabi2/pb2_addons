@@ -6,15 +6,50 @@ from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
 
+# Map state vs status
+STATUS_MAP = {
+    'draft': ['cancel'],
+    'open': ['normal', 'deliver', 'transfer', 'break', 'to_dispose'],
+    'removed': ['dispose', 'lost'],
+    'close': ['expire'],
+}
+
 
 class AccountAssetAsset(ChartFieldAction, models.Model):
     _inherit = 'account.asset.asset'
-    # _inherit = ['mail.thread', 'account.asset.asset']
 
     type = fields.Selection(
         # Need this way of doing default, because default_type in context will
         # cause problem compute depreciation table, it set line type wrongly
         default=lambda self: self._context.get('type') or 'normal',
+    )
+    status = fields.Selection(
+        [('normal', u'ใช้งานปกติ'),
+         ('deliver', u'ส่งมอบ'),
+         ('transfer', u'โอนเป็นครุภัณฑ์'),
+         ('break', u'ชำรุด'),
+         ('to_dispose', u'รอจำหน่าย'),
+         ('dispose', u'จำหน่าย'),
+         ('lost', u'สูญหาย'),
+         ('expire', u'หมดอายุการใช้งาน'),
+         ('cancel', u'ยกเลิก'), ],
+        string='Asset Status',
+        default='cancel',
+        required=True,
+        index=True,
+        help="Status vs State\n"
+        "Draft → ยกเลิก\n"
+        "Running → ใช้งานปกติ, ส่งมอบ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
+        "Removed → จำหน่าย, สูญหาย\n"
+        "Close → หมดอายุการใช้งาน"
+    )
+    deliver_to = fields.Char(
+        string='Deliver to',
+        help="If status is chagned to 'delivery', this field is required",
+    )
+    deliver_date = fields.Date(
+        string='Delivery date',
+        help="If status is chagned to 'delivery', this field is required",
     )
     code = fields.Char(
         string='Code',  # Rename
@@ -188,6 +223,24 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
+
+    @api.multi
+    def write(self, vals):
+        # Status follow state
+        if 'state' in vals and vals.get('state', False):
+            if vals.get('state') == 'close':
+                vals['status'] = 'expire'
+            if vals.get('state') == 'open':
+                vals['status'] = 'normal'
+            if vals.get('state') == 'draft':
+                vals['status'] = 'cancel'
+            # For removed, the state will be set in remove wizard
+        # Validate status change must be within status map
+        elif 'status' in vals and vals.get('status', False):
+            for asset in self:
+                if vals.get('status') not in STATUS_MAP[asset.state]:
+                    raise ValidationError(_('Invalid change of asset status'))
+        return super(AccountAssetAsset, self).write(vals)
 
     @api.multi
     def open_source_asset(self):

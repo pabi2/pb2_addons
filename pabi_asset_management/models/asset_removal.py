@@ -15,7 +15,7 @@ class AccountAssetRemoval(models.Model):
         readonly=True,
         copy=False,
     )
-    date = fields.Date(
+    date_remove = fields.Date(
         string='Removal Date',
         default=lambda self: fields.Date.context_today(self),
         required=True,
@@ -48,13 +48,22 @@ class AccountAssetRemoval(models.Model):
         readonly=True,
         copy=False,
     )
+    target_status = fields.Selection(
+        [('dispose', u'จำหน่าย'),
+         ('lost', u'สูญหาย'), ],
+        string='Target Status',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def create(self, vals):
         if vals.get('name', '/') == '/':
             Fiscal = self.env['account.fiscalyear']
+            fiscalyear_id = Fiscal.find(vals.get('date_remove'))
             vals['name'] = self.env['ir.sequence'].\
-                with_context(fiscalyear_id=Fiscal.find(vals.get('date'))).\
+                with_context(fiscalyear_id=fiscalyear_id).\
                 get('account.asset.removal') or '/'
         return super(AccountAssetRemoval, self).create(vals)
 
@@ -103,6 +112,18 @@ class AccountAssetRemovalLine(models.Model):
         domain=[('state', '=', 'open')],
         required=True,
     )
+    target_status = fields.Selection(
+        [('dispose', u'จำหน่าย'),
+         ('lost', u'สูญหาย'), ],
+        string='Target Status',
+        required=True,
+    )
+    _sql_constraints = [
+        ('asset_id_unique',
+         'unique(asset_id, removal_id)',
+         'Duplicate assets selected!')
+    ]
+
 
     @api.onchange('asset_id')
     def _onchange_asset_id(self):
