@@ -202,11 +202,6 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         string='Source Assets',
         help="List of source asset that has been transfer to this one",
     )
-    issued = fields.Boolean(
-        string='Issued',
-        default=False,
-        help="True, if has been issued by account.asset.issue",
-    )
     image = fields.Binary(
         string='Image',
     )

@@ -1,41 +1,6 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-
-        <!-- Asset -->
-        <record model="ir.ui.view" id="view_account_asset_asset_tree3">
-            <field name="name">account.asset.asset.tree3</field>
-            <field name="model">account.asset.asset</field>
-            <field name="arch" type="xml">
-                <tree string="Assets">
-                    <field name="name"/>
-                    <field name="code"/>
-                    <field name="product_id"/>
-                    <field name="category_id"/>
-                    <field name="purchase_id"/>
-                    <field name="project_id"/>
-                    <field name="state"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="view_account_asset_search3" model="ir.ui.view">
-            <field name="name">account.asset.asset.search3</field>
-            <field name="model">account.asset.asset</field>
-            <field name="arch" type="xml">
-                <search string="Assets">
-                    <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
-                    <field name="category_id"/>
-                    <field name="product_id"/>
-                    <field name="purchase_id"/>
-                    <field name="project_id"/>
-                    <group expand="0" string="Group By...">
-                        <filter string="Project" context="{'group_by':'project_id'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
         <!-- Asset Issue -->
         <record model="ir.ui.view" id="view_account_asset_issue_form">
             <field name="name">account.asset.issue.form</field>
@@ -44,7 +9,7 @@
                 <form string="Asset">
                     <header>
                         <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
-                        <button name="action_done" states="draft" string=" Asset" type="object" groups="account.group_account_manager" class="oe_highlight"/>
+                        <button name="action_done" states="draft" string="Issue Asset" type="object" groups="account.group_account_manager" class="oe_highlight"/>
                         <button name="action_cancel" states="draft,done" string="Cancel" type="object" groups="account.group_account_manager"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
@@ -58,27 +23,20 @@
                         </div>
                         <group>
                             <group>
-                              <field name="receive_user_id"/>
+                              <field name="responsible_user_id"/>
                             </group>
                             <group>
                               <field name="user_id"/>
-                              <field name="date"/>
+                              <field name="date_issue"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Source Assets">
-                                <field
-                                    name="issue_asset_ids"
-                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_asset_tree3',
-                                              'search_view_ref': 'pabi_asset_management.view_account_asset_search3'}">
+                                <field name="issue_asset_ids">
                                     <tree editable="bottom">
-                                        <field name="name" readonly="1"/>
-                                        <field name="code" readonly="1"/>
-                                        <field name="product_id" readonly="1"/>
-                                        <field name="category_id" readonly="1"/>
-                                        <field name="purchase_id" readonly="1"/>
-                                        <field name="project_id" readonly="1"/>
-                                        <field name="state" invisible="1"/>
+                                        <field name="asset_id"/>
+                                        <field name="location_id"/>
+                                        <field name="room"/>
                                     </tree>
                                 </field>
                             </page>
@@ -94,9 +52,9 @@
             <field name="arch" type="xml">
                 <tree string="Asset Issue">
                     <field name="name"/>
-                    <field name="date"/>
+                    <field name="date_issue"/>
                     <field name="user_id"/>
-                    <field name="receive_user_id"/>
+                    <field name="responsible_user_id"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -109,9 +67,9 @@
                 <search string="Issue Asset">
                     <field name="name" string="Asset Issue"/>
                     <field name="user_id"/>
-                    <field name="receive_user_id"/>
+                    <field name="responsible_user_id"/>
                     <group expand="0" string="Group By...">
-                        <filter string="Received By" domain="" context="{'group_by':'receive_user_id'}"/>
+                        <filter string="Received By" domain="" context="{'group_by':'responsible_user_id'}"/>
                     </group>
                 </search>
             </field>
