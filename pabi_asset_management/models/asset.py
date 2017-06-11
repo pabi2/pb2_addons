@@ -220,6 +220,17 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
                          'Asset Code must be unique!')]
 
     @api.multi
+    def validate_asset_to_request(self):
+        invalid_assets = len(self.filtered(lambda l: l.doc_request_id or
+                                           l.type == 'view' or
+                                           l.state != 'open'))
+        if invalid_assets > 0:
+            raise ValidationError(
+                _('Please select only running assets '
+                  'that has not been requested yet!'))
+        return True
+
+    @api.multi
     def write(self, vals):
         # Status follow state
         if 'state' in vals and vals.get('state', False):

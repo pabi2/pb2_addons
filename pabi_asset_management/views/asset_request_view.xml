@@ -12,7 +12,7 @@
                         <button name="action_confirm" states="draft" string="Confirm" type="object" groups="purchase.group_purchase_user" class="oe_highlight"/>
                         <button name="action_done" states="confirm" string="Approve" type="object" groups="purchase.group_purchase_manager" class="oe_highlight"/>
                         <button name="action_cancel" states="draft,confirm,done" string="Cancel" type="object" groups="purchase.group_purchase_manager"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box oe_right"></div>
@@ -24,19 +24,22 @@
                         </div>
                         <group>
                             <group>
-                              <field name="responsible_user_id"/>
-                            </group>
-                            <group>
                               <field name="user_id"/>
                               <field name="approve_user_id"/>
                               <field name="date_request"/>
                             </group>
+                            <group>
+                              <field name="responsible_user_id"/>
+                              <field name="location_id"/>
+                              <field name="room"/>
+                            </group>
                         </group>
                         <notebook>
                             <page string="Source Assets">
-                                <field name="request_asset_ids">
+                                <field name="request_asset_ids" context="{'default_location_id': location_id, 'default_room': room}">
                                     <tree editable="bottom">
                                         <field name="asset_id"/>
+                                        <field name="asset_value" sum="Total Value"/>
                                         <field name="location_id"/>
                                         <field name="room"/>
                                     </tree>

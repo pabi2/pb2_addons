@@ -196,6 +196,17 @@
 			</textField>
 		</band>
 	</detail>
+	<columnFooter>
+		<band height="26" splitType="Immediate">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement style="detail" mode="Transparent" x="448" y="0" width="106" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{total_value}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
 	<lastPageFooter>
 		<band height="222">
 			<staticText>

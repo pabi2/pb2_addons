@@ -66,6 +66,14 @@ class AccountAssetRequest(models.Model):
         readonly=True,
         copy=False,
     )
+    # Default
+    location_id = fields.Many2one(
+        'account.asset.location',
+        string='Default Building',
+    )
+    room = fields.Char(
+        string='Default Room',
+    )
 
     @api.model
     def create(self, vals):
@@ -82,11 +90,16 @@ class AccountAssetRequest(models.Model):
 
     @api.multi
     def action_confirm(self):
+        for rec in self:
+            assets = rec.request_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_request()
         self.write({'state': 'confirm'})
 
     @api.multi
     def action_done(self):
         for rec in self:
+            assets = rec.request_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_request()
             if self.env.user != rec.approve_user_id:
                 raise ValidationError(
                     _('Only %s can approve this document!') %
@@ -114,6 +127,21 @@ class AccountAssetRequest(models.Model):
                 })
         self.write({'state': 'cancel'})
 
+    @api.model
+    def default_get(self, field_list):
+        res = super(AccountAssetRequest, self).default_get(field_list)
+        asset_ids = self._context.get('selected_asset_ids')
+        location_id = self._context.get('default_location_id')
+        room = self._context.get('default_room')
+        room = self._context.get('default_responsible_user_id')
+        asset_request_lines = []
+        for asset_id in asset_ids:
+            asset_request_lines.append({'asset_id': asset_id,
+                                        'location_id': location_id,
+                                        'room': room})
+        res['request_asset_ids'] = asset_request_lines
+        return res
+
 
 class AccountAssetRequestLine(models.Model):
     _name = 'account.asset.request.line'
@@ -128,8 +156,15 @@ class AccountAssetRequestLine(models.Model):
     asset_id = fields.Many2one(
         'account.asset.asset',
         string='Asset',
-        domain=[('doc_request_id', '=', False)],
+        domain=[('doc_request_id', '=', False),
+                ('type', '=', 'normal'),
+                ('state', '=', 'open')],
         required=True,
+    )
+    asset_value = fields.Float(
+        string='Asset Value',
+        related='asset_id.asset_value',
+        readonly=True,
     )
     location_id = fields.Many2one(
         'account.asset.location',
