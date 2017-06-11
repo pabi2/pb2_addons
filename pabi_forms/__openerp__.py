@@ -14,11 +14,13 @@
         'purchase_invoice_line_percentage',
         'purchase_invoice_plan',
         'account',
+        'pabi_asset_management',
     ],
     'data': [
         'data/procurement_data.xml',
         'data/account_data.xml',
         'data/payment_export_data.xml',
+        'data/asset_data.xml',
         'print_journal_entries/print_voucher_wizard.xml',
     ],
     'installable': True,

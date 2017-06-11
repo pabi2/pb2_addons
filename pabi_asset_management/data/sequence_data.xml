@@ -16,15 +16,15 @@
             <field name="company_id" eval="False"/>
         </record>
 
-        <!-- Asset Issue -->
-        <record id="seq_type_account_asset_issue" model="ir.sequence.type">
-            <field name="name">Asset Issue</field>
-            <field name="code">account.asset.issue</field>
+        <!-- Asset Request -->
+        <record id="seq_type_account_asset_request" model="ir.sequence.type">
+            <field name="name">Asset Request</field>
+            <field name="code">account.asset.request</field>
         </record>
 
-        <record id="seq_account_asset_issue" model="ir.sequence">
-            <field name="name">Asset Issue</field>
-            <field name="code">account.asset.issue</field>
+        <record id="seq_account_asset_request" model="ir.sequence">
+            <field name="name">Asset Request</field>
+            <field name="code">account.asset.request</field>
             <field name="prefix">AI%(fy)s</field>
             <field name="padding">7</field>
             <field name="company_id" eval="False"/>

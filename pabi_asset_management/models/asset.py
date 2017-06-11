@@ -113,14 +113,14 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         # as issue 1504 is ready
         help="PR Requester of this asset",
     )
-    date_issue = fields.Date(
-        string='Date Issues',
+    date_request = fields.Date(
+        string='Date Request',
         readonly=True,
-        help="Asset issued date by issue document",
+        help="Asset Request date by request document",
     )
-    doc_issue_id = fields.Many2one(
-        'account.asset.issue',
-        string='Issue Document',
+    doc_request_id = fields.Many2one(
+        'account.asset.request',
+        string='Request Document',
         readonly=True,
     )
     responsible_user_id = fields.Many2one(
@@ -151,7 +151,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         states={'draft': [('readonly', False)]},
     )
     location_id = fields.Many2one(
-        'stock.location',
+        'account.asset.location',
         string='Building',
         readonly=True,
         states={'draft': [('readonly', False)]},

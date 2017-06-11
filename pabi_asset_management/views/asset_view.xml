@@ -139,8 +139,8 @@
                             </group>
                             <group string="Responsible By">
                                 <field name="pr_requester_id"/>
-                                <field name="date_issue"/>
-                                <field name="doc_issue_id"/>
+                                <field name="date_request"/>
+                                <field name="doc_request_id"/>
                                 <field name="responsible_user_id"/>
                                 <field name="location_id"/>
                                 <field name="room"/>
