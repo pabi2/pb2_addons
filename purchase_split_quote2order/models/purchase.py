@@ -65,7 +65,14 @@ class PurchaseOrder(models.Model):
             'order_type': 'purchase_order',
             'quote_id': self.id,
             'partner_ref': self.partner_ref,
+            'order_line': False,
         })
+        # assign purchase related id to line
+        for quo_line in self.order_line:
+            so_line = quo_line.copy()
+            so_line.order_id = order.id
+            so_line.quo_line_id = quo_line.id
+            quo_line.pur_line_id = so_line.id
         self.order_id = order.id  # Reference from this quotation to order
         self.signal_workflow('convert_to_order')
         self.state2 = 'done'
@@ -93,3 +100,19 @@ class PurchaseOrder(models.Model):
             'domain': "[('order_type', '=', 'purchase_order')]",
             'res_id': self.order_id and self.order_id.id or False,
         }
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    quo_line_id = fields.Many2one(
+        'purchase.order.line',
+        string='Quotation Line Reference',
+        readonly=True,
+        ondelete='restrict',
+    )
+    pur_line_id = fields.Many2one(
+        'purchase.order.line',
+        string='Order Line Reference',
+        readonly=True,
+        ondelete='restrict',
+    )
