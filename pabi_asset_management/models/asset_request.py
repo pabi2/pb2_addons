@@ -76,6 +76,24 @@ class AccountAssetRequest(models.Model):
     )
 
     @api.model
+    def default_get(self, field_list):
+        res = super(AccountAssetRequest, self).default_get(field_list)
+        asset_ids = self._context.get('selected_asset_ids', [])
+        location_id = self._context.get('default_location_id', False)
+        room = self._context.get('default_room', False)
+        responsible_user_id = \
+            self._context.get('default_responsible_user_id', False)
+        asset_request_lines = []
+        for asset_id in asset_ids:
+            asset_request_lines.append({
+                'asset_id': asset_id,
+                'location_id': location_id,
+                'room': room,
+                'responsible_user_id': responsible_user_id})
+        res['request_asset_ids'] = asset_request_lines
+        return res
+
+    @api.model
     def create(self, vals):
         if vals.get('name', '/') == '/':
             Fiscal = self.env['account.fiscalyear']
@@ -126,21 +144,6 @@ class AccountAssetRequest(models.Model):
                     'room': False,
                 })
         self.write({'state': 'cancel'})
-
-    @api.model
-    def default_get(self, field_list):
-        res = super(AccountAssetRequest, self).default_get(field_list)
-        asset_ids = self._context.get('selected_asset_ids')
-        location_id = self._context.get('default_location_id')
-        room = self._context.get('default_room')
-        room = self._context.get('default_responsible_user_id')
-        asset_request_lines = []
-        for asset_id in asset_ids:
-            asset_request_lines.append({'asset_id': asset_id,
-                                        'location_id': location_id,
-                                        'room': room})
-        res['request_asset_ids'] = asset_request_lines
-        return res
 
 
 class AccountAssetRequestLine(models.Model):

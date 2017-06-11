@@ -58,6 +58,31 @@ class AccountAssetRemoval(models.Model):
     )
 
     @api.model
+    def default_get(self, field_list):
+        res = super(AccountAssetRemoval, self).default_get(field_list)
+        asset_ids = self._context.get('selected_asset_ids', [])
+        user_id = self._context.get('default_user_id', False)
+        target_status = self._context.get('default_target_status', False)
+        asset_removal_lines = []
+        for asset_id in asset_ids:
+            Remove = self.env['account.asset.remove'].\
+                with_context(active_id=asset_id)
+            vals = Remove._get_sale()
+            asset_removal_lines.append({
+                'asset_id': asset_id,
+                'user_id': user_id,
+                'target_status': target_status,
+                'sale_value': vals['sale_value'],
+                'account_sale_id': vals['account_sale_id'],
+                'account_plus_value_id': Remove._get_plus_account(),
+                'account_min_value_id': Remove._get_min_account(),
+                'account_residual_value_id': Remove._get_residual_account(),
+                'posting_regime': Remove._get_posting_regime(),
+            })
+        res['removal_asset_ids'] = asset_removal_lines
+        return res
+
+    @api.model
     def create(self, vals):
         if vals.get('name', '/') == '/':
             Fiscal = self.env['account.fiscalyear']
@@ -87,6 +112,9 @@ class AccountAssetRemoval(models.Model):
 
     @api.multi
     def action_done(self):
+        for rec in self:
+            assets = rec.removal_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_removal()
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
 
@@ -109,7 +137,8 @@ class AccountAssetRemovalLine(models.Model):
     asset_id = fields.Many2one(
         'account.asset.asset',
         string='Asset',
-        domain=[('state', '=', 'open')],
+        domain=[('type', '=', 'normal'),
+                ('state', '=', 'open')],
         required=True,
     )
     target_status = fields.Selection(
@@ -123,7 +152,6 @@ class AccountAssetRemovalLine(models.Model):
          'unique(asset_id, removal_id)',
          'Duplicate assets selected!')
     ]
-
 
     @api.onchange('asset_id')
     def _onchange_asset_id(self):

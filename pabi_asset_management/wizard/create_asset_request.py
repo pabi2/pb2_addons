@@ -40,7 +40,8 @@ class CreateAssetRequest(models.TransientModel):
             'selected_asset_ids': asset_ids,
             'default_location_id': self.location_id.id,
             'default_room': self.room,
-            'default_responsible_user_id': self.responsible_user_id.id}
+            'default_responsible_user_id': self.responsible_user_id.id,
+        }
         result.update({'views': False,
                        'view_id': False,
                        'view_mode': 'form',
