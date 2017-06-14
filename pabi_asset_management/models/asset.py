@@ -134,14 +134,15 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     pr_requester_id = fields.Many2one(
         'res.users',
         string='Requester',
-        # related='move_id.purchase_line_id.requisition_line_id.'
-        # 'purchase_request_lines.request_id.requested_by',
-        # TODO: will change to move_id.purchase_line_id.quo_line_id.req...
-        # as issue 1504 is ready
+        related='move_id.purchase_line_id.quo_line_id.requisition_line_id.'
+        'purchase_request_lines.request_id.requested_by',
+        readonly=True,
         help="PR Requester of this asset",
     )
     date_request = fields.Date(
         string='Date Request',
+        related='move_id.purchase_line_id.quo_line_id.requisition_line_id.'
+        'purchase_request_lines.request_id.date_start',
         readonly=True,
         help="Asset Request date by request document",
     )
