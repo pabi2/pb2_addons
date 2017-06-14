@@ -6,8 +6,7 @@ class StockTransferDetails(models.TransientModel):
     _inherit = 'stock.transfer_details'
 
     @api.model
-    def default_get(self, fields):
-        res = super(StockTransferDetails, self).default_get(fields)
+    def _asset_split_line(self, res):
         Product = self.env['product.product']
         new_items = []
         for item in res['item_ids']:
@@ -26,5 +25,18 @@ class StockTransferDetails(models.TransientModel):
                     quantity -= 1
             else:
                 new_items.append(item)
-        res['item_ids'] = new_items
+        return new_items
+
+    @api.model
+    def default_get(self, fields):
+        res = super(StockTransferDetails, self).default_get(fields)
+        # For asset and real_time, split lines
+        res['item_ids'] = self._asset_split_line(res)
+        # For assets, make sure destinationloc_id is set to Asset Virtual Loc
+        # Product = self.env['product.product']
+        # asset_loc = self.env.ref('pabi_asset_management.stock_location_assets')
+        # for item in res['item_ids']:
+        #     product = Product.browse(item['product_id'])
+        #     if product.asset:
+        #         item['destinationloc_id'] = asset_loc.id
         return res

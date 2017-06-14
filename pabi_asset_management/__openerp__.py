@@ -19,6 +19,7 @@ This module allow creating asset during incoming shipment.
     "data": [
         "security/ir.model.access.csv",
         "data/account_data.xml",
+        "data/location_data.xml",
         "data/sequence_data.xml",
         "data/asset_status.xml",
         "wizard/account_asset_remove_view.xml",
