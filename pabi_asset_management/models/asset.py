@@ -7,12 +7,39 @@ from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
 
 # Map state vs status
-STATUS_MAP = {
-    'draft': ['cancel'],
-    'open': ['normal', 'deliver', 'transfer', 'break', 'to_dispose'],
-    'removed': ['dispose', 'lost'],
-    'close': ['expire'],
-}
+# 'draft': ['cancel'],
+# 'open': ['normal', 'deliver', 'transfer', 'break', 'to_dispose'],
+# 'removed': ['dispose', 'lost'],
+# 'close': ['expire'],
+
+
+class AccountAssetStatus(models.Model):
+    _name = 'account.asset.status'
+    _description = 'This non-UI model keeps the required status map of asset'
+
+    sequence = fields.Integer(
+        string='Sequence',
+        required=True,
+        default=1,
+    )
+    code = fields.Char(
+        string='Code',
+        size=10,
+        index=True,
+    )
+    name = fields.Char(
+        string='Status',
+        size=100,
+        required=True,
+    )
+    map_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('open', 'Running'),
+         ('close', 'Close'),
+         ('removed', 'Removed'), ],
+        string='Asset State Mapping',
+        required=True,
+    )
 
 
 class AccountAssetAsset(ChartFieldAction, models.Model):
@@ -23,18 +50,12 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         # cause problem compute depreciation table, it set line type wrongly
         default=lambda self: self._context.get('type') or 'normal',
     )
-    status = fields.Selection(
-        [('normal', u'ใช้งานปกติ'),
-         ('deliver', u'ส่งมอบ'),
-         ('transfer', u'โอนเป็นครุภัณฑ์'),
-         ('break', u'ชำรุด'),
-         ('to_dispose', u'รอจำหน่าย'),
-         ('dispose', u'จำหน่าย'),
-         ('lost', u'สูญหาย'),
-         ('expire', u'หมดอายุการใช้งาน'),
-         ('cancel', u'ยกเลิก'), ],
+    status = fields.Many2one(
+        'account.asset.status',
         string='Asset Status',
-        default='cancel',
+        default=lambda self: self.env.ref('pabi_asset_management.'
+                                          'asset_status_cancel'),
+        domain="[('map_state', '=', state)]",
         required=True,
         index=True,
         help="Status vs State\n"
@@ -42,6 +63,12 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         "Running → ใช้งานปกติ, ส่งมอบ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
         "Removed → จำหน่าย, สูญหาย\n"
         "Close → หมดอายุการใช้งาน"
+    )
+    status_code = fields.Char(
+        string='Status Code',
+        related='status.code',
+        readonly=True,
+        store=True,
     )
     deliver_to = fields.Char(
         string='Deliver to',
@@ -107,8 +134,8 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     pr_requester_id = fields.Many2one(
         'res.users',
         string='Requester',
-        related='move_id.purchase_line_id.requisition_line_id.'
-        'purchase_request_lines.request_id.requested_by',
+        # related='move_id.purchase_line_id.requisition_line_id.'
+        # 'purchase_request_lines.request_id.requested_by',
         # TODO: will change to move_id.purchase_line_id.quo_line_id.req...
         # as issue 1504 is ready
         help="PR Requester of this asset",
@@ -241,19 +268,21 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
 
     @api.multi
     def write(self, vals):
+        Status = self.env['account.asset.status']
         # Status follow state
         if 'state' in vals and vals.get('state', False):
             if vals.get('state') == 'close':
-                vals['status'] = 'expire'
+                vals['status'] = Status.search([('code', '=', 'expire')]).id
             if vals.get('state') == 'open':
-                vals['status'] = 'normal'
+                vals['status'] = Status.search([('code', '=', 'normal')]).id
             if vals.get('state') == 'draft':
-                vals['status'] = 'cancel'
+                vals['status'] = Status.search([('code', '=', 'cancel')]).id
             # For removed, the state will be set in remove wizard
         # Validate status change must be within status map
         elif 'status' in vals and vals.get('status', False):
+            status = Status.browse(vals.get('status'))
             for asset in self:
-                if vals.get('status') not in STATUS_MAP[asset.state]:
+                if status.map_state != asset.state:
                     raise ValidationError(_('Invalid change of asset status'))
         return super(AccountAssetAsset, self).write(vals)
 

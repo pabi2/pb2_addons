@@ -81,7 +81,7 @@
                                 <field name="asset_category_id" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')]}"/>
                                 <field name="ref_asset_id" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')]}"/>
                                 <!-- Change Owner -->
-                                <separator string="Change Owner" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')]}" colspan="2"/>
+                                <separator string="Change Owner for Depreciation" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')]}" colspan="2"/>
                                 <field name="section_id" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')], 'required': [('transfer_type', '=', 'change_owner'), ('project_id', '=', False)]}"/>
                                 <field name="project_id" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')], 'required': [('transfer_type', '=', 'change_owner'), ('section_id', '=', False)]}"/>
                                 <field name="costcenter_id" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')]}"/>

@@ -25,7 +25,7 @@ class AccountAssetTransfer(models.Model):
     )
     user_id = fields.Many2one(
         'res.users',
-        string='Responsible',
+        string='Prepared By',
         default=lambda self: self.env.user,
         required=True,
         copy=False,

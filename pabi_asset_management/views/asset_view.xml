@@ -10,15 +10,15 @@
             <field name="type">search</field>
             <field name="arch" type="xml">
                 <search position="inside">
-                    <filter string="ใช้งานปกติ" name="normal" domain="[('status','=','normal')]"/>
-                    <filter string="ส่งมอบ" name="deliver" domain="[('status','=','deliver')]"/>
-                    <filter string="โอนเป็นครุภัณฑ์" name="transfer" domain="[('status','=','transfer')]"/>
-                    <filter string="ชำรุด" name="break" domain="[('status','=','break')]"/>
-                    <filter string="รอจำหน่าย" name="to_dispose" domain="[('status','=','to_dispose')]"/>
-                    <filter string="จำหน่าย" name="dispose" domain="[('status','=','dispose')]"/>
-                    <filter string="สูญหาย" name="lost" domain="[('status','=','lost')]"/>
-                    <filter string="หมดอายุการใช้งาน" name="expire" domain="[('status','=','expire')]"/>
-                    <filter string="ยกเลิก" name="cancel" domain="[('status','=','cancel')]"/>
+                    <filter string="ใช้งานปกติ" name="normal" domain="[('status_code','=','normal')]"/>
+                    <filter string="ส่งมอบ" name="deliver" domain="[('status_code','=','deliver')]"/>
+                    <filter string="โอนเป็นครุภัณฑ์" name="transfer" domain="[('status_code','=','transfer')]"/>
+                    <filter string="ชำรุด" name="break" domain="[('status_code','=','break')]"/>
+                    <filter string="รอจำหน่าย" name="to_dispose" domain="[('status_code','=','to_dispose')]"/>
+                    <filter string="จำหน่าย" name="dispose" domain="[('status_code','=','dispose')]"/>
+                    <filter string="สูญหาย" name="lost" domain="[('status_code','=','lost')]"/>
+                    <filter string="หมดอายุการใช้งาน" name="expire" domain="[('status_code','=','expire')]"/>
+                    <filter string="ยกเลิก" name="cancel" domain="[('status_code','=','cancel')]"/>
                 </search>
                 <field name="partner_id" position="after">
                     <field name="product_id"/>
@@ -73,9 +73,10 @@
                             <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                             <field name="company_currency_id" groups="base.group_multi_currency" invisible="1"/>
                             <field name="move_line_check" invisible="1"/>
-                            <field name="status"/>
-                            <field name="deliver_to" attrs="{'invisible': [('status', '!=', 'deliver')], 'required': [('status', '=', 'deliver')]}"/>
-                            <field name="deliver_date" attrs="{'invisible': [('status', '!=', 'deliver')], 'required': [('status', '=', 'deliver')]}"/>
+                            <field name="status" widget="selection"/>
+                            <field name="status_code" invisible="1"/>
+                            <field name="deliver_to" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
+                            <field name="deliver_date" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
                         </group>
                     </group>
                     <group name="asset_value">

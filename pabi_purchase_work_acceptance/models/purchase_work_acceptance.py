@@ -146,14 +146,14 @@ class PurchaseWorkAcceptance(models.Model):
         THHoliday = self.env['thai.holiday']
         for acceptance in self:
             if not acceptance.date_receive:
-                acceptance.date_receive = today.strftime('%Y-%m-%d')
+                acceptance.date_receive = today
             received = THHoliday.find_next_working_day(acceptance.date_receive)
             received = datetime.datetime.strptime(
                 received,
                 "%Y-%m-%d",
             )
             if not acceptance.date_contract_end:
-                acceptance.date_contract_end = today.strftime('%Y-%m-%d')
+                acceptance.date_contract_end = today
             end_date = datetime.datetime.strptime(
                 acceptance.date_contract_end,
                 "%Y-%m-%d",
@@ -212,14 +212,14 @@ class PurchaseWorkAcceptance(models.Model):
         THHoliday = self.env['thai.holiday']
         for acceptance in self:
             if not acceptance.date_receive:
-                acceptance.date_receive = today.strftime('%Y-%m-%d')
+                acceptance.date_receive = today
             received = THHoliday.find_next_working_day(acceptance.date_receive)
             received = datetime.datetime.strptime(
                 received,
                 "%Y-%m-%d",
             )
             if not acceptance.date_contract_end:
-                acceptance.date_contract_end = today.strftime('%Y-%m-%d')
+                acceptance.date_contract_end = today
             end_date = datetime.datetime.strptime(
                 acceptance.date_contract_end,
                 "%Y-%m-%d",
@@ -260,14 +260,14 @@ class PurchaseWorkAcceptance(models.Model):
         THHoliday = self.env['thai.holiday']
         for acceptance in self:
             if not acceptance.date_receive:
-                acceptance.date_receive = today.strftime('%Y-%m-%d')
+                acceptance.date_receive = today
             received = THHoliday.find_next_working_day(acceptance.date_receive)
             received = datetime.datetime.strptime(
                 received,
                 "%Y-%m-%d",
             )
             if not acceptance.date_contract_end:
-                acceptance.date_contract_end = today.strftime('%Y-%m-%d')
+                acceptance.date_contract_end = today
             end_date = datetime.datetime.strptime(
                 acceptance.date_contract_end,
                 "%Y-%m-%d",
