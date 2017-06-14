@@ -30,13 +30,5 @@ class StockTransferDetails(models.TransientModel):
     @api.model
     def default_get(self, fields):
         res = super(StockTransferDetails, self).default_get(fields)
-        # For asset and real_time, split lines
         res['item_ids'] = self._asset_split_line(res)
-        # For assets, make sure destinationloc_id is set to Asset Virtual Loc
-        # Product = self.env['product.product']
-        # asset_loc = self.env.ref('pabi_asset_management.stock_location_assets')
-        # for item in res['item_ids']:
-        #     product = Product.browse(item['product_id'])
-        #     if product.asset:
-        #         item['destinationloc_id'] = asset_loc.id
         return res

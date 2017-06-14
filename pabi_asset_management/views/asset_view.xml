@@ -139,6 +139,7 @@
                                 <field name="owner_project_id"/>
                             </group>
                             <group string="Responsible By">
+                                <field name="asset_purchase_method_id"/>
                                 <field name="pr_requester_id"/>
                                 <field name="date_request"/>
                                 <field name="doc_request_id"/>

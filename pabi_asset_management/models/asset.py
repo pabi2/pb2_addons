@@ -131,6 +131,10 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         readonly=True,
     )
     # Additional Info
+    asset_purchase_method_id = fields.Many2one(
+        'asset.purchase.method',
+        string='Asset Purchase Method',
+    )
     pr_requester_id = fields.Many2one(
         'res.users',
         string='Requester',
@@ -207,12 +211,6 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         track_visibility='onchange',
         readonly=True,
         states={'draft': [('readonly', False)]},
-    )
-    # Purchase Method
-    pr_purchase_method_id = fields.Many2one(
-        'purchase.method',
-        string='Purchase Method',
-        # TODO: This should be a compute field back to PR
     )
     # Transfer Asset
     target_asset_id = fields.Many2one(

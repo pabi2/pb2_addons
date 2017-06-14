@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from . import stock_account
 from . import asset
+from . import asset_purchase_method
 from . import asset_transfer
 from . import asset_request
 from . import asset_removal

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         <function model="account.account.type" name="write">
             <function model="account.account.type" name="search"
               eval="[['|', ('name','ilike','fixed asset'), ('code', 'ilike', 'fixed asset')]]"/>

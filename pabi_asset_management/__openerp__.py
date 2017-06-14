@@ -18,6 +18,7 @@ This module allow creating asset during incoming shipment.
     """,
     "data": [
         "security/ir.model.access.csv",
+        "data/asset_purchase_method.xml",
         "data/account_data.xml",
         "data/location_data.xml",
         "data/sequence_data.xml",
@@ -36,6 +37,7 @@ This module allow creating asset during incoming shipment.
         "views/purchase_requisition_view.xml",
         "views/stock_view.xml",
         "views/purchase_view.xml",
+        "views/purchase_master_data_view.xml",
     ],
     'installable': True,
     'active': True,
