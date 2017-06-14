@@ -18,6 +18,7 @@
         "pabi_procurement",
     ],
     "data": [
+        "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
         "views/hr_expense_view.xml",
     ],
