@@ -172,76 +172,6 @@ class AccountAssetTransfer(models.Model):
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.model
-    def _prepare_asset_reverse_moves(self, assets):
-        AccountMoveLine = self.env['account.move.line']
-        default = {'move_id': False,
-                   'parent_asset_id': False,
-                   'asset_category_id': False,
-                   'product_id': False,
-                   'partner_id': False,
-                   'stock_move_id': False,
-                   }
-        asset_move_lines_dict = []
-        depre_move_lines_dict = []
-        for asset in assets:
-            account_asset_id = asset.category_id.account_asset_id.id
-            account_depre_id = asset.category_id.account_depreciation_id.id
-            # Getting the origin move_line (1 asset value and 1 depreciation)
-            # Asset
-            asset_lines = AccountMoveLine.search([  # Should have 1 line
-                ('asset_id', '=', asset.id),
-                ('account_id', '=', account_asset_id),
-                # Same Owner
-                ('project_id', '=', asset.project_id.id),
-                ('section_id', '=', asset.section_id.id),
-            ])
-            if asset_lines:
-                asset_line_dict = asset_lines[0].copy_data(default)[0]
-                debit = sum(asset_lines.mapped('debit'))
-                credit = sum(asset_lines.mapped('credit'))
-                asset_line_dict['credit'] = debit
-                asset_line_dict['debit'] = credit
-                asset_move_lines_dict.append(asset_line_dict)
-            # Depre
-            depre_lines = AccountMoveLine.search([
-                ('asset_id', '=', asset.id),
-                ('account_id', '=', account_depre_id),
-                # Same Owner
-                ('project_id', '=', asset.project_id.id),
-                ('section_id', '=', asset.section_id.id),
-            ])
-            if depre_lines:
-                depre_line_dict = depre_lines[0].copy_data(default)[0]
-                debit = sum(depre_lines.mapped('debit'))
-                credit = sum(depre_lines.mapped('credit'))
-                depre_line_dict['credit'] = debit
-                depre_line_dict['debit'] = credit
-                depre_move_lines_dict.append(depre_line_dict)
-            # Validation
-            if not asset_move_lines_dict:
-                raise ValidationError(
-                    _('No Asset Value. Something is wrong!\nIt is likely that,'
-                      ' the asset owner do not match with account move.'))
-            return (asset_move_lines_dict, depre_move_lines_dict)
-
-    @api.model
-    def _prepare_asset_target_move(self, move_lines_dict, new_owner={}):
-        debit = sum(x['debit'] for x in move_lines_dict)
-        credit = sum(x['credit'] for x in move_lines_dict)
-        move_line_dict = move_lines_dict[0].copy()
-        move_line_dict.update({
-            'credit': debit,
-            'debit': credit,
-        })
-        if new_owner:
-            move_line_dict.update({
-                'analytic_account_id': False,  # To refresh dimension
-                'project_id': new_owner.get('project_id'),
-                'section_id': new_owner.get('section_id'),
-            })
-        return move_line_dict
-
     @api.multi
     def _transfer_new_asset(self):
         """ The Concept
@@ -259,6 +189,7 @@ class AccountAssetTransfer(models.Model):
         """
         self.ensure_one()
         AccountMove = self.env['account.move']
+        Asset = self.env['account.asset.asset']
         Period = self.env['account.period']
         period = Period.find()
         # For Transfer: Property of New Asset
@@ -277,7 +208,7 @@ class AccountAssetTransfer(models.Model):
         # Prepare Old Move
         move_lines = []
         asset_move_lines_dict, depre_move_lines_dict = \
-            self._prepare_asset_reverse_moves(self.transfer_asset_ids)
+            Asset._prepare_asset_reverse_moves(self.transfer_asset_ids)
         move_lines += asset_move_lines_dict + depre_move_lines_dict
         # For transfer case, we first want to make sure that asset_id is false
         for x in move_lines:
@@ -285,7 +216,7 @@ class AccountAssetTransfer(models.Model):
         # Create move line for target asset
         # Asset
         new_asset_move_line_dict = \
-            self._prepare_asset_target_move(asset_move_lines_dict)
+            Asset._prepare_asset_target_move(asset_move_lines_dict)
         # For transfer, create a new asset by update following fields
         new_asset_move_line_dict.update({
             'name': self.asset_name,
@@ -297,7 +228,7 @@ class AccountAssetTransfer(models.Model):
         # Depre
         if depre_move_lines_dict:
             new_depre_move_lines_dict = \
-                self._prepare_asset_target_move(depre_move_lines_dict)
+                Asset._prepare_asset_target_move(depre_move_lines_dict)
             move_lines.append(new_depre_move_lines_dict)
         # Finalize all moves before create it.
         final_move_lines = [(0, 0, x) for x in move_lines]
@@ -317,59 +248,3 @@ class AccountAssetTransfer(models.Model):
         self.transfer_asset_ids.write({'active': False,
                                        'target_asset_id': asset.id,
                                        })
-
-    @api.multi
-    def _transfer_change_owner(self):
-        """ The Concept
-        * No new assect is being created
-        * Update new owner (project, section) and run move lines
-        * Source and target owner must be different, otherwise, warning.
-        Accoun Moves
-        ============
-        Dr Accumulated depreciation of transferring asset (if any)
-            Cr Asset Value of trasferring asset
-        Dr Asset Value to the new owner
-            Cr Accumulated Depreciation of to the new owner (if any)
-        """
-        self.ensure_one()
-        AccountMove = self.env['account.move']
-        Period = self.env['account.period']
-        period = Period.find()
-        # New Owner
-        project = self.project_id
-        section = self.section_id
-        # For change owner, no owner should be the same
-        for asset in self.transfer_asset_ids:
-            if (asset.project_id and asset.project_id == project) or \
-                    (asset.section_id and asset.section_id == section):
-                raise ValidationError(
-                    _('Asset %s change to the same owner!') % (asset.code))
-        new_owner = {'project_id': project.id, 'section_id': section.id}
-        # Moving of each asset to the new owner
-        for asset in self.transfer_asset_ids:
-            move_lines = []
-            asset_move_lines_dict, depre_move_lines_dict = \
-                self._prepare_asset_reverse_moves(asset)
-            move_lines += asset_move_lines_dict + depre_move_lines_dict
-            # Create move line for target asset
-            # Asset
-            new_asset_move_line_dict = \
-                self._prepare_asset_target_move(asset_move_lines_dict,
-                                                new_owner)
-            move_lines.append(new_asset_move_line_dict)
-            # Depre
-            if depre_move_lines_dict:
-                new_depre_move_lines_dict = \
-                    self._prepare_asset_target_move(depre_move_lines_dict,
-                                                    new_owner)
-                move_lines.append(new_depre_move_lines_dict)
-            # Finalize all moves before create it.
-            final_move_lines = [(0, 0, x) for x in move_lines]
-            move_dict = {'journal_id': asset.category_id.journal_id.id,
-                         'line_id': final_move_lines,
-                         'period_id': period.id,
-                         'date': fields.Date.context_today(self),
-                         'ref': self.name}
-            AccountMove.with_context(allow_asset=True).create(move_dict)
-            # Write back new owner
-            asset.write(new_owner)

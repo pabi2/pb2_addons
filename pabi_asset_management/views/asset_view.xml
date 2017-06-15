@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <menuitem id="menu_asset_actions" name="Asset Actions" parent="account_asset_management.menu_finance_assets"/>
 
         <!-- Account Asset View -->
         <record id="view_account_asset_search" model="ir.ui.view">

@@ -83,14 +83,14 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_account_asset_removal_form">
-            <field name="name">Asset Removal</field>
+            <field name="name">Removal</field>
             <field name="res_model">account.asset.removal</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_account_asset_removal_tree"/>
             <field name="search_view_id" ref="view_account_asset_removal_search"/>
         </record>
 
-        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_removal_form" action="action_account_asset_removal_form"/>
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_removal_form" action="action_account_asset_removal_form"/>
 
     </data>
 </openerp>

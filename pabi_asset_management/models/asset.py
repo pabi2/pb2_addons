@@ -349,6 +349,78 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
             res['value']['salvage_value'] = asset_category.salvage_value
         return res
 
+    # Method used in change owner and transfer
+
+    @api.model
+    def _prepare_asset_reverse_moves(self, assets):
+        AccountMoveLine = self.env['account.move.line']
+        default = {'move_id': False,
+                   'parent_asset_id': False,
+                   'asset_category_id': False,
+                   'product_id': False,
+                   'partner_id': False,
+                   'stock_move_id': False,
+                   }
+        asset_move_lines_dict = []
+        depre_move_lines_dict = []
+        for asset in assets:
+            account_asset_id = asset.category_id.account_asset_id.id
+            account_depre_id = asset.category_id.account_depreciation_id.id
+            # Getting the origin move_line (1 asset value and 1 depreciation)
+            # Asset
+            asset_lines = AccountMoveLine.search([  # Should have 1 line
+                ('asset_id', '=', asset.id),
+                ('account_id', '=', account_asset_id),
+                # Same Owner
+                ('project_id', '=', asset.project_id.id),
+                ('section_id', '=', asset.section_id.id),
+            ])
+            if asset_lines:
+                asset_line_dict = asset_lines[0].copy_data(default)[0]
+                debit = sum(asset_lines.mapped('debit'))
+                credit = sum(asset_lines.mapped('credit'))
+                asset_line_dict['credit'] = debit
+                asset_line_dict['debit'] = credit
+                asset_move_lines_dict.append(asset_line_dict)
+            # Depre
+            depre_lines = AccountMoveLine.search([
+                ('asset_id', '=', asset.id),
+                ('account_id', '=', account_depre_id),
+                # Same Owner
+                ('project_id', '=', asset.project_id.id),
+                ('section_id', '=', asset.section_id.id),
+            ])
+            if depre_lines:
+                depre_line_dict = depre_lines[0].copy_data(default)[0]
+                debit = sum(depre_lines.mapped('debit'))
+                credit = sum(depre_lines.mapped('credit'))
+                depre_line_dict['credit'] = debit
+                depre_line_dict['debit'] = credit
+                depre_move_lines_dict.append(depre_line_dict)
+            # Validation
+            if not asset_move_lines_dict:
+                raise ValidationError(
+                    _('No Asset Value. Something is wrong!\nIt is likely that,'
+                      ' the asset owner do not match with account move.'))
+            return (asset_move_lines_dict, depre_move_lines_dict)
+
+    @api.model
+    def _prepare_asset_target_move(self, move_lines_dict, new_owner={}):
+        debit = sum(x['debit'] for x in move_lines_dict)
+        credit = sum(x['credit'] for x in move_lines_dict)
+        move_line_dict = move_lines_dict[0].copy()
+        move_line_dict.update({
+            'credit': debit,
+            'debit': credit,
+        })
+        if new_owner:
+            move_line_dict.update({
+                'analytic_account_id': False,  # To refresh dimension
+                'project_id': new_owner.get('project_id'),
+                'section_id': new_owner.get('section_id'),
+            })
+        return move_line_dict
+
 
 class AccountAssetCategory(models.Model):
     _inherit = 'account.asset.category'

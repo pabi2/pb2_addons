@@ -151,7 +151,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_account_asset_transfer_form">
-            <field name="name">Asset Transfer</field>
+            <field name="name">Transfer</field>
             <field name="res_model">account.asset.transfer</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_account_asset_transfer_tree"/>
@@ -159,7 +159,7 @@
             <field name="context">{'active_test': False}</field>
         </record>
 
-        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_transfer_form" action="action_account_asset_transfer_form"/>
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer_form" action="action_account_asset_transfer_form"/>
 
     </data>
 </openerp>
