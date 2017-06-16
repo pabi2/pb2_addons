@@ -60,6 +60,7 @@
                         </div>
                         <group>
                             <group string="Change Owner for Depreciation">
+                                <field name="responsible_user_id"/>
                                 <field name="section_id" attrs="{'required': [('project_id', '=', False)]}"/>
                                 <field name="project_id" attrs="{'required': [('section_id', '=', False)]}"/>
                                 <field name="costcenter_id"/>

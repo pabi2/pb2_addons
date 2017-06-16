@@ -16,6 +16,7 @@
                     <field name="asset_value"/>
                     <field name="status"/>
                     <field name="state"/>
+                    <field name="active"/>
                 </tree>
             </field>
         </record>
@@ -25,8 +26,7 @@
             <field name="model">account.asset.asset</field>
             <field name="arch" type="xml">
                 <search string="Assets">
-                    <filter string="Asset w/o Depre." name="no_depre_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', True)]"/>
-                    <filter string="Normal Asset" name="normal_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', False)]"/>
+                    <filter string="Asset w/o Depre." name="no_depre_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', True), ('active', '=', True)]"/>
                     <separator/>
                     <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
                     <field name="category_id"/>
@@ -86,7 +86,9 @@
                                         <field name="category_id" readonly="1"/>
                                         <field name="purchase_id" readonly="1"/>
                                         <field name="asset_value" readonly="1" sum="Total"/>
-                                        <field name="state" invisible="1"/>
+                                        <field name="state"/>
+                                        <field name="status"/>
+                                        <field name="active"/>
                                     </tree>
                                 </field>
                             </page>
@@ -139,7 +141,6 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_account_asset_transfer_tree"/>
             <field name="search_view_id" ref="view_account_asset_transfer_search"/>
-            <field name="context">{'active_test': False}</field>
         </record>
 
         <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer_form" action="action_account_asset_transfer_form"/>

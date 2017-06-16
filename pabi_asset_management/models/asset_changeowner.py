@@ -53,6 +53,14 @@ class AccountAssetChangeowner(models.Model):
         string='Costcenter',
         compute='_compute_costcenter_id',
     )
+    responsible_user_id = fields.Many2one(
+        'res.users',
+        string='Responsible By',
+        required=True,
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     asset_ids = fields.Many2many(
         'account.asset.asset',
         'account_asset_asset_changeowner_rel',
@@ -137,6 +145,7 @@ class AccountAssetChangeowner(models.Model):
         # New Owner
         project = self.project_id
         section = self.section_id
+        responsible_user = self.responsible_user_id.id
         # For change owner, no owner should be the same
         for asset in self.asset_ids:
             if (asset.project_id and asset.project_id == project) or \
@@ -144,7 +153,8 @@ class AccountAssetChangeowner(models.Model):
                 raise ValidationError(
                     _('Asset %s change to the same owner!') % (asset.code))
         new_owner = {'owner_project_id': project.id,
-                     'owner_section_id': section.id}
+                     'owner_section_id': section.id,
+                     'responsible_user': responsible_user.id, }
         # Moving of each asset to the new owner
         for asset in self.asset_ids:
             move_lines = []

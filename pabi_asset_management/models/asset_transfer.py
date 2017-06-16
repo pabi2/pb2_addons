@@ -41,7 +41,8 @@ class AccountAssetTransfer(models.Model):
         'account_asset_asset_transfer_rel',
         'transfer_id', 'asset_id',
         string='Source Assets',
-        domain=[('type', '!=', 'view')],
+        domain=[('type', '!=', 'view'),
+                '|', ('active', '=', True), ('active', '=', False)],
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -170,6 +171,12 @@ class AccountAssetTransfer(models.Model):
             raise ValidationError(
                 _('When transfer to new asset, all selected '
                   'assets must belong to same owner!'))
+        # Purchase method, when mixed -> อื่นๆ (asset_purchase_method_11)
+        purchase_methods = self.asset_ids.mapped('asset_purchase_method_id')
+        new_purchase_method = (len(purchase_methods) == 1 and
+                               purchase_methods[0] or
+                               self.env.ref('pabi_asset_management.'
+                                            'asset_purchase_method_11'))
         # Prepare Old Move
         asset_move_lines_dict, depre_move_lines = \
             Asset._prepare_asset_reverse_moves(self.asset_ids)
@@ -235,7 +242,9 @@ class AccountAssetTransfer(models.Model):
                          'period_id': period.id,
                          'date': fields.Date.context_today(self),
                          'ref': self.name}
-            move = AccountMove.create(move_dict)
+            move = AccountMove.\
+                with_context(asset_purchase_method_id=new_purchase_method.id).\
+                create(move_dict)
             # For transfer, new asset should be created
             asset = move.line_id.mapped('asset_id')
             if len(asset) != 1:
