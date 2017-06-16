@@ -213,8 +213,10 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         states={'draft': [('readonly', False)]},
     )
     # Transfer Asset
-    target_asset_id = fields.Many2one(
+    target_asset_ids = fields.Many2many(
         'account.asset.asset',
+        'account_asset_source_target_rel',
+        'source_asset_id', 'target_asset_id',
         string='Transferred to Asset',
         help="In case of transfer, this field show asset created by this one",
     )
@@ -222,9 +224,10 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         string='Source Asset Count',
         compute='_compute_source_asset_count',
     )
-    source_asset_ids = fields.One2many(
+    source_asset_ids = fields.Many2many(
         'account.asset.asset',
-        'target_asset_id',
+        'account_asset_source_target_rel',
+        'target_asset_id', 'source_asset_id',
         string='Source Assets',
         help="List of source asset that has been transfer to this one",
     )
@@ -292,7 +295,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
                               'action_account_asset_asset_form')
         result = action.read()[0]
         assets = self.with_context(active_test=False).\
-            search([('target_asset_id', '=', self.id)])
+            search([('target_asset_ids', 'in', [self.id])])
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom, 'context': {'active_test': False}})
         return result
@@ -302,7 +305,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     def _compute_source_asset_count(self):
         for asset in self:
             _ids = self.with_context(active_test=False).\
-                search([('target_asset_id', '=', asset.id)])._ids
+                search([('target_asset_ids', 'in', [asset.id])])._ids
             asset.source_asset_count = len(_ids)
 
     @api.model
@@ -400,8 +403,8 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
             # Validation
             if not asset_move_lines_dict:
                 raise ValidationError(
-                    _('No Asset Value. Something is wrong!\nIt is likely that,'
-                      ' the asset owner do not match with account move.'))
+                    _('No Asset Value. Something went wrong!\nIt is likely '
+                      'that, the asset owner do not match with account move.'))
             return (asset_move_lines_dict, depre_move_lines_dict)
 
     @api.model
@@ -410,12 +413,12 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         credit = sum(x['credit'] for x in move_lines_dict)
         move_line_dict = move_lines_dict[0].copy()
         move_line_dict.update({
+            'analytic_account_id': False,  # To refresh dimension
             'credit': debit,
             'debit': credit,
         })
         if new_owner:
             move_line_dict.update({
-                'analytic_account_id': False,  # To refresh dimension
                 'project_id': new_owner.get('project_id'),
                 'section_id': new_owner.get('section_id'),
             })

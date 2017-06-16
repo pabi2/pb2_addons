@@ -3,8 +3,8 @@
     <data>
 
         <!-- Asset -->
-        <record model="ir.ui.view" id="view_account_asset_asset_tree2">
-            <field name="name">account.asset.asset.tree2</field>
+        <record model="ir.ui.view" id="view_account_asset_asset_tree_transfer">
+            <field name="name">account.asset.asset.tree_transfer</field>
             <field name="model">account.asset.asset</field>
             <field name="arch" type="xml">
                 <tree string="Assets">
@@ -13,14 +13,15 @@
                     <field name="product_id"/>
                     <field name="category_id"/>
                     <field name="purchase_id"/>
-                    <field name="project_id"/>
+                    <field name="asset_value"/>
+                    <field name="status"/>
                     <field name="state"/>
                 </tree>
             </field>
         </record>
 
-        <record id="view_account_asset_search2" model="ir.ui.view">
-            <field name="name">account.asset.asset.search2</field>
+        <record id="view_account_asset_search_transfer" model="ir.ui.view">
+            <field name="name">account.asset.asset.search_transfer</field>
             <field name="model">account.asset.asset</field>
             <field name="arch" type="xml">
                 <search string="Assets">
@@ -46,10 +47,11 @@
             <field name="arch" type="xml">
                 <form string="Asset">
                     <header>
-                        <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
-                        <button name="action_done" states="draft" string=" Asset" type="object" groups="account.group_account_manager" class="oe_highlight"/>
+                        <button name="action_draft" states="cancel,draft2" string="Set Source Assets" type="object"/>
+                        <button name="action_draft2" states="draft" string="Set Target Assets" type="object"/>
+                        <button name="action_done" states="draft2" string="Transfer" type="object" groups="account.group_account_manager" class="oe_highlight"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object" groups="account.group_account_manager"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,draft2,done"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box oe_right"></div>
@@ -62,54 +64,40 @@
                         <group>
                             <group>
                                 <field name="transfer_type"/>
+                                <field name="source_asset_value"/>
+                                <field name="target_asset_value"/>
                             </group>
                             <group>
-                                <div name="type_new_asset" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')]}">
-                                    Create a new asset and deactivate the old asset(s).
-                                </div>
-                                <div name="type_change_ownert" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')]}">
-                                    Changing owner of the select asset(s).
-                                </div>
-                            </group>
-                        </group>
-                        <group>
-                            <group>
-                                <!-- New Asset -->
-                                <separator string="New Asset" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')]}" colspan="2"/>
-                                <field name="product_id" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')], 'required': [('transfer_type', '=', 'new_asset')]}"/>
-                                <field name="asset_name" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')], 'required': [('transfer_type', '=', 'new_asset')]}"/>
-                                <field name="asset_category_id" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')]}"/>
-                                <field name="ref_asset_id" attrs="{'invisible': [('transfer_type', '!=', 'new_asset')]}"/>
-                                <!-- Change Owner -->
-                                <separator string="Change Owner for Depreciation" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')]}" colspan="2"/>
-                                <field name="section_id" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')], 'required': [('transfer_type', '=', 'change_owner'), ('project_id', '=', False)]}"/>
-                                <field name="project_id" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')], 'required': [('transfer_type', '=', 'change_owner'), ('section_id', '=', False)]}"/>
-                                <field name="costcenter_id" attrs="{'invisible': [('transfer_type', '!=', 'change_owner')]}"/>
-                            </group>
-                            <group>
-                                <separator string="Reference" colspan="2"/>
                                 <field name="user_id"/>
                                 <field name="date"/>
-                                <field name="search_no_depre_asset" invisible="1"/>
-                                <field name="search_normal_asset" invisible="1"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Source Assets">
                                 <field
-                                    name="transfer_asset_ids"
-                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_asset_tree2',
-                                              'search_view_ref': 'pabi_asset_management.view_account_asset_search2',
-                                              'search_default_no_depre_asset': search_no_depre_asset,
-                                              'search_default_normal_asset': search_normal_asset}">
+                                    name="asset_ids"
+                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_asset_tree_transfer',
+                                              'search_view_ref': 'pabi_asset_management.view_account_asset_search_transfer',
+                                              'search_default_no_depre_asset': 1}">
                                     <tree editable="bottom">
                                         <field name="name" readonly="1"/>
                                         <field name="code" readonly="1"/>
                                         <field name="product_id" readonly="1"/>
                                         <field name="category_id" readonly="1"/>
                                         <field name="purchase_id" readonly="1"/>
-                                        <field name="project_id" readonly="1"/>
+                                        <field name="asset_value" readonly="1" sum="Total"/>
                                         <field name="state" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Target Assets">
+                                <field name="target_asset_ids">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="asset_category_id"/>
+                                        <field name="asset_name"/>
+                                        <field name="asset_value" sum="Total"/>
+                                        <field name="ref_asset_id"/>
                                     </tree>
                                 </field>
                             </page>
@@ -127,9 +115,6 @@
                 <tree string="Asset Transfer">
                     <field name="name"/>
                     <field name="date"/>
-                    <field name="ref_asset_id"/>
-                    <field name="product_id"/>
-                    <field name="asset_category_id"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -141,10 +126,8 @@
             <field name="arch" type="xml">
                 <search string="Asset Transfer">
                     <field name="name" string="Asset Transfer"/>
-                    <field name="product_id"/>
-                    <field name="asset_category_id"/>
                     <group expand="0" string="Group By...">
-                        <filter string="Category" domain="" context="{'group_by':'asset_category_id'}"/>
+                        <!-- <filter string="Category" domain="" context="{'group_by':'asset_category_id'}"/> -->
                     </group>
                 </search>
             </field>

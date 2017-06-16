@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools import float_compare, float_round
 
 
 class AccountAssetTransfer(models.Model):
     _name = 'account.asset.transfer'
-    _description = 'Transfer types - 1. Change Owner 2. New Asset'
     _order = 'name desc'
 
     name = fields.Char(
@@ -36,71 +36,34 @@ class AccountAssetTransfer(models.Model):
         string='Note',
         copy=False,
     )
-    transfer_type = fields.Selection(
-        [('new_asset', 'New Asset'),
-         ('change_owner', 'Change Owner')],
-        string='Transfer Type',
-        default='new_asset',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    # To Asset Type
-    product_id = fields.Many2one(
-        'product.product',
-        string='To Asset Type',
-        domain=[('asset', '=', True)],
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    asset_name = fields.Char(
-        string='Asset Name',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    asset_category_id = fields.Many2one(
-        'account.asset.category',
-        related='product_id.asset_category_id',
-        string='To Asset Category',
-        store=True,
-        readonly=True,
-    )
-    ref_asset_id = fields.Many2one(
-        'account.asset.asset',
-        string='Asset Created',
-        readonly=True,
-        copy=False,
-    )
-    # To New Owner
-    section_id = fields.Many2one(
-        'res.section',
-        string='Section',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    project_id = fields.Many2one(
-        'res.project',
-        string='Project',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    costcenter_id = fields.Many2one(
-        'res.costcenter',
-        string='Costcenter',
-        compute='_compute_costcenter_id',
-    )
-    transfer_asset_ids = fields.Many2many(
+    asset_ids = fields.Many2many(
         'account.asset.asset',
         'account_asset_asset_transfer_rel',
         'transfer_id', 'asset_id',
-        string='Assets to Transfer',
+        string='Source Assets',
         domain=[('type', '!=', 'view')],
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    target_asset_ids = fields.One2many(
+        'account.asset.transfer.target',
+        'transfer_id',
+        string='Target New Assets',
+        copy=False,
+        readonly=True,
+        states={'draft2': [('readonly', False)]},
+    )
+    transfer_type = fields.Selection(
+        [('merge', 'Merge (many source -> 1 target)'),
+         ('split', 'Split (1 source -> many target)')],
+        string='Transfer Type',
+        compute='_compute_transfer_type',
+        store=True,
+    )
     state = fields.Selection(
-        [('draft', 'Draft'),
+        [('draft', 'Source Assets'),
+         ('draft2', 'Target Assets'),
          ('done', 'Transferred'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -108,45 +71,50 @@ class AccountAssetTransfer(models.Model):
         readonly=True,
         copy=False,
     )
-    # For search criteria
-    search_normal_asset = fields.Boolean(
-        string='Search Normal Asset',
-        default=False,
-        readonly=True,
+    source_asset_value = fields.Float(
+        string='Source Asset Value',
+        compute='_compute_asset_value',
     )
-    search_no_depre_asset = fields.Boolean(
-        string='Search No Depre. Asset',
-        default=False,
-        readonly=True,
+    target_asset_value = fields.Float(
+        string='Target Asset Value',
+        compute='_compute_asset_value',
     )
 
-    @api.onchange('transfer_type')
-    def _onchange_transfer_type(self):
-        self.search_normal_asset = False
-        self.search_no_depre_asset = False
-        if self.transfer_type == 'new_asset':
-            self.search_no_depre_asset = True
-        if self.transfer_type == 'change_owner':
-            self.search_normal_asset = True
+    @api.multi
+    def _validate_asset_values(self):
+        if float_compare(self.source_asset_value,
+                         self.target_asset_value, 2) != 0:
+            raise ValidationError(
+                _('To transfer, source and target asset value must equal!'))
+
+    @api.multi
+    @api.depends('asset_ids', 'target_asset_ids')
+    def _compute_asset_value(self):
+        for rec in self:
+            source_value = sum(rec.asset_ids.mapped('asset_value'))
+            target_value = sum(rec.target_asset_ids.mapped('asset_value'))
+            rec.source_asset_value = source_value
+            rec.target_asset_value = target_value
+
+    @api.multi
+    @api.depends('asset_ids', 'target_asset_ids')
+    def _compute_transfer_type(self):
+        """ 2 case allowed, 1) merget 2) split """
+        for rec in self:
+            if not rec.asset_ids or not rec.target_asset_ids:
+                rec.trasferring = False
+            elif len(rec.asset_ids) == 1 and len(rec.target_asset_ids) >= 1:
+                rec.transfer_type = 'split'
+            elif len(rec.asset_ids) >= 1 and len(rec.target_asset_ids) == 1:
+                rec.transfer_type = 'merge'
+            else:
+                raise ValidationError(
+                    _('You set up source/target assets incorrectly,\n'
+                      'only spliting (1-M) or merging (M-1) is allowed!'))
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
         self.asset_name = self.product_id.name
-
-    @api.onchange('project_id', 'section_id')
-    def _onchange_project_section(self):
-        if self.project_id:
-            self.section_id = False
-        if self.section_id:
-            self.project_id = False
-
-    @api.multi
-    @api.depends('project_id', 'section_id')
-    def _compute_costcenter_id(self):
-        for rec in self:
-            if rec.project_id or rec. section_id:
-                rec.costcenter_id = rec.project_id.costcenter_id or \
-                    rec.section_id.costcenter_id
 
     @api.model
     def create(self, vals):
@@ -160,12 +128,14 @@ class AccountAssetTransfer(models.Model):
         self.write({'state': 'draft'})
 
     @api.multi
+    def action_draft2(self):
+        self.write({'state': 'draft2'})
+
+    @api.multi
     def action_done(self):
         for rec in self:
-            if rec.transfer_type == 'new_asset':
-                rec._transfer_new_asset()
-            if rec.transfer_type == 'change_owner':
-                rec._transfer_change_owner()
+            rec._validate_asset_values()
+            rec._transfer_new_asset()
         self.write({'state': 'done'})
 
     @api.multi
@@ -180,8 +150,8 @@ class AccountAssetTransfer(models.Model):
         * All source asset must have same owner chartfields, otherwise, warning
         * We code to allow transfering the asset with depre, in fact, it won't
         * Inactive source assets
-        Accoun Moves
-        ============
+        Account Moves
+        =============
         Dr Accumulated depreciation of transfer assets (for each asset, if any)
             Cr Asset Value of trasferring assets (for each asset)
         Dr Asset Value to the new asset
@@ -192,59 +162,133 @@ class AccountAssetTransfer(models.Model):
         Asset = self.env['account.asset.asset']
         Period = self.env['account.period']
         period = Period.find()
-        # For Transfer: Property of New Asset
-        new_product = self.product_id
-        new_asset_category = new_product.asset_category_id
-        new_journal = new_asset_category.journal_id
-        new_account_asset = new_asset_category.account_asset_id
         # Owner
-        project = self.transfer_asset_ids.mapped('project_id')
-        section = self.transfer_asset_ids.mapped('section_id')
+        project = self.asset_ids.mapped('project_id')
+        section = self.asset_ids.mapped('section_id')
         # For Transfer, all asset must belong to same owner
         if len(project) > 1 or len(section) > 1:
             raise ValidationError(
                 _('When transfer to new asset, all selected '
                   'assets must belong to same owner!'))
         # Prepare Old Move
-        move_lines = []
-        asset_move_lines_dict, depre_move_lines_dict = \
-            Asset._prepare_asset_reverse_moves(self.transfer_asset_ids)
-        move_lines += asset_move_lines_dict + depre_move_lines_dict
-        # For transfer case, we first want to make sure that asset_id is false
-        for x in move_lines:
-            x.update({'asset_id': False})
+        asset_move_lines_dict, depre_move_lines = \
+            Asset._prepare_asset_reverse_moves(self.asset_ids)
         # Create move line for target asset
-        # Asset
         new_asset_move_line_dict = \
             Asset._prepare_asset_target_move(asset_move_lines_dict)
-        # For transfer, create a new asset by update following fields
-        new_asset_move_line_dict.update({
-            'name': self.asset_name,
-            'product_id': new_product.id,
-            'asset_category_id': new_asset_category.id,
-            'account_id': new_account_asset.id,
-        })
-        move_lines.append(new_asset_move_line_dict)
-        # Depre
-        if depre_move_lines_dict:
-            new_depre_move_lines_dict = \
-                Asset._prepare_asset_target_move(depre_move_lines_dict)
-            move_lines.append(new_depre_move_lines_dict)
-        # Finalize all moves before create it.
-        final_move_lines = [(0, 0, x) for x in move_lines]
-        move_dict = {'journal_id': new_journal.id,
-                     'line_id': final_move_lines,
-                     'period_id': period.id,
-                     'date': fields.Date.context_today(self),
-                     'ref': self.name}
-        move = AccountMove.create(move_dict)
-        # For transfer, new asset should be created
-        asset = move.line_id.mapped('asset_id')
-        if len(asset) != 1:
-            raise ValidationError(
-                _('An asset should be created, something is wrong!'))
-        self.ref_asset_id = asset.id
-        asset.source_asset_ids = self.transfer_asset_ids
-        self.transfer_asset_ids.write({'active': False,
-                                       'target_asset_id': asset.id,
-                                       })
+        new_asset_ids = []
+        count = len(self.target_asset_ids)
+        total_depre = sum([x['debit'] for x in depre_move_lines])
+        accum_depre = 0.0
+        i = 0
+        for target_asset in self.target_asset_ids:
+            i += 1
+            # Ratio
+            ratio = 1.0
+            if self.source_asset_value:
+                ratio = target_asset.asset_value / self.source_asset_value
+            # For each target asset, start with reverse move
+            move_lines = list(asset_move_lines_dict)
+            # Property of New Asset
+            new_product = target_asset.product_id
+            new_asset_category = new_product.asset_category_id
+            new_journal = new_asset_category.journal_id
+            new_account_asset = new_asset_category.account_asset_id
+            # For transfer, for each new asset, update following fields
+            new_asset_move_line_dict.update({
+                'name': target_asset.asset_name,
+                'product_id': new_product.id,
+                'asset_category_id': new_asset_category.id,
+                'account_id': new_account_asset.id,
+            })
+            move_lines.append(new_asset_move_line_dict)
+            for move_line in move_lines:
+                move_line['debit'] = \
+                    move_line['debit'] and target_asset.asset_value or 0.0
+                move_line['credit'] = \
+                    move_line['credit'] and target_asset.asset_value or 0.0
+            # Depreciation Move Line
+            if depre_move_lines:
+                depre_move_lines = list(depre_move_lines)
+                new_depre_dict = \
+                    Asset._prepare_asset_target_move(depre_move_lines)
+                depre_move_lines.append(new_depre_dict)
+                new_depre = 0.0
+                if i == count:
+                    new_depre = total_depre - accum_depre
+                else:
+                    new_depre = ratio * total_depre
+                for move_line in depre_move_lines:
+                    move_line['debit'] = \
+                        move_line['debit'] and new_depre or 0.0
+                    move_line['credit'] = \
+                        move_line['credit'] and new_depre or 0.0
+                accum_depre += new_depre
+                move_lines += depre_move_lines
+            # For transfer case, make sure that asset_id is false
+            for x in move_lines:
+                x.update({'asset_id': False})
+            # Finalize all moves before create it.
+            final_move_lines = [(0, 0, x) for x in move_lines]
+            move_dict = {'journal_id': new_journal.id,
+                         'line_id': final_move_lines,
+                         'period_id': period.id,
+                         'date': fields.Date.context_today(self),
+                         'ref': self.name}
+            move = AccountMove.create(move_dict)
+            # For transfer, new asset should be created
+            asset = move.line_id.mapped('asset_id')
+            if len(asset) != 1:
+                raise ValidationError(
+                    _('An asset should be created, something went wrong!'))
+            new_asset_ids.append(asset.id)
+            target_asset.ref_asset_id = asset.id
+            asset.source_asset_ids = self.asset_ids
+        self.asset_ids.write({
+            'active': False,
+            'target_asset_ids': [(4, x) for x in new_asset_ids]})
+
+
+class AccountAssetTransferTarget(models.Model):
+    _name = 'account.asset.transfer.target'
+
+    transfer_id = fields.Many2one(
+        'account.asset.transfer',
+        string='Asset Transfer',
+        indext=True,
+        ondelete='cascade',
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='To Asset Type',
+        domain=[('asset', '=', True)],
+        required=True,
+    )
+    asset_name = fields.Char(
+        string='Asset Name',
+        required=True,
+    )
+    asset_category_id = fields.Many2one(
+        'account.asset.category',
+        related='product_id.asset_category_id',
+        string='To Asset Category',
+        store=True,
+        readonly=True,
+    )
+    asset_value = fields.Float(
+        string='Value',
+        required=True,
+        default=0.0,
+    )
+    ref_asset_id = fields.Many2one(
+        'account.asset.asset',
+        string='New Asset',
+        readonly=True,
+    )
+
+    @api.multi
+    @api.constrains('asset_value')
+    def _check_asset_value(self):
+        for rec in self:
+            if float_compare(rec.asset_value, 0.0, 2) == -1:
+                raise ValidationError(_('Negative asset value not allowed!'))

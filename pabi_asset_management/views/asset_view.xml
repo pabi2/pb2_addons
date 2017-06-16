@@ -68,7 +68,7 @@
                             <field name="type" on_change="onchange_type(type)" invisible="1"/>
                             <field name="parent_id"/>
                             <field name="code2"/>
-                            <field name="target_asset_id" attrs="{'invisible': [('target_asset_id', '=', False)]}"/>
+                            <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_ids', '=', [])]}"/>
                         </group>
                         <group>
                             <field name="company_id" widget="selection" groups="base.group_multi_company"/>
