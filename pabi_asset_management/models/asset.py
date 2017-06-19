@@ -45,6 +45,9 @@ class AccountAssetStatus(models.Model):
 class AccountAssetAsset(ChartFieldAction, models.Model):
     _inherit = 'account.asset.asset'
 
+    name = fields.Char(
+        default='/',
+    )
     type = fields.Selection(
         # Need this way of doing default, because default_type in context will
         # cause problem compute depreciation table, it set line type wrongly
@@ -245,6 +248,13 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         string='Depreciation Summary',
         readonly=True,
     )
+    parent_type = fields.Selection(
+        [('ait', 'AIT'),
+         ('auc', 'AUC'),
+         ('atm', 'ATM'),
+         ],
+        string='Parent Type',
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
@@ -310,8 +320,14 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
 
     @api.model
     def create(self, vals):
+        # Case Parent Assets, AIT, AUC, ATM
+        type = vals.get('type', False)
+        ptype = vals.get('parent_type', False)
+        if ptype and type == 'view':
+            sequence_code = 'parent.asset.%s' % (ptype)
+            vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
         if vals.get('code', '/') == '/':
-            sequence = False
+            # Normal Case
             product_id = vals.get('product_id', False)
             if product_id:
                 product = self.env['product.product'].browse(product_id)

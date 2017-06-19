@@ -210,13 +210,15 @@
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" class="oe_inline"/>
+                                <field name="name" readonly="1" class="oe_inline"/>
                             </h1>
                         </div>
                         <group>
                             <group>
                                 <field name="type" invisible="1"/>
-                                <field name="project_id" required="1"/>
+                                <field name="parent_type" attrs="{'required': [('type', '=', 'view')], 'readonly': [('name', '!=', '/')]}"/>
+                                <field name="project_id"/>
+                                <field name="section_id"/>
                             </group>
                             <group>
                                 <field name="state" invisible="1"/>
@@ -235,7 +237,9 @@
                 <tree string="Parent Assets">
                     <field name="name"/>
                     <field name="type" invisible="1"/>
+                    <field name="parent_type"/>
                     <field name="project_id"/>
+                    <field name="section_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="state" invisible="1"/>
                 </tree>
@@ -249,8 +253,10 @@
                 <search string="Parent Asset">
                     <field name="name" string="Parent Asset"/>
                     <field name="project_id" string="Project"/>
+                    <field name="section_id" string="Section"/>
                     <group expand="0" string="Group By...">
                         <filter string="Project" name="project" domain="" context="{'group_by':'project_id'}"/>
+                        <filter string="Section" name="section" domain="" context="{'group_by':'section_id'}"/>
                     </group>
                 </search>
             </field>
