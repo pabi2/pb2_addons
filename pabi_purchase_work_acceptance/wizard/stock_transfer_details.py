@@ -13,7 +13,8 @@ class StockTransferDetails(models.TransientModel):
         picking_ids = self.env.context['active_ids'] or []
         picking = Picking.browse(picking_ids)
         res = super(StockTransferDetails, self).default_get(fields)
-        if picking.picking_type_code == 'incoming':
+        skip_wa = self._context.get('skip_work_acceptance', False)
+        if picking.picking_type_code == 'incoming' and not skip_wa:
             if len(picking.acceptance_id.acceptance_line_ids) == 0:
                 raise ValidationError(
                     _("You have to input Work Acceptance first."))
@@ -40,8 +41,9 @@ class StockTransferDetails(models.TransientModel):
 
     @api.one
     def do_detailed_transfer(self):
+        skip_wa = self._context.get('skip_work_acceptance', False)
         picking = self.picking_id
-        if picking.picking_type_code == 'incoming':
+        if picking.picking_type_code == 'incoming' and not skip_wa:
             transfer_qty = self._product_summary_qty(self.item_ids,
                                                      'quantity')
             stock_move_qty = self._product_summary_qty(picking.move_lines,

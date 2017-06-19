@@ -15,6 +15,11 @@ class StockPicking(models.Model):
         string='Asset Count',
         compute='_compute_assset_count',
     )
+    asset_purchase_method_id = fields.Many2one(
+        'asset.purchase.method',
+        string='Aquisition Method',
+        help="In case of direct receive, user will manually choose it."
+    )
 
     @api.multi
     def action_view_asset(self):
@@ -34,3 +39,12 @@ class StockPicking(models.Model):
     def _compute_assset_count(self):
         for rec in self:
             rec.asset_count = len(rec.asset_ids)
+
+
+class StockMove(models.Model):
+    _inherit = 'stock.move'
+
+    asset_value = fields.Float(
+        string='Asset Value (each)',
+        help="Case direct receive, need to spcifiy asset value",
+    )

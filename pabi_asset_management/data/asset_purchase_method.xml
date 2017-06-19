@@ -21,15 +21,19 @@
           </record>
           <record id="asset_purchase_method_7" model="asset.purchase.method">
               <field name="name">วิธีฉุกเฉิน</field>
+              <field name="direct">True</field>
           </record>
           <record id="asset_purchase_method_8" model="asset.purchase.method">
               <field name="name">รับบริจาค</field>
+              <field name="direct">True</field>
           </record>
           <record id="asset_purchase_method_9" model="asset.purchase.method">
               <field name="name">ของแถม</field>
+              <field name="direct">True</field>
           </record>
           <record id="asset_purchase_method_10" model="asset.purchase.method">
               <field name="name">รับโอน</field>
+              <field name="direct">True</field>
           </record>
           <record id="asset_purchase_method_11" model="asset.purchase.method">
               <field name="name">อื่นๆ</field>

@@ -28,8 +28,12 @@ class AccountMoveLine(models.Model):
         vals = {
             'product_id': move_line.product_id.id,
             'move_id': move_line.stock_move_id.id,
-            'asset_purchase_method_id':  # long link back to purchase method
+            'asset_purchase_method_id':
+            # Case direct receive, chosen by user in stock.picking
+            move_line.stock_move_id.picking_id.asset_purchase_method_id.id or
+            # Case Asset Transfer, inherit from source asset
             self._context.get('asset_purchase_method_id', False) or
+            # Normal case, start from PR, link back to original document
             move_line.stock_move_id.purchase_line_id.quo_line_id.
             requisition_line_id.requisition_id.purchase_method_id.
             asset_purchase_method_id.id,

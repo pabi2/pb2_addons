@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data noupdate="1">
+
         <record id="stock_location_assets" model="stock.location">
             <field name="name">Assets</field>
             <field name="location_id" ref="stock.stock_location_locations_virtual"/>
-            <field name="usage">inventory</field>
-            <field name="company_id"></field>
+            <field name="usage">internal</field>
+            <field name="company_id" ref="base.main_company"/>
         </record>
+
+        <record id="picking_type_asset_direct_receive" model="stock.picking.type">
+            <field name="name">Asset Direct Receive</field>
+            <field name="sequence_id" ref="seq_picking_type_asset_receive"/>
+            <field name="code">incoming</field>
+            <field name="warehouse_id" eval="False"/>
+            <field name="default_location_src_id" ref="stock.stock_location_suppliers"/>
+            <field name="default_location_dest_id" ref="stock_location_assets"/>
+        </record>
+
     </data>
+
 </openerp>

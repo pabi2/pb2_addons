@@ -12,16 +12,17 @@
         "pabi_purchase_work_acceptance",
         "account_budget_activity",
         "pabi_invest_construction",
+        "pabi_chartfield_merged",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
     """,
     "data": [
         "security/ir.model.access.csv",
+        "data/sequence_data.xml",
         "data/asset_purchase_method.xml",
         "data/account_data.xml",
         "data/location_data.xml",
-        "data/sequence_data.xml",
         "data/asset_status.xml",
         "views/asset_view.xml",
         "wizard/account_asset_remove_view.xml",
@@ -33,6 +34,7 @@ This module allow creating asset during incoming shipment.
         "views/asset_changeowner_view.xml",
         "views/asset_transfer_view.xml",
         "views/asset_removal_view.xml",
+        "views/asset_receive_view.xml",
         "views/asset_location_view.xml",
         "views/product_view.xml",
         "views/purchase_requisition_view.xml",

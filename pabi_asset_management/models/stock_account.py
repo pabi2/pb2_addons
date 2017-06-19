@@ -8,6 +8,9 @@ class StockQuant(models.Model):
     @api.model
     def _prepare_account_move_line(self, move, qty, cost,
                                    credit_account_id, debit_account_id):
+        # Overwrite by asset value in stock.move
+        if move.asset_value > 0.0:
+            cost = move.asset_value
         res = super(StockQuant, self).\
             _prepare_account_move_line(move, qty, cost,
                                        credit_account_id, debit_account_id)
