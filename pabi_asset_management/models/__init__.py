@@ -14,3 +14,5 @@ from . import account_move
 from . import stock
 from . import account
 from . import purchase
+from . import res_project
+from . import res_section

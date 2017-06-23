@@ -47,6 +47,8 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     name = fields.Char(
         default='/',
+        readonly=False,
+        states={},  # Always editable
     )
     type = fields.Selection(
         # Need this way of doing default, because default_type in context will

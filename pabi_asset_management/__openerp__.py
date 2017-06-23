@@ -41,6 +41,8 @@ This module allow creating asset during incoming shipment.
         "views/stock_view.xml",
         "views/purchase_view.xml",
         "views/purchase_master_data_view.xml",
+        "views/res_project_view.xml",
+        "views/res_section_view.xml",
         "wizard/asset_action_excel_import.xml",
     ],
     'installable': True,
