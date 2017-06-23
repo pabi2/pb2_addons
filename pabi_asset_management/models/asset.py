@@ -138,11 +138,18 @@ class AccountAsset(ChartFieldAction, models.Model):
         'asset.purchase.method',
         string='Asset Purchase Method',
     )
+    purchase_request_id = fields.Many2one(
+        'purchase.request',
+        string='Purchase Request',
+        related='move_id.purchase_line_id.quo_line_id.requisition_line_id.'
+        'purchase_request_lines.request_id',
+        readonly=True,
+        help="PR of this asset",
+    )
     pr_requester_id = fields.Many2one(
         'res.users',
         string='Requester',
-        related='move_id.purchase_line_id.quo_line_id.requisition_line_id.'
-        'purchase_request_lines.request_id.requested_by',
+        related='purchase_request_id.requested_by',
         readonly=True,
         help="PR Requester of this asset",
     )
