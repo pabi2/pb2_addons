@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 
 class AccountAssetRemoval(models.Model):
     _name = 'account.asset.removal'
+    _inherit = ['mail.thread']
     _description = 'Asset Removal'
     _order = 'name desc'
 
@@ -47,6 +48,7 @@ class AccountAssetRemoval(models.Model):
         default='draft',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     target_status = fields.Many2one(
         'account.asset.status',

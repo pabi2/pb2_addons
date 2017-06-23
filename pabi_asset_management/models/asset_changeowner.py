@@ -5,6 +5,8 @@ from openerp.exceptions import ValidationError
 
 class AccountAssetChangeowner(models.Model):
     _name = 'account.asset.changeowner'
+    _inherit = ['mail.thread']
+    _description = 'Asset Change Owner'
     _order = 'name desc'
 
     name = fields.Char(
@@ -79,6 +81,7 @@ class AccountAssetChangeowner(models.Model):
         default='draft',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
 
     @api.onchange('product_id')

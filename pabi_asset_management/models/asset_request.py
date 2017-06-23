@@ -5,7 +5,7 @@ from openerp.exceptions import ValidationError
 
 class AccountAssetRequest(models.Model):
     _name = 'account.asset.request'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread']
     _description = 'Asset Request'
     _order = 'name desc'
 

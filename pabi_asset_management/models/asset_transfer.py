@@ -6,6 +6,8 @@ from openerp.tools import float_compare, float_round
 
 class AccountAssetTransfer(models.Model):
     _name = 'account.asset.transfer'
+    _inherit = ['mail.thread']
+    _description = 'Asset Transfer'
     _order = 'name desc'
 
     name = fields.Char(
@@ -71,6 +73,7 @@ class AccountAssetTransfer(models.Model):
         default='draft',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     source_asset_value = fields.Float(
         string='Source Asset Value',
