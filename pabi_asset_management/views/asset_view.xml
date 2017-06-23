@@ -132,7 +132,10 @@
                         </group>
                     </group>
                 </xpath>
-                <notebook colspan="4" position="inside">
+                <page string="History" position="attributes">
+                    <attribute name="string">Journal Entries</attribute>
+                </page>
+                <page string="Depreciation Board" position="after">
                     <page string="Owner">
                         <group>
                             <group string="Depreciation On">
@@ -151,8 +154,8 @@
                             </group>
                         </group>
                     </page>
-                </notebook>
-                <notebook colspan="4">
+                </page>
+                <page string="Notes" position="before">
                     <page string="Other Info">
                         <group>
                             <group string="Warranty">
@@ -160,18 +163,23 @@
                                 <field name="warranty_start_date"/>
                                 <field name="warranty_expire_date"/>
                             </group>
-                            <group string="Repair Notes">
-                                <field name="repair_note_ids" nolabel="1">
-                                    <tree editable="bottom">
-                                        <field name="date"/>
-                                        <field name="note"/>
-                                    </tree>
-                                </field>
+                            <group string="Image">
+                                <field name="image" widget="image" nolabel="1"/>
                             </group>
                         </group>
-                        <field name="image" widget="image"/>
                     </page>
-                </notebook>
+                </page>
+                <page string="Notes" position="after">
+                    <page string="Repair Note">
+                        <field name="repair_note_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="date"/>
+                                <field name="purchase_id"/>
+                                <field name="note"/>
+                            </tree>
+                        </field>
+                    </page>
+                </page>
             </field>
         </record>
 

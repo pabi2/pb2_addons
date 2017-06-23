@@ -527,6 +527,10 @@ class AssetRepairNote(models.Model):
         ondelete='cascade',
         index=True,
     )
+    purchase_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+    )
     date = fields.Date(
         string='Date',
         default=lambda self: fields.Date.context_today(self),
