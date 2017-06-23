@@ -5,7 +5,8 @@ from openerp.exceptions import ValidationError
 
 class AccountAssetRequest(models.Model):
     _name = 'account.asset.request'
-    _description = 'Printout asset request form'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = 'Asset Request'
     _order = 'name desc'
 
     name = fields.Char(
@@ -65,6 +66,7 @@ class AccountAssetRequest(models.Model):
         default='draft',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     # Default
     location_id = fields.Many2one(
@@ -157,16 +159,16 @@ class AccountAssetRequestLine(models.Model):
         readonly=True,
     )
     asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='Asset',
         domain=[('doc_request_id', '=', False),
                 ('type', '=', 'normal'),
                 ('state', '=', 'open')],
         required=True,
     )
-    asset_value = fields.Float(
-        string='Asset Value',
-        related='asset_id.asset_value',
+    depreciation_base = fields.Float(
+        string='Depreciation Base',
+        related='asset_id.depreciation_base',
         readonly=True,
     )
     location_id = fields.Many2one(

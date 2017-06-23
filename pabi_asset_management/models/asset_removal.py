@@ -48,10 +48,10 @@ class AccountAssetRemoval(models.Model):
         readonly=True,
         copy=False,
     )
-    target_status = fields.Selection(
-        [('dispose', u'จำหน่าย'),
-         ('lost', u'สูญหาย'), ],
-        string='Target Status',
+    target_status = fields.Many2one(
+        'account.asset.status',
+        string='Asset Status',
+        domain="[('map_state', '=', 'removed')]",
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -67,16 +67,17 @@ class AccountAssetRemoval(models.Model):
         for asset_id in asset_ids:
             Remove = self.env['account.asset.remove'].\
                 with_context(active_id=asset_id)
-            vals = Remove._get_sale()
             asset_removal_lines.append({
                 'asset_id': asset_id,
                 'user_id': user_id,
                 'target_status': target_status,
-                'sale_value': vals['sale_value'],
-                'account_sale_id': vals['account_sale_id'],
-                'account_plus_value_id': Remove._get_plus_account(),
-                'account_min_value_id': Remove._get_min_account(),
-                'account_residual_value_id': Remove._get_residual_account(),
+                'sale_value': Remove._default_sale_value(),
+                'account_sale_id': Remove._default_account_sale_id(),
+                'account_plus_value_id':
+                Remove._default_account_plus_value_id(),
+                'account_min_value_id': Remove._default_account_min_value_id(),
+                'account_residual_value_id':
+                Remove._default_account_residual_value_id(),
                 'posting_regime': Remove._get_posting_regime(),
             })
         res['removal_asset_ids'] = asset_removal_lines
@@ -135,16 +136,16 @@ class AccountAssetRemovalLine(models.Model):
         readonly=True,
     )
     asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='Asset',
         domain=[('type', '=', 'normal'),
                 ('state', '=', 'open')],
         required=True,
     )
-    target_status = fields.Selection(
-        [('dispose', u'จำหน่าย'),
-         ('lost', u'สูญหาย'), ],
-        string='Target Status',
+    target_status = fields.Many2one(
+        'account.asset.status',
+        string='Asset Status',
+        domain="[('map_state', '=', 'removed')]",
         required=True,
     )
     _sql_constraints = [
@@ -161,7 +162,10 @@ class AccountAssetRemovalLine(models.Model):
             vals = Remove._get_sale()
             self.sale_value = vals['sale_value']
             self.account_sale_id = vals['account_sale_id']
-            self.account_plus_value_id = Remove._get_plus_account()
-            self.account_min_value_id = Remove._get_min_account()
-            self.account_residual_value_id = Remove._get_residual_account()
+            self.account_plus_value_id = \
+                Remove._default_account_plus_value_id()
+            self.account_min_value_id = \
+                Remove._default_account_min_value_id()
+            self.account_residual_value_id = \
+                Remove._default_account_residual_value_id()
             self.posting_regime = Remove._get_posting_regime()

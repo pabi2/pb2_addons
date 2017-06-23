@@ -62,8 +62,8 @@ class AccountAssetChangeowner(models.Model):
         states={'draft': [('readonly', False)]},
     )
     asset_ids = fields.Many2many(
-        'account.asset.asset',
-        'account_asset_asset_changeowner_rel',
+        'account.asset',
+        'account_asset_changeowner_rel',
         'changeowner_id', 'asset_id',
         string='Assets to Change Owner',
         domain=[('type', '!=', 'view')],
@@ -139,7 +139,7 @@ class AccountAssetChangeowner(models.Model):
         """
         self.ensure_one()
         AccountMove = self.env['account.move']
-        Asset = self.env['account.asset.asset']
+        Asset = self.env['account.asset']
         Period = self.env['account.period']
         period = Period.find()
         # New Owner
@@ -154,7 +154,7 @@ class AccountAssetChangeowner(models.Model):
                     _('Asset %s change to the same owner!') % (asset.code))
         new_owner = {'owner_project_id': project.id,
                      'owner_section_id': section.id,
-                     'responsible_user': responsible_user.id, }
+                     'responsible_user': responsible_user, }
         # Moving of each asset to the new owner
         for asset in self.asset_ids:
             move_lines = []
@@ -175,7 +175,7 @@ class AccountAssetChangeowner(models.Model):
                 move_lines.append(new_depre_move_lines_dict)
             # Finalize all moves before create it.
             final_move_lines = [(0, 0, x) for x in move_lines]
-            move_dict = {'journal_id': asset.category_id.journal_id.id,
+            move_dict = {'journal_id': asset.profile_id.journal_id.id,
                          'line_id': final_move_lines,
                          'period_id': period.id,
                          'date': fields.Date.context_today(self),

@@ -13,7 +13,7 @@ class AccountMoveLine(models.Model):
         help="When account is created by a stock move (anglo saxon).",
     )
     parent_asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='Parent Asset',
         readonly=True,
         help="If in purchase order line, parent asset is specified.",
@@ -68,7 +68,7 @@ class AccountMoveLine(models.Model):
     def create(self, vals):
         move_line = super(AccountMoveLine, self).create(vals)
         if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
-            if move_line.asset_category_id and move_line.asset_id:
+            if move_line.asset_profile_id and move_line.asset_id:
                 vals = self._prepare_asset_vals(move_line)
                 move_line.asset_id.write(vals)
         return move_line

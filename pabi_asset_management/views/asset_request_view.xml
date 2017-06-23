@@ -39,7 +39,7 @@
                                 <field name="request_asset_ids" context="{'default_location_id': location_id, 'default_room': room}">
                                     <tree editable="bottom">
                                         <field name="asset_id"/>
-                                        <field name="asset_value" sum="Total Value"/>
+                                        <field name="depreciation_base" sum="Total Value"/>
                                         <field name="location_id"/>
                                         <field name="room"/>
                                     </tree>
@@ -47,6 +47,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>

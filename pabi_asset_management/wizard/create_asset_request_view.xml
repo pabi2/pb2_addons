@@ -5,7 +5,7 @@
         <act_window
           id="action_create_asset_request"
           name="Create Asset Request"
-          src_model="account.asset.asset"
+          src_model="account.asset"
           res_model="create.asset.request"
           view_type="form"
           view_mode="form"

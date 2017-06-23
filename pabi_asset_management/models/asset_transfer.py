@@ -37,8 +37,8 @@ class AccountAssetTransfer(models.Model):
         copy=False,
     )
     asset_ids = fields.Many2many(
-        'account.asset.asset',
-        'account_asset_asset_transfer_rel',
+        'account.asset',
+        'account_asset_transfer_rel',
         'transfer_id', 'asset_id',
         string='Source Assets',
         domain=[('type', '!=', 'view'),
@@ -92,8 +92,10 @@ class AccountAssetTransfer(models.Model):
     @api.depends('asset_ids', 'target_asset_ids')
     def _compute_asset_value(self):
         for rec in self:
-            source_value = sum(rec.asset_ids.mapped('asset_value'))
-            target_value = sum(rec.target_asset_ids.mapped('asset_value'))
+            source_value = \
+                sum(rec.asset_ids.mapped('depreciation_base'))
+            target_value = \
+                sum(rec.target_asset_ids.mapped('depreciation_base'))
             rec.source_asset_value = source_value
             rec.target_asset_value = target_value
 
@@ -147,7 +149,7 @@ class AccountAssetTransfer(models.Model):
     def _transfer_new_asset(self):
         """ The Concept
         * A new asset will be created, owner chartfields will be the same
-          * So, make sure that the asset_category_id only on new move
+          * So, make sure that the asset_profile_id only on new move
         * All source asset must have same owner chartfields, otherwise, warning
         * We code to allow transfering the asset with depre, in fact, it won't
         * Inactive source assets
@@ -160,7 +162,7 @@ class AccountAssetTransfer(models.Model):
         """
         self.ensure_one()
         AccountMove = self.env['account.move']
-        Asset = self.env['account.asset.asset']
+        Asset = self.env['account.asset']
         Period = self.env['account.period']
         period = Period.find()
         # Owner
@@ -193,27 +195,28 @@ class AccountAssetTransfer(models.Model):
             # Ratio
             ratio = 1.0
             if self.source_asset_value:
-                ratio = target_asset.asset_value / self.source_asset_value
+                ratio = (target_asset.depreciation_base /
+                         self.source_asset_value)
             # For each target asset, start with reverse move
             move_lines = list(asset_move_lines_dict)
             # Property of New Asset
             new_product = target_asset.product_id
-            new_asset_category = new_product.asset_category_id
-            new_journal = new_asset_category.journal_id
-            new_account_asset = new_asset_category.account_asset_id
+            new_asset_profile = new_product.asset_profile_id
+            new_journal = new_asset_profile.journal_id
+            new_account_asset = new_asset_profile.account_asset_id
             # For transfer, for each new asset, update following fields
             new_asset_move_line_dict.update({
                 'name': target_asset.asset_name,
                 'product_id': new_product.id,
-                'asset_category_id': new_asset_category.id,
+                'asset_profile_id': new_asset_profile.id,
                 'account_id': new_account_asset.id,
             })
             move_lines.append(new_asset_move_line_dict)
             for move_line in move_lines:
-                move_line['debit'] = \
-                    move_line['debit'] and target_asset.asset_value or 0.0
-                move_line['credit'] = \
-                    move_line['credit'] and target_asset.asset_value or 0.0
+                move_line['debit'] = move_line['debit'] and \
+                    target_asset.depreciation_base or 0.0
+                move_line['credit'] = move_line['credit'] and \
+                    target_asset.depreciation_base or 0.0
             # Depreciation Move Line
             if depre_move_lines:
                 depre_move_lines = list(depre_move_lines)
@@ -277,27 +280,27 @@ class AccountAssetTransferTarget(models.Model):
         string='Asset Name',
         required=True,
     )
-    asset_category_id = fields.Many2one(
-        'account.asset.category',
-        related='product_id.asset_category_id',
+    asset_profile_id = fields.Many2one(
+        'account.asset.profile',
+        related='product_id.asset_profile_id',
         string='To Asset Category',
         store=True,
         readonly=True,
     )
-    asset_value = fields.Float(
+    depreciation_base = fields.Float(
         string='Value',
         required=True,
         default=0.0,
     )
     ref_asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='New Asset',
         readonly=True,
     )
 
     @api.multi
-    @api.constrains('asset_value')
+    @api.constrains('depreciation_base')
     def _check_asset_value(self):
         for rec in self:
-            if float_compare(rec.asset_value, 0.0, 2) == -1:
+            if float_compare(rec.depreciation_base, 0.0, 2) == -1:
                 raise ValidationError(_('Negative asset value not allowed!'))

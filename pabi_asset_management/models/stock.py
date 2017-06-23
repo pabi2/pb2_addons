@@ -6,7 +6,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     asset_ids = fields.One2many(
-        'account.asset.asset',
+        'account.asset',
         'picking_id',
         string='Assets',
         readonly=True,
@@ -24,9 +24,8 @@ class StockPicking(models.Model):
     @api.multi
     def action_view_asset(self):
         self.ensure_one()
-        Asset = self.env['account.asset.asset']
-        action = self.env.ref('account_asset_management.'
-                              'action_account_asset_asset_form')
+        Asset = self.env['account.asset']
+        action = self.env.ref('account_asset_management.account_asset_action')
         result = action.read()[0]
         assets = Asset.with_context(active_test=False).search([('picking_id',
                                                                 '=', self.id)])

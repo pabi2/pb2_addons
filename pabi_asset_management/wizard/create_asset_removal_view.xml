@@ -5,7 +5,7 @@
         <act_window
           id="action_create_asset_removal"
           name="Create Asset Removal"
-          src_model="account.asset.asset"
+          src_model="account.asset"
           res_model="create.asset.removal"
           view_type="form"
           view_mode="form"

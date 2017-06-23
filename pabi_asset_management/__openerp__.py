@@ -41,10 +41,11 @@ This module allow creating asset during incoming shipment.
         "views/stock_view.xml",
         "views/purchase_view.xml",
         "views/purchase_master_data_view.xml",
+        "wizard/asset_action_excel_import.xml",
     ],
     'installable': True,
     'active': True,
-    'auto_install': True,
+    'auto_install': False,
 }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

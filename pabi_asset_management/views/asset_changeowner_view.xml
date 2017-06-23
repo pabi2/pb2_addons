@@ -3,15 +3,15 @@
     <data>
 
         <!-- Asset -->
-        <record model="ir.ui.view" id="view_account_asset_asset_tree_changeowner">
-            <field name="name">account.asset.asset.tree.changeowner</field>
-            <field name="model">account.asset.asset</field>
+        <record model="ir.ui.view" id="view_account_asset_tree_changeowner">
+            <field name="name">account.asset.tree.changeowner</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <tree string="Assets">
                     <field name="name"/>
                     <field name="code"/>
                     <field name="product_id"/>
-                    <field name="category_id"/>
+                    <field name="profile_id"/>
                     <field name="purchase_id"/>
                     <field name="project_id"/>
                     <field name="state"/>
@@ -20,14 +20,14 @@
         </record>
 
         <record id="view_account_asset_search_changeowner" model="ir.ui.view">
-            <field name="name">account.asset.asset.search.changeowner</field>
-            <field name="model">account.asset.asset</field>
+            <field name="name">account.asset.search.changeowner</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <search string="Assets">
                     <filter string="Normal Asset" name="normal_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', False)]"/>
                     <separator/>
                     <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
-                    <field name="category_id"/>
+                    <field name="profile_id"/>
                     <field name="product_id"/>
                     <field name="purchase_id"/>
                     <field name="project_id"/>
@@ -74,14 +74,14 @@
                             <page string="Source Assets">
                                 <field
                                     name="asset_ids"
-                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_asset_tree_changeowner',
+                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_tree_changeowner',
                                               'search_view_ref': 'pabi_asset_management.view_account_asset_search_changeowner',
                                               'search_default_normal_asset': 1}">
                                     <tree editable="bottom">
                                         <field name="name" readonly="1"/>
                                         <field name="code" readonly="1"/>
                                         <field name="product_id" readonly="1"/>
-                                        <field name="category_id" readonly="1"/>
+                                        <field name="profile_id" readonly="1"/>
                                         <field name="purchase_id" readonly="1"/>
                                         <field name="owner_section_id" string="Owner Section" readonly="1"/>
                                         <field name="owner_project_id" string="Owner Project" readonly="1"/>

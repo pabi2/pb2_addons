@@ -4,10 +4,10 @@
         <menuitem id="menu_asset_actions" name="Asset Actions" parent="account_asset_management.menu_finance_assets"/>
 
         <!-- Account Asset View -->
-        <record id="view_account_asset_search" model="ir.ui.view">
-            <field name="name">account.asset.asset.search</field>
-            <field name="model">account.asset.asset</field>
-            <field name="inherit_id" ref="account_asset_management.view_account_asset_search"/>
+        <record id="account_asset_view_search" model="ir.ui.view">
+            <field name="name">account.asset.search</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_view_search"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
                 <search position="inside">
@@ -32,10 +32,10 @@
             </field>
         </record>
 
-        <record id="view_account_asset_asset_tree" model="ir.ui.view">
-            <field name="name">account.asset.asset.tree</field>
-            <field name="model">account.asset.asset</field>
-            <field name="inherit_id" ref="account_asset_management.view_account_asset_asset_tree"/>
+        <record id="account_asset_view_tree" model="ir.ui.view">
+            <field name="name">account.asset.tree</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_view_tree"/>
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <field name="state" position="before">
@@ -48,10 +48,10 @@
             </field>
         </record>
 
-        <record id="view_account_asset_asset_form" model="ir.ui.view">
-            <field name="name">account.asset.asset.form</field>
-            <field name="model">account.asset.asset</field>
-            <field name="inherit_id" ref="account_asset_management.view_account_asset_asset_form"/>
+        <record id="account_asset_view_form" model="ir.ui.view">
+            <field name="name">account.asset.form</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_view_form"/>
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <button name="open_entries" position="replace">
@@ -80,9 +80,9 @@
                             <field name="deliver_date" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
                         </group>
                     </group>
-                    <group name="asset_value">
+                    <group name="depreciation_base">
                         <group>
-                            <field name="asset_value" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                            <field name="depreciation_base" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
                             <field name="no_depreciation" invisible="1"/>
                         </group>
                         <group>
@@ -174,16 +174,16 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="account_asset_management.action_account_asset_asset_form">
+        <record model="ir.actions.act_window" id="account_asset_management.account_asset_action">
             <field name="domain">[('type', '=', 'normal')]</field>
             <field name="context">{'type': 'normal'}</field>
         </record>
 
         <!-- Asset Category -->
-        <record id="view_account_asset_category_form" model="ir.ui.view">
-            <field name="name">view.account.asset.category.form</field>
-            <field name="model">account.asset.category</field>
-            <field name="inherit_id" ref="account_asset_management.view_account_asset_category_form"/>
+        <record id="account_asset_profile_view_form" model="ir.ui.view">
+            <field name="name">view.account.asset.profile.form</field>
+            <field name="model">account.asset.profile</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_profile_view_form"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
                 <field name="name" position="after">
@@ -202,7 +202,7 @@
         <!-- Parent Asset -->
         <record model="ir.ui.view" id="view_account_asset_parent_form">
             <field name="name">view.account.asset.parent.form</field>
-            <field name="model">account.asset.asset</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <form string="Asset">
                     <sheet>
@@ -232,7 +232,7 @@
 
         <record model="ir.ui.view" id="view_account_asset_parent_tree">
             <field name="name">view.account.asset.parent.tree</field>
-            <field name="model">account.asset.asset</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <tree string="Parent Assets">
                     <field name="name"/>
@@ -248,7 +248,7 @@
 
         <record id="view_account_asset_parent_search" model="ir.ui.view">
             <field name="name">view.account.asset.parent.search</field>
-            <field name="model">account.asset.asset</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <search string="Parent Asset">
                     <field name="name" string="Parent Asset"/>
@@ -264,7 +264,7 @@
 
         <record model="ir.actions.act_window" id="action_account_asset_parent_form">
             <field name="name">Parent Assets</field>
-            <field name="res_model">account.asset.asset</field>
+            <field name="res_model">account.asset</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('type', '=', 'view'), ('parent_id', '=', False)]</field>

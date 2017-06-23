@@ -7,9 +7,9 @@ class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
     @api.multi
-    @api.constrains('asset_category_id', 'asset_id')
+    @api.constrains('asset_profile_id', 'asset_id')
     def _check_asset_id(self):
         for rec in self:
-            if rec.asset_category_id or rec.asset_id:
+            if rec.asset_profile_id or rec.asset_id:
                 raise ValidationError(
                     _('For PABI2, creating asset on invoice is not allowed.'))

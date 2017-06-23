@@ -42,8 +42,8 @@ class AccountAssetStatus(models.Model):
     )
 
 
-class AccountAssetAsset(ChartFieldAction, models.Model):
-    _inherit = 'account.asset.asset'
+class AccountAsset(ChartFieldAction, models.Model):
+    _inherit = 'account.asset'
 
     name = fields.Char(
         default='/',
@@ -59,7 +59,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         default=lambda self: self.env.ref('pabi_asset_management.'
                                           'asset_status_cancel'),
         domain="[('map_state', '=', state)]",
-        required=True,
+        required=False,
         index=True,
         help="Status vs State\n"
         "Draft → ยกเลิก\n"
@@ -92,7 +92,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     product_id = fields.Many2one(
         'product.product',
         string='Asset Type',
-        domain=[('asset_category_id', '!=', False)],
+        domain=[('asset_profile_id', '!=', False)],
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="This asset is created from this product class",
@@ -130,7 +130,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     )
     no_depreciation = fields.Boolean(
         string='No Depreciation',
-        related='category_id.no_depreciation',
+        related='profile_id.no_depreciation',
         readonly=True,
     )
     # Additional Info
@@ -217,7 +217,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     )
     # Transfer Asset
     target_asset_ids = fields.Many2many(
-        'account.asset.asset',
+        'account.asset',
         'account_asset_source_target_rel',
         'source_asset_id', 'target_asset_id',
         string='Transferred to Asset',
@@ -228,7 +228,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         compute='_compute_source_asset_count',
     )
     source_asset_ids = fields.Many2many(
-        'account.asset.asset',
+        'account.asset',
         'account_asset_source_target_rel',
         'target_asset_id', 'source_asset_id',
         string='Source Assets',
@@ -296,13 +296,12 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
             for asset in self:
                 if status.map_state != asset.state:
                     raise ValidationError(_('Invalid change of asset status'))
-        return super(AccountAssetAsset, self).write(vals)
+        return super(AccountAsset, self).write(vals)
 
     @api.multi
     def open_source_asset(self):
         self.ensure_one()
-        action = self.env.ref('account_asset_management.'
-                              'action_account_asset_asset_form')
+        action = self.env.ref('account_asset_management.account_asset_action')
         result = action.read()[0]
         assets = self.with_context(active_test=False).\
             search([('target_asset_ids', 'in', [self.id])])
@@ -336,12 +335,12 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
                     raise ValidationError(
                         _('No asset sequence setup for selected product!'))
                 vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
-        asset = super(AccountAssetAsset, self).create(vals)
+        asset = super(AccountAsset, self).create(vals)
         asset.update_related_dimension(vals)
         # Init Salvage Value from Category
         if self._context.get('create_asset_from_move_line', False):
-            if not asset.category_id.no_depreciation:
-                asset.salvage_value = asset.category_id.salvage_value
+            if not asset.profile_id.no_depreciation:
+                asset.salvage_value = asset.profile_id.salvage_value
         return asset
 
     @api.multi
@@ -358,14 +357,14 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
     @api.multi
     def compute_depreciation_board(self):
         assets = self.filtered(lambda l: not l.no_depreciation)
-        return super(AccountAssetAsset, assets).compute_depreciation_board()
+        return super(AccountAsset, assets).compute_depreciation_board()
 
     @api.multi
-    def onchange_category_id(self, category_id):
-        res = super(AccountAssetAsset, self).onchange_category_id(category_id)
-        asset_category = self.env['account.asset.category'].browse(category_id)
-        if asset_category and not asset_category.no_depreciation:
-            res['value']['salvage_value'] = asset_category.salvage_value
+    def onchange_profile_id(self, profile_id):
+        res = super(AccountAsset, self).onchange_profile_id(profile_id)
+        asset_profile = self.env['account.asset.profile'].browse(profile_id)
+        if asset_profile and not asset_profile.no_depreciation:
+            res['value']['salvage_value'] = asset_profile.salvage_value
         return res
 
     # Method used in change owner and transfer
@@ -375,7 +374,7 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         AccountMoveLine = self.env['account.move.line']
         default = {'move_id': False,
                    'parent_asset_id': False,
-                   'asset_category_id': False,
+                   'asset_profile_id': False,
                    'product_id': False,
                    'partner_id': False,
                    'stock_move_id': False,
@@ -383,8 +382,8 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         asset_move_lines_dict = []
         depre_move_lines_dict = []
         for asset in assets:
-            account_asset_id = asset.category_id.account_asset_id.id
-            account_depre_id = asset.category_id.account_depreciation_id.id
+            account_asset_id = asset.profile_id.account_asset_id.id
+            account_depre_id = asset.profile_id.account_depreciation_id.id
             # Getting the origin move_line (1 asset value and 1 depreciation)
             # Asset
             asset_lines = AccountMoveLine.search([  # Should have 1 line
@@ -441,8 +440,8 @@ class AccountAssetAsset(ChartFieldAction, models.Model):
         return move_line_dict
 
 
-class AccountAssetCategory(models.Model):
-    _inherit = 'account.asset.category'
+class AccountAssetProfile(models.Model):
+    _inherit = 'account.asset.profile'
 
     product_categ_id = fields.Many2one(
         'product.category',
@@ -466,20 +465,26 @@ class AccountAssetCategory(models.Model):
 
     @api.multi
     def write(self, vals):
-        res = super(AccountAssetCategory, self).write(vals)
+        res = super(AccountAssetProfile, self).write(vals)
         if 'product_categ_id' in vals:
             Product = self.env['product.product']
-            for asset_categ in self:
+            for asset_profile in self:
                 products = Product.search([
                     ('asset', '=', True),
-                    ('asset_category_id', '=', asset_categ.id)])
-                products.write({'categ_id': asset_categ.product_categ_id.id})
+                    ('asset_profile_id', '=', asset_profile.id)])
+                products.write({'categ_id': asset_profile.product_categ_id.id})
         return res
 
 
-class AccountAssetDepreciationLine(models.Model):
-    _inherit = 'account.asset.depreciation.line'
+class AccountAssetLine(models.Model):
+    _inherit = 'account.asset.line'
 
+    type = fields.Selection(
+        [('create', 'Purchase Value'),
+         ('depreciate', 'Depreciation'),
+         ('remove', 'Asset Removal'),
+         ],
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscalyear',
@@ -494,13 +499,13 @@ class AccountAssetDepreciationLine(models.Model):
         for rec in self:
             rec.fiscalyear_id = Fiscal.find(dt=rec.line_date)
 
-    def _setup_move_line_data(self, depreciation_line, depreciation_date,
-                              period_id, account_id, type, move_id, context):
-        move_line_data = super(AccountAssetDepreciationLine, self).\
-            _setup_move_line_data(depreciation_line, depreciation_date,
-                                  period_id, account_id, type,
-                                  move_id, context)
-        asset = depreciation_line.asset_id
+    @api.multi
+    def _setup_move_line_data(self, depreciation_date,
+                              period, account, type, move):
+        move_line_data = super(AccountAssetLine, self).\
+            _setup_move_line_data(depreciation_date,
+                                  period, account, type, move)
+        asset = self.asset_id
         move_line_data.update({'section_id': asset.owner_section_id.id,
                                'project_id': asset.owner_project_id.id})
         return move_line_data
@@ -510,7 +515,7 @@ class AssetRepairNote(models.Model):
     _name = 'asset.repair.note'
 
     asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='Asset',
         ondelete='cascade',
         index=True,
@@ -532,7 +537,7 @@ class AccountAssetDepreciationSummary(models.Model):
     _order = 'fiscalyear_id'
 
     asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='Asset',
         readonly=True,
     )
@@ -551,7 +556,7 @@ class AccountAssetDepreciationSummary(models.Model):
         _sql = """
             select min(id) as id, asset_id, fiscalyear_id,
             sum(amount) as amount_depreciate
-            from account_asset_depreciation_line a
+            from account_asset_line a
             where type = 'depreciate' and fiscalyear_id is not null
             group by asset_id, fiscalyear_id
         """

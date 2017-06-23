@@ -15,14 +15,14 @@ class ProductTemplate(models.Model):
         string='Is Asset',
         default=False,
     )
-    asset_category_id = fields.Many2one(
-        'account.asset.category',
-        string='Asset Category',
+    asset_profile_id = fields.Many2one(
+        'account.asset.profile',
+        string='Asset Profile',
     )
     stock_valuation_account_id = fields.Many2one(
         'account.account',
         string='Stock Asset Valuation Account',
-        related='asset_category_id.account_asset_id',
+        related='asset_profile_id.account_asset_id',
         readonly=True,
         help="If this product is an asset class, it will imply the stock "
         "valuation account from its assset category. ",
@@ -30,20 +30,20 @@ class ProductTemplate(models.Model):
 
     @api.onchange('asset')
     def _onchange_asset(self):
-        self.asset_category_id = False
+        self.asset_profile_id = False
         self.categ_id = False
 
-    @api.onchange('asset_category_id')
-    def _onchange_asset_category_id(self):
+    @api.onchange('asset_profile_id')
+    def _onchange_asset_profile_id(self):
         self.sequence_id = False
-        self.categ_id = self.asset_category_id.product_categ_id
+        self.categ_id = self.asset_profile_id.product_categ_id
 
     @api.multi
-    @api.constrains('asset_category_id', 'categ_id')
+    @api.constrains('asset_profile_id', 'categ_id')
     def _check_category(self):
         for rec in self:
-            if rec.asset_category_id and \
-                    rec.categ_id != rec.asset_category_id.product_categ_id:
+            if rec.asset_profile_id and \
+                    rec.categ_id != rec.asset_profile_id.product_categ_id:
                 raise ValidationError(
                     _('Internal Category not conform with Asset Category!'))
 

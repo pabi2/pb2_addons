@@ -24,7 +24,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     parent_asset_id = fields.Many2one(
-        'account.asset.asset',
+        'account.asset',
         string='Prototype',
         domain="[('parent_id', '=', False),('type', '=', 'view'),"
         "'|',('project_id', '=', project_id),('section_id', '=', section_id)]",

@@ -3,17 +3,17 @@
     <data>
 
         <!-- Asset -->
-        <record model="ir.ui.view" id="view_account_asset_asset_tree_transfer">
-            <field name="name">account.asset.asset.tree_transfer</field>
-            <field name="model">account.asset.asset</field>
+        <record model="ir.ui.view" id="view_account_asset_tree_transfer">
+            <field name="name">account.asset.tree_transfer</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <tree string="Assets">
                     <field name="name"/>
                     <field name="code"/>
                     <field name="product_id"/>
-                    <field name="category_id"/>
+                    <field name="profile_id"/>
                     <field name="purchase_id"/>
-                    <field name="asset_value"/>
+                    <field name="depreciation_base"/>
                     <field name="status"/>
                     <field name="state"/>
                     <field name="active"/>
@@ -22,14 +22,14 @@
         </record>
 
         <record id="view_account_asset_search_transfer" model="ir.ui.view">
-            <field name="name">account.asset.asset.search_transfer</field>
-            <field name="model">account.asset.asset</field>
+            <field name="name">account.asset.search_transfer</field>
+            <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <search string="Assets">
                     <filter string="Asset w/o Depre." name="no_depre_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', True), ('active', '=', True)]"/>
                     <separator/>
                     <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
-                    <field name="category_id"/>
+                    <field name="profile_id"/>
                     <field name="product_id"/>
                     <field name="purchase_id"/>
                     <field name="project_id"/>
@@ -76,16 +76,16 @@
                             <page string="Source Assets">
                                 <field
                                     name="asset_ids"
-                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_asset_tree_transfer',
+                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_tree_transfer',
                                               'search_view_ref': 'pabi_asset_management.view_account_asset_search_transfer',
                                               'search_default_no_depre_asset': 1}">
                                     <tree editable="bottom">
                                         <field name="name" readonly="1"/>
                                         <field name="code" readonly="1"/>
                                         <field name="product_id" readonly="1"/>
-                                        <field name="category_id" readonly="1"/>
+                                        <field name="profile_id" readonly="1"/>
                                         <field name="purchase_id" readonly="1"/>
-                                        <field name="asset_value" readonly="1" sum="Total"/>
+                                        <field name="depreciation_base" readonly="1" sum="Total"/>
                                         <field name="state"/>
                                         <field name="status"/>
                                         <field name="active"/>
@@ -96,9 +96,9 @@
                                 <field name="target_asset_ids">
                                     <tree editable="bottom">
                                         <field name="product_id"/>
-                                        <field name="asset_category_id"/>
+                                        <field name="asset_profile_id"/>
                                         <field name="asset_name"/>
-                                        <field name="asset_value" sum="Total"/>
+                                        <field name="depreciation_base" sum="Total"/>
                                         <field name="ref_asset_id"/>
                                     </tree>
                                 </field>
@@ -129,7 +129,7 @@
                 <search string="Asset Transfer">
                     <field name="name" string="Asset Transfer"/>
                     <group expand="0" string="Group By...">
-                        <!-- <filter string="Category" domain="" context="{'group_by':'asset_category_id'}"/> -->
+                        <!-- <filter string="Category" domain="" context="{'group_by':'asset_profile_id'}"/> -->
                     </group>
                 </search>
             </field>
