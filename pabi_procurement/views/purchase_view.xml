@@ -224,7 +224,9 @@
             <field name="model">purchase.order.line</field>
             <field name="inherit_id" ref="pabi_chartfield.purchase_order_line_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='section_id']" position="replace" />
+                <xpath expr="//field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='activity_group_id']" position="after">
                     <field name="section_id" />
                 </xpath>
