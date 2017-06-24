@@ -464,13 +464,32 @@ class AccountAssetProfile(models.Model):
     )
     no_depreciation = fields.Boolean(
         string='No Depreciation',
-        default=False,
+        compute='_compute_no_depreciation',
+        store=True,
+        help="If profile type is other than normal, No Depreciation is true",
     )
     salvage_value = fields.Float(
         string='Salvage Value',
         default=0.0,
         help="Default salvage value used when create asset from move line",
     )
+    profile_type = fields.Selection(
+        [('normal', 'Normal'),
+         ('ait', 'AIT'),
+         ('auc', 'AUC'),
+         ('lva', 'Low Value'),
+         ('atm', 'ATM')],
+        string='Asset Profile Type',
+        required=True,
+        default='normal',
+    )
+
+    @api.multi
+    @api.depends('profile_type')
+    def _compute_no_depreciation(self):
+        for rec in self:
+            rec.no_depreciation = \
+                rec.profile_type != 'normal' and True or False
 
     @api.multi
     def write(self, vals):

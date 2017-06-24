@@ -202,6 +202,7 @@
                     <attribute name="required">0</attribute>
                 </field>
                 <field name="parent_id" position="after">
+                    <field name="profile_type"/>
                     <field name="no_depreciation"/>
                     <field name="salvage_value"/>
                 </field>

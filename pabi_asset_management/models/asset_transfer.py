@@ -44,6 +44,7 @@ class AccountAssetTransfer(models.Model):
         'transfer_id', 'asset_id',
         string='Source Assets',
         domain=[('type', '!=', 'view'),
+                ('profile_id.profile_type', 'in', ('ait', 'auc')),
                 '|', ('active', '=', True), ('active', '=', False)],
         copy=False,
         readonly=True,
