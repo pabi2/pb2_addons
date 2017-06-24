@@ -30,11 +30,14 @@ class PabiFixedAssetNonStandardReport(models.Model):
         po.date_order,
         trim(concat(rp.title,' ',rp.name)) AS partner_name,
         rcp.name AS province,
-        aaa.warranty AS warranty,
+        extract(year from age(aaa.warranty_expire_date,
+                              aaa.warranty_start_date))*12 +
+        extract(month from age(aaa.warranty_expire_date,
+                               aaa.warranty_start_date)) AS warranty,
         aaa.name AS note,
         sm.name AS description
         FROM
-        account_asset_asset aaa
+        account_asset aaa
         LEFT JOIN product_product pp ON pp.id = aaa.product_id
         LEFT JOIN stock_move sm ON sm.id = aaa.move_id
         LEFT JOIN stock_picking sp ON sp.id = sm.picking_id
