@@ -55,6 +55,17 @@ class AccountAsset(ChartFieldAction, models.Model):
         # cause problem compute depreciation table, it set line type wrongly
         default=lambda self: self._context.get('type') or 'normal',
     )
+    profile_type = fields.Selection(
+        [('normal', 'Normal'),
+         ('ait', 'AIT'),
+         ('auc', 'AUC'),
+         ('lva', 'Low-Value'),
+         ('atm', 'ATM')],
+        related='profile_id.profile_type',
+        string='Asset Profile Type',
+        store=True,
+        readonly=True,
+    )
     status = fields.Many2one(
         'account.asset.status',
         string='Asset Status',
@@ -477,7 +488,7 @@ class AccountAssetProfile(models.Model):
         [('normal', 'Normal'),
          ('ait', 'AIT'),
          ('auc', 'AUC'),
-         ('lva', 'Low Value'),
+         ('lva', 'Low-Value'),
          ('atm', 'ATM')],
         string='Asset Profile Type',
         required=True,

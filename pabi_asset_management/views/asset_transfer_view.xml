@@ -26,7 +26,13 @@
             <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <search string="Assets">
-                    <filter string="Asset w/o Depre." name="no_depre_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', True), ('active', '=', True)]"/>
+                    <filter string="Active Assets" name="active_asset" domain="[('state', '=', 'open'), ('active', '=', True)]"/>
+                    <separator/>
+                    <filter string="Normal" name="normal" domain="[('type', '!=', 'view'), ('profile_type', '=', 'normal'), ('active', '=', True)]"/>
+                    <filter string="AIT" name="ait" domain="[('type', '!=', 'view'), ('profile_type', '=', 'ait'), ('active', '=', True)]"/>
+                    <filter string="AUC" name="auc" domain="[('type', '!=', 'view'), ('profile_type', '=', 'auc'), ('active', '=', True)]"/>
+                    <filter string="ATM" name="atm" domain="[('type', '!=', 'view'), ('profile_type', '=', 'atm'), ('active', '=', True)]"/>
+                    <filter string="Low-Value" name="lva" domain="[('type', '!=', 'view'), ('profile_type', '=', 'lva'), ('active', '=', True)]"/>
                     <separator/>
                     <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
                     <field name="profile_id"/>
@@ -78,7 +84,7 @@
                                     name="asset_ids"
                                     context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_tree_transfer',
                                               'search_view_ref': 'pabi_asset_management.view_account_asset_search_transfer',
-                                              'search_default_no_depre_asset': 1}">
+                                              'search_default_active_asset': 1}">
                                     <tree editable="bottom">
                                         <field name="name" readonly="1"/>
                                         <field name="code" readonly="1"/>
