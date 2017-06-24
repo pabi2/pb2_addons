@@ -410,30 +410,38 @@ class AccountAsset(ChartFieldAction, models.Model):
                 ('asset_id', '=', asset.id),
                 ('account_id', '=', account_asset_id),
                 # Same Owner
-                ('project_id', '=', asset.project_id.id),
-                ('section_id', '=', asset.section_id.id),
-            ])
+                ('project_id', '=', asset.owner_project_id.id),
+                ('section_id', '=', asset.owner_section_id.id),
+            ], order='id asc')
             if asset_lines:
                 asset_line_dict = asset_lines[0].copy_data(default)[0]
                 debit = sum(asset_lines.mapped('debit'))
                 credit = sum(asset_lines.mapped('credit'))
-                asset_line_dict['credit'] = debit
-                asset_line_dict['debit'] = credit
+                if debit > credit:
+                    asset_line_dict['credit'] = debit - credit
+                    asset_line_dict['debit'] = False
+                else:
+                    asset_line_dict['credit'] = False
+                    asset_line_dict['debit'] = credit - debit
                 asset_move_lines_dict.append(asset_line_dict)
             # Depre
             depre_lines = AccountMoveLine.search([
                 ('asset_id', '=', asset.id),
                 ('account_id', '=', account_depre_id),
                 # Same Owner
-                ('project_id', '=', asset.project_id.id),
-                ('section_id', '=', asset.section_id.id),
-            ])
+                ('project_id', '=', asset.owner_project_id.id),
+                ('section_id', '=', asset.owner_section_id.id),
+            ], order='id asc')
             if depre_lines:
                 depre_line_dict = depre_lines[0].copy_data(default)[0]
                 debit = sum(depre_lines.mapped('debit'))
                 credit = sum(depre_lines.mapped('credit'))
-                depre_line_dict['credit'] = debit
-                depre_line_dict['debit'] = credit
+                if debit > credit:
+                    asset_line_dict['credit'] = debit - credit
+                    asset_line_dict['debit'] = False
+                else:
+                    asset_line_dict['credit'] = False
+                    asset_line_dict['debit'] = credit - debit
                 depre_move_lines_dict.append(depre_line_dict)
             # Validation
             if not asset_move_lines_dict:
@@ -454,8 +462,8 @@ class AccountAsset(ChartFieldAction, models.Model):
         })
         if new_owner:
             move_line_dict.update({
-                'project_id': new_owner.get('project_id'),
-                'section_id': new_owner.get('section_id'),
+                'project_id': new_owner.get('owner_project_id', False),
+                'section_id': new_owner.get('owner_section_id', False),
             })
         return move_line_dict
 

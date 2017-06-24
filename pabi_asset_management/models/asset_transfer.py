@@ -23,7 +23,6 @@ class AccountAssetTransfer(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     user_id = fields.Many2one(
         'res.users',
@@ -118,10 +117,6 @@ class AccountAssetTransfer(models.Model):
                 raise ValidationError(
                     _('You set up source/target assets incorrectly,\n'
                       'only spliting (1-M) or merging (M-1) is allowed!'))
-
-    @api.onchange('product_id')
-    def _onchange_product_id(self):
-        self.asset_name = self.product_id.name
 
     @api.model
     def create(self, vals):
@@ -271,7 +266,7 @@ class AccountAssetTransferTarget(models.Model):
     transfer_id = fields.Many2one(
         'account.asset.transfer',
         string='Asset Transfer',
-        indext=True,
+        index=True,
         ondelete='cascade',
     )
     product_id = fields.Many2one(
@@ -301,6 +296,10 @@ class AccountAssetTransferTarget(models.Model):
         string='New Asset',
         readonly=True,
     )
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        self.asset_name = self.product_id.name
 
     @api.multi
     @api.constrains('depreciation_base')

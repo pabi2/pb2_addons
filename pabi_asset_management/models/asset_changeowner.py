@@ -22,7 +22,6 @@ class AccountAssetChangeowner(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     user_id = fields.Many2one(
         'res.users',
@@ -37,38 +36,10 @@ class AccountAssetChangeowner(models.Model):
         string='Note',
         copy=False,
     )
-    # To New Owner
-    section_id = fields.Many2one(
-        'res.section',
-        string='Section',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    project_id = fields.Many2one(
-        'res.project',
-        string='Project',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    costcenter_id = fields.Many2one(
-        'res.costcenter',
-        string='Costcenter',
-        compute='_compute_costcenter_id',
-    )
-    responsible_user_id = fields.Many2one(
-        'res.users',
-        string='Responsible By',
-        required=True,
-        copy=False,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    asset_ids = fields.Many2many(
-        'account.asset',
-        'account_asset_changeowner_rel',
-        'changeowner_id', 'asset_id',
-        string='Assets to Change Owner',
-        domain=[('type', '!=', 'view')],
+    changeowner_ids = fields.One2many(
+        'account.asset.changeowner.line',
+        'changeowner_id',
+        string='Changeowner Line',
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -83,28 +54,6 @@ class AccountAssetChangeowner(models.Model):
         copy=False,
         track_visibility='onchange',
     )
-
-    @api.onchange('product_id')
-    def _onchange_product_id(self):
-        self.asset_name = self.product_id.name
-
-    @api.onchange('section_id')
-    def _onchange_section_id(self):
-        if self.section_id:
-            self.project_id = False
-
-    @api.onchange('project_id')
-    def _onchange_project_id(self):
-        if self.project_id:
-            self.section_id = False
-
-    @api.multi
-    @api.depends('project_id', 'section_id')
-    def _compute_costcenter_id(self):
-        for rec in self:
-            if rec.project_id or rec. section_id:
-                rec.costcenter_id = rec.project_id.costcenter_id or \
-                    rec.section_id.costcenter_id
 
     @api.model
     def create(self, vals):
@@ -145,44 +94,113 @@ class AccountAssetChangeowner(models.Model):
         Asset = self.env['account.asset']
         Period = self.env['account.period']
         period = Period.find()
-        # New Owner
-        project = self.project_id
-        section = self.section_id
-        responsible_user = self.responsible_user_id.id
-        # For change owner, no owner should be the same
-        for asset in self.asset_ids:
-            if (asset.project_id and asset.project_id == project) or \
-                    (asset.section_id and asset.section_id == section):
+        for line in self.changeowner_ids:
+            project = line.project_id
+            section = line.section_id
+            # For change owner, no owner should be the same
+            asset = line.asset_id
+            if (project and asset.owner_project_id == project) or \
+                    (section and asset.owner_section_id == section):
                 raise ValidationError(
-                    _('Asset %s change to the same owner!') % (asset.code))
-        new_owner = {'owner_project_id': project.id,
-                     'owner_section_id': section.id,
-                     'responsible_user': responsible_user, }
-        # Moving of each asset to the new owner
-        for asset in self.asset_ids:
-            move_lines = []
-            asset_move_lines_dict, depre_move_lines_dict = \
-                Asset._prepare_asset_reverse_moves(asset)
-            move_lines += asset_move_lines_dict + depre_move_lines_dict
-            # Create move line for target asset
-            # Asset
-            new_asset_move_line_dict = \
-                Asset._prepare_asset_target_move(asset_move_lines_dict,
-                                                 new_owner)
-            move_lines.append(new_asset_move_line_dict)
-            # Depre
-            if depre_move_lines_dict:
-                new_depre_move_lines_dict = \
-                    Asset._prepare_asset_target_move(depre_move_lines_dict,
+                    _('Asset %s changes to the same owner!') % (asset.code))
+            new_owner = {'owner_project_id': project.id,
+                         'owner_section_id': section.id}
+            # Moving to new owner Project/Section
+            if new_owner.get('owner_project_id') or \
+                    new_owner.get('owner_section_id'):
+                move_lines = []
+                asset_move_lines_dict, depre_move_lines_dict = \
+                    Asset._prepare_asset_reverse_moves(asset)
+                move_lines += asset_move_lines_dict + depre_move_lines_dict
+                # Create move line for target asset
+                # Asset
+                new_asset_move_line_dict = \
+                    Asset._prepare_asset_target_move(asset_move_lines_dict,
                                                      new_owner)
-                move_lines.append(new_depre_move_lines_dict)
-            # Finalize all moves before create it.
-            final_move_lines = [(0, 0, x) for x in move_lines]
-            move_dict = {'journal_id': asset.profile_id.journal_id.id,
-                         'line_id': final_move_lines,
-                         'period_id': period.id,
-                         'date': fields.Date.context_today(self),
-                         'ref': self.name}
-            AccountMove.with_context(allow_asset=True).create(move_dict)
-            # Write back new owner
+                move_lines.append(new_asset_move_line_dict)
+                # Depre
+                if depre_move_lines_dict:
+                    new_depre_move_lines_dict = \
+                        Asset._prepare_asset_target_move(depre_move_lines_dict,
+                                                         new_owner)
+                    move_lines.append(new_depre_move_lines_dict)
+                # Finalize all moves before create it.
+                final_move_lines = [(0, 0, x) for x in move_lines]
+                move_dict = {'journal_id': asset.profile_id.journal_id.id,
+                             'line_id': final_move_lines,
+                             'period_id': period.id,
+                             'date': fields.Date.context_today(self),
+                             'ref': self.name}
+                print move_dict
+                AccountMove.with_context(allow_asset=True).create(move_dict)
+            # Asset Owner Info update
+            if line.responsible_user_id:
+                new_owner['responsible_user_id'] = line.responsible_user_id.id
+            if line.location_id:
+                new_owner['location_id'] = line.location_id.id
+            if line.room:
+                new_owner['room'] = line.room
             asset.write(new_owner)
+
+    @api.multi
+    @api.constrains('changeowner_ids')
+    def _check_changeowner_ids(self):
+        for rec in self:
+            if len(rec.changeowner_ids) != \
+                    len(rec.changeowner_ids.mapped('asset_id')):
+                raise ValidationError(_('Duplicate asset in line!'))
+
+
+class AccountAssetChangeownerLine(models.Model):
+    _name = 'account.asset.changeowner.line'
+
+    changeowner_id = fields.Many2one(
+        'account.asset.changeowner',
+        string='Asset Changeowner',
+        index=True,
+        ondelete='cascade',
+    )
+    asset_id = fields.Many2one(
+        'account.asset',
+        string='Asset',
+        domain=[('state', '=', 'open')],
+        required=True,
+    )
+    # Target Owner
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+    )
+    responsible_user_id = fields.Many2one(
+        'res.users',
+        string='Responsible By',
+    )
+    location_id = fields.Many2one(
+        'account.asset.location',
+        string='Location',
+    )
+    room = fields.Char(
+        string='Room',
+    )
+
+    @api.onchange('section_id')
+    def _onchange_section_id(self):
+        if self.section_id:
+            self.project_id = False
+
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        if self.project_id:
+            self.section_id = False
+
+    @api.multi
+    @api.constrains('section_id', 'project_id')
+    def _check_section_project(self):
+        for rec in self:
+            if rec.section_id and rec.project_id:
+                raise ValidationError(
+                    _('Please choose only project or section!'))
