@@ -65,7 +65,7 @@
                 <group colspan="4" col="4" position="replace">
                     <group name="asset_status">
                         <group>
-                            <field name="type" on_change="onchange_type(type)" invisible="1"/>
+                            <field name="type" invisible="1"/>
                             <field name="parent_id"/>
                             <field name="code2"/>
                             <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_ids', '=', [])]}"/>
