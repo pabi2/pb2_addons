@@ -554,13 +554,13 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise ValidationError("Cant' get PD Document Type.")
+            raise ValidationError("Can't get PD Document Type.")
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
             ('report_type', '=', 'pdf'),
             ('report_name', '=',
-             'purchase.requisition_'+doc_type.name.lower())],)
+             'purchase.requisition_' + doc_type.name.lower())],)
         if matching_reports:
             report = matching_reports[0]
             result, _ = openerp.report.render_report(self._cr, self._uid,
@@ -596,8 +596,8 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise ValidationError(_("Cant' get PD Document Type."))
-        report_name = 'purchase.requisition_'+doc_type.name.lower()
+            raise ValidationError(_("Can't get PD Document Type."))
+        report_name = 'purchase.requisition_' + doc_type.name.lower()
         return self.env['report'].get_action(self, report_name)
 
     @api.multi
