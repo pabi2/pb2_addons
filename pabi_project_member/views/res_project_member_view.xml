@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_res_project_member_form" model="ir.ui.view">
+            <field name="name">res.project.member.form</field>
+            <field name="model">res.project</field>
+            <field name="inherit_id" ref="pabi_base.view_res_project_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='/form/notebook' position="inside">
+                    <page string="Project Member">
+                        <field name="member_ids">
+                            <tree string="Project Member" editable="bottom">
+                                <field name="employee_id"/>
+                                <field name="project_position"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

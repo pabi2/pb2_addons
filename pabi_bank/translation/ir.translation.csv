@@ -1,0 +1,33 @@
+id,lang,res_id,src,source,state,name,value,type
+base.res_bank_master_translate_1,th_TH,1,BANK OF THAILAND,BANK OF THAILAND,Translated,"res.bank.master,name",ธนาคารแห่งประเทศไทย,Object
+base.res_bank_master_translate_2,th_TH,2,BANGKOK BANK PUBLIC COMPANY LIMITED,BANGKOK BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารกรุงเทพ จำกัด (มหาชน),Object
+base.res_bank_master_translate_3,th_TH,3,KASIKORNBANK PUBLIC COMPANY LIMITED,KASIKORNBANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารกสิกรไทย จำกัด (มหาชน),Object
+base.res_bank_master_translate_4,th_TH,4,"The ROYAL BANK OF SCOTLAND N.V., BANGKOK BRANCH","The ROYAL BANK OF SCOTLAND N.V., BANGKOK BRANCH",Translated,"res.bank.master,name",เดอะรอยัลแบ็งก์อ๊อฟสกอตแลนด์ เอ็น.วี.สาขากรุงเทพฯ (เดิมคือ ธนาคารเอบีเอ็น แอมโร เอ็น.วี. :ABN-AMRO),Object
+base.res_bank_master_translate_5,th_TH,5,KRUNG THAI BANK PUBLIC COMPANY LIMITED,KRUNG THAI BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารกรุงไทย จำกัด (มหาชน),Object
+base.res_bank_master_translate_6,th_TH,6,"JPMORGAN CHASE BANK, N.A.BANGKOK BRANCH","JPMORGAN CHASE BANK, N.A.BANGKOK BRANCH",Translated,"res.bank.master,name",ธนาคารเจพีมอร์แกน เชส สาขากรุงเทพฯ,Object
+base.res_bank_master_translate_7,th_TH,7,"THE BANK OF TOKYO-MITSUBISHI UFJ, LTD. , BANGKOK BRANCH","THE BANK OF TOKYO-MITSUBISHI UFJ, LTD. , BANGKOK BRANCH",Translated,"res.bank.master,name",ธนาคารแห่งโตเกียว - มิตซูบิชิ ยูเอฟเจ จำกัด สาขากรุงเทพฯ,Object
+base.res_bank_master_translate_8,th_TH,8,TMB BANK PUBLIC COMPANY LIMITED,TMB BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารทหารไทย จำกัด (มหาชน),Object
+base.res_bank_master_translate_9,th_TH,9,SIAM COMMERCIAL BANK PUBLIC COMPANY LIMITED,SIAM COMMERCIAL BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารไทยพาณิชย์ จำกัด (มหาชน),Object
+base.res_bank_master_translate_10,th_TH,10,SIAM CITY BANK PUBLIC COMPANY LIMITED,SIAM CITY BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารนครหลวงไทย จำกัด (มหาชน),Object
+base.res_bank_master_translate_11,th_TH,11,CITIBANK N.A.,CITIBANK N.A.,Translated,"res.bank.master,name",ธนาคารซิตี้แบงก์ เอ็น.เอ. สาขากรุงเทพฯ,Object
+base.res_bank_master_translate_12,th_TH,12,SUMITOMO MITSUI BANKING CORPORATION,SUMITOMO MITSUI BANKING CORPORATION,Translated,"res.bank.master,name",ธนาคารชูมิโตโม มิตซุย แบงกิ้ง คอร์ปอเรชั่น,Object
+base.res_bank_master_translate_13,th_TH,13,STANDARD CHARTERED BANK (THAI) PUBLIC COMPANY LTD,STANDARD CHARTERED BANK (THAI) PUBLIC COMPANY LTD,Translated,"res.bank.master,name",ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย) จำกัด (มหาชน),Object
+base.res_bank_master_translate_14,th_TH,14,CIMB THAI BANK PUBLIC COMPANY LIMITED,CIMB THAI BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารซีไอเอ็มบีไทย จำกัด (มหาชน),Object
+base.res_bank_master_translate_15,th_TH,15,UNITED OVERSEAS BANK (THAI) PUBLIC COMPANY LIMITED,UNITED OVERSEAS BANK (THAI) PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคายูโอบี จำกัด (มหาชน),Object
+base.res_bank_master_translate_16,th_TH,16,BANK OF AYUDHYA PUBLIC COMPANY PUBLIC COMPANY LIMITED,BANK OF AYUDHYA PUBLIC COMPANY PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน) ,Object
+base.res_bank_master_translate_17,th_TH,17,MEGA INTERNATIONAL COMMERCIAL BANK PUBLIC COMPANY LIMITED,MEGA INTERNATIONAL COMMERCIAL BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารเมกกะ สากลพาณิชย์ จำกัด,Object
+base.res_bank_master_translate_18,th_TH,18,"BANK OF AMERICA, NATIONAL ASSOCIATION","BANK OF AMERICA, NATIONAL ASSOCIATION",Translated,"res.bank.master,name",ธนาคารแห่งอเมริกา เนชั่นแนล แอสโซซิเอชั่น,Object
+base.res_bank_master_translate_19,th_TH,19,CREDIT AGRICOLE CORPORATE AND INVESTMENT BANK,CREDIT AGRICOLE CORPORATE AND INVESTMENT BANK,Translated,"res.bank.master,name",ธนาคารเครดิต อะกริกอล คอร์ปอเรทแอนด์อินเวสเมนท์แบงก์ (เดิม:ธนาคารคาลิยง-CALYON),Object
+base.res_bank_master_translate_20,th_TH,20,GOVERNMENT SAVING BANK,GOVERNMENT SAVING BANK,Translated,"res.bank.master,name",ธนาคารออมสิน,Object
+base.res_bank_master_translate_21,th_TH,21,"HONGKONG & SHANGHAI CORPORATION PUBLIC COMPANY LIMITED, BANGKOK BRANCH","HONGKONG & SHANGHAI CORPORATION PUBLIC COMPANY LIMITED, BANGKOK BRANCH",Translated,"res.bank.master,name",ธนาคารฮ่องกงและเซี่ยงไฮ้แบงค์กิ้งคอร์เปอร์เรต,Object
+base.res_bank_master_translate_22,th_TH,22,"DEUTSCHE BANK AKTIENGESELLSC, BANGKOK BRANCH","DEUTSCHE BANK AKTIENGESELLSC, BANGKOK BRANCH",Translated,"res.bank.master,name",ธนาคารดอยซ์แบงก์,Object
+base.res_bank_master_translate_23,th_TH,23,GOVERNMENT HOUSING BANK,GOVERNMENT HOUSING BANK,Translated,"res.bank.master,name",ธนาคารอาคารสงเคราะห์,Object
+base.res_bank_master_translate_24,th_TH,24,BANK FOR AGRICULTURE AND AGRICULTURAL CO-OPERATIVES,BANK FOR AGRICULTURE AND AGRICULTURAL CO-OPERATIVES,Translated,"res.bank.master,name",ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร,Object
+base.res_bank_master_translate_25,th_TH,25,"MIZUHO CORPORATE BANK PUBLIC COMPANY LIMITED , BANGKOK BRANCH","MIZUHO CORPORATE BANK PUBLIC COMPANY LIMITED , BANGKOK BRANCH",Translated,"res.bank.master,name",ธนาคารมิซูโฮ คอร์ปอเรต จำกัด สาขากรุงเทพฯ,Object
+base.res_bank_master_translate_26,th_TH,26,THANACHART BANK PUBLIC COMPANY LIMITED,THANACHART BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนารคารธนชาต จำกัด (มหาชน),Object
+base.res_bank_master_translate_27,th_TH,27,ISLAMIC BANK OF THAILAND,ISLAMIC BANK OF THAILAND,Translated,"res.bank.master,name",ธนาคารอิสลามแห่งประเทศไทย,Object
+base.res_bank_master_translate_28,th_TH,28,TISCO BANK PUBLIC COMPANY LIMITED,TISCO BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารทิสโก้ จำกัด (มหาชน),Object
+base.res_bank_master_translate_29,th_TH,29,KIATNAKIN BANK PUBLIC COMPANY LIMITED,KIATNAKIN BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารเกียรตินาคิน จำกัด (มหาชน),Object
+base.res_bank_master_translate_30,th_TH,30,INDUSTRIAL AND COMMERCIAL BANK OF CHAINA (THAI) PUBLIC COMPANY LIMITED,INDUSTRIAL AND COMMERCIAL BANK OF CHAINA (THAI) PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารไอซีบีซี (ไทย) จำกัด (มหาชน),Object
+base.res_bank_master_translate_31,th_TH,31,THE THAI CREDITRETAIL BANK PUBLIC COMPANY LIMITED,THE THAI CREDITRETAIL BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารไทยเครดิตเพื่อรายย่อย จำกัด (มหาชน),Object
+base.res_bank_master_translate_32,th_TH,32,LAND AND HOUSES RETAIL BANK PUBLIC COMPANY LIMITED,LAND AND HOUSES RETAIL BANK PUBLIC COMPANY LIMITED,Translated,"res.bank.master,name",ธนาคารแลนด์แอนด์เฮ้าส์เพื่อรายย่อย จำกัด,Object

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>  
+    	#TOP Project Configuration Menu
+    	<menuitem name="Project" id="menu_wkf_config_project" parent="menu_wkf_config" sequence="5"/>
+    	      
+    	#Special Amount Project Approval
+        <record id="view_wkf_cmd_special_amount_project_approval_tree" model="ir.ui.view">
+            <field name="name">view.wkf.cmd.special.amount.project.approval.tree</field>
+            <field name="model">wkf.cmd.special.amount.project.approval</field>
+            <field name="arch" type="xml">
+                <tree string="Special Amount Project Approval">
+                    <field name="doctype_id"/>
+                    <field name="employee_id"/>
+                    <field name="amount_min" />
+                    <field name="amount_max" />
+                </tree>
+            </field>
+        </record> 
+
+        <record id="view_wkf_cmd_special_amount_project_approval_form" model="ir.ui.view">
+            <field name="name">view.wkf.cmd.special.amount.project.approval.form</field>
+            <field name="model">wkf.cmd.special.amount.project.approval</field>
+            <field name="arch" type="xml">
+            	<form string="Special Amount Project Approval">
+                	<group>
+            			<group>
+		                    <field name="doctype_id"/>
+		                    <field name="employee_id"/>
+		                    <field name="amount_min" />
+		                    <field name="amount_max" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>            
+
+        <record id="action_wkf_cmd_special_amount_project_approval" model="ir.actions.act_window">
+            <field name="name">Special Amount Project Approval</field>
+            <field name="res_model">wkf.cmd.special.amount.project.approval</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_wkf_cmd_special_amount_project_approval_tree"/>
+        </record>
+        
+        <menuitem name="Special Amount Project Approval"
+         	id="menu_wkf_cmd_special_amount_project_approval"
+        	action="action_wkf_cmd_special_amount_project_approval" 
+        	parent="menu_wkf_config_project" 
+        	sequence="1"/>	
+    </data>
+</openerp>

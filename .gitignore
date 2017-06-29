@@ -15,12 +15,20 @@ dist/
 downloads/
 eggs/
 .eggs/
+<<<<<<< HEAD
 lib/
 lib64/
 parts/
 sdist/
 var/
 wheels/
+=======
+#lib/
+#lib64/
+parts/
+sdist/
+var/
+>>>>>>> pb2_base_nstda/master
 *.egg-info/
 .installed.cfg
 *.egg
@@ -43,11 +51,16 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+<<<<<<< HEAD
 *.cover
+=======
+*,cover
+>>>>>>> pb2_base_nstda/master
 .hypothesis/
 
 # Translations
 *.mo
+<<<<<<< HEAD
 *.pot
 
 # Django stuff:
@@ -60,6 +73,12 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+=======
+#*.pot
+
+# Django stuff:
+*.log
+>>>>>>> pb2_base_nstda/master
 
 # Sphinx documentation
 docs/_build/
@@ -67,6 +86,7 @@ docs/_build/
 # PyBuilder
 target/
 
+<<<<<<< HEAD
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -99,3 +119,16 @@ ENV/
 
 # mypy
 .mypy_cache/
+=======
+#Ipython Notebook
+.ipynb_checkpoints
+
+# Additional
+openerp-server.conf
+*.jasper
+.project
+.pydevproject
+*.settings
+*.*~
+.~*
+>>>>>>> pb2_base_nstda/master

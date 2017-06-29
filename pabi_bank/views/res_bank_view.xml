@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+
+        <!-- add the bank abbrev-->
+        <record id="view_res_bank_form" model="ir.ui.view">
+            <field name="name">res.bank.form.rib.inherit</field>
+            <field name="model">res.bank</field>
+            <field name="inherit_id" ref="base.view_res_bank_form" />
+            <field name="arch" type="xml">
+                <field name="bic" position="before">
+                    <field name="code" required="1"/>
+                    <field name="abbrev" required="1" />
+                </field>
+            </field>
+        </record>
+
+        <!-- res.bank.branch.branch -->
+        <record id="view_res_bank_master_form" model="ir.ui.view">
+            <field name="name">res.bank.branch.form</field>
+            <field name="model">res.bank.branch</field>
+            <field name="arch" type="xml">
+                <form string="Bank Branch">
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="bank_id"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_res_bank_master_tree" model="ir.ui.view">
+            <field name="name">res.bank.branch.tree</field>
+            <field name="model">res.bank.branch</field>
+            <field name="arch" type="xml">
+                <tree string="Bank Branch">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="bank_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_res_bank_master_form" model="ir.actions.act_window">
+            <field name="name">Bank Branch</field>
+            <field name="res_model">res.bank.branch</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new bank branch
+                </p>
+                <p>
+                    Manage bank records you want to be used in the system.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_res_bank_master_form" id="menu_action_res_bank_master_form" parent="base.menu_config_address_book" sequence="10" groups="base.group_no_one"/>
+    </data>
+</openerp>

@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # Fund
+        <record id="view_res_fund_tree" model="ir.ui.view">
+            <field name="name">view.res.fund.tree</field>
+            <field name="model">res.fund</field>
+            <field name="arch" type="xml">
+                <tree string="Fund">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_fund_form" model="ir.ui.view">
+            <field name="name">view.res.fund.form</field>
+            <field name="model">res.fund</field>
+            <field name="arch" type="xml">
+                <form string="Fund">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="type"/>
+                        </group>
+                        <group>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <separator string="Fund for following areas.."/>
+                        <page string="Projects">
+                            <field name="project_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Sections">
+                            <field name="section_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Investment Assets">
+                            <field name="invest_asset_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Investment Construction Phases">
+                            <field name="invest_construction_phase_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Personnel Costcenters">
+                            <field name="personnel_costcenter_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_res_fund_search" model="ir.ui.view">
+            <field name="name">view.res.fund.search</field>
+            <field name="model">res.fund</field>
+            <field name="arch" type="xml">
+                <search string="Fund">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <group expand="0" string="Group By">
+                        <filter name="type" string="Type" context="{'group_by':'type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_res_fund" model="ir.actions.act_window">
+            <field name="name">Fund</field>
+            <field name="res_model">res.fund</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_fund_tree"/>
+        </record>
+
+        <menuitem name="Source of Funds" id="menu_res_fund" action="action_res_fund" parent="menu_source_of_fund" sequence="1"/>
+    </data>
+</openerp>

@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # SPA
+        <record id="view_res_spa_tree" model="ir.ui.view">
+            <field name="name">view.res.spa.tree</field>
+            <field name="model">res.spa</field>
+            <field name="arch" type="xml">
+                <tree string="SPA">
+                    <field name="name"/>
+                    <field name="begin_date"/>
+                    <field name="end_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_spa_form" model="ir.ui.view">
+            <field name="name">view.res.spa.form</field>
+            <field name="model">res.spa</field>
+            <field name="arch" type="xml">
+                <form string="SPA">
+                    <label for="name" class="oe_edit_only" string="Name"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="begin_period_id"/>
+                            <field name="end_period_id"/>
+                        </group>
+                        <group>
+                            <field name="begin_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <notebook></notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_spa" model="ir.actions.act_window">
+            <field name="name">SPA</field>
+            <field name="res_model">res.spa</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_spa_tree"/>
+        </record>
+
+        <menuitem name="SPA" id="menu_res_spa" action="action_res_spa" parent="menu_structured_dimension" sequence="1"/>
+
+        # Mission
+        <record id="view_res_mission_tree" model="ir.ui.view">
+            <field name="name">view.res.mission.tree</field>
+            <field name="model">res.mission</field>
+            <field name="arch" type="xml">
+                <tree string="Mission">
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_mission_form" model="ir.ui.view">
+            <field name="name">view.res.mission.form</field>
+            <field name="model">res.mission</field>
+            <field name="arch" type="xml">
+                <form string="Mission">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <notebook></notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_mission" model="ir.actions.act_window">
+            <field name="name">Mission</field>
+            <field name="res_model">res.mission</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_mission_tree"/>
+        </record>
+
+        <menuitem name="Mission" id="menu_res_mission" action="action_res_mission" parent="menu_structured_dimension" sequence="2"/>
+
+        # Tax Branch
+        <record id="view_res_taxbranch_tree" model="ir.ui.view">
+            <field name="name">view.res.taxbranch.tree</field>
+            <field name="model">res.taxbranch</field>
+            <field name="arch" type="xml">
+                <tree string="Tax Branch">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_taxbranch_form" model="ir.ui.view">
+            <field name="name">view.res.taxbranch.form</field>
+            <field name="model">res.taxbranch</field>
+            <field name="arch" type="xml">
+                <form string="Tax Branch">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                        <field name="code" class="oe_inline" placeholder="Code"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="street"/>
+                            <field name="street2"/>
+                            <field name="city"/>
+                            <field name="zip"/>
+                            <field name="country_id"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                        <group>
+                            <!-- <field name="org_id"/> -->
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="fax"/>
+                            <field name="taxid"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="address_print_text"/>
+                        <field name="address_print_text_receipt"/>
+                        <field name="payment_method_text"/>
+                    </group>
+                    <notebook></notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_res_taxbranch_search" model="ir.ui.view">
+            <field name="name">view.res.taxbranch.search</field>
+            <field name="model">res.taxbranch</field>
+            <field name="arch" type="xml">
+                <search string="Tax Branch">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_res_taxbranch" model="ir.actions.act_window">
+            <field name="name">Tax Branch</field>
+            <field name="res_model">res.taxbranch</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_taxbranch_tree"/>
+        </record>
+
+        <menuitem name="Tax Branch" id="menu_res_taxbranch" action="action_res_taxbranch" parent="menu_structured_dimension" sequence="3"/>
+
+        # Tag Type
+        <record id="view_res_tag_type_tree" model="ir.ui.view">
+            <field name="name">view.res.tag.type.tree</field>
+            <field name="model">res.tag.type</field>
+            <field name="arch" type="xml">
+                <tree string="Tag Type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_tag_type_form" model="ir.ui.view">
+            <field name="name">view.res.tag.type.form</field>
+            <field name="model">res.tag.type</field>
+            <field name="arch" type="xml">
+                <form string="Tag Type">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group></group>
+                        <group></group>
+                    </group>
+                    <notebook></notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_tag_type" model="ir.actions.act_window">
+            <field name="name">Tag Type</field>
+            <field name="res_model">res.tag.type</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_tag_type_tree"/>
+        </record>
+
+        <menuitem name="Tag Type" id="menu_res_tag_type" action="action_res_tag_type" parent="menu_structured_dimension" sequence="4"/>
+
+        # Tag
+        <record id="view_res_tag_tree" model="ir.ui.view">
+            <field name="name">view.res.tag.tree</field>
+            <field name="model">res.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Tag">
+                    <field name="name"/>
+                    <field name="tag_type_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_tag_form" model="ir.ui.view">
+            <field name="name">view.res.tag.form</field>
+            <field name="model">res.tag</field>
+            <field name="arch" type="xml">
+                <form string="Tag">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="tag_type_id"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <notebook></notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_tag" model="ir.actions.act_window">
+            <field name="name">Tag</field>
+            <field name="res_model">res.tag</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_tag_tree"/>
+        </record>
+
+        <menuitem name="Tag" id="menu_res_tag" action="action_res_tag" parent="menu_structured_dimension" sequence="5"/>
+
+    </data>
+</openerp>

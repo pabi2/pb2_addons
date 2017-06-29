@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+    <data>        
+		<record id="view_hr_employee_section_assign_form_pabi" model="ir.ui.view">
+            <field name="name">hr.employee.section.assign.form.pabi</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="pabi_user_profile.view_hr_employee_form_pabi"/>
+            <field name="arch" type="xml">
+	            <xpath expr='//field[@name="section_id"]' position="after">
+	            	<field name="section_assign_ids" widget="many2many_tags"/>
+				</xpath> 
+			</field>
+        </record>	
+    </data>
+</openerp>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>  
+   		#TOP Work Flow Configuration Menu
+   		<menuitem name="Purchase" id="menu_wkf_config_purchase" parent="menu_wkf_config" sequence="4"/>
+    	      
+   		#Purchasing Unit
+        <record id="view_wkf_config_purchase_unit_tree" model="ir.ui.view">
+            <field name="name">view.wkf.config.purchase.unit.tree</field>
+            <field name="model">wkf.config.purchase.unit</field>
+            <field name="arch" type="xml">
+                <tree string="Purchasing Unit">
+            		<field name="org_id" />
+                    <field name="doctype_id" />
+                    <field name="name"/>
+                    <field name="description" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_wkf_config_purchase_unit_form" model="ir.ui.view">
+            <field name="name">view.wkf.config.purchase.unit.form</field>
+            <field name="model">wkf.config.purchase.unit</field>
+            <field name="arch" type="xml">
+            	<form string="Purchasing Unit">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                        	<field name="org_id" />
+                        	<field name="doctype_id" />
+	                        <field name="description" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Responsible">
+                    		<field name="responsible_ids">
+							<tree string="Responsible" editable="bottom">
+								<field name="employee_id"/>
+								<field name="level"/>
+							</tree>
+							</field>
+						</page>
+						 <page string="Sections">
+                    		<field name="section_ids">
+								<tree string="Sections" editable="bottom">
+									<field name="name"/>
+									<field name="code"/>
+								</tree>
+							</field>
+						</page>
+					</notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_wkf_config_purchase_unit_search" model="ir.ui.view">
+            <field name="name">view.wkf.config.purchase.unit.search</field>
+            <field name="model">wkf.config.purchase.unit</field>
+            <field name="arch" type="xml">
+                <search string="Purchasing Unit">
+                    <group expand="0" string="Group By">
+                    	<filter name="org_id" string="Org." context="{'group_by':'org_id'}"/>
+                    	<filter name="doctype_id" string="Document Type" context="{'group_by':'doctype_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>               
+
+        <record id="action_wkf_config_purchase_unit" model="ir.actions.act_window">
+            <field name="name">Purchasing Unit</field>
+            <field name="res_model">wkf.config.purchase.unit</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_wkf_config_purchase_unit_tree"/>
+        </record>
+        
+        <menuitem name="Purchasing Unit"
+         	id="menu_wkf_config_purchase_unit"
+        	action="action_wkf_config_purchase_unit" 
+        	parent="menu_wkf_config_purchase" 
+        	sequence="1"/>	
+    </data>
+</openerp>
