@@ -23,7 +23,7 @@ from openerp.osv import fields, osv
 from openerp.tools.safe_eval import safe_eval
 from openerp.tools.translate import _
 
-from . import login
+from .pycas import login
 
 default_host = 'http://127.0.0.1:8069/'
 # default_port = 8443
