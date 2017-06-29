@@ -12,6 +12,7 @@ addons:
       - python-lxml  # because pip installation is slow
       - python-xlrd
       - python-openpyxl
+      - pyton-unicodecsv
 
 env:
   global:
@@ -27,7 +28,7 @@ virtualenv:
 
 install:
   - pip install xlutils
-  - pip install unicodecsv
+  # - pip install unicodecsv
   - git clone --depth=1 https://github.com/OCA/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
