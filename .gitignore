@@ -15,32 +15,11 @@ dist/
 downloads/
 eggs/
 .eggs/
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-=======
-=======
->>>>>>> pb2_pabi/master
-=======
->>>>>>> pb2_generic/master
 #lib/
 #lib64/
 parts/
 sdist/
 var/
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> pb2_base_nstda/master
-=======
->>>>>>> pb2_pabi/master
-=======
->>>>>>> pb2_generic/master
 *.egg-info/
 .installed.cfg
 *.egg
@@ -63,54 +42,15 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-*.cover
-=======
 *,cover
->>>>>>> pb2_base_nstda/master
-=======
-*,cover
->>>>>>> pb2_pabi/master
-=======
-*,cover
->>>>>>> pb2_generic/master
 .hypothesis/
 
 # Translations
 *.mo
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-=======
-=======
->>>>>>> pb2_pabi/master
-=======
->>>>>>> pb2_generic/master
 #*.pot
 
 # Django stuff:
 *.log
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> pb2_base_nstda/master
-=======
->>>>>>> pb2_pabi/master
-=======
->>>>>>> pb2_generic/master
 
 # Sphinx documentation
 docs/_build/
@@ -118,46 +58,6 @@ docs/_build/
 # PyBuilder
 target/
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# dotenv
-.env
-
-# virtualenv
-.venv
-venv/
-ENV/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-=======
-=======
->>>>>>> pb2_pabi/master
-=======
->>>>>>> pb2_generic/master
 #Ipython Notebook
 .ipynb_checkpoints
 
@@ -169,10 +69,3 @@ openerp-server.conf
 *.settings
 *.*~
 .~*
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> pb2_base_nstda/master
-=======
->>>>>>> pb2_pabi/master
-=======
->>>>>>> pb2_generic/master
