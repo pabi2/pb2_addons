@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+
+		<record id="view_voucher_create_bank_receipt" model="ir.ui.view">
+			<field name="name">view.voucher.create.bank.receipt</field>
+			<field name="model">voucher.create.bank.receipt.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Create Bank Receipt">
+					<p class="oe_grey">
+						From Payment Bank Intransit, this action will create draft Bank Receipt. Once money is deposited into target bank,
+						you can specify the bank account in Bak Receipt and complete the operation.
+					</p>
+					<group>
+						<group>
+							<field name="receipt_date"/>
+						</group>
+						<group>
+						</group>
+					</group>
+					<footer>
+						<button name="voucher_create_bank_receipt" type="object" string="Create Bank Receipt" class="oe_highlight"/>
+						or
+						<button special="cancel" class="oe_link" string="Cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+    <act_window id="action_voucher_create_bank_receipt_multi"
+        multi="True"
+        key2="client_action_multi" name="Create Bank Receipt"
+        res_model="voucher.create.bank.receipt.wizard" src_model="account.voucher"
+        view_mode="form" target="new" view_type="form" />
+
+		<record id="action_voucher_create_bank_receipt" model="ir.actions.act_window">
+			<field name="name">Create Bank Receipt</field>
+			<field name="res_model">voucher.create.bank.receipt.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="context">{}</field>
+			<field name="target">new</field>
+		</record>
+
+	</data>
+</openerp>

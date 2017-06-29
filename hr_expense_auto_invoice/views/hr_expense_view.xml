@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+
+		<record id="view_expenses_form" model="ir.ui.view">
+			<field name="name">view.expenses.form</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+			<field name="arch" type="xml">
+				<button name="draft" position="replace"/>
+				<button name="done" position="replace">
+					<button name="%(action_expense_create_supplier_invoice)d" string="Create Supplier Invoice" type="action" groups="account.group_account_invoice" states="accepted" class="oe_highlight"/>
+				</button>
+				<button name="action_view_move" position="attributes">
+					<attribute name="string">View Invoice</attribute>
+					<attribute name="class">oe_highlight</attribute>
+				</button>
+				<button name="action_view_move" position="after">
+					<button name="action_view_move" states="paid" string="View Invoices" type="object" groups="account.group_account_invoice"/>
+				</button>
+				<field name="name" position="after">
+					<field name="pay_to"/>
+					<field name="partner_id" attrs="{'invisible': ['|', ('pay_to', '!=', 'supplier'),
+																('partner_id', '=', False)]}"/>
+					<!--				<field name="is_invoiced" invisible="1"/-->
+					<!--                <field name="to_invoice_amount" invisible="1"/-->
+				</field>
+				<xpath expr='/form/sheet/notebook/page/field/tree/field[@name="total_amount"]' position="before">
+					<field name="tax_ids" widget="many2many_tags"/>
+				</xpath>
+				<xpath expr='/form/sheet/notebook/page/field/form/group//field[@name="date_value"]' position="before">
+					<field name="tax_ids" widget="many2many_tags"/>
+				</xpath>
+				<xpath expr='/form/sheet/notebook/page[@string="Accounting"]/group/group/field[@name="account_move_id"]' position="before">
+					<field name="invoice_id"/>
+					<field name="date_invoice"/>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>

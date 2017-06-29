@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="view_account_journal_1" model="ir.ui.view">
+			<field name="name">account.journal.form.1</field>
+			<field name="model">account.journal</field>
+			<field name="inherit_id" ref="account.view_account_journal_1"/>
+			<field name="arch" type="xml">
+				<field name="analytic_journal_id" position="after">
+					<field name="is_budget_commit" attrs="{'invisible': [('type', 'not in', ('sale', 'purchase'))]}"/>
+				</field>
+				<group position="inside">
+					<group string="Budget Commitment" attrs="{'invisible': [('is_budget_commit', '=', False)]}">
+						<field name="so_commitment_analytic_journal_id" attrs="{'invisible': [('type', '!=', 'sale')]}"/>
+						<field name="so_commitment_account_id" attrs="{'invisible': [('so_commitment_analytic_journal_id', '=', False)],
+														'required': [('so_commitment_analytic_journal_id', '!=', False)]}"/>
+						<field name="pr_commitment_analytic_journal_id" attrs="{'invisible': [('type', '!=', 'purchase')]}"/>
+						<field name="pr_commitment_account_id" attrs="{'invisible': [('pr_commitment_analytic_journal_id', '=', False)],
+	                    			'required': [('pr_commitment_analytic_journal_id', '!=', False)]}"/>
+						<field name="po_commitment_analytic_journal_id" attrs="{'invisible': [('type', '!=', 'purchase')]}"/>
+						<field name="po_commitment_account_id" attrs="{'invisible': [('po_commitment_analytic_journal_id', '=', False)],
+	                    			'required': [('po_commitment_analytic_journal_id', '!=', False)]}"/>
+						<field name="exp_commitment_analytic_journal_id" attrs="{'invisible': [('type', '!=', 'purchase')]}"/>
+						<field name="exp_commitment_account_id" attrs="{'invisible': [('exp_commitment_analytic_journal_id', '=', False)],
+	                    			'required': [('exp_commitment_analytic_journal_id', '!=', False)]}"/>
+					</group>
+				</group>
+			</field>
+		</record>
+
+	</data>
+</openerp>

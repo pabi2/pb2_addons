@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_property_form" model="ir.ui.view">
+            <field name="name">view.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <page name="accounting" position="after">
+                        <page name="thai_taxation" string="Thai Taxation" attrs="{'invisible': [('supplier', '=', False)]}">
+                            <group>
+                                <group name="group1">
+                                    <field name="income_tax_form" />
+                                </group>
+                                <group name="group2">
+                                </group>
+                            </group>
+                        </page>
+                    </page>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

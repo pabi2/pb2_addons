@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+<data>
+
+    <record id="invoice_supplier_form" model="ir.ui.view">
+        <field name="name">account.invoice.supplier.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='supplier_invoice_number']" position="after">
+                <field name="expense_id" readonly="1" attrs="{'invisible': [('expense_id', '=', False)]}"/>
+                <field name="invoice_ref_id" invisible="1" />
+            </xpath>
+        </field>
+    </record>
+
+</data>
+</openerp>

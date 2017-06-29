@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <!--
+        Cash on Delivery
+        -->
+        <record id="cash_on_delivery_payment_term" model="account.payment.term">
+            <field name="name">Cash on Delivery</field>
+            <field name="note">Cash on Delivery</field>
+        </record>
+
+        <record id="cash_on_delivery_payment_term_line" model="account.payment.term.line">
+            <field name="value">balance</field>
+            <field eval="0" name="days"/>
+            <field eval="0" name="days2"/>
+            <field eval="cash_on_delivery_payment_term" name="payment_id"/>
+        </record>
+
+    </data>
+</openerp>

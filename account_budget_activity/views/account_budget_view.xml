@@ -1,0 +1,335 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <menuitem name="Budgeting" id="menu_budgeting" sequence="51"/>
+        <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="100"/>
+        <menuitem name="Budget Monitor" id="menu_action_budget_report" parent="menu_budgeting" sequence="110"/>
+        <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="120"/>
+
+        <record id="budget_line_period_split_tree_view" model="ir.ui.view">
+            <field name="name">account.budget.line.period.split.tree.view</field>
+            <field name="model">account.budget.line.period.split</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines Period Split">
+                    <field name="sequence"/>
+                    <field name="budget_line_id" invisible="1"/>
+                    <field name="quarter"/>
+                    <field name="period_id"/>
+                    <field name="amount" sum="amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="budget_line_period_split_form_view" model="ir.ui.view">
+            <field name="name">account.budget.line.period.split.form.view</field>
+            <field name="model">account.budget.line.period.split</field>
+            <field name="arch" type="xml">
+                <form string="Budget Lines Period Split">
+                    <field name="sequence"/>
+                    <field name="budget_line_id" invisible="1"/>
+                    <field name="quarter"/>
+                    <field name="period_id"/>
+                    <field name="amount"/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_account_budget_line_split_period_view">
+            <field name="name">Budget Line Period Split</field>
+            <field name="res_model">account.budget.line.period.split</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'budget_line_id': active_id}</field>
+            <field name="domain">[('budget_line_id', '=', active_id)]</field>
+        </record>
+
+        <record id="budget_line_tree_view" model="ir.ui.view">
+            <field name="name">budget.line.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines" editable="bottom">
+                    <field name="budget_method"/>
+
+                    <field name="activity_group_id" domain="[('budget_method', '=', budget_method)]"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+
+                    <field name="fiscalyear_id" invisible="1"/>
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                    <button name="%(act_account_budget_line_split_period_view)d" string="Split Budget Line Period Wise" type="action" icon="gtk-justify-fill"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_budget_view_form">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="arch" type="xml">
+                <form string="Budget" duplicate="false">
+                    <header>
+                        <button string="Confirm" name="budget_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="budget_validate" states="confirm" type="object" class="oe_highlight"/>
+                        <button string="Done" name="budget_done" states="validate" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="budget_draft" states="cancel" type="object"/>
+                        <button string="Cancel Budget" name="budget_cancel" states="confirm,validate" type="object"/>
+                        <button string="Minor Revision" name="new_minor_revision" type="object" attrs="{'invisible': ['|', ('active', '=', False), ('state', 'not in', ('validate'))]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                    </header>
+                    <sheet string="Budget">
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button name="get_all_version" type="object" class="oe_inline oe_stat_button"
+                              icon="fa-bookmark-o" context="{'active_test': False}">
+                                <field name="version" widget="statinfo"/>
+                            </button>
+                            <field name="active" invisible="1"/>
+                            <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up" string="Latest" attrs="{'invisible': [('active', '=', False)]}"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="creating_user_id" attrs="{'readonly':[('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                                <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="budgeted_revenue"/>
+                                <field name="budgeted_expense"/>
+                                <field name="budgeted_overall"/>
+                                <field name="budget_level_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="fiscalyear_id"/>
+                                <field name="currency_id"/>
+                                <label for="date_from" string="Duration"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    -
+                                    <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+                                </div>
+                                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                <field name="budget_release" invisible="1"/>
+                                <field name="released_amount" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline" attrs="{'invisible': [('budget_release', '=', 'manual_header')]}"/>
+                                <field name="to_release_amount" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline" attrs="{'invisible': [('budget_release', '!=', 'manual_header')],
+                                              'required': [('budget_release', '=', 'manual_header')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Expense" name="expense">
+                                <div name="expense_extra"></div>
+                                <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id}"/>
+                                <group>
+                                    <group></group>
+                                    <group class="oe_subtotal_footer oe_right">
+                                        <field name="past_actual" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                                        <field name="future_plan" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                                        <field name="rolling" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Revenue" name="revenue">
+                                <div name="revenue_extra"></div>
+                                <field
+                                    name="budget_revenue_line_ids"
+                                    colspan="4"
+                                    nolabel="1"
+                                    attrs="{'readonly':[('state','!=','draft')]}"
+                                    context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
+                            </page>
+                            <page string="Revisions" name="revisions">
+                                <field name="prev_revision_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="version"/>
+                                        <field name="create_date"/>
+                                        <field name="released_amount"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_budget_view_tree">
+            <field name="name">account.budget.view.tree</field>
+            <field name="model">account.budget</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
+                    <field name="name"/>
+                    <field name="version"/>
+                    <field name="active"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="released_amount" sum="Released Amount"/>
+                    <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    <field name="creating_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_budget_search" model="ir.ui.view">
+            <field name="name">account.budget.search</field>
+            <field name="model">account.budget</field>
+            <field name="arch" type="xml">
+                <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <filter string="Draft" icon="terp-document-new" domain="[('state','=','draft')]" help="Draft Budgets"/>
+                    <filter string="To Approve" icon="terp-camera_test" domain="[('state','=','confirm')]" help="To Approve Budgets"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_account_budget_view">
+            <field name="name">Budgets</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_view_tree"/>
+            <field name="search_view_id" ref="view_account_budget_search"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new budget.
+                </p>
+                <p>
+                    A budget is a forecast of your company's income and/or expenses expected for a period in the future. A budget is defined on some financial accounts and/or analytic accounts (that may represent projects, departments, categories of products, etc.)
+                </p>
+                <p>
+                    By keeping track of where your money goes, you may be less likely to overspend, and more likely to meet your financial goals. Forecast a budget by detailing the expected revenue per analytic account and monitor its evolution based on the actuals
+                    realised during that period.
+                </p>
+            </field>
+        </record>
+
+        <menuitem parent="menu_action_account_budget_control" id="menu_act_account_budget_view" action="act_account_budget_view" sequence="1"/>
+
+        <record model="ir.ui.view" id="view_account_budget_line_tree">
+            <field name="name">account.budget.line.tree</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines">
+                    <!--field name="analytic_account_id" groups="analytic.group_analytic_accounting"/-->
+                    <field name="budget_method"/>
+                    <field name="budget_id" invisible="1"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
+                    <button name="%(action_budget_release_wizard)d"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_account_budget_line_form">
+            <field name="name">account.budget.line.form</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <form string="Budget Lines">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                            </group>
+                            <group>
+                              <field name="current_period" invisible="1"/>
+                              <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                              <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                              <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                              <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                              <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                              <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                              <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                              <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                              <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                              <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                              <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                              <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_account_budget_line_view">
+            <field name="name">Budget Control Analysis</field>
+            <field name="res_model">account.budget.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_budget_line_tree"/>
+        </record>
+
+        <menuitem parent="menu_action_account_budget_control" id="menu_act_account_budget_line_view" action="act_account_budget_line_view"/>
+
+        <!--  Shortcuts -->
+        <!--act_window name="Budget Lines"
+            context="{'search_default_analytic_account_id': [active_id], 'default_analytic_account_id': active_id}"
+            res_model="account.budget.line"
+            src_model="account.analytic.account"
+            id="act_account_analytic_account_cb_lines"/-->
+
+        <!--record model="ir.ui.view" id="view_account_analytic_account_form_inherit_budget">
+            <field name="name">account.analytic.account.form.inherit.budget</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Budget Lines" groups="account.group_account_user">
+                            <field name="budget_line_ids" widget="one2many_list" colspan="4" nolabel="1" mode="tree">
+                                <tree string="Budget Lines" editable="top">
+                                    <field name="budget_id"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="planned_amount"/>
+                                </tree>
+                                <form string="Budget Lines">
+                                    <field name="budget_id"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="planned_amount"/>
+                                </form>
+                            </field>
+                    </page>
+                </notebook>
+            </field>
+        </record-->
+
+    </data>
+</openerp>

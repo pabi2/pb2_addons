@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_form_ext" model="ir.ui.view">
+            <field name="name">invoice.form.ext.</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="arch" type="xml">
+                <field name="amount_total" position="after">
+                	<field name="amount_total_text_en" invisible="1"/>
+                	<field name="amount_total_text_th" invisible="1"/>
+                </field>       
+            </field>
+        </record>
+        <record id="view_order_form_ext" model="ir.ui.view">
+            <field name="name">view_order_form_ext</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+                <field name="amount_total" position="after">
+                	<field name="amount_total_text_en" invisible="1"/>
+                	<field name="amount_total_text_th" invisible="1"/>
+                </field>       
+            </field>
+        </record>
+        <record id="view_vendor_receipt_form_ext" model="ir.ui.view">
+            <field name="name">view.vendor.receipt.form.ext</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form" />
+            <field name="arch" type="xml">
+                <field name="amount" position="after">
+                	<field name="amount_total_text_en" invisible="1"/>
+                	<field name="amount_total_text_th" invisible="1"/>
+                </field>       
+            </field>
+        </record>
+    </data>
+</openerp>

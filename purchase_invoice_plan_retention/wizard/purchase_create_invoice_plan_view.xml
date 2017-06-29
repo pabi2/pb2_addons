@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_purchase_create_invoice_plan" model="ir.ui.view">
+            <field name="name">view.sale.create.invoice.plan</field>
+            <field name="model">purchase.create.invoice.plan</field>
+            <field name="inherit_id" ref="purchase_invoice_plan.view_purchase_create_invoice_plan"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="use_deposit"]' position="after">
+	            	<field name="use_retention" />
+	            	<field name="retention_type" attrs="{'invisible': [('use_retention','=',False)], 'required': [('use_retention','=',True)]}"/>
+	            	<field name="percent_retention" attrs="{'invisible': ['|', ('use_retention','=',False), ('retention_type','=','fixed')], 'required': [('use_retention','=',True), ('retention_type','!=','fixed')]}"/>
+	            	<field name="fixed_retention" attrs="{'invisible': ['|', ('use_retention','=',False), ('retention_type','!=','fixed')], 'required': [('use_retention','=',True), ('retention_type','=','fixed')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

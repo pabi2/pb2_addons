@@ -11,10 +11,13 @@ addons:
       - expect-dev  # provides unbuffer utility
       - python-lxml  # because pip installation is slow
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       - python-xlrd
       - python-openpyxl
 >>>>>>> pb2_pabi/master
+=======
+>>>>>>> pb2_generic/master
 
 env:
   global:
@@ -30,10 +33,13 @@ virtualenv:
 
 install:
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   - pip install xlutils
   - pip install unicodecsv
 >>>>>>> pb2_pabi/master
+=======
+>>>>>>> pb2_generic/master
   - git clone --depth=1 https://github.com/OCA/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly

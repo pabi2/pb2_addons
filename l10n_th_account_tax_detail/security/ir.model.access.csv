@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_tax_detail,access_account_tax_detail,model_account_tax_detail,,1,1,1,1
+access_account_tax_detail_sequence,access_account_tax_detail_sequence,model_account_tax_detail_sequence,,1,1,1,1

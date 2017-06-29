@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2016 Kitti U.
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+
+<openerp>
+<data>
+
+<record id="wizard_expense_create_supplier_invoice" model="ir.ui.view">
+    <field name="name">Create Supplier Invoice</field>
+    <field name="model">expense.create.supplier.invoice</field>
+    <field name="arch" type="xml">
+        <form string="Select invoice date">
+            <group>
+				<group>            
+	            	<field name="date_invoice" />
+	            </group>
+				<group> 
+					<field name="pay_to" invisible="1" />           
+	            	<field name="partner_id" attrs="{'required': [('pay_to', '=', 'supplier')],
+	            									'invisible': [('pay_to', '!=', 'supplier')]}"/>
+	            </group>
+            </group>
+            <footer>
+                <button name="action_create_supplier_invoice"
+                        type="object"
+                        string="Create Supplier Invoice"
+                        class="oe_highlight"/>
+                or
+                <button special="cancel"
+                        string="Cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="action_expense_create_supplier_invoice" model="ir.actions.act_window">
+    <field name="name">Create Supplier Invoice</field>
+    <field name="res_model">expense.create.supplier.invoice</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+</data>
+</openerp>

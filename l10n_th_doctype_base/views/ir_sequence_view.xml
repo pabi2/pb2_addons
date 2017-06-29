@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_sequence_search" model="ir.ui.view">
+            <field name="name">view.sequence.search</field>
+            <field name="model">ir.sequence</field>
+            <field name="inherit_id" ref="base.view_sequence_search"/>
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                    <filter string="Doctype" domain="[('special_type','=','doctype')]" name="doctype"/>
+                </field>
+            </field>
+        </record>
+        <record id="ir_sequence_doctype_form" model="ir.actions.act_window">
+            <field name="name">Doctype Sequence</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.sequence</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="base.sequence_view_tree"/>
+            <field name="context">{'active_test': False, 'default_special_type': 'doctype', 'search_default_doctype': 1}</field>
+        </record>
+        <menuitem action="ir_sequence_doctype_form" id="menu_ir_sequence_doctyp_form" parent="base.next_id_5" sequence="14"/>
+    </data>
+</openerp>

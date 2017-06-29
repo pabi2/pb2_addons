@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_invoice_plan.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook//page[@string='Invoice Plan']//field[@name='use_deposit']" position="after">
+                    <field name="use_retention"/>
+                    <field name="percent_retention" attrs="{'invisible': ['|', ('use_retention','=',False), ('retention_type','=','fixed')]}"/>
+                    <field name="fixed_retention" attrs="{'invisible': ['|', ('use_retention','=',False), ('retention_type','!=','fixed')]}"/>
+                    <field name="retention_type" attrs="{'invisible': [('use_retention','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

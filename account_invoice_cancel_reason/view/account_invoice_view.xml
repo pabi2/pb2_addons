@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        #Customer Invoice
+        <record id="inovice_form" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_cancel.invoice_form_cancel_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='invoice_cancel']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="before">
+                    <button name="%(action_account_invoice_cancel)d" type="action" states="draft,proforma2,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
+                </xpath>
+                <xpath expr="/form/sheet/h1[1]" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                        <field name="cancel_reason_txt" class="oe_inline" />
+                    </h2>
+                </xpath>
+            </field>
+        </record>
+
+        #Supplier Invoice
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_cancel.invoice_supplier_cancel_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='invoice_cancel']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='invoice_cancel']" position="before">
+                    <button name="%(action_account_invoice_cancel)d" type="action" states="draft,proforma2,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
+                </xpath>
+                <xpath expr="/form/sheet/div/h1" position="after">
+                    <h2 attrs="{'invisible': [('state', '!=', 'cancel')]}">
+                        <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                        <field name="cancel_reason_txt" class="oe_inline" />
+                    </h2>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

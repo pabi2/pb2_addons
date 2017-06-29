@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+            <!--Account Invoice Data-->
+            <record id="doctype_customer_invoice" model="res.doctype" >
+                <field name="name">Customer Invoice</field>
+                <field name="sequence_id" ref="doctype_customer_invoice_seq"/>
+                <field name="refer_type">out_invoice</field>
+            </record>
+            <record id="doctype_customer_refund" model="res.doctype" >
+                <field name="name">Customer Refund</field>
+                <field name="sequence_id" ref="doctype_customer_refund_seq"/>
+                <field name="refer_type">out_refund</field>
+            </record>
+            <record id="doctype_customer_debitnote" model="res.doctype" >
+                <field name="name">Customer Debitnote</field>
+                <field name="sequence_id" ref="doctype_customer_debitnote_seq"/>
+                <field name="refer_type">out_invoice_debitnote</field>
+            </record>
+            <record id="doctype_supplier_invoice" model="res.doctype" >
+                <field name="name">Supplier Invoice</field>
+                <field name="sequence_id" ref="doctype_supplier_invoice_seq"/>
+                <field name="refer_type">in_invoice</field>
+            </record>
+            <record id="doctype_supplier_refund" model="res.doctype" >
+                <field name="name">Supplier Refund</field>
+                <field name="sequence_id" ref="doctype_supplier_refund_seq"/>
+                <field name="refer_type">in_refund</field>
+            </record>
+            <record id="doctype_supplier_debitnote" model="res.doctype" >
+                <field name="name">Supplier Debitnote</field>
+                <field name="sequence_id" ref="doctype_supplier_debitnote_seq"/>
+                <field name="refer_type">in_invoice_debitnote</field>
+            </record>
+
+    </data>
+</openerp>

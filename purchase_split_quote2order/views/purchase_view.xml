@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_purchase_order_filter" model="ir.ui.view">
+            <field name="name">view.purchase.order.filter</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+            	<filter name="draft" position="replace" >
+                    <filter string="Quotation" name="draft" domain="[('state','in',('draft','sent')),('order_type','=','quotation')]" help="Purchase Order that haven't yet been confirmed"/>
+       			</filter>
+            	<filter name="approved" position="replace" >
+                    <filter string="Purchase Order" name="approved" domain="[('state','=',('approved'))]"/>
+                </filter>
+            </field>
+    	</record>
+
+        <record id="view_purchase_order_form" model="ir.ui.view">
+            <field name="name">view.purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+            	<!-- Quote/SO -->
+                <xpath expr="/form/header" position="replace" >
+					<!-- Header for Purchase Order (Default) -->
+                    <header name="purchase_order" attrs="{'invisible': [('order_type','=','quotation')]}" >
+                        <!--<button name="bid_received" states="sent" string="Bid Received" class="oe_highlight"/>-->
+                        <!--<button name="wkf_send_rfq" states="draft" string="Send RFQ by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>-->
+                        <!--<button name="wkf_send_rfq" states="sent" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}"/>-->
+                        <!--<button name="print_quotation" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>-->
+                        <!--<button name="print_quotation" string="Re-Print RFQ" type="object" states="sent" groups="base.group_user"/>-->
+                        <button name="purchase_confirm" states="draft" string="Confirm Order" id="draft_confirm"/>
+                        <button name="purchase_confirm" states="bid" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
+                        <button name="picking_ok" states="except_picking" string="Manually Corrected"/>
+                        <button name="invoice_ok" states="except_invoice" string="Manually Corrected"/>
+                        <button name="purchase_approve" states="confirmed" string="Approve Order" class="oe_highlight" groups="purchase.group_purchase_manager"/>
+                        <!--<button name="wkf_send_rfq" states="approved" string="Send PO by Email" type="object" context="{'send_rfq':False}"/>-->
+                        <button name="view_picking" string="Receive Products" type="object" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}" class="oe_highlight"/>
+                        <button name="view_invoice" string="Receive Invoice" type="object" attrs="{'invisible': ['|', ('invoice_method','in', ['picking', 'manual']), '|', ('state','!=', 'approved'), ('invoiced','=',True) ]}" class="oe_highlight"/>
+                        <button name="action_cancel_draft" states="cancel,sent,confirmed" string="Set to Draft" type="object" />
+                        <button name="action_cancel" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="object" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,done"
+                        		invisible="context.get('order_type', 'purchase_order') == 'quotation'"
+                        		statusbar_colors='{"invoice_except":"red","waiting_date":"blue"}'/>
+                    </header>
+					<!-- Header for Quotation -->
+                    <header name="quotation" attrs="{'invisible': [('order_type','=','purchase_order')]}" >
+                        <!-- <button name="action_quotation_send" string="Send by Email" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>
+                        <button name="action_quotation_send" string="Send by Email" type="object" states="sent" groups="base.group_user"/> -->
+                        <!-- <button name="print_quotation" string="Print" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>
+                        <button name="print_quotation" string="Print" type="object" states="sent" groups="base.group_user"/> -->
+	            		<button name="action_button_convert_to_order" states="draft"
+	            				class="oe_highlight" type="object" string="Convert to Order" groups="base.group_user"/>
+                        <!--button name="copy_quotation" states="cancel" string="New Copy of Quotation" type="object"/-->
+                        <button name="action_cancel" type="object" states="draft" string="Cancel Quotation" groups="base.group_user"/>
+                        <field name="state2" widget="statusbar" statusbar_visible="draft,done"/>
+                	</header>
+                </xpath>
+                <field name="bid_validity" position="after">
+                    <field name="order_type" />
+                    <field name="quote_id" attrs="{'invisible': [('order_type','=','quotation')]}"
+                    	context="{'order_type': 'quotation'}"/>
+                    <field name="order_id" attrs="{'invisible': [('order_type','=','purchase_order')]}"
+                   		context="{'order_type': 'purchase_order'}"/>
+                </field>
+                <label string="Request for Quotation " position="replace">
+                	<label string="Quotation " attrs="{'invisible': [('order_type','=','purchase_order')]}"/>
+                </label>
+                <label string="Purchase Order " position="replace">
+                	<label string="Purchase Order " attrs="{'invisible': [('order_type','=','quotation')]}"/>
+                </label>
+                <xpath expr="/form/sheet/notebook/page/field[@name='order_line']" position="attributes" >
+            		<attribute name="context">{'order_type': order_type}</attribute>
+                </xpath>
+        	</field>
+        </record>
+
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+            <field name="name">Quotation</field>
+            <field name="context">
+                {
+                    'order_type': 'quotation',
+                }
+            </field>
+            <field name="domain">[('order_type', '=', 'quotation')]</field>
+        </record>
+
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="context">
+                {
+                    'order_type': 'purchase_order',
+                }
+            </field>
+            <field name="domain">[('order_type', '=', 'purchase_order')]</field>
+        </record>
+    </data>
+</openerp>

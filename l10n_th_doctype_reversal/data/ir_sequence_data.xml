@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Customer Invoices Reversal
+        <record id="doctype_cancel_with_reversal_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Reversal</field>
+            <field name="code"></field>
+            <field name="prefix">CV%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+            <field name="special_type">doctype</field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="purchase_order_form" model="ir.ui.view" >
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="account_budget_activity.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
+                    <field name="activity_rpt_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense')]"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

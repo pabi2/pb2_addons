@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_config_settings" model="ir.ui.view">
+            <field name="name">account.config.settings.form</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <div name="other_cofing" position="inside">
+                    <div>
+                        <field name="auto_recognize_vat" class="oe_inline"/>
+                        <label for="auto_recognize_vat"/>
+                    </div>
+                    <div>
+                        <label for="recognize_vat_journal_id"/>
+                        <field name="recognize_vat_journal_id" class="oe_inline" attrs="{'required': [('auto_recognize_vat', '=', False)]}"/>
+                    </div>
+                </div>
+                <field name="purchase_refund_journal_id" position="after">
+                    <separator string="Retention"/>
+                    <group name="account_retention">
+                        <label for="id" string="Account Retention"/>
+                        <div>
+                        <div>
+                            <label string="Customer"/>
+                            <field name="account_retention_customer" class="oe_inline"/>
+                        </div>
+                        <div>
+                            <label string="Supplier"/>
+                            <field name="account_retention_supplier" class="oe_inline"/>
+                        </div>
+                        <div>
+                            <field name="retention_on_payment" class="oe_inline"/>
+                            <label string="Retention on Payment"/>
+                        </div>
+                        </div>
+                    </group>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

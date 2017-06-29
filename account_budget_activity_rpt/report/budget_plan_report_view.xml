@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_budget_plan_report_tree" model="ir.ui.view">
+            <field name="name">budget.plan.report.tree</field>
+            <field name="model">budget.plan.report</field>
+            <field name="inherit_id" ref="account_budget_activity.view_budget_plan_report_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activity_id']" position="after">
+                    <field name="activity_rpt_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

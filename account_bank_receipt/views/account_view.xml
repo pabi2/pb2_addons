@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_journal_form">
+            <field name="name">view.account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="type" position="after">
+                    <field name="intransit" attrs="{'invisible': [('type', '!=', 'bank')]}"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

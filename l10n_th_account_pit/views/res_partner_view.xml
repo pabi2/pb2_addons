@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">view.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="l10n_th_account.view_partner_property_form"/>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//notebook/page[@name='thai_taxation']/group/group[@name='group2']" position="inside">
+                        <button name="%(action_print_pit_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', ('supplier', '!=', True), ('pit_line', '=', [])]}"/>
+                    </xpath>
+                    <page name="thai_taxation" position="inside">
+                        <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}" string="PIT">
+                            <field name="pit_line" nolabel="1" context="{'default_manual': True}">
+                                <tree editable="bottom" string="PIT" create="0" delete="0">
+                                    <field name="voucher_id" attrs="{'readonly': [('posted', '=', True)]}"/>
+                                    <field name="manual" invisible="1"/>
+                                    <field name="date"/>
+                                    <field name="calendar_year"/>
+                                    <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}" sum="Total Income"/>
+                                    <field name="amount_wht" sum="Total WHT"/>
+                                    <field name="posted"/>
+                                    <button name="action_post" type="object" string="Post" icon="gtk-apply" class="oe_highlight" attrs="{'invisible': ['|', ('manual', '=', False), ('posted', '=', True)]}" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group attrs="{'invisible': [('supplier', '=', False)]}">
+                            <group></group>
+                            <group string="Yearly Summary">
+                                <field name="pit_yearly" nolabel="1">
+                                    <tree editable="bottom" string="PIT" create="0" delete="0">
+                                        <field name="calendar_year"/>
+                                        <field name="amount_income" sum="Total Income"/>
+                                        <field name="amount_wht" sum="Total WHT"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </page>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

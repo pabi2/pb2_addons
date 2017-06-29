@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+group_user_model_res_doctype,group_user_model_res_doctype,model_res_doctype,base.group_user,1,1,0,0

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record id="view_voucher_multiple_reconcile_filter" model="ir.ui.view">
+            <field name="name">account.voucher.multiple.reconcile.search</field>
+            <field name="model">account.voucher.multiple.reconcile</field>
+            <field name="arch" type="xml">
+                <search string="Reconcile Lines">
+                    <field name="account_id" select="1"/>
+                    <field name="amount" select="1"/>
+                </search>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_vendor_receipt_form_voucher_payment">
+            <field name="name">account.voucher.voucher.customer.payment.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="l10n_th_account.view_vendor_receipt_form_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='writeoff_acc_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='comment']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='analytic_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_option']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_option']" position="after">
+                    <p colspan="2" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
+                        Different amount can be reconciled in "Payment Differences" tab.
+                    </p>
+                </xpath>
+                <xpath expr="/form/sheet/notebook" position="inside">
+                    <page name="deductions" string="Payment Differences">
+                        <field name="multiple_reconcile_ids" nolabel="1" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
+                            <tree string="Reconcile Lines" editable="top">
+                                <field name="account_id" domain="[('type','not in',['view', 'closed'])]"/>
+                                <field name="amount" sum="Total Amount"/>
+                                <field name="note"/>
+                                <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_vendor_supplier_form_voucher_payment">
+            <field name="name">account.voucher.voucher.supplier.payment.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="l10n_th_account.view_vendor_payment_form_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='writeoff_acc_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='comment']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='analytic_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_option']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_option']" position="after">
+                    <p colspan="2" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
+                        Different amount can be reconciled in "Payment Differences" tab.
+                    </p>
+                </xpath>
+                <xpath expr="/form/sheet/notebook" position="inside">
+                    <page name="deductions" string="Payment Differences" attrs="{'invisible': [('writeoff_amount', '=', 0), ('multiple_reconcile_ids', '=', [])]}">
+                        <field name="multiple_reconcile_ids" nolabel="1">
+                            <tree string="Reconcile Lines" editable="top">
+                                <field name="account_id" domain="[('type','not in',['view', 'closed'])]"/>
+                                <field name="amount" sum="Total Amount"/>
+                                <field name="note"/>
+                                <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

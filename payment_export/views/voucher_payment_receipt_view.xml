@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_vendor_payment_form">
+            <field name="name">view.vendor.payment.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="l10n_th_fields.view_vendor_payment_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="before">
+                    <field name="payment_type" required="1"/>
+                </field>
+                <field name="journal_id" position="after">
+                    <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')],
+                										'required': [('payment_type', '=', 'transfer')]}"/>
+                    <field name="is_cheque_lot" invisible="1"/>
+                    <field name="cheque_lot_id" attrs="{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('is_cheque_lot', '=', False)],
+                										'required': [('payment_type', '=', 'cheque'), ('is_cheque_lot', '=', True)]}"/>
+                    <field name="supplier_bank_id"/>
+                    <field name="supplier_bank_branch"/>
+                </field>
+                <field name="number_cheque" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('cheque_lot_id', '!=', False), ('number_cheque', '=', False)]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_vendor_receipt_dialog_form" model="ir.ui.view">
+            <field name="name">view.vendor.receipt.dialog.form.ext</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_dialog_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="before">
+                    <field name="payment_type" required="1"/>
+                </field>
+                <field name="journal_id" position="after">
+                  <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')],
+                                  'required': [('payment_type', '=', 'transfer')]}"/>
+                  <field name="is_cheque_lot" invisible="1"/>
+                  <field name="cheque_lot_id" attrs="{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('is_cheque_lot', '=', False)],
+                                  'required': [('payment_type', '=', 'cheque'), ('is_cheque_lot', '=', True)]}"/>
+                    <field name="supplier_bank_id"/>
+                    <field name="supplier_bank_branch"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

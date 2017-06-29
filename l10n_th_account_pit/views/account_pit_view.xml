@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # PIT Table
+        <record id="view_account_pit_tree" model="ir.ui.view">
+            <field name="name">view.account.pit.tree</field>
+            <field name="model">account.pit</field>
+            <field name="arch" type="xml">
+                <tree string="PIT Rate Table">
+                    <field name="calendar_year"/>
+                    <field name="date_effective"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_pit_form" model="ir.ui.view">
+            <field name="name">view.account.pit.form</field>
+            <field name="model">account.pit</field>
+            <field name="arch" type="xml">
+                <form string="PIT Rate Table">
+                    <group>
+                        <group>
+                            <field name="calendar_year"/>
+                            <field name="date_effective"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <separator string="Witholding Tax Rates"/>
+                    <field name="rate_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="income_from"/>
+                            <field name="income_to"/>
+                            <field name="tax_rate"/>
+                            <field name="amount_tax_max"/>
+                            <field name="amount_tax_max_accum"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_pit_search" model="ir.ui.view">
+            <field name="name">view.account.pit.search</field>
+            <field name="model">account.pit</field>
+            <field name="arch" type="xml">
+                <search string="PIT Rate Table">
+                    <field name="calendar_year" filter_domain="[('calendar_year','ilike',self)]" string="Calendar Year"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_account_pit" model="ir.actions.act_window">
+            <field name="name">PIT Rate Table</field>
+            <field name="res_model">account.pit</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_pit_tree"/>
+        </record>
+
+        <menuitem name="PIT Rate" id="menu_account_pit" action="action_account_pit"
+            parent="account.next_id_27" sequence="50" groups="account.group_account_invoice"/>
+    </data>
+</openerp>

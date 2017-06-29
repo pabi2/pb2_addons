@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_hr_salary_expense_form" model="ir.ui.view">
+            <field name="name">view.hr.salary.expense.view</field>
+            <field name="model">hr.salary.expense</field>
+            <field name="inherit_id" ref="hr_salary.view_hr_salary_expense_form"/>
+            <field name="arch" type="xml">
+                <button name="action_draft" position="replace" />
+                <xpath expr="/form/sheet/notebook//field[@name='move_id']" position="after">
+                    <field name="cancel_move_id" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

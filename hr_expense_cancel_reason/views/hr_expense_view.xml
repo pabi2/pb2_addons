@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group" position="before">
+                        <h2 attrs="{'invisible': [('state', '!=', 'cancelled')]}">
+                            <label for="cancel_reason_txt" string="Cancellation reason:"/>
+                            <field name="cancel_reason_txt" class="oe_inline" />
+                        </h2>
+                        <br/>
+                </xpath>
+                <xpath expr="//button[@name='refuse']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='refuse']" position="before">
+                    <button name="%(action_hr_expense_cancel)d"
+                            type="action"
+                            states="confirm,accepted"
+                            string="Refuse"
+                            groups="base.group_hr_user"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

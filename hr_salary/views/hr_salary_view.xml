@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    		<!-- Salary & Welfare Sheet-->
+    		<menuitem id="menu_hr_salary_root" name="Salary &amp; Welfare" parent="hr.menu_hr_root" sequence="200"/>
+
+        <record id="view_hr_salary_expense_tree" model="ir.ui.view">
+            <field name="name">view.hr.salary.expense.tree</field>
+            <field name="model">hr.salary.expense</field>
+            <field name="arch" type="xml">
+                <tree string="Expenses" colors="blue:state=='draft'">
+                    <field name="number"/>
+                    <field name="user_id"/>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="submit_user_id"/>
+                    <field name="date_submit"/>
+                    <field name="approve_user_id"/>
+                    <field name="date_approve"/>
+                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_salary_expense_form" model="ir.ui.view">
+            <field name="name">hr.salary.expense.form</field>
+            <field name="model">hr.salary.expense</field>
+            <field eval="25" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Salary Sheet">
+                <header>
+                    <button name="action_draft" string="Set to Draft" type="object" attrs="{'invisible': ['|', ('state', '!=', 'cancel'), ('move_id', '!=', False)]}"/>
+                    <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
+                    <button name="action_approve" string="Approve" type="object" states="submit" class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancel" type="object" states="draft,submit,open"/>
+                    <button name="action_reject" string="Reject" type="object" states="submit"/>
+                    <button name="action_open" string="Create Journal Entries" type="object" states="approve" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,submit,approve,open,paid" statusbar_colors='{"confirm":"blue","cancel":"red","reject":"red"}'/>
+                </header>
+                <sheet>
+                    <div class="oe_right oe_button_box" name="buttons">
+                    </div>
+                    <h1>
+                        <label string="Number "/>
+                        <field name="number" class="oe_inline" readonly="1"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="submit_user_id"/>
+                            <field name="date_submit"/>
+                            <field name="approve_user_id"/>
+                            <field name="date_approve"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="journal_id"/>
+                            <field name="currency_id" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="line_ids">
+                                <tree string="Salary Lines" editable="bottom">
+                                    <field name="sequence" invisible="1"/>
+                                    <field name="date" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="account_id"/>
+                                    <field name="analytic_account_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount" sum="Total"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <div>
+                                    <separator string="Notes"/>
+                                    <field name="note" placeholder="Free Notes"/>
+                                </div>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Journal Items" attrs="{'invisible': [('move_id', '=', False)]}">
+                            <group>
+                                <group name="move">
+                                    <field name="move_id"/>
+                                </group>
+                                <group name="extra">
+                                </group>
+                            </group>
+                            <field name="move_line_ids" readonly="1">
+                               <tree string="Journal Items">
+                                   <field name="move_id"/>
+                                   <field name="ref"/>
+                                   <field name="date"/>
+                                   <field name="statement_id"/>
+                                   <field name="partner_id"/>
+                                   <field name="account_id"/>
+                                   <field name="name"/>
+                                   <field name="debit"/>
+                                   <field name="credit"/>
+                                   <field name="state"/>
+                                   <field name="reconcile_id"/>
+                                   <field name="amount_currency" groups="base.group_multi_currency"/>
+                                   <field name="currency_id" groups="base.group_multi_currency"/>
+                               </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_hr_salary_expense_filter" model="ir.ui.view">
+            <field name="name">view.hr.salary.expense.filter</field>
+            <field name="model">hr.salary.expense</field>
+            <field name="arch" type="xml">
+                <search string="Salary">
+                    <field name="number" string="Number"/>
+                    <field name="name" string="Description"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Date" domain="[]" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_hr_salary_expense" model="ir.actions.act_window">
+            <field name="name">Salary Expense</field>
+            <field name="res_model">hr.salary.expense</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_hr_salary_expense_filter"/>
+            <field name="view_id" ref="view_hr_salary_expense_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register new salary.
+              </p>
+            </field>
+        </record>
+
+        <menuitem action="action_hr_salary_expense" id="menu_hr_salary_expense" name="Salary Expense" parent="menu_hr_salary_root" groups="base.group_hr_manager"/>
+
+    </data>
+</openerp>

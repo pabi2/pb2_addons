@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+		<!-- System Param to allow/disallow change of partner's category if account is differ -->	    
+		<record id="no_partner_tag_change_account" model="ir.config_parameter">
+			<field name="key">res_partner_ext.no_partner_tag_change_account</field>
+			<field name="value">True</field>
+		</record>
+    </data>
+</openerp>

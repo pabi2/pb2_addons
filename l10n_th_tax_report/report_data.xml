@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		# PDF
+		<record id="account_tax_report_pdf" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">account.tax.report</field>
+			<field name="name">VAT Report (pdf)</field>
+			<field name="report_name">account_tax_report_pdf</field>
+			<field name="report_rml">l10n_th_tax_report/report/account_tax_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="account_tax_report_pdf_values" model="ir.values">
+			<field name="name">VAT Report (pdf)</field>
+			<field name="model">account.tax.report</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(account_tax_report_pdf)"/>
+		</record>
+
+		# XLS
+		<record id="account_tax_report_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">account.tax.report</field>
+			<field name="name">VAT Report (xls)</field>
+			<field name="report_name">account_tax_report_xls</field>
+			<field name="report_rml">l10n_th_tax_report/report/account_tax_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="account_tax_report_xls_values" model="ir.values">
+			<field name="name">VAT Report (xls)</field>
+			<field name="model">account.tax.report</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(account_tax_report_xls)"/>
+		</record>
+
+	</data>
+</openerp>

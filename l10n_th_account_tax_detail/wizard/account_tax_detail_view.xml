@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+
+		<record id="view_tax_wizard" model="ir.ui.view">
+			<field name="name">view.tax.wizard</field>
+			<field name="model">account.tax.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Tax Invoice Detail">
+					<field name="invoice_tax_id" invisible="1"/>
+					<field name="is_readonly" invisible="1"/>
+					<h2 class="oe_right">
+						<label string="Base:"/>
+						<field name="base" class="oe_inline"/>
+						<label string="Tax:"/>
+						<field name="amount" class="oe_inline"/>
+					</h2>
+					<field name="detail_ids">
+						<tree editable="bottom" delete="0">
+							<field name="is_readonly" invisible="1"/>
+							<field name="tax_detail_id" invisible="1"/>
+							<field name="partner_id" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+							<field name="vat" invisible="1"/>
+							<field name="taxbranch" invisible="1"/>
+							<field name="vat_readonly"/>
+							<field name="taxbranch_readonly"/>
+							<field name="period_id"/>
+							<field name="invoice_number"/>
+							<field name="invoice_date" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+							<field name="base" sum="Base" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+							<field name="amount" sum="Tax" attrs="{'readonly': [('is_readonly', '=', True)]}"/>
+							<field name="tax_sequence" invisible="1"/>
+							<field name="tax_sequence_display"/>
+							<field name="addition"/>
+						</tree>
+					</field>
+					<footer attrs="{'invisible': [('is_readonly', '=', True)]}">
+						<button name="save_tax_detail" type="object" string="Save" class="oe_highlight"/>
+						or
+						<button special="cancel" class="oe_link" string="Cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_tax_detail" model="ir.actions.act_window">
+			<field name="name">Tax Invoice Detail</field>
+			<field name="res_model">account.tax.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="context">{}</field>
+			<field name="target">new</field>
+		</record>
+
+	</data>
+</openerp>

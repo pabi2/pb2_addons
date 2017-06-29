@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_payment_export">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="payment_export.payment_export_layout">
+                    <div class="page">
+                        <div class="row">
+                            <h2>Payment Export <t t-esc="o.name"/></h2>
+                        </div>
+                        <div class="row mt16">
+                            <table class="table table-condensed">
+                                <tr style="border-top:hidden;">
+                                    <td style="border-right:1px solid #DCDCDC;"><strong>Payment Method</strong></td>
+                                    <td><span t-field="o.journal_id.name"/></td>
+                                    <td style="border-right:1px solid #DCDCDC;"><strong>Value/Cheque Date</strong></td>
+                                    <td><span t-field="o.date_value"/></td>
+                                </tr>
+                                <tr style="border-top:hidden;">
+                                    <td style="border-right:1px solid #DCDCDC;"><strong>Cheque Lot</strong></td>
+                                    <td><span t-field="o.cheque_lot_id.name"/></td>
+                                    <td style="border-right:1px solid #DCDCDC;"><strong>Company</strong></td>
+                                    <td><span t-field="o.company_id.name"/></td>
+                                </tr>
+                                <tr style="border-top:hidden;">
+                                    <td style="border-right:1px solid #DCDCDC;"><strong>Bank Account</strong></td>
+                                    <td><span t-field="o.bank_id.name"/></td>
+                                    <td style="border-right:1px solid #DCDCDC;"><strong>Sum Amount</strong></td>
+                                    <td><span t-field="o.sum_amount"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row mt64">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <th style="border:1px solid #DCDCDC;">Supplier Payment &amp; Cheque Number</th>
+                                </thead>
+                                <thead>
+                                    <th>Supplier Payment</th>
+                                    <th>Supplier</th>
+                                    <th>Amount</th>
+                                    <th>Fee</th>
+                                    <th>Total</th>
+                                    <th>Cheque Number</th>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.line_ids" t-as="line">
+                                        <td><span t-field="line.voucher_id.number"/></td>
+                                        <td><span t-field="line.partner_id.name"/></td>
+                                        <td><span t-field="line.amount"/></td>
+                                        <td><span t-field="line.amount_fee"/></td>
+                                        <td><span t-field="line.amount_total"/></td>
+                                        <td><span t-field="line.cheque_register_id.number"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+        
+        <template id="payment_export_layout">
+            <!-- Multicompany -->
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"></t>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"></t>
+            </t>
+        
+            <div class="header">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <span t-esc="datetime.date.today().strftime('%m/%d/%Y')"/>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <span>Payment Export - </span><span t-esc="company.name"/>
+                    </div>
+                    <div class="col-xs-3">
+                    </div>
+                </div>
+            </div>
+            <t t-raw="0" />
+        </template>
+    </data>
+</openerp>

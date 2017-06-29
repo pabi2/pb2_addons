@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="account_model_prepayment" model="account.model.type">
+            <field name="name">Prepayment</field>
+        </record>
+        <record id="account_model_accrual_invoice_plan" model="account.model.type">
+            <field name="name">Accrual Invoice plan</field>
+        </record>
+        <record id="account_model_accrual_utilities" model="account.model.type">
+            <field name="name">Accrual Utilities</field>
+        </record>
+
+    </data>
+</openerp>

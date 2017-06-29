@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_account_journal_form">
+            <field name="name">view.account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="sequence" />
+                </xpath>
+            </field>
+        </record>     
+        <record model="ir.ui.view" id="view_account_journal_tree">
+            <field name="name">view.account.journal.tree</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="before">
+                    <field name="sequence" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

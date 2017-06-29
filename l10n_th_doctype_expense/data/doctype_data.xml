@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+        <record id="doctype_employee_expense" model="res.doctype" >
+            <field name="name">Employee Expense</field>
+            <field name="sequence_id" ref="doctype_employee_expense_seq"/>
+            <field name="refer_type">employee_expense</field>
+        </record>
+        <record id="doctype_employee_advance" model="res.doctype" >
+            <field name="name">Employee Advance</field>
+            <field name="sequence_id" ref="doctype_employee_advance_seq"/>
+            <field name="refer_type">employee_advance</field>
+        </record>
+    </data>
+</openerp>

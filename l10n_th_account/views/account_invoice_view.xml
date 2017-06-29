@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="invoice_form_ext" model="ir.ui.view">
+            <field name="name">invoice.form.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
+                    <field name="amount_retention" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </xpath>
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="residual"]' position="after">
+                    <field name="retention_on_payment" attrs="{'invisible': [('retention_on_payment','!=',True)]}"/>
+                </xpath>
+                <xpath expr='/form/sheet/notebook/page[@string="Other Info"]/field[@name="tax_line"]' position="replace"/>
+                <xpath expr='/form/sheet/notebook/page' position="after">
+                    <page string="Tax">
+                        <field name="tax_line">
+                            <tree editable="bottom" string="Taxes">
+                                <field name="name"/>
+                                <field name="account_id" groups="account.group_account_invoice"/>
+                                <field name="account_analytic_id" domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
+                                <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)" readonly="1"/>
+                                <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
+
+                                <field invisible="True" name="base_amount"/>
+                                <field invisible="True" name="tax_amount"/>
+                                <field name="factor_base" invisible="True"/>
+                                <field name="factor_tax" invisible="True"/>
+                            </tree>
+                        </field>
+                        <div>
+                            <button name="button_reset_taxes" states="draft,proforma2" string="(update)" class="oe_link oe_edit_only" type="object" help="Recompute taxes and total"/>
+                        </div>
+                    </page>
+                    <page string="Journal Items" attrs="{'invisible': [('state','not in', ('open', 'paid'))]}">
+                        <field name="move_ids" readonly="1">
+                            <tree string="Journal Items">
+                                <field name="move_id"/>
+                                <field name="ref"/>
+                                <field name="date"/>
+                                <field name="statement_id"/>
+                                <field name="partner_id"/>
+                                <field name="account_id"/>
+                                <field name="name"/>
+                                <field name="debit"/>
+                                <field name="credit"/>
+                                <field name="state"/>
+                                <field name="reconcile_id"/>
+                                <field name="amount_currency" groups="base.group_multi_currency"/>
+                                <field name="currency_id" groups="base.group_multi_currency"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
+                    <field name="amount_retention" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </xpath>
+                <xpath expr='/form/sheet/notebook/page/group//field[@name="residual"]' position="after">
+                    <field name="retention_on_payment" attrs="{'invisible': [('retention_on_payment','!=',True)]}"/>
+                </xpath>
+                <xpath expr='/form/sheet/notebook/page/div/field[@name="tax_line"]' position="replace"/>
+                <xpath expr='/form/sheet/notebook/page' position="after">
+                    <page string="Tax">
+                        <field name="tax_line">
+                            <tree editable="bottom" string="Taxes">
+                                <field name="name"/>
+                                <field name="account_id" groups="account.group_account_invoice"/>
+                                <field name="account_analytic_id" domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
+                                <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)" readonly="1"/>
+                                <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
+
+                                <field invisible="True" name="base_amount"/>
+                                <field invisible="True" name="tax_amount"/>
+                                <field name="factor_base" invisible="True"/>
+                                <field name="factor_tax" invisible="True"/>
+                            </tree>
+                        </field>
+                        <div>
+                            <button name="button_reset_taxes" states="draft,proforma2" string="(update)" class="oe_link oe_edit_only" type="object" help="Recompute taxes and total"/>
+                        </div>
+                    </page>
+                    <page string="Journal Items" attrs="{'invisible': [('state','not in', ('open', 'paid'))]}">
+                        <field name="move_ids" readonly="1">
+                            <tree string="Journal Items">
+                                <field name="move_id"/>
+                                <field name="ref"/>
+                                <field name="date"/>
+                                <field name="statement_id"/>
+                                <field name="partner_id"/>
+                                <field name="account_id"/>
+                                <field name="name"/>
+                                <field name="debit"/>
+                                <field name="credit"/>
+                                <field name="state"/>
+                                <field name="reconcile_id"/>
+                                <field name="amount_currency" groups="base.group_multi_currency"/>
+                                <field name="currency_id" groups="base.group_multi_currency"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

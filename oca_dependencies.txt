@@ -1,4 +1,5 @@
 pb2_base_technical https://github.com/pabi2/pb2_base_technical.git master
+<<<<<<< HEAD
 pb2_base_functional https://github.com/pabi2/pb2_base_functional.git master
 pb2_operating-units https://github.com/pabi2/pb2_operating-units.git master
 <<<<<<< HEAD
@@ -7,3 +8,6 @@ pb2_generic https://github.com/pabi2/pb2_generic.git master
 pb2_generic https://github.com/pabi2/pb2_generic.git master
 pb2_base_nstda https://github.com/pabi2/pb2_base_nstda.git master
 >>>>>>> pb2_pabi/master
+=======
+pb2_base_functional https://github.com/pabi2/pb2_base_functional.git master
+>>>>>>> pb2_generic/master

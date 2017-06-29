@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+        <record id="doctype_salary_expense" model="res.doctype" >
+            <field name="name">Salary Expense</field>
+            <field name="sequence_id" ref="doctype_salary_expense_seq"/>
+            <field name="refer_type">salary_expense</field>
+        </record>
+    </data>
+</openerp>

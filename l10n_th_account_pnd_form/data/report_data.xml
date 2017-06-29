@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		# PND53
+		<record id="report_pnd53_form" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="name">PND53 Form</field>
+			<field name="report_name">report_pnd53_form</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd53_form.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd53_form_values" model="ir.values">
+			<field name="name">PND53 Form</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd53_form)"/>
+		</record>
+
+		# PND53 XLS
+		<record id="report_pnd53_form_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="name">PND53 Form</field>
+			<field name="report_name">report_pnd53_form_xls</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd53_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd53_form_xls_values" model="ir.values">
+			<field name="name">PND53 Form</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd53_form_xls)"/>
+		</record>
+
+		# PND53 (TXT)
+		<record id="report_pnd53_form_txt" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="name">PND53 Form</field>
+			<field name="report_name">report_pnd53_form_txt</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd53_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">txt_csv</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd53_form_txt_values" model="ir.values">
+			<field name="name">PND53 Form</field>
+			<field name="model">report.pnd53.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd53_form_txt)"/>
+		</record>
+
+		###########################################################################
+
+		# PND3
+		<record id="report_pnd3_form" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="name">PND3 Form</field>
+			<field name="report_name">report_pnd3_form</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3_form.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd3_form_values" model="ir.values">
+			<field name="name">PND3 Form</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form)"/>
+		</record>
+
+		# PND3 (XLS)
+		<record id="report_pnd3_form_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="name">PND3 Form</field>
+			<field name="report_name">report_pnd3_form_xls</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd3_form_xls_values" model="ir.values">
+			<field name="name">PND3 Form</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_xls)"/>
+		</record>
+
+		# PND3 (TXT)
+		<record id="report_pnd3_form_txt" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="name">PND3 Form</field>
+			<field name="report_name">report_pnd3_form_txt</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">txt_csv</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd3_form_txt_values" model="ir.values">
+			<field name="name">PND3 Form</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_txt)"/>
+		</record>
+		
+		###########################################################################
+
+		# PND3A
+		<record id="report_pnd3a_form" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3a.form</field>
+			<field name="name">PND3A Form</field>
+			<field name="report_name">report_pnd3a_form</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3a_form.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd3a_form_values" model="ir.values">
+			<field name="name">PND3A Form</field>
+			<field name="model">report.pnd3a.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3a_form)"/>
+		</record>
+		
+		# PND3A (XLS)
+		<record id="report_pnd3a_form_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3a.form</field>
+			<field name="name">PND3A Form</field>
+			<field name="report_name">report_pnd3a_form_xls</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3a_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+		
+		<record id="report_pnd3a_form_xls_values" model="ir.values">
+			<field name="name">PND3A Form</field>
+			<field name="model">report.pnd3a.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3a_form_xls)"/>
+		</record>
+		
+		# PND3A (TXT)
+		<record id="report_pnd3a_form_txt" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3a.form</field>
+			<field name="name">PND3A Form</field>
+			<field name="report_name">report_pnd3a_form_txt</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd3a_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">txt_csv</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd3a_form_txt_values" model="ir.values">
+			<field name="name">PND3A Form</field>
+			<field name="model">report.pnd3a.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3a_form_txt)"/>
+		</record>
+	</data>
+</openerp>
