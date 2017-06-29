@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from psycopg2.extras import _logging
+# from psycopg2.extras import _logging
 import logging
 import os
-import cgi
+# import cgi
 import md5
 import time
 import urllib

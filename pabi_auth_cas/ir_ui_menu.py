@@ -1,13 +1,13 @@
-import base64
+# import base64
 import operator
-import re
-import threading
+# import re
+# import threading
 
-import openerp.modules
+# import openerp.modules
 from openerp.osv import fields, osv
-from openerp import api, tools
-from openerp.tools.safe_eval import safe_eval as eval
-from openerp.tools.translate import _
+from openerp import tools
+# from openerp.tools.safe_eval import safe_eval as eval
+# from openerp.tools.translate import _
 
 MENU_ITEM_SEPARATOR = "/"
 

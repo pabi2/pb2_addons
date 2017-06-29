@@ -33,30 +33,30 @@ import werkzeug.urls
 import werkzeug.exceptions
 # import time
 # import Cookie
-import operator
+# import operator
 import ssl
 
 from urllib import urlencode
 from urlparse import urlparse, urlunparse, parse_qs
 
 # from openid import oidutil
-from openid.store import filestore
-from openid.consumer import consumer
+# from openid.store import filestore
+# from openid.consumer import consumer
 from openid.cryptutil import randomString
-from openid.extensions import ax, sreg
+# from openid.extensions import ax, sreg
 
 import openerp
 from openerp import SUPERUSER_ID
 from openerp import pooler
 from openerp.modules.registry import RegistryManager
-from openerp.addons.web.controllers.main \
-    import login_and_redirect, set_cookie_and_redirect
+from openerp.addons.web.controllers.main import login_and_redirect
+# set_cookie_and_redirect
 import openerp.http as http
 from openerp.http import request
 from openerp.tools.translate import _
 
 from ..pycas import login
-from ..pycas import make_pycas_cookie
+# from ..pycas import make_pycas_cookie
 from openerp.addons.web.controllers import main
 from openerp.addons.web.controllers.main import Session
 
