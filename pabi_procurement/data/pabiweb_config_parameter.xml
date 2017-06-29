@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="base.ir_config_parameter_2" model="ir.config_parameter">
+            <field name="key">pabiweb_username</field>
+            <field name="value">002648</field>
+        </record>
+        <record id="base.ir_config_parameter_3" model="ir.config_parameter">
+            <field name="key">pabiweb_password</field>
+            <field name="value">password</field>
+        </record>
+    </data>
+</openerp>

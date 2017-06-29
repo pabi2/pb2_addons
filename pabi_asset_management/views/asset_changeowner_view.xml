@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Asset -->
+        <record model="ir.ui.view" id="view_account_asset_tree_changeowner">
+            <field name="name">account.asset.tree.changeowner</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <tree string="Assets">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="product_id"/>
+                    <field name="profile_id"/>
+                    <field name="purchase_id"/>
+                    <field name="project_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_search_changeowner" model="ir.ui.view">
+            <field name="name">account.asset.search.changeowner</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <search string="Assets">
+                    <filter string="Normal Asset" name="normal_asset" domain="[('type', '!=', 'view'), ('no_depreciation', '=', False)]"/>
+                    <separator/>
+                    <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
+                    <field name="profile_id"/>
+                    <field name="product_id"/>
+                    <field name="purchase_id"/>
+                    <field name="project_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Project" context="{'group_by':'project_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Asset Changeowner -->
+        <record model="ir.ui.view" id="view_account_asset_changeowner_form">
+            <field name="name">account.asset.changeowner.form</field>
+            <field name="model">account.asset.changeowner</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <header>
+                        <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
+                        <button name="action_done" states="draft" string="Change Owner" type="object" groups="account.group_account_manager" class="oe_highlight"/>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object" groups="account.group_account_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="user_id"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Change Asset Owner">
+                                <field name="changeowner_ids">
+                                    <tree editable="bottom">
+                                        <field name="asset_id"/>
+                                        <field name="section_id"/>
+                                        <field name="project_id"/>
+                                        <field name="responsible_user_id"/>
+                                        <field name="location_id"/>
+                                        <field name="room"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <field name="note" placeholder="Add an internal note here..."/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_changeowner_tree">
+            <field name="name">account.asset.changeowner.tree</field>
+            <field name="model">account.asset.changeowner</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Change Owner">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_changeowner_search" model="ir.ui.view">
+            <field name="name">account.asset.changeowner.search</field>
+            <field name="model">account.asset.changeowner</field>
+            <field name="arch" type="xml">
+                <search string="Asset Change Owner">
+                    <field name="name" string="Asset Change Owner"/>
+                    <field name="user_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="User" domain="" context="{'group_by':'user_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_changeowner_form">
+            <field name="name">Change Owner</field>
+            <field name="res_model">account.asset.changeowner</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_asset_changeowner_tree"/>
+            <field name="search_view_id" ref="view_account_asset_changeowner_search"/>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_changeowner_form" action="action_account_asset_changeowner_form"/>
+
+    </data>
+</openerp>

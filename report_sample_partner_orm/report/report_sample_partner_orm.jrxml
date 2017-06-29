@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
+	<queryString language="xPath">
+		<![CDATA[/data]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
+	</field>
+	<field name="customer" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
+	<field name="supplier" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[supplier]]></fieldDescription>
+	</field>
+	<field name="salesperson" class="java.lang.String">
+		<fieldDescription><![CDATA[user_id/name]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="151" height="29"/>
+				<textElement lineSpacing="Single">
+					<font size="22" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Partner List]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="161" y="1" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Is Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="261" y="1" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Is Supplier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="1" width="180" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Salesperson Name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="49" splitType="Stretch">
+			<textField>
+				<reportElement x="161" y="9" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Boolean"><![CDATA[$F{customer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="261" y="9" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Boolean"><![CDATA[$F{supplier}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="375" y="9" width="180" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salesperson}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="9" width="161" height="20"/>
+				<textElement lineSpacing="Single">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="14" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="9" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="12" splitType="Stretch"/>
+	</summary>
+</jasperReport>

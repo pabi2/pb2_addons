@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_pabi_web_config_settings" model="ir.ui.view">
+            <field name="name">pabiweb settings</field>
+            <field name="model">pabi.web.config.settings</field>
+            <field name="arch" type="xml">
+                <form string="Configure PABI Web." class="oe_form_configuration">
+                    <header>
+                        <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <field name="company_id" invisible="1"/>
+                    <separator string="PABI Web. Configuration"/>
+                    <group>
+                        <label for="id" string="Options"/>
+                        <div name="pabiweb_option">
+                            <div>
+                                <label for="pabiweb_active"/>
+                                <field name="pabiweb_active" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)]}" >
+                                <br/>
+                                <label for="pabiweb_exp_url"/>
+                                <field name="pabiweb_exp_url" attrs="{'required': [('pabiweb_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)], 'required': [('pabiweb_active', '=', True)]}" >
+                              <p class="oe_gray">e.g., http://%s:%s@10.226.202.134/alfresco/s/pb/exp/inf</p>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)]}" >
+                                <label for="pabiweb_pcm_url"/>
+                                <field name="pabiweb_pcm_url" attrs="{'required': [('pabiweb_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)], 'required': [('pabiweb_active', '=', True)]}" >
+                              <p class="oe_gray">e.g., http://%s:%s@10.226.202.134/alfresco/s/pb/pcm/inf</p>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)]}" >
+                                <label for="pabiweb_file_prefix"/>
+                                <field name="pabiweb_file_prefix" attrs="{'required': [('pabiweb_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)], 'required': [('pabiweb_active', '=', True)]}" >
+                              <p class="oe_gray">e.g., http://10.226.202.134/share/proxy/alfresco/api/node/content/workspace/SpacesStore/</p>
+                            </div>
+                        </div>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_web_config" model="ir.actions.act_window">
+            <field name="name">Configure PABI Web.</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pabi.web.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_pabi_web_config" name="PABI Web." parent="base.menu_config" sequence="100" action="action_pabi_web_config"/>
+    </data>
+</openerp>

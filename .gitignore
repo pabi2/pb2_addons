@@ -16,6 +16,7 @@ downloads/
 eggs/
 .eggs/
 <<<<<<< HEAD
+<<<<<<< HEAD
 lib/
 lib64/
 parts/
@@ -23,12 +24,17 @@ sdist/
 var/
 wheels/
 =======
+=======
+>>>>>>> pb2_pabi/master
 #lib/
 #lib64/
 parts/
 sdist/
 var/
+<<<<<<< HEAD
 >>>>>>> pb2_base_nstda/master
+=======
+>>>>>>> pb2_pabi/master
 *.egg-info/
 .installed.cfg
 *.egg
@@ -52,14 +58,19 @@ htmlcov/
 nosetests.xml
 coverage.xml
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.cover
 =======
 *,cover
 >>>>>>> pb2_base_nstda/master
+=======
+*,cover
+>>>>>>> pb2_pabi/master
 .hypothesis/
 
 # Translations
 *.mo
+<<<<<<< HEAD
 <<<<<<< HEAD
 *.pot
 
@@ -74,11 +85,16 @@ instance/
 # Scrapy stuff:
 .scrapy
 =======
+=======
+>>>>>>> pb2_pabi/master
 #*.pot
 
 # Django stuff:
 *.log
+<<<<<<< HEAD
 >>>>>>> pb2_base_nstda/master
+=======
+>>>>>>> pb2_pabi/master
 
 # Sphinx documentation
 docs/_build/
@@ -86,6 +102,7 @@ docs/_build/
 # PyBuilder
 target/
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -120,6 +137,8 @@ ENV/
 # mypy
 .mypy_cache/
 =======
+=======
+>>>>>>> pb2_pabi/master
 #Ipython Notebook
 .ipynb_checkpoints
 
@@ -131,4 +150,7 @@ openerp-server.conf
 *.settings
 *.*~
 .~*
+<<<<<<< HEAD
 >>>>>>> pb2_base_nstda/master
+=======
+>>>>>>> pb2_pabi/master

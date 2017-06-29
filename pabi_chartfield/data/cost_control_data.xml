@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Job Order Type -->
+        <record id="cost_control_nstda_course" model="cost.control.type">
+            <field name="name">NSTDA Course</field>
+            <field name="description">Course or Seminar organized by NSTDA</field>
+        </record>
+        
+        <record id="cost_control_field_trip" model="cost.control.type">
+            <field name="name">Field Trip</field>
+            <field name="description"></field>
+        </record>
+        
+        <record id="cost_control_event" model="cost.control.type">
+            <field name="name">Event</field>
+            <field name="description"></field>
+        </record>
+        
+    </data>
+</openerp>

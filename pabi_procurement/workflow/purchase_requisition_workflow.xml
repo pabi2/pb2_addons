@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="act_to_verify" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_requisition.purchase_requisition_workflow"/>
+            <field name="name">verify</field>
+            <field name="kind">function</field>
+            <field name="action">
+                check_rfq_no()
+                to_verify()
+            </field>
+        </record>
+        <record id="act_rejected" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_requisition.purchase_requisition_workflow"/>
+            <field name="name">verify</field>
+            <field name="kind">function</field>
+            <field name="action">rejected()</field>
+        </record>
+        <record id="trans_sent_to_verify" model="workflow.transition">
+            <field name="act_from" ref="purchase_requisition.act_sent"/>
+            <field name="act_to" ref="act_to_verify"/>
+            <field name="signal">to_verify</field>
+        </record>
+         <record id="trans_to_verify_verified" model="workflow.transition">
+            <field name="act_from" ref="act_to_verify"/>
+            <field name="act_to" ref="purchase_requisition.act_open"/>
+            <field name="signal">verified</field>
+        </record>
+        <record id="trans_to_verify_draft" model="workflow.transition">
+            <field name="act_from" ref="act_to_verify"/>
+            <field name="act_to" ref="act_rejected"/>
+            <field name="signal">rejected</field>
+        </record>
+        <record id="trans_open_to_rejected" model="workflow.transition">
+            <field name="act_from" ref="purchase_requisition.act_open"/>
+            <field name="act_to" ref="act_rejected"/>
+            <field name="signal">open_rejected</field>
+        </record>
+        <!-- Validate CFB Amount VS Quotation Amount -->
+        <record id="purchase_requisition.act_open" model="workflow.activity">
+            <field name="action">
+                set_verification_info()
+                send_pbweb_requisition()
+	           	tender_open()</field>
+        </record>
+        <record id="purchase_requisition.act_cancel" model="workflow.activity">
+            <field name="action">
+                send_pbweb_requisition_cancel()
+                tender_cancel()
+            </field>
+        </record>
+    </data>
+</openerp>

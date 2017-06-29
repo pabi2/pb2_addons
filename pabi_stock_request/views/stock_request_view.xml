@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_stock_request_tree" >
+            <field name="name">view.stock.request.tree</field>
+            <field name="model">stock.request</field>
+            <field name="inherit_id" ref="stock_request.view_stock_request_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="after">
+                    <field name="receive_emp_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_stock_request_form" >
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.request</field>
+            <field name="inherit_id" ref="stock_request.view_stock_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location_borrow_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('type', '!=', 'borrow')], 'required': [('type', '=', 'borrow')], 'readonly': [('state', '!=', 'draft')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('state', 'not in', ('draft', 'wait_confirm', 'wait_approve'))]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('state', 'not in', ('draft', 'wait_confirm', 'wait_approve'))]}</attribute>
+                </xpath>
+                <!--<button name="action_confirm" string="Request" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'draft')]}"/>-->
+                <!--<button name="action_verify" string="Verify" type="object" class="oe_highlight" groups="stock.group_stock_user" attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'confirmed')]}"/>-->
+                <!--<button name="action_approve" string="Approve" type="object" class="oe_highlight" groups="stock.group_stock_manager" attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'wait_approve')]}"/>-->
+                <!--<button name="action_prepare" string="Prepare Transfer" type="object" class="oe_highlight" groups="stock.group_stock_user" attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'approved')]}"/>-->
+                <!--<button name="action_transfer" string="Transfer" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('type', '!=', 'request'), ('state', '!=', 'ready')]}"/>-->
+            </field>
+        </record>
+    </data>
+</openerp>

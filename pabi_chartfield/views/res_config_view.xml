@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Account Setting
+        <record id="view_account_config_settings" model="ir.ui.view">
+            <field name="name">account settings</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//separator[@name='analytic_account']" position="before">
+                    <separator name="chartfield_config" string="Chartfields"/>
+                    <group name="chartfield">
+                        <label for="id" string="Configuration"/>
+                        <div>
+                            <div name="group_chartfields_invoice">
+                                <field name="group_chartfields_invoice"/>
+                                <label for="group_chartfields_invoice"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        # HR Setting
+        <record id="view_human_resources_configuration" model="ir.ui.view">
+            <field name="name">hr settings</field>
+            <field name="model">hr.config.settings</field>
+            <field name="inherit_id" ref="hr.view_human_resources_configuration"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='contract_grp']" position="after">
+                    <group name="chartfield_group" string="Chartfields">
+                        <label for="id" string="Configuration"/>
+                        <div>
+                            <div>
+                                <field name="group_chartfields_expense" class="oe_inline"/>
+                                <label for="group_chartfields_expense"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        # Purchase Setting
+        <record id="view_purchase_configuration" model="ir.ui.view">
+            <field name="name">purchase settings</field>
+            <field name="model">purchase.config.settings</field>
+            <field name="inherit_id" ref="purchase.view_purchase_configuration"/>
+            <field name="arch" type="xml">
+                <xpath expr="//separator[last()]" position="before">
+                    <separator string="Chartfields"/>
+                    <group name="chartfield_group">
+                        <label for="id" string="Configuration"/>
+                        <div>
+                            <div>
+                                <field name="group_chartfields_purchase" class="oe_inline"/>
+                                <label for="group_chartfields_purchase"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

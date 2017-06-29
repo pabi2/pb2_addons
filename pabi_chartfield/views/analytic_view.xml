@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+        <record id="view_account_analytic_account_form" model="ir.ui.view" >
+            <field name="name">view.account.analytic.account.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="account_budget_activity.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='chartfields']" position="inside">
+                    
+                    <field name="spa_id"/>
+                    <field name="mission_id" />
+                    <field name="tag_type_id" />
+                    <field name="tag_id" />
+                    
+                    <field name="functional_area_id" />
+                    <field name="program_group_id" />
+                    <field name="program_id" />
+                    <field name="project_group_id" />
+                    <field name="project_id"/>
+                    
+                    <field name="org_id" />
+                    <field name="sector_id" />
+                    <field name="subsector_id"/>
+                    <field name="division_id" />
+                    <field name="section_id" />
+                    <field name="costcenter_id"/>
+                    <field name="taxbranch_id" />
+                    
+                    <field name="invest_asset_id" />
+                        
+                    <field name="invest_construction_id" />
+                    <field name="invest_construction_phase_id" />
+            
+                    <field name="personnel_costcenter_id" />
+                    
+                    <field name="fund_id" />
+                    <field name="cost_control_type_id"/>
+                    <field name="cost_control_id" />   
+                                         
+                </xpath> 
+            </field>
+        </record>         
+        <record id="view_account_analytic_account_tree" model="ir.ui.view">
+            <field name="name">account.analytic.account.tree</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="account.view_account_analytic_account_tree"/>
+            <field name="arch" type="xml">
+                <field name="debit" position="before">
+                    
+                    <field name="spa_id"/>
+                    <field name="mission_id" />
+                    <field name="tag_type_id" />
+                    <field name="tag_id" />
+                    
+                    <field name="functional_area_id" />
+                    <field name="program_group_id" />
+                    <field name="program_id" />
+                    <field name="project_group_id" />
+                    <field name="project_id"/>
+                    
+                    <field name="org_id" />
+                    <field name="sector_id" />
+                    <field name="subsector_id"/>
+                    <field name="division_id" />
+                    <field name="section_id" />
+                    <field name="costcenter_id"/>
+                    <field name="taxbranch_id" />
+                    
+                    <field name="invest_asset_id" />
+                        
+                    <field name="invest_construction_id" />
+                    <field name="invest_construction_phase_id" />
+            
+                    <field name="personnel_costcenter_id" />
+                    
+                    <field name="fund_id" />
+                    <field name="cost_control_type_id"/>
+                    <field name="cost_control_id" />
+                    
+                </field>
+            </field>
+        </record>
+        
+        <record id="view_account_analytic_account_search" model="ir.ui.view">
+            <field name="name">account.analytic.account.search</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="account.view_account_analytic_account_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/group" position="inside">
+                    
+                    <filter string="SPA" context="{'group_by':'spa_id'}"/>
+                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                    <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
+                    <filter string="Tag" context="{'group_by':'tag_id'}"/>
+
+                    <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
+                    <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
+                    <filter string="Program" context="{'group_by':'program_id'}"/>
+                    <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
+                    <filter string="Project" context="{'group_by':'project_id'}"/>
+                    
+                    <filter string="Org" context="{'group_by':'org_id'}"/>
+                    <filter string="Sector" context="{'group_by':'sector_id'}"/>
+                    <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
+                    <filter string="Division" context="{'group_by':'division_id'}"/>
+                    <filter string="Section" context="{'group_by':'section_id'}"/>
+                    <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                    <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
+
+                    <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
+                		
+                    <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
+                    <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
+
+                    <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
+
+					<filter string="Fund" context="{'group_by':'fund_id'}"/>
+                    <filter string="Job Order Type" context="{'group_by':'cost_control_type_id'}"/>
+                    <filter string="Job Order" context="{'group_by':'cost_control_id'}"/>
+                    
+                </xpath>
+            </field>
+		</record>
+		
+		<!-- Analytic Line -->
+	
+	    <record id="view_account_analytic_line_graph" model="ir.ui.view">
+	         <field name="name">view.account.analytic.line.graph</field>
+	         <field name="model">account.analytic.line</field>
+	         <field name="arch" type="xml">
+	             <graph string="Analytic Journal Item" type="pivot">
+	                 <field name="org_id" type="row"/>
+	                 <field name="date" type="col"/>
+	                 <field name="amount" type="measure"/>
+	             </graph>
+	         </field>
+	    </record>
+
+        <record id="view_account_analytic_line_tree" model="ir.ui.view">
+            <field name="name">view.account.analytic.line.tree</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account.view_account_analytic_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    
+                	<field name="spa_id" invisible="1"/>
+                	<field name="mission_id" invisible="1" />
+                	<field name="tag_type_id" invisible="1" />
+                	<field name="tag_id" invisible="1" />
+                	
+                	<field name="functional_area_id" invisible="1" />
+                	<field name="program_group_id" invisible="1" />
+                	<field name="program_id" invisible="1" />
+                	<field name="project_group_id" invisible="1" />
+                	<field name="project_id" invisible="1" />
+                	
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="subsector_id" invisible="1" />
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" invisible="1" />
+                    <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+                    
+                    <field name="invest_asset_id" invisible="1" />
+                		
+                    <field name="invest_construction_id" invisible="1" />
+                    <field name="invest_construction_phase_id" invisible="1" />
+            
+                    <field name="personnel_costcenter_id" invisible="1" />
+                    
+                    <field name="fund_id" invisible="1"/>
+                    <field name="cost_control_type_id" invisible="1" />
+                    <field name="cost_control_id" invisible="1" />
+                    
+                </field>
+            </field>
+        </record>		
+		
+
+        <record id="view_account_analytic_line_filter" model="ir.ui.view">
+            <field name="name">view.account.analytic.line.filter</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="account.view_account_analytic_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/group" position="inside">
+                	
+                    <filter string="SPA" context="{'group_by':'spa_id'}"/>
+                    <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                    <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
+                    <filter string="Tag" context="{'group_by':'tag_id'}"/>
+
+                    <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
+                    <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
+                    <filter string="Program" context="{'group_by':'program_id'}"/>
+                    <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
+                    <filter string="Project" context="{'group_by':'project_id'}"/>
+                    
+                    <filter string="Org" context="{'group_by':'org_id'}"/>
+                    <filter string="Sector" context="{'group_by':'sector_id'}"/>
+                    <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
+                    <filter string="Division" context="{'group_by':'division_id'}"/>
+                    <filter string="Section" context="{'group_by':'section_id'}"/>
+                    <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                    <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
+                    
+                    <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
+                		
+                    <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
+                    <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
+            
+                    <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
+                    
+                    <filter string="Fund" context="{'group_by':'fund_id'}" />
+                    <filter string="Job Order Type" context="{'group_by':'cost_control_type_id'}"/>
+                    <filter string="Job Order" context="{'group_by':'cost_control_id'}"/>
+                    
+                </xpath>
+            </field>
+         </record>	
+
+		<record id="account.action_account_analytic_journal_open_form" model="ir.actions.act_window">
+		    <field name="view_mode">tree,form,graph</field>
+		</record>	
+		
+     </data>
+</openerp>

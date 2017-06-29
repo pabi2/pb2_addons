@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Default list view on partner page-->
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="name">Suppliers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1}</field>
+            <field name="filter" eval="True"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+              </p><p>
+                Odoo helps you easily track all activities related to
+                a supplier: discussions, history of purchases,
+                documents, etc.
+              </p>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_partner_form_ext" >
+            <field name="name">view.partner.form.ext</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="res_partner_ext.view_partner_form_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group/group/field[@name='vat']" position="replace"/>
+                <xpath expr="//form/sheet/notebook/page/field/form/sheet/group/group/field[@name='taxbranch']" position="replace"/>
+                <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='supplier']" position="before">
+                    <group attrs="{'invisible': [('use_parent_address', '=', True)]}">
+                        <field name="vat" string="Tax ID"/>
+                        <field name="taxbranch" />
+                    </group>
+				</xpath>
+                <xpath expr="/form/sheet/group/group/field[@name='is_government']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+				</xpath>
+                <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='is_government']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+				</xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_purchase_method_form" model="ir.ui.view">
+            <field name="name">purchase.method.form</field>
+            <field name="model">purchase.method</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_method_form"/>
+            <field name="arch" type="xml">
+                <field name="require_rfq" position="after">
+                    <field name="asset_purchase_method_id"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

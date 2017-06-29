@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_invoice_filter">
+            <field name="name">view.account.invoice.filter</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="source_document" string="Source Document Ref."/>
+                    <field name="source_document_type" string="Source Document Type"/>
+                </xpath>
+                <xpath expr="//search/group" position="inside">
+                    <filter name="group_by_source_document" string="Source Document Ref" context="{'group_by':'source_document'}"/>
+                    <filter name="group_by_source_document_type" string="Source Document Type" context="{'group_by':'source_document_type'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="source_document"/>
+                    <field name="source_document_type" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Customer Invoice/Refund
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position']" position="after" >
+                    <field name="source_document_id"/>
+                    <field name="source_document_type" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Supplier Invoice/Refund
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='supplier_invoice_number']" position="after" >
+                    <field name="source_document_id"/>
+                    <field name="source_document_type" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

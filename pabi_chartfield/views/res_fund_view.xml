@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        # Fund
+        <record id="view_res_fund_form" model="ir.ui.view">
+            <field name="name">view.res.fund.form</field>
+            <field name="model">res.fund</field>
+            <field name="inherit_id" ref="pabi_base.view_res_fund_form"/>
+            <field name="arch" type="xml">
+                <group position="inside">
+                    <group string="Applicable with Budget Struture..." colspan="4">
+                        <div>
+                            <field name="unit_base" class="oe_inline"/>
+                            <label string="Unit Based," class="oe_inline"/>
+                            <field name="project_base" class="oe_inline"/>
+                            <label string="Project Based," class="oe_inline"/>
+                            <field name="personnel" class="oe_inline"/>
+                            <label string="Personnel," class="oe_inline"/>
+                            <field name="invest_asset" class="oe_inline"/>
+                            <label string="Investment Asset," class="oe_inline"/>
+                            <field name="invest_construction" class="oe_inline"/>
+                            <label string="Investment Construction" class="oe_inline"/>
+                        </div>
+                    </group>
+                </group>
+            </field>
+        </record>
+    </data>
+</openerp>

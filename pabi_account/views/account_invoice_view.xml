@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">view.account.invoice.filter.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <search position="inside">
+                    <separator/>
+                    <filter name="payment_type_cheque" string="Cheque" domain="[('payment_type','=','cheque')]" help="Payment Type Cheque"/>
+                    <filter name="payment_type_transfer" string="Transfer" domain="[('payment_type','=','transfer')]" help="Payment Type Transfer"/>
+                </search>
+            </field>
+        </record>
+
+        # Customer Invoice
+        <record model="ir.ui.view" id="invoice_form">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position']" position="after" >
+                    <field name="number_preprint" />
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Other Info']//field[@name='period_id']" position="after">
+                    <field name="validate_user_id"/>
+                    <field name="validate_date"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Supplier Invoice
+        <record model="ir.ui.view" id="view_invoice_supplier">
+            <field name="name">view.invoice.supplier</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_voucher.view_invoice_supplier"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//button[@name='invoice_pay_customer']" position="attributes">
+                    <attribute name="context">{'default_payment_type': payment_type}</attribute>
+                </xpath> -->
+                <!-- Now we have decision to hide it -->
+                <xpath expr="//button[@name='invoice_pay_customer']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="invoice_supplier_form">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term']" position="after">
+                    <field name="validate_user_id"/>
+                    <field name="validate_date"/>
+                </xpath>
+                <xpath expr="/form/sheet/group/group/div" position="after">
+                    <field name="payment_type" required="1"/>
+                    <field name="has_wht" invisible="1"/>
+                    <field name="income_tax_form"
+                        attrs="{'required': [('type', 'in', ('in_invoice', 'in_refund')), ('has_wht', '=', True)],
+                                'invisible': ['|', ('type', 'not in', ('in_invoice', 'in_refund')), ('has_wht', '!=', True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="after">
+                    <field name="account_id_readonly"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="invoice_supplier_form2">
+            <field name="name">account.invoice.supplier.form2</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="l10n_th_fields.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='buttons']" position="inside">
+                    <button class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text" context="{'default_partner_id': partner_id, 'default_payment_type': payment_type}">
+                        <field string="Payments" name="payment_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        # Hide unused fields to avoid confusion
+        <record id="invoice_supplier_form3" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='expense_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+        # Hide unused fields to avoid confusion
+        <record id="invoice_supplier_form4" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <!-- Will try to use super source document instead -->
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <!-- Will try to use super source document instead -->
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

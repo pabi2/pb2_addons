@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="account_asset_remove_view_form">
+            <field name="name">account.asset.remove.form</field>
+            <field name="model">account.asset.remove</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_remove_view_form"/>
+            <field name="arch" type="xml">
+                <field name="posting_regime" position="after">
+                    <field name="target_status"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

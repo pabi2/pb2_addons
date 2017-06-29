@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_asset_action_excel_import" model="ir.ui.view">
+            <field name="name">view.asset.action.excel.import</field>
+            <field name="model">asset.action.excel.import</field>
+            <field name="arch" type="xml">
+                <form string="Asset Action Excel Import">
+                    <group>
+                        <group>
+                            <field name="action_type"/>
+                        </group>
+                        <group>
+                            <field name="import_file"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Import" name="action_import" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_asset_action_excel_import" model="ir.actions.act_window">
+            <field name="name">Asset Action Excel Import</field>
+            <field name="res_model">asset.action.excel.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_asset_action_excel_import"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_asset_action_excel_import" name="Batch Import (xls)" id="menu_asset_action_excel_import" sequence="100" parent="menu_asset_actions"/>
+
+    </data>
+</openerp>

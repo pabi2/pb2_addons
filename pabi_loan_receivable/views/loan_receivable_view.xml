@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_loan_receivable" name="Loan Receivables" parent="account.menu_finance" sequence="3"
+            groups="account.group_account_user,account.group_account_manager"/>
+
+    	# Bank Loan MOU
+        <record id="view_loan_bank_mou_filter" model="ir.ui.view">
+            <field name="name">view.loan.bank.mou.filter</field>
+            <field name="model">loan.bank.mou</field>
+            <field name="arch" type="xml">
+                <search string="Search Bank Loan MOU">
+                    <field name="name"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+       	<record model="ir.ui.view" id="view_loan_bank_mou_tree">
+            <field name="name">view.loan.bank.mou.tree</field>
+            <field name="model">loan.bank.mou</field>
+            <field name="arch" type="xml">
+                <tree string="Bank Loan MOU">
+                    <field name="name"/>
+                    <field name="bank_id"/>
+                    <field name="max_installment"/>
+                    <field name="loan_ratio"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_loan_bank_mou_form">
+            <field name="name">view.loan.bank.mou.form</field>
+            <field name="model">loan.bank.mou</field>
+            <field name="arch" type="xml">
+                <form string="Bank Loan MOU" >
+                    <group>
+                        <group>
+                        	<field name="name"/>
+                            <field name="bank_id" />
+                            <label for="date_begin" string="Duration"/>
+                            <div>
+                                <field name="date_begin" class="oe_inline"/> -
+                                <field name="date_end" class="oe_inline"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="product_id" />
+                            <field name="max_installment" />
+                            <field name="loan_ratio" />
+                        </group>
+                    </group>
+                    <separator string="Loan Agreements"/>
+                    <field name="loan_agreement_ids" nolabel="1">
+                        <tree string="Customer Loan Agreement"
+                    colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                            <field name="name" />
+                            <field name="bank_id" />
+                            <field name="partner_id" />
+                            <field name="amount_loan_total" />
+                            <field name="amount_receivable" />
+                            <field name="state" />
+                            <field name="date_begin"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+
+		<record id="action_loan_bank_mou" model="ir.actions.act_window">
+            <field name="name">Bank Loan MOU</field>
+            <field name="res_model">loan.bank.mou</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Bank Loan MOU.
+              </p>
+            </field>
+        </record>
+        <record id="action_loan_bank_mou_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_loan_bank_mou_tree"/>
+            <field name="act_window_id" ref="action_loan_bank_mou"/>
+        </record>
+        <record id="action_loan_bank_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_loan_bank_mou_form"/>
+            <field name="act_window_id" ref="action_loan_bank_mou"/>
+        </record>
+
+	    <menuitem action="action_loan_bank_mou" sequence="1"
+	    	id="menu_action_loan_bank_mou"  parent="menu_loan_receivable"/>
+
+
+   		# Customer Loan Agreement
+        <record id="view_loan_customer_agreement_filter" model="ir.ui.view">
+            <field name="name">view.loan.bank.mou.filter</field>
+            <field name="model">loan.bank.mou</field>
+            <field name="arch" type="xml">
+                <search string="Search Bank Loan MOU">
+                    <field name="name"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+       	<record model="ir.ui.view" id="view_loan_customer_agreement_tree">
+            <field name="name">view.loan.customer.agreement.tree</field>
+            <field name="model">loan.customer.agreement</field>
+            <field name="arch" type="xml">
+                <tree string="Customer Loan Agreement"
+                	colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                    <field name="name" />
+                    <field name="mou_id" />
+                    <field name="bank_id" />
+                    <field name="partner_id" />
+                    <field name="amount_loan_total" />
+                    <field name="amount_receivable" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_loan_customer_agreement_form">
+            <field name="name">view.loan.customer.agreement.form</field>
+            <field name="model">loan.customer.agreement</field>
+            <field name="arch" type="xml">
+            	<form string="Customer Loan Agreement" >
+                <header>
+                    <button name="action_sign" string="Sign Document" states="draft" type="object" class="oe_highlight"/>
+	                <button name="%(action_create_bank_invoice)d"
+	                         string="Create Bank Invoice"
+	                         type="action"
+	                         groups="account.group_account_invoice"
+	                         states="open"
+	                         class="oe_highlight" />
+	                <button name="%(action_create_installment_order)d"
+	                         string="Create Installment"
+	                         type="action"
+	                         groups="account.group_account_invoice"
+	                         states="sign"
+	                         class="oe_highlight" />
+                    <button name="action_cancel" string="Cancel" type="object" states="sign"/>
+                    <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sign,bank_invoice,bank_paid,open,done" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Loan Agreement" />
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+                                name="open_bank_invoices"
+                                attrs="{'invisible': [('bank_invoice_count', '=', 0)]}">
+                            <field string="Bank Invoices" name="bank_invoice_count" widget="statinfo" />
+                        </button>
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text-o"
+                                name="open_installment_invoices"
+                                attrs="{'invisible': [('installment_invoice_count', '=', 0)]}">
+                            <field string="Installments" name="installment_invoice_count" widget="statinfo" />
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" />
+                            <field name="mou_id" />
+                            <field name="mou_bank" invisible="1"/>
+                            <field name="bank_id" />
+                            <label for="section_id"/>
+                            <div>
+                                <field name="section_id" class="oe_inline"/>
+                                <button name="%(action_update_section_invoice)d"
+                                         string="⇒ Update Section"
+                                         type="action"
+                                         states="bank_invoice,bank_paid,done"
+                                         groups="account.group_account_invoice"
+                                         class="oe_link oe_inline" />
+                            </div>
+                            <field name="operating_unit_id" />
+                            <field name="account_receivable_id"
+                                    domain="[('type','=', 'receivable')]" />
+                            <field name="supplier_invoice_id" invisible="1"
+                            	context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
+                        </group>
+                        <group>
+                            <field name="amount_loan_total"/>
+                            <field name="amount_receivable"/>
+                            <field name="installment"/>
+                            <field name="fy_penalty_rate"/>
+                            <field name="days_grace_period"/>
+                            <label for="date_begin" string="Duration"/>
+                            <div>
+                                <field name="date_begin" class="oe_inline" nolabel="1"/> -
+                                <field name="date_end" nolabel="1" class="oe_inline"/>
+                            </div>
+                        	<field name="monthly_due_type" />
+                            <field name="date_specified" attrs="{'invisible': [('monthly_due_type', '!=', 'specific')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+	                    <page string="Installment Plan" >
+		                    <group>
+			                    <group>
+			                    	<field name="sale_id" />
+			                    </group>
+			                    <group>
+			                    </group>
+		                    </group>
+		                   	<field name="invoice_plan_ids" >
+		                   		<tree string="Installment Plan">
+							      	<field name="sequence" widget="handle" />
+						            <field name="order_id" invisible="1" />
+						            <field name="order_line_id" domain="[('order_id','=',parent.id)]" invisible="1" />
+						            <field name="installment" />
+						            <field name="date_invoice" />
+						            <field name="invoice_amount" sum="Amount" />
+						            <field name="invoice_percent" invisible="1"/>
+						            <field name="subtotal" sum="Subtotal" attrs="{'invisible': ['|', ('subtotal','=',0), ('installment','=',0)]}"/>
+						     		<field name="ref_invoice_id" widget="many2one_clickable" />
+						            <field name="state" invisible="0"/>
+						            <field name="date_paid" />
+						            <field name="payment_ids" />
+					            </tree>
+		                   	</field>
+	                   	</page>
+	           		</notebook>
+               	</sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+
+		<record id="action_loan_customer_agreement" model="ir.actions.act_window">
+            <field name="name">Loan Agreement</field>
+            <field name="res_model">loan.customer.agreement</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a new Customer Loan Agreement.
+              </p>
+            </field>
+        </record>
+
+        <record id="action_loan_customer_agreement_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_loan_customer_agreement_tree"/>
+            <field name="act_window_id" ref="action_loan_customer_agreement"/>
+        </record>
+        <record id="action_loan_customer_agreement_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_loan_customer_agreement_form"/>
+            <field name="act_window_id" ref="action_loan_customer_agreement"/>
+        </record>
+
+	    <menuitem action="action_loan_customer_agreement" sequence="1"
+	    	id="menu_action_loan_customer_agreement"  parent="menu_loan_receivable"/>
+    </data>
+</openerp>

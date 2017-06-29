@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # Unit Base
+        <record id="unit_base_tree_view" model="ir.ui.view">
+            <field name="name">unit.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.unit_base_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='budget_method']" position="after">
+                    <field name="charge_type" />
+                </xpath>
+                <xpath expr="/tree" position="attributes">
+                    <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
+                </xpath>
+            </field>
+        </record>
+        # Project base
+        <record id="project_base_tree_view" model="ir.ui.view">
+            <field name="name">project.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.project_base_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='budget_method']" position="after">
+                    <field name="charge_type" />
+                </xpath>
+                <xpath expr="/tree" position="attributes">
+                    <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="account_budget_view_form" model="ir.ui.view">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page[@name='expense']/div[@name='expense_extra']" position="inside">
+                    <group>
+                        <group>
+                            <field name="budgeted_expense_external" string="External"/>
+                        </group>
+                        <group>
+                            <field name="budgeted_expense_internal" string="Internal"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='revenue']/div[@name='revenue_extra']" position="inside">
+                    <group>
+                        <group>
+                            <field name="budgeted_revenue_external" string="External"/>
+                        </group>
+                        <group>
+                            <field name="budgeted_revenue_internal" string="Internal"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

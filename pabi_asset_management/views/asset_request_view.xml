@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Asset Request -->
+        <record model="ir.ui.view" id="view_account_asset_request_form">
+            <field name="name">account.asset.request.form</field>
+            <field name="model">account.asset.request</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <header>
+                        <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
+                        <button name="action_confirm" states="draft" string="Confirm" type="object" groups="purchase.group_purchase_user" class="oe_highlight"/>
+                        <button name="action_done" states="confirm" string="Approve" type="object" groups="purchase.group_purchase_manager" class="oe_highlight"/>
+                        <button name="action_cancel" states="draft,confirm,done" string="Cancel" type="object" groups="purchase.group_purchase_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                              <field name="user_id"/>
+                              <field name="approve_user_id"/>
+                              <field name="date_request"/>
+                            </group>
+                            <group>
+                              <field name="responsible_user_id"/>
+                              <field name="location_id"/>
+                              <field name="room"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Source Assets">
+                                <field name="request_asset_ids" context="{'default_location_id': location_id, 'default_room': room}">
+                                    <tree editable="bottom">
+                                        <field name="asset_id"/>
+                                        <field name="depreciation_base" sum="Total Value"/>
+                                        <field name="location_id"/>
+                                        <field name="room"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_request_tree">
+            <field name="name">account.asset.request.tree</field>
+            <field name="model">account.asset.request</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Request">
+                    <field name="name"/>
+                    <field name="date_request"/>
+                    <field name="user_id"/>
+                    <field name="responsible_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_request_search" model="ir.ui.view">
+            <field name="name">account.asset.request.search</field>
+            <field name="model">account.asset.request</field>
+            <field name="arch" type="xml">
+                <search string="Asset Request">
+                    <field name="name" string="Asset Request"/>
+                    <field name="user_id"/>
+                    <field name="responsible_user_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Received By" domain="" context="{'group_by':'responsible_user_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_request_form">
+            <field name="name">Request</field>
+            <field name="res_model">account.asset.request</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_asset_request_tree"/>
+            <field name="search_view_id" ref="view_account_asset_request_search"/>
+        </record>
+
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request_form" action="action_account_asset_request_form"/>
+
+    </data>
+</openerp>

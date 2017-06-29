@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_payment_export_form" model="ir.ui.view">
+            <field name="name">view.payment.export.form</field>
+            <field name="model">payment.export</field>
+            <field name="inherit_id" ref="payment_export.view_payment_export_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Attachments">
+                        <field name="attachment_ids"
+                            context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree'}">
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

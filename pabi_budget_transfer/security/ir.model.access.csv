@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_section_budget_transfer_line,access_section_budget_transfer_line,model_section_budget_transfer_line,pabi_base.group_budget_user,1,1,1,1

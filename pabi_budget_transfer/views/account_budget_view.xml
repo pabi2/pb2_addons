@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="account_budget_view_form" model="ir.ui.view">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page[last()]" position="after">
+                    <page string="Transfer">
+                        <group>
+                            <group string="IN">
+                                <field name="in_unit_transfer_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="transfer_id" string="Reference"/>
+                                        <field name="from_section_id"/>
+                                        <field name="amount_transfer" sum="Total Amount"/>
+                                        <field name="notes"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group string="OUT">
+                                <field name="out_unit_transfer_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="transfer_id" string="Reference"/>
+                                        <field name="to_section_id"/>
+                                        <field name="amount_transfer" sum="Total Amount"/>
+                                        <field name="notes"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

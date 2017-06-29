@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_purchase_work_acceptance_form" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.form</field>
+            <field name="model">purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Work Acceptance" create="false">
+                    <header>
+                        <button name="action_evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
+                        <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
+                        <button name="action_cancel" type="object" states="draft,evaluation" string="Cancel"/>
+                        <button name="action_set_draft" type="object" states="cancel" string="Set to draft"/>
+                        <button name="open_order_line" type="object" string="Create Invoices" attrs="{'invisible':['|',('order_method', '!=', 'manual'),('invoice_created', '=', True)]}"/>
+                        <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,evaluation,done"/>
+                    </header>
+                    <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Work Acceptance"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="order_id"/>
+                            <field name="date_contract_start" readonly="1"/>
+                            <field name="date_scheduled_end" string="Contract End Date" readonly="1"/>
+                            <field name="date_contract_end" invisible="1"/>
+                            <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="fine_per_day" invisible="1"/>
+                            <field name="overdue_day" invisible="1"/>
+                            <field name="order_method" invisible="1"/>
+                            <field name="invoice_created" invisible="1"/>
+                            <field name="total_fine_cal" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="is_manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="manual_days" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="supplier_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_receive" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_accept" attrs="{'readonly': ['|', ('order_method', '=', 'picking'), ('state','in',('done','cancel'))],
+                                                              'required': [('order_method', '!=', 'picking'), ('state','=',('evaluation'))]}"/>
+                        </group>
+                    </group>
+                    <field name="acceptance_line_ids" attrs="{'readonly': [('state','!=','draft')]}">
+                        <tree editable="bottom" >
+                            <field name="product_id"/>
+                            <field name="name"/>
+                            <field name="balance_qty"/>
+                            <field name="to_receive_qty"/>
+                            <field name="product_uom"/>
+                            <field name="price_unit"/>
+                            <field name="tax_ids" widget="many2many_tags"/>
+                            <field name="price_subtotal"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_untaxed" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="amount_total"/>
+                        </div>
+                        <field name="amount_total" nolabel="1"
+                               class="oe_subtotal_footer_separator" widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <div class="oe_clear"/>
+                    <h2>Supplier Evaluation</h2>
+                    <group colspan="4">
+                        <group>
+                            <field name="eval_receiving" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                            <field name="eval_quality" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                            <field name="eval_service" attrs="{'readonly': [('state','!=','evaluation')], 'required': [('state','=','evaluation')]}"/>
+                        </group>
+                        <group/>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_purchase_work_acceptance_tree" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.tree</field>
+            <field name="model">purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Work Acceptance" create="false">
+                    <field name="name"/>
+                    <field name="date_receive"/>
+                    <field name="date_contract_start"/>
+                    <field name="date_scheduled_end" string="Contract End Date"/>
+                    <field name="date_contract_end" invisible="1"/>
+                    <field name="is_manual_fine"/>
+                    <field name="manual_fine"/>
+                    <field name="manual_days"/>
+                    <field name="state"/>
+                    <!--<field name="total_fine"/>-->
+                </tree>
+            </field>
+        </record>
+        <record id="view_purchase_work_acceptance_search" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.search</field>
+            <field name="model">purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Work Acceptance">
+                    <field name="name" string="Purchase Work Acceptance"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_purchase_work_acceptance_tree" model="ir.actions.act_window">
+            <field name="name">Purchase Work Acceptance</field>
+            <field name="res_model">purchase.work.acceptance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Purchase Work Acceptance.
+              </p>
+            </field>
+        </record>
+       <menuitem action="action_purchase_work_acceptance_tree"
+                 id="menu_purchase_work_acceptance_action"
+                 parent="purchase.menu_procurement_management"/>
+    </data>
+</openerp>

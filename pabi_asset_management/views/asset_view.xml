@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem id="menu_asset_actions" name="Asset Actions" parent="account_asset_management.menu_finance_assets"/>
+
+        <!-- Account Asset View -->
+        <record id="account_asset_view_search" model="ir.ui.view">
+            <field name="name">account.asset.search</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_view_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search position="inside">
+                    <filter string="ใช้งานปกติ" name="normal" domain="[('status_code','=','normal')]"/>
+                    <filter string="ส่งมอบ" name="deliver" domain="[('status_code','=','deliver')]"/>
+                    <filter string="โอนเป็นครุภัณฑ์" name="transfer" domain="[('status_code','=','transfer')]"/>
+                    <filter string="ชำรุด" name="break" domain="[('status_code','=','break')]"/>
+                    <filter string="รอจำหน่าย" name="to_dispose" domain="[('status_code','=','to_dispose')]"/>
+                    <filter string="จำหน่าย" name="dispose" domain="[('status_code','=','dispose')]"/>
+                    <filter string="สูญหาย" name="lost" domain="[('status_code','=','lost')]"/>
+                    <filter string="หมดอายุการใช้งาน" name="expire" domain="[('status_code','=','expire')]"/>
+                    <filter string="ยกเลิก" name="cancel" domain="[('status_code','=','cancel')]"/>
+                </search>
+                <field name="partner_id" position="after">
+                    <field name="product_id"/>
+                    <field name="picking_id"/>
+                    <field name="status"/>
+                </field>
+                <group position="inside">
+                    <filter string="Asset Status" context="{'group_by':'status'}"/>
+                </group>
+            </field>
+        </record>
+
+        <record id="account_asset_view_tree" model="ir.ui.view">
+            <field name="name">account.asset.tree</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_view_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="state" position="before">
+                    <field name="product_id"/>
+                    <field name="picking_id"/>
+                </field>
+                <field name="state" position="after">
+                    <field name="status"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_asset_view_form" model="ir.ui.view">
+            <field name="name">account.asset.form</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_view_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <button name="open_entries" position="replace">
+                    <button name="open_entries" class="oe_stat_button" icon="fa-book" type="object">
+                        <div>Journal<br/>Entries</div>
+                    </button>
+                    <button type="object" name="open_source_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('source_asset_count', '=', 0)]}">
+                        <field name="source_asset_count" widget="statinfo" string="Source Assets"/>
+                    </button>
+                </button>
+                <group colspan="4" col="4" position="replace">
+                    <group name="asset_status">
+                        <group>
+                            <field name="type" invisible="1"/>
+                            <field name="parent_id"/>
+                            <field name="code2"/>
+                            <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_ids', '=', [])]}"/>
+                        </group>
+                        <group>
+                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                            <field name="company_currency_id" groups="base.group_multi_currency" invisible="1"/>
+                            <field name="move_line_check" invisible="1"/>
+                            <field name="status" widget="selection"/>
+                            <field name="status_code" invisible="1"/>
+                            <field name="deliver_to" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
+                            <field name="deliver_date" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
+                        </group>
+                    </group>
+                    <group name="depreciation_base">
+                        <group>
+                            <field name="depreciation_base" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                            <field name="no_depreciation" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="value_depreciated" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                            <field name="value_residual" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                        </group>
+                    </group>
+                </group>
+                <xpath expr="//form/sheet/div/h1" position="after">
+                    <label for="code" class="oe_edit_only"/>
+                    <h2>
+                        <field name="code" class="oe_inline"/>
+                    </h2>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='General']//field[@name='partner_id']" position="after">
+                    <field name="profile_type"/>
+                    <field name="product_id"/>
+                    <field name="uom_id"/>
+                    <field name="picking_id"/>
+                    <field name="date_picking"/>
+                    <field name="purchase_id"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('no_depreciation', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']" position="after">
+                    <group>
+                        <group></group>
+                        <group string="Yearly Summary">
+                            <field name="depreciation_summary_ids" nolabel="1">
+                                <tree editable="bottom" string="Depreciation Summary" create="0" delete="0">
+                                    <field name="fiscalyear_id"/>
+                                    <field name="amount_depreciate" sum="Total Depreciation"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/separator[@string='Other Information']" position="before">
+                    <group string="Source of Budget">
+                        <group>
+                            <field name="section_id"/>
+                            <field name="project_id"/>
+                        </group>
+                        <group>
+                            <field name="invest_asset_id"/>
+                            <field name="invest_construction_phase_id"/>
+                        </group>
+                    </group>
+                </xpath>
+                <page string="History" position="attributes">
+                    <attribute name="string">Journal Entries</attribute>
+                </page>
+                <page string="Depreciation Board" position="after">
+                    <page string="Owner">
+                        <group>
+                            <group string="Depreciation On">
+                                <field name="owner_section_id"/>
+                                <field name="owner_project_id"/>
+                            </group>
+                            <group string="Responsible By">
+                                <field name="purchase_request_id"/>
+                                <field name="asset_purchase_method_id"/>
+                                <field name="pr_requester_id"/>
+                                <field name="date_request"/>
+                                <field name="doc_request_id"/>
+                                <field name="responsible_user_id"/>
+                                <field name="location_id"/>
+                                <field name="room"/>
+                            </group>
+                        </group>
+                    </page>
+                </page>
+                <page string="Notes" position="before">
+                    <page string="Other Info">
+                        <group>
+                            <group string="Warranty">
+                                <field name="serial_number"/>
+                                <field name="warranty_start_date"/>
+                                <field name="warranty_expire_date"/>
+                            </group>
+                            <group string="Image">
+                                <field name="image" widget="image" nolabel="1"/>
+                            </group>
+                        </group>
+                    </page>
+                </page>
+                <page string="Notes" position="after">
+                    <page string="Repair Note">
+                        <field name="repair_note_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="date"/>
+                                <field name="purchase_id"/>
+                                <field name="note"/>
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="account_asset_management.account_asset_action">
+            <field name="domain">[('type', '=', 'normal')]</field>
+            <field name="context">{'type': 'normal'}</field>
+        </record>
+
+        <!-- Asset Category -->
+        <record id="account_asset_profile_view_form" model="ir.ui.view">
+            <field name="name">view.account.asset.profile.form</field>
+            <field name="model">account.asset.profile</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_profile_view_form"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="product_categ_id"/>
+                </field>
+                <field name="parent_id" position="attributes">
+                    <attribute name="required">0</attribute>
+                </field>
+                <field name="parent_id" position="after">
+                    <field name="profile_type"/>
+                    <field name="no_depreciation"/>
+                    <field name="salvage_value"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Parent Asset -->
+        <record model="ir.ui.view" id="view_account_asset_parent_form">
+            <field name="name">view.account.asset.parent.form</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <sheet>
+                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" readonly="1" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="type" invisible="1"/>
+                                <field name="parent_type" attrs="{'required': [('type', '=', 'view')], 'readonly': [('name', '!=', '/')]}"/>
+                                <field name="project_id"/>
+                                <field name="section_id"/>
+                            </group>
+                            <group>
+                                <field name="state" invisible="1"/>
+                                <field name="note" placeholder="Add an internal note here..."/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_parent_tree">
+            <field name="name">view.account.asset.parent.tree</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <tree string="Parent Assets">
+                    <field name="name"/>
+                    <field name="type" invisible="1"/>
+                    <field name="parent_type"/>
+                    <field name="project_id"/>
+                    <field name="section_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_parent_search" model="ir.ui.view">
+            <field name="name">view.account.asset.parent.search</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <search string="Parent Asset">
+                    <field name="name" string="Parent Asset"/>
+                    <field name="project_id" string="Project"/>
+                    <field name="section_id" string="Section"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Project" name="project" domain="" context="{'group_by':'project_id'}"/>
+                        <filter string="Section" name="section" domain="" context="{'group_by':'section_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_parent_form">
+            <field name="name">Parent Assets</field>
+            <field name="res_model">account.asset</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type', '=', 'view'), ('parent_id', '=', False)]</field>
+            <field name="context">{'type': 'view'}</field>
+        </record>
+
+        <record id="action_account_asset_parent_form_view1" model="ir.actions.act_window.view">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_asset_parent_tree"/>
+            <field name="act_window_id" ref="action_account_asset_parent_form"/>
+        </record>
+
+        <record id="action_account_asset_parent_form_view2" model="ir.actions.act_window.view">
+            <field eval="20" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_asset_parent_form"/>
+            <field name="act_window_id" ref="action_account_asset_parent_form"/>
+        </record>
+
+        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_parent_form" action="action_account_asset_parent_form"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data>
+
+        <!--record id="account_budget_prepare_view_form" model="ir.ui.view" >
+            <field name="name">account.budget.prepare.view.form</field>
+            <field name="model">account.budget.prepare</field>
+            <field name="inherit_id" ref="pabi_budget_prepare.account_budget_prepare_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='buttons']" position="after">
+                    <group>
+                        <group/>
+                        <group>
+                            <div>
+                                <button name="%(budget_import_wizard_action)d"
+                                   type="action" string="Import to Excel" class="oe_highlight oe_inline"/>
+                                 <button name="%(budget_export_wizard_action)d"
+                                   type="action" string="Export to Excel" class="oe_highlight oe_inline"/>
+                            </div>
+
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record-->
+
+        <record id="view_budget_plan_unit_form" model="ir.ui.view" >
+            <field name="name">view.budget.plan.unit.form</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_form"/>
+            <field name="arch" type="xml">
+                <button name="button_cancel" position="after">
+                                <button name="%(budget_export_wizard_action)d"
+                                   type="action" states="draft" string="Export Plan" class="oe_inline"/>
+                                <button name="%(budget_import_wizard_action)d"
+                                   type="action" states="draft"  string="Import Plan" class="oe_inline"/>
+                </button>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Budget Plan History">
+                        <field name="plan_history_line_ids" readonly="True"/>
+                    </page>
+                    <page string="Attachments">
+                        <field name="attachment_ids">
+                            <tree string="Attachments">
+                                <field name="type" />
+                                <field name="name" />
+                                <field name="description" />
+                                <field name="url" widget="url" invisible="1"/>
+                                <button name="%(pabi_attachment_helper.action_open_url)d"
+                                        string="Open Document"
+                                        type="action"
+                                        icon="gtk-justify-fill"
+                                    />
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="view_invest_asset_plan_form" model="ir.ui.view" >
+            <field name="name">view.invest.asset.plan.form</field>
+            <field name="model">invest.asset.plan</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_invest_asset_plan_form"/>
+            <field name="arch" type="xml">
+                <button name="button_cancel" position="after">
+                    <button name="%(action_asset_item_wizard)d" type="action" states="draft" string="Export Plan"
+                        class="oe_inline"/>
+                    <button name="%(import_asset_item_action)d" type="action" states="draft" string="Import
+                        Plan" class="oe_inline"/>
+                </button>
+                
+                <xpath expr="//form" position="inside">
+                    <notebook>
+                    <page string="Budget Plan History">
+                        <field name="plan_history_line_ids" readonly="True"/>
+                    </page>
+                    <page string="Attachments">
+                        <field name="attachment_ids">
+                            <tree string="Attachments">
+                                <field name="type" />
+                                <field name="name" />
+                                <field name="description" />
+                                <field name="url" widget="url" invisible="1"/>
+                                <button name="%(pabi_attachment_helper.action_open_url)d" string="Open Document" type="action"
+                                    icon="gtk-justify-fill" />
+                            </tree>
+                        </field>
+                    </page>
+                    </notebook>
+                </xpath>
+                
+            </field>
+        </record>
+        
+     </data>
+</openerp>

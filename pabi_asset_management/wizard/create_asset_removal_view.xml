@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <act_window
+          id="action_create_asset_removal"
+          name="Create Asset Removal"
+          src_model="account.asset"
+          res_model="create.asset.removal"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"
+          />
+
+        <record id="create_asset_removal_wizard" model="ir.ui.view">
+            <field name="name">create.asset.removal.wizard</field>
+            <field name="model">create.asset.removal</field>
+            <field name="arch" type="xml">
+                <form string="Create Asset Removal">
+                    <p>Selected assets will be used to create Asset Removal.</p>
+                    <group>
+                        <group name="users">
+                            <field name="user_id"/>
+                        </group>
+                        <group name="default">
+                            <field name="date_remove"/>
+                            <field name="target_status"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_create_asset_removal" type="object" string="Create Asset Removal" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

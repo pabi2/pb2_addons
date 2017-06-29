@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="purchase_request_line_make_purchase_requisition_form" model="ir.ui.view" >
+            <field name="name">purchase.request.line.make.purchase.requisition.form</field>
+            <field name="model">purchase.request.line.make.purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_request_to_requisition.view_purchase_request_line_make_purchase_requisition"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='purchase_requisition_id']" position="attributes">
+                    <attribute name="domain">
+                        [
+                            ('state','in',('draft', 'done')),
+                        ]
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='product_uom_id']" position="after">
+                    <field name="price_unit" />
+                    <field name="tax_ids" widget="many2many_tags"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

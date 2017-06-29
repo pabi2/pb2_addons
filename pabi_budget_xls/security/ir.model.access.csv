@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_xls_output,access_budget_xls_output,model_budget_xls_output,base.group_user,1,0,0,0
+access_unit_budget_plan_export,access_unit_budget_plan_export,model_unit_budget_plan_export,base.group_user,1,0,0,0
+access_budget_import_wizard,access_budget_import_wizard,model_budget_import_wizard,base.group_user,1,0,0,0
+access_budget_plan_history,access_budget_plan_history,model_budget_plan_history,base.group_user,1,1,1,1

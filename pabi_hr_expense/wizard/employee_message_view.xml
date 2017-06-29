@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_employee_message_wizard">
+            <field name="name">employee.message.wizard</field>
+            <field name="model">employee.message</field>
+            <field name="arch" type="xml">
+                <form>
+                    <p class="oe_grey">
+                        This wizard will send message to employee.
+                    </p>
+                    <field name="message" />
+                    <footer>
+                        <button name="action_send_message" string="Send" type="object"
+                            class="oe_highlight" />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_message_to_employee">
+            <field name="name">Send Message to Employee</field>
+            <field name="res_model">employee.message</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

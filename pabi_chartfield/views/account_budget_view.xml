@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="unit_base_budget_summary_tree_view" model="ir.ui.view">
+            <field name="name">budget.unit.summary.view</field>
+            <field name="model">budget.unit.summary</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Summary Lines" editable="bottom">
+                    <field name="budget_method" invisible="True"/>
+                    <field name="activity_group_id" />
+                    <field name="m1" sum="m1"/>
+                    <field name="m2" sum="m2"/>
+                    <field name="m3" sum="m3"/>
+                    <field name="m4" sum="m4"/>
+                    <field name="m5" sum="m5"/>
+                    <field name="m6" sum="m6"/>
+                    <field name="m7" sum="m7"/>
+                    <field name="m8" sum="m8"/>
+                    <field name="m9" sum="m9"/>
+                    <field name="m10" sum="m10"/>
+                    <field name="m11" sum="m11"/>
+                    <field name="m12" sum="m12"/>
+                    <field name="planned_amount" sum="planned_amount"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="account_budget_view_form" model="ir.ui.view" >
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group//field[@name='validating_user_id']" position="after">
+                    <field name="chart_view" required="1" readonly="1"/>
+                    <field name="program_id"
+                        attrs="{'invisible': [('chart_view','!=','project_base')],
+                            'required': [('chart_view','=','project_base')]}"/>
+                    <field name="section_id"
+                        attrs="{'invisible': [('chart_view','!=','unit_base')],
+                            'required': [('chart_view','=','unit_base')]}"/>
+                    <field name="personnel_costcenter_id"
+                        attrs="{'invisible': [('chart_view','!=','personnel')],
+                            'required': [('chart_view','=','personnel')]}"/>
+                    <field name="org_id"
+                        attrs="{'invisible': [('chart_view','not in',('invest_asset','invest_construction'))],
+                            'required': [('chart_view','in',('invest_asset','invest_construction'))]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook//field[@name='budget_revenue_line_ids']" position="replace">
+                    <field name="budget_revenue_line_unit_base" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
+                                      'default_section_id': section_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'revenue'}" />
+                    <field name="budget_revenue_line_project_base" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
+                                      'default_program_id': program_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'revenue'}" />
+                    <field name="budget_revenue_line_personnel" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
+                                      'default_personnel_costcenter_id': personnel_costcenter_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'revenue'}" />
+                    <field name="budget_revenue_line_invest_asset" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
+                                      'default_org_id': org_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'revenue'}" />
+                    <field name="budget_revenue_line_invest_construction" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
+                                      'default_org_id': org_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'revenue'}" />
+                </xpath>
+                <xpath expr="/form/sheet/notebook//field[@name='budget_expense_line_ids']" position="replace">
+                    <field name="budget_expense_line_unit_base" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
+                                      'default_section_id': section_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'expense'}" />
+                    <field name="budget_expense_line_project_base" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
+                                      'default_program_id': program_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'expense'}" />
+                    <field name="budget_expense_line_personnel" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
+                                      'default_personnel_costcenter_id': personnel_costcenter_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'expense'}" />
+                    <field name="budget_expense_line_invest_asset" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
+                                      'default_org_id': org_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'expense'}" />
+                    <field name="budget_expense_line_invest_construction" colspan="4" nolabel="1"
+                            context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
+                                      'default_org_id': org_id,
+                                      'default_fiscalyear_id': fiscalyear_id,
+                                      'default_budget_method': 'expense'}" />
+                </xpath>
+                <xpath expr="//page[1]" position="before">
+                    <page string="Summary">
+                        <separator string="Budgeted Expense"/>
+                        <field name="budget_summary_expense_line_ids"
+                                colspan="4" nolabel="1"
+                                context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
+                        <separator string="Budgeted Revenue"/>
+                        <field name="budget_summary_revenue_line_ids"
+                                colspan="4" nolabel="1"
+                                context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
+
+                    </page>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Job Order">
+                        <field name="cost_control_ids" colspan="4" nolabel="1" >
+                            <tree string="Job Order" editable="bottom">
+                                <field name="cost_control_id"/>
+                                <button name="%(action_add_budget_job_order_breakdown)d" type="action" string="Add Detail" icon="gtk-ok"/>
+                                <field name="amount_total" sum="Total Amount"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Tree Views for all Structue
+        <record id="unit_base_tree_view" model="ir.ui.view">
+            <field name="name">unit.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1" />
+                    <field name="tag_type_id" invisible="1" />
+                    <field name="tag_id" invisible="1" />
+
+                    <field name="functional_area_id" invisible="1" />
+                    <field name="program_group_id" invisible="1" />
+                    <field name="program_id" invisible="1" />
+                    <field name="project_group_id" invisible="1" />
+                    <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
+
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" invisible="1" />
+                    <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+
+                    <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field name="invest_construction_phase_id" invisible="1" />
+
+                    <field name="personnel_costcenter_id" invisible="1" />
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="0" /> <!-- for unit base -->
+
+                    <!-- ACTIVITY -->
+                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+
+                    <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
+                    <button name="%(account_budget_activity.action_budget_release_wizard)d"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                    <field name="period_split_line_ids" invisible="1"/>
+                    <button name="%(account_budget_activity.act_account_budget_line_split_period_view)d"
+                            string="Split Budget Line Period Wise"
+                            type="action" invisible="1"
+                            icon="gtk-justify-fill" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="project_base_tree_view" model="ir.ui.view">
+            <field name="name">project.base.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1" />
+                    <field name="tag_type_id" invisible="1" />
+                    <field name="tag_id" invisible="1" />
+
+                    <field name="functional_area_id" invisible="1" />
+                    <field name="program_group_id" invisible="1" />
+                    <field name="program_id" invisible="1" />
+                    <field name="project_group_id" invisible="0" />
+                    <field name="project_id" invisible="0" />
+                    <field name="fund_id" required="1" invisible="0" />
+
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" invisible="1" />
+                    <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+
+                    <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field name="invest_construction_phase_id" invisible="1" />
+
+                    <field name="personnel_costcenter_id" invisible="1" />
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="1" />
+
+                    <!-- ACTIVITY -->
+                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+
+                    <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
+                    <button name="%(account_budget_activity.action_budget_release_wizard)d"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="personnel_tree_view" model="ir.ui.view">
+            <field name="name">personnel.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1" />
+                    <field name="tag_type_id" invisible="1" />
+                    <field name="tag_id" invisible="1" />
+                    <field name="functional_area_id" invisible="1" />
+                    <field name="program_group_id" invisible="1" />
+                    <field name="program_id" invisible="1" />
+                    <field name="project_group_id" invisible="1" />
+                    <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
+
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" invisible="1" />
+                    <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+                    <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field name="invest_construction_phase_id" invisible="1" />
+                    <field name="personnel_costcenter_id" invisible="0" />
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="1" />
+                    <!-- ACTIVITY -->
+                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_id" invisible="0"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+                    <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="0"/>
+                    <button name="%(account_budget_activity.action_budget_release_wizard)d"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="invest_asset_tree_view" model="ir.ui.view">
+            <field name="name">invest.asset.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1" />
+                    <field name="tag_type_id" invisible="1" />
+                    <field name="tag_id" invisible="1" />
+
+                    <field name="functional_area_id" invisible="1" />
+                    <field name="program_group_id" invisible="1" />
+                    <field name="program_id" invisible="1" />
+                    <field name="project_group_id" invisible="1" />
+                    <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
+
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" invisible="1" />
+                    <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+
+                    <field name="invest_asset_id" invisible="0" />
+                    <field name="item_id" widget="many2one_clickable" invisible="0" />
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field name="invest_construction_phase_id" invisible="1" />
+
+                    <field name="personnel_costcenter_id" invisible="1" />
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="1" />
+                    <!-- ACTIVITY -->
+                    <field name="activity_group_id" invisible="1"/>
+                    <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+                    <!-- PERIOD -->
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
+                    <button name="%(account_budget_activity.action_budget_release_wizard)d"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="invest_construction_tree_view" model="ir.ui.view">
+            <field name="name">invest.construction.tree.view</field>
+            <field name="model">account.budget.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Lines" editable="bottom" >
+                    <field name="budget_method" invisible="1"/>
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1" />
+                    <field name="tag_type_id" invisible="1" />
+                    <field name="tag_id" invisible="1" />
+
+                    <field name="functional_area_id" invisible="1" />
+                    <field name="program_group_id" invisible="1" />
+                    <field name="program_id" invisible="1" />
+                    <field name="project_group_id" invisible="1" />
+                    <field name="project_id" invisible="1" />
+                    <field name="fund_id" invisible="0" />
+
+                    <field name="org_id" invisible="1" />
+                    <field name="sector_id" invisible="1" />
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1" />
+                    <field name="section_id" invisible="1" />
+                    <field name="costcenter_id" invisible="1" />
+                    <field name="taxbranch_id" invisible="1" />
+
+                    <field name="invest_asset_id" invisible="1" />
+                    <field name="item_id" widget="many2one_clickable" invisible="1" />
+
+                    <field name="invest_construction_id" invisible="0"/>
+                    <field name="invest_construction_phase_id" invisible="0" />
+
+                    <field name="personnel_costcenter_id" invisible="1" />
+
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="1" />
+
+                    <!-- ACTIVITY -->
+                    <field name="activity_group_id" invisible="1"/>
+                    <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+
+                    <!-- PERIOD -->
+
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_release" invisible="1"/>
+                    <button name="%(account_budget_activity.action_budget_release_wizard)d"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
+                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released"
+                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <field name="current_period" invisible="1"/>
+                    <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                    <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                    <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                    <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                    <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                    <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                    <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                    <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                    <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                    <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                    <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                    <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Menu for 5 types of budget structure -->
+        <!-- 1) Unit Base (reuse generic Budgets menu) -->
+
+        <record model="ir.actions.act_window" id="account_budget_activity.act_account_budget_view">
+            <field name="name">Unit Based</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'unit_base')]</field>
+            <field name="context">{'default_chart_view': 'unit_base'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="account_budget_activity.menu_act_account_budget_view"
+            parent="account_budget_activity.menu_action_account_budget_control"
+            action="account_budget_activity.act_account_budget_view" sequence="1" />
+
+        <!-- 2) Project Base -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_project_base">
+            <field name="name">Project Based</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'project_base')]</field>
+            <field name="context">{'default_chart_view': 'project_base'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_project_base"
+            parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_project_base" sequence="2" />
+
+        <!-- 3) Personnel -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_personnel">
+            <field name="name">Personnel</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'personnel')]</field>
+            <field name="context">{'default_chart_view': 'personnel'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_personnel"
+            parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_personnel" sequence="3" />
+
+        <!-- 4) Invest Asset -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_invest_asset">
+            <field name="name">Investment Asset</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'invest_asset')]</field>
+            <field name="context">{'default_chart_view': 'invest_asset'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_invest_asset"
+            parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_invest_asset" sequence="4" />
+
+        <!-- 4) Invest Construction -->
+
+        <record model="ir.actions.act_window" id="act_account_budget_view_invest_construction">
+            <field name="name">Investment Construction</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
+            <field name="search_view_id" ref="account_budget_activity.view_account_budget_search"/>
+            <field name="domain">[('chart_view', '=', 'invest_construction')]</field>
+            <field name="context">{'default_chart_view': 'invest_construction'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_act_account_budget_view_invest_construction"
+            parent="account_budget_activity.menu_action_account_budget_control"
+            action="act_account_budget_view_invest_construction" sequence="5" />
+
+     </data>
+</openerp>

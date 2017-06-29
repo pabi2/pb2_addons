@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+
+			<menuitem id="menu_pabi_customer_dunning" sequence="200" name="Customer Dunning" parent="account.menu_finance_reports"/>
+
+		<!-- Can't do graph for amount_residual, it is function field -->
+		<!-- <record id="view_pabi_partner_dunning_report_graph" model="ir.ui.view">
+			<field name="name">view.pabi.partner.dunning.report.graph</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="arch" type="xml">
+				<graph string="Budget Plan" type="pivot">
+					<field name="date_maturity" type="row"/>
+					<field name="partner_id" type="col"/>
+					<field name="amount_residual" type="measure"/>
+				</graph>
+			</field>
+		</record> -->
+
+		<record model="ir.ui.view" id="view_pabi_partner_dunning_report_tree">
+			<field name="name">view.pabi.partner.dunning.report.tree</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="arch" type="xml">
+				<tree string="Partner Dunning Report">
+					<field name="partner_id"/>
+					<field name="date_run"/>
+					<field name="date" string="Invoice Date"/>
+					<field name="date_maturity"/>
+					<field name="amount_residual" string="Amount" sum="Total Amount"/>
+					<field name="move_line_id" string="Invoice"/>
+					<field name="invoice_id" invisible="1"/>
+					<field name="reconcile_id" invisible="1"/>
+					<field name="days_overdue"/>
+					<field name="validate_user_id"/>
+					<field name="l1" invisible="0"/>
+					<field name="l1_date" string=""/>
+					<field name="l2" invisible="0"/>
+					<field name="l2_date" string=""/>
+					<field name="l3" invisible="0"/>
+					<field name="l3_date" string=""/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_pabi_partner_dunning_report_form">
+			<field name="name">view.pabi.partner.dunning.report.form</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="arch" type="xml">
+				<form string="Partner Dunning Report">
+					<group>
+						<group>
+							<field name="partner_id"/>
+							<field name="date_run"/>
+							<field name="move_line_id"/>
+						</group>
+						<group>
+							<field name="amount_residual"/>
+							<field name="date_maturity"/>
+							<field name="days_overdue"/>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_pabi_partner_dunning_report_search" model="ir.ui.view">
+			<field name="name">view.pabi.partner.dunning.report.search</field>
+			<field name="model">pabi.partner.dunning.report</field>
+			<field name="arch" type="xml">
+				<search string="Partner Dunning Report">
+					<filter
+						string="Dunning Report"
+						name="to_run"
+						domain="['|', '|',
+										'&amp;', ('l1', '=', False), ('date_maturity', '&lt;=', (context_today() - datetime.timedelta(7)).strftime('%%Y-%%m-%%d') ),
+										'&amp;', ('l2', '=', False), ('date_maturity', '&lt;=', (context_today() - datetime.timedelta(14)).strftime('%%Y-%%m-%%d') ),
+										'&amp;', ('l3', '=', False), ('date_maturity', '&lt;=', (context_today() - datetime.timedelta(19)).strftime('%%Y-%%m-%%d') )]"
+						help="Running for 7, 14, 19 days overdue"/>
+					<separator/>
+					<filter string="1st Letter" domain="[('l1', '=', True)]"/>
+					<filter string="2nd Letter" domain="[('l2', '=', True)]"/>
+					<filter string="3rd Letter" domain="[('l3', '=', True)]"/>
+					<group expand="1" string="Group By">
+						<filter string="Partner" name="groupby_partner" context="{'group_by':'partner_id'}"/>
+						<filter string="Validator" name="groupby_validate_user_id" context="{'group_by':'validate_user_id'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="action_pabi_partner_dunning_report" model="ir.actions.act_window">
+			<field name="name">Partner Dunning Report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">pabi.partner.dunning.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="context">{'search_default_to_run': True}</field>
+		</record>
+
+	</data>
+</openerp>

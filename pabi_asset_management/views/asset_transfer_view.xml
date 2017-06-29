@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Asset -->
+        <record model="ir.ui.view" id="view_account_asset_tree_transfer">
+            <field name="name">account.asset.tree_transfer</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <tree string="Assets">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="product_id"/>
+                    <field name="profile_id"/>
+                    <field name="purchase_id"/>
+                    <field name="depreciation_base"/>
+                    <field name="status"/>
+                    <field name="state"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_search_transfer" model="ir.ui.view">
+            <field name="name">account.asset.search_transfer</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <search string="Assets">
+                    <filter string="Active Assets" name="active_asset" domain="[('state', '=', 'open'), ('active', '=', True)]"/>
+                    <separator/>
+                    <filter string="Normal" name="normal" domain="[('type', '!=', 'view'), ('profile_type', '=', 'normal'), ('active', '=', True)]"/>
+                    <filter string="AIT" name="ait" domain="[('type', '!=', 'view'), ('profile_type', '=', 'ait'), ('active', '=', True)]"/>
+                    <filter string="AUC" name="auc" domain="[('type', '!=', 'view'), ('profile_type', '=', 'auc'), ('active', '=', True)]"/>
+                    <filter string="ATM" name="atm" domain="[('type', '!=', 'view'), ('profile_type', '=', 'atm'), ('active', '=', True)]"/>
+                    <filter string="Low-Value" name="lva" domain="[('type', '!=', 'view'), ('profile_type', '=', 'lva'), ('active', '=', True)]"/>
+                    <separator/>
+                    <field name="name" string="Asset" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
+                    <field name="profile_id"/>
+                    <field name="product_id"/>
+                    <field name="purchase_id"/>
+                    <field name="project_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Project" context="{'group_by':'project_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Asset Transfer -->
+        <record model="ir.ui.view" id="view_account_asset_transfer_form">
+            <field name="name">account.asset.transfer.form</field>
+            <field name="model">account.asset.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <header>
+                        <button name="action_draft" states="cancel,draft2" string="Set Source Assets" type="object"/>
+                        <button name="action_draft2" states="draft" string="Set Target Assets" type="object"/>
+                        <button name="action_done" states="draft2" string="Transfer" type="object" groups="account.group_account_manager" class="oe_highlight"/>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object" groups="account.group_account_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,draft2,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="transfer_type"/>
+                                <field name="source_asset_value"/>
+                                <field name="target_asset_value"/>
+                            </group>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Source Assets">
+                                <field
+                                    name="asset_ids"
+                                    context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_tree_transfer',
+                                              'search_view_ref': 'pabi_asset_management.view_account_asset_search_transfer',
+                                              'search_default_active_asset': 1}">
+                                    <tree editable="bottom">
+                                        <field name="name" readonly="1"/>
+                                        <field name="code" readonly="1"/>
+                                        <field name="product_id" readonly="1"/>
+                                        <field name="profile_id" readonly="1"/>
+                                        <field name="purchase_id" readonly="1"/>
+                                        <field name="depreciation_base" readonly="1" sum="Total"/>
+                                        <field name="state"/>
+                                        <field name="status"/>
+                                        <field name="active"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Target Assets">
+                                <field name="target_asset_ids">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="asset_profile_id"/>
+                                        <field name="asset_name"/>
+                                        <field name="depreciation_base" sum="Total"/>
+                                        <field name="ref_asset_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <field name="note" placeholder="Add an internal note here..."/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_transfer_tree">
+            <field name="name">account.asset.transfer.tree</field>
+            <field name="model">account.asset.transfer</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Transfer">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_transfer_search" model="ir.ui.view">
+            <field name="name">account.asset.transfer.search</field>
+            <field name="model">account.asset.transfer</field>
+            <field name="arch" type="xml">
+                <search string="Asset Transfer">
+                    <field name="name" string="Asset Transfer"/>
+                    <group expand="0" string="Group By...">
+                        <!-- <filter string="Category" domain="" context="{'group_by':'asset_profile_id'}"/> -->
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_transfer_form">
+            <field name="name">Transfer</field>
+            <field name="res_model">account.asset.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_asset_transfer_tree"/>
+            <field name="search_view_id" ref="view_account_asset_transfer_search"/>
+        </record>
+
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer_form" action="action_account_asset_transfer_form"/>
+
+    </data>
+</openerp>

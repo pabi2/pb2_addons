@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="view_create_purchase_work_acceptance" model="ir.ui.view">
+            <field name="name">Create Work Acceptance</field>
+            <field name="model">create.purchase.work.acceptance</field>
+            <field name="arch" type="xml">
+             <form string="CreateWork Acceptance">
+                <p class="oe_grey">
+                    Now, you are going to create the work acceptance.
+                </p>
+                 <group>
+                    <field name="select_invoice_plan"
+                           attrs="{
+                                'invisible':[('is_invoice_plan','!=',True)],
+                                'required':[('is_invoice_plan','=',True)],
+                           }"
+                    />
+                    <field name="order_id" invisible="1"/>
+                    <field name="date_scheduled_end" invisible="1"/>
+                    <field name="date_receive" invisible="1"/>
+                    <field name="date_contract_end" invisible="1"/>
+                    <field name="is_invoice_plan" invisible="1"/>
+                    <field name="acceptance_line_ids" invisible="1"/>
+                 </group>
+                <footer>
+                    <button name="action_create_acceptance"
+                        string="Create" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_create_purchase_work_acceptance" model="ir.actions.act_window">
+            <field name="name">Create Work Acceptance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">create.purchase.work.acceptance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_create_purchase_work_acceptance"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

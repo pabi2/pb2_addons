@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <field name="pay_to" position="replace">
+                    <label for="pay_to"/>
+                    <div>
+                        <div>
+                            <field name="pay_to" class="oe_inline"/>
+                            <field name="internal_charge" class="oe_inline" />
+                        </div>
+                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                            <label for="internal_section_id" string="Section"/>
+                            <field name="internal_section_id" attrs="{'required': [('pay_to', '=', 'internal'), ('internal_project_id', '=', False)]}" class="oe_inline"/>
+                        </div>
+                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                            <label for="internal_project_id" string="Project"/>
+                            <field name="internal_project_id" attrs="{'required': [('pay_to', '=', 'internal'), ('internal_section_id', '=', False)]}" class="oe_inline"/>
+                        </div>
+                    </div>
+                </field>
+            </field>
+        </record>
+        <record id="view_expenses_form2" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="pabi_hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <field name="receive_method" position="attributes">
+                    <attribute name="attrs">{'invisible': [('pay_to', '=', 'internal')]}</attribute>
+                </field>
+            </field>
+        </record>
+        <record id="view_expenses_form3" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <button name="confirm" position="attributes">
+                    <attribute name="states">False</attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '=', 'internal')]}</attribute>
+                </button>
+                <button name="confirm" position="after">
+                    <button name="internal_charge" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '!=', 'internal')]}" string="Create Internal Charge" type="workflow" class="oe_highlight"/>
+                </button>
+                <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="after">
+                    <field name="rev_ic_journal_id" invisible="1"/>
+                    <field name="rev_ic_move_id" attrs="{'invisible': [('pay_to', '!=', 'internal')]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="after">
+                    <field name="exp_ic_journal_id" invisible="1"/>
+                    <field name="exp_ic_move_id" attrs="{'invisible': [('pay_to', '!=', 'internal')]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="replace"/>
+            </field>
+        </record>
+        <record id="view_expenses_form4" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="account_budget_activity.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="attributes">
+                    <attribute name="domain">[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'), ('internal_charge', '=', parent.internal_charge)]</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

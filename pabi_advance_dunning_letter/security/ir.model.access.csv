@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pabi_advance_dunning_letter,access_pabi_advance_dunning_letter,model_pabi_advance_dunning_letter,account.group_account_user,1,1,1,1
+access_pabi_advance_dunning_letter_line,access_pabi_advance_dunning_letter_line,model_pabi_advance_dunning_letter_line,account.group_account_user,1,1,1,1

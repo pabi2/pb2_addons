@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form[@string='Call for Bids']" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']"
+                       position="attributes">
+                    <attribute name="attrs"/>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']"
+                       position="attributes">
+                    <attribute name="widget">date</attribute>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="replace">
+                </xpath>
+                <xpath expr="//separator[@string='Terms and Conditions']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='description']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='multiple_rfq_per_supplier']"
+                       position="after">
+                    <field name="is_central_purchase"/>
+                    <field name="purchase_type_id"/>
+                    <field name="objective"/>
+                    <field name="description" string="Reason"/>
+                    <field name="total_budget_value" attrs="{'invisible': [('total_budget_value', '=', 0)]}"/>
+                    <field name="prototype_type"/>
+                    <field name="request_uid"/>
+                    <field name="assign_uid"/>
+                    <field name="request_ref_id"/>
+                    <field name="delivery_address"/>
+                </xpath>
+                <xpath expr="//field[@name='multiple_rfq_per_supplier']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='exclusive']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='generate_po']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='tender_reset']"
+                       position="attributes">
+                    <attribute name="states">rejected,in_progress</attribute>
+                    <attribute name="string">Manually Correct</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']" position="replace"/>
+                <xpath expr="//field[@name='ordering_date']"
+                       position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="after">
+                    <field name="date_end" required="1"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
+                       position="after">
+                    <field name="purchase_method_id"/>
+                    <field name="purchase_price_range_id"/>
+                    <field name="require_rfq" invisible='1'/>
+                    <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="purchase_condition_detail" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="currency_id"/>
+                    <field name="currency_rate"/>
+                </xpath>
+                 <xpath expr="//form/sheet/group/group/field[@name='origin']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']"
+                       position="after">
+                    <field name="product_name"/>
+                </xpath>
+                <xpath expr="//button[@name='open_bid']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='sent_suppliers']" position="after">
+                    <button name="to_verify" states="in_progress" string="Send to Verify" class="oe_highlight"/>
+                    <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_manager" class="oe_highlight"/>
+                    <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_manager" states="verify" string="Reject"/>
+                    <button name="print_requisition_with_condition" type="object" string="View PD"/>
+                    <button name="print_approval_report" type="object" string="View Approval Report"/>
+                </xpath>
+                <xpath expr="//button[@name='%(purchase_requisition.action_purchase_requisition_partner)d']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state', 'not in', ('in_progress', 'done'))]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='open_rfq']" position="after">
+                    <button name="open_price_comparison" type="object" string="Price Comparison" attrs="{'invisible': [('state', 'in', ('draft'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="attributes">
+                    <attribute name="String">Bidding Date</attribute>
+                </xpath>
+                <xpath expr="//button[@name='purchase_approve']" position="replace">
+                    <button name="by_pass_approve" type="object" states="confirmed" string="Approved by Suppliers" icon="gtk-go-forward" confirm="Approve this RfQ?"/>
+                </xpath>
+                <xpath expr="//button[@name='purchase_confirm']" position="attributes">
+                    <attribute name="confirm">Confirm this RfQ?</attribute>
+                </xpath>
+                <xpath expr="//button[@name='purchase_cancel']" position="replace">
+                    <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
+                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
+                       position="after">
+                    <field name="price_unit"/>
+                    <field name="price_standard"/>
+                    <field name="is_green_product"/>
+                </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
+                    <field name="price_unit"/>
+                    <field name="price_standard"/>
+                    <field name="is_green_product"/>
+                </xpath>
+                <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
+                    <field name="product_name"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']"
+                       position="after">
+                    <field name="fixed_asset" invisible="1"/>
+                    <field name="tax_ids" widget="many2many_tags"/>
+                    <field name="price_subtotal"/>
+                    <field name="fiscalyear_id"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']"
+                       position="after">
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_untaxed" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget="monetary"
+                        options="{'currency_field': 'currency_id'}"/>
+                        <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="amount_total"/>
+                        </div>
+                        <field name="amount_total" nolabel="1"
+                               class="oe_subtotal_footer_separator" widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <div class="oe_clear"/>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']" position="attributes">
+                	<attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree" position="attributes">
+                	<attribute name="editable">bottom</attribute>
+                </xpath>
+                <xpath expr="//tree[@string='Products']" position="attributes">
+                    <attribute name="editable"/>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='name']" position="replace">
+                	<field name="operating_unit_id" />
+                	<field name="dummy_quote_id" widget="many2one_clickable"/>
+                    <field name="amount_total"/>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='purchase_ids']/tree/field[@name='state']" position="after">
+                	<field name="order_id" widget="many2one_clickable"/>
+                    <field name="order_state"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page" position="after">
+               		<page string="Committee">
+                        <field name="committee_ids">
+                            <tree editable="bottom">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="position"/>
+                                <field name="committee_type_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Attachment">
+                        <field name="attachment_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="type"/>
+                                <field name="description" />
+                                <field name="attach_by" />
+                                <field name="url" widget="url" invisible="1"/>
+                                <button name="%(pabi_attachment_helper.action_open_url)d"
+                                        string="Open Document"
+                                        type="action"
+                                        icon="gtk-justify-fill"
+                                    />
+                            </tree>
+                            <form>
+                            	<group colspan="4">
+	                            	<group>
+	                            		<field name="name"/>
+                                        <field name="url" widget="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
+                                        <field name="datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
+	                        		</group>
+                                    <group>
+                                		<field name="description"/>
+                                        <field name="type"/>
+	                        		</group>
+                        		</group>
+                        	</form>
+                    	</field>
+                    </page>
+                    <page string="Approval Report">
+                        <button name="create_approval_no" attrs="{'invisible':[('doc_no','!=',False)]}" string="Create Approval No." type="object"/>
+                        <group col="4">
+                            <group>
+                                <field name="verify_uid"/>
+                                <field name="date_verify"/>
+                                <field name="doc_approve_uid"/>
+                                <field name="date_doc_approve"/>
+                                <field name="reject_reason_txt"/>
+                            </group>
+                            <group>
+                                <field name="doc_no"/>
+                                <field name="doc_header"/>
+                                <field name="doc_body"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="acc_budget_view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="account_budget_activity.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!-- <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='activity_group_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+            </field>
+        </record>
+        <record model="ir.ui.view" id="cancel_reason_view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition_cancel_reason.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(purchase_requisition_cancel_reason.action_requisition_cancel)d']" position="attributes">
+                    <attribute name="states">draft,in_progress,done</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_requisition_tree">
+            <field name="name">purchase.requisition.tree</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition.view_purchase_requisition_tree"/>
+            <field name="arch" type="xml">
+                <!-- #  Note :: take out when this up to production -->
+                <!--<xpath expr="//tree" position="attributes">-->
+                    <!--<attribute name="create">false</attribute>-->
+                <!--</xpath>-->
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="default_order">create_date desc</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="create_date" widget="date" string="Create Date"/>
+                    <field name="request_uid" string="Requested by"/>
+                    <field name="purchase_type_id"/>
+                    <field name="purchase_method_id"/>
+                    <field name="objective"/>
+                    <field name="amount_total" string="Total Amount"/>
+                    <field name="currency_id"/>
+                </xpath>
+                <xpath expr="//field[@name='ordering_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_end']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="requisition_ou_view_purchase_requisition_tree">
+            <field name="name">purchase.requisition.tree</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id"
+                   ref="purchase_requisition_operating_unit.view_purchase_requisition_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='operating_unit_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_requisition_filter">
+            <field name="name">purchase.requisition.search</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//filter[@string='Unassigned']" position="after">
+                        <filter name="po_created" domain="[('state','=','done')]" string="PO Created"/>
+                    </xpath>
+                </field>
+        </record>
+    </data>
+</openerp>

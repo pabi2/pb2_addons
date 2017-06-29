@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_attachment_history_tree" model="ir.ui.view">
+            <field name="name">view.attachment.history.tree</field>
+            <field name="model">ir.attachment</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" >
+                    <field name="type" />
+                    <field name="name" />
+                    <field name="description" />
+                    <field name="attach_by"/>
+                    <field name="url" widget="url" invisible="1"/>
+                    <button name="%(action_open_url)d" string="Open Document"
+                        type="action" icon="gtk-justify-fill"
+                        />
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "NSTDA :: PABI2 - Partner Dunning Report",
+    'summary': "",
+    'author': "Ecosoft",
+    'website': "http://ecosoft.co.th",
+    'category': 'Account',
+    'version': '0.1.0',
+
+    'description': """
+
+    """,
+    'depends': [
+        'pabi_account',
+    ],
+    'data': [
+        # Partner Dunning Report
+        'security/ir.model.access.csv',
+        'data/report_data.xml',
+        'views/pabi_partner_dunning_report.xml',
+        'views/pabi_partner_dunning_letter_view.xml',
+        'views/pabi_dunning_config.xml',
+        'wizard/pabi_partner_dunning_wizard.xml',
+        'wizard/create_dunning_letter.xml',
+    ],
+    'demo': [
+    ],
+    'installable': True,
+    'pre_init_hook': 'pre_init_hook',
+}
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

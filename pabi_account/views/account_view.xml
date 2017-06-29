@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_period_form" model="ir.ui.view">
+            <field name="name">view.account.period.form</field>
+            <field name="model">account.period</field>
+            <field name="inherit_id" ref="l10n_th_account_tax_detail.view_account_period_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='taxdetail_sequence_ids']/tree/field[@name='sequence_id']" position="before">
+                    <field name="taxbranch_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">view.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page/field[@name='narration']" position="after">
+                  <field name="line_item_summary" colspan="4" nolabel="1"/>
+                </xpath>
+                <xpath expr="/form/notebook/page/field[@name='line_id']/tree" position="attributes">
+                  <attribute name="default_order">move_id, debit desc, credit desc, account_id</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

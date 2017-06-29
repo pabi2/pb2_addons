@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='supplier_invoice_number']" position="after">
+                    <field name="purchase_billing_id" attrs="{'invisible': [('purchase_billing_id', '=', False)]}" />
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">invoice.supplier.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="purchase_billing_id" invisible="context.get('journal_type', 'sale') not in ('purchase', 'purchase_refund')"/>
+                </xpath>
+            </field>
+        </record>
+  
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter" />
+            <field name="arch" type="xml">
+                <field name="user_id" position="after">
+                    <field name="purchase_billing_id" />
+                </field>
+                <filter name="group_by_partner_id" position="after">
+                    <filter string="Billing" domain="[]" context="{'group_by':'purchase_billing_id'}"/>
+                </filter>
+            </field>
+        </record>
+    </data>
+</openerp>

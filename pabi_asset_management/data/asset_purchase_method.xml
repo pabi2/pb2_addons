@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+          <record id="asset_purchase_method_1" model="asset.purchase.method">
+              <field name="name">วิธีตกลงราคา</field>
+          </record>
+          <record id="asset_purchase_method_2" model="asset.purchase.method">
+              <field name="name">วิธีสอบราคา</field>
+          </record>
+          <record id="asset_purchase_method_3" model="asset.purchase.method">
+              <field name="name">วิธีประกวดราคา</field>
+          </record>
+          <record id="asset_purchase_method_4" model="asset.purchase.method">
+              <field name="name">วิธีพิเศษ</field>
+          </record>
+          <record id="asset_purchase_method_5" model="asset.purchase.method">
+              <field name="name">วิธีกรณีพิเศษ</field>
+          </record>
+          <record id="asset_purchase_method_6" model="asset.purchase.method">
+              <field name="name">วิธีe-Auction</field>
+          </record>
+          <record id="asset_purchase_method_7" model="asset.purchase.method">
+              <field name="name">วิธีฉุกเฉิน</field>
+              <field name="direct">True</field>
+          </record>
+          <record id="asset_purchase_method_8" model="asset.purchase.method">
+              <field name="name">รับบริจาค</field>
+              <field name="direct">True</field>
+          </record>
+          <record id="asset_purchase_method_9" model="asset.purchase.method">
+              <field name="name">ของแถม</field>
+              <field name="direct">True</field>
+          </record>
+          <record id="asset_purchase_method_10" model="asset.purchase.method">
+              <field name="name">รับโอน</field>
+              <field name="direct">True</field>
+          </record>
+          <record id="asset_purchase_method_11" model="asset.purchase.method">
+              <field name="name">อื่นๆ</field>
+          </record>
+    </data>
+</openerp>

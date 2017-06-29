@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_requisition_form" >
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page[@string='Products']" position="after">
+                    <page string="Fine">
+                        <group>
+                            <field name="fine_rate"/>
+                            <field name="fine_condition"/>
+                            <field name="date_fine"
+                                attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
+                            <field name="fine_num_days"
+                                attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
+                            <field name="fine_num_months"
+                                attrs="{'invisible':[('fine_condition', '!=', 'month')]}"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="report_sample_partner_sql_wizard" model="ir.ui.view">
+            <field name="name">Sample Jasper (SQL)</field>
+            <field name="model">report.sample.partner.sql.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Selection Criteria">
+                    <group>
+                        <group>
+                            <field name="customer"/>
+                            <field name="supplier"/>
+                        </group>
+                        <group>
+                            <field name="format"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Run Report" name="run_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_report_sample_partner_sql_wizard" model="ir.actions.act_window">
+            <field name="name">Sample Jasper (SQL)</field>
+            <field name="res_model">report.sample.partner.sql.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="report_sample_partner_sql_wizard"/>
+            <field name="target">new</field>
+            <field name="help">Print Partner List Report</field>
+        </record>
+
+        <menuitem id="menu_report_sample_partner_sql_wizard" action="action_report_sample_partner_sql_wizard"
+          groups="" parent="jasper_reports.jasper_reports_menu" sequence="112"/>
+
+    </data>
+</openerp>

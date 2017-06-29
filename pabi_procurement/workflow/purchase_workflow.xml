@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="purchase.act_confirmed" model="workflow.activity">
+            <field name="action">
+	            wkf_validate_invoice_method()
+	            wkf_confirm_order()
+            </field>
+        </record>
+        <record id="purchase.act_router" model="workflow.activity">
+            <field name="action">
+           		wkf_approve_order()
+           	</field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © <YEAR(S)> <AUTHOR(S)>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+<openerp>
+    <data noupdate="1">
+        <!--
+          * Purchase Requisition
+          * Work Acceptance
+          * Approval Report
+          * Stock Request
+          * Stock Transfer
+          * Stock Borrow
+          * Payment Export
+          * Account Interface
+        -->
+        <record id="doctype_purchase_requisition" model="res.doctype" >
+            <field name="name">Purchase Requisition</field>
+            <field name="sequence_id" ref="doctype_purchase_requisition_seq"/>
+            <field name="refer_type">purchase_requisition</field>
+        </record>
+        <record id="doctype_work_acceptance" model="res.doctype" >
+            <field name="name">Work Acceptance</field>
+            <field name="sequence_id" ref="doctype_work_acceptance_seq"/>
+            <field name="refer_type">work_acceptance</field>
+        </record>
+        <record id="doctype_approval_report" model="res.doctype" >
+            <field name="name">Approval Report</field>
+            <field name="sequence_id" ref="doctype_approval_report_seq"/>
+            <field name="refer_type">approval_report</field>
+        </record>
+        <record id="doctype_stock_request" model="res.doctype" >
+            <field name="name">Stock Request</field>
+            <field name="sequence_id" ref="doctype_stock_request_seq"/>
+            <field name="refer_type">stock_request</field>
+        </record>
+        <record id="doctype_stock_transfer" model="res.doctype" >
+            <field name="name">Stock Transfer</field>
+            <field name="sequence_id" ref="doctype_stock_transfer_seq"/>
+            <field name="refer_type">stock_transfer</field>
+        </record>
+        <record id="doctype_stock_borrow" model="res.doctype" >
+            <field name="name">Stock Borrow</field>
+            <field name="sequence_id" ref="doctype_stock_borrow_seq"/>
+            <field name="refer_type">stock_borrow</field>
+        </record>
+        <record id="doctype_payment_export" model="res.doctype" >
+            <field name="name">Payment Export</field>
+            <field name="sequence_id" ref="doctype_payment_export_seq"/>
+            <field name="refer_type">payment_export</field>
+        </record>
+        <record id="doctype_interface_account" model="res.doctype" >
+            <field name="name">Interface Account</field>
+            <field name="sequence_id" ref="doctype_interface_account_seq"/>
+            <field name="refer_type">interface_account</field>
+        </record>
+
+        <!--Additional Reversal Data-->
+        <record id="doctype_interface_account" model="res.doctype" >
+            <field name="with_reversal" >True</field>
+            <field name="reversal_sequence_id" ref="l10n_th_doctype_reversal.doctype_cancel_with_reversal_seq"/>
+        </record>
+    </data>
+</openerp>

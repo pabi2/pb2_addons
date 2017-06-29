@@ -1,0 +1,290 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_invest_asset_plan_form">
+            <field name="name">view.invest.asset.plan.form</field>
+            <field name="model">invest.asset.plan</field>
+            <field name="arch" type="xml">
+                <form string="Budget Plan">
+                    <header>
+                        <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="button_draft" states="cancel" type="object" />
+                        <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,reject,approve"/>
+                    </header>
+                    <div class="oe_title">
+                        <br/>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                        	<field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </h1>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <br/>
+	                	<button name="%(action_asset_plan_to_budget_plan)d" type="action" string="Convert to Budget Plan" />
+                    </div>
+                    <group>
+                        <group>
+                        	<field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1" />
+                            <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                        <group>
+                        	<field name="date" />
+                        	<field name="date_submit" />
+                        	<field name="date_approve" />
+                            <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <div>
+                                <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - 
+                                <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+                            </div>
+                        </group>
+                    </group>
+                    <h2>
+                    	<label for="verified_amount" /><field name="verified_amount" class="oe_inline"/>
+                    </h2>
+                    <button name="%(action_invest_asset_selection)d"
+                                    string="⇒ Mass Update Select" type="action" class="oe_link"/>
+                    <field name="item_ids" colspan="4" nolabel="1"
+                 		context="{'default_org_id': org_id, 'default_fiscalyear_id': fiscalyear_id,
+                 				'form_view_ref': 'view_invest_asset_plan_item_form'}">
+	                 	<tree string="Asset Lines" colors="grey:select==False;blue:select==True" >
+	                 		<field name="select" />
+							<field name="plan_id" invisible="1"/>
+							<field name="fiscalyear_id" invisible="1"/>
+							<field name="org_id" invisible="1"/>
+							<field name="section_id" invisible="0" />
+							<field name="division_id" invisible="0" />
+							<field name="program_group_id" invisible="0" />
+							<field name="priority" invisible="0" />
+							<field name="invest_asset_categ_id" invisible="0" />
+							<field name="asset_common_name" invisible="0" />
+							<field name="asset_name" invisible="0" />
+							<field name="request_user_id" invisible="0" />
+							<field name="location" invisible="0" />
+							<field name="quantity_plan" invisible="0" sum="Planned Quantity" />
+							<field name="quantity" invisible="0"  sum="Verified Quantity" />
+							<field name="price_unit" invisible="0"  sum="Unit Price" />
+							<field name="price_subtotal" invisible="0"  sum="Subtotal" />
+							<field name="price_other" invisible="0"  sum="Others" />
+							<field name="price_total" invisible="0" sum="Total" />
+							<field name="reason_purchase" invisible="0" />
+							<field name="reason_purchase_text" invisible="0" />
+							<field name="planned_utilization" invisible="0" />
+							<field name="quotation_document" invisible="0" />
+							<field name="specification_document" invisible="0" />
+							<field name="specification_summary" invisible="0" />
+							<field name="total_commitment" invisible="0"  sum="Total Commitment" />
+							<field name="pr_commitment" invisible="0" sum="PR Commitment" />
+							<field name="po_commitment" invisible="0" sum="PO Commitment" />
+							<field name="exp_commitment" invisible="0" sum="Expense Commitment" />
+							<field name="actual_amount" invisible="0" sum="Actual Amount"  />
+							<field name="total_commit_and_actual" invisible="0" sum="Total Commitment + Actual" />
+							<field name="budget_residual" invisible="0" sum="Budget Residual"/>
+						</tree>
+					</field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_invest_asset_plan_tree">
+            <field name="name">view.invest.asset.plan.tree</field>
+            <field name="model">invest.asset.plan</field>
+            <field name="arch" type="xml">
+               <tree string="Investment Asset Planning" >
+                    <field name="name" />
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="creating_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_invest_asset_plan_search" model="ir.ui.view">
+           <field name="name">view.invest.asset.plan.search</field>
+           <field name="model">invest.asset.plan</field>
+           <field name="arch" type="xml">
+               <search string="Investment Asset Planning">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Investment Asset Planning"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_invest_asset_plan_view">
+            <field name="name">Asset Item Plans</field>
+            <field name="res_model">invest.asset.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_invest_asset_plan_tree"/>
+            <field name="search_view_id" ref="view_invest_asset_plan_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new budget preparation.
+              </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_plan_invest_asset"
+            id="menu_invest_asset_plan_view"
+            action="action_invest_asset_plan_view" sequence="5" />
+
+
+		<!-- Investment Asset Plan Items -->
+		
+        <record id="view_invest_asset_plan_item_filter" model="ir.ui.view">
+            <field name="name">invest.asset.plan.item.filter</field>
+            <field name="model">invest.asset.plan.item</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Plan Line">
+                    <group expand="0" string="Group By">
+                    	<filter name="fiscalyear_id" string="Fiscal Year" domain="[]" context="{'group_by':'fiscalyear_id'}"/>
+                    	<filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
+						<filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
+               		</group>
+               </search>
+            </field>
+        </record>
+            	
+        <record model="ir.ui.view" id="view_invest_asset_plan_item_tree">
+            <field name="name">invest.asset.plan.item.tree</field>
+            <field name="model">invest.asset.plan.item</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Plan Lines">
+					<field name="plan_id" invisible="1"/>
+					<field name="fiscalyear_id" invisible="1"/>
+					<field name="org_id" invisible="1"/>
+					<field name="section_id" invisible="0" />
+					<field name="division_id" invisible="0" />
+					<field name="program_group_id" invisible="0" />
+					<field name="priority" invisible="0" />
+					<field name="invest_asset_categ_id" invisible="0" />
+					<field name="asset_common_name" invisible="0" />
+					<field name="asset_name" invisible="0" />
+					<field name="request_user_id" invisible="0" />
+					<field name="location" invisible="0" />
+					<field name="quantity_plan" invisible="0" sum="Planned Quantity"/>
+					<field name="quantity" invisible="0" sum="Quantity" />
+					<field name="price_unit" invisible="0" sum="Unit Price"/>
+					<field name="price_subtotal" invisible="0" sum="Subtotal"/>
+					<field name="price_other" invisible="0" sum="Others"/>
+					<field name="price_total" invisible="0" sum="Total"/>
+					<field name="reason_purchase" invisible="1" />
+					<field name="reason_purchase_text" invisible="1" />
+					<field name="planned_utilization" invisible="0" />
+					<field name="quotation_document" invisible="0" />
+					<field name="specification_document" invisible="0" />
+					<field name="specification_summary" invisible="0" />
+					<field name="total_commitment" invisible="0" sum="Total Commitment" />
+					<field name="pr_commitment" invisible="0" sum="PR Commitment" />
+					<field name="po_commitment" invisible="0" sum="PO Commitment" />
+					<field name="exp_commitment" invisible="0" sum="Expense Commitment" />
+					<field name="actual_amount" invisible="0" sum="Actual Amount" />
+					<field name="total_commit_and_actual" invisible="0" sum="Total Commitment + Actual" />
+					<field name="budget_residual" invisible="0" sum="Budget Residual" />
+                </tree>
+            </field>
+        </record>
+	    <record id="view_invest_asset_plan_item_graph" model="ir.ui.view">
+	         <field name="name">view.invest.asset.plan.item.graph</field>
+	         <field name="model">invest.asset.plan.item</field>
+	         <field name="arch" type="xml">
+	             <graph string="Budget Plan Lines" type="pivot">
+	                <field name="org_id" type="col"/>
+	                <field name="price_total" type="measure"/>
+	             </graph>
+	         </field>
+	    </record>
+        <record model="ir.ui.view" id="view_invest_asset_plan_item_form">
+            <field name="name">invest.asset.plan.item.form</field>
+            <field name="model">invest.asset.plan.item</field>
+            <field name="arch" type="xml">
+                <form string="Invest Asset Items">
+                	<group>
+                		<group>
+		                	<h1>
+		                		<field name="select" class="oe_inline"/>
+		                		<label string="Selected" class="oe_inline"/>
+			                </h1>
+                		</group>
+                		<group>
+							<field name="quotation_document" />
+							<field name="specification_document" />
+                		</group>
+                	</group>
+	                <group string="Organization">
+						<group>
+							<field name="fiscalyear_id" invisible="1" />
+							<field name="org_id" invisible="0" />	
+							<field name="section_id" invisible="0" />
+						</group>
+						<group>
+							<field name="division_id" invisible="0" />
+							<field name="program_group_id" invisible="0" />	
+						</group>
+					</group>
+					<group string="Asset Item">
+						<group>
+							<field name="asset_common_name" invisible="0" />
+							<field name="asset_name" invisible="0" />
+							<field name="priority" invisible="0" />
+							<field name="planned_utilization" invisible="0" />
+							<field name="invest_asset_categ_id" invisible="0" />
+							<field name="request_user_id" invisible="0" />
+							<field name="location" invisible="0" />
+						</group>
+						<group>
+							<field name="quantity" invisible="0" />
+							<field name="price_unit" invisible="0" />
+							<field name="price_subtotal" invisible="0" />
+							<field name="price_other" invisible="0" />
+							<field name="price_total" invisible="0" />
+						</group>
+	                </group>
+	                <group string="Budgeting">
+						<group>
+							<field name="total_commitment" invisible="0" />
+							<field name="pr_commitment" invisible="0" />
+							<field name="po_commitment" invisible="0" />
+							<field name="exp_commitment" invisible="0" />
+						</group>
+						<group>
+							<field name="actual_amount" invisible="0" />
+							<field name="total_commit_and_actual" invisible="0" />
+							<field name="budget_residual" invisible="0" />   
+						</group>
+	                </group>
+					<group string="Reasons">
+						<field name="reason_purchase" invisible="0" />
+						<field name="reason_purchase_text" invisible="0" />
+						<field name="specification_summary" invisible="0" />
+					</group>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_invest_asset_plan_item_view">
+            <field name="name">Asset Item Plan Line</field>
+            <field name="res_model">invest.asset.plan.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_invest_asset_plan_item_tree"/>
+            <field name="context">{'search_default_fiscalyear_id': 1, 'search_default_org_id': 1}</field>
+        </record>
+
+        <menuitem parent="menu_action_budget_plan_invest_asset"
+            id="menu_act_invest_asset_plan_item_view"
+            action="act_invest_asset_plan_item_view"
+        	sequence="6"/>
+
+    </data>
+</openerp>
+
+

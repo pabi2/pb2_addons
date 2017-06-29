@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Expenses -->
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside" >
+                    <page string="Attachments">
+                        <field name="attachment_ids"
+                            context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree'}"/>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+    </data>
+</openerp>

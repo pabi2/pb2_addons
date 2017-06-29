@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_order_form" >
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_split_quote2order.view_purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='view_picking']" position="replace">
+                    <button name="view_picking" string="Receive Products" type="object" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']" position="before">
+                    <button name="%(action_create_purchase_work_acceptance)d"
+                            type="action"
+                            string="Create Work Acceptance"
+                            class="oe_highlight"
+                            attrs="{'invisible':[('state', '!=', 'approved'),]}"/>
+                </xpath>
+                <xpath expr="//div[@name='buttons']/button[@name='view_picking']" position="before">
+                    <button type="object"  name="acceptance_open"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o"
+                        attrs="{'invisible': [('state','not in',('approved','done','cancel'))]}"
+                        >
+                    <field name="count_acceptance" widget="statinfo" string="Work Acceptances"/>
+                    </button>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page" position="after">
+                    <page string="Fine">
+                        <group>
+                            <field name="fine_rate"/>
+                            <field name="fine_condition"/>
+                            <field name="date_fine"
+                                attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
+                            <field name="fine_num_days"
+                                attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
+                            <field name="fine_num_months"
+                                attrs="{'invisible':[('fine_condition', '!=', 'month')]}"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="purchase_order_tree">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+                <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="acceptance_done"/>
+                </xpath>
+                </field>
+        </record>
+    </data>
+</openerp>

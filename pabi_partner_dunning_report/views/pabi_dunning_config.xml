@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_pabi_dunning_config_form" model="ir.ui.view">
+            <field name="name">view.pabi.dunning.config.form</field>
+            <field name="model">pabi.dunning.config</field>
+            <field name="arch" type="xml">
+                <form string="Dunning Config" class="oe_form_configuration">
+                    <header>
+                        <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <group>
+                        <field name="company_id" invisible="1"/>
+                        <group string="Title Mapping for Customer Dunning Report">
+                            <field name="title_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="title_id"/>
+                                    <field name="new_title"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Letter 1">
+                            <field name="letter1_subject"/>
+                            <field name="letter1_header"/>
+                            <field name="letter1_footer"/>
+                            <field name="letter1_signature"/>
+                        </page>
+                        <page string="Letter 2">
+                            <field name="letter2_subject"/>
+                            <field name="letter2_header"/>
+                            <field name="letter2_footer"/>
+                            <field name="letter2_signature"/>
+                        </page>
+                        <page string="Letter 3">
+                            <field name="letter3_subject"/>
+                            <field name="letter3_header"/>
+                            <field name="letter3_footer"/>
+                            <field name="letter3_signature"/>
+                        </page>
+                    </notebook>
+                    <!-- <group string="Alternalte Text for Dunning Letter Form" >
+                        <group>
+                            <field name="litigation_contact"/>
+                            <field name="signature_dunning"/>
+                            <field name="signature_litigation"/>
+                            <field name="account_dept_contact"/>
+                        </group>
+                        <group>
+                            <field name="litigation_contact_en"/>
+                            <field name="signature_dunning_en"/>
+                            <field name="signature_litigation_en"/>
+                            <field name="account_dept_contact_en"/>
+                        </group>
+                    </group> -->
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_dunning_config" model="ir.actions.act_window">
+            <field name="name">Dunning Config</field>
+            <field name="res_model">pabi.dunning.config</field>
+            <field name="view_type">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="view_pabi_dunning_config_form"/>
+        </record>
+
+        <menuitem action="action_pabi_dunning_config" id="menu_pabi_dunning_config" sequence="30" name="Dunning Config" parent="menu_pabi_customer_dunning"/>
+    </data>
+</openerp>

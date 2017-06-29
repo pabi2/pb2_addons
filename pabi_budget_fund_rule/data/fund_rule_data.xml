@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="expense_group_1" model="budget.fund.expense.group">
+            <field name="name">ค่าตอบแทน</field>
+        </record>
+        <record id="expense_group_2" model="budget.fund.expense.group">
+            <field name="name">ค่าจ้าง</field>
+        </record>
+        <record id="expense_group_3" model="budget.fund.expense.group">
+            <field name="name">ค่าบริการวิชาการ</field>
+        </record>
+        <record id="expense_group_4" model="budget.fund.expense.group">
+            <field name="name">ค่าใช้สอย</field>
+        </record>
+        <record id="expense_group_5" model="budget.fund.expense.group">
+            <field name="name">ค่าวัสดุ</field>
+        </record>
+        <record id="expense_group_6" model="budget.fund.expense.group">
+            <field name="name">ครุภัณฑ์</field>
+        </record>
+        <record id="expense_group_7" model="budget.fund.expense.group">
+            <field name="name">ค่าสาธารณูปโภค</field>
+        </record>
+        <record id="expense_group_8" model="budget.fund.expense.group">
+            <field name="name">รายจ่ายอื่นๆ</field>
+        </record>
+        <record id="expense_group_9" model="budget.fund.expense.group">
+            <field name="name">ค่าธรรมเนียมสถาบันต้นสังกัด</field>
+        </record>
+
+    </data>
+</openerp>
