@@ -49,12 +49,12 @@ class ProductTemplate(models.Model):
 
     @api.model
     def get_product_accounts(self, product_id):
-        """ Overwrite """
-        """ To get the stock input account, stock output account and stock
+        """ Overwrite
+        To get the stock input account, stock output account and stock
         journal related to product.
         @param product_id: product id
         @return: dictionary which contains information regarding stock input
-        account, stock output account and stock journal
+                 account, stock output account and stock journal
         """
         product = self.browse(product_id)
         stock_input_acc = product.property_stock_account_input or \

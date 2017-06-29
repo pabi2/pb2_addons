@@ -80,7 +80,8 @@ class ResSpa(models.Model):
                                     ('end_date', '>=', self.end_date),
                                     ('id', '!=', self.id)])._ids)
         if overlaps1 or overlaps2:
-            raise ValidationError(_('This SPA has overlap period with other SPA!'))
+            raise ValidationError(
+                _('This SPA has overlap period with other SPA!'))
 
 
 class ResMission(models.Model):

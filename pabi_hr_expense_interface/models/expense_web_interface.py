@@ -191,7 +191,6 @@ class HRExpense(models.Model):
     @api.model
     def _pre_process_hr_expense(self, data_dict):
         Employee = self.env['hr.employee']
-        ExpenseLine = self.env['hr.expense.line']
         # employee_code to employee_id.id
         domain = [('employee_code', '=', data_dict.get('employee_code'))]
         employee = Employee.search(domain)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-import openerp.addons.decimal_precision as dp
 from openerp import SUPERUSER_ID
 from openerp.api import Environment
 from openerp.exceptions import except_orm, ValidationError

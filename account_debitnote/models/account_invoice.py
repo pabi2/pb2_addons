@@ -57,7 +57,8 @@ class AccountInvoice(models.Model):
 
         type_list = ['out_invoice', 'in_invoice', ]
         if invoice.type not in type_list:
-            raise ValidationError(_('Can not create Debit Note from this document!'))
+            raise ValidationError(
+                _('Can not create Debit Note from this document!'))
 
         invoice_data = {}
         for field in ['name', 'reference', 'comment', 'date_due', 'partner_id',

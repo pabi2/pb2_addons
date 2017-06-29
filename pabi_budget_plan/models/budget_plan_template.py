@@ -2,7 +2,6 @@
 from openerp import models, fields, api, _
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartField, CHART_VIEW_FIELD
-import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
 
 

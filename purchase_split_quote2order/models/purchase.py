@@ -101,6 +101,7 @@ class PurchaseOrder(models.Model):
             'res_id': self.order_id and self.order_id.id or False,
         }
 
+
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 

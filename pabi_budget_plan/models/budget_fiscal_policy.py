@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 

@@ -650,7 +650,8 @@ class AccountVoucher(common_voucher, models.Model):
             move_pool = self.env['account.move']
             for voucher in self:
                 if voucher.recognize_vat_move_id:
-                    raise ValidationError(_('Recognize VAT Entry already exists'))
+                    raise ValidationError(
+                        _('Recognize VAT Entry already exists'))
                 company_currency = self._get_company_currency(voucher.id)
                 current_currency = self._get_current_currency(voucher.id)
                 context = self.with_context(context)._sel_context(voucher.id)

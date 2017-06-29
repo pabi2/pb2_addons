@@ -116,7 +116,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     @api.model
     def _check_installment_amount(self):
         if any([i.amount < 0 for i in self.installment_ids]):
-            raise ValidationError(_('Negative installment amount not allowed!'))
+            raise ValidationError(
+                _('Negative installment amount not allowed!'))
 
     @api.one
     def do_create_purchase_invoice_plan(self):

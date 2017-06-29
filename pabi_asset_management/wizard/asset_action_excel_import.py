@@ -18,10 +18,6 @@ class AssetActionExcelImport(models.TransientModel):
         required=True,
     )
 
-    @api.multi
-    def action_import(self):
-        x = 1
-
     #
     # @api.onchange('period_type')
     # def _onchange_pariod_type(self):
@@ -64,7 +60,7 @@ class AssetActionExcelImport(models.TransientModel):
     #     company_name = company.name or ''
     #     data['parameters']['company_name'] = company.title.name and \
     #         company.title.name + ' ' + company_name or company_name
-    #     data['parameters']['branch_name'] = data['parameters']['company_name']
+#     data['parameters']['branch_name'] = data['parameters']['company_name']
     #     data['parameters']['branch_vat'] = company.vat or ''
     #     data['parameters']['branch_taxbranch'] = company.taxbranch or ''
     #     data['parameters']['advance_sequence'] = False

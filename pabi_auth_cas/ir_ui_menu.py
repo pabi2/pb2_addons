@@ -41,8 +41,8 @@ class ir_ui_menu(osv.osv):
         """
         fields = ['name', 'sequence', 'parent_id', 'action']
         menu_root_ids = self.get_user_roots(cr, uid, context=context)
-        menu_roots = self.read(
-            cr, uid, menu_root_ids, fields, context=context) if menu_root_ids else []
+        menu_roots = menu_root_ids and \
+            self.read(cr, uid, menu_root_ids, fields, context=context) or []
         menu_root = {
             'id': False,
             'name': 'root',
@@ -56,7 +56,8 @@ class ir_ui_menu(osv.osv):
         # menus are loaded fully unlike a regular tree view, cause there are a
         # limited number of items (752 when all 6.1 addons are installed)
         menu_ids = self.search(
-            cr, uid, [('id', 'child_of', menu_root_ids)], 0, False, False, context=context)
+            cr, uid, [('id', 'child_of', menu_root_ids)],
+            0, False, False, context=context)
         menu_items = self.read(cr, uid, menu_ids, fields, context=context)
         # adds roots at the end of the sequence, so that they will overwrite
         # equivalent menu items from full menu read when put into id:item
@@ -85,24 +86,30 @@ class ir_ui_menu(osv.osv):
 
     @tools.ormcache()
     def get_id_by_name(self, cr, uid, app):
-        """Returns (model, res_id) corresponding to a given module and xml_id (cached) or raise ValueError if not found"""
+        """Returns (model, res_id) corresponding to a given module
+        and xml_id (cached) or raise ValueError if not found"""
         app_id = self.search(
-            cr, uid, [('app3digi', '=', app), ('parent_id', '=', False)], limit=1)
+            cr, uid, [('app3digi', '=', app),
+                      ('parent_id', '=', False)], limit=1)
         if app_id:
             res = self.read(cr, uid, app_id, ['id'])[0]
             if not res['id']:
                 raise ValueError(
-                    'No such Menu Item currently defined in the system: %s' % (app))
+                    'No such Menu Item currently defined in the system: %s'
+                    % (app))
             return res['id']
         else:
             raise ValueError(
-                'No such Menu Item currently defined in the system: %s' % (app))
+                'No such Menu Item currently defined in the system: %s'
+                % (app))
 
     @tools.ormcache()
     def get_name_by_3digi(self, cr, uid, app):
-        """Returns (model, res_id) corresponding to a given module and xml_id (cached) or raise ValueError if not found"""
+        """Returns (model, res_id) corresponding to a given module and xml_id
+        (cached) or raise ValueError if not found"""
         app_id = self.search(
-            cr, uid, [('app3digi', '=', app), ('parent_id', '=', False)], limit=1)
+            cr, uid, [('app3digi', '=', app),
+                      ('parent_id', '=', False)], limit=1)
         if app_id:
             res = self.read(cr, uid, app_id, ['name'])[0]
             if not res['name']:
@@ -114,5 +121,3 @@ class ir_ui_menu(osv.osv):
 #     _columns = {
 #         'app3digi': fields.char('App Menu'),
 #     }
-
-ir_ui_menu()

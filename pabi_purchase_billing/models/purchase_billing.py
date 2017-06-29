@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 import datetime
 import re
-from openerp.exceptions import ValidationError
 
 
 class PurchaseBilling(models.Model):

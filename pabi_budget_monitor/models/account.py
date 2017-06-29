@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
+from openerp import models, api
 from openerp import SUPERUSER_ID
 from openerp.api import Environment
 from openerp.exceptions import ValidationError

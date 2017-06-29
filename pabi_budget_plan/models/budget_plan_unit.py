@@ -4,7 +4,6 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_template import BudgetPlanCommon
 from openerp import SUPERUSER_ID
-import openerp.addons.decimal_precision as dp
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
@@ -164,7 +163,8 @@ class BudgetPlanUnit(BudgetPlanCommon, models.Model):
     def unlink(self):
         for rec in self:
             if rec.state != 'draft':
-                raise ValidationError(_('You can not delete non-draft records!'))
+                raise ValidationError(
+                    _('You can not delete non-draft records!'))
             rec.plan_line_ids.mapped('template_id').unlink()
         self.mapped('template_id').unlink()
         return super(BudgetPlanUnit, self).unlink()

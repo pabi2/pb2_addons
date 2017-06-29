@@ -34,7 +34,8 @@ class ImportAsseItem(models.TransientModel):
             raise ValidationError(_(e.strerror))
         except:
             e = sys.exc_info()[0]
-            raise ValidationError(_('Wrong file format. Please enter .xlsx file.'))
+            raise ValidationError(
+                _('Wrong file format. Please enter .xlsx file.'))
         Plans = self.env[active_model].browse(active_ids)
         for plan in Plans:
             if plan.state != 'draft':

@@ -142,7 +142,8 @@ class SectionBudgetTransfer(models.Model):
     def unlink(self):
         for rec in self:
             if rec.state != 'draft':
-                raise ValidationError(_('You can not delete non-draft records!'))
+                raise ValidationError(
+                    _('You can not delete non-draft records!'))
         return super(SectionBudgetTransfer, self).unlink()
 
 

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from openerp import api, models, _
-from openerp.exceptions import ValidationError
+from openerp import models
 
 
 class BudgetReleaseWizard(models.TransientModel):

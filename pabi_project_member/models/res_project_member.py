@@ -47,4 +47,5 @@ class ResProjectMember(models.Model):
         """, (self.project_id.id,))
         count = self._cr.fetchone()[0]
         if count > 1:
-            raise ValidationError(_('There are project with > 1 project manager'))
+            raise ValidationError(
+                _('There are project with > 1 project manager'))

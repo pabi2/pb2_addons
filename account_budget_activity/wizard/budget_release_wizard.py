@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from openerp import api, models, fields, _
-import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
 
 
@@ -102,7 +101,7 @@ class BudgetReleaseWizard(models.TransientModel):
 #     )
 #     ready = fields.Boolean(
 #         string='Ready to release',
-#         help="Whether budget should be released according to release interval",
+#       help="Whether budget should be released according to release interval",
 #     )
 #     past = fields.Boolean(
 #         string='Past release',

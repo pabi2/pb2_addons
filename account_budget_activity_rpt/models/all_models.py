@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import models
 from openerp.addons.account_budget_activity_rpt.models.account_activity \
     import ActivityCommon
 

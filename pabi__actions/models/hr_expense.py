@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, fields, api
 
 _logger = logging.getLogger(__name__)
 

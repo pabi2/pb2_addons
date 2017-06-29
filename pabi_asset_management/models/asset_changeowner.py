@@ -131,7 +131,6 @@ class AccountAssetChangeowner(models.Model):
                              'period_id': period.id,
                              'date': fields.Date.context_today(self),
                              'ref': self.name}
-                print move_dict
                 AccountMove.with_context(allow_asset=True).create(move_dict)
             # Asset Owner Info update
             if line.responsible_user_id:

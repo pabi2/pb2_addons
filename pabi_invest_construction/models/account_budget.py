@@ -22,7 +22,8 @@ class AccountBudget(models.Model):
         """
         self.ensure_one()  # Make sure it is synced one by one
         if self.chart_view != 'invest_construction':
-            raise ValidationError(_('Not an invest construction budget control'))
+            raise ValidationError(
+                _('Not an invest construction budget control'))
         # Find matched phases for this budget control
         Phase = self.env['res.invest.construction.phase']
         PhaseSync = self.env['res.invest.construction.phase.sync']

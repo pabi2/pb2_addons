@@ -1,7 +1,16 @@
-#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from psycopg2.extras import _logging
 import logging
+import os
+import cgi
+import md5
+import time
+import urllib
+import urllib2
+import urlparse
+
 _logger = logging.getLogger(__name__)
+
 # /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
 #
 # DO NOT REPLACE THIS FILE !!
@@ -12,10 +21,10 @@ _logger = logging.getLogger(__name__)
 # /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
 
 #  Debug
-## import os
+# # import os
 # print "Content-type: text/html\n"
-## import sys
-## sys.stderr = sys.stdout
+# # import sys
+# # sys.stderr = sys.stdout
 
 #  Copyright 2011 Jon Rifkin
 #
@@ -32,9 +41,9 @@ _logger = logging.getLogger(__name__)
 #  limitations under the License.
 
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #  Usage
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #
 #  Purpose
 #      Authenticate users against a CAS server from your python cgi scripts.
@@ -64,19 +73,20 @@ _logger = logging.getLogger(__name__)
 #      - path:      Authentication cookie applies for all urls under 'path'.
 #                   Defaults to "/" (all urls).
 #      - protocol:  CAS protocol version.  Default is 2.  Can be set to 1.
-#      - secure:    Default is 1, which authenticates for https connections only.
+#      - secure:  Default is 1, which authenticates for https connections only.
 #      - opt:       set to 'renew' or 'gateway' for these CAS options.
 #
 #        Examples:
-#          status, id, cookie = pycas.login(CAS_SERVER,THIS_SCRIPT,protocol=1,secure=0)
-#          status, id, cookie = pycas.login(CAS_SERVER,THIS_SCRIPT,path="/cgi-bin/accts")
+#  status, id, cookie = pycas.login(CAS_SERVER,THIS_SCRIPT,protocol=1,secure=0)
+#  status, id, cookie = \
+#     pycas.login(CAS_SERVER,THIS_SCRIPT,path="/cgi-bin/accts")
 #
 #   Status Codes are listed below.
 #
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #  Constants
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #
 #  Secret used to produce hash.   This can be any string.  Hackers
 #  who know this string can forge this script's authentication cookie.
@@ -116,22 +126,9 @@ CAS_MSG = (
 # Optional log file for debugging
 # LOG_FILE="/tmp/cas.log"
 
-
-#-----------------------------------------------------------------------
-#  Imports
-#-----------------------------------------------------------------------
-import os
-import cgi
-import md5
-import time
-import urllib
-import urllib2
-import urlparse
-
-
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #  Functions
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 #  For debugging.
 """
@@ -144,12 +141,10 @@ def writelog(msg):
 
 
 def parse_tag(str, tag):
-    """
-    Used for parsing xml.  Search str for first occurance of
+    """ Used for parsing xml.  Search str for first occurance of
     <tag>.....</tag> and return text (striped of leading and
     trailing whitespace) between tags.  Return "" if tag not
-    found.
-    """
+    found. """
     tag1_pos1 = str.find("<" + tag)
     #  No tag found, return empty string.
     if tag1_pos1 == -1:
@@ -189,21 +184,22 @@ def make_pycas_cookie(val, domain, path, secure, expires=None):
 
 
 def do_redirect(cas_host, service_url, opt, secure):
-    """ Send redirect to client.  This function does not return, i.e. it teminates this script. """
+    """ Send redirect to client.  This function does not return,
+    i.e. it teminates this script. """
     cas_url = cas_host + "/login?service=" + service_url
     urllib2.urlopen(cas_url)
     if opt in ("renew", "gateway"):
         cas_url += "&%s=true" % opt
         #  Print redirect page to browser
-    print "Refresh: 0; url=%s" % cas_url
-    print "Content-type: text/html"
+    # print "Refresh: 0; url=%s" % cas_url
+    # print "Content-type: text/html"
     if opt == "gateway":
         domain, path = urlparse.urlparse(service_url)[1:3]
-        print make_pycas_cookie("gateway", domain, path, secure)
-    print """
-If your browser does not redirect you, then please follow <a href="%s">this link</a>.
-""" % cas_url
-    #raise SystemExit
+    #     print make_pycas_cookie("gateway", domain, path, secure)
+    # print ("""If your browser does not redirect you,
+    #        then please follow <a href="%s">this link</a>.
+    #        """ % cas_url)
+    # raise SystemExit
 
 
 def decode_cookie(cookie_vals, lifetime=None):
@@ -213,7 +209,7 @@ def decode_cookie(cookie_vals, lifetime=None):
     Return status and id (id will be empty string if unknown).
     """
     #  Test for now cookies
-    if cookie_vals == None:
+    if cookie_vals is None:
         return COOKIE_NONE, ""
 
     #  Test each cookie value
@@ -233,7 +229,7 @@ def decode_cookie(cookie_vals, lifetime=None):
             oldhash = cookie_val[0:8]
             timestr, id = split2(cookie_val[8:], ":")
             #  Verify hash
-            newhash = makehash(timestr + ":" + id)
+            # newhash = makehash(timestr + ":" + id)
             if oldhash == makehash(timestr + ":" + id):
                 #  Check lifetime
                 if lifetime:
@@ -288,7 +284,8 @@ def validate_cas_1(cas_host, service_url, ticket):
 def validate_cas_2(cas_host, service_url, ticket, opt):
     """
     Validate ticket using cas 2.0 protocol
-    The 2.0 protocol allows the use of the mutually exclusive "renew" and "gateway" options.
+    The 2.0 protocol allows the use of the mutually exclusive
+    "renew" and "gateway" options.
     """
     #  Second Call to CAS server: Ticket found, verify it.
     cas_validate = cas_host + "/proxyValidate?ticket=" + \
@@ -308,7 +305,7 @@ def validate_cas_2(cas_host, service_url, ticket, opt):
     #  Ticket validates
     else:
         _logger.info(
-            '----------------------- Successful CAS login from ' + id + ' ----------------------- ')
+            '---- Successful CAS login from ' + id + '-----')
         return TICKET_OK, id
 
 
@@ -322,7 +319,7 @@ def get_cookies():
     cookies = {}
     for cookie_pair in cookie_pairs:
         key, val = split2(cookie_pair.strip(), "=")
-        if cookies.has_key(key):
+        if cookies in key:
             cookies[key].append(val)
         else:
             cookies[key] = [val, ]
@@ -353,18 +350,19 @@ def get_ticket_status(cas_host, service_url, ticket, protocol, opt):
         return TICKET_NONE, ""
 
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #  Exported functions
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
-def login(cas_host, service_url, ticket, lifetime=None, secure=1, protocol=2, path="/", opt="gateway"):
+def login(cas_host, service_url, ticket, lifetime=None, secure=1,
+          protocol=2, path="/", opt="gateway"):
     """
     Login to cas and return user id.
     Returns status, id, pycas_cookie.
     """
     #  Check cookie for previous pycas state, with is either
     #     COOKIE_AUTH    - client already authenticated by pycas.
-    #     COOKIE_GATEWAY - client returning from CAS_SERVER with gateway option set.
+    #  COOKIE_GATEWAY-client returning from CAS_SERVER with gateway option set.
     #  Other cookie status are
     #     COOKIE_NONE    - no cookie found.
     #     COOKIE_INVALID - invalid cookie found.
@@ -382,12 +380,12 @@ def login(cas_host, service_url, ticket, lifetime=None, secure=1, protocol=2, pa
     #     TICKET_NONE    - no ticket found.
     #  If ticket is ok, then user has authenticated, return id and
     #  a pycas cookie for calling program to send to web browser.
-    #cas_host = 'https://sso.nstda.or.th/saml/module.php/casserver/cas.php'
-    #service_url = 'http://10.226.29.138:8069/'
+    # cas_host = 'https://sso.nstda.or.th/saml/module.php/casserver/cas.php'
+    # service_url = 'http://10.226.29.138:8069/'
 
     ticket_status, id = get_ticket_status(
         cas_host, service_url, ticket, protocol, opt)
-    #id = 'admin'
+    # id = 'admin'
 #     print "------ Ticket Status ------- " + str(ticket_status)
 
     if ticket_status == TICKET_OK:
@@ -395,15 +393,17 @@ def login(cas_host, service_url, ticket, lifetime=None, secure=1, protocol=2, pa
         hash = makehash(timestr + ":" + id)
         cookie_val = hash + timestr + ":" + id
         domain = urlparse.urlparse(service_url)[1]
-        print "------ CAS_OK -------" + " Valid CAS server ticket found."
+        # print "------ CAS_OK -------" + " Valid CAS server ticket found."
         return CAS_OK, id, make_pycas_cookie(cookie_val, domain, path, secure)
 
     elif ticket_status == TICKET_INVALID:
-        print "------ CAS_TICKET_INVALID -------" + " No CAS server ticket found."
+        # print ("------ CAS_TICKET_INVALID -------" +
+        #        " No CAS server ticket found.")
         return CAS_TICKET_INVALID, "", ""
 
     elif ticket_status == NOT_CAS_SEVER:
-        print "------ NOT_CAS_SEVER -------" + " Invalid CAS server ticket found."
+        # print ("------ NOT_CAS_SEVER -------" +
+        #        " Invalid CAS server ticket found.")
         return NOT_CAS_SEVER, "", ""
 
     #  If unathenticated and in gateway mode, return gateway status and clear
@@ -413,5 +413,7 @@ def login(cas_host, service_url, ticket, lifetime=None, secure=1, protocol=2, pa
             domain, path = urlparse.urlparse(service_url)[1:3]
             #  Set cookie expiration in the past to clear the cookie.
             past_date = time.strftime(
-                "%a, %d-%b-%Y %H:%M:%S %Z", time.localtime(time.time() - 48 * 60 * 60))
-            return CAS_GATEWAY, "", make_pycas_cookie("", domain, path, secure, past_date)
+                "%a, %d-%b-%Y %H:%M:%S %Z",
+                time.localtime(time.time() - 48 * 60 * 60))
+            return CAS_GATEWAY, "", make_pycas_cookie("", domain, path,
+                                                      secure, past_date)

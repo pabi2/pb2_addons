@@ -93,7 +93,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             browse(self._context.get('active_id'))
         if order.by_fiscalyear:
             if any([not l.fiscalyear_id for l in order.order_line]):
-                raise ValidationError(_('Please set fiscal year on product line'))
+                raise ValidationError(
+                    _('Please set fiscal year on product line'))
         return order.by_fiscalyear
 
     by_fiscalyear = fields.Boolean(

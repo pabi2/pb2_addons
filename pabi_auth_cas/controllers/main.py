@@ -19,27 +19,27 @@
 #
 ##############################################################################
 
-import cgi
+# import cgi
 import logging
-import os
-import tempfile
-import getpass
+# import os
+# import tempfile
+# import getpass
 import urllib
-import urllib2
-import urlparse
+# import urllib2
+# import urlparse  -> Suplicated
 import werkzeug
 import werkzeug.utils
 import werkzeug.urls
 import werkzeug.exceptions
-import time
-import Cookie
+# import time
+# import Cookie
 import operator
 import ssl
 
 from urllib import urlencode
 from urlparse import urlparse, urlunparse, parse_qs
 
-from openid import oidutil
+# from openid import oidutil
 from openid.store import filestore
 from openid.consumer import consumer
 from openid.cryptutil import randomString
@@ -49,7 +49,8 @@ import openerp
 from openerp import SUPERUSER_ID
 from openerp import pooler
 from openerp.modules.registry import RegistryManager
-from openerp.addons.web.controllers.main import login_and_redirect, set_cookie_and_redirect
+from openerp.addons.web.controllers.main \
+    import login_and_redirect, set_cookie_and_redirect
 import openerp.http as http
 from openerp.http import request
 from openerp.tools.translate import _
@@ -126,7 +127,8 @@ class CasController(openerp.addons.web.controllers.main.Home):
 
     @http.route('/', type='http', auth="none")
     def index(self, s_action=None, db=None, **kw):
-        return http.local_redirect(get_base_url() + '/auth_cas', query=request.params, keep_hash=True)
+        return http.local_redirect(get_base_url() + '/auth_cas',
+                                   query=request.params, keep_hash=True)
 
     @http.route('/web', type='http', auth="user")
     def web_client(self, s_action=None, menu=None, **kw):
@@ -146,7 +148,8 @@ class CasController(openerp.addons.web.controllers.main.Home):
             request.context['menu'] = menu
         menu_data = request.registry['ir.ui.menu'].load_menu(
             request.cr, request.uid, context=request.context)
-        return request.render('web.webclient_bootstrap', qcontext={'menu_data': menu_data})
+        return request.render('web.webclient_bootstrap',
+                              qcontext={'menu_data': menu_data})
 
     def get_config(self, dbname):
         """ Retrieves the module config for the CAS authentication. """
@@ -154,22 +157,31 @@ class CasController(openerp.addons.web.controllers.main.Home):
         with registry.cursor() as cr:
             icp = registry.get('ir.config_parameter')
             config = {
-                'login_cas': icp.get_param(cr, openerp.SUPERUSER_ID, 'cas_auth.cas_activated'),
-                'host': icp.get_param(cr, openerp.SUPERUSER_ID, 'cas_auth.cas_server'),
-                'port': icp.get_param(cr, openerp.SUPERUSER_ID, 'cas_auth.cas_server_port'),
-                'cas_service': icp.get_param(cr, openerp.SUPERUSER_ID, 'cas_auth.cas_service'),
-                'base_url': icp.get_param(cr, openerp.SUPERUSER_ID, 'web.base.url'),
-                'auto_create': icp.get_param(cr, openerp.SUPERUSER_ID, 'cas_auth.cas_create_user'),
+                'login_cas': icp.get_param(cr, openerp.SUPERUSER_ID,
+                                           'cas_auth.cas_activated'),
+                'host': icp.get_param(cr, openerp.SUPERUSER_ID,
+                                      'cas_auth.cas_server'),
+                'port': icp.get_param(cr, openerp.SUPERUSER_ID,
+                                      'cas_auth.cas_server_port'),
+                'cas_service': icp.get_param(cr, openerp.SUPERUSER_ID,
+                                             'cas_auth.cas_service'),
+                'base_url': icp.get_param(cr, openerp.SUPERUSER_ID,
+                                          'web.base.url'),
+                'auto_create': icp.get_param(cr, openerp.SUPERUSER_ID,
+                                             'cas_auth.cas_create_user'),
             }
 
         return config
 
-    def cas_authenticate(self, req, dbname, cur_url, cas_host, auto_create, ticket):
-        """ Checks if the user attempts to authenticate is authorized to do it and, if it is, authenticate him. """
+    def cas_authenticate(self, req, dbname, cur_url,
+                         cas_host, auto_create, ticket):
+        """ Checks if the user attempts to authenticate is
+        authorized to do it and, if it is, authenticate him. """
         # cas_server = cas_host + ':' + cas_port
         cas_server = cas_host
         service_url = urllib.quote(cur_url, safe='')
-        # The login function, from pycas, check if the ticket given by CAS is a real ticket. The login of the user
+        # The login function, from pycas, check if the ticket given by
+        # CAS is a real ticket. The login of the user
         # connected by CAS is returned.
 
         status, idUser, cookie = login(cas_server, service_url, ticket)
@@ -191,9 +203,11 @@ class CasController(openerp.addons.web.controllers.main.Home):
                 # If the user have no account, we create one
                 else:
                     user_id = users.create(
-                        cr, SUPERUSER_ID, {'name': idUser.capitalize(), 'login': idUser})
+                        cr, SUPERUSER_ID, {'name': idUser.capitalize(),
+                                           'login': idUser})
 
-                # A random key is generated in order to verify if the login request come from here or if the user
+                # A random key is generated in order to verify if the
+                # login request come from here or if the user
                 # try to authenticate by any other way
                 cas_key = randomString(
                     16, '0123456789abcdefghijklmnopqrstuvwxyz')
@@ -203,10 +217,12 @@ class CasController(openerp.addons.web.controllers.main.Home):
 
                 login_and_redirect(dbname, idUser, cas_key)
 
-                result = {'status': status, 'session_id': req.session_id}
+                result = {'status': status,
+                          'session_id': req.session_id}
             else:
-                result = {
-                    'status': status, 'fail': True, 'session_id': req.session_id}
+                result = {'status': status,
+                          'fail': True,
+                          'session_id': req.session_id}
 
             cr.close()
 
@@ -216,7 +232,8 @@ class CasController(openerp.addons.web.controllers.main.Home):
         return result
 
     def cas_redirect(self, cas_host, service_url, opt="gateway", secure=1):
-        """ Send redirect to client.  This function does not return, i.e. it teminates this script. """
+        """ Send redirect to client.  This function does
+        not return, i.e. it teminates this script. """
         cas_url = cas_host + "/login?service=" + service_url
         _logger.info(cas_url)
         urllib.urlopen(cas_url)
@@ -248,7 +265,8 @@ class CasController(openerp.addons.web.controllers.main.Home):
                 return self.cas_redirect(config['host'], callback_url)
 
             res = self.cas_authenticate(
-                request, dbname, callback_url, config['host'], config['auto_create'], ticket)
+                request, dbname, callback_url, config['host'],
+                config['auto_create'], ticket)
             if res['status'] != 0:
                 return self.cas_redirect(config['host'], callback_url)
             elif res.get('fail', False):
@@ -308,7 +326,8 @@ class CasController(openerp.addons.web.controllers.main.Home):
         if adminlogin or request.httprequest.method == 'POST':
             Session().logout()
             main.ensure_db()
-            if request.httprequest.method == 'GET' and redirect and request.session.uid:
+            if request.httprequest.method == 'GET' and \
+                    redirect and request.session.uid:
                 return werkzeug.utils.redirect(redirect)
 
             if not request.uid:
@@ -328,7 +347,8 @@ class CasController(openerp.addons.web.controllers.main.Home):
             if request.httprequest.method == 'POST':
                 old_uid = request.uid
                 uid = request.session.authenticate(
-                    request.session.db, request.params['login'], request.params['password'])
+                    request.session.db, request.params['login'],
+                    request.params['password'])
                 if uid is not False:
                     return werkzeug.utils.redirect(redirect)
                 request.uid = old_uid
@@ -338,8 +358,10 @@ class CasController(openerp.addons.web.controllers.main.Home):
         config = self.get_config(dbname)
         if config['login_cas']:
             if redirect:
-                #                 _logger.info('----------------------' + get_base_url() +  '/auth_cas?app=' + redirect)
-                return werkzeug.utils.redirect(get_base_url() + '/auth_cas?app=' + redirect)
+                # _logger.info('----------------------' + get_base_url() +
+                # '/auth_cas?app=' + redirect)
+                return werkzeug.utils.redirect(get_base_url() +
+                                               '/auth_cas?app=' + redirect)
             else:
                 return werkzeug.utils.redirect(get_base_url() + '/auth_cas')
         else:
@@ -362,17 +384,19 @@ class Apps(openerp.addons.web.controllers.main.Apps):
         if ticket:
             CasController().cas_start(get_base_url() + '/app/' + app, ticket)
         else:
-            #             request.session.logout()
-            #             request.session.db = getattr(request.session, 'db', False)
+            # request.session.logout()
+            # request.session.db = getattr(request.session, 'db', False)
             request.session.uid = None
 
         if not request.session.uid:
-            return werkzeug.utils.redirect(get_base_url() + '/web/login?redirect=' + get_base_url() + '/app/' + app)
+            return werkzeug.utils.redirect(get_base_url() +
+                                           '/web/login?redirect=' +
+                                           get_base_url() + '/app/' + app)
 #         CasController().web_login(get_base_url() + '/app/' + app)
 
         if app:
             _logger.info(
-                '---------------------- Login by AppURL - User: ' + str(request.session.login))
+                '---- Login by AppURL - User: ' + str(request.session.login))
             ir_ui_menu = request.registry['ir.ui.menu']
             try:
                 cr = pooler.get_db(dbname).cursor()
@@ -384,8 +408,9 @@ class Apps(openerp.addons.web.controllers.main.Apps):
                 menu_id = False
 
             if not menu_id:
-                #             return werkzeug.utils.redirect('/#action=login&loginerror=1')
-                #                 result = {'error': _('You do not have permission to access this page : %s') % (app)}
+                # return werkzeug.utils.redirect('/#action=login&loginerror=1')
+                # result = {'error': _('You do not have permission to
+                # access this page : %s') % (app)}
                 return page_access_denied(app)
 #                 return werkzeug.exceptions.Forbidden(result['error'])
 
@@ -394,6 +419,8 @@ class Apps(openerp.addons.web.controllers.main.Apps):
                 str(menu_name) if debug and menu_name else '?menu=' + \
                 str(menu_name)
 
-            return werkzeug.utils.redirect(get_base_url() + '/web{0}#{1}'.format(debug, menu))
+            return werkzeug.utils.redirect(get_base_url() +
+                                           '/web{0}#{1}'.format(debug, menu))
         else:
-            return werkzeug.utils.redirect(get_base_url() + '/web{0}'.format(debug))
+            return werkzeug.utils.redirect(get_base_url() +
+                                           '/web{0}'.format(debug))

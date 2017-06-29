@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp import tools
-from openerp.modules.module import get_module_resource
 from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
@@ -451,7 +450,9 @@ class AccountAsset(ChartFieldAction, models.Model):
             return (asset_move_lines_dict, depre_move_lines_dict)
 
     @api.model
-    def _prepare_asset_target_move(self, move_lines_dict, new_owner={}):
+    def _prepare_asset_target_move(self, move_lines_dict, new_owner=None):
+        if new_owner is None:
+            new_owner = {}
         debit = sum(x['debit'] for x in move_lines_dict)
         credit = sum(x['credit'] for x in move_lines_dict)
         move_line_dict = move_lines_dict[0].copy()

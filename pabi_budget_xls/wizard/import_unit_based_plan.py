@@ -178,7 +178,8 @@ class BudgetImportWizard(models.TransientModel):
             raise ValidationError(_(e.strerror))
         except:
             e = sys.exc_info()[0]
-            raise ValidationError(_('Wrong file format. Please enter .xlsx file.'))
+            raise ValidationError(
+                _('Wrong file format. Please enter .xlsx file.'))
         budgets = self.env['budget.plan.unit'].browse(budget_ids)
         for budget in budgets:
             # if we are trying to import after draft state then restrict him

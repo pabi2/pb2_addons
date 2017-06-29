@@ -196,12 +196,12 @@ class AccountBilling(models.Model):
         else:
             currency_domain = [('currency_id', '=', currency_id)]
 
-        ids = move_line_pool.search(cr, uid, [
-                ('state', '=', 'valid'),
-                ('account_id.type', 'in', account_type),
-                ('reconcile_id', '=', False),
-                ('partner_id', '=', partner_id)
-            ] + currency_domain + billing_date_condition,  context=context)
+        ids = move_line_pool.search(
+            cr, uid, [('state', '=', 'valid'),
+                      ('account_id.type', 'in', account_type),
+                      ('reconcile_id', '=', False),
+                      ('partner_id', '=', partner_id)] +
+            currency_domain + billing_date_condition, context=context)
 
         account_move_lines = move_line_pool.browse(cr, uid, ids,
                                                    context=context)

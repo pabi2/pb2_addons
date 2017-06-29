@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import tools
-from openerp import api, models, fields, _
+from openerp import api, models, fields
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
 

@@ -165,7 +165,7 @@ class StockRequest(models.Model):
     def _check_location(self):
         if self.location_dest_id == self.location_id:
             raise ValidationError(_('Source and Destination Location '
-                              'can not be the same location'))
+                                    'can not be the same location'))
 
     @api.model
     def fields_view_get(self, view_id=None, view_type=False,
@@ -218,7 +218,7 @@ class StockRequest(models.Model):
             if not (self.env.user.access_all_operating_unit or
                     origin_ou_id in user_ou_ids):
                 raise ValidationError(_('Only user from the borrow location '
-                                  'can process this request'))
+                                        'can process this request'))
 
     # Internal Actions
     @api.multi
@@ -286,7 +286,8 @@ class StockRequest(models.Model):
             self.return_picking_id.sudo().action_confirm()
             self.return_picking_id.sudo().action_assign()
             if self.sudo().return_picking_id.state != 'assigned':
-                raise ValidationError('Requested material(s) not fully available!')
+                raise ValidationError(
+                    _('Requested material(s) not fully available!'))
             self.return_picking_id.sudo().action_done()
         self.write({'state': 'done_return'})
 
@@ -345,9 +346,10 @@ class StockRequest(models.Model):
             raise ValidationError(_('Invalid picking type!'))
         picking_obj = self.env['stock.picking']
         move_obj = self.env['stock.move']
-        if all(t == 'service'
-               for t in self.line_ids.mapped('product_id.type')):
-            raise ValidationError('Requested material(s) not of type stockable!')
+        if all(t == 'service' for t in
+               self.line_ids.mapped('product_id.type')):
+            raise ValidationError(
+                _('Requested material(s) not of type stockable!'))
         picking = picking_obj.create(self._prepare_picking(self))
         location_id = False
         location_dest_id = False
@@ -477,4 +479,5 @@ class StockRequestLine(models.Model):
     def _check_future_qty(self):
         for line in self:
             if line.product_uom_qty > line.future_qty:
-                raise ValidationError(_('%s is not enough!') % line.product_id.name)
+                raise ValidationError(
+                    _('%s is not enough!') % line.product_id.name)

@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from openerp import fields, models, api, _
+from openerp import fields, models, api
 
 
 class AccountAssetRemove(models.TransientModel):

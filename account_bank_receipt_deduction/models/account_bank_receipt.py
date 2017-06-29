@@ -76,7 +76,8 @@ class AccountBankReceipt(models.Model):
     def validate_bank_receipt(self):
         for receipt in self:
             if receipt.writeoff_amount != 0.0:
-                raise ValidationError(_('Wrieteoff Amount must be 0.0 to validate!'))
+                raise ValidationError(
+                    _('Wrieteoff Amount must be 0.0 to validate!'))
         res = super(AccountBankReceipt, self).validate_bank_receipt()
         return res
 

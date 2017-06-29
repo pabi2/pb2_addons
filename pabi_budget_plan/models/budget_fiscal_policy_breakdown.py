@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_VIEW_LIST, ChartField
 
@@ -219,7 +218,8 @@ class BudgetFiscalPolicyBreakdown(models.Model):
         self.ensure_one()
         sum_policy_amount = sum([l.policy_amount for l in self.line_ids])
         if self.policy_overall != sum_policy_amount:
-            raise ValidationError(_('Overall policy amount is not full filled'))
+            raise ValidationError(
+                _('Overall policy amount is not full filled'))
         name = self.env['ir.sequence'].\
             next_by_code('fiscal.policy.breakdown.unit')
         self.write({
