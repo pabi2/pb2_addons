@@ -13,6 +13,7 @@
         "account_budget_activity",
         "pabi_invest_construction",
         "pabi_chartfield_merged",
+        "pabi_xls",
     ],
     "description": """
 This module allow creating asset during incoming shipment.

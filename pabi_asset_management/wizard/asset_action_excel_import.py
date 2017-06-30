@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+import base64
+import os
+import xlrd
+from xlrd.sheet import ctype_text
+import unicodecsv
+from datetime import datetime, timedelta
+from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
 
 
 class AssetActionExcelImport(models.TransientModel):
@@ -17,6 +24,14 @@ class AssetActionExcelImport(models.TransientModel):
         string='Import File (*.xls)',
         required=True,
     )
+
+    @api.multi
+    def action_import_xls(self):
+        self.ensure_one()
+        if not self.import_file:
+            raise ValidationError(_('Please choose excel file to import!'))
+        self.env['pabi.xls'].import_xls(
+            'account.asset.changeowner', self.import_file)
 
     #
     # @api.onchange('period_type')
