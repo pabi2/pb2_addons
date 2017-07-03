@@ -10,13 +10,15 @@
                     <group>
                         <group>
                             <field name="action_type"/>
+                            <field name="import_attachment" invisible="1"/>
+                            <field name="import_template" />
                         </group>
                         <group>
                             <field name="import_file"/>
                         </group>
                     </group>
                     <footer>
-                        <button string="Import" name="action_import" type="object" class="oe_highlight"/>
+                        <button string="Import" name="action_import_xls" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>

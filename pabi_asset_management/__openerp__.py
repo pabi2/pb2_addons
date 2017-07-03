@@ -13,12 +13,14 @@
         "account_budget_activity",
         "pabi_invest_construction",
         "pabi_chartfield_merged",
+        "pabi_xls",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
     """,
     "data": [
         "security/ir.model.access.csv",
+        "data/import_templates.xml",
         "data/sequence_data.xml",
         "data/asset_purchase_method.xml",
         "data/account_data.xml",

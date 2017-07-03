@@ -6,7 +6,7 @@ import re
 
 
 class PurchaseBilling(models.Model):
-    _name = "purchase.billing"
+    _name = 'purchase.billing'
     _inherit = ['mail.thread']
 
     name = fields.Char(
