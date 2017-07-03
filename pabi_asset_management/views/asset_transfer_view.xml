@@ -80,6 +80,7 @@
                         </group>
                         <notebook>
                             <page string="Source Assets">
+                                <p>Select asset(s) with profile type "AIT" or "AUC" to transfer...</p>
                                 <field
                                     name="asset_ids"
                                     context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_tree_transfer',
@@ -145,7 +146,7 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_account_asset_transfer_form">
+        <record model="ir.actions.act_window" id="action_account_asset_transfer">
             <field name="name">Transfer</field>
             <field name="res_model">account.asset.transfer</field>
             <field name="view_type">form</field>
@@ -153,7 +154,7 @@
             <field name="search_view_id" ref="view_account_asset_transfer_search"/>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer_form" action="action_account_asset_transfer_form"/>
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer" action="action_account_asset_transfer"/>
 
     </data>
 </openerp>

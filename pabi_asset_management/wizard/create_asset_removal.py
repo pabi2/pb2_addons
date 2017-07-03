@@ -38,7 +38,7 @@ class CreateAssetRemoval(models.TransientModel):
         self.ensure_one()
         asset_ids = self._context.get('active_ids', [])
         action = self.env.ref('pabi_asset_management.'
-                              'action_account_asset_removal_form')
+                              'action_account_asset_removal')
         result = action.read()[0]
         ctx = {
             'selected_asset_ids': asset_ids,

@@ -11,7 +11,8 @@
                         <group>
                             <field name="action_type"/>
                             <field name="import_attachment" invisible="1"/>
-                            <field name="import_template" />
+                            <field name="import_template_name" invisible="1"/>
+                            <field name="import_template" filename="import_template_name"/>
                         </group>
                         <group>
                             <field name="import_file"/>

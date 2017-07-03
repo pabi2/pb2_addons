@@ -5,7 +5,7 @@ from openerp.exceptions import ValidationError
 ACTION_TYPES = {
     'change_owner': {
         'model': 'account.asset.changeowner',
-        'header_map': {
+        'header_map': {  # Must be lowercase
             'id': 'id',
             'asset': 'changeowner_ids/asset_id',
             'section': 'changeowner_ids/section_id',
@@ -14,16 +14,17 @@ ACTION_TYPES = {
             'room': 'changeowner_ids/room',
             'responsible user': 'changeowner_ids/responsible_user_id',
         },
-        'action_xml': 'pabi_asset_management.'
-                      'action_account_asset_changeowner_form',
+        'extra_columns': [],
+        'action_xml': 'pabi_asset_management.action_account_asset_changeowner',
+        'import_template': 'pabi_asset_management.asset_changeowner_template',
     },
     'direct_receive': {
         'model': 'stock.picking',
-        'header_map': {
+        'header_map': {  # Must be lowercase
             'id': 'id',
             'supplier': 'partner_id',
             'purchase method': 'asset_purchase_method_id',
-            'asset type': 'move_lines/product_id/id',  # STILL NOT name_search
+            'asset type': 'move_lines/product_id/id',  # TODO
             'asset name': 'move_lines/name',
             'quantity': 'move_lines/product_uom_qty',
             'asset value': 'move_lines/asset_value',
@@ -39,6 +40,39 @@ ACTION_TYPES = {
              'pabi_asset_management.stock_location_assets'),
         ],
         'action_xml': 'pabi_asset_management.action_asset_direct_receive',
+        'import_template': 'pabi_asset_management.asset_receive_template',
+    },
+    'transfer': {
+        'model': 'account.asset.transfer',
+        'header_map': {  # Must be lowercase
+            'id': 'id',
+            'source asset(s)': 'asset_ids',
+            'target asset': 'target_asset_ids/product_id/id',  # TODO
+            'target asset name': 'target_asset_ids/asset_name',
+            'asset value': 'target_asset_ids/depreciation_base',
+        },
+        'extra_columns': [],
+        'action_xml': 'pabi_asset_management.action_account_asset_transfer',
+        'import_template': 'pabi_asset_management.asset_transfer_template',
+    },
+    'removal': {
+        'model': 'account.asset.removal',
+        'header_map': {  # Must be lowercase
+            'id': 'id',
+            'asset': 'removal_asset_ids/asset_id',
+            'removal date': 'removal_asset_ids/date_remove',  # TODO
+            'removal entry policy': 'removal_asset_ids/posting_regime',
+            'plus-value account': 'removal_asset_ids/account_plus_value_id',
+            'min-value account': 'removal_asset_ids/account_min_value_id',
+            'residual value account':
+            'removal_asset_ids/account_residual_value_id',
+            'sale value': 'removal_asset_ids/sale_value',
+            'asset sale account': 'removal_asset_ids/account_sale_id',
+            'asset status': 'removal_asset_ids/target_status',
+        },
+        'extra_columns': [],
+        'action_xml': 'pabi_asset_management.action_account_asset_removal',
+        'import_template': 'pabi_asset_management.asset_removal_template',
     },
 }
 
@@ -48,9 +82,10 @@ class AssetActionExcelImport(models.TransientModel):
 
     action_type = fields.Selection(
         [('change_owner', 'Change Asset Owner'),
-         ('direct_receive', 'Direct Receive Asset'),
          ('transfer', 'Asset Transfer'),
-         ('removal', 'Asset Removal')],
+         ('removal', 'Asset Removal'),
+         ('direct_receive', 'Direct Receive Asset'),
+         ],
         string='Action Type',
         required=True,
     )
@@ -64,15 +99,21 @@ class AssetActionExcelImport(models.TransientModel):
         readonly=True,
     )
     import_template = fields.Binary(
+        string='Sample Import Template',
         related='import_attachment.datas',
-        string='Sample Import File',
+        readonly=True,
+    )
+    import_template_name = fields.Char(
+        string='Template Name',
+        related='import_attachment.name',
         readonly=True,
     )
 
     @api.onchange('action_type')
     def _onchange_action_type(self):
-        self.import_attachment = self.env.ref(
-            'pabi_asset_management.asset_changeowner_template')
+        xml_id = self.action_type and \
+            ACTION_TYPES[self.action_type].get('import_template', False)
+        self.import_attachment = xml_id and self.env.ref(xml_id) or False
 
     @api.multi
     def action_import_xls(self):

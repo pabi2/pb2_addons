@@ -4,8 +4,26 @@
         <!-- Asset Change Owner -->
         <record id="asset_changeowner_template" model="ir.attachment">
             <field name="datas"></field>
-            <field name="datas_fname">changeowner_import.xls</field>
-            <field name="name">changeowner_import.xls</field>
+            <field name="datas_fname">asset_changeowner.xls</field>
+            <field name="name">asset_changeowner.xls</field>
+        </record>
+        <!-- Asset Transfer -->
+        <record id="asset_transfer_template" model="ir.attachment">
+            <field name="datas"></field>
+            <field name="datas_fname">asset_transfer.xls</field>
+            <field name="name">asset_transfer.xls</field>
+        </record>
+        <!-- Asset Removal -->
+        <record id="asset_removal_template" model="ir.attachment">
+            <field name="datas"></field>
+            <field name="datas_fname">asset_removal.xls</field>
+            <field name="name">asset_removal.xls</field>
+        </record>
+        <!-- Asset Direct Receive -->
+        <record id="asset_receive_template" model="ir.attachment">
+            <field name="datas"></field>
+            <field name="datas_fname">asset_receive.xls</field>
+            <field name="name">asset_receive.xls</field>
         </record>
     </data>
 </openerp>

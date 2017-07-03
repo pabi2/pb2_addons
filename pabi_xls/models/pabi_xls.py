@@ -51,7 +51,13 @@ class PABIXls(models.AbstractModel):
         f.write(decoded_data)
         f.seek(0)
         f.close()
-        wb = xlrd.open_workbook(f.name)
+        try:
+            wb = xlrd.open_workbook(f.name)
+        except xlrd.XLRDError:
+            raise ValidationError(
+                _('Invalid file format, only .xls or .xlsx file allowed!'))
+        except Exception:
+            raise
         st = wb.sheet_by_index(0)
         csv_file = open(ftemp + '.csv', 'wb')
         csv_out = unicodecsv.writer(csv_file,
