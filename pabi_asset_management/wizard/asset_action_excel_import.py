@@ -6,15 +6,40 @@ ACTION_TYPES = {
     'change_owner': {
         'model': 'account.asset.changeowner',
         'header_map': {
-            '#': False,
+            'id': 'id',
             'asset': 'changeowner_ids/asset_id',
             'section': 'changeowner_ids/section_id',
             'project': 'changeowner_ids/project_id',
             'location': 'changeowner_ids/location_id',
             'room': 'changeowner_ids/room',
             'responsible user': 'changeowner_ids/responsible_user_id',
-        }
-    }
+        },
+        'action_xml': 'pabi_asset_management.'
+                      'action_account_asset_changeowner_form',
+    },
+    'direct_receive': {
+        'model': 'stock.picking',
+        'header_map': {
+            'id': 'id',
+            'supplier': 'partner_id',
+            'purchase method': 'asset_purchase_method_id',
+            'asset type': 'move_lines/product_id/id',  # STILL NOT name_search
+            'asset name': 'move_lines/name',
+            'quantity': 'move_lines/product_uom_qty',
+            'asset value': 'move_lines/asset_value',
+            'budget': 'move_lines/chartfield_id',
+            'fund': 'move_lines/fund_id',
+        },
+        'extra_columns': [
+            ('picking_type_id/id',
+             'pabi_asset_management.picking_type_asset_direct_receive'),
+            ('move_lines/product_uom/id', 'product.product_uom_unit'),
+            ('move_lines/location_id/id', 'stock.stock_location_suppliers'),
+            ('move_lines/location_dest_id/id',
+             'pabi_asset_management.stock_location_assets'),
+        ],
+        'action_xml': 'pabi_asset_management.action_asset_direct_receive',
+    },
 }
 
 
@@ -40,7 +65,7 @@ class AssetActionExcelImport(models.TransientModel):
     )
     import_template = fields.Binary(
         related='import_attachment.datas',
-        string='Template',
+        string='Sample Import File',
         readonly=True,
     )
 
@@ -59,59 +84,19 @@ class AssetActionExcelImport(models.TransientModel):
             raise ValidationError(
                 _('Selected action type is not yet implemented'))
         model = ACTION_TYPES[self.action_type]['model']
-        header_map = ACTION_TYPES[self.action_type]['header_map']
-        self.env['pabi.xls'].import_xls(model, self.import_file,
-                                        header_map=header_map)
+        header_map = ACTION_TYPES[self.action_type].get('header_map', False)
+        extra_columns = ACTION_TYPES[self.action_type].get('extra_columns',
+                                                           False)
+        xml_ids = self.env['pabi.xls'].import_xls(model, self.import_file,
+                                                  header_map=header_map,
+                                                  extra_columns=extra_columns)
+        res_ids = [self.env.ref(xmlid).id for xmlid in xml_ids]
+        return self._open_imported_records(model, res_ids)
 
-    #
-    # @api.onchange('period_type')
-    # def _onchange_pariod_type(self):
-    #     self.calendar_period_id = False
-    #     self.calendar_from_period_id = False
-    #     self.calendar_to_period_id = False
-    #
-    # @api.onchange('calendar_from_period_id', 'calendar_to_period_id')
-    # def _onchange_calendar_from_to_period_id(self):
-    #     if self.calendar_from_period_id and self.calendar_to_period_id:
-    #         if self.calendar_from_period_id.date_start > \
-    #                 self.calendar_to_period_id.date_start:
-    #             self.calendar_from_period_id = False
-    #             self.calendar_to_period_id = False
-    #             return {'warning': {
-    #                 'title': 'Incorrect Periods',
-    #                 'message': 'From period is later than to period!',
-    #             }}
-    #
-    # @api.multi
-    # def run_report(self):
-    #     data = {'parameters': {}}
-    #     report_name = self.print_format == 'pdf' and \
-    #         'account_tax_report_pdf' or 'account_tax_report_xls'
-    #
-    #     period_ids = []
-    #     if self.period_type == 'specific':
-    #         period_ids = [self.calendar_period_id.id]
-    #     elif self.period_type == 'range':
-    #         domain = [('id', '>=', self.calendar_from_period_id.id),
-    #                   ('id', '<=', self.calendar_to_period_id.id)]
-    #         period_ids = self.env['account.period'].search(domain).ids
-    #
-    #     # Params
-    #     data['parameters']['period_ids'] = period_ids
-    #     data['parameters']['tax_id'] = self.tax_id.id
-    #     data['parameters']['doc_type'] = self.tax_id.type_tax_use
-    #     # Display Params
-    #     company = self.env.user.company_id.partner_id
-    #     company_name = company.name or ''
-    #     data['parameters']['company_name'] = company.title.name and \
-    #         company.title.name + ' ' + company_name or company_name
-#     data['parameters']['branch_name'] = data['parameters']['company_name']
-    #     data['parameters']['branch_vat'] = company.vat or ''
-    #     data['parameters']['branch_taxbranch'] = company.taxbranch or ''
-    #     data['parameters']['advance_sequence'] = False
-    #     res = {
-    #         'type': 'ir.actions.report.xml',
-    #         'report_name': report_name,
-    #         'datas': data,
-    #     }
-    #     return res
+    @api.model
+    def _open_imported_records(self, model, res_ids):
+        action = self.env.ref(ACTION_TYPES[self.action_type]['action_xml'])
+        result = action.read()[0]
+        dom = [('id', 'in', res_ids)]
+        result.update({'domain': dom})
+        return result
