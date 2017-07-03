@@ -2,6 +2,21 @@
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 
+ACTION_TYPES = {
+    'change_owner': {
+        'model': 'account.asset.changeowner',
+        'header_map': {
+            '#': False,
+            'asset': 'changeowner_ids/asset_id',
+            'section': 'changeowner_ids/section_id',
+            'project': 'changeowner_ids/project_id',
+            'location': 'changeowner_ids/location_id',
+            'room': 'changeowner_ids/room',
+            'responsible user': 'changeowner_ids/responsible_user_id',
+        }
+    }
+}
+
 
 class AssetActionExcelImport(models.TransientModel):
     _name = 'asset.action.excel.import'
@@ -18,6 +33,21 @@ class AssetActionExcelImport(models.TransientModel):
         string='Import File (*.xls)',
         required=True,
     )
+    import_attachment = fields.Many2one(
+        'ir.attachment',
+        string='Import Attachment',
+        readonly=True,
+    )
+    import_template = fields.Binary(
+        related='import_attachment.datas',
+        string='Template',
+        readonly=True,
+    )
+
+    @api.onchange('action_type')
+    def _onchange_action_type(self):
+        self.import_attachment = self.env.ref(
+            'pabi_asset_management.asset_changeowner_template')
 
     @api.multi
     def action_import_xls(self):
@@ -25,8 +55,13 @@ class AssetActionExcelImport(models.TransientModel):
         if not self.import_file:
             raise ValidationError(
                 _('Please choose excel file to import!'))
-        self.env['pabi.xls'].import_xls(
-            'account.asset.changeowner', self.import_file)
+        if self.action_type not in ACTION_TYPES.keys():
+            raise ValidationError(
+                _('Selected action type is not yet implemented'))
+        model = ACTION_TYPES[self.action_type]['model']
+        header_map = ACTION_TYPES[self.action_type]['header_map']
+        self.env['pabi.xls'].import_xls(model, self.import_file,
+                                        header_map=header_map)
 
     #
     # @api.onchange('period_type')

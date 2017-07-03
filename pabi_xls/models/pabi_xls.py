@@ -35,12 +35,12 @@ class PABIXls(models.AbstractModel):
         return xldate.strftime("%Y-%m-%d")
 
     @api.model
-    def import_xls(self, model, file, extra_columns=None, column_map=None):
+    def import_xls(self, model, file, header_map=None, extra_columns=None):
         """
-        If there is additional fixed column value
-        - add_col_val = [('name', 'ABC'), ('id', 10), ]
         To map user column with database column
-        - column_map = {'Name': 'name', 'Document', 'doc_id', }
+        - header_map = {'Name': 'name', 'Document', 'doc_id', }
+        If there is additional fixed column value
+        - extra_columns = [('name', 'ABC'), ('id', 10), ]
         """
         decoded_data = base64.decodestring(file)
         ftemp = 'temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
@@ -97,8 +97,9 @@ class PABIXls(models.AbstractModel):
                 _HEADER_FIELDS.insert(0, str(column[0]))
                 file_txt = self._add_column(column[0], column[1], file_txt)
         # Map column name
-        if column_map:
-            _HEADER_FIELDS = [column_map.get(x, False) and column_map[x] or x
+        if header_map:
+            _HEADER_FIELDS = [header_map.get(x.lower().strip(), False) and
+                              header_map[x.lower()] or False
                               for x in _HEADER_FIELDS]
         Import = self.env['base_import.import']
         imp = Import.create({
