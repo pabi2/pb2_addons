@@ -36,7 +36,9 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem action="action_asset_action_excel_import" name="Batch Import (xls)" id="menu_asset_action_excel_import" sequence="100" parent="menu_asset_actions"/>
+        <menuitem action="action_asset_action_excel_import" name="Batch Import (xls)"
+          id="menu_asset_action_excel_import" sequence="100" parent="menu_asset_actions"
+          groups="purchase.group_purchase_user"/>
 
     </data>
 </openerp>
