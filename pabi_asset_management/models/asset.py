@@ -315,7 +315,14 @@ class AccountAsset(ChartFieldAction, models.Model):
             for asset in self:
                 if status.map_state != asset.state:
                     raise ValidationError(_('Invalid change of asset status'))
-        return super(AccountAsset, self).write(vals)
+        res = super(AccountAsset, self).write(vals)
+        # Following code repeat the compute depre, but w/o it, value is zero
+        for asset in self:
+            if asset.profile_id.open_asset and \
+                    self._context.get('create_asset_from_move_line'):
+                asset.compute_depreciation_board()
+        # --
+        return res
 
     @api.multi
     def open_source_asset(self):
