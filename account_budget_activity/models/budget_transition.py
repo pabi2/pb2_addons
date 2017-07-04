@@ -207,7 +207,7 @@ class HRExpenseLine(models.Model):
     @api.multi
     @api.constrains('invoice_line_ids')
     def _trigger_invoice_line_ids(self):
-        BudgetTrans = self.env['budget.transition']
+        BudgetTrans = self.env['budget.transition'].sudo()
         for expense_line in self:
             BudgetTrans.create_trans_expense_to_invoice(expense_line)
 
@@ -221,7 +221,7 @@ class PurchaseRequestLine(models.Model):
     # @api.multi
     # @api.constrains('purchase_lines')
     # def _trigger_purchase_lines(self):
-    #     BudgetTrans = self.env['budget.transition']
+    #     BudgetTrans = self.env['budget.transition'].sudo()
     #     for pr_line in self:
     #         BudgetTrans.create_trans_pr_to_purchase(pr_line)
 
@@ -234,7 +234,7 @@ class PurchaseOrderLine(models.Model):
     @api.constrains('invoice_lines')
     def _trigger_purchase_lines(self):
         """ PO -> INV """
-        BudgetTrans = self.env['budget.transition']
+        BudgetTrans = self.env['budget.transition'].sudo()
         for po_line in self:
             if po_line.product_id.valuation != 'real_time':  # PO -> INV
                 BudgetTrans.create_trans_purchase_to_invoice(po_line)
@@ -248,7 +248,7 @@ class StockMove(models.Model):
     @api.constrains('state')
     def _trigger_stock_moves(self):
         """ PO -> Stock Move, create transaction as it is tansferred """
-        BudgetTrans = self.env['budget.transition']
+        BudgetTrans = self.env['budget.transition'].sudo()
         # For done moves, create transition and return budget
         moves = self.filtered(lambda l: l.state == 'done' and
                               l.product_id.valuation == 'real_time')
@@ -263,7 +263,7 @@ class SaleOrderLine(models.Model):
     @api.multi
     @api.constrains('invoice_lines')
     def _trigger_sale_lines(self):
-        BudgetTrans = self.env['budget.transition']
+        BudgetTrans = self.env['budget.transition'].sudo()
         for so_line in self:
             BudgetTrans.create_trans_sale_to_invoice(so_line)
 
@@ -274,7 +274,7 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def write(self, vals):
-        BudgetTrans = self.env['budget.transition']
+        BudgetTrans = self.env['budget.transition'].sudo()
         if 'state' in vals:
             purchases = self
             # PO Confirmed, It is time to return commitment to PR
@@ -292,7 +292,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def write(self, vals):
-        BudgetTrans = self.env['budget.transition']
+        BudgetTrans = self.env['budget.transition'].sudo()
         if 'state' in vals:
             invoices = self
             # Invoice Validated, It is time to return commitment

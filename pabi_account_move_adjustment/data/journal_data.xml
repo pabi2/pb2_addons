@@ -27,6 +27,7 @@
             <field name="type">adjust_budget</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="sequence_id" ref="seq_journal_adjust_budget"/>
+            <field name="entry_posted">True</field>
             <field name="update_posted">True</field>
             <field name="analytic_journal_id" ref="analytic_journal_adjust_budget"/> <!--With analytic journal -->
         </record>
@@ -48,6 +49,7 @@
             <field name="type">adjust_no_budget</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="sequence_id" ref="seq_journal_adjust_no_budget"/>
+            <field name="entry_posted">True</field>
             <field name="update_posted">True</field>
         </record>
 

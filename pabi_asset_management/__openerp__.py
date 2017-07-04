@@ -14,6 +14,7 @@
         "pabi_invest_construction",
         "pabi_chartfield_merged",
         "pabi_xls",
+        "pabi_account_move_adjustment",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
@@ -25,6 +26,7 @@ This module allow creating asset during incoming shipment.
         "data/asset_purchase_method.xml",
         "data/account_data.xml",
         "data/location_data.xml",
+        "data/journal_data.xml",
         "data/asset_status.xml",
         "views/asset_view.xml",
         "wizard/account_asset_remove_view.xml",
