@@ -271,7 +271,7 @@ class AccountAnalyticAccount(models.Model):
                 raise ValidationError(_('Select both Product and '
                                         'Activity is prohibited'))
         # Only create analytic if not exists yet
-        Analytic = self.env['account.analytic.account']
+        Analytic = self.env['account.analytic.account'].sudo()
         domain = self.get_analytic_search_domain(rec)
         # If not a valid domain, return False (domain with no values)
         if self._invalid_domain(domain):

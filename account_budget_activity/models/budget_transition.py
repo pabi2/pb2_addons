@@ -175,11 +175,11 @@ class BudgetTransition(models.Model):
     # Return / Regain Commitment
     @api.model
     def do_forward(self, model, objects, obj_line_field=False):
-        self.do_transit('forward', model, objects, obj_line_field)
+        self.sudo().do_transit('forward', model, objects, obj_line_field)
 
     @api.model
     def do_backward(self, model, objects, obj_line_field=False):
-        self.do_transit('backward', model, objects, obj_line_field)
+        self.sudo().do_transit('backward', model, objects, obj_line_field)
 
     @api.model
     def do_transit(self, direction, model, objects, obj_line_field=False):

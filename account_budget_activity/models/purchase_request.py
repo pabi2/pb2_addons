@@ -149,7 +149,7 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         vals = self._prepare_analytic_line(
             reverse=reverse, currency=self.request_id.currency_id)
         if vals:
-            self.env['account.analytic.line'].create(vals)
+            self.env['account.analytic.line'].sudo().create(vals)
 
     # # When partial purchased_qty
     # @api.multi
