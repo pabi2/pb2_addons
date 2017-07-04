@@ -117,7 +117,7 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_account_asset_changeowner_form">
+        <record model="ir.actions.act_window" id="action_account_asset_changeowner">
             <field name="name">Change Owner</field>
             <field name="res_model">account.asset.changeowner</field>
             <field name="view_type">form</field>
@@ -126,7 +126,7 @@
             <field name="context">{}</field>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_changeowner_form" action="action_account_asset_changeowner_form"/>
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_changeowner" action="action_account_asset_changeowner"/>
 
     </data>
 </openerp>

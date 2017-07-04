@@ -2,6 +2,7 @@
 import base64
 import os
 import xlrd
+import uuid
 from xlrd.sheet import ctype_text
 import unicodecsv
 from datetime import datetime, timedelta
@@ -41,6 +42,8 @@ class PABIXls(models.AbstractModel):
         - header_map = {'Name': 'name', 'Document', 'doc_id', }
         If there is additional fixed column value
         - extra_columns = [('name', 'ABC'), ('id', 10), ]
+        If the import file have column id, we will use this column to create
+        external id, and hence possible to return record id being created
         """
         decoded_data = base64.decodestring(file)
         ftemp = 'temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
@@ -48,7 +51,13 @@ class PABIXls(models.AbstractModel):
         f.write(decoded_data)
         f.seek(0)
         f.close()
-        wb = xlrd.open_workbook(f.name)
+        try:
+            wb = xlrd.open_workbook(f.name)
+        except xlrd.XLRDError:
+            raise ValidationError(
+                _('Invalid file format, only .xls or .xlsx file allowed!'))
+        except Exception:
+            raise
         st = wb.sheet_by_index(0)
         csv_file = open(ftemp + '.csv', 'wb')
         csv_out = unicodecsv.writer(csv_file,
@@ -56,13 +65,24 @@ class PABIXls(models.AbstractModel):
                                     quoting=unicodecsv.QUOTE_ALL)
         if st._cell_values:
             _HEADER_FIELDS = st._cell_values[0]
+        id_index = -1  # -1 means no id
+        xml_ids = []
         for nrow in xrange(st.nrows):
+            if nrow == 0:  # Header, find id field
+                header_values = st.row_values(nrow)
+                if 'id' in [x.lower().strip() for x in header_values]:
+                    id_index = header_values.index('id')
             if nrow > 0:
                 row_values = st.row_values(nrow)
                 for index, val in enumerate(row_values):
                     ctype = st.cell(nrow, index).ctype
                     type = ctype_text.get(ctype, 'unknown type')
-                    if type == 'empty' or type == 'text' \
+                    if id_index == index and val:
+                        # UUID replace id
+                        xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
+                        row_values[index] = xml_id
+                        xml_ids.append(xml_id)
+                    elif type == 'empty' or type == 'text' \
                         or type == 'bool' or type == 'error' \
                             or type == 'blank':
                         row_values[index] = st.cell(nrow, index).value
@@ -91,6 +111,12 @@ class PABIXls(models.AbstractModel):
         os.unlink(ftemp + '.csv')
         if not file_txt:
             raise ValidationError(_(str("File Not found.")))
+        # Create xml_ids if not already assigned
+        if id_index == -1:
+            _HEADER_FIELDS.insert(0, 'id')
+            xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
+            file_txt = self._add_column('id', xml_id, file_txt)
+            xml_ids.append(xml_id)
         # Add extra column
         if extra_columns:
             for column in extra_columns:
@@ -112,7 +138,7 @@ class PABIXls(models.AbstractModel):
              'quoting': '"', 'encoding': 'utf-8'})
         if errors:
             raise ValidationError(_(str(errors[0]['message'])))
-        return file
+        return list(set(xml_ids))
 
     # Original
     # @api.multi

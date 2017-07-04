@@ -54,7 +54,6 @@ class AccountAssetRemoval(models.Model):
         'account.asset.status',
         string='Asset Status',
         domain="[('map_state', '=', 'removed')]",
-        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

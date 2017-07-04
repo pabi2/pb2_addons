@@ -84,7 +84,7 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_account_asset_request_form">
+        <record model="ir.actions.act_window" id="action_account_asset_request">
             <field name="name">Request</field>
             <field name="res_model">account.asset.request</field>
             <field name="view_type">form</field>
@@ -92,7 +92,7 @@
             <field name="search_view_id" ref="view_account_asset_request_search"/>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request_form" action="action_account_asset_request_form"/>
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request" action="action_account_asset_request"/>
 
     </data>
 </openerp>
