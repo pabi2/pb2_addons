@@ -51,7 +51,10 @@
             <field name="view_id" ref="view_account_asset_location_tree"/>
         </record>
 
-        <menuitem name="Asset Location" id="menu_account_asset_location" action="action_account_asset_location" parent="account_asset_management.menu_finance_assets" sequence="200"/>
+        <menuitem name="Asset Location" id="menu_account_asset_location"
+          action="action_account_asset_location"
+          parent="account_asset_management.menu_finance_config_assets" sequence="20"
+          groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>
