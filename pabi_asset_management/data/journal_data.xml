@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Journal for Asset
+        <record id="seq_journal_asset" model="ir.sequence">
+            <field name="name">Asset Journal</field>
+            <field name="code"></field>
+            <field name="prefix">AJ%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_asset" model="account.journal">
+            <field name="name">Asset Journal</field>
+            <field name="code">AJ</field>
+            <field name="type">adjust_no_budget</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_asset"/>
+            <field name="entry_posted">True</field>
+            <field name="update_posted">True</field>
+        </record>
+
+    </data>
+</openerp>

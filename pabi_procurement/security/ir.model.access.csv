@@ -1,4 +1,4 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_prweb_purchase_method,access_prweb_purchase_method,model_prweb_purchase_method,base.group_user,1,0,0,0
 access_purchase_type,access_purchase_type,model_purchase_type,base.group_user,1,0,0,0
 access_purchase_method,access_purchase_method,model_purchase_method,base.group_user,1,0,0,0
@@ -15,3 +15,8 @@ access_purchase_requisition_line_manager,access_purchase_requisition_line_manage
 access_purchase_requisition_user,access_purchase_requisition_user,model_purchase_requisition,group_purchase_requisition_user,1,1,1,1
 access_purchase_requisition_line_user,access_purchase_requisition_line_user,model_purchase_requisition_line,group_purchase_requisition_user,1,1,1,1
 access_purchase_web_interface,access_purchase_web_interface,model_purchase_web_interface,base.group_user,1,0,0,0
+purchase.access_account_move,account.move,account.model_account_move,purchase.group_purchase_user,1,1,1,0
+purchase.access_account_move_line,account.move.line,account.model_account_move_line,purchase.group_purchase_user,1,1,1,0
+access_account_voucher,account.voucher,account_voucher.model_account_voucher,purchase.group_purchase_user,1,0,0,0
+access_account_bank_receipt,account.bank.receipt,account_bank_receipt.model_account_bank_receipt,purchase.group_purchase_user,1,0,0,0
+access_account_account_type,account.account.type,account.model_account_account_type,purchase.group_purchase_user,1,0,0,0
