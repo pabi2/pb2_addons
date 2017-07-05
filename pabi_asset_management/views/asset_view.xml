@@ -2,33 +2,20 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_asset_main"
-                  name="Assets"
-                  parent=""
-                  groups="purchase.group_purchase_user,account.group_account_user"
-                  sequence="51"/>
+        <menuitem id="menu_asset_main" name="Assets" parent="" groups="purchase.group_purchase_user,account.group_account_user" sequence="51"/>
 
-        <menuitem id="account_asset_management.menu_finance_assets"
-                  name="Assets"
-                  parent="menu_asset_main"
-                  sequence="10"
-                  groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem id="account_asset_management.menu_finance_assets" name="Assets" parent="menu_asset_main" sequence="10" groups="purchase.group_purchase_user,account.group_account_user"/>
 
-        <menuitem id="account_asset_management.menu_finance_config_assets"
-                  name="Configurations"
-                  parent="menu_asset_main"
-                  sequence="20"
-                  groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem id="account_asset_management.menu_finance_config_assets" name="Configurations" parent="menu_asset_main" sequence="20" groups="purchase.group_purchase_user,account.group_account_user"/>
 
-        <menuitem id="account_asset_management.account_asset_profile_menu"
-                  action="account_asset_management.account_asset_profile_action"
-                  parent="account_asset_management.menu_finance_config_assets"
-                  sequence="10"
-                  groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem
+            id="account_asset_management.account_asset_profile_menu"
+            action="account_asset_management.account_asset_profile_action"
+            parent="account_asset_management.menu_finance_config_assets"
+            sequence="10"
+            groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <menuitem id="menu_asset_actions" name="Asset Actions" parent="account_asset_management.menu_finance_assets"/>
-
-account_asset_management.account_asset_profile_menu
 
         <!-- Account Asset View -->
         <record id="account_asset_view_search" model="ir.ui.view">
@@ -37,6 +24,12 @@ account_asset_management.account_asset_profile_menu
             <field name="inherit_id" ref="account_asset_management.account_asset_view_search"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
+                <field name="name" position="attributes">
+                    <attribute name="filter_domain">['|',('name','ilike',self),('code','ilike',self)]</attribute>
+                </field>
+                <field name="code" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
                 <search position="inside">
                     <filter string="ใช้งานปกติ" name="normal" domain="[('status_code','=','normal')]"/>
                     <filter string="ส่งมอบ" name="deliver" domain="[('status_code','=','deliver')]"/>
@@ -49,6 +42,7 @@ account_asset_management.account_asset_profile_menu
                     <filter string="ยกเลิก" name="cancel" domain="[('status_code','=','cancel')]"/>
                 </search>
                 <field name="partner_id" position="after">
+                    <field name="purchase_id"/>
                     <field name="product_id"/>
                     <field name="picking_id"/>
                     <field name="status"/>
@@ -81,6 +75,12 @@ account_asset_management.account_asset_profile_menu
             <field name="inherit_id" ref="account_asset_management.account_asset_view_form"/>
             <field name="type">form</field>
             <field name="arch" type="xml">
+                <sheet position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </sheet>
                 <button name="open_entries" position="replace">
                     <button name="open_entries" class="oe_stat_button" icon="fa-book" type="object">
                         <div>Journal<br/>Entries</div>
@@ -323,10 +323,7 @@ account_asset_management.account_asset_profile_menu
             <field name="act_window_id" ref="action_account_asset_parent_form"/>
         </record>
 
-        <menuitem parent="account_asset_management.menu_finance_assets"
-          id="menu_action_account_asset_parent_form"
-          action="action_account_asset_parent_form"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_parent_form" action="action_account_asset_parent_form" groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>

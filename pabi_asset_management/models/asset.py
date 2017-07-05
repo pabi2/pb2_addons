@@ -42,7 +42,8 @@ class AccountAssetStatus(models.Model):
 
 
 class AccountAsset(ChartFieldAction, models.Model):
-    _inherit = 'account.asset'
+    _name = 'account.asset'
+    _inherit = ['account.asset', 'mail.thread']
 
     name = fields.Char(
         default='/',
@@ -56,6 +57,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     profile_type = fields.Selection(
         [('normal', 'Normal'),
+         ('normal_nod', 'Normal (No-Depre)'),
          ('ait', 'AIT'),
          ('auc', 'AUC'),
          ('lva', 'Low-Value'),
@@ -502,6 +504,7 @@ class AccountAssetProfile(models.Model):
     )
     profile_type = fields.Selection(
         [('normal', 'Normal'),
+         ('normal_nod', 'Normal (No-Depre)'),
          ('ait', 'AIT'),
          ('auc', 'AUC'),
          ('lva', 'Low-Value'),
