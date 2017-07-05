@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+      <!-- Default days_calc = true -->
+      <record id="value_asset_profile_days_calc_true" model="ir.values">
+          <field name="name">days_calc</field>
+          <field name="model">account.asset.profile</field>
+          <field name="key">default</field>
+          <field name="key2"></field>
+          <field name="company_id">1</field>
+          <field name="value_unpickle">True</field>
+        </record>
+    </data>
+</openerp>
