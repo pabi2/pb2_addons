@@ -456,7 +456,9 @@ class PurchaseRequisition(models.Model):
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
-        self.print_call_for_bid_form()
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if pabiweb_active:  # If no connection to PRWeb, no need to send doc
+            self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,
             'date_verify': fields.Date.context_today(self),

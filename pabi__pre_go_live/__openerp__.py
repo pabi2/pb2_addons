@@ -20,6 +20,7 @@
     "data": [
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",
+        "views/purchase_request_view.xml",
         "views/hr_expense_view.xml",
     ],
 }

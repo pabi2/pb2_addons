@@ -322,7 +322,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
             res.append(requisition.id)
 
         return {
-            'domain': "[('id','in', ["+','.join(map(str, res))+"])]",
+            'domain': "[('id','in', [" + ','.join(map(str, res)) + "])]",
             'name': _('Purchase requisition'),
             'view_type': 'form',
             'view_mode': 'tree,form',

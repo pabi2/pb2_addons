@@ -9,5 +9,21 @@
             <field name="state">code</field>
             <field name="code">self.action_accept_to_paid(cr, uid, context.get('active_ids', []), context=context)</field>
         </record>
+        <record id="action_pr_to_po" model="ir.actions.server">
+            <field name="name">1 PR -> 1 PO</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_purchase_request" />
+            <field name="state">code</field>
+            <field name="code">self.action_pr_to_po(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+        <record id="action_req_to_po" model="ir.actions.server">
+            <field name="name">1 CFB -> 1 PO</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_purchase_requisition" />
+            <field name="state">code</field>
+            <field name="code">self.action_req_to_po(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
     </data>
 </openerp>
