@@ -6,6 +6,10 @@
 
         <menuitem id="account_asset_management.menu_finance_assets" name="Assets" parent="menu_asset_main" sequence="10" groups="purchase.group_purchase_user,account.group_account_user"/>
 
+        <menuitem id="account_asset_management.account_asset_menu" name="Assets"
+          parent="account_asset_management.menu_finance_assets"
+          groups="purchase.group_purchase_user,account.group_account_user"/>
+
         <menuitem id="account_asset_management.menu_finance_config_assets" name="Configurations" parent="menu_asset_main" sequence="20" groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <menuitem
