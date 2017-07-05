@@ -10,9 +10,10 @@
                     <header>
                         <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
                         <button name="action_confirm" states="draft" string="Confirm" type="object" groups="purchase.group_purchase_user" class="oe_highlight"/>
-                        <button name="action_done" states="confirm" string="Approve" type="object" groups="purchase.group_purchase_manager" class="oe_highlight"/>
-                        <button name="action_cancel" states="draft,confirm,done" string="Cancel" type="object" groups="purchase.group_purchase_manager"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                        <button name="action_approve" states="confirm" string="Approve" type="object" groups="purchase.group_purchase_manager" class="oe_highlight"/>
+                        <button name="action_done" states="approve" string="Request" type="object" groups="purchase.group_purchase_manager" class="oe_highlight"/>
+                        <button name="action_cancel" states="draft,confirm,approve,done" string="Cancel" type="object" groups="purchase.group_purchase_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,done"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box oe_right"></div>
