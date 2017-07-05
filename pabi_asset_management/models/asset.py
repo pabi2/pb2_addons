@@ -42,7 +42,8 @@ class AccountAssetStatus(models.Model):
 
 
 class AccountAsset(ChartFieldAction, models.Model):
-    _inherit = 'account.asset'
+    _name = 'account.asset'
+    _inherit = ['account.asset', 'mail.thread']
 
     name = fields.Char(
         default='/',
