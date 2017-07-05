@@ -3,7 +3,7 @@ from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 
 ACTION_TYPES = {
-    'change_owner': {
+    'changeowner': {
         'model': 'account.asset.changeowner',
         'header_map': {  # Must be lowercase
             'id': 'id',
@@ -18,7 +18,7 @@ ACTION_TYPES = {
         'action_xml': 'pabi_asset_management.action_account_asset_changeowner',
         'import_template': 'pabi_asset_management.asset_changeowner_template',
     },
-    'direct_receive': {
+    'receive': {
         'model': 'stock.picking',
         'header_map': {  # Must be lowercase
             'id': 'id',
@@ -81,10 +81,10 @@ class AssetActionExcelImport(models.TransientModel):
     _name = 'asset.action.excel.import'
 
     action_type = fields.Selection(
-        [('change_owner', 'Change Asset Owner'),
-         ('transfer', 'Asset Transfer'),
-         ('removal', 'Asset Removal'),
-         ('direct_receive', 'Direct Receive Asset'),
+        [('changeowner', 'Change Owner'),
+         ('transfer', 'Transfer'),
+         ('removal', 'Removal'),
+         ('receive', 'Direct Receive'),
          ],
         string='Action Type',
         required=True,
