@@ -23,5 +23,26 @@
             <field name="update_posted">True</field>
         </record>
 
+        # Journal for Asset
+        <record id="seq_journal_asset_depre_journal" model="ir.sequence">
+            <field name="name">Depreciation Journal</field>
+            <field name="code"></field>
+            <field name="prefix">AD%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_asset_depre_journal" model="account.journal">
+            <field name="name">Depreciation Journal</field>
+            <field name="code">AD</field>
+            <field name="type">adjust_no_budget</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_asset_depre_journal"/>
+            <field name="entry_posted">True</field>
+            <field name="update_posted">True</field>
+        </record>
+
     </data>
 </openerp>
