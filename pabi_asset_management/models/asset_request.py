@@ -60,6 +60,7 @@ class AccountAssetRequest(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'),
          ('confirm', 'Waiting Approval'),
+         ('approve', 'Approved'),
          ('done', 'Requested'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -116,7 +117,7 @@ class AccountAssetRequest(models.Model):
         self.write({'state': 'confirm'})
 
     @api.multi
-    def action_done(self):
+    def action_approve(self):
         for rec in self:
             assets = rec.request_asset_ids.mapped('asset_id')
             assets.validate_asset_to_request()
@@ -124,6 +125,17 @@ class AccountAssetRequest(models.Model):
                 raise ValidationError(
                     _('Only %s can approve this document!') %
                     (rec.approve_user_id.name,))
+        self.write({'state': 'approve'})
+
+    @api.multi
+    def action_done(self):
+        for rec in self:
+            assets = rec.request_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_request()
+            if self.env.user != rec.responsible_user_id:
+                raise ValidationError(
+                    _('Only %s can request this document!') %
+                    (rec.responsible_user_id.name,))
             for line in rec.request_asset_ids:
                 line.asset_id.write({
                     'doc_request_id': rec.id,
