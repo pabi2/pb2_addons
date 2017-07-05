@@ -69,8 +69,9 @@ class PABIXls(models.AbstractModel):
         xml_ids = []
         for nrow in xrange(st.nrows):
             if nrow == 0:  # Header, find id field
-                header_values = st.row_values(nrow)
-                if 'id' in [x.lower().strip() for x in header_values]:
+                header_values = [x.lower().strip()
+                                 for x in st.row_values(nrow)]
+                if 'id' in header_values:
                     id_index = header_values.index('id')
             if nrow > 0:
                 row_values = st.row_values(nrow)
@@ -117,16 +118,16 @@ class PABIXls(models.AbstractModel):
             xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
             file_txt = self._add_column('id', xml_id, file_txt)
             xml_ids.append(xml_id)
-        # Add extra column
-        if extra_columns:
-            for column in extra_columns:
-                _HEADER_FIELDS.insert(0, str(column[0]))
-                file_txt = self._add_column(column[0], column[1], file_txt)
         # Map column name
         if header_map:
             _HEADER_FIELDS = [header_map.get(x.lower().strip(), False) and
                               header_map[x.lower()] or False
                               for x in _HEADER_FIELDS]
+        # Add extra column
+        if extra_columns:
+            for column in extra_columns:
+                _HEADER_FIELDS.insert(0, str(column[0]))
+                file_txt = self._add_column(column[0], column[1], file_txt)
         Import = self.env['base_import.import']
         imp = Import.create({
             'res_model': model,
@@ -139,32 +140,3 @@ class PABIXls(models.AbstractModel):
         if errors:
             raise ValidationError(_(str(errors[0]['message'])))
         return list(set(xml_ids))
-
-    # Original
-    # @api.multi
-    # def action_import_csv(self):
-    #     _TEMPLATE_FIELDS = ['statement_id/.id',
-    #                         'document',
-    #                         'cheque_number',
-    #                         'description',
-    #                         'debit', 'credit',
-    #                         'date_value',
-    #                         'batch_code']
-    #     for rec in self:
-    #         rec.import_ids.unlink()
-    #         rec.import_error = False
-    #         if not rec.import_file:
-    #             continue
-    #         Import = self.env['base_import.import']
-    #         file_txt = base64.decodestring(rec.import_file)
-    #         file_txt = self._add_statement_id_column(rec.id, file_txt)
-    #         imp = Import.create({
-    #             'res_model': 'pabi.bank.statement.import',
-    #             'file': file_txt,
-    #         })
-    #         [errors] = imp.do(
-    #             _TEMPLATE_FIELDS,
-    #             {'headers': True, 'separator': ',',
-    #              'quoting': '"', 'encoding': 'utf-8'})
-    #         if errors:
-    #             rec.import_error = str(errors)
