@@ -24,7 +24,7 @@ ACTION_TYPES = {
             'id': 'id',
             'supplier': 'partner_id',
             'purchase method': 'asset_purchase_method_id',
-            'asset type': 'move_lines/product_id/id',  # TODO
+            'asset type': 'move_lines/product_id',
             'asset name': 'move_lines/name',
             'quantity': 'move_lines/product_uom_qty',
             'asset value': 'move_lines/asset_value',
@@ -47,7 +47,7 @@ ACTION_TYPES = {
         'header_map': {  # Must be lowercase
             'id': 'id',
             'source asset(s)': 'asset_ids',
-            'target asset': 'target_asset_ids/product_id/id',  # TODO
+            'target asset': 'target_asset_ids/product_id',
             'target asset name': 'target_asset_ids/asset_name',
             'asset value': 'target_asset_ids/depreciation_base',
         },
@@ -60,7 +60,7 @@ ACTION_TYPES = {
         'header_map': {  # Must be lowercase
             'id': 'id',
             'asset': 'removal_asset_ids/asset_id',
-            'removal date': 'removal_asset_ids/date_remove',  # TODO
+            'removal date': 'removal_asset_ids/date_remove',
             'removal entry policy': 'removal_asset_ids/posting_regime',
             'plus-value account': 'removal_asset_ids/account_plus_value_id',
             'min-value account': 'removal_asset_ids/account_min_value_id',
