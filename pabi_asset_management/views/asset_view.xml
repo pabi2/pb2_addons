@@ -179,6 +179,7 @@
                                 <field name="asset_purchase_method_id"/>
                                 <field name="pr_requester_id"/>
                                 <field name="date_request"/>
+                                <separator colspan="2"/>
                                 <field name="doc_request_id"/>
                                 <field name="responsible_user_id"/>
                                 <field name="location_id"/>

@@ -150,7 +150,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     # Additional Info
     asset_purchase_method_id = fields.Many2one(
         'asset.purchase.method',
-        string='Asset Purchase Method',
+        string='Purchase Method',
     )
     purchase_request_id = fields.Many2one(
         'purchase.request',
@@ -162,21 +162,21 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     pr_requester_id = fields.Many2one(
         'res.users',
-        string='Requester',
+        string='PR Requester',
         related='purchase_request_id.requested_by',
         readonly=True,
         help="PR Requester of this asset",
     )
     date_request = fields.Date(
-        string='Date Request',
+        string='PR Approved Date',
         related='move_id.purchase_line_id.quo_line_id.requisition_line_id.'
-        'purchase_request_lines.request_id.date_start',
+        'purchase_request_lines.request_id.date_approve',
         readonly=True,
-        help="Asset Request date by request document",
+        help="PR's Approved Date",
     )
     doc_request_id = fields.Many2one(
         'account.asset.request',
-        string='Request Document',
+        string='Asset Request',
         readonly=True,
     )
     responsible_user_id = fields.Many2one(
