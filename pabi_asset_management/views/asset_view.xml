@@ -24,6 +24,12 @@
             <field name="inherit_id" ref="account_asset_management.account_asset_view_search"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
+                <field name="name" position="attributes">
+                    <attribute name="filter_domain">['|',('name','ilike',self),('code','ilike',self)]</attribute>
+                </field>
+                <field name="code" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
                 <search position="inside">
                     <filter string="ใช้งานปกติ" name="normal" domain="[('status_code','=','normal')]"/>
                     <filter string="ส่งมอบ" name="deliver" domain="[('status_code','=','deliver')]"/>
@@ -36,6 +42,7 @@
                     <filter string="ยกเลิก" name="cancel" domain="[('status_code','=','cancel')]"/>
                 </search>
                 <field name="partner_id" position="after">
+                    <field name="purchase_id"/>
                     <field name="product_id"/>
                     <field name="picking_id"/>
                     <field name="status"/>
