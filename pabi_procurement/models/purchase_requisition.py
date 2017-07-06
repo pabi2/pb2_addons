@@ -456,7 +456,9 @@ class PurchaseRequisition(models.Model):
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
-        self.print_call_for_bid_form()
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if pabiweb_active:  # If no connection to PRWeb, no need to send doc
+            self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,
             'date_verify': fields.Date.context_today(self),
@@ -554,7 +556,7 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         doc_type = self.get_doc_type()
         if not doc_type:
-            raise ValidationError("Can't get PD Document Type.")
+            raise ValidationError(_("Can't get PD Document Type."))
         Report = self.env['ir.actions.report.xml']
         matching_reports = Report.search([
             ('model', '=', self._name),
@@ -563,10 +565,10 @@ class PurchaseRequisition(models.Model):
              'purchase.requisition_' + doc_type.name.lower())],)
         if matching_reports:
             report = matching_reports[0]
-            result, _ = openerp.report.render_report(self._cr, self._uid,
-                                                     [self.id],
-                                                     report.report_name,
-                                                     {'model': self._name})
+            result, _x = openerp.report.render_report(self._cr, self._uid,
+                                                      [self.id],
+                                                      report.report_name,
+                                                      {'model': self._name})
             eval_context = {'time': time, 'object': self}
             if not report.attachment or not eval(report.attachment,
                                                  eval_context):

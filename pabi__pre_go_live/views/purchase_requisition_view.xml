@@ -6,6 +6,9 @@
             <field name="model">purchase.requisition</field>
             <field name="inherit_id" ref="pabi_procurement.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//form[@string='Call for Bids']" position="attributes">
+                    <attribute name="create">true</attribute>
+                </xpath>
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="attrs"/>
                     <attribute name="readonly">0</attribute>

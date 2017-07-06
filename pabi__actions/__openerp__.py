@@ -7,6 +7,7 @@
     "description": """
 
 * [hr.expense].action_accept_to_paid
+* [purchase.request].pr_to_po
 
     """,
     "website": "https://ecosoft.co.th/",
@@ -17,6 +18,7 @@
     "depends": [
         "pabi_hr_expense",
         "account_invoice_create_payment",
+        "pabi_procurement",
     ],
     "data": [
         "data/server_action.xml",
