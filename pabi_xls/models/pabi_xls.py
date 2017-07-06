@@ -6,7 +6,7 @@ import uuid
 from xlrd.sheet import ctype_text
 import unicodecsv
 from datetime import datetime, timedelta
-from openerp import fields, models, api, _
+from openerp import models, api, _
 from openerp.exceptions import ValidationError
 
 

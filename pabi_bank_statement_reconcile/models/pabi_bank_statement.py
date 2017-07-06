@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-import base64
-import os
-import xlrd
-import unicodecsv
-from xlrd.sheet import ctype_text
 from datetime import datetime, timedelta
-
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 
