@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models, api
+from openerp import fields, models, api, _
 
 
 class StockPicking(models.Model):
@@ -38,6 +38,23 @@ class StockPicking(models.Model):
     def _compute_assset_count(self):
         for rec in self:
             rec.asset_count = len(rec.asset_ids)
+
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        moves = self.env['account.move'].search(
+            [('document', '=', self.name)], order='date ASC')
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', moves.ids)],
+        }
 
 
 class StockMove(models.Model):
