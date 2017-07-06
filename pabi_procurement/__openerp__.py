@@ -39,6 +39,7 @@ PABI2 - Procurement Module
         "purchase_partner_invoice_method",
         "l10n_th_thai_holidays",
         "l10n_th_amount_text_ext",
+        "l10n_th_doctype_order",
         "res_partner_ext",
         "purchase_requisition_operating_unit",
         "purchase_request_to_requisition_operating_unit",

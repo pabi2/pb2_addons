@@ -49,6 +49,7 @@ class PurchaseRequisitionPartner(models.TransientModel):
         res = super(PurchaseRequisitionPartner, self.with_context(
             sel_operating_unit_id=self.operating_unit_view_id.id,
             sel_picking_type_id=self.sudo().picking_type_id.id,
-            sel_location_id=self.sudo().location_id.id).sudo()
+            sel_location_id=self.sudo().location_id.id,
+            order_type='quotation').sudo(),
         ).create_order()
         return res

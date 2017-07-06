@@ -187,7 +187,7 @@ class PurchaseOrder(models.Model):
     @api.model
     def by_pass_approve(self, ids):
         quotation = self.browse(ids)
-        quotation._check_request_for_quotation()
+        # quotation._check_request_for_quotation()
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
@@ -257,7 +257,11 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def action_button_convert_to_order(self):
-        # self.wkf_validate_vs_requisition()
+        # Find doc type
+        doctype = self.env['res.doctype'].get_doctype('purchase_order')
+        fiscalyear_id = self.env['account.fiscalyear'].find()
+        self = self.with_context(doctype_id=doctype.id,
+                                 fiscalyear_id=fiscalyear_id)
         res = super(PurchaseOrder, self).action_button_convert_to_order()
         orders = self.browse(res['res_id'])
         for order in orders:

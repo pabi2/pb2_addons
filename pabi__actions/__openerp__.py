@@ -5,9 +5,26 @@
     "version": "1.0",
     "category": "Tools",
     "description": """
+This module contain following Server Actions.
+To activate, go to Server Actions menu, and add it to model's menu
 
-* [hr.expense].action_accept_to_paid
-* [purchase.request].pr_to_po
+- AV: Action -> Paid
+
+  - hr.expense.expense of type AV
+  - Confirm AV -> Create Invoic -> Pay for invoice
+
+- 1 PR -> 1 PO
+
+  - purchase.request
+  - Nee disconnect PABIWeb
+  - Sample PR @ data/purchase.request.csv
+  - Confirm PR -> Create Requisition -> Create Quotation -> Create PO
+
+- 1 CFB -> 1 PO
+
+  - purchase.requisition
+  - disconnect PABIWeb
+  - Confirm Requisition -> Create Quotation -> Create PO
 
     """,
     "website": "https://ecosoft.co.th/",
