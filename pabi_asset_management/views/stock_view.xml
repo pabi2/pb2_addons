@@ -13,6 +13,9 @@
                         <field name="asset_count" widget="statinfo"
                           string="Assets"/>
                     </button>
+                    <button name="open_entries" class="oe_stat_button" icon="fa-book" type="object">
+                        <div>Journal<br/>Entries</div>
+                    </button>
                 </xpath>
             </field>
         </record>
