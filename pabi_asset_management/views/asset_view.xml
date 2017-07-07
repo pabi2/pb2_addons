@@ -6,9 +6,7 @@
 
         <menuitem id="account_asset_management.menu_finance_assets" name="Assets" parent="menu_asset_main" sequence="10" groups="purchase.group_purchase_user,account.group_account_user"/>
 
-        <menuitem id="account_asset_management.account_asset_menu" name="Assets"
-          parent="account_asset_management.menu_finance_assets"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem id="account_asset_management.account_asset_menu" name="Assets" parent="account_asset_management.menu_finance_assets" groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <menuitem id="account_asset_management.menu_finance_config_assets" name="Configurations" parent="menu_asset_main" sequence="20" groups="purchase.group_purchase_user,account.group_account_user"/>
 
@@ -53,23 +51,31 @@
                 </field>
                 <group position="inside">
                     <filter string="Asset Status" context="{'group_by':'status'}"/>
+                    <filter string="Owner Section" context="{'group_by':'owner_section_id'}"/>
+                    <filter string="Owner Project" context="{'group_by':'owner_project_id'}"/>
                 </group>
             </field>
         </record>
 
-        <record id="account_asset_view_tree" model="ir.ui.view">
+        <record id="account_asset_view_tree2" model="ir.ui.view">
             <field name="name">account.asset.tree</field>
             <field name="model">account.asset</field>
-            <field name="inherit_id" ref="account_asset_management.account_asset_view_tree"/>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <field name="state" position="before">
-                    <field name="product_id"/>
+                <tree string="Assets" colors="blue:(type == 'view')">
+                    <field name="type" invisible="1"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="purchase_id"/>
+                    <field name="purchase_value"/>
+                    <field name="date_start"/>
+                    <field name="partner_id"/>
                     <field name="picking_id"/>
-                </field>
-                <field name="state" position="after">
+                    <field name="location_id"/>
+                    <field name="room"/>
                     <field name="status"/>
-                </field>
+                    <field name="state" invisible="1"/>
+                </tree>
             </field>
         </record>
 
@@ -219,6 +225,7 @@
         <record model="ir.actions.act_window" id="account_asset_management.account_asset_action">
             <field name="domain">[('type', '=', 'normal')]</field>
             <field name="context">{'type': 'normal'}</field>
+            <field name="view_id" ref="account_asset_view_tree2"/>
         </record>
 
         <!-- Asset Category -->
