@@ -71,5 +71,6 @@ class PurchaseRequisition(models.Model):
                     res = quote.action_button_convert_to_order()
                     purchase_ids.append(res['res_id'])
         purchases = self.env['purchase.order'].browse(purchase_ids)
-        purchases.write({'payment_term_id': 1})  # Immediate
+        for purchase in purchases:
+            purchase.write({'payment_term_id': 1})  # Immediate
         return purchase_ids
