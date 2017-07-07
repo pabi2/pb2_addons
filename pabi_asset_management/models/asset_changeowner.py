@@ -114,10 +114,11 @@ class AccountAssetChangeowner(models.Model):
                 move_lines += asset_move_lines_dict + depre_move_lines_dict
                 # Create move line for target asset
                 # Asset
-                new_asset_move_line_dict = \
-                    Asset._prepare_asset_target_move(asset_move_lines_dict,
-                                                     new_owner)
-                move_lines.append(new_asset_move_line_dict)
+                if asset_move_lines_dict:
+                    new_asset_move_line_dict = \
+                        Asset._prepare_asset_target_move(asset_move_lines_dict,
+                                                         new_owner)
+                    move_lines.append(new_asset_move_line_dict)
                 # Depre
                 if depre_move_lines_dict:
                     new_depre_move_lines_dict = \
