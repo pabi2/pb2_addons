@@ -451,10 +451,10 @@ class AccountAsset(ChartFieldAction, models.Model):
                     asset_line_dict['debit'] = credit - debit
                 depre_move_lines_dict.append(depre_line_dict)
             # Validation
-            if not asset_move_lines_dict:
-                raise ValidationError(
-                    _('No Asset Value. Something went wrong!\nIt is likely '
-                      'that, the asset owner do not match with account move.'))
+            # if not asset_move_lines_dict:
+            #     raise ValidationError(
+            #         _('No Asset Value. Something went wrong!\nIt is likely '
+            #         'that, the asset owner do not match with account move.'))
             return (asset_move_lines_dict, depre_move_lines_dict)
 
     @api.model
