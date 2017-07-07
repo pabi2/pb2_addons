@@ -318,12 +318,12 @@ class AccountAsset(ChartFieldAction, models.Model):
                 if status.map_state != asset.state:
                     raise ValidationError(_('Invalid change of asset status'))
         res = super(AccountAsset, self).write(vals)
-        # Following code repeat the compute depre, but w/o it, value is zero
-        for asset in self:
-            if asset.profile_id.open_asset and \
-                    self._context.get('create_asset_from_move_line'):
-                asset.compute_depreciation_board()
-        # --
+        # # Following code repeat the compute depre, but w/o it, value is zero
+        # for asset in self:
+        #     if asset.profile_id.open_asset and \
+        #             self._context.get('create_asset_from_move_line'):
+        #         asset.compute_depreciation_board()
+        # # --
         return res
 
     @api.multi
@@ -353,16 +353,15 @@ class AccountAsset(ChartFieldAction, models.Model):
         if ptype and type == 'view':
             sequence_code = 'parent.asset.%s' % (ptype)
             vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
-        if vals.get('code', '/') == '/':
-            # Normal Case
-            product_id = vals.get('product_id', False)
-            if product_id:
-                product = self.env['product.product'].browse(product_id)
-                sequence = product.sequence_id
-                if not sequence:
-                    raise ValidationError(
-                        _('No asset sequence setup for selected product!'))
-                vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
+        # Normal Case
+        product_id = vals.get('product_id', False)
+        if product_id:
+            product = self.env['product.product'].browse(product_id)
+            sequence = product.sequence_id
+            if not sequence:
+                raise ValidationError(
+                    _('No asset sequence setup for selected product!'))
+            vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
         asset = super(AccountAsset, self).create(vals)
         asset.update_related_dimension(vals)
         # Init Salvage Value from Category
@@ -452,10 +451,10 @@ class AccountAsset(ChartFieldAction, models.Model):
                     asset_line_dict['debit'] = credit - debit
                 depre_move_lines_dict.append(depre_line_dict)
             # Validation
-            if not asset_move_lines_dict:
-                raise ValidationError(
-                    _('No Asset Value. Something went wrong!\nIt is likely '
-                      'that, the asset owner do not match with account move.'))
+            # if not asset_move_lines_dict:
+            #     raise ValidationError(
+            #         _('No Asset Value. Something went wrong!\nIt is likely '
+            #         'that, the asset owner do not match with account move.'))
             return (asset_move_lines_dict, depre_move_lines_dict)
 
     @api.model
