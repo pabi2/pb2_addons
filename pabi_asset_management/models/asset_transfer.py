@@ -163,6 +163,7 @@ class AccountAssetTransfer(models.Model):
         AccountMove = self.env['account.move']
         Asset = self.env['account.asset']
         Period = self.env['account.period']
+        AssetStatus = self.env['account.asset.status']
         period = Period.find()
         # Owner
         project = self.asset_ids.mapped('project_id')
@@ -182,6 +183,7 @@ class AccountAssetTransfer(models.Model):
         asset_move_lines_dict, depre_move_lines = \
             Asset._prepare_asset_reverse_moves(self.asset_ids)
         # Create move line for target asset
+        print asset_move_lines_dict
         new_asset_move_line_dict = \
             Asset._prepare_asset_target_move(asset_move_lines_dict)
         new_asset_ids = []
@@ -257,7 +259,8 @@ class AccountAssetTransfer(models.Model):
             asset.source_asset_ids = self.asset_ids
         self.asset_ids.write({
             'active': False,
-            'target_asset_ids': [(4, x) for x in new_asset_ids]})
+            'target_asset_ids': [(4, x) for x in new_asset_ids],
+            'status': AssetStatus.search([('code', '=', 'transfer')]).id})
 
 
 class AccountAssetTransferTarget(models.Model):
