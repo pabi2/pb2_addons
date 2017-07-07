@@ -55,8 +55,8 @@
                     <header>
                         <button name="action_draft" states="cancel,draft2" string="Set Source Assets" type="object"/>
                         <button name="action_draft2" states="draft" string="Set Target Assets" type="object"/>
-                        <button name="action_done" states="draft2" string="Transfer" type="object" groups="account.group_account_manager" class="oe_highlight"/>
-                        <button name="action_cancel" states="draft" string="Cancel" type="object" groups="account.group_account_manager"/>
+                        <button name="action_done" states="draft2" string="Transfer" type="object" class="oe_highlight"/>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,draft2,done"/>
                     </header>
                     <sheet>
