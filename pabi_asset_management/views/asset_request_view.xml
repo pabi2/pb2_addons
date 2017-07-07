@@ -40,7 +40,7 @@
                                 <field name="request_asset_ids" context="{'default_location_id': location_id, 'default_room': room}">
                                     <tree editable="bottom">
                                         <field name="asset_id"/>
-                                        <field name="depreciation_base" sum="Total Value"/>
+                                        <field name="purchase_value" sum="Total Value"/>
                                         <field name="location_id"/>
                                         <field name="room"/>
                                     </tree>

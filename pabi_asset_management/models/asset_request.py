@@ -178,9 +178,9 @@ class AccountAssetRequestLine(models.Model):
                 ('state', '=', 'open')],
         required=True,
     )
-    depreciation_base = fields.Float(
-        string='Depreciation Base',
-        related='asset_id.depreciation_base',
+    purchase_value = fields.Float(
+        string='Purchase Value',
+        related='asset_id.purchase_value',
         readonly=True,
     )
     location_id = fields.Many2one(
