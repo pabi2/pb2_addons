@@ -17,7 +17,8 @@
             sequence="10"
             groups="purchase.group_purchase_user,account.group_account_user"/>
 
-        <menuitem id="menu_asset_actions" name="Asset Actions" parent="account_asset_management.menu_finance_assets"/>
+        <menuitem id="menu_asset_actions" name="Asset Actions"
+          sequence="20" parent="account_asset_management.menu_finance_assets"/>
 
         <!-- Account Asset View -->
         <record id="account_asset_view_search" model="ir.ui.view">
@@ -150,6 +151,20 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']" position="attributes">
                     <attribute name="attrs">{'invisible': [('no_depreciation', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//button[@name='compute_depreciation_board']" position="after">
+                    <button type="object" name="open_depreciation_lines" string="View Depreciation Lines"
+                      icon="terp-check"
+                      colspan="2" attrs="{'invisible':[('depreciation_line_ids', '=', [])]}"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='line_date']" position="before">
+                    <field name="fiscalyear_id"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciated_value']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']/tree/field[@name='amount']" position="after">
+                    <field name="amount_accumulated"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']" position="after">
                     <group>
@@ -341,7 +356,54 @@
             <field name="act_window_id" ref="action_account_asset_parent_form"/>
         </record>
 
-        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_parent_form" action="action_account_asset_parent_form" groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_parent_form"
+          sequence="30" action="action_account_asset_parent_form" groups="purchase.group_purchase_user,account.group_account_user"/>
+
+        <!-- Depreciation Line -->
+        <record model="ir.ui.view" id="view_account_asset_line_tree">
+            <field name="name">view.account.asset.line.tree</field>
+            <field name="model">account.asset.line</field>
+            <field name="arch" type="xml">
+                <tree string="Depreciation Lines" colors="blue:(move_check == False) and (init_entry == False)" >
+                    <field name="asset_id"/>
+                    <field name="type"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="line_date"/>
+                    <field name="line_days"/>
+                    <field name="amount"/>
+                    <field name="amount_accumulated"/>
+                    <field name="remaining_value"/>
+                    <field name="init_entry"/>
+                    <field name="move_check"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_line_search" model="ir.ui.view">
+            <field name="name">view.account.asset.line.search</field>
+            <field name="model">account.asset.line</field>
+            <field name="arch" type="xml">
+                <search string="Depreciation Lines">
+                    <field name="asset_id" string="Asset"/>
+                    <filter string="Purchase Value" name="create" domain="[('type','=','create')]"/>
+                    <filter string="Depreciation" name="depreciate" domain="[('type','=','depreciate')]"/>
+                    <filter string="Asset Removal" name="remove" domain="[('type','=','remove')]"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Asset" name="asset" domain="" context="{'group_by':'asset_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_line">
+            <field name="name">Asset's Depreciation Lines</field>
+            <field name="res_model">account.asset.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_line"
+          sequence="15" action="action_account_asset_line" groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>

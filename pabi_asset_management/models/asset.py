@@ -336,6 +336,16 @@ class AccountAsset(ChartFieldAction, models.Model):
         return result
 
     @api.multi
+    def open_depreciation_lines(self):
+        self.ensure_one()
+        action = self.env.ref('pabi_asset_management.'
+                              'action_account_asset_line')
+        result = action.read()[0]
+        dom = [('asset_id', '=', self.id)]
+        result.update({'domain': dom})
+        return result
+
+    @api.multi
     @api.depends()
     def _compute_source_asset_count(self):
         for asset in self:
@@ -550,6 +560,19 @@ class AccountAssetLine(models.Model):
         compute='_compute_fiscalyear_id',
         store=True,
     )
+    amount_accumulated = fields.Float(
+        string='Accumulated Amount',
+        compute='_compute_amount_accumulated',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('amount', 'depreciated_value')
+    def _compute_amount_accumulated(self):
+        for rec in self:
+            print rec.amount
+            print rec.depreciated_value
+            rec.amount_accumulated = rec.amount + rec.depreciated_value
 
     @api.multi
     @api.depends('line_date')
