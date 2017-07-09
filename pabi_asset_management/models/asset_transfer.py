@@ -23,6 +23,7 @@ class AccountAssetTransfer(models.Model):
         required=True,
         copy=False,
         readonly=True,
+        states={'draft2': [('readonly', False)]},
     )
     user_id = fields.Many2one(
         'res.users',
@@ -163,6 +164,7 @@ class AccountAssetTransfer(models.Model):
         AccountMove = self.env['account.move']
         Asset = self.env['account.asset']
         Period = self.env['account.period']
+        AssetStatus = self.env['account.asset.status']
         period = Period.find()
         # Owner
         project = self.asset_ids.mapped('project_id')
@@ -242,7 +244,7 @@ class AccountAssetTransfer(models.Model):
             move_dict = {'journal_id': new_journal.id,
                          'line_id': final_move_lines,
                          'period_id': period.id,
-                         'date': fields.Date.context_today(self),
+                         'date': self.date,
                          'ref': self.name}
             move = AccountMove.\
                 with_context(asset_purchase_method_id=new_purchase_method.id).\
@@ -257,7 +259,8 @@ class AccountAssetTransfer(models.Model):
             asset.source_asset_ids = self.asset_ids
         self.asset_ids.write({
             'active': False,
-            'target_asset_ids': [(4, x) for x in new_asset_ids]})
+            'target_asset_ids': [(4, x) for x in new_asset_ids],
+            'status': AssetStatus.search([('code', '=', 'transfer')]).id})
 
 
 class AccountAssetTransferTarget(models.Model):

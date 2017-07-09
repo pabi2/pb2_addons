@@ -219,22 +219,19 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     serial_number = fields.Char(
         string='Serial Number',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        readonly=False,
     )
     warranty_start_date = fields.Date(
         string='Warranty Start Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        readonly=False,
     )
     warranty_expire_date = fields.Date(
         string='Warranty Expire Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        readonly=False,
     )
     # Transfer Asset
     target_asset_ids = fields.Many2many(
@@ -243,6 +240,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'source_asset_id', 'target_asset_id',
         string='Transferred to Asset',
         help="In case of transfer, this field show asset created by this one",
+        readonly=True,
     )
     source_asset_count = fields.Integer(
         string='Source Asset Count',
@@ -338,6 +336,16 @@ class AccountAsset(ChartFieldAction, models.Model):
         return result
 
     @api.multi
+    def open_depreciation_lines(self):
+        self.ensure_one()
+        action = self.env.ref('pabi_asset_management.'
+                              'action_account_asset_line')
+        result = action.read()[0]
+        dom = [('asset_id', '=', self.id)]
+        result.update({'domain': dom})
+        return result
+
+    @api.multi
     @api.depends()
     def _compute_source_asset_count(self):
         for asset in self:
@@ -362,12 +370,14 @@ class AccountAsset(ChartFieldAction, models.Model):
                 raise ValidationError(
                     _('No asset sequence setup for selected product!'))
             vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
+        # # Init Salvage Value from Category
+        profile_id = vals.get('profile_id', False)
+        if profile_id:
+            profile = self.env['account.asset.profile'].browse(profile_id)
+            if not profile.no_depreciation:
+                vals['salvage_value'] = profile.salvage_value
         asset = super(AccountAsset, self).create(vals)
         asset.update_related_dimension(vals)
-        # Init Salvage Value from Category
-        if self._context.get('create_asset_from_move_line', False):
-            if not asset.profile_id.no_depreciation:
-                asset.salvage_value = asset.profile_id.salvage_value
         return asset
 
     @api.multi
@@ -463,6 +473,10 @@ class AccountAsset(ChartFieldAction, models.Model):
             new_owner = {}
         debit = sum(x['debit'] for x in move_lines_dict)
         credit = sum(x['credit'] for x in move_lines_dict)
+        if not move_lines_dict:
+            raise ValidationError(
+                _('Error on function _prepare_asset_target_move.\n'
+                  'Invalid or no journal entry in original asset.'))
         move_line_dict = move_lines_dict[0].copy()
         move_line_dict.update({
             'analytic_account_id': False,  # To refresh dimension
@@ -548,6 +562,17 @@ class AccountAssetLine(models.Model):
         compute='_compute_fiscalyear_id',
         store=True,
     )
+    amount_accumulated = fields.Float(
+        string='Accumulated Amount',
+        compute='_compute_amount_accumulated',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('amount', 'depreciated_value')
+    def _compute_amount_accumulated(self):
+        for rec in self:
+            rec.amount_accumulated = rec.amount + rec.depreciated_value
 
     @api.multi
     @api.depends('line_date')

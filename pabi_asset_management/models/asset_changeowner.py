@@ -40,8 +40,8 @@ class AccountAssetChangeowner(models.Model):
         'account.asset.changeowner.line',
         'changeowner_id',
         string='Changeowner Line',
-        copy=False,
         readonly=True,
+        copy=True,
         states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(

@@ -53,9 +53,13 @@
             <field name="arch" type="xml">
                 <form string="Asset">
                     <header>
-                        <button name="action_draft" states="cancel,draft2" string="Set Source Assets" type="object"/>
-                        <button name="action_draft2" states="draft" string="Set Target Assets" type="object"/>
-                        <button name="action_done" states="draft2" string="Transfer" type="object" class="oe_highlight"/>
+                        <button name="action_draft" states="cancel,draft2"
+                          string="Set Source Assets" type="object"/>
+                        <button name="action_draft2" states="draft"
+                          string="Set Target Assets" type="object"/>
+                        <button name="action_done" states="draft2"
+                          string="Transfer" type="object" class="oe_highlight"
+                          groups="account.group_user_account"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,draft2,done"/>
                     </header>
