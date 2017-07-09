@@ -370,12 +370,14 @@ class AccountAsset(ChartFieldAction, models.Model):
                 raise ValidationError(
                     _('No asset sequence setup for selected product!'))
             vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
+        # # Init Salvage Value from Category
+        profile_id = vals.get('profile_id', False)
+        if profile_id:
+            profile = self.env['account.asset.profile'].browse(profile_id)
+            if not profile.no_depreciation:
+                vals['salvage_value'] = profile.salvage_value
         asset = super(AccountAsset, self).create(vals)
         asset.update_related_dimension(vals)
-        # Init Salvage Value from Category
-        if self._context.get('create_asset_from_move_line', False):
-            if not asset.profile_id.no_depreciation:
-                asset.salvage_value = asset.profile_id.salvage_value
         return asset
 
     @api.multi
@@ -570,8 +572,6 @@ class AccountAssetLine(models.Model):
     @api.depends('amount', 'depreciated_value')
     def _compute_amount_accumulated(self):
         for rec in self:
-            print rec.amount
-            print rec.depreciated_value
             rec.amount_accumulated = rec.amount + rec.depreciated_value
 
     @api.multi
