@@ -219,22 +219,19 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     serial_number = fields.Char(
         string='Serial Number',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        readonly=False,
     )
     warranty_start_date = fields.Date(
         string='Warranty Start Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        readonly=False,
     )
     warranty_expire_date = fields.Date(
         string='Warranty Expire Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        readonly=False,
     )
     # Transfer Asset
     target_asset_ids = fields.Many2many(
@@ -243,6 +240,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'source_asset_id', 'target_asset_id',
         string='Transferred to Asset',
         help="In case of transfer, this field show asset created by this one",
+        readonly=True,
     )
     source_asset_count = fields.Integer(
         string='Source Asset Count',
@@ -463,6 +461,10 @@ class AccountAsset(ChartFieldAction, models.Model):
             new_owner = {}
         debit = sum(x['debit'] for x in move_lines_dict)
         credit = sum(x['credit'] for x in move_lines_dict)
+        if not move_lines_dict:
+            raise ValidationError(
+                _('Error on function _prepare_asset_target_move.\n'
+                  'Invalid or no journal entry in original asset.'))
         move_line_dict = move_lines_dict[0].copy()
         move_line_dict.update({
             'analytic_account_id': False,  # To refresh dimension

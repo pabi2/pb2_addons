@@ -44,7 +44,6 @@ class AccountAssetRequest(models.Model):
         'res.users',
         string='Responsible Person',
         required=True,
-        copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Default purchase request user, but can change."
@@ -53,7 +52,6 @@ class AccountAssetRequest(models.Model):
         'account.asset.request.line',
         'request_id',
         string='Assets to Move',
-        copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

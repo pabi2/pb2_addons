@@ -553,6 +553,11 @@ class PurchaseWorkAcceptance(models.Model):
             raise ValidationError(
                 _("Can't evaluate the acceptance with no line.")
             )
+        no_qty_lines = self.acceptance_line_ids.filtered(lambda l:
+                                                         l.to_receive_qty <= 0)
+        if no_qty_lines:
+            raise ValidationError(
+                _('To Receive Quantity must greater than zero!'))
         self.validate_amount_total_with_order()
         self.state = 'evaluation'
 

@@ -23,6 +23,7 @@ class AccountAssetTransfer(models.Model):
         required=True,
         copy=False,
         readonly=True,
+        states={'draft2': [('readonly', False)]},
     )
     user_id = fields.Many2one(
         'res.users',
@@ -183,7 +184,6 @@ class AccountAssetTransfer(models.Model):
         asset_move_lines_dict, depre_move_lines = \
             Asset._prepare_asset_reverse_moves(self.asset_ids)
         # Create move line for target asset
-        print asset_move_lines_dict
         new_asset_move_line_dict = \
             Asset._prepare_asset_target_move(asset_move_lines_dict)
         new_asset_ids = []
@@ -244,7 +244,7 @@ class AccountAssetTransfer(models.Model):
             move_dict = {'journal_id': new_journal.id,
                          'line_id': final_move_lines,
                          'period_id': period.id,
-                         'date': fields.Date.context_today(self),
+                         'date': self.date,
                          'ref': self.name}
             move = AccountMove.\
                 with_context(asset_purchase_method_id=new_purchase_method.id).\
