@@ -36,18 +36,11 @@ class BudgetPlanInvestConstruction(BPCommon, LogCommon, models.Model):
         domain=[('budget_method', '=', 'expense')],  # Have domain
         track_visibility='onchange',
     )
-    # --
+    # Select Dimension - ORG
     org_id = fields.Many2one(
         'res.org',
         string='Org',
         required=True,
-    )
-    plan_line_ids = fields.One2many(
-        'budget.plan.invest.construction.line',
-        'plan_id',
-        string='Budget Plan Lines',
-        copy=True,
-        track_visibility='onchange',
     )
     info_line_ids = fields.One2many(
         'budget.plan.invest.construction.line',

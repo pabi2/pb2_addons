@@ -58,7 +58,7 @@ class PaymentExport(models.Model):
         'res.users',
         string='Responsible',
         required=True,
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
     )
     line_ids = fields.One2many(
         'payment.export.line',

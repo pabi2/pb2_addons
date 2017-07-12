@@ -1,0 +1,243 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_budget_plan_unit_summary_tree">
+            <field name="name">view.budget.plan.unit.line.tree.inside</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" >
+                    <field name="activity_group_id"/>
+                    <field name="budget_method"/>
+
+                    <field name="m1" sum="M1"/>
+                    <field name="m2" sum="M2"/>
+                    <field name="m3" sum="M3"/>
+                    <field name="m4" sum="M4"/>
+                    <field name="m5" sum="M5"/>
+                    <field name="m6" sum="M6"/>
+                    <field name="m7" sum="M7"/>
+                    <field name="m8" sum="M8"/>
+                    <field name="m9" sum="M9"/>
+                    <field name="m10" sum="M10"/>
+                    <field name="m11" sum="M11"/>
+                    <field name="m12" sum="M12"/>
+
+                    <field name="planned_amount" sum="Planned Amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree_inside">
+            <field name="name">view.budget.plan.unit.line.tree.inside</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                  <field name="budget_method" invisible="1"/>
+                  <field name="section_id"/>
+                  <field name="fund_id"/>
+                  <field name="activity_group_id"/>
+                  <field name="cost_control_id"/>
+                  <field name="unit"/>
+                  <field name="activity_unit_price"/>
+                  <field name="activity_unit"/>
+                  <field name="total_budget"/>
+                  <field name="description"/>
+                  <field name="m1"/>
+                  <field name="m2"/>
+                  <field name="m3"/>
+                  <field name="m4"/>
+                  <field name="m5"/>
+                  <field name="m6"/>
+                  <field name="m7"/>
+                  <field name="m8"/>
+                  <field name="m9"/>
+                  <field name="m10"/>
+                  <field name="m11"/>
+                  <field name="m12"/>
+                  <field name="planned_amount" sum="Planned Amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_plan_unit_form">
+            <field name="name">view.budget.plan.unit.form</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="arch" type="xml">
+                <form string="Budget Plan">
+                    <header>
+                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
+                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
+                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                        </div>
+                        <group>
+                            <group>
+                                <field name="section_id"/>
+                                <field name="division_id"/>
+                                <field name="org_id"/>
+                                <field name="user_id"/>
+                                <field name="planned_revenue"/>
+                                <field name="planned_expense"/>
+                                <field name="planned_overall"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="fiscalyear_id"/>
+                                <label for="date_from" string="Duration"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline"/>
+                                    -
+                                    <field name="date_to" class="oe_inline" nolabel="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Summary">
+                                <separator string="Planned Revenue"/>
+                                <field name="plan_summary_revenue_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
+                                <separator string="Planned Expense"/>
+                                <field name="plan_summary_expense_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
+                            </page>
+                            <page string="Revenue Plan">
+                                <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
+                            </page>
+                            <page string="Expense Plan">
+                                <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_plan_unit_tree">
+            <field name="name">view.budget.plan.unit.tree</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="arch" type="xml">
+                <tree string="Budget">
+                    <field name="section_id"/>
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_plan_unit_search" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.search</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="arch" type="xml">
+                <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
+                    <field name="section_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_budget_plan_unit_view">
+            <field name="name">Budget Plans</field>
+            <field name="res_model">budget.plan.unit</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_plan_unit_tree"/>
+            <field name="search_view_id" ref="view_budget_plan_unit_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new budget preparation.
+                </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_plan_unit" id="menu_budget_plan_unit_view" action="action_budget_plan_unit_view" sequence="10"/>
+
+        <!-- Budget Plan Line -->
+
+        <record id="view_budget_plan_unit_line_filter" model="ir.ui.view">
+            <field name="name">budget.plan.unit.line.filter</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Plan Line">
+                    <group expand="0" string="Group By">
+                        <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
+                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
+                        <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree">
+            <field name="name">budget.plan.unit.line.tree</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Plan Lines">
+                  <field name="plan_id"/>
+                  <field name="budget_method"/>
+                  <field name="section_id"/>
+                  <field name="fund_id"/>
+                  <field name="activity_group_id"/>
+                  <field name="cost_control_id"/>
+                  <field name="unit"/>
+                  <field name="activity_unit_price"/>
+                  <field name="activity_unit"/>
+                  <field name="total_budget"/>
+                  <field name="description"/>
+                  <field name="m1"/>
+                  <field name="m2"/>
+                  <field name="m3"/>
+                  <field name="m4"/>
+                  <field name="m5"/>
+                  <field name="m6"/>
+                  <field name="m7"/>
+                  <field name="m8"/>
+                  <field name="m9"/>
+                  <field name="m10"/>
+                  <field name="m11"/>
+                  <field name="m12"/>
+                  <field name="planned_amount" sum="Planned Amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_plan_unit_line_graph" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.line.graph</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="arch" type="xml">
+                <graph string="Budget Plan Lines" type="pivot">
+                    <field name="section_id" type="col"/>
+                    <field name="planned_amount" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_budget_plan_unit_line_view">
+            <field name="name">Budget Plan Lines</field>
+            <field name="res_model">budget.plan.unit.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_budget_plan_unit_line_tree"/>
+        </record>
+
+        <menuitem parent="menu_action_budget_plan_unit" id="menu_act_budget_plan_unit_line_view" action="act_budget_plan_unit_line_view" sequence="20"/>
+
+    </data>
+</openerp>

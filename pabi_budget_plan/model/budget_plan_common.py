@@ -27,7 +27,7 @@ class BPCommon(object):
     user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
     )
     date = fields.Date(
         string='Date',
@@ -38,7 +38,7 @@ class BPCommon(object):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-        default=lambda self: self.env['account.fiscalyear'].find(),
+        default=lambda self: self.env['account.period'].find().fiscalyear_id,
     )
     date_from = fields.Date(
         string='Start Date',

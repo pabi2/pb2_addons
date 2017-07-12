@@ -45,7 +45,7 @@ class SectionBudgetTransfer(models.Model):
     preparer_user_id = fields.Many2one(
         'res.users',
         string='Preparer',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )

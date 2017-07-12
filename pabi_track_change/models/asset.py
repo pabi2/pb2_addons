@@ -17,7 +17,6 @@ class AccountAsset(models.Model):
     invest_asset_id = fields.Many2one(track_visibility='onchange')
     invest_construction_id = fields.Many2one(track_visibility='onchange')
     profile_id = fields.Many2one(track_visibility='onchange')
-    profile_type = fields.Selection(track_visibility='onchange')
     method_time = fields.Selection(track_visibility='onchange')
     method_number = fields.Integer(track_visibility='onchange')
     method_period = fields.Selection(track_visibility='onchange')

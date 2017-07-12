@@ -59,7 +59,7 @@ class BudgetFiscalPolicy(models.Model):
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
         readonly=True,
     )
     validating_user_id = fields.Many2one(

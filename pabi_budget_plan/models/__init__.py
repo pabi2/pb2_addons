@@ -2,7 +2,7 @@
 
 from . import account_budget
 from . import budget_plan_template
-from . import budget_plan_unit
+# from . import budget_plan_unit
 from . import budget_plan_project
 from . import budget_plan_personnel
 from . import budget_plan_invest_asset

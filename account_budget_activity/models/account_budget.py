@@ -52,7 +52,7 @@ class AccountBudget(models.Model):
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
     )
     validating_user_id = fields.Many2one(
         'res.users',
