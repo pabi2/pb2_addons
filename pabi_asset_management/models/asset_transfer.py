@@ -46,7 +46,7 @@ class AccountAssetTransfer(models.Model):
         domain=[('type', '!=', 'view'),
                 ('profile_type', 'in', ('ait', 'auc')),
                 '|', ('active', '=', True), ('active', '=', False)],
-        copy=False,
+        copy=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -54,7 +54,7 @@ class AccountAssetTransfer(models.Model):
         'account.asset.transfer.target',
         'transfer_id',
         string='Target New Assets',
-        copy=False,
+        copy=True,
         readonly=True,
         states={'draft2': [('readonly', False)]},
     )
