@@ -5,7 +5,9 @@
     "version": "1.0",
     "category": "Human Resources",
     "description": """
+
 This module focus mainly on creating PDF and submit to Alfresco workflow
+
     """,
     "website": "https://ecosoft.co.th/",
     "author": "Kitti U.",
