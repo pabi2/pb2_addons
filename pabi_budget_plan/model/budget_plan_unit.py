@@ -13,6 +13,7 @@ class BudgetPlanUnit(BPCommon, LogCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherit = ['mail.thread']
     _description = "Unit - Budget Plan"
+    _order = 'id desc'
 
     # COMMON
     plan_line_ids = fields.One2many(
@@ -74,6 +75,10 @@ class BudgetPlanUnit(BPCommon, LogCommon, models.Model):
         readonly=True,
         store=True,
     )
+    _sql_constraints = [
+        ('uniq_plan', 'unique(section_id, fiscalyear_id)',
+         'Duplicated budget plan for the same section is not allowed!'),
+    ]
 
     @api.model
     def generate_plans(self, fiscalyear_id=None):

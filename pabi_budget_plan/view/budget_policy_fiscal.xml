@@ -1,0 +1,557 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_budget_policy_fiscal_form">
+            <field name="name">view.budget.policy.fiscal.form</field>
+            <field name="model">budget.policy.fiscal</field>
+            <field name="arch" type="xml">
+                <form string="Fiscal Budget Policy">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                        </div>
+                        <group>
+                            <group>
+                                <field name="planned_overall"/>
+                                <field name="policy_overall"/>
+                            </group>
+                            <group>
+                                <field name="fiscalyear_id" />
+                                <label for="date_from" string="Duration" />
+                                <div>
+                                    <field name="date_from" class="oe_inline" /> -
+                                    <field name="date_to" class="oe_inline" nolabel="1"/>
+                                </div>
+                            </group>
+                       </group>
+                       <group>
+                            <group string="Planned">
+                                <field name="planned_project_base"/>
+                                <field name="planned_unit_base"/>
+                                <field name="planned_personnel"/>
+                                <field name="planned_invest_asset"/>
+                                <field name="planned_invest_construction"/>
+                            </group>
+                            <group string="Policy">
+                                <field name="policy_project_base"/>
+                                <field name="policy_unit_base"/>
+                                <field name="policy_personnel"/>
+                                <field name="policy_invest_asset"/>
+                                <field name="policy_invest_construction"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Unit Based">
+                                <group>
+                                    <group>
+                                        <button name="create_unit_budget_policy" type="object" string="=> Create Budget Policy" />
+                                        <button name="create_unit_budget_breakdown" type="object" string="=> Create Breakdown" />
+                                    </group>
+                                    <group>
+                                         <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+                                                name="action_open_breakdown" context="{'chart_view': 'unit_base'}"
+                                                states="confirm">
+                                            <field string="Breakdowns" name="unit_breakdown_count" widget="statinfo" />
+                                        </button>
+                                      </group>
+                                </group>
+                                <field name="unit_base_ids" colspan="4" nolabel="1" > <!-- We have invisible="1" for 7-12 policy,if you want to have it you can reopen it by changing invisible="0" -->
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_policy_version" invisible="1"/>
+                                        <field name="org_id" />
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" invisible="1" />
+                                        <field name="policy_amount_v1" attrs="{'readonly': [('budget_policy_version', '!=', 1.0)]}" sum="Policy Amount Rev.1" />
+                                        <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
+                                        <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.4" />
+                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.5" />
+                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.6" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.7" />
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.8" />
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.9" />
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.10" />
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.11" />
+                                        <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.12" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Project Based">
+                                <field name="project_base_ids" colspan="4" nolabel="1" >
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_policy_version" invisible="1"/>
+                                        <field name="program_id" />
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" invisible="1" />
+                                        <field name="policy_amount_v1" attrs="{'readonly': [('budget_policy_version', '!=', 1.0)]}" sum="Policy Amount Rev.1" />
+                                        <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
+                                        <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.4" />
+                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.5" />
+                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.6" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.7" />
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.8" />
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.9" />
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.10" />
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.11" />
+                                        <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.12" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Personnel">
+                                <field name="personnel_costcenter_ids" colspan="4" nolabel="1" >
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_policy_version" invisible="1"/>
+                                        <field name="personnel_costcenter_id" />
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" />
+                                        <field name="policy_amount_v1" attrs="{'readonly': [('budget_policy_version', '!=', 1.0)]}" sum="Policy Amount Rev.1" />
+                                        <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
+                                        <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.4" />
+                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.5" />
+                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.6" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.7" />
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.8" />
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.9" />
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.10" />
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.11" />
+                                        <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.12" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Investment Asset">
+                                <group>
+                                    <group>
+                                        <button name="create_invest_asset_budget_policy_breakdown" states="confirm" type="object" string="=> Create Breakdown" />
+                                    </group>
+                                    <group>
+                                         <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text"
+                                                name="action_open_breakdown" context="{'chart_view': 'invest_asset'}"
+                                                states="confirm">
+                                            <field string="Breakdowns" name="invest_asset_breakdown_count" widget="statinfo" />
+                                        </button>
+                                    </group>
+                                </group>
+                                <field name="invest_asset_ids" colspan="4" nolabel="1" >
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_policy_version" invisible="1"/>
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" />
+                                        <field name="policy_amount_v1" attrs="{'readonly': [('budget_policy_version', '!=', 1.0)]}" sum="Policy Amount Rev.1" />
+                                        <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
+                                        <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.4" />
+                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.5" />
+                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.6" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.7" />
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.8" />
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.9" />
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.10" />
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.11" />
+                                        <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.12" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Investment Construction">
+                                <field name="invest_construction_ids" colspan="4" nolabel="1" >
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_policy_version" invisible="1"/>
+                                        <field name="invest_construction_id" />
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" />
+                                        <field name="policy_amount_v1" attrs="{'readonly': [('budget_policy_version', '!=', 1.0)]}" sum="Policy Amount Rev.1" />
+                                        <field name="policy_amount_v2" attrs="{'readonly': [('budget_policy_version', '!=', 2.0)]}" sum="Policy Amount Rev.2" />
+                                        <field name="policy_amount_v3" attrs="{'readonly': [('budget_policy_version', '!=', 3.0)]}" sum="Policy Amount Rev.3" />
+                                        <field name="policy_amount_v4" attrs="{'readonly': [('budget_policy_version', '!=', 4.0)]}" sum="Policy Amount Rev.4" />
+                                        <field name="policy_amount_v5" attrs="{'readonly': [('budget_policy_version', '!=', 5.0)]}" sum="Policy Amount Rev.5" />
+                                        <field name="policy_amount_v6" attrs="{'readonly': [('budget_policy_version', '!=', 6.0)]}" sum="Policy Amount Rev.6" />
+                                        <field name="policy_amount_v7" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 7.0)]}" sum="Policy Amount Rev.7" />
+                                        <field name="policy_amount_v8" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 8.0)]}" sum="Policy Amount Rev.8" />
+                                        <field name="policy_amount_v9" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 9.0)]}" sum="Policy Amount Rev.9" />
+                                        <field name="policy_amount_v10" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 10.0)]}" sum="Policy Amount Rev.10" />
+                                        <field name="policy_amount_v11" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 11.0)]}" sum="Policy Amount Rev.11" />
+                                        <field name="policy_amount_v12" invisible="1" attrs="{'readonly': [('budget_policy_version', '!=', 12.0)]}" sum="Policy Amount Rev.12" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Other Info">
+                                <group>
+                                    <group>
+                                        <field name="creating_user_id"/>
+                                        <field name="validating_user_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="date"/>
+                                        <field name="date_confirm"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_policy_fiscal_tree">
+            <field name="name">view.budget.policy.fiscal.tree</field>
+            <field name="model">budget.policy.fiscal</field>
+            <field name="arch" type="xml">
+               <tree string="Fiscal Budget Policy">
+                    <field name="name" />
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_overall"/>
+                    <field name="policy_overall"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_policy_fiscal_search" model="ir.ui.view">
+           <field name="name">view.budget.policy.fiscal_search</field>
+           <field name="model">budget.policy.fiscal</field>
+           <field name="arch" type="xml">
+               <search string="Fiscal Budget Policy">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Fiscal Budget Policy"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_budget_policy_fiscal_view">
+            <field name="name">Fiscal Budget Policies</field>
+            <field name="res_model">budget.policy.fiscal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_policy_fiscal_tree"/>
+            <field name="search_view_id" ref="view_budget_policy_fiscal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new fiscal budget policy.
+              </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_policy"
+            id="menu_budget_policy_fiscal_view"
+            groups="pabi_base.group_cooperate_budget"
+            action="action_budget_policy_fiscal_view" sequence="5" />
+
+
+        <!-- Budget Policy Breakdown -->
+
+        <record model="ir.ui.view" id="view_budget_policy_fiscal_breakdown_form">
+            <field name="name">view.budget.policy.fiscal.breakdown.form</field>
+            <field name="model">budget.policy.fiscal.breakdown</field>
+            <field name="arch" type="xml">
+                <form string="Fiscal Budget Policy">
+                    <header>
+                        <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button name="prepare_budget_control" states="confirm" type="object" string="Generate Budget Control" />
+                        <button string="Cancel" name="button_cancel" states="draft" type="object" />
+                        <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,budgeted"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button class="oe_inline oe_stat_button" name="get_all_versions" type="object" icon="fa-bookmark-o">
+                                <field name="version" widget="statinfo"/>
+                            </button>
+                            <field name="latest_version" invisible="1"/>
+                            <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up"
+                                string="Latest"
+                                attrs="{'invisible': [('latest_version', '=', False)]}"/>
+                            <button class="oe_inline oe_stat_button" name="get_budget_controls" type="object" icon="fa-bookmark-o">
+                                <field name="budget_control_count" widget="statinfo"/>
+                            </button>
+
+                        </div>
+                        <group>
+                            <group>
+                                <field name="org_id" />
+                                <field name="planned_overall" />
+                                <field name="policy_overall" />
+                                <field name="chart_view" />
+                                <field name="ref_breakdown_id"/>
+                            </group>
+                            <group>
+                                <field name="fiscalyear_id" />
+                                <label for="date_from" string="Duration" />
+                                <div>
+                                    <field name="date_from" class="oe_inline" /> -
+                                    <field name="date_to" class="oe_inline" nolabel="1"/>
+                                </div>
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="currency_id" groups="base.group_multi_currency"/>
+                            </group>
+                       </group>
+                        <notebook>
+                            <page string="Section Policy Amount">
+                                <field name="unit_base_ids" colspan="4" nolabel="1"
+                                    attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_plan_unit_id" />
+                                        <field name="chart_view" />
+                                        <field name="section_id" />
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" />
+                                    </tree>
+                                </field>
+                                <field name="invest_asset_ids" colspan="4" nolabel="1"
+                                    attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="budget_plan_invest_asset_id" />
+                                        <field name="chart_view" />
+                                        <field name="org_id" />
+                                        <field name="planned_amount" sum="Planned Amount" />
+                                        <field name="policy_amount" sum="Policy Amount" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Other Info">
+                                <group>
+                                    <group>
+                                        <field name="creating_user_id"/>
+                                        <field name="validating_user_id"/>
+                                        <field name="budgeting_user_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="date"/>
+                                        <field name="date_confirm"/>
+                                        <field name="date_budget"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_unit_base_policy_breakdown_tree">
+            <field name="name">view.unit.base.policy.breakdown.tree</field>
+            <field name="model">budget.policy.fiscal.breakdown</field>
+            <field name="arch" type="xml">
+               <tree string="Unit Base Budget Policy Breakdown">
+                    <field name="org_id" />
+                    <field name="chart_view" invisible="1" />
+                    <field name="name" />
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_overall"/>
+                    <field name="policy_overall"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_invest_asset_policy_breakdown_tree">
+            <field name="name">view.invest.asset.policy.breakdown.tree</field>
+            <field name="model">budget.policy.fiscal.breakdown</field>
+            <field name="arch" type="xml">
+               <tree string="Invest Asset Budget Policy Breakdown">
+                    <field name="chart_view" invisible="1" />
+                    <field name="name" />
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_overall"/>
+                    <field name="policy_overall"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_policy_fiscal_breakdown_search" model="ir.ui.view">
+           <field name="name">view.budget.policy.fiscal.breakdown_search</field>
+           <field name="model">budget.policy.fiscal.breakdown</field>
+           <field name="arch" type="xml">
+               <search string="Fiscal Budget Policy">
+                    <field name="state"/>
+                    <field name="org_id"/>
+                    <field name="chart_view"/>
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Fiscal Budget Policy Breakdown"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Budget View" context="{'group_by':'chart_view'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_unit_base_policy_breakdown_view">
+            <field name="name">Breakdowns - Unit Based</field>
+            <field name="res_model">budget.policy.fiscal.breakdown</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_unit_base_policy_breakdown_tree"/>
+            <field name="search_view_id" ref="view_budget_policy_fiscal_breakdown_search"/>
+            <field name="domain" >[('chart_view', '=', 'unit_base')]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new fiscal budget policy breakdown.
+              </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_policy"
+            id="menu_unit_base_policy_breakdown_view"
+            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"
+            action="action_unit_base_policy_breakdown_view" sequence="10" />
+
+        <record model="ir.actions.act_window" id="action_invest_asset_policy_breakdown_view">
+            <field name="name">Breakdowns - Invest Asset</field>
+            <field name="res_model">budget.policy.fiscal.breakdown</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_invest_asset_policy_breakdown_tree"/>
+            <field name="search_view_id" ref="view_budget_policy_fiscal_breakdown_search"/>
+            <field name="domain" >[('chart_view', '=', 'invest_asset')]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new fiscal budget policy breakdown.
+              </p>
+            </field>
+        </record>
+
+        <menuitem parent="menu_action_budget_policy"
+            id="menu_invest_asset_policy_breakdown_view"
+            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"
+            action="action_invest_asset_policy_breakdown_view" sequence="15" />
+
+
+        <!-- Budget Plan Analysis -->
+
+        <record id="view_budget_plan_line_template_filter" model="ir.ui.view">
+            <field name="name">budget.plan.line.template.filter</field>
+            <field name="model">budget.plan.line.template</field>
+            <field name="arch" type="xml">
+                <search string="Search Budget Plan Analysis">
+                    <group expand="0" string="Group By">
+
+                        <filter string="SPA" context="{'group_by':'spa_id'}"/>
+                        <filter string="Mission" context="{'group_by':'mission_id'}"/>
+                        <filter string="Tag Type" context="{'group_by':'tag_type_id'}"/>
+                        <filter string="Tag" context="{'group_by':'tag_id'}"/>
+
+                        <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
+                        <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
+                        <filter string="Program" context="{'group_by':'program_id'}"/>
+                        <filter string="Project Group" context="{'group_by':'project_group_id'}"/>
+                        <filter string="Project" context="{'group_by':'project_id'}"/>
+
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Sector" context="{'group_by':'sector_id'}"/>
+                        <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
+                        <filter string="Division" context="{'group_by':'division_id'}"/>
+                        <filter string="Section" context="{'group_by':'section_id'}"/>
+                        <filter string="Costcenter" context="{'group_by':'costcenter_id'}"/>
+                        <filter string="Tax Branch" context="{'group_by':'taxbranch_id'}"/>
+
+                        <filter string="Invest Asset" context="{'group_by':'invest_asset_id'}"/>
+
+                        <filter string="Invest Construction" context="{'group_by':'invest_construction_id'}"/>
+                        <filter string="Invest Construction Phase" context="{'group_by':'invest_construction_phase_id'}"/>
+
+                        <filter string="Personnel Budget" context="{'group_by':'personnel_costcenter_id'}"/>
+
+                        <filter string="Job Order Type" context="{'group_by':'cost_control_type_id'}"/>
+                        <filter string="Job Order" context="{'group_by':'cost_control_id'}"/>
+
+                       </group>
+               </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_plan_line_template_tree">
+            <field name="name">budget.plan.line.template.tree</field>
+            <field name="model">budget.plan.line.template</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Plan Analysis" create="0" delete="0" edit="0">
+
+                    <field name="spa_id" invisible="1"/>
+                    <field name="mission_id" invisible="1"/>
+                    <field name="tag_type_id" invisible="1"/>
+                    <field name="tag_id" invisible="1"/>
+
+                    <field name="functional_area_id" invisible="1"/>
+                    <field name="program_group_id" invisible="1"/>
+                    <field name="program_id" invisible="1"/>
+                    <field name="project_group_id" invisible="1"/>
+                    <field name="project_id" invisible="1"/>
+
+                    <field name="org_id" invisible="1"/>
+                    <field name="sector_id" invisible="1"/>
+                    <field name="subsector_id" invisible="1"/>
+                    <field name="division_id" invisible="1"/>
+                    <field name="section_id" invisible="1"/>
+                    <field name="costcenter_id" invisible="1"/>
+                    <field name="taxbranch_id" invisible="1"/>
+
+                    <field name="invest_asset_id" invisible="1"/>
+
+                    <field name="invest_construction_id" invisible="1"/>
+                    <field name="invest_construction_phase_id" invisible="1"/>
+
+                    <field name="personnel_costcenter_id" invisible="1"/>
+
+                    <field name="cost_control_type_id" invisible="1"/>
+                    <field name="cost_control_id" invisible="1"/>
+
+                    <field name="chart_view" />
+                    <field name="fiscalyear_id" />
+
+                    <field name="m1" sum="Period 1" />
+                    <field name="m2" sum="Period 2" />
+                    <field name="m3" sum="Period 3" />
+                    <field name="m4" sum="Period 4" />
+                    <field name="m5" sum="Period 5" />
+                    <field name="m6" sum="Period 6" />
+                    <field name="m7" sum="Period 7" />
+                    <field name="m8" sum="Period 8" />
+                    <field name="m9" sum="Period 9" />
+                    <field name="m10" sum="Period 10" />
+                    <field name="m11" sum="Period 11" />
+                    <field name="m12" sum="Period 12" />
+
+                    <field name="planned_amount" sum="Planned Amount" />
+
+                </tree>
+            </field>
+        </record>
+        <record id="view_budget_plan_line_template_graph" model="ir.ui.view">
+             <field name="name">view.budget.plan.line.template.graph</field>
+             <field name="model">budget.plan.line.template</field>
+             <field name="arch" type="xml">
+                 <graph string="Budget Plan Analysis" type="pivot">
+                    <field name="org_id" type="col"/>
+                    <field name="planned_amount" type="measure"/>
+                 </graph>
+             </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_budget_plan_line_template_view">
+            <field name="name">Budget Plan Analysis</field>
+            <field name="res_model">budget.plan.line.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_budget_plan_line_template_tree"/>
+        </record>
+
+        <menuitem id="menu_act_budget_plan_line_template_view" action="act_budget_plan_line_template_view" parent="menu_action_budget_plan" sequence="60"/>
+
+    </data>
+</openerp>

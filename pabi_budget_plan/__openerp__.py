@@ -24,6 +24,8 @@
         'wizard/generate_budget_plan_wizard.xml',
         'views/budget_plan_menu.xml',
         'view/budget_plan_unit_view.xml',
+        'view/budget_policy_view.xml',
+        'view/budget_breakdown_view.xml',
         # 'views/budget_plan_unit_view.xml',
         'views/budget_plan_project_view.xml',
         'views/budget_plan_personnel_view.xml',

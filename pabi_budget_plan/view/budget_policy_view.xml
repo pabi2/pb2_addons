@@ -1,0 +1,112 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Inside View for Unit Based -->
+        <record model="ir.ui.view" id="view_budget_policy_unit_line_tree_inside">
+            <field name="name">view.budget.policy.unit.line.tree.inside</field>
+            <field name="model">budget.policy.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" create="0" delete="0">
+                    <field name="org_id"/>
+                    <field name="planned_amount"/>
+                    <field name="policy_amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_policy_tree">
+            <field name="name">view_budget_policy_tree</field>
+            <field name="model">budget.policy</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="chart_view"/>
+                    <field name="name"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="revision"/>
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="policy_amount" sum="Policy Amount"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_policy_form">
+            <field name="name">view.budget.policy.form</field>
+            <field name="model">budget.policy</field>
+            <field name="arch" type="xml">
+                <form string="Budget Policy">
+                    <header>
+                        <button string="Validate" name="action_ready" states="draft,not_ready" type="object" class="oe_highlight"/>
+                        <button string="Create Policy Breakdown" name="action_done" states="ready" confirm="This operation can not be undo, do you want to proceed?" type="object" class="oe_highlight"/>
+                        <button string="Set to Draft" name="action_draft" state="ready,not_ready" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,ready,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button string="Generate Policy Lines" name="generate_policy_line" state="draft" type="object"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="revision"/>
+                            </group>
+                            <group>
+                                <field name="chart_view"/>
+                                <field name="fiscalyear_id"/>
+                                <label for="date_from" string="Duration"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline"/>
+                                    -
+                                    <field name="date_to" class="oe_inline" nolabel="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Unit Base" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                                <field name="unit_base_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_policy_unit_line_tree_inside'}"/>
+                            </page>
+                        </notebook>
+                        <field name="message"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_budget_policy_search" model="ir.ui.view">
+            <field name="name">view.budget.policy.search</field>
+            <field name="model">budget.policy</field>
+            <field name="arch" type="xml">
+                <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Policy"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="chart_view"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_budget_policy_unit_view">
+            <field name="name">Unit Based Policy</field>
+            <field name="res_model">budget.policy</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_policy_tree"/>
+            <field name="search_view_id" ref="view_budget_policy_search"/>
+            <field name="domain">[('chart_view', '=', 'unit_base')]</field>
+            <field name="context">{'default_chart_view': 'unit_base'}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new budget policy for unit based structure.
+                </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_unit_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_unit_view" sequence="6"/>
+
+    </data>
+</openerp>
