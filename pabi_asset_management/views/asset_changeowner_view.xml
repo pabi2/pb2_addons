@@ -45,9 +45,12 @@
             <field name="arch" type="xml">
                 <form string="Asset">
                     <header>
-                        <button name="action_draft" states="cancel" string="Set to Draft" type="object" invisible="1"/>
-                        <button name="action_done" states="draft" string="Change Owner" type="object" class="oe_highlight"/>
-                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
+                        <button name="action_draft" states="cancel" string="Set to Draft" type="object" invisible="1"
+                          groups="purchase.group_purchase_user"/>
+                        <button name="action_done" states="draft" string="Change Owner" type="object" class="oe_highlight"
+                          groups="purchase.group_purchase_user"/>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object"
+                          groups="purchase.group_purchase_user"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
