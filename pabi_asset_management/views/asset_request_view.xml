@@ -85,6 +85,7 @@
                     <field name="responsible_user_id"/>
                     <group expand="0" string="Group By...">
                         <filter string="Received By" domain="" context="{'group_by':'responsible_user_id'}"/>
+                        <filter string="Status" domain="" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
