@@ -53,6 +53,7 @@ class AccountAssetRequest(models.Model):
         'request_id',
         string='Assets to Move',
         readonly=True,
+        copy=True,
         states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(

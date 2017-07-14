@@ -52,7 +52,8 @@ class MonitorView(models.AbstractModel):
 
     _monitor_view_tempalte = """
         CREATE or REPLACE VIEW %s as (
-            select min(id) as id,
+            select dense_rank() OVER  -- Can't use row_number, it not persist
+                (ORDER BY budget_method, fiscalyear_id, %s) AS id,
                 budget_method, fiscalyear_id,
                 %s,
                 sum(planned_amount) planned_amount,
@@ -75,7 +76,7 @@ class MonitorView(models.AbstractModel):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute(
             self._monitor_view_tempalte %
-            (self._table, field, where, field))
+            (self._table, field, field, where, field))
 
 
 class AccountActivityGroupMonitorView(models.Model):
