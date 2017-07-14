@@ -370,13 +370,11 @@ class AccountAsset(ChartFieldAction, models.Model):
                 raise ValidationError(
                     _('No asset sequence setup for selected product!'))
             vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
-        # # Init Salvage Value from Category
-        profile_id = vals.get('profile_id', False)
-        if profile_id:
-            profile = self.env['account.asset.profile'].browse(profile_id)
-            if not profile.no_depreciation:
-                vals['salvage_value'] = profile.salvage_value
         asset = super(AccountAsset, self).create(vals)
+        # Set Salvage Value from Category
+        if asset.profile_id and not asset.profile_id.no_depreciation:
+            # This will also trigger new calc of depre base
+            asset._write({'salvage_value': asset.profile_id.salvage_value})
         asset.update_related_dimension(vals)
         return asset
 
