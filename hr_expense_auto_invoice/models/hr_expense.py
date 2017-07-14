@@ -90,8 +90,7 @@ class HRExpenseExpese(models.Model):
             'quantity': exp_line.unit_quantity,
             'product_id': exp_line.product_id.id or False,
             'invoice_line_tax_id': [(6, 0, exp_line.tax_ids.ids)],
-            'account_analytic_id': exp_line.analytic_account and \
-                                   exp_line.analytic_account.id or False,
+            'account_analytic_id': exp_line.analytic_account.id or False,
         }
 
     @api.model
