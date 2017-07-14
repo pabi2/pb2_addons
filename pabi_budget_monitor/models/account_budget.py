@@ -146,6 +146,7 @@ class AccountBudget(models.Model):
         res = {'budget_ok': True,
                'budget_status': {},
                'message': False}
+        return res  # TO BE REMOVED
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
