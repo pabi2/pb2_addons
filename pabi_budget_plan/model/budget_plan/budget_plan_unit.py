@@ -81,6 +81,13 @@ class BudgetPlanUnit(BPCommon, LogCommon, models.Model):
     ]
 
     @api.model
+    def create(self, vals):
+        name = self._get_doc_number(vals['fiscalyear_id'],
+                                    'res.section', vals['section_id'])
+        vals.update({'name': name})
+        return super(BudgetPlanUnit, self).create(vals)
+
+    @api.model
     def generate_plans(self, fiscalyear_id=None):
         if not fiscalyear_id:
             raise ValidationError(_('No fiscal year provided!'))
@@ -96,6 +103,17 @@ class BudgetPlanUnit(BPCommon, LogCommon, models.Model):
                                 'user_id': False})
             plan_ids.append(plan.id)
         return plan_ids
+
+    @api.multi
+    def convert_to_budget_control(self):
+        """ Create a budget control from budget plan """
+        self.ensure_one()
+        head_src_model = self.env['budget.plan.unit']
+        line_src_model = self.env['budget.plan.unit.line']
+        budget = self._convert_plan_to_budget_control(self.id,
+                                                      head_src_model,
+                                                      line_src_model)
+        return budget
 
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):

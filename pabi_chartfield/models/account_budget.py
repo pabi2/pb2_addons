@@ -108,14 +108,14 @@ class AccountBudget(ChartField, models.Model):
         domain=[('budget_method', '=', 'revenue')],
         help="Summary by Activity Group View",
     )
-    cost_control_ids = fields.One2many(
-        'budget.unit.job.order',
-        'budget_id',
-        string='Job Order',
-        copy=True,
-        states={'draft': [('readonly', False)]},
-        track_visibility='onchange',
-    )
+    # cost_control_ids = fields.One2many(
+    #     'budget.unit.job.order',
+    #     'budget_id',
+    #     string='Job Order',
+    #     copy=True,
+    #     states={'draft': [('readonly', False)]},
+    #     track_visibility='onchange',
+    # )
 
     @api.model
     def _get_budget_level_type_hook(self, budget):
@@ -125,7 +125,7 @@ class AccountBudget(ChartField, models.Model):
             _get_budget_level_type_hook(budget)
 
     @api.multi
-    def budget_validate(self):
+    def budget_done(self):
         for budget in self:
             lines = budget.budget_line_ids
             for line in lines:
@@ -137,22 +137,22 @@ class AccountBudget(ChartField, models.Model):
         #             budget.validate_chartfields(budget.chart_view)
         #             lines = budget.budget_line_ids
         #             lines.validate_chartfields(budget.chart_view)
-        return super(AccountBudget, self).budget_validate()
+        return super(AccountBudget, self).budget_done()
 
-    @api.multi
-    def budget_confirm(self):
-        for budget in self:
-            lines = budget.budget_line_ids
-            for line in lines:
-                res = line.\
-                    _get_chained_dimension(CHART_VIEW_FIELD[budget.chart_view])
-                line.write(res)
-        # kittiu: Following might not necessary as we already split chart_view
-        #         for budget in self:
-        #             budget.validate_chartfields(budget.chart_view)
-        #             lines = budget.budget_line_ids
-        #             lines.validate_chartfields(budget.chart_view)
-        return super(AccountBudget, self).budget_confirm()
+    # @api.multi
+    # def budget_confirm(self):
+    #     for budget in self:
+    #         lines = budget.budget_line_ids
+    #         for line in lines:
+    #             res = line.\
+    #                 _get_chained_dimension(CHART_VIEW_FIELD[budget.chart_view])
+    #             line.write(res)
+    # kittiu: Following might not necessary as we already split chart_view
+    #         for budget in self:
+    #             budget.validate_chartfields(budget.chart_view)
+    #             lines = budget.budget_line_ids
+    #             lines.validate_chartfields(budget.chart_view)
+    #     return super(AccountBudget, self).budget_confirm()
 
     # TODO: When confirm budget, validate all fields has relationship
 
@@ -205,20 +205,6 @@ class AccountBudget(ChartField, models.Model):
             res['arch'] = etree.tostring(doc)
         return res
 
-    @api.multi
-    def _get_past_actual_domain(self):
-        self.ensure_one()
-        dom = super(AccountBudget, self)._get_past_actual_domain()
-        budget_type_dict = {
-            'unit_base': 'section_id',
-            'project_base': 'project_id',
-            'personnel': 'personnel_costcenter_id',
-            'invest_asset': 'investment_asset_id',
-            'invest_construction': 'invest_construction_phase_id'}
-        dimension = budget_type_dict[self.chart_view]
-        dom.append((dimension, '=', self[dimension].id))
-        return dom
-
 
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
@@ -239,10 +225,10 @@ class AccountBudgetLine(ChartField, models.Model):
         readonly=True,
         compute='_compute_display_name',
     )
-    breakdown_line_id = fields.Many2one(
-        'budget.unit.job.order.line',
-        string='Breakdown Job Order Line ref.',
-    )
+    # breakdown_line_id = fields.Many2one(
+    #     'budget.unit.job.order.line',
+    #     string='Breakdown Job Order Line ref.',
+    # )
 
     @api.model
     def _get_budget_level_type_hook(self, budget_line):

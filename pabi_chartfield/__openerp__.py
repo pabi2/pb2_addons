@@ -26,7 +26,7 @@
         'views/res_config_view.xml',
         'data/cost_control_data.xml',
         'data/job_order_history_rule.xml',
-        'wizard/cost_control_breakdown_wizard.xml',
+        # 'wizard/cost_control_breakdown_wizard.xml',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
         'views/analytic_view.xml',

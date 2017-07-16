@@ -8,7 +8,8 @@
             <field name="model">budget.policy.line</field>
             <field name="arch" type="xml">
                 <tree editable="bottom" create="0" delete="0">
-                    <field name="org_id"/>
+                    <field name="org_id" invisible="1"/>
+                    <field name="name" string="Org"/>
                     <field name="planned_amount"/>
                     <field name="policy_amount"/>
                 </tree>
@@ -24,6 +25,7 @@
                     <field name="name"/>
                     <field name="fiscalyear_id"/>
                     <field name="revision"/>
+                    <field name="new_policy_amount" sum="New Policy Amount"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="policy_amount" sum="Policy Amount"/>
                     <field name="state"/>
@@ -37,9 +39,9 @@
             <field name="arch" type="xml">
                 <form string="Budget Policy">
                     <header>
-                        <button string="Validate" name="action_ready" states="draft,not_ready" type="object" class="oe_highlight"/>
-                        <button string="Create Policy Breakdown" name="action_done" states="ready" confirm="This operation can not be undo, do you want to proceed?" type="object" class="oe_highlight"/>
-                        <button string="Set to Draft" name="action_draft" state="ready,not_ready" type="object"/>
+                        <button string="Validate" name="action_ready" states="draft,not_ready" type="object" class="oe_highlight" confirm="To proceed, all budget plans of all section in all organization listed below must be accepted."/>
+                        <button string="Create Policy Breakdown" name="action_done" states="ready" type="object" class="oe_highlight" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <button string="Set to Draft" name="action_draft" states="ready,not_ready" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,ready,done"/>
                     </header>
                     <sheet>
@@ -50,7 +52,10 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button string="Generate Policy Lines" name="generate_policy_line" state="draft" type="object"/>
+                            <button string="Generate Policy Lines" states="draft" name="generate_policy_line" type="object"/>
+                            <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_breakdown" states="done">
+                                <field string="Breakdowns" name="breakdown_count" widget="statinfo"/>
+                            </button>
                         </div>
                         <group>
                             <group>
@@ -68,8 +73,17 @@
                                 </div>
                             </group>
                         </group>
+                        <group string="Policy">
+                            <group>
+                                <field name="new_policy_amount"/>
+                            </group>
+                            <group>
+                                <field name="planned_amount"/>
+                                <field name="policy_amount"/>
+                            </group>
+                        </group>
                         <notebook>
-                            <page string="Unit Base" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                            <page string="Unit Base">
                                 <field name="unit_base_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_policy_unit_line_tree_inside'}"/>
                             </page>
                         </notebook>

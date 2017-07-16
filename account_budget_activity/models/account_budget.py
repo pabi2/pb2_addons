@@ -10,10 +10,10 @@ import logging
 _logger = logging.getLogger(__name__)
 
 BUDGET_STATE = [('draft', 'Draft'),
-                ('cancel', 'Cancelled'),
-                ('confirm', 'Confirmed'),
-                ('validate', 'Validated'),
-                ('done', 'Done')]
+                # ('cancel', 'Cancelled'),
+                # ('confirm', 'Confirmed'),
+                # ('validate', 'Validated'),
+                ('done', 'Controlled')]
 
 
 class AccountBudget(models.Model):
@@ -40,12 +40,6 @@ class AccountBudget(models.Model):
         default="/",
         states={'done': [('readonly', True)]},
     )
-    ref_budget_id = fields.Many2one(
-        'account.budget',
-        string="Previous Budget",
-        copy=False,
-        readonly=True,
-    )
     create_date = fields.Datetime(
         readonly=True,
     )
@@ -53,11 +47,12 @@ class AccountBudget(models.Model):
         'res.users',
         string='Responsible User',
         default=lambda self: self.env.user,
+        readonly=True,
     )
-    validating_user_id = fields.Many2one(
-        'res.users',
-        string='Validating User',
-    )
+    # validating_user_id = fields.Many2one(
+    #     'res.users',
+    #     string='Validating User',
+    # )
     date_from = fields.Date(
         string='Start Date',
         compute='_compute_date',
@@ -108,21 +103,21 @@ class AccountBudget(models.Model):
         required=True,
         default=lambda self: self.env.user.company_id,
     )
-    version = fields.Float(
-        string='Revision',
-        readonly=True,
-        default=0.0,
-        digits=(2, 1),
-        help="Indicate revision of the same budget plan. "
-        "Only latest one is used",
-    )
-    active = fields.Boolean(
-        string='Current',
-        readonly=True,
-        default=True,
-        # compute='_compute_latest_version',  TODO: determine version
-        help="Indicate latest revision of the same plan.",
-    )
+    # version = fields.Float(
+    #     string='Revision',
+    #     readonly=True,
+    #     default=0.0,
+    #     digits=(2, 1),
+    #     help="Indicate revision of the same budget plan. "
+    #     "Only latest one is used",
+    # )
+    # active = fields.Boolean(
+    #     string='Current',
+    #     readonly=True,
+    #     default=True,
+    #     # compute='_compute_latest_version',  TODO: determine version
+    #     help="Indicate latest revision of the same plan.",
+    # )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
@@ -173,7 +168,7 @@ class AccountBudget(models.Model):
         compute='_compute_budget_level',
         store=True,
     )
-    past_actual = fields.Float(
+    past_consumed = fields.Float(
         string='Past Actual',
         compute='_compute_past_future_rolling',
         help="Commitment + Actual for the past months",
@@ -188,17 +183,9 @@ class AccountBudget(models.Model):
         compute='_compute_past_future_rolling',
         help="Past Actual + Future Plan",
     )
-    prev_revision_ids = fields.One2many(
-        'account.budget',
-        'ref_budget_id',
-        string='Previous Reivisions',
-        domain=['|', ('active', '=', True), ('active', '=', False)],
-        readonly=True,
-        copy=False,
-    )
 
     @api.multi
-    def _get_past_actual_domain(self):
+    def _get_past_consumed_domain(self):
         self.ensure_one()
         Period = self.env['account.period']
         current_period = Period.find()
@@ -223,12 +210,12 @@ class AccountBudget(models.Model):
         Consume = self.env['budget.consume.report']
         for budget in self:
             # Past
-            dom = budget._get_past_actual_domain()
-            budget.past_actual = sum(Consume.search(dom).mapped('amount'))
+            dom = budget._get_past_consumed_domain()
+            budget.past_consumed = sum(Consume.search(dom).mapped('amount'))
             # Future
             budget.future_plan = budget._get_future_plan_amount()
             # Rolling
-            budget.rolling = budget.past_actual + budget.future_plan
+            budget.rolling = budget.past_consumed + budget.future_plan
 
     @api.multi
     def write(self, vals):
@@ -301,14 +288,13 @@ class AccountBudget(models.Model):
                     _('Required budgeting level is %s') %
                     (LEVEL_DICT[budget_level]))
 
-    @api.multi
-    def budget_validate(self):
-        self._validate_budget_level()
-        self.write({
-            'state': 'validate',
-            'validating_user_id': self._uid,
-        })
-        return True
+    # @api.multi
+    # def budget_validate(self):
+    #     self._validate_budget_level()
+    #     self.write({
+    #         'state': 'validate',
+    #         'validating_user_id': self._uid,
+    #     })
 
     @api.multi
     def _validate_plan_vs_release(self):
@@ -323,56 +309,25 @@ class AccountBudget(models.Model):
                          budget.name_get()[0][1]))
         return True
 
-    @api.multi
-    def budget_confirm(self):
-        self._validate_budget_level()
-        self._validate_plan_vs_release()
-        self.write({'state': 'confirm'})
-        return True
+    # @api.multi
+    # def budget_confirm(self):
+    #     self._validate_budget_level()
+    #     self._validate_plan_vs_release()
+    #     self.write({'state': 'confirm'})
 
     @api.multi
     def budget_draft(self):
         self.write({'state': 'draft'})
-        return True
 
-    @api.multi
-    def budget_cancel(self):
-        self.write({'state': 'cancel'})
-        return True
+    # @api.multi
+    # def budget_cancel(self):
+    #     self.write({'state': 'cancel'})
 
     @api.multi
     def budget_done(self):
+        self._validate_budget_level()
+        self._validate_plan_vs_release()
         self.write({'state': 'done'})
-        return True
-
-    # New Revision
-    @api.multi
-    def new_minor_revision(self):
-        self.ensure_one()
-        new_budget = self
-        # Existing one will be the new one
-        new_version = new_budget.version + 0.1
-        if round(new_version % 1, 2) == 0.0:
-            raise ValidationError(_('You reach minor revision limit!'))
-        prev_budget = new_budget.copy({'active': False})
-        prev_budget.write({
-            'ref_budget_id': new_budget.id,
-            'to_release_amount': new_budget.to_release_amount,
-            'state': new_budget.state,
-            'active': False,
-        })
-        new_budget.version = new_version
-        return True
-
-    @api.multi
-    def get_all_version(self):
-        self.ensure_one()
-        action = self.env.ref('account_budget_activity.'
-                              'act_account_budget_view')
-        result = action.read()[0]
-        dom = ['|', ('ref_budget_id', '=', self.id), ('id', '=', self.id)]
-        result.update({'domain': dom})
-        return result
 
     # ---- BUDGET CHECK ----
     def convert_lines_to_doc_lines(self, lines):

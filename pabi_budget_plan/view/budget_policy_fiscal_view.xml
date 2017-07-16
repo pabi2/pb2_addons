@@ -283,7 +283,7 @@
                                 <field name="planned_overall" />
                                 <field name="policy_overall" />
                                 <field name="chart_view" />
-                                <field name="ref_breakdown_id"/>
+                                <!-- <field name="ref_breakdown_id"/> -->
                             </group>
                             <group>
                                 <field name="fiscalyear_id" />

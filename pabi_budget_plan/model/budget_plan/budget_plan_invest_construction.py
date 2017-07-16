@@ -63,6 +63,17 @@ class BudgetPlanInvestConstruction(BPCommon, LogCommon, models.Model):
         copy=True,
         track_visibility='onchange',
     )
+    _sql_constraints = [
+        ('uniq_plan', 'unique(org_id, fiscalyear_id)',
+         'Duplicated budget plan for the same org is not allowed!'),
+    ]
+
+    @api.model
+    def create(self, vals):
+        name = self._get_doc_number(vals['fiscalyear_id'],
+                                    'res.org', vals['org_id'])
+        vals.update({'name': name})
+        return super(BudgetPlanInvestConstruction, self).create(vals)
 
 
 class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,

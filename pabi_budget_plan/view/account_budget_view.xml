@@ -10,15 +10,15 @@
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/group//field[@name='company_id']" position="after">
-                	<field name="prev_planned_amount" />
+                	<!-- <field name="prev_planned_amount" /> -->
                 	<field name="policy_amount" />
-                	<field name="ref_budget_id"/>
-                	<field name="ref_breakdown_id"/>
+                	<!-- <field name="ref_budget_id"/> -->
+                	<!-- <field name="ref_breakdown_id"/> -->
                 </xpath>
                 <!-- <xpath expr="//button[@name='budget_confirm']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
-                </xpath>
-                <xpath expr="//button[@name='budget_validate']" position="attributes">
+                </xpath> -->
+                <!-- <xpath expr="//button[@name='budget_validate']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath> -->
                 <xpath expr="//button[@name='budget_done']" position="attributes">

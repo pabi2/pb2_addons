@@ -9,7 +9,8 @@
             <field name="arch" type="xml">
                 <form string="Budget Breakdown">
                     <header>
-                        <button name="action_done" states="confirm" type="object" string="Generate Budget Control"/>
+                        <button name="action_done" states="draft" type="object" string="Set New Budget Policy" class="oe_highlight"
+                          confirm="This action will assign the new policy amount to all sections' budget. On the new fiscal year, it will also create new budget control for every sections."/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
@@ -19,23 +20,19 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button string="Generate Breakdown Line" name="generate_breakdown_line" state="draft" type="object"/>
-
-
-                            <!-- <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up" string="Latest" attrs="{'invisible': [('latest_version', '=', False)]}"/>
-                            <button class="oe_inline oe_stat_button" name="get_budget_controls" type="object" icon="fa-bookmark-o">
-                                <field name="budget_control_count" widget="statinfo"/>
-                            </button> -->
+                            <button string="Generate Breakdown Lines" states="draft" name="generate_breakdown_line" type="object"/>
+                            <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_budget" states="done">
+                                <field string="Budgets" name="budget_count" widget="statinfo"/>
+                            </button>
                         </div>
                         <group>
                             <group>
-                                <field name="policy_line_id"/>
+                                <field name="policy_line_id" invisible="1"/>
                                 <field name="org_id"/>
-                                <field name="planned_overall"/>
-                                <field name="policy_overall"/>
-                                <field name="chart_view"/>
+                                <field name="revision"/>
                             </group>
                             <group>
+                                <field name="chart_view"/>
                                 <field name="fiscalyear_id"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
@@ -45,13 +42,27 @@
                                 </div>
                             </group>
                         </group>
+                        <group string="Policy">
+                            <group>
+                                <field name="new_policy_amount"/>
+                            </group>
+                            <group>
+                                <field name="planned_amount"/>
+                                <field name="policy_amount"/>
+                            </group>
+                        </group>
                         <notebook>
                             <page string="Section Policy Amount">
-                                <field name="unit_base_line_ids" colspan="4" nolabel="1" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                                <field name="unit_base_line_ids" colspan="4" nolabel="1" >
                                     <tree editable="bottom" create="0" delete="0">
-                                        <field name="budget_plan_unit_id"/>
-                                        <field name="section_id"/>
+                                        <field name="section_id" readonly="1"/>
+                                        <field name="budget_plan_id"/>
                                         <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="budget_id"/>
+                                        <field name="past_consumed"/>
+                                        <field name="future_plan"/>
+                                        <field name="rolling"/>
+                                        <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
                                     </tree>
                                 </field>
@@ -85,8 +96,10 @@
                     <field name="chart_view" invisible="0"/>
                     <field name="name"/>
                     <field name="fiscalyear_id"/>
-                    <field name="planned_overall"/>
-                    <field name="policy_overall"/>
+                    <field name="revision"/>
+                    <field name="new_policy_amount"/>
+                    <field name="planned_amount"/>
+                    <field name="policy_amount"/>
                     <field name="state"/>
                 </tree>
             </field>

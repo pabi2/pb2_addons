@@ -106,7 +106,7 @@ class BudgetMonitorReport(models.Model):
             -- Dimensions
             %s
             from budget_plan_report
-            where state in ('validate', 'done')
+            where state in ('done')
             UNION ALL
             select budget_method, user_id, fiscalyear_id,
             ------> doc_ref, doc_id,

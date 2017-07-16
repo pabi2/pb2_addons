@@ -22,6 +22,7 @@
         'wizard/asset_plan_to_budget_plan_wizard.xml',
         'wizard/invest_asset_select_wizard_view.xml',
         'wizard/generate_budget_plan_wizard.xml',
+        'view/account_budget_view.xml',
         'views/budget_plan_menu.xml',
         'view/budget_plan_unit_view.xml',
         'view/budget_policy_view.xml',
@@ -33,7 +34,7 @@
         'view/budget_plan_invest_construction_view.xml',
         'views/budget_fiscal_policy_view.xml',
         'views/invest_asset_plan_view.xml',
-        'views/account_budget_view.xml',
+        # 'views/account_budget_view.xml',
         'views/account_view.xml',
         # 'views/report_section_budget_transfer_view.xml',
         'views/budget_plan_report.xml'

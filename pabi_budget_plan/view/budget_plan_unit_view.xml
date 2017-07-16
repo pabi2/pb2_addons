@@ -112,10 +112,12 @@
                                 <separator string="Planned Expense"/>
                                 <field name="plan_summary_expense_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
                             </page>
-                            <page string="Revenue Plan">
+                            <page string="Revenue Plan" name="revenue">
+                                <div name="revenue_extra"></div>
                                 <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
-                            <page string="Expense Plan">
+                            <page string="Expense Plan" name="expense">
+                                <div name="expense_extra"></div>
                                 <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
                         </notebook>

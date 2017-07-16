@@ -32,7 +32,7 @@
             <field name="model">account.budget</field>
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/group/group//field[@name='validating_user_id']" position="after">
+                <xpath expr="/form/sheet/group/group//field[@name='creating_user_id']" position="after">
                     <field name="chart_view" required="1" readonly="1"/>
                     <field name="program_id"
                         attrs="{'invisible': [('chart_view','!=','project_base')],
@@ -112,17 +112,6 @@
                                 colspan="4" nolabel="1"
                                 context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
 
-                    </page>
-                </xpath>
-                <xpath expr="//page[last()]" position="after">
-                    <page string="Job Order">
-                        <field name="cost_control_ids" colspan="4" nolabel="1" >
-                            <tree string="Job Order" editable="bottom">
-                                <field name="cost_control_id"/>
-                                <button name="%(action_add_budget_job_order_breakdown)d" type="action" string="Add Detail" icon="gtk-ok"/>
-                                <field name="amount_total" sum="Total Amount"/>
-                            </tree>
-                        </field>
                     </page>
                 </xpath>
             </field>

@@ -7,11 +7,6 @@ from openerp.exceptions import ValidationError
 class BudgetReleaseWizard(models.TransientModel):
     _name = "budget.release.wizard"
 
-    # release_ids = fields.One2many(
-    #     'budget.release.line',
-    #     'wizard_id',
-    #     string='Release Lines',
-    # )
     progress = fields.Float(
         string='Progress',
         readonly=True,
@@ -59,55 +54,3 @@ class BudgetReleaseWizard(models.TransientModel):
         release_result = {}
         release_result.update({budget_line.id: self.amount_to_release})
         budget_line.release_budget_line(release_result)
-
-#
-# class BudgetReleaseLine(models.TransientModel):
-#     _name = "budget.release.line"
-#
-#     wizard_id = fields.Many2one(
-#         'budget.release.wizard',
-#         string='Wizard',
-#         readonly=True,
-#     )
-#     from_period = fields.Integer(
-#         string='From Period',
-#         readonly=True,
-#     )
-#     to_period = fields.Integer(
-#         string='To Period',
-#         readonly=True,
-#     )
-#     from_date = fields.Date(
-#         string='From Date',
-#         readonly=True,
-#     )
-#     to_date = fields.Date(
-#         string='To Date',
-#         readonly=True,
-#     )
-#     planned_amount = fields.Float(
-#         string='Planned Amount',
-#         digits_compute=dp.get_precision('Account'),
-#         readonly=True,
-#     )
-#     released_amount = fields.Float(
-#         string='Released Amount',
-#         digits_compute=dp.get_precision('Account'),
-#         readonly=True,
-#     )
-#     release = fields.Boolean(
-#         string='Release',
-#         default=False,
-#     )
-#     ready = fields.Boolean(
-#         string='Ready to release',
-#       help="Whether budget should be released according to release interval",
-#     )
-#     past = fields.Boolean(
-#         string='Past release',
-#         help="Whether this is past release, and can't be unreleased",
-#     )
-#
-#     @api.onchange('release')
-#     def _onchange_release(self):
-#         self.released_amount = self.release and self.planned_amount or 0.0

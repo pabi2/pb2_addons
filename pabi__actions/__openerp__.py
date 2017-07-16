@@ -36,6 +36,7 @@ To activate, go to Server Actions menu, and add it to model's menu
         "pabi_hr_expense",
         "account_invoice_create_payment",
         "pabi_procurement",
+        "pabi_budget_plan",
     ],
     "data": [
         "data/server_action.xml",
