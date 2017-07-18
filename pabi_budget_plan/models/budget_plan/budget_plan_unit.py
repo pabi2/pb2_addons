@@ -5,11 +5,11 @@ from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
-from openerp.addons.document_status_history.models.document_history import \
-    LogCommon
+# from openerp.addons.document_status_history.models.document_history import \
+#     LogCommon
 
 
-class BudgetPlanUnit(BPCommon, LogCommon, models.Model):
+class BudgetPlanUnit(BPCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherit = ['mail.thread']
     _description = "Unit - Budget Plan"
@@ -155,7 +155,7 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         res = super(BudgetPlanUnitLine, self)._write(vals)
         print self.section_id
         if not self._context.get('MyModelLoopBreaker', False):
-            self.update_related_dimension({'section_id': self.section_id.id})
+            self.update_related_dimension(vals)
         return res
 
 

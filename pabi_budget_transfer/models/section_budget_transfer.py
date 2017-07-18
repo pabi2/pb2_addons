@@ -19,7 +19,7 @@ class SectionBudgetTransfer(models.Model):
         string='Fiscal Year',
         required=True,
         readonly=True,
-        default=lambda self: self.env['account.fiscalyear'].find(),
+        default=lambda self: self.env['account.period'].find().fiscalyear_id,
         help="Fiscalyear will be as of current date only, no backdate allowed"
     )
     currency_id = fields.Many2one(

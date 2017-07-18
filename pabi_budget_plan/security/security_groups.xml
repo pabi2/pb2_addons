@@ -54,7 +54,7 @@
 
         # budget_fiscal_policy_breakdown and budget_fiscal_policy_breakdown_line for Cooperate and OU
         # OU
-        <record id="property_budget_fiscal_policy_breakdown_org" model="ir.rule">
+        <!-- <record id="property_budget_fiscal_policy_breakdown_org" model="ir.rule">
             <field name="name">Budget Org - Budget Policy Breakdown Access</field>
             <field name="model_id" ref="model_budget_fiscal_policy_breakdown"/>
             <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
@@ -65,9 +65,9 @@
             <field name="model_id" ref="model_budget_fiscal_policy_breakdown_line"/>
             <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
-        </record>
+        </record> -->
         # Cooperate
-        <record id="property_budget_fiscal_policy_breakdown_corp" model="ir.rule">
+        <!-- <record id="property_budget_fiscal_policy_breakdown_corp" model="ir.rule">
             <field name="name">Budget Cooperate - Budget Policy Breakdown Access</field>
             <field name="model_id" ref="model_budget_fiscal_policy_breakdown"/>
             <field name="domain_force">[(1 ,'=',1)]</field>
@@ -78,6 +78,6 @@
             <field name="model_id" ref="model_budget_fiscal_policy_breakdown_line"/>
             <field name="domain_force">[(1 ,'=',1)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
-        </record>
+        </record> -->
     </data>
 </openerp>

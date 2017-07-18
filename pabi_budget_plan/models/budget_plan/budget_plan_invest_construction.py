@@ -3,11 +3,11 @@ from openerp import models, fields, api
 from .budget_plan_common import BPCommon, BPLCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
-from openerp.addons.document_status_history.models.document_history import \
-    LogCommon
+# from openerp.addons.document_status_history.models.document_history import \
+#     LogCommon
 
 
-class BudgetPlanInvestConstruction(BPCommon, LogCommon, models.Model):
+class BudgetPlanInvestConstruction(BPCommon, models.Model):
     _name = 'budget.plan.invest.construction'
     _inherit = ['mail.thread']
     _description = "Investment Construction Budget - Budget Plan"
@@ -92,7 +92,7 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         index=True,
         required=True,
     )
-    # --
+    # Extra
     invest_construction_id = fields.Many2one(
         related='invest_construction_phase_id.invest_construction_id',
         store=True,

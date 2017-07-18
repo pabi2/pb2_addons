@@ -25,16 +25,16 @@ class BudgetPolicy(models.Model):
         string='Responsible User',
         copy=False,
         default=lambda self: self.env.user,
-        readonly=False,
-        states={'done': [('readonly', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     revision = fields.Selection(
         lambda self: [(str(x), str(x))for x in range(13)],
         string='Revision',
         required=True,
         help="Revision 0 - 12, 0 is on on the fiscalyear open.",
-        readonly=False,
-        states={'done': [('readonly', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,

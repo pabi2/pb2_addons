@@ -256,7 +256,9 @@ class BudgetBreakdown(models.Model):
                 plan = line.budget_plan_id
                 budget = plan.convert_to_budget_control()
                 line.budget_id = budget
-            line.budget_id.policy_amount = line.policy_amount
+            # New policy, set is set to draft
+            line.budget_id.write({'state': 'draft',
+                                  'policy_amount': line.policy_amount})
         self.write({'state': 'done'})
 
 
@@ -270,6 +272,13 @@ class BudgetBreakdownLine(ChartField, models.Model):
         index=True,
         ondelete='cascade',
     )
+    chart_view = fields.Selection(
+        CHART_VIEW_LIST,
+        related='breakdown_id.chart_view',
+        string='Budget View',
+        store=True,
+        readonly=True,
+    )
     # References
     budget_plan_id = fields.Reference(
         [('budget.plan.unit', 'Budget Plan - Unit Based'), ],
@@ -280,6 +289,14 @@ class BudgetBreakdownLine(ChartField, models.Model):
         'account.budget',
         string='Budget Control',
         readonly=True,
+    )
+    budget_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('done', 'Controlled')],
+        related='budget_id.state',
+        string='Budget Status',
+        store=True,
+        readnly=True,
     )
     # --
     past_consumed = fields.Float(

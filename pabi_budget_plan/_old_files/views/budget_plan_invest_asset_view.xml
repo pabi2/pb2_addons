@@ -8,13 +8,12 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="button_draft" states="cancel" type="object"/>
+                        <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,reject,approve"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -24,27 +23,33 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
+                            <button name="%(action_convert_to_budget_control)d" type="action" string="Convert to Budget Control" invisible="1"/>
+                            <!-- Remove -->
                         </div>
                         <group>
                             <group>
-                              <field name="org_id"/>
-                              <field name="user_id"/>
-                              <field name="planned_overall"/>
+                                <field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
+                                <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                                <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="chart_view" required="1" readonly="1"/>
+                                <field name="planned_overall"/>
                             </group>
                             <group>
                                 <field name="date"/>
-                                <field name="fiscalyear_id"/>
-                                <label for="date_from" string="Duration"/>
+                                <field name="date_submit"/>
+                                <field name="date_approve"/>
+                                <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
                                 <div>
-                                    <field name="date_from" class="oe_inline"/>
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
                                     -
-                                    <field name="date_to" class="oe_inline" nolabel="1"/>
+                                    <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
                             </group>
                         </group>
                         <notebook>
                             <page string="Budget Control">
-                                <field name="plan_line_ids" colspan="4" nolabel="1">
+                                <field name="plan_line_ids" colspan="4" nolabel="1" context="{'org_id': org_id}">
                                     <tree string="Budget Lines" editable="bottom">
 
                                         <field name="org_id"/>
@@ -86,6 +91,7 @@
                     <field name="org_id"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
+                    <field name="creating_user_id"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -111,7 +117,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_budget_plan_invest_asset_tree"/>
             <field name="search_view_id" ref="view_budget_plan_invest_asset_search"/>
-            <field name="context">{}</field>
+            <field name="context">{'default_chart_view': 'invest_asset'}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a new budget preparation.
@@ -133,6 +139,7 @@
 
                         <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
                         <filter name="activity_id" string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
+                        <filter name="cost_control_id" string="Job Order" domain="[]" context="{'group_by':'cost_control_id'}"/>
                     </group>
                 </search>
             </field>
@@ -173,9 +180,21 @@
             <field name="model">budget.plan.invest.asset.line</field>
             <field name="arch" type="xml">
                 <graph string="Budget Plan Lines" type="pivot">
+                    <!-- field name="project_id" type="row"/-->
                     <field name="org_id" type="col"/>
                     <field name="planned_amount" type="measure"/>
                 </graph>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_budget_plan_invest_asset_line_form">
+            <field name="name">budget.plan.invest.asset.line.form</field>
+            <field name="model">budget.plan.invest.asset.line</field>
+            <field name="arch" type="xml">
+                <form string="Budget Lines">
+                    <sheet>
+                        <group col="4"></group>
+                    </sheet>
+                </form>
             </field>
         </record>
 

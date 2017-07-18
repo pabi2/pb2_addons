@@ -140,8 +140,8 @@ class BPCommon(object):
         no_fields = [
             'id', 'state', 'display_name', '__last_update', 'state'
             'write_date', 'create_date', 'create_uid', 'write_uid',
-            'date', 'date_approve', 'date_submit', 'date_from', 'date_to',
-            'template_id', 'validating_user_id', 'creating_user_id',
+            'date', 'date_from', 'date_to',
+            'creating_user_id',
         ]
         trg_fields = [f for f, _x in target_model._fields.iteritems()]
         return list((set(src_fields) & set(trg_fields)) - set(no_fields))

@@ -83,7 +83,7 @@
                     <header>
                         <button string="Activate" name="budget_done" states="draft" type="object" class="oe_highlight"/>
                         <button string="Back to Draft" name="budget_draft" states="done" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet string="Budget">
                         <div class="oe_title">
@@ -161,8 +161,9 @@
             <field name="name">account.budget.view.tree</field>
             <field name="model">account.budget</field>
             <field name="arch" type="xml">
-                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
+                <tree colors="blue:state == 'draft';black:state in ('done')" string="Budget">
                     <field name="name"/>
+                    <field name="fiscalyear_id"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="released_amount" sum="Released Amount"/>

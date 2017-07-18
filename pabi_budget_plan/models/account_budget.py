@@ -7,23 +7,44 @@ class AccountBudget(models.Model):
     _inherit = 'account.budget'
     _order = 'create_date desc'
 
-    prev_planned_amount = fields.Float(
-        string='Planned Amount',
-        readonly=True,
-    )
+    # prev_planned_amount = fields.Float(
+    #     string='Planned Amount',
+    #     readonly=True,
+    # )
     policy_amount = fields.Float(
         string='Policy Amount',
         readonly=False,  # TODO: change back to True
     )
-    ref_breakdown_id = fields.Many2one(
-        'budget.fiscal.policy.breakdown',
-        string="Breakdown Reference",
-        copy=True,
-        readonly=True,
-    )
+    # ref_breakdown_id = fields.Many2one(
+    #     'budget.fiscal.policy.breakdown',
+    #     string="Breakdown Reference",
+    #     copy=True,
+    #     readonly=True,
+    # )
     company_id = fields.Many2one(
         readonly=True,
     )
+
+    @api.multi
+    def _get_doc_number(self):
+        self.ensure_one()
+        _prefix = 'CTRL'
+        _prefix2 = {'unit_base': 'UNIT',
+                    'invest_asset': 'ASSET',
+                    'project_base': 'PROJ',
+                    'invest_construction': 'CONST',
+                    'personnel': 'PERS'}
+        _prefix3 = {'unit_base': 'section_id',
+                    'invest_asset': 'org_id',
+                    'project_base': 'program_id',
+                    'invest_construction': 'org_id',
+                    'personnel': 'personnel_costcenter_id'}
+        prefix2 = _prefix2[self.chart_view]
+        obj = self[_prefix3[self.chart_view]]
+        prefix3 = obj.code or obj.name_short or obj.name
+        name = '%s/%s/%s/%s' % (_prefix, prefix2,
+                                self.fiscalyear_id.code, prefix3)
+        return name
 
     @api.model
     def create(self, vals):
@@ -34,6 +55,9 @@ class AccountBudget(models.Model):
                 'policy_amount' in vals:
             vals['to_release_amount'] = vals['policy_amount']
             budget.write(vals)
+        # Numbering
+        budget.name = budget._get_doc_number()
+        # --
         return budget
 
     @api.multi
@@ -50,27 +74,30 @@ class AccountBudget(models.Model):
         return True
 
     @api.multi
-    @api.constrains('fiscalyear_id', 'section_id')
+    @api.constrains('chart_view', 'fiscalyear_id', 'section_id', 'program_id',
+                    'org_id', 'personnel_costcenter_id')
     def _check_fiscalyear_section_unique(self):
         for budget in self:
-            if budget.chart_view == 'unit_base' and \
-                    budget.fiscalyear_id and budget.section_id:
-                budget = self.search(
-                    [('fiscalyear_id', '=', budget.fiscalyear_id.id),
-                     ('section_id', '=', budget.section_id.id),
-                     ('state', '!=', 'cancel'), ])
-                if len(budget) > 1:
-                    raise ValidationError(
-                        _('You cannot have more than one active Budget '
-                          'Control on the same Section.'))
+            budget = self.search(
+                [('chart_view', '=', budget.chart_view),
+                 ('fiscalyear_id', '=', budget.fiscalyear_id.id),
+                 ('section_id', '=', budget.section_id.id),
+                 ('program_id', '=', budget.program_id.id),
+                 ('org_id', '=', budget.org_id.id),
+                 ('personnel_costcenter_id', '=',
+                  budget.personnel_costcenter_id.id),
+                 ])
+            if len(budget) > 1:
+                raise ValidationError(
+                    _('Duplicated budget on the same fiscal year!'))
 
-    @api.multi
-    def budget_confirm(self):
-        for rec in self:
-            name = self.env['ir.sequence'].next_by_code('budget.control.unit')
-            rec.write({'name': name})
-            # rec.ref_budget_id.budget_cancel()
-        return super(AccountBudget, self).budget_confirm()
+    # @api.multi
+    # def budget_confirm(self):
+    #     for rec in self:
+    #        name = self.env['ir.sequence'].next_by_code('budget.control.unit')
+    #         rec.write({'name': name})
+    #         # rec.ref_budget_id.budget_cancel()
+    #     return super(AccountBudget, self).budget_confirm()
 
     # # New Revision
     # @api.multi
