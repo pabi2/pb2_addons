@@ -7,7 +7,7 @@
             <field name="name">view.budget.breakdown.form</field>
             <field name="model">budget.breakdown</field>
             <field name="arch" type="xml">
-                <form string="Budget Breakdown">
+                <form string="Budget Breakdown" create="0" delete="0">
                     <header>
                         <button name="action_done" states="draft" type="object" string="Set New Budget Policy" class="oe_highlight"
                           confirm="This action will assign the new policy amount to all sections' budget. On the new fiscal year, it will also create new budget control for every sections."/>
@@ -20,7 +20,8 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button string="Generate Breakdown Lines" states="draft" name="generate_breakdown_line" type="object"/>
+                            <button string="Regenerate Breakdown Lines" states="draft" name="generate_breakdown_line" type="object"
+                              groups="pabi_base.group_cooperate_budget"/>
                             <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_budget" states="done">
                                 <field string="Budgets" name="budget_count" widget="statinfo"/>
                             </button>
@@ -29,11 +30,11 @@
                             <group>
                                 <field name="policy_line_id" invisible="1"/>
                                 <field name="org_id"/>
+                                <field name="fiscalyear_id"/>
                                 <field name="revision"/>
                             </group>
                             <group>
                                 <field name="chart_view"/>
-                                <field name="fiscalyear_id"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
                                     <field name="date_from" class="oe_inline"/>
@@ -44,11 +45,11 @@
                         </group>
                         <group string="Policy">
                             <group>
-                                <field name="new_policy_amount"/>
-                            </group>
-                            <group>
                                 <field name="planned_amount"/>
                                 <field name="policy_amount"/>
+                            </group>
+                            <group>
+                                <field name="new_policy_amount"/>
                             </group>
                         </group>
                         <notebook>
@@ -61,7 +62,7 @@
                                         <field name="planned_amount" sum="Planned Amount"/>
                                         <field name="budget_id"/>
                                         <field name="past_consumed"/>
-                                        <field name="future_plan"/>
+                                        <field name="future_plan" invisible="1"/>
                                         <field name="rolling"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
@@ -93,7 +94,7 @@
             <field name="name">view.unit.base.policy.breakdown.tree</field>
             <field name="model">budget.breakdown</field>
             <field name="arch" type="xml">
-                <tree string="Unit Base Budget Policy Breakdown">
+                <tree string="Unit Based" create="0" delete="0">
                     <field name="org_id"/>
                     <field name="chart_view" invisible="0"/>
                     <field name="name"/>

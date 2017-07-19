@@ -2,6 +2,9 @@
 <openerp>
     <data>
 
+        <!-- Core Security that used across PABI Project -->
+
+        # Budgeting
         <record model="ir.module.category" id="module_category_account_budget">
             <field name="name">Budget Management</field>
             <field name="parent_id" ref="base.module_category_accounting_and_finance"/>

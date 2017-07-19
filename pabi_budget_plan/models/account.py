@@ -19,12 +19,14 @@ class AccountFiscalyearBudgetLevel(models.Model):
 
 
 class AccountFiscalyear(models.Model):
-    _inherit = 'account.fiscalyear'
+    _name = 'account.fiscalyear'
+    _inherit = ['account.fiscalyear', 'mail.thread']
 
     budget_allocation_ids = fields.One2many(
         'budget.allocation',
         'fiscalyear_id',
         string='Budget Allocations',
+        track_visibility='onchange',
     )
 
     def init(self, cr):
@@ -38,7 +40,7 @@ class AccountFiscalyear(models.Model):
         for fiscal in self:
             if not fiscal.budget_allocation_ids:
                 lines = [(0, 0, {'revision': str(i)}) for i in range(13)]
-                fiscal.write({'budget_allocation_ids': lines})
+                fiscal.sudo().write({'budget_allocation_ids': lines})
 
     @api.model
     def create(self, vals):

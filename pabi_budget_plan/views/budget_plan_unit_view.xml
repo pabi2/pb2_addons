@@ -2,12 +2,11 @@
 <openerp>
     <data>
 
-
         <record model="ir.ui.view" id="view_budget_plan_unit_summary_tree">
             <field name="name">view.budget.plan.unit.line.tree.inside</field>
             <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
-                <tree editable="bottom" >
+                <tree editable="bottom">
                     <field name="activity_group_id"/>
                     <field name="budget_method"/>
 
@@ -34,29 +33,29 @@
             <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
-                  <field name="budget_method" invisible="1"/>
-                  <field name="section_id"/>
-                  <field name="fund_id"/>
-                  <field name="activity_group_id"/>
-                  <field name="cost_control_id"/>
-                  <field name="unit"/>
-                  <field name="activity_unit_price"/>
-                  <field name="activity_unit"/>
-                  <field name="total_budget"/>
-                  <field name="description"/>
-                  <field name="m1"/>
-                  <field name="m2"/>
-                  <field name="m3"/>
-                  <field name="m4"/>
-                  <field name="m5"/>
-                  <field name="m6"/>
-                  <field name="m7"/>
-                  <field name="m8"/>
-                  <field name="m9"/>
-                  <field name="m10"/>
-                  <field name="m11"/>
-                  <field name="m12"/>
-                  <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="budget_method" invisible="1"/>
+                    <field name="section_id" invisible="1"/>
+                    <field name="fund_id" invisible="1"/>
+                    <field name="activity_group_id"/>
+                    <field name="cost_control_id"/>
+                    <field name="unit"/>
+                    <field name="activity_unit_price"/>
+                    <field name="activity_unit"/>
+                    <field name="total_budget"/>
+                    <field name="description"/>
+                    <field name="m1"/>
+                    <field name="m2"/>
+                    <field name="m3"/>
+                    <field name="m4"/>
+                    <field name="m5"/>
+                    <field name="m6"/>
+                    <field name="m7"/>
+                    <field name="m8"/>
+                    <field name="m9"/>
+                    <field name="m10"/>
+                    <field name="m11"/>
+                    <field name="m12"/>
+                    <field name="planned_amount" sum="Planned Amount"/>
                 </tree>
             </field>
         </record>
@@ -65,15 +64,18 @@
             <field name="name">view.budget.plan.unit.form</field>
             <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
-                <form string="Budget Plan">
+                <form string="Budget Plan" create="0">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
+                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="approve" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="accept" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="submit,approve" type="object"/>
+                        <button string="Reset to Draft" name="action_draft" states="cancel,reject" type="object"/>
                         <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,verify,accept"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -82,8 +84,7 @@
                                 <field name="name"/>
                             </h1>
                         </div>
-                        <div class="oe_right oe_button_box" name="buttons">
-                        </div>
+                        <div class="oe_right oe_button_box" name="buttons"></div>
                         <group>
                             <group>
                                 <field name="section_id"/>
@@ -106,19 +107,19 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Summary">
-                                <separator string="Planned Revenue"/>
-                                <field name="plan_summary_revenue_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
-                                <separator string="Planned Expense"/>
-                                <field name="plan_summary_expense_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
+                            <page string="Expense Plan" name="expense">
+                                <div name="expense_extra"></div>
+                                <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
                             <page string="Revenue Plan" name="revenue">
                                 <div name="revenue_extra"></div>
                                 <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>
-                            <page string="Expense Plan" name="expense">
-                                <div name="expense_extra"></div>
-                                <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
+                            <page string="Summary">
+                                <separator string="Planned Revenue"/>
+                                <field name="plan_summary_revenue_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
+                                <separator string="Planned Expense"/>
+                                <field name="plan_summary_expense_line_ids" colspan="4" nolabel="1" context="{'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_summary_tree'}"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -134,12 +135,15 @@
             <field name="name">view.budget.plan.unit.tree</field>
             <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
-                <tree string="Budget">
-                    <field name="fiscalyear_id"/>
+                <tree string="Budget" create="0" delete="0">
                     <field name="name"/>
-                    <field name="section_id"/>
                     <field name="org_id"/>
                     <field name="division_id"/>
+                    <field name="section_id"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_revenue"/>
+                    <field name="planned_expense"/>
+                    <field name="planned_overall"/>
                     <field name="user_id"/>
                     <field name="state"/>
                 </tree>
@@ -152,10 +156,31 @@
             <field name="arch" type="xml">
                 <search string="Budget">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
-                    <field name="section_id"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
+                    <field name="org_id"/>
+                    <field name="division_id"/>
+                    <field name="section_id"/>
+                    <filter string="My Org Plans" name="my_org_plans" context="{'my_org_plans': True}"/>
+                    <filter string="My Section Plans" name="my_section_plans" context="{'my_section_plans': True}"/>
+                    <filter string="My Division Plans" name="my_division_plans" context="{'my_division_plans': True}"/>
+                    <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','approve')]" string="Approved"/>
+                    <filter domain="[('state','=','verify')]" string="Verified"/>
+                    <filter domain="[('state','=','accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','reject')]" string="Rejected"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Division" context="{'group_by':'division_id'}"/>
+                        <filter string="Section" context="{'group_by':'section_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
                 </search>
             </field>
         </record>
@@ -183,10 +208,29 @@
             <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Line">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
+                    <field name="state"/>
+                    <field name="org_id"/>
+                    <field name="division_id"/>
+                    <field name="section_id"/>
+                    <filter string="My Org Plans" name="my_org_plans" context="{'my_org_plans': True}"/>
+                    <filter string="My Section Plans" name="my_section_plans" context="{'my_section_plans': True}"/>
+                    <filter string="My Division Plans" name="my_division_plans" context="{'my_division_plans': True}"/>
+                    <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','approve')]" string="Approved"/>
+                    <filter domain="[('state','=','verify')]" string="Verified"/>
+                    <filter domain="[('state','=','accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','reject')]" string="Rejected"/>
                     <group expand="0" string="Group By">
-                        <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
-                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
-                        <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Division" context="{'group_by':'division_id'}"/>
+                        <filter string="Section" context="{'group_by':'section_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -196,31 +240,35 @@
             <field name="name">budget.plan.unit.line.tree</field>
             <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
-                <tree string="Budget Plan Lines">
-                  <field name="plan_id"/>
-                  <field name="budget_method"/>
-                  <field name="section_id"/>
-                  <field name="fund_id"/>
-                  <field name="activity_group_id"/>
-                  <field name="cost_control_id"/>
-                  <field name="unit"/>
-                  <field name="activity_unit_price"/>
-                  <field name="activity_unit"/>
-                  <field name="total_budget"/>
-                  <field name="description"/>
-                  <field name="m1"/>
-                  <field name="m2"/>
-                  <field name="m3"/>
-                  <field name="m4"/>
-                  <field name="m5"/>
-                  <field name="m6"/>
-                  <field name="m7"/>
-                  <field name="m8"/>
-                  <field name="m9"/>
-                  <field name="m10"/>
-                  <field name="m11"/>
-                  <field name="m12"/>
-                  <field name="planned_amount" sum="Planned Amount"/>
+                <tree string="Budget Plan Lines" create="0" delete="0" edit="0">
+                    <field name="fiscalyear_id"/>
+                    <field name="plan_id"/>
+                    <field name="budget_method"/>
+                    <field name="org_id"/>
+                    <field name="division_id"/>
+                    <field name="section_id"/>
+                    <field name="fund_id"/>
+                    <field name="activity_group_id"/>
+                    <field name="cost_control_id"/>
+                    <field name="unit"/>
+                    <field name="activity_unit_price"/>
+                    <field name="activity_unit"/>
+                    <field name="total_budget"/>
+                    <field name="description"/>
+                    <field name="m1"/>
+                    <field name="m2"/>
+                    <field name="m3"/>
+                    <field name="m4"/>
+                    <field name="m5"/>
+                    <field name="m6"/>
+                    <field name="m7"/>
+                    <field name="m8"/>
+                    <field name="m9"/>
+                    <field name="m10"/>
+                    <field name="m11"/>
+                    <field name="m12"/>
+                    <field name="planned_amount" sum="Planned Amount"/>
+                    <field name="state" invisible="1"/>
                 </tree>
             </field>
         </record>

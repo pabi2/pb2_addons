@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="action_show_message" model="ir.actions.server">
+            <field name="name">Show Message</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+    </data>
+</openerp>

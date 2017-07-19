@@ -39,10 +39,9 @@
             <field name="arch" type="xml">
                 <form string="Budget Policy">
                     <header>
-                        <button string="Validate" name="action_ready" states="draft,not_ready" type="object" class="oe_highlight" confirm="To proceed, all budget plans of all section in all organization listed below must be accepted."/>
-                        <button string="Create Policy Breakdown" name="action_done" states="ready" type="object" class="oe_highlight" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
-                        <button string="Set to Draft" name="action_draft" states="ready,not_ready" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,ready,done"/>
+                        <button string="Create Budget Breakdown" name="action_done" states="draft" type="object" class="oe_highlight"
+                          confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -52,42 +51,50 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button string="Generate Policy Lines" states="draft" name="generate_policy_line" type="object"/>
+                            <button string="Regenerate Policy Lines" states="draft" name="generate_policy_line" type="object"/>
                             <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_breakdown" states="done">
                                 <field string="Breakdowns" name="breakdown_count" widget="statinfo"/>
                             </button>
                         </div>
                         <group>
                             <group>
-                                <field name="user_id"/>
-                                <field name="revision"/>
+                                <field name="user_id" required="1"/>
+                                <field name="fiscalyear_id" context="{'active_id': active_id}"/>
+                                <field name="revision" invisible="1"/>
+                                <field name="revision_readonly"/>
                             </group>
                             <group>
                                 <field name="chart_view"/>
-                                <field name="fiscalyear_id"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
                                     <field name="date_from" class="oe_inline"/>
                                     -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
+                                <span colspan="2" style="color: red;" attrs="{'invisible': [('message', '=', False)]}">
+                                  <p color="red">
+                                    There are some error occur. Please see detail in Error Message tab.
+                                  </p>
+                                </span>
                             </group>
                         </group>
                         <group string="Policy">
                             <group>
-                                <field name="new_policy_amount"/>
-                            </group>
-                            <group>
                                 <field name="planned_amount"/>
                                 <field name="policy_amount"/>
+                            </group>
+                            <group>
+                                <field name="new_policy_amount"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Unit Base">
                                 <field name="unit_base_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_policy_unit_line_tree_inside'}"/>
                             </page>
+                            <page string="Error Message" attrs="{'invisible': [('message', '=', False)]}">
+                                <field name="message"/>
+                            </page>
                         </notebook>
-                        <field name="message"/>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
@@ -104,13 +111,23 @@
                 <search string="Budget">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Policy"/>
                     <field name="fiscalyear_id"/>
-                    <field name="chart_view"/>
+                    <filter string="Unit Based" name="unit_base" domain="[('chart_view', '=', 'unit_base')]"/>
+                    <filter string="Project Based" name="project_base" domain="[('chart_view', '=', 'project_base')]"/>
+                    <filter string="Personnel Budget" name="personnel" domain="[('chart_view', '=', 'personnel')]"/>
+                    <filter string="Invest Asset" name="invest_asset" domain="[('chart_view', '=', 'invest_asset')]"/>
+                    <filter string="Invest Construction" name="invest_construction" domain="[('chart_view', '=', 'invest_construction')]"/>
+
+
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                    </group>
                 </search>
             </field>
         </record>
 
         <record model="ir.actions.act_window" id="action_budget_policy_unit_view">
-            <field name="name">Unit Based Policy</field>
+            <field name="name">Unit Based</field>
             <field name="res_model">budget.policy</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

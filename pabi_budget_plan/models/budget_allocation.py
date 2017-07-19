@@ -39,7 +39,54 @@ class BudgetAllocation(models.Model):
     amount_invest_construction = fields.Float(
         string='Invest Construction',
     )
+    amount_total = fields.Float(
+        string='Total',
+        compute='_compute_amount_total',
+        store=True,
+    )
     _sql_constraints = [
         ('uniq_revision', 'unique(fiscalyear_id, revision)',
          'Duplicated revision of budget policy is not allowed!'),
     ]
+
+    @api.multi
+    @api.depends('amount_unit_base', 'amount_project_base', 'amount_personnel',
+                 'amount_invest_asset', 'amount_invest_construction')
+    def _compute_amount_total(self):
+        for rec in self:
+            rec.amount_total = sum([rec.amount_unit_base,
+                                    rec.amount_project_base,
+                                    rec.amount_personnel,
+                                    rec.amount_invest_asset,
+                                    rec.amount_invest_construction])
+
+    @api.model
+    def _change_amount_content(self, fiscal, alloc, alloc_vals):
+        track_fields = ['amount_unit_base', 'amount_project_base',
+                        'amount_personnel', 'amount_invest_asset',
+                        'amount_invest_construction']
+        if not alloc_vals or set(alloc_vals.keys()).isdisjoint(track_fields):
+            return False
+        field_labels = dict([(name, field.string)
+                             for name, field in alloc._fields.iteritems()])
+        title = _('Allocation change(s) for %s revision %s') % (fiscal.name,
+                                                                alloc.revision)
+        message = '<h3>%s</h3><ul>' % title
+        for field in track_fields:
+            if alloc_vals.get(field, False):
+                message += _(
+                    '<li><b>%s</b>: %s → %s</li>'
+                ) % (field_labels[field],
+                     '{:,.2f}'.format(alloc[field]),
+                     '{:,.2f}'.format(alloc_vals[field]), )
+        message += '</ul>'
+        return message
+
+    @api.multi
+    def write(self, vals):
+        for alloc in self:
+            message = self._change_amount_content(alloc.fiscalyear_id,
+                                                  alloc, vals)
+            if message:
+                alloc.fiscalyear_id.message_post(body=message)
+        return super(BudgetAllocation, self).write(vals)

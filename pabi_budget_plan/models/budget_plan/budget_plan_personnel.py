@@ -110,10 +110,18 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
         readonly=True,
     )
 
+    # Required for updating dimension
+    @api.model
+    def create(self, vals):
+        res = super(BudgetPlanPersonnelLine, self).create(vals)
+        if not self._context.get('MyModelLoopBreaker', False):
+            res.update_related_dimension(vals)
+        return res
+
     @api.multi
-    def _write(self, vals):  # Use _write, as it triggered on related field
-        res = super(BudgetPlanPersonnelLine, self)._write(vals)
-        print self.section_id
+    def write(self, vals):
+        res = super(BudgetPlanPersonnelLine, self).write(vals)
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
         return res
+    # ---------

@@ -23,6 +23,7 @@ class BudgetBreakdown(models.Model):
         'budget.policy.line',
         string='Budget Policy Line',
         required=True,
+        track_visibility='onchange',
     )
     policy_id = fields.Many2one(
         'budget.policy',
@@ -84,6 +85,7 @@ class BudgetBreakdown(models.Model):
         copy=False,
         default=lambda self: fields.Date.context_today(self),
         readonly=True,
+        track_visibility='onchange',
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -163,10 +165,25 @@ class BudgetBreakdown(models.Model):
                                     prefix3, self.revision)
         return name
 
+    @api.multi
+    def unlink(self):
+        if 'done' in self.mapped('state'):
+            raise ValidationError(
+                _('You can not delete breakdown whose status is "Done"!'))
+        return super(BudgetBreakdown, self).unlink()
+
     @api.model
     def create(self, vals):
         res = super(BudgetBreakdown, self).create(vals)
         res.name = res._get_doc_number()
+        return res
+
+    @api.multi
+    def write(self, vals):
+        res = super(BudgetBreakdown, self).write(vals)
+        for rec in self:
+            if rec.name != rec._get_doc_number():
+                rec._write({'name': rec._get_doc_number()})
         return res
 
     @api.multi
@@ -284,11 +301,13 @@ class BudgetBreakdownLine(ChartField, models.Model):
         [('budget.plan.unit', 'Budget Plan - Unit Based'), ],
         string='Budget Plan',
         readonly=True,
+        ondelete='set null',
     )
     budget_id = fields.Many2one(
         'account.budget',
         string='Budget Control',
         readonly=True,
+        ondelete='set null'
     )
     budget_state = fields.Selection(
         [('draft', 'Draft'),
@@ -339,3 +358,32 @@ class BudgetBreakdownLine(ChartField, models.Model):
         for line in self:
             line.planned_amount = line.budget_plan_id.planned_expense or 0.0
             line.latest_policy_amount = line.budget_id.policy_amount or 0.0
+
+    @api.model
+    def _change_amount_content(self, breakdown, new_amount):
+        BREAKDOWN_LEVEL = {'unit_base': 'section_id',  # only 2 types
+                           'invest_asset': 'org_id', }
+        title = _('Policy amount change(s)')
+        message = '<h3>%s</h3><ul>' % title
+        for rec in self:
+            print rec
+            obj = rec[BREAKDOWN_LEVEL[breakdown.chart_view]]
+            message += _(
+                '<li><b>%s</b>: %s → %s</li>'
+            ) % (obj.code or obj.name_short or obj.name,
+                 '{:,.2f}'.format(rec.policy_amount),
+                 '{:,.2f}'.format(new_amount), )
+            message += '</ul>'
+        return message
+
+    @api.multi
+    def write(self, vals):
+        # Grouping by Policy
+        if 'policy_amount' in vals:
+            for breakdown in self.mapped('breakdown_id'):
+                lines = self.filtered(lambda l: l.breakdown_id == breakdown)
+                new_amount = vals.get('policy_amount')
+                message = lines._change_amount_content(breakdown, new_amount)
+            if message:
+                breakdown.message_post(body=message)
+        return super(BudgetBreakdownLine, self).write(vals)

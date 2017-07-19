@@ -208,10 +208,12 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         string='FY0 Balance',
     )
 
+    # Required for updating dimension
     @api.model
     def create(self, vals):
         res = super(BudgetPlanInvestConstructionLine, self).create(vals)
-        res.update_related_dimension(vals)
+        if not self._context.get('MyModelLoopBreaker', False):
+            res.update_related_dimension(vals)
         return res
 
     @api.multi
@@ -220,3 +222,4 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
         return res
+    # ---------

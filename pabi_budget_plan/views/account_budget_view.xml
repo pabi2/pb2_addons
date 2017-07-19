@@ -22,10 +22,10 @@
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath> -->
                 <xpath expr="//button[@name='budget_done']" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_user</attribute>
                 </xpath>
                 <xpath expr="//button[@name='budget_draft']" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
+                    <attribute name="groups">pabi_base.group_budget_user</attribute>
                 </xpath>
                 <!-- <xpath expr="//button[@name='budget_cancel']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>

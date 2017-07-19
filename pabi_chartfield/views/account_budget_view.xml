@@ -101,7 +101,7 @@
                                       'default_fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                 </xpath>
-                <xpath expr="//page[1]" position="before">
+                <xpath expr="/form/sheet/notebook/page[last()]" position="after">
                     <page string="Summary">
                         <separator string="Budgeted Expense"/>
                         <field name="budget_summary_expense_line_ids"

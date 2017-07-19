@@ -27,24 +27,29 @@ class BudgetPolicy(models.Model):
         default=lambda self: self.env.user,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     revision = fields.Selection(
         lambda self: [(str(x), str(x))for x in range(13)],
         string='Revision',
         required=True,
         help="Revision 0 - 12, 0 is on on the fiscalyear open.",
+        track_visibility='onchange',
+    )
+    revision_readonly = fields.Selection(
+        lambda self: [(str(x), str(x))for x in range(13)],
+        related='revision',
+        string='Revision',
         readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,
         string='Budget View',
         readonly=True,
+        track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('ready', 'Ready'),
-         ('not_ready', 'Not Ready'),
          ('done', 'Done'),
          ],
         string='Status',
@@ -57,6 +62,7 @@ class BudgetPolicy(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     date_from = fields.Date(
         string='Start Date',
@@ -77,9 +83,11 @@ class BudgetPolicy(models.Model):
     # New Policy
     new_policy_amount = fields.Float(
         string='New Policy Overall',
+        required=True,
         readonly=False,
         states={'done': [('readonly', True)]},
-        help="Policy amount allocated overall. When done, "
+        help="Policy amount allocated overall. When done, ",
+        track_visibility='onchange',
     )
     # PLAN
     planned_amount = fields.Float(
@@ -123,6 +131,45 @@ class BudgetPolicy(models.Model):
          'Duplicated revision of budget policy is not allowed!'),
     ]
 
+    @api.model
+    def _get_revision(self, fiscalyear_id, chart_view):
+        existing_policies = self.search(
+            [('chart_view', '=', chart_view),
+             ('fiscalyear_id', '=', fiscalyear_id),
+             ('id', '!=', self._context.get('active_id', False))],
+            order='revision desc')
+        revision = False
+        if existing_policies:
+            current_rev = int(existing_policies[0].revision)
+            if current_rev == 12:
+                raise ValidationError(_('You have reached max revision!'))
+            else:
+                revision = str(int(existing_policies[0].revision) + 1)
+        else:
+            revision = '0'
+        return revision
+
+    @api.model
+    def _set_new_policy_amount(self, fiscalyear_id, chart_view, revision):
+        _fields = {'unit_base': 'amount_unit_base',
+                   'project_base': 'amount_project_base',
+                   'personnel': 'amount_personnel',
+                   'invest_asset': 'amount_invest_asset',
+                   'invest_construction': 'amount_invest_construction'}
+        alloc = self.env['budget.allocation'].search(
+            [('fiscalyear_id', '=', self.fiscalyear_id.id),
+             ('revision', '=', self.revision)])
+        return alloc[_fields[chart_view]]
+
+    @api.onchange('fiscalyear_id')
+    def _onchange_fiscalyear_id(self):
+        revision = self._get_revision(self.fiscalyear_id.id, self.chart_view)
+        self.revision = revision
+        new_policy_amount = self._set_new_policy_amount(self.fiscalyear_id.id,
+                                                        self.chart_view,
+                                                        self.revision)
+        self.new_policy_amount = new_policy_amount
+
     @api.multi
     @api.depends()
     def _compute_breakdown_count(self):
@@ -158,7 +205,23 @@ class BudgetPolicy(models.Model):
     def create(self, vals):
         res = super(BudgetPolicy, self).create(vals)
         res.name = res._get_doc_number()
+        res.generate_policy_line()
         return res
+
+    @api.multi
+    def write(self, vals):
+        res = super(BudgetPolicy, self).write(vals)
+        for rec in self:
+            if rec.name != rec._get_doc_number():
+                rec._write({'name': rec._get_doc_number()})
+        return res
+
+    @api.multi
+    def unlink(self):
+        if 'done' in self.mapped('state'):
+            raise ValidationError(
+                _('You can not delete policy whose status is "Done"!'))
+        return super(BudgetPolicy, self).unlink()
 
     @api.model
     def default_get(self, fields):
@@ -170,13 +233,6 @@ class BudgetPolicy(models.Model):
                 order='date_start')
             if fiscals:
                 res['fiscalyear_id'] = fiscals[0].id
-        chart_view = res.get('chart_view', False)
-        if chart_view:
-            revs = self.search([
-                ('fiscalyear_id', '=', res['fiscalyear_id']),
-                ('chart_view', '=', chart_view)]).mapped('revision')
-            next_rev = revs and str(int(max(revs)) + 1) or '0'
-            res['revision'] = next_rev
         return res
 
     @api.multi
@@ -217,10 +273,37 @@ class BudgetPolicy(models.Model):
                             'planned_amount': planned_expense, }
                     lines.append((0, 0, vals))
                 policy.write({'unit_base_line_ids': lines})
+
             # Other structure...
+        self.message_post(body=_('Regenerate Policy Lines, all amount reset!'))
 
     @api.multi
-    def _validate_budget_plan_unit(self):
+    def action_draft(self):
+        self.write({'state': 'draft'})
+
+    @api.multi
+    def action_done(self):
+        for policy in self:
+            policy._validate_policy_amount()
+            if policy.chart_view == 'unit_base':
+                valid = policy._validate_policy_unit_base()
+                if not valid:
+                    continue
+                policy._create_breakdown_unit_base()
+                policy.write({'state': 'done'})
+            else:
+                raise ValidationError(
+                    _('This action is not valid for this budget structure!'))
+
+    @api.multi
+    def _validate_policy_amount(self):
+        self.ensure_one()
+        if float_compare(self.new_policy_amount,
+                         self.policy_amount, 2) != 0:
+            raise ValidationError(_('Overall policy amount mismatch!'))
+
+    @api.multi
+    def _validate_policy_unit_base(self):
         """ Check relelated budget plan
         - Each org, the budget plan of all its section must be accepted
         """
@@ -251,47 +334,16 @@ class BudgetPolicy(models.Model):
             else:
                 msg.append("Ready...")
         res['message'] = '\n'.join(msg)
-        return res
+
+        if res['valid']:
+            self.write({'message': False})
+            return True
+        else:
+            self.write({'message': res['message']})
+            return False
 
     @api.multi
-    def action_draft(self):
-        self.write({'state': 'draft'})
-
-    @api.multi
-    def action_ready(self):
-        for rec in self:
-            if not rec.line_ids:
-                raise ValidationError(
-                    _('Before you proceed, please click button to '
-                      '"Generate Policy Lines".'))
-            result = {'valid': False, 'message': False}
-            if rec.chart_view == 'unit_base':
-                result = rec._validate_budget_plan_unit()
-            else:
-                raise ValidationError(
-                    _('Cannot validate this budget structure'))
-            if result['valid']:
-                rec.write({'state': 'ready',
-                           'message': False})
-            else:
-                rec.write({'state': 'not_ready',
-                           'message': result['message']})
-
-    @api.multi
-    def action_done(self):
-        for policy in self:
-            if float_compare(policy.new_policy_amount,
-                             policy.policy_amount, 2) != 0:
-                raise ValidationError(_('Overall policy amount mismatch!'))
-            if policy.chart_view == 'unit_base':
-                policy.create_unit_base_policy_breakdown()
-            else:
-                raise ValidationError(
-                    _('This action is not valid for this budget structure!'))
-        self.write({'state': 'done'})
-
-    @api.multi
-    def create_unit_base_policy_breakdown(self):
+    def _create_breakdown_unit_base(self):
         self.ensure_one()
         Breakdown = self.env['budget.breakdown']
         # For each policy line, create a breakdown
@@ -351,3 +403,35 @@ class BudgetPolicyLine(ChartField, models.Model):
                  line.policy_id.revision)
             res.append((line.id, name))
         return res
+
+    @api.model
+    def _change_amount_content(self, policy, new_amount):
+        POLICY_LEVEL = {'unit_base': 'org_id',
+                        'invest_asset': 'org_id',
+                        'project_base': 'program_id',
+                        'invest_construction': 'org_id',
+                        'personnel': 'personnel_costcenter_id'}
+        title = _('Policy amount change(s)')
+        message = '<h3>%s</h3><ul>' % title
+        for rec in self:
+            print rec
+            obj = rec[POLICY_LEVEL[policy.chart_view]]
+            message += _(
+                '<li><b>%s</b>: %s → %s</li>'
+            ) % (obj.code or obj.name_short or obj.name,
+                 '{:,.2f}'.format(rec.policy_amount),
+                 '{:,.2f}'.format(new_amount), )
+            message += '</ul>'
+        return message
+
+    @api.multi
+    def write(self, vals):
+        # Grouping by Policy
+        if 'policy_amount' in vals:
+            for policy in self.mapped('policy_id'):
+                lines = self.filtered(lambda l: l.policy_id == policy)
+                new_amount = vals.get('policy_amount')
+                message = lines._change_amount_content(policy, new_amount)
+            if message:
+                policy.message_post(body=message)
+        return super(BudgetPolicyLine, self).write(vals)

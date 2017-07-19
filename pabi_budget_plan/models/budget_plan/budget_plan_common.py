@@ -2,26 +2,44 @@
 from openerp import fields, api
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
+# This is the most detailed stats for any budget plan structure.
+# We make it common, but not necessary to use all of them
+_STATE = [('draft', 'Draft'),
+          ('submit', 'Submitted'),  # draft
+          ('approve', 'Approved'),  # submit
+          ('cancel', 'Cancelled'),  # draft,submit
+          ('reject', 'Rejected'),   # submit,approve
+          ('verify', 'Verified'),   # approve
+          ('accept', 'Accepted'),   # verify
+          # Accepted by Cooperate
+          ]
 
-class BPCommon(object):
+
+class Common(object):
+
+    @api.model
+    def search_args(self, args):
+        section = self.env.user.partner_id.employee_id.section_id
+        if self._context.get('my_org_plans', False):
+            args += [('org_id', '=', section.org_id.id)]
+        if self._context.get('my_section_plans', False):
+            args += [('section_id', '=', section.id)]
+        if self._context.get('my_division_plans', False):
+            args += [('division_id', '=', section.division_id.id)]
+        if self._context.get('this_year_plans', False):
+            current_fiscalyear = \
+                self.env['account.period'].find().fiscalyear_id
+            args += [('fiscalyear_id', '=', current_fiscalyear.id)]
+        return args
+
+
+class BPCommon(Common):
 
     """ Budget Plan Header, no Chartfield here """
-
-    # This is the most detailed stats for any budget plan structure.
-    # We make it common, but not necessary to use all of them
-    _STATE = [('draft', 'Draft'),
-              ('submit', 'Submitted'),  # draft
-              ('approve', 'Approved'),  # submit
-              ('cancel', 'Cancelled'),  # draft,submit
-              ('reject', 'Rejected'),   # submit,approve
-              ('verify', 'Verified'),   # approve
-              ('accept', 'Accepted'),   # verify
-              # Accepted by Cooperate
-              ]
-
     name = fields.Char(
         string='Number',
         required=True,
+        readonly=True,
         default="/",
         copy=False,
     )
@@ -34,11 +52,13 @@ class BPCommon(object):
         string='Date',
         copy=False,
         default=lambda self: fields.Date.context_today(self),
+        readonly=True,
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
+        readonly=True,
         default=lambda self: self.env['account.period'].find().fiscalyear_id,
     )
     date_from = fields.Date(
@@ -177,7 +197,7 @@ class BPCommon(object):
         return self.env['account.budget'].create(budget)
 
 
-class BPLCommon(ChartField):
+class BPLCommon(ChartField, Common):
 
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
@@ -196,6 +216,12 @@ class BPLCommon(ChartField):
     )
     name = fields.Char(
         string='Description',
+    )
+    state = fields.Selection(
+        _STATE,
+        string='Status',
+        related='plan_id.state',
+        store=True,
     )
     description = fields.Text(
         string="Description",
