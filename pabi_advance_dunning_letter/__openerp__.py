@@ -20,13 +20,13 @@ Expense Related Reports
         'pabi_hr_expense',
     ],
     'data': [
+        'security/ir.model.access.csv',
+        'data/dunning_sequence.xml',
+        'data/report_data.xml',
         # 'edi/email_templates_-1_days.xml',
         'edi/email_templates_0_days.xml',
         'edi/email_templates_5_days.xml',
         'edi/email_templates_10_days.xml',
-        'security/ir.model.access.csv',
-        'data/dunning_sequence.xml',
-        'data/report_data.xml',
         'views/pabi_dunning_letter_view.xml',
     ],
     'demo': [
