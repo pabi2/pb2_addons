@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+
+        <menuitem name="Budget Transfer" id="menu_budget_transfer" parent="account_budget_activity.menu_budgeting" sequence="105" groups="pabi_base.group_budget_user"/>
+
         <record model="ir.ui.view" id="view_section_budget_transfer_form">
             <field name="name">view.section.budget.transfer.form</field>
             <field name="model">section.budget.transfer</field>
@@ -26,7 +29,8 @@
                                 <field name="fiscalyear_id"/>
                             </group>
                             <group>
-                                <field name="currency_id" invisible="1"/>
+                                <field name="org_id"/>
+                                <field name="division_id"/>
                             </group>
                             <group/>
                         </group>
@@ -44,18 +48,26 @@
                         </group>
                         <notebook>
                             <page string="Section Transfer Lines">
-                                <field name="transfer_line_ids">
+                                <field name="transfer_line_ids" context="{'display_as_section': True}">
                                     <tree string="Section Transfer Lines" editable="top">
-                                        <field name="from_section_id"/>
-                                        <field name="from_org_id"/>
+                                        <field
+                                            name="from_budget_id"
+                                            context="{'display_as_section': True}"
+                                            domain="[('state', '=', 'draft'), ('chart_view', '=', 'unit_base'), ('section_id.org_id', '=', parent.org_id), ('fiscalyear_id', '=', parent.fiscalyear_id)]"
+                                            options="{'no_open': True}"/>
+                                        <field name="from_budget"/>
                                         <field name="amount_transfer" sum="Total Amount"/>
-                                        <field name="to_section_id"/>
-                                        <field name="to_org_id"/>
+                                        <field
+                                            name="to_budget_id"
+                                            context="{'display_as_section': True}"
+                                            domain="[('state', '=', 'draft'), ('chart_view', '=', 'unit_base'), ('section_id.org_id', '=', parent.org_id), ('fiscalyear_id', '=', parent.fiscalyear_id)]"
+                                            options="{'no_open': True}"/>
+                                        <field name="to_budget"/>
                                         <field name="notes"/>
                                     </tree>
                                 </field>
                                 <group class="oe_subtotal_footer oe_right">
-                                    <field name="total_transfer_amt" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
+                                    <field name="total_transfer_amt" class="oe_subtotal_footer_separator"/>
                                 </group>
                                 <div class="oe_clear">
                                     <label for="notes"/>
@@ -79,6 +91,8 @@
                 <tree string="Section Budget Transfer">
                     <field name="name"/>
                     <field name="fiscalyear_id"/>
+                    <field name="org_id"/>
+                    <field name="division_id"/>
                     <field name="date_prepare"/>
                     <field name="date_approve"/>
                     <field name="date_transfer"/>
@@ -118,6 +132,6 @@
             </field>
         </record>
 
-        <menuitem parent="account_budget_activity.menu_action_account_budget_control" id="menu_section_budget_transfer" action="action_section_budget_transfer" sequence="20"/>
+        <menuitem parent="menu_budget_transfer" id="menu_section_budget_transfer" action="action_section_budget_transfer" sequence="20"/>
     </data>
 </openerp>

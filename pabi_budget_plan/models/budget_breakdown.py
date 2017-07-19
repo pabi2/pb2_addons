@@ -366,7 +366,6 @@ class BudgetBreakdownLine(ChartField, models.Model):
         title = _('Policy amount change(s)')
         message = '<h3>%s</h3><ul>' % title
         for rec in self:
-            print rec
             obj = rec[BREAKDOWN_LEVEL[breakdown.chart_view]]
             message += _(
                 '<li><b>%s</b>: %s → %s</li>'

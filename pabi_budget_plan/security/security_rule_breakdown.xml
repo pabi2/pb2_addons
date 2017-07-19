@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <!-- OU see plans in same OU -->
+        <!-- OU see breakdown in same OU -->
         <record id="property_rule_breakdown_budget_org" model="ir.rule">
               <field name="name">Budget Org Manager - Breakdown Access</field>
             <field name="model_id" ref="model_budget_breakdown"/>
@@ -9,7 +9,7 @@
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
         </record>
 
-        <!-- Cooperate see all plans -->
+        <!-- Cooperate see all breakdown -->
         <record id="property_rule_breakdown_budget_cooperate" model="ir.rule">
               <field name="name">Budget Cooperate - Breakdown Access</field>
             <field name="model_id" ref="model_budget_breakdown"/>

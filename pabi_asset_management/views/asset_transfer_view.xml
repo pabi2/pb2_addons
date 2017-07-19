@@ -87,7 +87,7 @@
                         </group>
                         <notebook>
                             <page string="Source Assets">
-                                <p>Select asset(s) with profile type "AIT" or "AUC" to transfer...</p>
+                                <p class="oe_grey">Select asset(s) with profile type "AIT" or "AUC" to transfer...</p>
                                 <field
                                     name="asset_ids"
                                     context="{'tree_view_ref': 'pabi_asset_management.view_account_asset_tree_transfer',

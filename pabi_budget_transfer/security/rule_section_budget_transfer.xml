@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Manager / User see plan in same division -->
+        <record id="rule_section_transfer_budget_user" model="ir.rule">
+            <field name="name">Budget User - Section Transfer Access</field>
+            <field name="model_id" ref="model_section_budget_transfer"/>
+            <field name="domain_force">[('division_id','=',user.partner_id.employee_id.section_id.division_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
+        <!-- OU see in same OU -->
+        <record id="rule_section_transfer_budget_org" model="ir.rule">
+            <field name="name">Budget Org Manager - Section Transfer Access</field>
+            <field name="model_id" ref="model_section_budget_transfer"/>
+            <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+        </record>
+
+        <!-- Cooperate see all plans -->
+        <record id="property_rule_breakdown_budget_cooperate" model="ir.rule">
+            <field name="name">Budget Cooperate - Section Transfer Access</field>
+            <field name="model_id" ref="model_section_budget_transfer"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+    </data>
+</openerp>

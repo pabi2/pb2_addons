@@ -136,11 +136,11 @@
             <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
                 <tree string="Budget" create="0" delete="0">
+                    <field name="fiscalyear_id"/>
                     <field name="name"/>
                     <field name="org_id"/>
                     <field name="division_id"/>
                     <field name="section_id"/>
-                    <field name="fiscalyear_id"/>
                     <field name="planned_revenue"/>
                     <field name="planned_expense"/>
                     <field name="planned_overall"/>

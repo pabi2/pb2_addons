@@ -2,52 +2,43 @@
 <openerp>
     <data>
 
-        <menuitem name="Budgeting" groups="pabi_base.group_budget_user"  id="account_budget_activity.menu_budgeting" sequence="51"/>
+        <menuitem name="Budgeting" groups="pabi_base.group_budget_user" id="account_budget_activity.menu_budgeting" sequence="51"/>
 
-        <record id="account_budget_view_form" model="ir.ui.view" >
+        <record id="account_budget_view_form" model="ir.ui.view">
             <field name="name">account.budget.view.form</field>
             <field name="model">account.budget</field>
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/group//field[@name='company_id']" position="after">
-                	<!-- <field name="prev_planned_amount" /> -->
-                	<field name="policy_amount" />
-                	<!-- <field name="ref_budget_id"/> -->
-                	<!-- <field name="ref_breakdown_id"/> -->
+                <xpath expr="/form/sheet//field[@name='name']" position="attributes">
+                    <attribute name="readonly">True</attribute>
                 </xpath>
-                <!-- <xpath expr="//button[@name='budget_confirm']" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
-                </xpath> -->
-                <!-- <xpath expr="//button[@name='budget_validate']" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
-                </xpath> -->
+                <xpath expr="/form/sheet/group//button[@name='%(account_budget_activity.action_change_release_amount)d']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group//field[@name='budget_release']" position="after">
+                    <field name="policy_amount"/>
+                </xpath>
                 <xpath expr="//button[@name='budget_done']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_user</attribute>
                 </xpath>
                 <xpath expr="//button[@name='budget_draft']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_user</attribute>
                 </xpath>
-                <!-- <xpath expr="//button[@name='budget_cancel']" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
-                </xpath> -->
-                <!-- <xpath expr="//button[@name='new_minor_revision']" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
-                </xpath> -->
             </field>
         </record>
 
-        <!-- <record id="account_budget_view_tree" model="ir.ui.view" >
+        <record id="account_budget_view_tree" model="ir.ui.view" >
             <field name="name">account.budget.view.tree</field>
             <field name="model">account.budget</field>
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//button" position="attributes">
-                    <attribute name="groups">pabi_base.group_budget_manager</attribute>
+                <xpath expr="/tree/field[@name='released_amount']" position="before">
+                    <field name="policy_amount"/>
                 </xpath>
             </field>
-        </record> -->
+        </record>
 
-        <record id="view_account_budget_line_tree" model="ir.ui.view" >
+        <record id="view_account_budget_line_tree" model="ir.ui.view">
             <field name="name">account.budget.line.tree</field>
             <field name="model">account.budget.line</field>
             <field name="inherit_id" ref="account_budget_activity.view_account_budget_line_tree"/>
@@ -58,7 +49,7 @@
             </field>
         </record>
 
-        <record id="unit_base_tree_view" model="ir.ui.view" >
+        <record id="unit_base_tree_view" model="ir.ui.view">
             <field name="name">unit.base.tree.view</field>
             <field name="model">account.budget.line</field>
             <field name="inherit_id" ref="pabi_chartfield.unit_base_tree_view"/>

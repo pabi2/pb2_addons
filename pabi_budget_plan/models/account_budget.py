@@ -13,7 +13,7 @@ class AccountBudget(models.Model):
     # )
     policy_amount = fields.Float(
         string='Policy Amount',
-        readonly=False,  # TODO: change back to True
+        readonly=True,
     )
     # ref_breakdown_id = fields.Many2one(
     #     'budget.fiscal.policy.breakdown',
@@ -21,9 +21,6 @@ class AccountBudget(models.Model):
     #     copy=True,
     #     readonly=True,
     # )
-    company_id = fields.Many2one(
-        readonly=True,
-    )
 
     @api.multi
     def _get_doc_number(self):
@@ -71,6 +68,10 @@ class AccountBudget(models.Model):
                 super(AccountBudget, budget).write(vals)
         else:
             super(AccountBudget, self).write(vals)
+        # Name
+        for rec in self:
+            if rec.name != rec._get_doc_number():
+                rec._write({'name': rec._get_doc_number()})
         return True
 
     @api.multi

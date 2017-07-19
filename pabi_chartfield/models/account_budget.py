@@ -205,6 +205,29 @@ class AccountBudget(ChartField, models.Model):
             res['arch'] = etree.tostring(doc)
         return res
 
+    @api.model
+    def search_args(self, args):
+        section = self.env.user.partner_id.employee_id.section_id
+        if self._context.get('my_org_budgets', False):
+            args += [('org_id', '=', section.org_id.id)]
+        if self._context.get('my_section_budgets', False):
+            args += [('section_id', '=', section.id)]
+        if self._context.get('my_division_budgets', False):
+            args += [('division_id', '=', section.division_id.id)]
+        if self._context.get('this_year_budgets', False):
+            current_fiscalyear = \
+                self.env['account.period'].find().fiscalyear_id
+            args += [('fiscalyear_id', '=', current_fiscalyear.id)]
+        return args
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        """ Add additional filter criteria """
+        return super(AccountBudget, self).search(self.search_args(args),
+                                                 offset=offset,
+                                                 limit=limit, order=order,
+                                                 count=count)
+
 
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
