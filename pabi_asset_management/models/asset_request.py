@@ -32,6 +32,13 @@ class AccountAssetRequest(models.Model):
         copy=False,
         readonly=True,
     )
+    org_id = fields.Many2one(
+        'res.org',
+        related='user_id.partner_id.employee_id.org_id',
+        string='Org',
+        store=True,
+        readonly=True,
+    )
     approve_user_id = fields.Many2one(
         'res.users',
         string='Approver',

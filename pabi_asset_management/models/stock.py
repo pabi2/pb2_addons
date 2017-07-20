@@ -56,6 +56,13 @@ class StockPicking(models.Model):
             'domain': [('id', 'in', moves.ids)],
         }
 
+    @api.multi
+    def action_confirm_and_transfer(self):
+        self.ensure_one()
+        self = self.with_context(skip_work_acceptance=True)
+        self.action_confirm()
+        return self.do_enter_transfer_details()
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -64,3 +71,13 @@ class StockMove(models.Model):
         string='Asset Value (each)',
         help="Case direct receive, need to spcifiy asset value",
     )
+    asset_value_total = fields.Float(
+        string='Total Value',
+        compute='_compute_asset_value_total',
+    )
+
+    @api.multi
+    @api.depends('asset_value', 'product_uom_qty')
+    def _compute_asset_value_total(self):
+        for rec in self:
+            rec.asset_value_total = rec.product_uom_qty * rec.asset_value

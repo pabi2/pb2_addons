@@ -32,6 +32,13 @@ class AccountAssetChangeowner(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    org_id = fields.Many2one(
+        'res.org',
+        related='user_id.partner_id.employee_id.org_id',
+        string='Org',
+        store=True,
+        readonly=True,
+    )
     note = fields.Text(
         string='Note',
         copy=False,
