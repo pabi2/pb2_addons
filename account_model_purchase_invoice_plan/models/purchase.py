@@ -24,7 +24,7 @@ class PurchaseOrder(models.Model):
             purchase.is_fin_lease = False
             fin_leases = purchase.order_line.\
                 mapped('product_id').mapped('is_fin_lease')
-            if len(fin_leases) > 1:
+            if len(set(fin_leases)) > 1:
                 raise ValidationError(
                     _('Mixing financial lease in products is not allowed!'))
             purchase.is_fin_lease = fin_leases and fin_leases[0] or False
