@@ -111,17 +111,4 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
 
     # Required for updating dimension
-    @api.model
-    def create(self, vals):
-        res = super(BudgetPlanPersonnelLine, self).create(vals)
-        if not self._context.get('MyModelLoopBreaker', False):
-            res.update_related_dimension(vals)
-        return res
-
-    @api.multi
-    def write(self, vals):
-        res = super(BudgetPlanPersonnelLine, self).write(vals)
-        if not self._context.get('MyModelLoopBreaker', False):
-            self.update_related_dimension(vals)
-        return res
-    # ---------
+    # FIND ONLY WHAT IS NEED AND USE related field.

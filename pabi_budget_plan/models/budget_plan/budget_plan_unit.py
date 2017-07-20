@@ -74,7 +74,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         'res.section',
         string='Section',
         required=True,
-        readonly=True,
+        # readonly=True,
     )
     org_id = fields.Many2one(
         'res.org',
@@ -160,6 +160,16 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    division_id = fields.Many2one(
+        related='plan_id.division_id',
+        store=True,
+        readonly=True,
+    )
+    org_id = fields.Many2one(
+        related='plan_id.org_id',
+        store=True,
+        readonly=True,
+    )
     unit = fields.Float(
         string='Unit',
     )
@@ -172,22 +182,6 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     total_budget = fields.Float(
         string='Total Budget',
     )
-
-    # Required for updating dimension
-    @api.model
-    def create(self, vals):
-        res = super(BudgetPlanUnitLine, self).create(vals)
-        if not self._context.get('MyModelLoopBreaker', False):
-            res.update_related_dimension(vals)
-        return res
-
-    @api.multi
-    def write(self, vals):
-        res = super(BudgetPlanUnitLine, self).write(vals)
-        if not self._context.get('MyModelLoopBreaker', False):
-            self.update_related_dimension(vals)
-        return res
-    # ---------
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):

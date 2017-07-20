@@ -58,7 +58,7 @@ class BPCommon(Common):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-        readonly=True,
+        # readonly=True,
         default=lambda self: self.env['account.period'].find().fiscalyear_id,
     )
     date_from = fields.Date(
