@@ -130,7 +130,7 @@
     </record>
     <record id="stock_operating_unit.ir_rule_stock_picking_type_allowed_operating_units"
             model="ir.rule">
-        <field name="domain_force">['|', '|', (user.access_all_operating_unit, '=', True), ('warehouse_id.operating_unit_id','=',False),('warehouse_id.operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
+        <field name="domain_force">['|', '|', '|', ('warehouse_id', '=', False), (user.access_all_operating_unit, '=', True), ('warehouse_id.operating_unit_id','=',False),('warehouse_id.operating_unit_id','in',[g.id for g in user.operating_unit_ids])]</field>
     </record>
     <record id="stock_operating_unit.ir_rule_stock_location_allowed_operating_units"
             model="ir.rule">
