@@ -181,7 +181,7 @@ class AccountAssetChangeownerLine(models.Model):
     )
     location_id = fields.Many2one(
         'account.asset.location',
-        string='Location',
+        string='Building',
     )
     room = fields.Char(
         string='Room',
