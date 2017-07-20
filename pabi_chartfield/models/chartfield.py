@@ -644,6 +644,12 @@ class ChartField(object):
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
             self.with_context(MyModelLoopBreaker=True).write(res)
+            # Fund, assign defult if none
+            if not vals.get('fund_id', False):
+                for rec in self:
+                    if not rec.fund_id:
+                        rec.with_context(MyModelLoopBreaker=True).\
+                            write({'fund_id': rec._get_default_fund()})
 
 
 class ChartFieldAction(ChartField):

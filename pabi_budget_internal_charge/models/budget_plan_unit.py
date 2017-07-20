@@ -53,8 +53,8 @@ class BudgetPlanUnit(models.Model):
             rec.planned_expense_internal = expense_internal
 
 
-class BudgetPlanUnitCostControlLine(models.Model):
-    _inherit = 'budget.plan.unit.cost.control.line'
+class BudgetPlanUnitLine(models.Model):
+    _inherit = "budget.plan.unit.line"
 
     charge_type = fields.Selection(
         [('internal', 'Internal'),
@@ -65,3 +65,15 @@ class BudgetPlanUnitCostControlLine(models.Model):
         help="Specify whether the budget plan line is for Internal Charge or "
         "External Charge. Internal charged is for Unit Based only."
     )
+# class BudgetPlanUnitCostControlLine(models.Model):
+#     _inherit = 'budget.plan.unit.cost.control.line'
+#
+#     charge_type = fields.Selection(
+#         [('internal', 'Internal'),
+#          ('external', 'External')],
+#         string='Charge Type',
+#         required=True,
+#         default='external',
+#       help="Specify whether the budget plan line is for Internal Charge or "
+#         "External Charge. Internal charged is for Unit Based only."
+#     )

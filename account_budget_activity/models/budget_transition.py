@@ -5,7 +5,7 @@ from openerp.exceptions import ValidationError
 
 class BudgetTransition(models.Model):
     _name = 'budget.transition'
-    _description = 'Keep tranck of budget transition from one model to another'
+    _description = 'Keep track of budget transition from one model to another'
 
     expense_line_id = fields.Many2one(
         'hr.expense.line',

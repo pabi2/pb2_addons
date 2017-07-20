@@ -1,0 +1,164 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Budget Breakdown -->
+        <record model="ir.ui.view" id="view_budget_breakdown_form">
+            <field name="name">view.budget.breakdown.form</field>
+            <field name="model">budget.breakdown</field>
+            <field name="arch" type="xml">
+                <form string="Budget Breakdown" create="0" delete="0">
+                    <header>
+                        <button name="action_done" states="draft" type="object" string="Set New Budget Policy" class="oe_highlight"
+                          confirm="This action will assign the new policy amount to all sections' budget. On the new fiscal year, it will also create new budget control for every sections."/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button string="Regenerate Breakdown Lines" states="draft" name="generate_breakdown_line" type="object"
+                              groups="pabi_base.group_cooperate_budget"/>
+                            <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_budget" states="done">
+                                <field string="Budgets" name="budget_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="policy_line_id" invisible="1"/>
+                                <field name="org_id"/>
+                                <field name="fiscalyear_id"/>
+                                <field name="revision"/>
+                            </group>
+                            <group>
+                                <field name="chart_view"/>
+                                <label for="date_from" string="Duration"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline"/>
+                                    -
+                                    <field name="date_to" class="oe_inline" nolabel="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Policy">
+                            <group>
+                                <field name="planned_amount"/>
+                                <field name="policy_amount"/>
+                            </group>
+                            <group>
+                                <field name="new_policy_amount"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Section Policy Amount">
+                                <field name="unit_base_line_ids" colspan="4" nolabel="1" >
+                                    <tree editable="bottom" create="0" delete="0" string="Budget"
+                                      colors="blue:budget_state=='draft';black:budget_state=='done'" >
+                                        <field name="section_id" readonly="1"/>
+                                        <field name="budget_plan_id"/>
+                                        <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="budget_id"/>
+                                        <field name="past_consumed"/>
+                                        <field name="future_plan" invisible="1"/>
+                                        <field name="rolling"/>
+                                        <field name="latest_policy_amount" sum="Latest Policy Amount"/>
+                                        <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="budget_state" invisible="1"/>
+                                    </tree>
+                                </field>
+                                <!-- <field name="invest_asset_ids" colspan="4" nolabel="1"
+                                          attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
+                                          <tree editable="bottom" create="0" delete="0">
+                                              <field name="budget_plan_invest_asset_id" />
+                                              <field name="chart_view" />
+                                              <field name="org_id" />
+                                              <field name="planned_amount" sum="Planned Amount" />
+                                              <field name="policy_amount" sum="Policy Amount" />
+                                          </tree>
+                                      </field> -->
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_unit_base_breakdown_tree">
+            <field name="name">view.unit.base.policy.breakdown.tree</field>
+            <field name="model">budget.breakdown</field>
+            <field name="arch" type="xml">
+                <tree string="Unit Based" create="0" delete="0">
+                    <field name="org_id"/>
+                    <field name="chart_view" invisible="0"/>
+                    <field name="name"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="revision"/>
+                    <field name="new_policy_amount"/>
+                    <field name="planned_amount"/>
+                    <field name="policy_amount"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- <record model="ir.ui.view" id="view_invest_asset_breakdown_tree">
+            <field name="name">view.invest.asset.policy.breakdown.tree</field>
+            <field name="model">budget.breakdown</field>
+            <field name="arch" type="xml">
+                <tree string="Invest Asset Budget Policy Breakdown">
+                    <field name="chart_view" invisible="0"/>
+                    <field name="name"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="planned_overall"/>
+                    <field name="policy_overall"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record> -->
+
+        <record id="view_budget_breakdown_search" model="ir.ui.view">
+            <field name="name">view.budget.breakdown_search</field>
+            <field name="model">budget.breakdown</field>
+            <field name="arch" type="xml">
+                <search string="Budget Breakdown">
+                    <field name="name" filter_domain="[('name','ilike',self)]"
+                      string="Budget Breakdown"/>
+                    <field name="state"/>
+                    <field name="org_id"/>
+                    <field name="chart_view"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Budget View" context="{'group_by':'chart_view'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_unit_base_breakdown_view">
+            <field name="name">Unit Based</field>
+            <field name="res_model">budget.breakdown</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_unit_base_breakdown_tree"/>
+            <field name="search_view_id" ref="view_budget_breakdown_search"/>
+            <field name="domain">[('chart_view', '=', 'unit_base')]</field>
+            <field name="context">{'default_chart_view': 'unit_base'}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new budget breakdown.
+                </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_breakdown" id="menu_unit_base_breakdown_view" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget" action="action_unit_base_breakdown_view" sequence="10"/>
+
+    </data>
+</openerp>

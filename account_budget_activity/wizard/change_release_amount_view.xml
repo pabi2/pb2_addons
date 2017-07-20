@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_change_release_amount" model="ir.ui.view">
+            <field name="name">Change Release Amount</field>
+            <field name="model">change.release.amount</field>
+            <field name="arch" type="xml">
+                <form string="Change Release Amount">
+                    <group>
+                        <group>
+                            <field name="to_release_amount"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="change_amount" string="Apply" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_change_release_amount" model="ir.actions.act_window">
+            <field name="name">Change Release Amount</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">change.release.amount</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_change_release_amount"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

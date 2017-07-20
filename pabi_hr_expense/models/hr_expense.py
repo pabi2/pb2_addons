@@ -333,27 +333,6 @@ class HRExpenseAttendeeExternal(models.Model):
     )
 
 
-class HRExpenseClearing(models.Model):
-    _inherit = 'hr.expense.clearing'
-
-    validate_user_id = fields.Many2one(
-        'res.users',
-        string='Validated by',
-    )
-
-    def _sql_select_1(self):
-        sql_select = super(HRExpenseClearing, self)._sql_select_1()
-        return sql_select + ', null as validate_user_id'
-
-    def _sql_select_2(self):
-        sql_select = super(HRExpenseClearing, self)._sql_select_2()
-        return sql_select + ', validate_user_id'
-
-    def _sql_select_3(self):
-        sql_select = super(HRExpenseClearing, self)._sql_select_3()
-        return sql_select + ', ai.validate_user_id'
-
-
 class HRExpenseRule(models.Model):
     _name = "hr.expense.rule"
 
@@ -379,8 +358,9 @@ class HRExpenseRule(models.Model):
         default=0.0,
         required=True,
     )
-    _sql_constraints = [
-        ('rule_unique',
-         'unique(activity_id, position, condition_1, condition_2, uom)',
-         'Expense Regulation must be unique!'),
-    ]
+    # _sql_constraints = [
+    # THIS CONSTRAINT TAKING TOO MUCH CPU TIME ON INSTALL, DO NOT USE
+    #     ('rule_unique',
+    #      'unique(activity_id, position, condition_1, condition_2, uom)',
+    #      'Expense Regulation must be unique!'),
+    # ]

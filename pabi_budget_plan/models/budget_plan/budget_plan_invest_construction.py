@@ -3,11 +3,11 @@ from openerp import models, fields, api
 from .budget_plan_common import BPCommon, BPLCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
-from openerp.addons.document_status_history.models.document_history import \
-    LogCommon
+# from openerp.addons.document_status_history.models.document_history import \
+#     LogCommon
 
 
-class BudgetPlanInvestConstruction(BPCommon, LogCommon, models.Model):
+class BudgetPlanInvestConstruction(BPCommon, models.Model):
     _name = 'budget.plan.invest.construction'
     _inherit = ['mail.thread']
     _description = "Investment Construction Budget - Budget Plan"
@@ -36,18 +36,11 @@ class BudgetPlanInvestConstruction(BPCommon, LogCommon, models.Model):
         domain=[('budget_method', '=', 'expense')],  # Have domain
         track_visibility='onchange',
     )
-    # --
+    # Select Dimension - ORG
     org_id = fields.Many2one(
         'res.org',
         string='Org',
         required=True,
-    )
-    plan_line_ids = fields.One2many(
-        'budget.plan.invest.construction.line',
-        'plan_id',
-        string='Budget Plan Lines',
-        copy=True,
-        track_visibility='onchange',
     )
     info_line_ids = fields.One2many(
         'budget.plan.invest.construction.line',
@@ -70,6 +63,17 @@ class BudgetPlanInvestConstruction(BPCommon, LogCommon, models.Model):
         copy=True,
         track_visibility='onchange',
     )
+    _sql_constraints = [
+        ('uniq_plan', 'unique(org_id, fiscalyear_id)',
+         'Duplicated budget plan for the same org is not allowed!'),
+    ]
+
+    @api.model
+    def create(self, vals):
+        name = self._get_doc_number(vals['fiscalyear_id'],
+                                    'res.org', vals['org_id'])
+        vals.update({'name': name})
+        return super(BudgetPlanInvestConstruction, self).create(vals)
 
 
 class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
@@ -88,7 +92,7 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         index=True,
         required=True,
     )
-    # --
+    # Extra
     invest_construction_id = fields.Many2one(
         related='invest_construction_phase_id.invest_construction_id',
         store=True,
@@ -204,10 +208,12 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         string='FY0 Balance',
     )
 
+    # Required for updating dimension
     @api.model
     def create(self, vals):
         res = super(BudgetPlanInvestConstructionLine, self).create(vals)
-        res.update_related_dimension(vals)
+        if not self._context.get('MyModelLoopBreaker', False):
+            res.update_related_dimension(vals)
         return res
 
     @api.multi
@@ -216,3 +222,4 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
         return res
+    # ---------

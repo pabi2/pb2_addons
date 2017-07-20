@@ -38,7 +38,7 @@ class PurchaseBilling(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
     )
     date = fields.Date(
         string='Billing Date',

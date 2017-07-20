@@ -2,6 +2,12 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
+_TRANSFER_STATE = [('draft', 'Draft'),
+                   ('confirm', 'Confirmed'),
+                   ('approve', 'Approved'),
+                   ('cancel', 'Cancelled'),
+                   ('transfer', 'Transferred')]
+
 
 class SectionBudgetTransfer(models.Model):
     _name = 'section.budget.transfer'
@@ -18,9 +24,25 @@ class SectionBudgetTransfer(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-        readonly=True,
-        default=lambda self: self.env['account.fiscalyear'].find(),
+        readonly=False,
+        default=lambda self: self.env['account.period'].find().fiscalyear_id,
         help="Fiscalyear will be as of current date only, no backdate allowed"
+    )
+    division_id = fields.Many2one(
+        'res.division',
+        string='Division',
+        required=True,
+        readonly=True,
+        default=lambda self:
+        self.env.user.partner_id.employee_id.section_id.division_id,
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        required=True,
+        readonly=True,
+        default=lambda self:
+        self.env.user.partner_id.employee_id.section_id.org_id,
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -45,7 +67,7 @@ class SectionBudgetTransfer(models.Model):
     preparer_user_id = fields.Many2one(
         'res.users',
         string='Preparer',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -60,11 +82,7 @@ class SectionBudgetTransfer(models.Model):
         readonly=True,
     )
     state = fields.Selection(
-        [('draft', 'Draft'),
-         ('confirm', 'Confirmed'),
-         ('approve', 'Approved'),
-         ('cancel', 'Cancelled'),
-         ('transfer', 'Transferred')],
+        _TRANSFER_STATE,
         string='Status',
         default='draft',
         index=True,
@@ -86,6 +104,44 @@ class SectionBudgetTransfer(models.Model):
         string="Transferred Amount",
         compute="_compute_total_transfer_amt",
     )
+
+    @api.multi
+    @api.constrains('fiscalyear_id', 'org_id', 'transfer_line_ids')
+    def _check_transfer_line(self):
+        """ Check that, all budget selected must be
+        * chart_view = 'unit_base'
+        * Same fiscal as the header
+        * Belong to the same Org
+        * Must be in state draft
+        """
+        for trans in self:
+            for l in trans.transfer_line_ids:
+                # State
+                if l.from_budget_id.state != 'draft' or \
+                        l.to_budget_id.state != 'draft':
+                    raise ValidationError(_('Please verify that all budgets '
+                                            'are in draft state!'))
+                # Unit based
+                if l.from_budget_id.chart_view != 'unit_base' or \
+                        l.to_budget_id.chart_view != 'unit_base':
+                    raise ValidationError(
+                        _('Please verify that all budgets are unit based'))
+                # Fiscal year
+                if l.from_budget_id.fiscalyear_id != trans.fiscalyear_id or \
+                        l.to_budget_id.fiscalyear_id != trans.fiscalyear_id:
+                    raise ValidationError(
+                        _('Please verify that all budgets are on fiscal '
+                          'year %s') % (trans.fiscalyear_id.name))
+                # Org
+                if l.from_budget_id.org_id != trans.org_id or \
+                        l.to_budget_id.org_id != trans.org_id:
+                    raise ValidationError(
+                        _('Please verify that all budgets belong to Org %s') %
+                        (trans.org_id.name_shart))
+                # Not same budget
+                if l.from_budget_id == l.to_budget_id:
+                    raise ValidationError(_('Please verify that soure and '
+                                            'target budget are not same!'))
 
     @api.depends('transfer_line_ids',
                  'transfer_line_ids.amount_transfer',
@@ -112,9 +168,9 @@ class SectionBudgetTransfer(models.Model):
     def button_confirm(self):
         fiscalyear_id = self.env['account.fiscalyear'].find()
         for record in self:
-            if not record.transfer_line_ids:
+            if sum(record.transfer_line_ids.mapped('amount_transfer')) == 0.0:
                 raise ValidationError(
-                    _('You can not confirm without transfer lines!'))
+                    _('You can not confirm without transfer line amount!'))
             name = self.env['ir.sequence'].\
                 with_context(fiscalyear_id=fiscalyear_id).\
                 next_by_code('section.budget.transfer')
@@ -157,76 +213,60 @@ class SectionBudgetTransferLine(models.Model):
         ondelete='cascade',
         index=True,
     )
-    from_section_id = fields.Many2one(
-        'res.section',
-        string='From Section',
-        required=True,
-    )
-    from_org_id = fields.Many2one(
-        'res.org',
-        string='From Org',
-        related='from_section_id.org_id',
+    state = fields.Selection(
+        _TRANSFER_STATE,
+        string='Status',
+        related='transfer_id.state',
         readonly=True,
+        store=True,
     )
     from_budget_id = fields.Many2one(
         'account.budget',
+        string='From Section',
+        required=True,
+        domain=[('chart_view', '=', 'unit_base')],
+    )
+    from_budget = fields.Char(
         string='From Budget',
+        related='from_budget_id.name',
         readonly=True,
     )
     amount_transfer = fields.Float(
         string='Transfer Amount',
         required=True,
     )
-    to_section_id = fields.Many2one(
-        'res.section',
-        string='To Section',
-        required=True,
-    )
-    to_org_id = fields.Many2one(
-        'res.org',
-        string='To Org',
-        related='to_section_id.org_id',
-    )
     to_budget_id = fields.Many2one(
         'account.budget',
+        string='To Section',
+        required=True,
+        domain=[('chart_view', '=', 'unit_base')],
+    )
+    to_budget = fields.Char(
         string='To Budget',
+        related='to_budget_id.name',
         readonly=True,
     )
     notes = fields.Text(
         string="Notes/Reason",
     )
 
-    @api.model
-    def _get_section_budget(self, fiscalyear, section):
-        AccountBudget = self.env['account.budget']
-        budget = AccountBudget.search([
-            ('active', '=', True),
-            ('fiscalyear_id', '=', fiscalyear.id),
-            ('section_id', '=', section.id),
-            ('state', 'not in', ('draft', 'cancel'))])
-        if not budget:
-            raise ValidationError(
-                _("No active budget control for section %s") %
-                (section.name_get()[0][1], ))
-        if len(budget) == 1:
-            return budget
-        else:
-            raise ValidationError(
-                _("Strange!, there are > 1 active budget control "
-                  "for section %s") % (section.name_get(), ))
-
     @api.multi
     def action_transfer(self):
         for line in self:
-            fiscalyear = line.transfer_id.fiscalyear_id
-            from_budget = self._get_section_budget(fiscalyear,
-                                                   line.from_section_id)
-            to_budget = self._get_section_budget(fiscalyear,
-                                                 line.to_section_id)
+            from_budget = line.from_budget_id
             from_budget.to_release_amount -= line.amount_transfer
             from_budget._validate_plan_vs_release()
+            to_budget = line.to_budget_id
             to_budget.to_release_amount += line.amount_transfer
             to_budget._validate_plan_vs_release()
-            line.write({'from_budget_id': from_budget.id,
-                        'to_budget_id': to_budget.id, })
         return True
+
+    @api.onchange('from_budget_id')
+    def _onchange_from_budget_id(self):
+        self.amount_transfer = self.from_budget_id.release_diff_rolling
+
+    @api.onchange('amount_transfer')
+    def _onchange_amount_transfer(self):
+        if self.amount_transfer > self.from_budget_id.release_diff_rolling:
+            raise ValidationError(
+                _('Your amount is bigger than available amount to transfer!'))

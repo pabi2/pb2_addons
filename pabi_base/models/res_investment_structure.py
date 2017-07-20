@@ -85,7 +85,7 @@ class ResInvestConstruction(ResCommon, models.Model):
     )
 
 
-class ResInvestConstructionPhase(models.Model):
+class ResInvestConstructionPhase(ResCommon, models.Model):
     _name = 'res.invest.construction.phase'
     _description = 'Investment Construction Phase'
     _order = 'sequence, id'

@@ -1,19 +1,104 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-    
+
         <menuitem name="Budget Plan" id="menu_action_budget_plan" groups="pabi_base.group_budget_user" parent="account_budget_activity.menu_budgeting" sequence="10"/>
-    		<menuitem name="Unit Based" id="menu_action_budget_plan_unit" parent="menu_action_budget_plan" sequence="10"/>
-    		<menuitem name="Project Based" id="menu_action_budget_plan_project" parent="menu_action_budget_plan" sequence="20"/>
-    		<menuitem name="Personnel" id="menu_action_budget_plan_personnel" parent="menu_action_budget_plan" sequence="30"/>
-    		<menuitem name="Investment Asset" id="menu_action_budget_plan_invest_asset" parent="menu_action_budget_plan" sequence="40"/>
-    		<menuitem name="Investment Construction" id="menu_action_budget_plan_invest_construction" parent="menu_action_budget_plan" sequence="50"/>
+        <menuitem name="Unit Based" id="menu_action_budget_plan_unit" parent="menu_action_budget_plan" sequence="10"/>
+        <menuitem name="Project Based" id="menu_action_budget_plan_project" parent="menu_action_budget_plan" sequence="20"/>
+        <menuitem name="Personnel" id="menu_action_budget_plan_personnel" parent="menu_action_budget_plan" sequence="30"/>
+        <menuitem name="Investment Asset" id="menu_action_budget_plan_invest_asset" parent="menu_action_budget_plan" sequence="40"/>
+        <menuitem name="Investment Construction" id="menu_action_budget_plan_invest_construction" parent="menu_action_budget_plan" sequence="50"/>
 
-             <menuitem name="Budget Policy" id="menu_action_budget_policy" parent="account_budget_activity.menu_budgeting" sequence="12"/>
+        <menuitem name="Budget Policy" id="menu_action_budget_policy" parent="account_budget_activity.menu_budgeting" sequence="12"/>
 
-            <menuitem name="Configuration" groups="base.group_system" id="account_budget_activity.menu_action_account_budget_config" parent="account_budget_activity.menu_budgeting" sequence="120"/>
+        <menuitem name="Budget Breakdown" id="menu_action_budget_breakdown" parent="account_budget_activity.menu_budgeting" sequence="13"/>
+
+        <menuitem name="Configuration" groups="base.group_system" id="account_budget_activity.menu_action_account_budget_config" parent="account_budget_activity.menu_budgeting" sequence="120"/>
+
+
+        # Temp Menu # TOBE DELETED
+        <record id="action_policy_project" model="ir.actions.server">
+            <field name="name">Project Based</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem action="action_policy_project"  id="menu_policy_project" sequence="20" parent="menu_action_budget_policy" groups="pabi_base.group_cooperate_budget" />
+
+        <record id="action_policy_personnel" model="ir.actions.server">
+            <field name="name">Personnel</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem action="action_policy_personnel"  id="menu_policy_personne" sequence="30" parent="menu_action_budget_policy" groups="pabi_base.group_cooperate_budget" />
+
+        <record id="action_policy_invest_asset" model="ir.actions.server">
+            <field name="name">Investment Asset</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem action="action_policy_invest_asset"  id="menu_policy_invest_asset" sequence="40" parent="menu_action_budget_policy" groups="pabi_base.group_cooperate_budget" />
+
+        <record id="action_policy_invest_construction" model="ir.actions.server">
+            <field name="name">Investment Construction</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem action="action_policy_invest_construction"  id="menu_policy_invest_construction" sequence="50" parent="menu_action_budget_policy" groups="pabi_base.group_cooperate_budget" />
+
+
+        <record id="action_breakdown_project" model="ir.actions.server">
+            <field name="name">Project Based</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem  action="action_breakdown_project" sequence="20" id="menu_breakdown_project" parent="menu_action_budget_breakdown" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+
+        <record id="action_breakdown_personnel" model="ir.actions.server">
+            <field name="name">Personnel</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem  action="action_breakdown_personnel" sequence="30" id="menu_breakdown_personnel" parent="menu_action_budget_breakdown" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+
+        <record id="action_breakdown_invest_asset" model="ir.actions.server">
+            <field name="name">Investment Asset</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem  action="action_breakdown_invest_asset" sequence="40" id="menu_breakdown_invest_asset" parent="menu_action_budget_breakdown" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+
+        <record id="action_breakdown_invest_construction" model="ir.actions.server">
+            <field name="name">Investment Construction</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="state">code</field>
+            <field name="code">self.show_message(cr, uid, [], context=context)</field>
+        </record>
+        <menuitem  action="action_breakdown_invest_construction" sequence="50" id="menu_breakdown_invest_construction" parent="menu_action_budget_breakdown" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+
+        # TOBE DELETED
 
     </data>
 </openerp>
-
-

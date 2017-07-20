@@ -284,3 +284,17 @@ class AccountBudget(models.Model):
             ext_res_id = val[1]
             ext_field = sel_fields[1]
         return (res_id, ext_field, ext_res_id, filtered_lines)
+
+    @api.multi
+    def _get_past_consumed_domain(self):
+        self.ensure_one()
+        dom = super(AccountBudget, self)._get_past_consumed_domain()
+        budget_type_dict = {
+            'unit_base': 'section_id',
+            'project_base': 'project_id',
+            'personnel': 'personnel_costcenter_id',
+            'invest_asset': 'investment_asset_id',
+            'invest_construction': 'invest_construction_phase_id'}
+        dimension = budget_type_dict[self.chart_view]
+        dom.append((dimension, '=', self[dimension].id))
+        return dom

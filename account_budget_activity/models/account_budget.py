@@ -10,14 +10,15 @@ import logging
 _logger = logging.getLogger(__name__)
 
 BUDGET_STATE = [('draft', 'Draft'),
-                ('cancel', 'Cancelled'),
-                ('confirm', 'Confirmed'),
-                ('validate', 'Validated'),
-                ('done', 'Done')]
+                # ('cancel', 'Cancelled'),
+                # ('confirm', 'Confirmed'),
+                # ('validate', 'Validated'),
+                ('done', 'Controlled')]
 
 
 class AccountBudget(models.Model):
     _name = "account.budget"
+    _inherit = ['mail.thread']
     _description = "Budget"
 
     BUDGET_LEVEL = {
@@ -40,24 +41,20 @@ class AccountBudget(models.Model):
         default="/",
         states={'done': [('readonly', True)]},
     )
-    ref_budget_id = fields.Many2one(
-        'account.budget',
-        string="Previous Budget",
-        copy=False,
-        readonly=True,
-    )
     create_date = fields.Datetime(
         readonly=True,
     )
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
-    validating_user_id = fields.Many2one(
-        'res.users',
-        string='Validating User',
-    )
+    # validating_user_id = fields.Many2one(
+    #     'res.users',
+    #     string='Validating User',
+    # )
     date_from = fields.Date(
         string='Start Date',
         compute='_compute_date',
@@ -77,7 +74,8 @@ class AccountBudget(models.Model):
         index=True,
         required=True,
         readonly=True,
-        # copy=False,
+        copy=False,
+        track_visibility='onchange',
     )
     budget_line_ids = fields.One2many(
         'account.budget.line',
@@ -102,40 +100,31 @@ class AccountBudget(models.Model):
         domain=[('budget_method', '=', 'expense')],
         # copy=True,
     )
-    company_id = fields.Many2one(
-        'res.company',
-        string='Company',
-        required=True,
-        default=lambda self: self.env.user.company_id,
-    )
-    version = fields.Float(
-        string='Revision',
-        readonly=True,
-        default=0.0,
-        digits=(2, 1),
-        help="Indicate revision of the same budget plan. "
-        "Only latest one is used",
-    )
-    active = fields.Boolean(
-        string='Current',
-        readonly=True,
-        default=True,
-        # compute='_compute_latest_version',  TODO: determine version
-        help="Indicate latest revision of the same plan.",
-    )
+    # version = fields.Float(
+    #     string='Revision',
+    #     readonly=True,
+    #     default=0.0,
+    #     digits=(2, 1),
+    #     help="Indicate revision of the same budget plan. "
+    #     "Only latest one is used",
+    # )
+    # active = fields.Boolean(
+    #     string='Current',
+    #     readonly=True,
+    #     default=True,
+    #     # compute='_compute_latest_version',  TODO: determine version
+    #     help="Indicate latest revision of the same plan.",
+    # )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-    )
-    currency_id = fields.Many2one(
-        'res.currency',
-        string="Currency",
-        default=lambda self: self.env.user.company_id.currency_id,
         readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     to_release_amount = fields.Float(
         string='Released Amount',
+        readonly=True,
     )
     released_amount = fields.Float(
         string='Released Amount',
@@ -173,7 +162,7 @@ class AccountBudget(models.Model):
         compute='_compute_budget_level',
         store=True,
     )
-    past_actual = fields.Float(
+    past_consumed = fields.Float(
         string='Past Actual',
         compute='_compute_past_future_rolling',
         help="Commitment + Actual for the past months",
@@ -188,17 +177,14 @@ class AccountBudget(models.Model):
         compute='_compute_past_future_rolling',
         help="Past Actual + Future Plan",
     )
-    prev_revision_ids = fields.One2many(
-        'account.budget',
-        'ref_budget_id',
-        string='Previous Reivisions',
-        domain=['|', ('active', '=', True), ('active', '=', False)],
-        readonly=True,
-        copy=False,
+    release_diff_rolling = fields.Float(
+        string='Release - Rolling',
+        compute='_compute_release_diff_rolling',
+        help="Release amount - rolling amount",
     )
 
     @api.multi
-    def _get_past_actual_domain(self):
+    def _get_past_consumed_domain(self):
         self.ensure_one()
         Period = self.env['account.period']
         current_period = Period.find()
@@ -223,23 +209,33 @@ class AccountBudget(models.Model):
         Consume = self.env['budget.consume.report']
         for budget in self:
             # Past
-            dom = budget._get_past_actual_domain()
-            budget.past_actual = sum(Consume.search(dom).mapped('amount'))
+            dom = budget._get_past_consumed_domain()
+            budget.past_consumed = sum(Consume.search(dom).mapped('amount'))
             # Future
             budget.future_plan = budget._get_future_plan_amount()
             # Rolling
-            budget.rolling = budget.past_actual + budget.future_plan
+            budget.rolling = budget.past_consumed + budget.future_plan
+
+    @api.multi
+    @api.depends()
+    def _compute_release_diff_rolling(self):
+        for budget in self:
+            amount_diff = budget.released_amount - budget.rolling
+            budget.release_diff_rolling = amount_diff
 
     @api.multi
     def write(self, vals):
         res = super(AccountBudget, self).write(vals)
         for budget in self:
             if budget.budget_level_id.budget_release == 'manual_header':
-                if budget.budget_expense_line_ids:
-                    budget.budget_expense_line_ids.write(
-                        {'released_amount': 0.0})
-                    budget.budget_expense_line_ids[0].write(
-                        {'released_amount': budget.to_release_amount})
+                if not budget.budget_expense_line_ids:
+                    raise ValidationError(
+                        _('Budget %s has no expense line!\n'
+                          'This operation can not proceed.') % (budget.name,))
+                budget.budget_expense_line_ids.write(
+                    {'released_amount': 0.0})
+                budget.budget_expense_line_ids[0].write(
+                    {'released_amount': budget.to_release_amount})
         return res
 
     @api.multi
@@ -301,14 +297,13 @@ class AccountBudget(models.Model):
                     _('Required budgeting level is %s') %
                     (LEVEL_DICT[budget_level]))
 
-    @api.multi
-    def budget_validate(self):
-        self._validate_budget_level()
-        self.write({
-            'state': 'validate',
-            'validating_user_id': self._uid,
-        })
-        return True
+    # @api.multi
+    # def budget_validate(self):
+    #     self._validate_budget_level()
+    #     self.write({
+    #         'state': 'validate',
+    #         'validating_user_id': self._uid,
+    #     })
 
     @api.multi
     def _validate_plan_vs_release(self):
@@ -316,63 +311,33 @@ class AccountBudget(models.Model):
             if budget.budget_level_id.check_plan_with_released_amount:
                 if budget.rolling > budget.released_amount:
                     raise ValidationError(
-                        _('Rolling plan (%s) will exceed released amount (%s) '
-                          'on budget control - %s') %
-                        (budget.rolling,
-                         budget.released_amount,
-                         budget.name_get()[0][1]))
+                        _('%s: rolling plan (%s) will exceed '
+                          'released amount (%s) after this operation!') %
+                        (budget.name_get()[0][1],
+                         '{:,.2f}'.format(budget.rolling),
+                         '{:,.2f}'.format(budget.released_amount),
+                         ))
         return True
 
-    @api.multi
-    def budget_confirm(self):
-        self._validate_budget_level()
-        self._validate_plan_vs_release()
-        self.write({'state': 'confirm'})
-        return True
+    # @api.multi
+    # def budget_confirm(self):
+    #     self._validate_budget_level()
+    #     self._validate_plan_vs_release()
+    #     self.write({'state': 'confirm'})
 
     @api.multi
     def budget_draft(self):
         self.write({'state': 'draft'})
-        return True
 
-    @api.multi
-    def budget_cancel(self):
-        self.write({'state': 'cancel'})
-        return True
+    # @api.multi
+    # def budget_cancel(self):
+    #     self.write({'state': 'cancel'})
 
     @api.multi
     def budget_done(self):
+        self._validate_budget_level()
+        self._validate_plan_vs_release()
         self.write({'state': 'done'})
-        return True
-
-    # New Revision
-    @api.multi
-    def new_minor_revision(self):
-        self.ensure_one()
-        new_budget = self
-        # Existing one will be the new one
-        new_version = new_budget.version + 0.1
-        if round(new_version % 1, 2) == 0.0:
-            raise ValidationError(_('You reach minor revision limit!'))
-        prev_budget = new_budget.copy({'active': False})
-        prev_budget.write({
-            'ref_budget_id': new_budget.id,
-            'to_release_amount': new_budget.to_release_amount,
-            'state': new_budget.state,
-            'active': False,
-        })
-        new_budget.version = new_version
-        return True
-
-    @api.multi
-    def get_all_version(self):
-        self.ensure_one()
-        action = self.env.ref('account_budget_activity.'
-                              'act_account_budget_view')
-        result = action.read()[0]
-        dom = ['|', ('ref_budget_id', '=', self.id), ('id', '=', self.id)]
-        result.update({'domain': dom})
-        return result
 
     # ---- BUDGET CHECK ----
     def convert_lines_to_doc_lines(self, lines):
@@ -462,7 +427,7 @@ class AccountBudget(models.Model):
                                '[%s] the requested budget is %s,\n'
                                'but there is no budget control for it.') % \
                 (fiscal.name, resource.name_get()[0][1],
-                 '{0:,}'.format(amount))
+                 '{:,.2f}'.format(amount))
             return res
         else:  # Current Budget Status
             res['budget_status'].update({
@@ -482,14 +447,14 @@ class AccountBudget(models.Model):
                                    '%s, not enough budget, this transaction '
                                    'will result in ฿%s over budget!') % \
                     (fiscal.name, resource.name_get()[0][1],
-                     '{0:,}'.format(-monitors[0].amount_balance))
+                     '{:,.2f}'.format(-monitors[0].amount_balance))
             else:
                 res['message'] = _('%s\n'
                                    '%s, remaining budget is %s,\n'
                                    'but the requested budget is %s') % \
                     (fiscal.name, resource.name_get()[0][1],
-                     '{0:,}'.format(monitors[0].amount_balance),
-                     '{0:,}'.format(amount))
+                     '{:,.2f}'.format(monitors[0].amount_balance),
+                     '{:,.2f}'.format(amount))
 
         if not blevel.is_budget_control:
             res['budget_ok'] = True  # No control, just return information
@@ -632,14 +597,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         index=True,
         required=True,
     )
-    company_id = fields.Many2one(
-        'res.company',
-        related='budget_id.company_id',
-        string='Company',
-        type='many2one',
-        store=True,
-        readonly=True,
-    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
@@ -726,6 +683,11 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                     if m in vals:
                         raise ValidationError(
                             _('Adjusting past plan amount is not allowed!'))
+        # Post change in tracking fields, m1, ... , m12
+        for rec in self:
+            message = self._change_budget_content(rec, vals)
+            if message:
+                rec.budget_id.message_post(body=message)
         return super(AccountBudgetLine, self).write(vals)
 
     @api.multi
@@ -813,3 +775,27 @@ class AccountBudgetLine(ActivityCommon, models.Model):
             amount_to_release = release_result.get(rec.id, 0.0)
             rec.write({'released_amount': amount_to_release})
         return
+
+    # Messaging
+    @api.model
+    def _change_budget_content(self, line, vals):
+        _track_fields = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6',
+                         'm7', 'm8', 'm9', 'm10', 'm11', 'm12', ]
+        if set(_track_fields).isdisjoint(vals.keys()):
+            return False
+        title = _('Budget amount change(s)')
+        message = '<h3>%s</h3><ul>' % title
+        # Get the line label
+        line_labels = [line.activity_group_id.name,
+                       line.activity_id.name]
+        line_labels = filter(lambda a: a is not False, line_labels)
+        line_label = '/'.join(line_labels)
+        for field in _track_fields:
+            if field in vals:
+                message += _(
+                    '<li><b>%s</b>: %s → %s</li>'
+                ) % (line_label,
+                     '{:,.2f}'.format(line[field]),
+                     '{:,.2f}'.format(vals.get(field)), )
+                message += '</ul>'
+        return message

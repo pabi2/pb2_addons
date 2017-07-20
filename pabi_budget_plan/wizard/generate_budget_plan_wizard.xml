@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_generate_budget_plan" model="ir.ui.view">
+            <field name="name">view.generate.budget.plan</field>
+            <field name="model">generate.budget.plan</field>
+            <field name="arch" type="xml">
+                <form string="Generate Budget Plans">
+                    <group>
+                        <group>
+                            <field name="chart_view"/>
+                            <field name="fiscalyear_id"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <footer>
+                        <button string="Generate Plans" name="action_generate_budget_plan" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_generate_budget_plan" model="ir.actions.act_window">
+            <field name="name">Generate Budget Plans</field>
+            <field name="res_model">generate.budget.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_generate_budget_plan"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_generate_budget_plan" id="menu_generate_budget_plan"
+          parent="menu_action_budget_plan" sequence="70" groups="pabi_base.group_cooperate_budget"/>
+
+    </data>
+</openerp>

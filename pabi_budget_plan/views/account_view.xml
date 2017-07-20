@@ -1,17 +1,101 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-
-        <record id="view_fiscalyear_budget_level_form" model="ir.ui.view" >
+        <!-- More option in Budget Level -->
+        <record id="view_fiscalyear_budget_level_form" model="ir.ui.view">
             <field name="name">view.fiscalyear.budget.level.form</field>
             <field name="model">account.fiscalyear</field>
             <field name="inherit_id" ref="account_budget_activity.view_fiscalyear_budget_level_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/field/tree/field[@name='budget_release']" position="after">
-                	<field name="release_follow_policy" />
+                    <field name="release_follow_policy"/>
                 </xpath>
             </field>
         </record>
+
+        <!-- Budget Allocation -->
+        <record id="view_fiscalyear_budget_allocation_form" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.allocation.form</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <form string="Fiscalyear Budget Allocation" create="0" delete="0">
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button name="generate_budget_allocations" string="Allocate Budget" type="object" attrs="{'invisible': [('budget_allocation_ids', '!=', [])]}" class="oe_highlight"/>
+                    </div>
+                    <separator string="Budget Allocation Board"/>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="code" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <p class="oe_grey">
+                            Use this budget allocation board to lock policy amount when confirm budget policy across budget structure.
+                            <br/>
+                            If not specified (0.0), there will be no amount lock in budget policy.
+                        </p>
+                    </group>
+                    <field colspan="4" name="budget_allocation_ids" nolabel="1" widget="one2many_list">
+                        <tree string="Budget Allocations" editable="bottom" create="0" delete="0">
+                            <field name="revision"/>
+                            <field name="amount_unit_base" sum="Unit Based"/>
+                            <field name="amount_project_base" sum="Project Based"/>
+                            <field name="amount_personnel" sum="Personnel"/>
+                            <field name="amount_invest_asset" sum="Invest Asset"/>
+                            <field name="amount_invest_construction" sum="Invest Construction"/>
+                            <field name="amount_total" sum="Total"/>
+                        </tree>
+                    </field>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="view_fiscalyear_budget_allocation_tree" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.allocation.tree</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_fiscalyear_budget_allocation_search" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.allocation.search</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <search string="Search Fiscalyear">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Fiscal Year"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_fiscalyear_budget_allocation" model="ir.actions.act_window">
+            <field name="name">Budget Allocations</field>
+            <field name="res_model">account.fiscalyear</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_fiscalyear_budget_allocation_search"/>
+        </record>
+        <record id="action_fiscalyear_budget_allocation_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_fiscalyear_budget_allocation_form"/>
+            <field name="act_window_id" ref="action_fiscalyear_budget_allocation"/>
+        </record>
+        <record id="action_fiscalyear_budget_allocation_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_fiscalyear_budget_allocation_tree"/>
+            <field name="act_window_id" ref="action_fiscalyear_budget_allocation"/>
+        </record>
+        <menuitem action="action_fiscalyear_budget_allocation" id="menu_fiscalyear_budget_allocation"
+          parent="menu_action_budget_policy" sequence="1" groups="pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>

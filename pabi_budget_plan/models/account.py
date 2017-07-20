@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.api import Environment
+from openerp import SUPERUSER_ID
 
 
 class AccountFiscalyearBudgetLevel(models.Model):
@@ -14,3 +16,34 @@ class AccountFiscalyearBudgetLevel(models.Model):
     @api.onchange('budget_release')
     def _onchange_budget_release(self):
         self.release_follow_policy = False
+
+
+class AccountFiscalyear(models.Model):
+    _name = 'account.fiscalyear'
+    _inherit = ['account.fiscalyear', 'mail.thread']
+
+    budget_allocation_ids = fields.One2many(
+        'budget.allocation',
+        'fiscalyear_id',
+        string='Budget Allocations',
+        track_visibility='onchange',
+    )
+
+    def init(self, cr):
+        env = Environment(cr, SUPERUSER_ID, {})
+        Fiscal = env['account.fiscalyear']
+        fiscals = Fiscal.search([])
+        fiscals.generate_budget_allocations()
+
+    @api.multi
+    def generate_budget_allocations(self):
+        for fiscal in self:
+            if not fiscal.budget_allocation_ids:
+                lines = [(0, 0, {'revision': str(i)}) for i in range(13)]
+                fiscal.sudo().write({'budget_allocation_ids': lines})
+
+    @api.model
+    def create(self, vals):
+        fiscal = super(AccountFiscalyear, self).create(vals)
+        fiscal.generate_budget_allocations()
+        return fiscal

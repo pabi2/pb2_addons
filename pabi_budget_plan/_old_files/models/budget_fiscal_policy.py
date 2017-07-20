@@ -59,7 +59,7 @@ class BudgetFiscalPolicy(models.Model):
     creating_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
-        default=lambda self: self._uid,
+        default=lambda self: self.env.user,
         readonly=True,
     )
     validating_user_id = fields.Many2one(
@@ -626,8 +626,8 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
     )
     policy_amount = fields.Float(
         string='Policy Amount',
-        compute='_compute_policy_amount',
-        store=True,
+        # compute='_compute_policy_amount',
+        # store=True,
     )
     policy_amount_v1 = fields.Float(
         string='Policy Amount Rev.1',
@@ -666,20 +666,20 @@ class BudgetFiscalPolicyLine(ChartField, models.Model):
         string='Policy Amount Rev.12',
     )
 
-    @api.depends('policy_amount_v1',
-                 'policy_amount_v2',
-                 'policy_amount_v3',
-                 'policy_amount_v4',
-                 'policy_amount_v5',
-                 'policy_amount_v6',
-                 'policy_amount_v7',
-                 'policy_amount_v8',
-                 'policy_amount_v9',
-                 'policy_amount_v10',
-                 'policy_amount_v11',
-                 'policy_amount_v12')
-    def _compute_policy_amount(self):
-        for line in self:
-            version = line.budget_policy_version
-            field_policy_amt = 'policy_amount_v' + str(int(version))
-            line.policy_amount = sum(line.mapped(field_policy_amt))
+    # @api.depends('policy_amount_v1',
+    #              'policy_amount_v2',
+    #              'policy_amount_v3',
+    #              'policy_amount_v4',
+    #              'policy_amount_v5',
+    #              'policy_amount_v6',
+    #              'policy_amount_v7',
+    #              'policy_amount_v8',
+    #              'policy_amount_v9',
+    #              'policy_amount_v10',
+    #              'policy_amount_v11',
+    #              'policy_amount_v12')
+    # def _compute_policy_amount(self):
+    #     for line in self:
+    #         version = line.budget_policy_version
+    #         field_policy_amt = 'policy_amount_v' + str(int(version))
+    #         line.policy_amount = sum(line.mapped(field_policy_amt))

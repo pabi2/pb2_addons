@@ -8,6 +8,7 @@
     'version': '8.0.1.0.0',
     'depends': [
         'pabi_chartfield',
+        'pabi_invest_construction',
     ],
     'data': [
         'security/ir.model.access.csv',

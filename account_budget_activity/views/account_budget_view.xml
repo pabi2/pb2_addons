@@ -81,13 +81,9 @@
             <field name="arch" type="xml">
                 <form string="Budget" duplicate="false">
                     <header>
-                        <button string="Confirm" name="budget_confirm" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="budget_validate" states="confirm" type="object" class="oe_highlight"/>
-                        <button string="Done" name="budget_done" states="validate" type="object" class="oe_highlight"/>
-                        <button string="Reset to Draft" name="budget_draft" states="cancel" type="object"/>
-                        <button string="Cancel Budget" name="budget_cancel" states="confirm,validate" type="object"/>
-                        <button string="Minor Revision" name="new_minor_revision" type="object" attrs="{'invisible': ['|', ('active', '=', False), ('state', 'not in', ('validate'))]}"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                        <button string="Activate" name="budget_done" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Back to Draft" name="budget_draft" states="done" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet string="Budget">
                         <div class="oe_title">
@@ -96,18 +92,10 @@
                                 <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
                             </h1>
                         </div>
-                        <div class="oe_right oe_button_box" name="buttons">
-                            <button name="get_all_version" type="object" class="oe_inline oe_stat_button"
-                              icon="fa-bookmark-o" context="{'active_test': False}">
-                                <field name="version" widget="statinfo"/>
-                            </button>
-                            <field name="active" invisible="1"/>
-                            <button class="oe_inline oe_stat_button" icon="fa-thumbs-o-up" string="Latest" attrs="{'invisible': [('active', '=', False)]}"/>
-                        </div>
+                        <div class="oe_right oe_button_box" name="buttons"></div>
                         <group>
                             <group>
-                                <field name="creating_user_id" attrs="{'readonly':[('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
-                                <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="creating_user_id"/>
                                 <field name="budgeted_revenue"/>
                                 <field name="budgeted_expense"/>
                                 <field name="budgeted_overall"/>
@@ -115,18 +103,21 @@
                             </group>
                             <group>
                                 <field name="fiscalyear_id"/>
-                                <field name="currency_id"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
                                     <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
                                     -
                                     <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
                                 </div>
-                                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
                                 <field name="budget_release" invisible="1"/>
-                                <field name="released_amount" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline" attrs="{'invisible': [('budget_release', '=', 'manual_header')]}"/>
-                                <field name="to_release_amount" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline" attrs="{'invisible': [('budget_release', '!=', 'manual_header')],
-                                              'required': [('budget_release', '=', 'manual_header')]}"/>
+                                <field name="released_amount" class="oe_inline" attrs="{'invisible': [('budget_release', '=', 'manual_header')]}"/>
+                                <!-- To Release Amount -->
+                                <label for="to_release_amount" attrs="{'invisible': [('budget_release', '!=', 'manual_header')]}"/>
+                                <div attrs="{'invisible': [('budget_release', '!=', 'manual_header')]}">
+                                    <field name="to_release_amount" class="oe_inline"
+                                        attrs="{'required': [('budget_release', '=', 'manual_header')]}"/>
+                                    <button name="%(action_change_release_amount)d" string="⇒ Update" type="action" class="oe_link"/>
+                                </div>
                             </group>
                         </group>
                         <notebook>
@@ -136,9 +127,9 @@
                                 <group>
                                     <group></group>
                                     <group class="oe_subtotal_footer oe_right">
-                                        <field name="past_actual" widget="monetary" options="{'currency_field': 'currency_id'}" />
-                                        <field name="future_plan" widget="monetary" options="{'currency_field': 'currency_id'}" />
-                                        <field name="rolling" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
+                                        <field name="past_consumed"/>
+                                        <field name="future_plan"/>
+                                        <field name="rolling" class="oe_subtotal_footer_separator"/>
                                     </group>
                                 </group>
                             </page>
@@ -151,7 +142,7 @@
                                     attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
                             </page>
-                            <page string="Revisions" name="revisions">
+                            <!-- <page string="Revisions" name="revisions">
                                 <field name="prev_revision_ids" nolabel="1">
                                     <tree editable="bottom">
                                         <field name="name"/>
@@ -161,9 +152,13 @@
                                         <field name="state"/>
                                     </tree>
                                 </field>
-                            </page>
+                            </page> -->
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -172,14 +167,13 @@
             <field name="name">account.budget.view.tree</field>
             <field name="model">account.budget</field>
             <field name="arch" type="xml">
-                <tree colors="blue:state == 'draft';gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Budget">
+                <tree colors="blue:state == 'draft';black:state in ('done')" string="Budget">
+                    <field name="fiscalyear_id"/>
                     <field name="name"/>
-                    <field name="version"/>
-                    <field name="active"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
+                    <field name="budgeted_revenue"/>
+                    <field name="budgeted_expense"/>
+                    <field name="budgeted_overall"/>
                     <field name="released_amount" sum="Released Amount"/>
-                    <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                     <field name="creating_user_id"/>
                     <field name="state"/>
                 </tree>
@@ -195,7 +189,7 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <filter string="Draft" icon="terp-document-new" domain="[('state','=','draft')]" help="Draft Budgets"/>
-                    <filter string="To Approve" icon="terp-camera_test" domain="[('state','=','confirm')]" help="To Approve Budgets"/>
+                    <filter string="Controlled" icon="terp-camera_test" domain="[('state','=','done')]" help="Controlled Budgets"/>
                     <field name="state"/>
                 </search>
             </field>
@@ -235,11 +229,8 @@
                     <field name="fiscalyear_id"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
-                    <button name="%(action_budget_release_wizard)d"
-                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
-                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
-                    <field name="released_amount" sum="Released"
-                      attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <button name="%(action_budget_release_wizard)d" attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released" attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
@@ -268,19 +259,19 @@
                                 <field name="released_amount"/>
                             </group>
                             <group>
-                              <field name="current_period" invisible="1"/>
-                              <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
-                              <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
-                              <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
-                              <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
-                              <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
-                              <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
-                              <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
-                              <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
-                              <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
-                              <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
-                              <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
-                              <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
+                                <field name="current_period" invisible="1"/>
+                                <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
+                                <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>
+                                <field name="m3" attrs="{'readonly': [('current_period', '>=', 3)]}" sum="m3"/>
+                                <field name="m4" attrs="{'readonly': [('current_period', '>=', 4)]}" sum="m4"/>
+                                <field name="m5" attrs="{'readonly': [('current_period', '>=', 5)]}" sum="m5"/>
+                                <field name="m6" attrs="{'readonly': [('current_period', '>=', 6)]}" sum="m6"/>
+                                <field name="m7" attrs="{'readonly': [('current_period', '>=', 7)]}" sum="m7"/>
+                                <field name="m8" attrs="{'readonly': [('current_period', '>=', 8)]}" sum="m8"/>
+                                <field name="m9" attrs="{'readonly': [('current_period', '>=', 9)]}" sum="m9"/>
+                                <field name="m10" attrs="{'readonly': [('current_period', '>=', 10)]}" sum="m10"/>
+                                <field name="m11" attrs="{'readonly': [('current_period', '>=', 11)]}" sum="m11"/>
+                                <field name="m12" attrs="{'readonly': [('current_period', '>=', 12)]}" sum="m12"/>
                             </group>
                         </group>
                     </sheet>
