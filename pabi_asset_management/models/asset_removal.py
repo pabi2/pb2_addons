@@ -111,6 +111,7 @@ class AccountAssetRemoval(models.Model):
                 if asset.value_residual:
                     ctx.update({'early_removal': True})
                 line.with_context(ctx).remove()
+                asset.status = line.target_status
 
     @api.multi
     def action_done(self):
