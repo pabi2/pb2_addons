@@ -53,7 +53,7 @@
             <field name="arch" type="xml">
                 <form string="Asset">
                     <header>
-                        <button name="action_draft" states="cancel,draft2"
+                        <button name="action_draft" states="draft2"
                           string="Set Source Assets" type="object"
                           groups="purchase.group_purchase_user"/>
                         <button name="action_draft2" states="draft"

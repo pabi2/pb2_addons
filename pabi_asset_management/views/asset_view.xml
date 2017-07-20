@@ -369,7 +369,7 @@
                     <field name="type"/>
                     <field name="fiscalyear_id"/>
                     <field name="line_date"/>
-                    <field name="line_days"/>
+                    <field name="line_days" sum="Total Days"/>
                     <field name="amount"/>
                     <field name="amount_accumulated"/>
                     <field name="remaining_value"/>
