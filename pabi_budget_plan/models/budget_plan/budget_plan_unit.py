@@ -138,6 +138,31 @@ class BudgetPlanUnit(BPCommon, models.Model):
                                                   limit=limit, order=order,
                                                   count=count)
 
+    @api.multi
+    def action_verify_to_accept(self):
+        if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
+            raise ValidationError(_('You are not allowed to accept!'))
+        if self.filtered(lambda l: l.state != 'verify'):
+            raise ValidationError(_('Only verified plan can be selected!'))
+        self.action_accept()
+
+    @api.multi
+    def action_approve_to_verify(self):
+        if not self.env.user.has_group('pabi_base.'
+                                       'group_operating_unit_budget'):
+            raise ValidationError(_('You are not allowed to verify!'))
+        if self.filtered(lambda l: l.state != 'approve'):
+            raise ValidationError(_('Only approved plan can be selected!'))
+        self.action_verify()
+
+    @api.multi
+    def action_submit_to_approve(self):
+        if not self.env.user.has_group('pabi_base.group_budget_manager'):
+            raise ValidationError(_('You are not allowed to approve!'))
+        if self.filtered(lambda l: l.state != 'submit'):
+            raise ValidationError(_('Only submitted plan can be selected!'))
+        self.action_approve()
+
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
