@@ -82,7 +82,7 @@ class BudgetPolicy(models.Model):
     )
     # New Policy
     new_policy_amount = fields.Float(
-        string='New Policy Overall',
+        string='Budget Policy',
         required=True,
         readonly=False,
         states={'done': [('readonly', True)]},
@@ -97,7 +97,12 @@ class BudgetPolicy(models.Model):
     )
     # POLICY
     policy_amount = fields.Float(
-        string='Policy Overall',
+        string='Policy Amount',
+        compute='_compute_all',
+        store=True,
+    )
+    policy_diff = fields.Float(
+        string='Diff Amount',
         compute='_compute_all',
         store=True,
     )
@@ -253,6 +258,7 @@ class BudgetPolicy(models.Model):
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
             rec.policy_amount = sum(lines.mapped('policy_amount'))
+            rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.multi
     def generate_policy_line(self):

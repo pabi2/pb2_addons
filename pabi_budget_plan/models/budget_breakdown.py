@@ -54,13 +54,18 @@ class BudgetBreakdown(models.Model):
         store=True,
     )
     policy_amount = fields.Float(
-        string='Policy Overall',
+        string='Policy Amount',
+        compute='_compute_all',
+        store=True,
+    )
+    policy_diff = fields.Float(
+        string='Diff Amount',
         compute='_compute_all',
         store=True,
     )
     new_policy_amount = fields.Float(
         related='policy_line_id.policy_amount',
-        string='New Policy Amount',
+        string='Budget Policy',
         readonly=True,
         store=True,
         help="Policy amount allowcated by cooperate."
@@ -197,6 +202,7 @@ class BudgetBreakdown(models.Model):
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
             rec.policy_amount = sum(lines.mapped('policy_amount'))
+            rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.onchange('policy_line_id')
     def _onchange_policy_line_id(self):

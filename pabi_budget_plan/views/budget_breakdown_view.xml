@@ -46,10 +46,11 @@
                         <group string="Policy">
                             <group>
                                 <field name="planned_amount"/>
-                                <field name="policy_amount"/>
                             </group>
                             <group>
                                 <field name="new_policy_amount"/>
+                                <field name="policy_amount"/>
+                                <field name="policy_diff"/>
                             </group>
                         </group>
                         <notebook>
