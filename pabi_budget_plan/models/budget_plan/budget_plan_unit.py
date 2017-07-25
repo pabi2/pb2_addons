@@ -8,6 +8,26 @@ from openerp.addons.account_budget_activity.models.account_activity \
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
 
+_STATUS = [('1', 'Draft'),
+           ('2', 'Submitted'),
+           ('3', 'Approved'),
+           ('4', 'Cancelled'),
+           ('5', 'Rejected'),
+           ('6', 'Verified'),
+           ('7', 'Accepted'),
+           ('8', 'Done'),
+           ]
+
+_STATE_TO_STATUS = {'draft': '1',
+                    'submit': '2',
+                    'approve': '3',
+                    'cancel': '4',
+                    'reject': '5',
+                    'verify': '6',
+                    'accept': '7',
+                    'done': '8',
+                    }
+
 
 class BudgetPlanUnit(BPCommon, models.Model):
     _name = 'budget.plan.unit'
@@ -90,10 +110,24 @@ class BudgetPlanUnit(BPCommon, models.Model):
         readonly=True,
         store=True,
     )
+    # Converted to equivalant status
+    status = fields.Selection(
+        _STATUS,
+        string='Status',
+        compute='_compute_status',
+        store=True,
+        help="This virtual field is being used to sort the status in view",
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(section_id, fiscalyear_id)',
          'Duplicated budget plan for the same section is not allowed!'),
     ]
+
+    @api.multi
+    @api.depends('state')
+    def _compute_status(self):
+        for rec in self:
+            rec.status = _STATE_TO_STATUS[rec.state]
 
     @api.model
     def create(self, vals):
@@ -206,6 +240,14 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     total_budget = fields.Float(
         string='Total Budget',
+    )
+    # Converted to equivalant status
+    status = fields.Selection(
+        _STATUS,
+        related='plan_id.status',
+        string='Status',
+        store=True,
+        help="This virtual field is being used to sort the status in view",
     )
 
     @api.model

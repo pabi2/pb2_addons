@@ -145,7 +145,8 @@
                     <field name="planned_expense"/>
                     <field name="planned_overall"/>
                     <field name="user_id"/>
-                    <field name="state"/>
+                    <field name="state" invisible="1"/>
+                    <field name="status"/>
                 </tree>
             </field>
         </record>
@@ -179,7 +180,7 @@
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Status" context="{'group_by':'status'}"/>
                     </group>
                 </search>
             </field>
@@ -230,7 +231,7 @@
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Status" context="{'group_by':'status'}"/>
                     </group>
                 </search>
             </field>
@@ -269,6 +270,7 @@
                     <field name="m12"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="state" invisible="1"/>
+                    <field name="status" invisible="1"/>
                 </tree>
             </field>
         </record>
