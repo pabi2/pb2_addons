@@ -219,13 +219,53 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    section_name = fields.Char(
+        related='section_id.name',
+        string='Section Name',
+        store=True,
+        readonly=True,
+    )
+    section_name_short = fields.Char(
+        related='section_id.name_short',
+        string='Section Alias',
+        store=True,
+        readonly=True,
+    )
+    section_code = fields.Char(
+        related='section_id.code',
+        string='Section Code',
+        store=True,
+        readonly=True,
+    )
+    mission_id = fields.Many2one(
+        related='section_id.mission_id',
+        string='Mission',
+        store=True,
+        readonly=True,
+    )
+    program_rpt_id = fields.Many2one(
+        related='section_id.program_rpt_id',
+        string='Program',
+        store=True,
+        readonly=True,
+    )
     division_id = fields.Many2one(
-        related='plan_id.division_id',
+        related='section_id.division_id',
+        store=True,
+        readonly=True,
+    )
+    subsector_id = fields.Many2one(
+        related='section_id.subsector_id',
+        store=True,
+        readonly=True,
+    )
+    sector_id = fields.Many2one(
+        related='section_id.sector_id',
         store=True,
         readonly=True,
     )
     org_id = fields.Many2one(
-        related='plan_id.org_id',
+        related='section_id.org_id',
         store=True,
         readonly=True,
     )
@@ -240,6 +280,21 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     total_budget = fields.Float(
         string='Total Budget',
+    )
+    cost_control_code = fields.Char(
+        related='cost_control_id.code',
+        string='Job Order Code',
+        readonly=True,
+        store=True,
+    )
+    cost_control_name = fields.Char(
+        related='cost_control_id.name',
+        string='Job Order Name',
+        readonly=True,
+        store=True,
+    )
+    reason = fields.Text(
+        string='Reason',
     )
     # Converted to equivalant status
     status = fields.Selection(

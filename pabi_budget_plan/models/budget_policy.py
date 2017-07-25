@@ -291,6 +291,11 @@ class BudgetPolicy(models.Model):
                     continue
                 policy._create_breakdown_unit_base()
                 policy.write({'state': 'done'})
+                # update plans to done
+                plans = self.env['budget.plan.unit'].search([
+                    ('fiscalyear_id', '=', self.fiscalyear_id.id),
+                    ('state', '=', 'accept')])
+                plans.write({'state': 'done'})
             else:
                 raise ValidationError(
                     _('This action is not valid for this budget structure!'))
