@@ -24,7 +24,8 @@ class SectionBudgetTransfer(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-        readonly=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         default=lambda self: self.env['account.period'].find().fiscalyear_id,
         help="Fiscalyear will be as of current date only, no backdate allowed"
     )
@@ -250,18 +251,31 @@ class SectionBudgetTransferLine(models.Model):
         string="Notes/Reason",
     )
     _sql_constraints = [
-        ('no_negative_transfer_amount', 'CHECK(amount_transfer >= 0',
+        ('no_negative_transfer_amount', 'CHECK(amount_transfer >= 0)',
          'Transfer amount must be positive'),
     ]
 
     @api.multi
     def action_transfer(self):
+        # Only available setup to use section budget transfer it,
         for line in self:
             from_budget = line.from_budget_id
-            from_budget.to_release_amount -= line.amount_transfer
-            from_budget._validate_plan_vs_release()
             to_budget = line.to_budget_id
-            to_budget.to_release_amount += line.amount_transfer
+            # Check budget level
+            from_budget_release = from_budget.budget_level_id.budget_release
+            to_budget_release = to_budget.budget_level_id.budget_release
+            if from_budget_release != 'manual_header' or \
+                    to_budget_release != 'manual_header':
+                raise ValidationError(
+                    _('Budget level for unit base is not valid for transfer.\n'
+                      'Please make sure Release Type = "Budget Header".'))
+            from_budget.write({
+                'to_release_amount': (from_budget.released_amount -
+                                      line.amount_transfer)})
+            from_budget._validate_plan_vs_release()
+            to_budget.write({
+                'to_release_amount': (to_budget.released_amount +
+                                      line.amount_transfer)})
             to_budget._validate_plan_vs_release()
         return True
 
