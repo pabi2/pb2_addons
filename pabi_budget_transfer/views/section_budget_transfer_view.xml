@@ -52,7 +52,7 @@
                                     <tree string="Section Transfer Lines" editable="top">
                                         <field
                                             name="from_budget_id"
-                                            context="{'display_as_section': True}"
+                                            context="{'display_as_section': True, 'show_release_diff_rolling_gt_zero': True}"
                                             domain="[('state', '=', 'draft'), ('chart_view', '=', 'unit_base'), ('section_id.org_id', '=', parent.org_id), ('fiscalyear_id', '=', parent.fiscalyear_id)]"
                                             options="{'no_open': True}"/>
                                         <field name="from_budget"/>
