@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        # Temp Message during development
         <record id="action_show_message" model="ir.actions.server">
             <field name="name">Show Message</field>
             <field name="condition">True</field>
@@ -9,5 +10,66 @@
             <field name="state">code</field>
             <field name="code">self.show_message(cr, uid, [], context=context)</field>
         </record>
+
+        # Budget Plan:
+        # Submitted -> Approved
+        <record id="action_submit_to_approve" model="ir.actions.server">
+            <field name="name">Submitted -> Approved</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit" />
+            <field name="state">code</field>
+            <field name="code">self.action_submit_to_approve(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+        <record model="ir.values" id="ir_values_submit_to_approve">
+          <field name="name">"Run Submitted -> Approved"</field>
+          <field name="key">action</field>
+          <field name="key2">client_action_multi</field>
+          <field name="value" eval="'ir.actions.server,' +str(ref('action_submit_to_approve'))" />
+          <field name="model">budget.plan.unit</field>
+        </record>
+        <record id="action_submit_to_approve" model="ir.actions.server">
+            <field name="menu_ir_values_id" eval="ref('ir_values_submit_to_approve')" />
+        </record>
+        # Approved -> Verified
+        <record id="action_approve_to_verify" model="ir.actions.server">
+            <field name="name">Approved -> Verified</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit" />
+            <field name="state">code</field>
+            <field name="code">self.action_approve_to_verify(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+        <record model="ir.values" id="ir_values_approve_to_verify">
+          <field name="name">"Run Approved -> Verified"</field>
+          <field name="key">action</field>
+          <field name="key2">client_action_multi</field>
+          <field name="value" eval="'ir.actions.server,' +str(ref('action_approve_to_verify'))" />
+          <field name="model">budget.plan.unit</field>
+        </record>
+        <record id="action_approve_to_verify" model="ir.actions.server">
+            <field name="menu_ir_values_id" eval="ref('ir_values_approve_to_verify')" />
+        </record>
+        # Verified -> Accepted
+        <record id="action_verify_to_accept" model="ir.actions.server">
+            <field name="name">Verified -> Accepted</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit" />
+            <field name="state">code</field>
+            <field name="code">self.action_verify_to_accept(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+        <record model="ir.values" id="ir_values_verify_to_accept">
+          <field name="name">"Run Verified -> Accepted"</field>
+          <field name="key">action</field>
+          <field name="key2">client_action_multi</field>
+          <field name="value" eval="'ir.actions.server,' +str(ref('action_verify_to_accept'))" />
+          <field name="model">budget.plan.unit</field>
+        </record>
+        <record id="action_verify_to_accept" model="ir.actions.server">
+            <field name="menu_ir_values_id" eval="ref('ir_values_verify_to_accept')" />
+        </record>
+
+
     </data>
 </openerp>

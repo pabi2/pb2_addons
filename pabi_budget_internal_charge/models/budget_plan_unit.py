@@ -65,6 +65,29 @@ class BudgetPlanUnitLine(models.Model):
         help="Specify whether the budget plan line is for Internal Charge or "
         "External Charge. Internal charged is for Unit Based only."
     )
+    income_section_id = fields.Many2one(
+        'res.section',
+        string='Income Section',
+    )
+    income_section_name = fields.Char(
+        related='income_section_id.name',
+        string='Income Section Name',
+        store=True,
+        readonly=True,
+    )
+    income_section_name_short = fields.Char(
+        related='income_section_id.name_short',
+        string='Income Section Alias',
+        store=True,
+        readonly=True,
+    )
+    income_section_code = fields.Char(
+        related='income_section_id.code',
+        string='Income Section Code',
+        store=True,
+        readonly=True,
+    )
+
 # class BudgetPlanUnitCostControlLine(models.Model):
 #     _inherit = 'budget.plan.unit.cost.control.line'
 #

@@ -163,7 +163,7 @@ class AccountBudget(models.Model):
         store=True,
     )
     past_consumed = fields.Float(
-        string='Past Actual',
+        string='Consumed',
         compute='_compute_past_future_rolling',
         help="Commitment + Actual for the past months",
     )
@@ -193,12 +193,21 @@ class AccountBudget(models.Model):
         return dom
 
     @api.multi
+    def _budget_expense_lines_hook(self):
+        self.ensure_one()
+        return self.budget_expense_line_ids
+
+    @api.multi
     def _get_future_plan_amount(self):
         self.ensure_one()
         Period = self.env['account.period']
-        period_num = Period.get_num_period_by_period()  # Now
+        period_num = 1
+        date_start = Period.find().date_start
+        if self.fiscalyear_id.date_start <= date_start:
+            period_num = Period.get_num_period_by_period()  # Now
         future_plan = 0.0
-        for line in self.budget_expense_line_ids:
+        expense_lines = self._budget_expense_lines_hook()
+        for line in expense_lines:
             for i in range(period_num, 13):
                 future_plan += line['m%s' % (i,)]
         return future_plan
@@ -420,6 +429,12 @@ class AccountBudget(models.Model):
                                             budget_level, resource,
                                             ext_field=ext_field,
                                             ext_res_id=ext_res_id)
+
+        # No plan and no control, do nothing
+        if not monitors and not blevel.is_budget_control:
+            res['budget_ok'] = True
+            return res
+
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
@@ -694,8 +709,11 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     @api.depends()
     def _compute_current_period(self):
         Period = self.env['account.period']
+        date_start = Period.find().date_start
         for rec in self:
             if rec.budget_id.budget_level_id.adjust_past_plan:
+                rec.current_period = 0
+            elif rec.fiscalyear_id.date_start > date_start:
                 rec.current_period = 0
             else:
                 rec.current_period = Period.get_num_period_by_period()

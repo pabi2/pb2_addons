@@ -8,6 +8,26 @@ from openerp.addons.account_budget_activity.models.account_activity \
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
 
+_STATUS = [('1', 'Draft'),
+           ('2', 'Submitted'),
+           ('3', 'Approved'),
+           ('4', 'Cancelled'),
+           ('5', 'Rejected'),
+           ('6', 'Verified'),
+           ('7', 'Accepted'),
+           ('8', 'Done'),
+           ]
+
+_STATE_TO_STATUS = {'draft': '1',
+                    'submit': '2',
+                    'approve': '3',
+                    'cancel': '4',
+                    'reject': '5',
+                    'verify': '6',
+                    'accept': '7',
+                    'done': '8',
+                    }
+
 
 class BudgetPlanUnit(BPCommon, models.Model):
     _name = 'budget.plan.unit'
@@ -74,7 +94,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         'res.section',
         string='Section',
         required=True,
-        readonly=True,
+        # readonly=True,
     )
     org_id = fields.Many2one(
         'res.org',
@@ -90,10 +110,24 @@ class BudgetPlanUnit(BPCommon, models.Model):
         readonly=True,
         store=True,
     )
+    # Converted to equivalant status
+    status = fields.Selection(
+        _STATUS,
+        string='Status',
+        compute='_compute_status',
+        store=True,
+        help="This virtual field is being used to sort the status in view",
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(section_id, fiscalyear_id)',
          'Duplicated budget plan for the same section is not allowed!'),
     ]
+
+    @api.multi
+    @api.depends('state')
+    def _compute_status(self):
+        for rec in self:
+            rec.status = _STATE_TO_STATUS[rec.state]
 
     @api.model
     def create(self, vals):
@@ -138,6 +172,31 @@ class BudgetPlanUnit(BPCommon, models.Model):
                                                   limit=limit, order=order,
                                                   count=count)
 
+    @api.multi
+    def action_verify_to_accept(self):
+        if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
+            raise ValidationError(_('You are not allowed to accept!'))
+        if self.filtered(lambda l: l.state != 'verify'):
+            raise ValidationError(_('Only verified plan can be selected!'))
+        self.action_accept()
+
+    @api.multi
+    def action_approve_to_verify(self):
+        if not self.env.user.has_group('pabi_base.'
+                                       'group_operating_unit_budget'):
+            raise ValidationError(_('You are not allowed to verify!'))
+        if self.filtered(lambda l: l.state != 'approve'):
+            raise ValidationError(_('Only approved plan can be selected!'))
+        self.action_verify()
+
+    @api.multi
+    def action_submit_to_approve(self):
+        if not self.env.user.has_group('pabi_base.group_budget_manager'):
+            raise ValidationError(_('You are not allowed to approve!'))
+        if self.filtered(lambda l: l.state != 'submit'):
+            raise ValidationError(_('Only submitted plan can be selected!'))
+        self.action_approve()
+
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
@@ -160,6 +219,56 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    section_name = fields.Char(
+        related='section_id.name',
+        string='Section Name',
+        store=True,
+        readonly=True,
+    )
+    section_name_short = fields.Char(
+        related='section_id.name_short',
+        string='Section Alias',
+        store=True,
+        readonly=True,
+    )
+    section_code = fields.Char(
+        related='section_id.code',
+        string='Section Code',
+        store=True,
+        readonly=True,
+    )
+    mission_id = fields.Many2one(
+        related='section_id.mission_id',
+        string='Mission',
+        store=True,
+        readonly=True,
+    )
+    program_rpt_id = fields.Many2one(
+        related='section_id.program_rpt_id',
+        string='Program',
+        store=True,
+        readonly=True,
+    )
+    division_id = fields.Many2one(
+        related='section_id.division_id',
+        store=True,
+        readonly=True,
+    )
+    subsector_id = fields.Many2one(
+        related='section_id.subsector_id',
+        store=True,
+        readonly=True,
+    )
+    sector_id = fields.Many2one(
+        related='section_id.sector_id',
+        store=True,
+        readonly=True,
+    )
+    org_id = fields.Many2one(
+        related='section_id.org_id',
+        store=True,
+        readonly=True,
+    )
     unit = fields.Float(
         string='Unit',
     )
@@ -172,22 +281,29 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     total_budget = fields.Float(
         string='Total Budget',
     )
-
-    # Required for updating dimension
-    @api.model
-    def create(self, vals):
-        res = super(BudgetPlanUnitLine, self).create(vals)
-        if not self._context.get('MyModelLoopBreaker', False):
-            res.update_related_dimension(vals)
-        return res
-
-    @api.multi
-    def write(self, vals):
-        res = super(BudgetPlanUnitLine, self).write(vals)
-        if not self._context.get('MyModelLoopBreaker', False):
-            self.update_related_dimension(vals)
-        return res
-    # ---------
+    cost_control_code = fields.Char(
+        related='cost_control_id.code',
+        string='Job Order Code',
+        readonly=True,
+        store=True,
+    )
+    cost_control_name = fields.Char(
+        related='cost_control_id.name',
+        string='Job Order Name',
+        readonly=True,
+        store=True,
+    )
+    reason = fields.Text(
+        string='Reason',
+    )
+    # Converted to equivalant status
+    status = fields.Selection(
+        _STATUS,
+        related='plan_id.status',
+        string='Status',
+        store=True,
+        help="This virtual field is being used to sort the status in view",
+    )
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):

@@ -98,7 +98,7 @@
                                 <field name="creating_user_id"/>
                                 <field name="budgeted_revenue"/>
                                 <field name="budgeted_expense"/>
-                                <field name="budgeted_overall"/>
+                                <field name="budgeted_overall" invisible="1"/>
                                 <field name="budget_level_id" invisible="1"/>
                             </group>
                             <group>
@@ -172,7 +172,7 @@
                     <field name="name"/>
                     <field name="budgeted_revenue"/>
                     <field name="budgeted_expense"/>
-                    <field name="budgeted_overall"/>
+                    <field name="budgeted_overall" invisible="1"/>
                     <field name="released_amount" sum="Released Amount"/>
                     <field name="creating_user_id"/>
                     <field name="state"/>

@@ -11,6 +11,7 @@ _STATE = [('draft', 'Draft'),
           ('reject', 'Rejected'),   # submit,approve
           ('verify', 'Verified'),   # approve
           ('accept', 'Accepted'),   # verify
+          ('done', 'Done'),   # verify
           # Accepted by Cooperate
           ]
 
@@ -58,7 +59,7 @@ class BPCommon(Common):
         'account.fiscalyear',
         string='Fiscal Year',
         required=True,
-        readonly=True,
+        # readonly=True,
         default=lambda self: self.env['account.period'].find().fiscalyear_id,
     )
     date_from = fields.Date(
@@ -153,6 +154,10 @@ class BPCommon(Common):
     @api.multi
     def action_accept(self):
         self.write({'state': 'accept'})
+
+    @api.multi
+    def action_done(self):
+        self.write({'state': 'done'})
 
     @api.model
     def _prepare_copy_fields(self, source_model, target_model):

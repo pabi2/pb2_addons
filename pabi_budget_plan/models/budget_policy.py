@@ -82,7 +82,7 @@ class BudgetPolicy(models.Model):
     )
     # New Policy
     new_policy_amount = fields.Float(
-        string='New Policy Overall',
+        string='Budget Policy',
         required=True,
         readonly=False,
         states={'done': [('readonly', True)]},
@@ -97,7 +97,12 @@ class BudgetPolicy(models.Model):
     )
     # POLICY
     policy_amount = fields.Float(
-        string='Policy Overall',
+        string='Policy Amount',
+        compute='_compute_all',
+        store=True,
+    )
+    policy_diff = fields.Float(
+        string='Diff Amount',
         compute='_compute_all',
         store=True,
     )
@@ -253,12 +258,19 @@ class BudgetPolicy(models.Model):
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
             rec.policy_amount = sum(lines.mapped('policy_amount'))
+            rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.multi
     def generate_policy_line(self):
         for policy in self:
             policy.line_ids.unlink()
             lines = []
+            # 1st policy
+            v0_lines = self.search([('revision', '=', '0')]).line_ids
+            # latest policy
+            latest_lines = self.search(
+                [('revision', '=', str(int(policy.revision) - 1))]).line_ids
+
             # Unit Base
             if policy.chart_view == 'unit_base':
                 # For Revision 0, compare with Budget Plan
@@ -271,10 +283,22 @@ class BudgetPolicy(models.Model):
                     planned_expense = sum(plans.mapped('planned_expense'))
                     vals = {'org_id': org.id,
                             'planned_amount': planned_expense, }
+                    # V0 and latest policy
+                    if policy.revision != '0':
+                        v0_line = v0_lines.filtered(lambda l: l.org_id == org)
+                        lastest_line = latest_lines.filtered(lambda l:
+                                                             l.org_id == org)
+                        v0_policy_amount = v0_line.policy_amount
+                        latest_policy_amount = lastest_line.policy_amount
+                        vals.update({
+                            'v0_policy_amount': v0_policy_amount,
+                            'latest_policy_amount': latest_policy_amount,
+                        })
                     lines.append((0, 0, vals))
                 policy.write({'unit_base_line_ids': lines})
 
             # Other structure...
+
         self.message_post(body=_('Regenerate Policy Lines, all amount reset!'))
 
     @api.multi
@@ -291,6 +315,11 @@ class BudgetPolicy(models.Model):
                     continue
                 policy._create_breakdown_unit_base()
                 policy.write({'state': 'done'})
+                # update plans to done
+                plans = self.env['budget.plan.unit'].search([
+                    ('fiscalyear_id', '=', self.fiscalyear_id.id),
+                    ('state', '=', 'accept')])
+                plans.write({'state': 'done'})
             else:
                 raise ValidationError(
                     _('This action is not valid for this budget structure!'))
@@ -376,6 +405,14 @@ class BudgetPolicyLine(ChartField, models.Model):
     )
     planned_amount = fields.Float(
         string='Planned Amount',
+        readonly=True,
+    )
+    v0_policy_amount = fields.Float(
+        string='V0 Policy Amount',
+        readonly=True,
+    )
+    latest_policy_amount = fields.Float(
+        string='Latest Policy Amount',
         readonly=True,
     )
     policy_amount = fields.Float(

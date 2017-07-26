@@ -43,6 +43,7 @@
                     <field name="activity_unit"/>
                     <field name="total_budget"/>
                     <field name="description"/>
+                    <field name="reason"/>
                     <field name="m1"/>
                     <field name="m2"/>
                     <field name="m3"/>
@@ -75,7 +76,7 @@
                         <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="submit,approve" type="object"/>
                         <button string="Reset to Draft" name="action_draft" states="cancel,reject" type="object"/>
                         <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,verify,accept"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,verify,accept,done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -87,7 +88,7 @@
                         <div class="oe_right oe_button_box" name="buttons"></div>
                         <group>
                             <group>
-                                <field name="section_id"/>
+                                <field name="section_id" readonly="1"/>
                                 <field name="division_id"/>
                                 <field name="org_id"/>
                                 <field name="user_id"/>
@@ -97,7 +98,7 @@
                             </group>
                             <group>
                                 <field name="date"/>
-                                <field name="fiscalyear_id"/>
+                                <field name="fiscalyear_id" readonly="1"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
                                     <field name="date_from" class="oe_inline"/>
@@ -145,7 +146,8 @@
                     <field name="planned_expense"/>
                     <field name="planned_overall"/>
                     <field name="user_id"/>
-                    <field name="state"/>
+                    <field name="state" invisible="1"/>
+                    <field name="status"/>
                 </tree>
             </field>
         </record>
@@ -179,7 +181,7 @@
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Status" context="{'group_by':'status'}"/>
                     </group>
                 </search>
             </field>
@@ -211,8 +213,12 @@
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
                     <field name="state"/>
                     <field name="org_id"/>
+                    <field name="sector_id"/>
+                    <field name="subsector_id"/>
                     <field name="division_id"/>
                     <field name="section_id"/>
+                    <field name="mission_id"/>
+                    <field name="program_rpt_id"/>
                     <filter string="My Org Plans" name="my_org_plans" context="{'my_org_plans': True}"/>
                     <filter string="My Section Plans" name="my_section_plans" context="{'my_section_plans': True}"/>
                     <filter string="My Division Plans" name="my_division_plans" context="{'my_division_plans': True}"/>
@@ -225,12 +231,17 @@
                     <filter domain="[('state','=','accept')]" string="Accepted"/>
                     <filter domain="[('state','=','cancel')]" string="Cancelled"/>
                     <filter domain="[('state','=','reject')]" string="Rejected"/>
+                    <filter domain="[('state','=','done')]" string="Done"/>
                     <group expand="0" string="Group By">
                         <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Sector" context="{'group_by':'sector_id'}"/>
+                        <filter string="Subsector" context="{'group_by':'subsection_id'}"/>
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
+                        <filter string="Mission" context="{'group_by':'mission'}"/>
+                        <filter string="Program" context="{'group_by':'program_rpt_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Status" context="{'group_by':'state'}"/>
+                        <filter string="Status" context="{'group_by':'status'}"/>
                     </group>
                 </search>
             </field>
@@ -245,16 +256,26 @@
                     <field name="plan_id"/>
                     <field name="budget_method"/>
                     <field name="org_id"/>
+                    <field name="sector_id"/>
+                    <field name="subsector_id"/>
                     <field name="division_id"/>
-                    <field name="section_id"/>
-                    <field name="fund_id"/>
+                    <field name="section_id" invisible="1"/>
+                    <field name="section_code" />
+                    <field name="section_name_short" />
+                    <field name="section_name" />
+                    <field name="mission_id" />
+                    <field name="program_rpt_id" />
+                    <field name="fund_id" invisible="1"/>
                     <field name="activity_group_id"/>
-                    <field name="cost_control_id"/>
+                    <field name="cost_control_id" invisible="1"/>
+                    <field name="cost_control_code"/>
+                    <field name="cost_control_name"/>
                     <field name="unit"/>
                     <field name="activity_unit_price"/>
                     <field name="activity_unit"/>
                     <field name="total_budget"/>
                     <field name="description"/>
+                    <field name="reason"/>
                     <field name="m1"/>
                     <field name="m2"/>
                     <field name="m3"/>
@@ -269,6 +290,7 @@
                     <field name="m12"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="state" invisible="1"/>
+                    <field name="status" invisible="1"/>
                 </tree>
             </field>
         </record>

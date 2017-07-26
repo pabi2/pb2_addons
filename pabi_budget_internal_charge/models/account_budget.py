@@ -60,17 +60,10 @@ class AccountBudget(models.Model):
             rec.budgeted_expense_internal = expense_internal
 
     @api.multi
-    def _get_future_plan_amount(self):
-        """ Overwrite """
+    def _budget_expense_lines_hook(self):
         self.ensure_one()
-        Period = self.env['account.period']
-        period_num = Period.get_num_period_by_period()  # Now
-        future_plan = 0.0
-        for line in self.budget_expense_line_ids.\
-                filtered(lambda l: l.charge_type == 'external'):  # Add this
-            for i in range(period_num, 13):
-                future_plan += line['m%s' % (i,)]
-        return future_plan
+        return self.budget_expense_line_ids.\
+            filtered(lambda l: l.charge_type == 'external')
 
 
 class AccountBudgetLine(models.Model):

@@ -33,9 +33,7 @@
                     </group>
                     <group>
                         <p class="oe_grey">
-                            Use this budget allocation board to lock policy amount when confirm budget policy across budget structure.
-                            <br/>
-                            If not specified (0.0), there will be no amount lock in budget policy.
+                            This allocation board simply report the updated status of budget policy for every structure.
                         </p>
                     </group>
                     <field colspan="4" name="budget_allocation_ids" nolabel="1" widget="one2many_list">
