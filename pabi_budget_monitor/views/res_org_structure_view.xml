@@ -156,9 +156,6 @@
             <field name="model">res.section</field>
             <field name="inherit_id" ref="pabi_base.view_res_section_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='division_id']" position="after">
-                    <field name="program_rpt_id"/>
-                </xpath>
                 <xpath expr="//notebook" position="inside">
                     <page string="Budget Monitor">
                         <separator string="Expense"/>

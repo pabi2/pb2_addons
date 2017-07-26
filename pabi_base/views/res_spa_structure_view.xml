@@ -307,6 +307,7 @@
                             <field name="functional_area_id"/>
                             <field name="program_group_id"/>
                             <field name="program_id"/>
+                            <field name="program_rpt_id"/>
                         </group>
                         <group string="Tags">
                             <field name="mission_id"/>
