@@ -48,12 +48,14 @@ class BPCommon(Common):
         'res.users',
         string='Responsible User',
         default=lambda self: self.env.user,
+        track_visibility='onchange',
     )
     date = fields.Date(
         string='Date',
         copy=False,
         default=lambda self: fields.Date.context_today(self),
         readonly=True,
+        track_visibility='onchange',
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -61,6 +63,7 @@ class BPCommon(Common):
         required=True,
         # readonly=True,
         default=lambda self: self.env['account.period'].find().fiscalyear_id,
+        track_visibility='onchange',
     )
     date_from = fields.Date(
         string='Start Date',
@@ -77,18 +80,21 @@ class BPCommon(Common):
         compute='_compute_planned_overall',
         store=True,
         help="All Revenue",
+        track_visibility='onchange',
     )
     planned_expense = fields.Float(
         string='Total Expense Plan',
         compute='_compute_planned_overall',
         store=True,
         help="All Expense",
+        track_visibility='onchange',
     )
     planned_overall = fields.Float(
         string='Total Planned',
         compute='_compute_planned_overall',
         store=True,
         help="All Revenue - All Expense",
+        track_visibility='onchange',
     )
     state = fields.Selection(
         _STATE,
@@ -204,6 +210,10 @@ class BPCommon(Common):
 
 class BPLCommon(ChartField, Common):
 
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        required=True,
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],

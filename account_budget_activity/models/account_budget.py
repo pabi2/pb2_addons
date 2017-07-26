@@ -698,11 +698,11 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                     if m in vals:
                         raise ValidationError(
                             _('Adjusting past plan amount is not allowed!'))
-        # Post change in tracking fields, m1, ... , m12
-        for rec in self:
-            message = self._change_budget_content(rec, vals)
-            if message:
-                rec.budget_id.message_post(body=message)
+        # # Post change in tracking fields, m1, ... , m12
+        # for rec in self:
+        #     message = self._change_budget_content(rec, vals)
+        #     if message:
+        #         rec.budget_id.message_post(body=message)
         return super(AccountBudgetLine, self).write(vals)
 
     @api.multi
@@ -794,26 +794,27 @@ class AccountBudgetLine(ActivityCommon, models.Model):
             rec.write({'released_amount': amount_to_release})
         return
 
-    # Messaging
-    @api.model
-    def _change_budget_content(self, line, vals):
-        _track_fields = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6',
-                         'm7', 'm8', 'm9', 'm10', 'm11', 'm12', ]
-        if set(_track_fields).isdisjoint(vals.keys()):
-            return False
-        title = _('Budget amount change(s)')
-        message = '<h3>%s</h3><ul>' % title
-        # Get the line label
-        line_labels = [line.activity_group_id.name,
-                       line.activity_id.name]
-        line_labels = filter(lambda a: a is not False, line_labels)
-        line_label = '/'.join(line_labels)
-        for field in _track_fields:
-            if field in vals:
-                message += _(
-                    '<li><b>%s</b>: %s → %s</li>'
-                ) % (line_label,
-                     '{:,.2f}'.format(line[field]),
-                     '{:,.2f}'.format(vals.get(field)), )
-                message += '</ul>'
-        return message
+    # # Messaging
+    # Kitti U. We have a more computed one in pabi_chartfield module
+    # @api.model
+    # def _change_budget_content(self, line, vals):
+    #     _track_fields = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6',
+    #                      'm7', 'm8', 'm9', 'm10', 'm11', 'm12', ]
+    #     if set(_track_fields).isdisjoint(vals.keys()):
+    #         return False
+    #     title = _('Budget amount change(s)')
+    #     message = '<h3>%s</h3><ul>' % title
+    #     # Get the line label
+    #     line_labels = [line.activity_group_id.name,
+    #                    line.activity_id.name]
+    #     line_labels = filter(lambda a: a is not False, line_labels)
+    #     line_label = '/'.join(line_labels)
+    #     for field in _track_fields:
+    #         if field in vals:
+    #             message += _(
+    #                 '<li><b>%s</b>: %s → %s</li>'
+    #             ) % (line_label,
+    #                  '{:,.2f}'.format(line[field]),
+    #                  '{:,.2f}'.format(vals.get(field)), )
+    #             message += '</ul>'
+    #     return message
