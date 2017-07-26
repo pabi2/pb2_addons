@@ -228,70 +228,15 @@ class AccountBudget(ChartField, models.Model):
                                                  limit=limit, order=order,
                                                  count=count)
 
-    @api.model
-    def _change_line_content(self, vals):
-        BudgetLine = self.env['account.budget.line']
-        todos = {'budget_expense_line_unit_base': ('Expense line',
-                                                   'account.activity.group',
-                                                   'activity_group_id'),
-                 'budget_revenue_line_unit_base': ('Revenue line',
-                                                   'account.activity.group',
-                                                   'activity_group_id')}
-        messages = []
-        for field in todos:
-            if field in vals:
-                title = todos[field][0]
-                res_model = todos[field][1]
-                res_field = todos[field][2]
-                # Case Add
-                add_lines = filter(lambda x: x[0] == 0, vals[field])
-                if add_lines:
-                    message = '<h3>%s</h3>' % (title + ' add(s)', )
-                    message += '<ul>'
-                    for line in add_lines:
-                        res_id = line[2].get(res_field, False)
-                        res = self.env[res_model].browse(res_id)
-                        message += '<li><b>%s</b></li>' % (res.name, )
-                    message += '</ul>'
-                    messages.append(message)
-                # Case Delete
-                delete_lines = filter(lambda x: x[0] == 2, vals[field])
-                if delete_lines:
-                    message = '<h3>%s</h3>' % (title + ' delete(s)', )
-                    message += '<ul>'
-                    for line in delete_lines:
-                        plan_line = BudgetLine.browse(line[1])
-                        message += '<li><b>%s</b></li>' % \
-                            (plan_line[res_field].name, )
-                    message += '</ul>'
-                    messages.append(message)
-                # Case Update
-                change_lines = filter(lambda x: x[0] == 1, vals[field])
-                if change_lines:
-                    message = '<h3>%s</h3>' % (title + ' change(s)', )
-                    for line in change_lines:
-                        plan_line = BudgetLine.browse(line[1])
-                        print res_field
-                        print plan_line
-                        print plan_line[res_field]
-                        message += '<b>%s</b><ul>' % (plan_line[res_field].name, )
-                        for key in line[2]:
-                            old_val = (str(plan_line[key]).isdigit() and
-                                       '{:,.2f}'.format(plan_line[key]) or
-                                       plan_line[key])
-                            new_val = (str(line[2][key]).isdigit() and
-                                       '{:,.2f}'.format(line[2][key]) or
-                                       line[2][key])
-                            message += _(
-                                '<li><b>%s</b>: %s → %s</li>'
-                            ) % (key, old_val, new_val)
-                        message += '</ul>'
-                    messages.append(message)
-        return messages
-
     @api.multi
     def write(self, vals):
-        messages = self._change_line_content(vals)
+        todo = {'budget_expense_line_unit_base': ('Expense line',
+                                                  'account.activity.group',
+                                                  'activity_group_id'),
+                'budget_revenue_line_unit_base': ('Revenue line',
+                                                  'account.activity.group',
+                                                  'activity_group_id')}
+        messages = self.env['account.budget.line']._change_content(vals, todo)
         for message in messages:
             self.message_post(body=message)
         return super(AccountBudget, self).write(vals)

@@ -194,65 +194,16 @@ class BudgetPlanUnit(BPCommon, models.Model):
             raise ValidationError(_('Only submitted plan can be selected!'))
         self.action_approve()
 
-    @api.model
-    def _change_line_content(self, vals):
-        PlanLine = self.env['budget.plan.unit.line']
-        ActivityGroup = self.env['account.activity.group']
-        todos = {'plan_expense_line_ids': 'Expense line',
-                 'plan_revenue_line_ids': 'Revenue line'}
-        messages = []
-        for field in todos:
-            if field in vals:
-                # Case Add
-                add_lines = filter(lambda x: x[0] == 0, vals[field])
-                if add_lines:
-                    title = todos[field] + ' add(s)'
-                    message = '<h3>%s</h3>' % title
-                    message += '<ul>'
-                    for line in add_lines:
-                        ag_id = line[2].get('activity_group_id', False)
-                        ag = ActivityGroup.browse(ag_id)
-                        message += '<li><b>%s</b></li>' % (ag.name)
-                    message += '</ul>'
-                    messages.append(message)
-                # Case Delete
-                delete_lines = filter(lambda x: x[0] == 2, vals[field])
-                if delete_lines:
-                    title = todos[field] + ' delete(s)'
-                    message = '<h3>%s</h3>' % title
-                    message += '<ul>'
-                    for line in delete_lines:
-                        del_line = PlanLine.browse(line[1])
-                        message += '<li><b>%s</b></li>' % \
-                            (del_line.name_get()[0][1])
-                    message += '</ul>'
-                    messages.append(message)
-                # Case Update
-                change_lines = filter(lambda x: x[0] == 1, vals[field])
-                if change_lines:
-                    title = todos[field] + ' change(s)'
-                    message = '<h3>%s</h3>' % title
-                    for line in change_lines:
-                        plan_line = PlanLine.browse(line[1])
-                        message += '<b>%s</b><ul>' % \
-                            (plan_line.name_get()[0][1])
-                        for key in line[2]:
-                            old_val = (str(plan_line[key]).isdigit() and
-                                       '{:,.2f}'.format(plan_line[key]) or
-                                       plan_line[key])
-                            new_val = (str(line[2][key]).isdigit() and
-                                       '{:,.2f}'.format(line[2][key]) or
-                                       line[2][key])
-                            message += _(
-                                '<li><b>%s</b>: %s → %s</li>'
-                            ) % (key, old_val, new_val)
-                        message += '</ul>'
-                    messages.append(message)
-        return messages
-
     @api.multi
     def write(self, vals):
-        messages = self._change_line_content(vals)
+        todo = {'plan_expense_line_ids': ('Expense line',
+                                          'account.activity.group',
+                                          'activity_group_id'),
+                'plan_revenue_line_ids': ('Revenue line',
+                                          'account.activity.group',
+                                          'activity_group_id')}
+        PlanLine = self.env['budget.plan.unit.line']
+        messages = PlanLine._change_content(vals, todo)
         for message in messages:
             self.message_post(body=message)
         return super(BudgetPlanUnit, self).write(vals)
