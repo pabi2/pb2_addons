@@ -249,6 +249,10 @@ class SectionBudgetTransferLine(models.Model):
     notes = fields.Text(
         string="Notes/Reason",
     )
+    _sql_constraints = [
+        ('no_negative_transfer_amount', 'CHECK(amount_transfer >= 0',
+         'Transfer amount must be positive'),
+    ]
 
     @api.multi
     def action_transfer(self):
