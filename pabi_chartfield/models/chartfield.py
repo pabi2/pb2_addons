@@ -538,7 +538,7 @@ class ChartField(object):
         # If that dimension have no funds, use NSTDA
         # Else return false
         fund_id = False
-        funds = False
+        funds = []
         if self.project_id:
             funds = self.project_id.fund_ids
         if self.section_id:
