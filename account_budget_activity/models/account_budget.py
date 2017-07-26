@@ -429,6 +429,12 @@ class AccountBudget(models.Model):
                                             budget_level, resource,
                                             ext_field=ext_field,
                                             ext_res_id=ext_res_id)
+
+        # No plan and no control, do nothing
+        if not monitors and not blevel.is_budget_control:
+            res['budget_ok'] = True
+            return res
+
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
