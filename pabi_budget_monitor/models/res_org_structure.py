@@ -95,10 +95,6 @@ class ResSection(models.Model):
         string='Section Monitor',
         domain=[('budget_method', '=', 'expense')],
     )
-    program_rpt_id = fields.Many2one(
-        'res.program',
-        string='Report Program',
-    )
 
 
 class ResCostcenter(models.Model):

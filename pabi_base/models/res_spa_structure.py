@@ -261,6 +261,10 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
+    program_rpt_id = fields.Many2one(
+        'res.program',
+        string='Report Program',
+    )
     # prototype_ids = fields.One2many(
     #     'res.project.prototype',
     #     'project_id',
