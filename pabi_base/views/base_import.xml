@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Only Technical Feature users can use import feature -->
+        <record id="base_import.assets_backend" model="ir.ui.view">
+            <field name="groups_id" eval="[(4, ref('base.group_no_one'))]"/>
+        </record>
+    </data>
+</openerp>
