@@ -52,6 +52,9 @@ class BudgetConsumeReport(models.Model):
     amount_actual = fields.Float(
         string='Actual',
     )
+    amount_consumed = fields.Float(
+        string='Consumed',
+    )
     product_id = fields.Many2one(
         'product.product',
         string='Product',
@@ -79,6 +82,11 @@ class BudgetConsumeReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
+        select *,
+        amount_so_commit + amount_pr_commit + amount_po_commit +
+        amount_exp_commit + amount_actual as amount_consumed
+        from
+        (
             select aal.id, aal.user_id, aal.date,
                 aal.fiscalyear_id,
                 -------------> aal.doc_ref, aal.doc_id,
@@ -107,6 +115,9 @@ class BudgetConsumeReport(models.Model):
                 %s
             from account_analytic_line aal
             join account_analytic_journal aaj on aaj.id = aal.journal_id
+            left join res_section section on section.id = aal.section_id
+            left join res_project project on project.id = aal.project_id
+        ) a
         """ % (self._get_dimension(),)
         return sql_view
 

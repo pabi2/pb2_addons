@@ -15,6 +15,7 @@
 						<field name="amount_po_commit" type="measure"/>
 						<field name="amount_exp_commit" type="measure"/>
 						<field name="amount_actual" type="measure"/>
+						<field name="amount_consumed" type="measure"/>
 						<field name="amount" type="measure"/>
 					</graph>
 				</xpath>
@@ -29,7 +30,7 @@
 				<xpath expr="//field[@name='amount']" position="after">
 
 					<field name="document"/>
-					
+
 					<field name="spa_id"/>
 					<field name="mission_id"/>
 					<field name="tag_type_id"/>
