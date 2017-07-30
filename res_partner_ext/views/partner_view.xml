@@ -25,11 +25,11 @@
             		</attribute>
             	</field>
             	<group position="inside">
-                       <filter string="Category" context="{'group_by': 'single_category_id'}"/>
+                       <filter string="Category" context="{'group_by': 'category_id'}"/>
 		        </group>
             </field>
         </record>
-        
+
     	<record id="view_partner_tree_ext" model="ir.ui.view">
             <field name="name">view.partner.tree.ext</field>
             <field name="model">res.partner</field>
@@ -88,7 +88,7 @@
 				</field>
 				<field name="name" position="before">
 	            	<field name="title" style="width: 50%%"  options='{"no_open": True}' placeholder="Title"/>
-				</field>			
+				</field>
 	            <field name="name" position="after">
 	            	<field name="id" invisible="1"/>
                 	<field name="search_key"/>
@@ -152,7 +152,7 @@
 				            <field name="taxbranch" string="Tax Branch ID"/>
                             <field name="user_ids" invisible="1"/>
                             <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
-                        </group>               	
+                        </group>
                		</group>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='type']" position="attributes">
@@ -163,7 +163,7 @@
 	            </field>
             </field>
         </record>
-        
+
         <!-- Partner Category -->
         <record id="view_partner_category_form_ext" model="ir.ui.view">
             <field name="name">view.partner.category.form.ext</field>
@@ -180,18 +180,18 @@
                         <field name="receivable_account_id" />
                         <field name="payable_account_id" />
                         <field name="fiscal_position_id" />
-                    </group>				
-                </group>	
+                    </group>
+                </group>
                 <field name="active" position="after">require_tax_branch_unique
                 </field>
             </field>
         </record>
-        
+
         <record id="view_partner_category_list_ext" model="ir.ui.view">
             <field name="name">view.partner.category.list.ext</field>
             <field name="model">res.partner.category</field>
             <field name="inherit_id" ref="base.view_partner_category_list"/>
-            <field name="arch" type="xml">	
+            <field name="arch" type="xml">
             	<field name="complete_name" position="after" >
             		<field name="receivable_account_id" />
             	</field>
