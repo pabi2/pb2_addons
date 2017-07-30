@@ -26,12 +26,6 @@ class ResPartner(models.Model):
         compute='_get_search_key',
         store=True,
     )
-    # For group by only,
-    single_category_id = fields.Many2one(
-        'res.partner.category',
-        compute='_get_single_category_id',
-        store=True,
-    )
     require_taxid = fields.Boolean(
         string='Require Tax ID',
         compute='_get_require_taxbranch',
@@ -174,20 +168,14 @@ class ResPartner(models.Model):
         return result
 
     @api.one
-    @api.depends('category_id')
-    def _get_single_category_id(self):
-        if self.category_id:
-            self.single_category_id = self.category_id.id
-
-    @api.one
     @api.depends('category_id', 'parent_id')
     def _get_require_taxbranch(self):
         if self.parent_id:  # If a contact, never set as required.
             self.require_taxid = False
             self.require_taxbranch = False
-        elif self.single_category_id:
-            self.require_taxid = self.single_category_id.require_taxid
-            self.require_taxbranch = self.single_category_id.require_taxbranch
+        elif self.category_id:
+            self.require_taxid = self.category_id.require_taxid
+            self.require_taxbranch = self.category_id.require_taxbranch
 
     @api.one
     @api.depends('category_id')

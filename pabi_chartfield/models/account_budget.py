@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from openerp import api, fields, models
+from openerp import api, fields, models, _
 from .chartfield import CHART_VIEW_FIELD, CHART_FIELDS, ChartField
 from lxml import etree
 
@@ -227,6 +227,19 @@ class AccountBudget(ChartField, models.Model):
                                                  offset=offset,
                                                  limit=limit, order=order,
                                                  count=count)
+
+    @api.multi
+    def write(self, vals):
+        todo = {'budget_expense_line_unit_base': ('Expense line',
+                                                  'account.activity.group',
+                                                  'activity_group_id'),
+                'budget_revenue_line_unit_base': ('Revenue line',
+                                                  'account.activity.group',
+                                                  'activity_group_id')}
+        messages = self.env['account.budget.line']._change_content(vals, todo)
+        for message in messages:
+            self.message_post(body=message)
+        return super(AccountBudget, self).write(vals)
 
 
 class AccountBudgetLine(ChartField, models.Model):

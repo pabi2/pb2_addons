@@ -16,6 +16,7 @@
                  <field name="amount_po_commit" type="measure"/>
                  <field name="amount_exp_commit" type="measure"/>
                  <field name="amount_actual" type="measure"/>
+                 <field name="amount_consumed" type="measure"/>
                  <field name="amount" type="measure"/>
              </graph>
          </field>
@@ -42,6 +43,7 @@
                  <field name="amount_po_commit" />
                  <field name="amount_exp_commit" />
                  <field name="amount_actual" />
+                 <field name="amount_consumed"/>
                  <field name="amount" />
              </tree>
          </field>

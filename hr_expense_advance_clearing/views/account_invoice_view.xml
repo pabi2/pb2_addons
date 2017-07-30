@@ -6,21 +6,24 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='check_total']" position="after">
+                    <field name="supplier_invoice_type"/>
+                </xpath>
                 <xpath expr="//button[@name='invoice_cancel']" position="attributes">
-                    <field name="attrs" >{'invisible': ['|', ('state', '!=', 'paid'), ('invoice_type', 'not in', ('expense_advance_invoice', 'advance_clearing_invoice'))]}</field>
+                    <field name="attrs">{'invisible': ['|', ('state', '!=', 'paid'), ('supplier_invoice_type', 'not in', ('expense_advance_invoice', 'advance_clearing_invoice'))]}</field>
                 </xpath>
             </field>
         </record>
 
-	    <record id="invoice_form" model="ir.ui.view">
-	        <field name="name">invoice.form</field>
-	        <field name="model">account.invoice</field>
-	        <field name="inherit_id" ref="account.invoice_form"/>
-	        <field name="arch" type="xml">
-	            <xpath expr="//field[@name='fiscal_position']" position="after">
-	                <field name="advance_expense_id" />
-	            </xpath>
-	        </field>
-	    </record>
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position']" position="after">
+                    <field name="advance_expense_id"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>

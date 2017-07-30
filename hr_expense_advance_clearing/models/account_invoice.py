@@ -10,15 +10,19 @@ class AccountInvoice(models.Model):
     #     string='Advance Clearing?',
     #     copy=False,
     # )
-    invoice_type = fields.Selection(
-        selection_add=[
-            # Created from Normal Expense
-            ('expense_expense_invoice', 'For Employee Expense'),
-            # Created from Advance
-            ('expense_advance_invoice', 'For Employee Advance'),
-            # Created from Advance Clearing
-            ('advance_clearing_invoice', 'For Advance Clearing'),
-        ],
+    supplier_invoice_type = fields.Selection(
+        [('normal', 'Normal Invoice'),
+         # Created from Normal Expense
+         ('expense_expense_invoice', 'For Employee Expense'),
+         # Created from Advance
+         ('expense_advance_invoice', 'For Employee Advance'),
+         # Created from Advance Clearing
+         ('advance_clearing_invoice', 'For Advance Clearing'),
+         ],
+        string="Invoice Type",
+        readonly=True,
+        copy=False,
+        default='normal',
     )
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
@@ -108,10 +112,10 @@ class AccountInvoice(models.Model):
         result = super(AccountInvoice, self).invoice_validate()
         for invoice in self:
             # Advance case, send back the final approved amount
-            if invoice.invoice_type == 'expense_advance_invoice':
+            if invoice.supplier_invoice_type == 'expense_advance_invoice':
                 invoice.expense_id.amount_advanced = invoice.amount_total
             # Clearing case, do reconcile
-            if invoice.invoice_type == 'advance_clearing_invoice'\
+            if invoice.supplier_invoice_type == 'advance_clearing_invoice'\
                     and not invoice.amount_total:
                 move_lines = \
                     self.env['account.move.line'].search(
