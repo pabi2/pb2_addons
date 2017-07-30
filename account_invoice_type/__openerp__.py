@@ -2,7 +2,7 @@
 
 {
     'name': "Account Invoice Type",
-    'summary': "Added new invoice_type field on invoice",
+    'summary': "Added new supplier_invoice_type field on invoice",
     'author': "Ecosoft",
     'website': "http://ecosoft.co.th",
     'category': 'Account',
