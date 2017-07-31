@@ -440,6 +440,10 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.condition',
         string='Condition',
     )
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
+        string='Committee type',
+    )
 
 
 class PurchaseType(models.Model):
@@ -488,14 +492,11 @@ class PurchaseCommitteeType(models.Model):
         string='Purchase Committee Type Code',
         required=False,
     )
-    web_method_ids = fields.Many2many(
+    web_method_ids = fields.One2many(
+        'prweb.purchase.method',
+        'committee_type_id',
         string='PRWeb Method',
-        comodel_name='prweb.purchase.method',
-        relation='prweb_purchase_method_rel',
-        column1='committee_type_id',
-        column2='method_id',
     )
-
 
 class PurchasePriceRange(models.Model):
     _name = 'purchase.price.range'
