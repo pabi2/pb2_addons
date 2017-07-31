@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import StringIO
+import csv
 import base64
 import os
 import xlrd
@@ -37,13 +39,30 @@ class PABIXls(models.AbstractModel):
 
     @api.model
     def import_xls(self, model, file, header_map=None, extra_columns=None):
-        """
+        # 1) Convert form XLS to CSV
+        header_fields, file_txt = self.xls_to_csv(
+            model, file, header_map=header_map, extra_columns=extra_columns)
+        # 2) Do the import
+        xls_ids = self.import_csv(model, header_fields, file_txt)
+        return xls_ids
+
+    @api.model
+    def xls_to_csv(self, model, file, header_map=None, extra_columns=None):
+        """ This function will convert a simple (header+line) XLS file to
+            simple CSV file (header+line) and the header columns
         To map user column with database column
         - header_map = {'Name': 'name', 'Document', 'doc_id', }
         If there is additional fixed column value
         - extra_columns = [('name', 'ABC'), ('id', 10), ]
         If the import file have column id, we will use this column to create
         external id, and hence possible to return record id being created
+        Return:
+            - csv ready for import to Odoo
+              'ID', 'Asset', ...
+              'external_id_1', 'ASSET-0001', ...
+              'external_id_2', 'ASSET-0002', ...
+            - headers, i.e,
+              ['id', 'asset_id', ...]
         """
         decoded_data = base64.decodestring(file)
         ftemp = 'temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
@@ -63,10 +82,10 @@ class PABIXls(models.AbstractModel):
         csv_out = unicodecsv.writer(csv_file,
                                     encoding='utf-8',
                                     quoting=unicodecsv.QUOTE_ALL)
+        _HEADER_FIELDS = []
         if st._cell_values:
             _HEADER_FIELDS = st._cell_values[0]
         id_index = -1  # -1 means no id
-        xml_ids = []
         for nrow in xrange(st.nrows):
             if nrow == 0:  # Header, find id field
                 header_values = [x.lower().strip()
@@ -82,7 +101,6 @@ class PABIXls(models.AbstractModel):
                         # UUID replace id
                         xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
                         row_values[index] = xml_id
-                        xml_ids.append(xml_id)
                     elif type == 'empty' or type == 'text' \
                         or type == 'bool' or type == 'error' \
                             or type == 'blank':
@@ -117,7 +135,6 @@ class PABIXls(models.AbstractModel):
             _HEADER_FIELDS.insert(0, 'id')
             xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
             file_txt = self._add_column('id', xml_id, file_txt)
-            xml_ids.append(xml_id)
         # Map column name
         if header_map:
             _HEADER_FIELDS = [header_map.get(x.lower().strip(), False) and
@@ -128,15 +145,40 @@ class PABIXls(models.AbstractModel):
             for column in extra_columns:
                 _HEADER_FIELDS.insert(0, str(column[0]))
                 file_txt = self._add_column(column[0], column[1], file_txt)
+        return (_HEADER_FIELDS, file_txt)
+
+    @api.model
+    def import_csv(self, model, header_fields, file_txt):
+        """
+        The file_txt loaded, must also have the header row
+        - header_fields i.e, ['id', 'field1', 'field2']
+        - field_txt = normal csv with comma delimited
+        """
+        # get xml_ids
+        f = StringIO.StringIO(file_txt)
+        rows = csv.reader(f, delimiter=',')
+        id_index = -1
+        xml_ids = []
+        for row in rows:  # Check the first row only
+            head_row = [isinstance(x, basestring) and x.lower() or ''
+                        for x in row]
+            id_index = head_row.index('id')
+            break
+        if id_index >= 0:
+            for row in rows:
+                if isinstance(row[id_index], basestring) and \
+                        len(row[id_index].strip()) > 0:
+                    xml_ids.append(row[id_index])
+        # Do the import
         Import = self.env['base_import.import']
         imp = Import.create({
             'res_model': model,
             'file': file_txt,
         })
         [errors] = imp.do(
-            _HEADER_FIELDS,
+            header_fields,
             {'headers': True, 'separator': ',',
              'quoting': '"', 'encoding': 'utf-8'})
         if errors:
             raise ValidationError(_(str(errors[0]['message'])))
-        return list(set(xml_ids))
+        return xml_ids
