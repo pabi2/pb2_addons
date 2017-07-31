@@ -441,6 +441,14 @@ class PRWebPurchaseMethod(models.Model):
         string='Condition',
     )
 
+    @api.multi
+    def name_get(self):
+        res = []
+        for rec in self:
+            res.append((rec.id,
+                        '%s - %s' % (rec.type_id.name, rec.method_id.name)))
+        return res
+
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'
@@ -488,12 +496,58 @@ class PurchaseCommitteeType(models.Model):
         string='Purchase Committee Type Code',
         required=False,
     )
-    web_method_ids = fields.Many2many(
+    web_method_ids = fields.One2many(
+        'purchase.committee.type.prweb.method',
+        'committee_type_id',
+        string='PR Methods',
+    )
+    # web_method_ids = fields.Many2many(
+    #     string='PRWeb Method',
+    #     comodel_name='prweb.purchase.method',
+    #     relation='prweb_purchase_method_rel',
+    #     column1='committee_type_id',
+    #     column2='method_id',
+    # )
+
+
+class PurchaseCommiteeTypePRWebMethod(models.Model):
+    _name = 'purchase.committee.type.prweb.method'
+    _description = 'PABI2 Purchase Committee Type PR Web Method'
+    _order = 'sequence, id'
+
+    committee_type_id = fields.Many2one(
+        'purchase.committee.type',
+        string='Commitee Type',
+        index=True,
+        ondelete='cascade',
+        readonly=True,
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10,
+    )
+    method_id = fields.Many2one(
+        'prweb.purchase.method',
         string='PRWeb Method',
-        comodel_name='prweb.purchase.method',
-        relation='prweb_purchase_method_rel',
-        column1='committee_type_id',
-        column2='method_id',
+        required=True,
+    )
+    doctype_id = fields.Many2one(
+        'wkf.config.doctype',
+        string='Type',
+        related='method_id.doctype_id',
+        readonly=True,
+    )
+    price_range_id = fields.Many2one(
+        'purchase.price.range',
+        string='Price Range',
+        related='method_id.price_range_id',
+        readonly=True,
+    )
+    condition_id = fields.Many2one(
+        'purchase.condition',
+        string='Condition',
+        related='method_id.condition_id',
+        readonly=True,
     )
 
 
