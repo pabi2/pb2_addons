@@ -15,14 +15,13 @@ class AccountVoucher(models.Model):
                 status = u'Payment Approved'
                 status_th = u'อนุมัติจ่าย'
                 comment = u'วันที่เช็ค/โอน %s' % (voucher.date_value,)
-                for voucher in self:
-                    for line in voucher.line_ids:
-                        exp = line.move_line_id.invoice.expense_id
-                        if not exp:
-                            continue
-                        exp.send_comment_to_pabiweb(status,
-                                                    status_th,
-                                                    comment)
+                for line in voucher.line_ids:
+                    exp = line.move_line_id.invoice.expense_id
+                    if not exp:
+                        continue
+                    exp.send_comment_to_pabiweb(status,
+                                                status_th,
+                                                comment)
         except Exception, e:
             self._cr.rollback()
             raise ValidationError(str(e))

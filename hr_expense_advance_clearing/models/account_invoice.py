@@ -113,7 +113,8 @@ class AccountInvoice(models.Model):
         for invoice in self:
             # Advance case, send back the final approved amount
             if invoice.supplier_invoice_type == 'expense_advance_invoice':
-                invoice.expense_id.amount_advanced = invoice.amount_total
+                invoice.expense_id.write({
+                    'amount_advanced': invoice.amount_total})
             # Clearing case, do reconcile
             if invoice.supplier_invoice_type == 'advance_clearing_invoice'\
                     and not invoice.amount_total:
