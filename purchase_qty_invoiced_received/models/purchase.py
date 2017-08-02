@@ -29,7 +29,7 @@ class PurchaseOrderLine(models.Model):
     @api.depends('invoice_lines.invoice_id.state')
     def _compute_open_invoiced_qty(self):
         Uom = self.env['product.uom']
-        for po_line in self:
+        for po_line in self.sudo():
             open_invoiced_qty = 0.0
             for invoice_line in po_line.invoice_lines:
                 invoice = invoice_line.invoice_id
