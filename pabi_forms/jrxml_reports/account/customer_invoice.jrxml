@@ -136,7 +136,7 @@
 		<fieldDescription><![CDATA[comment]]></fieldDescription>
 	</field>
 	<field name="logo" class="java.lang.String">
-		<fieldDescription><![CDATA[taxbranch_id/org_id/logo]]></fieldDescription>
+		<fieldDescription><![CDATA[taxbranch_id/logo]]></fieldDescription>
 	</field>
 	<field name="attention" class="java.lang.String">
 		<fieldDescription><![CDATA[attention]]></fieldDescription>
@@ -562,7 +562,7 @@ $F{validate_user_lname}]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA["หน้า/Page " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="436" y="-4" width="117" height="42"/>
+				<reportElement x="438" y="0" width="117" height="40"/>
 				<imageExpression class="java.lang.String"><![CDATA[$F{logo}]]></imageExpression>
 			</image>
 		</band>
