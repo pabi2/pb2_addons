@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <act_window
+        <act_window name="Print Voucher"
             id="action_print_voucher_wizard"
-            name="Print Voucher"
             src_model="account.move"
             res_model="print.voucher.wizard"
             view_type="form"
             view_mode="form"
-            key2="client_action_multi"
+            key2="client_print_multi"
             target="new"
         />
 
