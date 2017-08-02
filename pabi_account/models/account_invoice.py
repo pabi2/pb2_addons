@@ -141,7 +141,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def invoice_validate(self):
-        result = super(AccountInvoice, self).invoice_validate()
+        result = super(AccountInvoice, self.sudo()).invoice_validate()
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
