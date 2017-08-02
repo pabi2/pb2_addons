@@ -327,7 +327,7 @@
 		<record id="invoice_voucher_kv_values" model="ir.values">
 			<field name="name">KV Voucher</field>
 			<field name="model">account.move</field>
-			<field name="key2" eval="'client_print_multi'"/>
+			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher_kv)"/>
 		</record>
 		<!-- DV -->
@@ -349,7 +349,7 @@
 		<record id="invoice_voucher_dv_values" model="ir.values">
 			<field name="name">DV Voucher</field>
 			<field name="model">account.move</field>
-			<field name="key2" eval="'client_print_multi'"/>
+			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(invoice_voucher_dv)"/>
 		</record>
 
@@ -373,7 +373,7 @@
 		<record id="payment_voucher_pv_values" model="ir.values">
 			<field name="name">PV Voucher</field>
 			<field name="model">account.move</field>
-			<field name="key2" eval="'client_print_multi'"/>
+			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher_pv)"/>
 		</record>
 		<!-- RC -->
@@ -395,7 +395,7 @@
 		<record id="payment_voucher_rc_values" model="ir.values">
 			<field name="name">RC Voucher</field>
 			<field name="model">account.move</field>
-			<field name="key2" eval="'client_print_multi'"/>
+			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_voucher_rc)"/>
 		</record>
 
@@ -420,7 +420,7 @@
 		<record id="bank_receipt_voucher_values" model="ir.values">
 			<field name="name">RV Voucher</field>
 			<field name="model">account.move</field>
-			<field name="key2" eval="'client_print_multi'"/>
+			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_receipt_voucher)"/>
 		</record>
 
