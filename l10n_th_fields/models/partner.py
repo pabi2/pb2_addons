@@ -27,7 +27,7 @@ class ResPartner(models.Model):
 
     @api.model
     def _search_employee_id(self, operator, value):
-        users = self.env['res.users'].search([('name', 'ilike', str(value))])
+        users = self.env['res.users'].search([('name', 'ilike', value)])
         return [('id', 'in', users.mapped('partner_id')._ids)]
 
     @api.multi
