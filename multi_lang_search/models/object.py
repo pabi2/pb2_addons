@@ -34,7 +34,7 @@ def _extend_name_results_translation(self, domain, field_name,
             WHERE (src ilike '%s' or value ilike '%s') AND
                 name = '%s'
             LIMIT %d
-        """ % ('%%%s%%' % name, '%%%s%%' % name, trans_name, limit))
+        """ % ('%' + name + '%', '%' + name + '%', trans_name, limit))
         res = self._cr.dictfetchall()
         record_ids = [t['res_id'] for t in res]
         record_ids = self.browse(record_ids)
@@ -51,9 +51,9 @@ def _extend_search_results_translation(self, sub_domain):
         self._cr.execute("""
             SELECT src
             FROM ir_translation
-            WHERE (src ilike '%s' or value ilike '%s') AND
+            WHERE value ilike '%s' AND
                 name = '%s'
-        """ % ('%%%s%%' % value, '%%%s%%' % value, trans_name))
+        """ % (value, trans_name))
         res = self._cr.fetchone()
         source_value = res and res[0] or False
         if source_value:
