@@ -91,6 +91,9 @@
                         <field name="comment" attrs="{'invisible':[('payment_option','!=','with_writeoff')]}"/>
                         <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
                     </field>
+                    <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/group/field[@name='audit']" position="before">
+                        <field name="move_id" readonly="1"/>
+                    </xpath>
                     <!-- Tax -->
                     <page string="Payment Information" position="after">
                         <page string="Tax">
@@ -153,6 +156,12 @@
                     </xpath>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
                         <attribute name="on_change">onchange_reconcile(parent.partner_id, move_line_id, amount_original, reconcile, amount, amount_unreconciled, context)</attribute>
+                    </xpath>
+                    <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/group/field[@name='number']" position="attributes">
+                        <attribute name="invisible">True</attribute>
+                    </xpath>
+                    <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/group/field[@name='number']" position="before">
+                        <field name="move_id" readonly="1"/>
                     </xpath>
                     <!-- Moving Payment Options to header -->
                     <xpath expr="/form/sheet/notebook/page/group//separator[@string='Payment Options']" position="replace"/>

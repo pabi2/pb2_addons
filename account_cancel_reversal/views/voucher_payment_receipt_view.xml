@@ -10,7 +10,7 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='audit']" position="after">
-                    <field name="cancel_move_id"/>
+                    <field name="cancel_move_id" attrs="{'invisible': [('cancel_move_id', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//page[@string='Journal Items']" position="attributes">
                     <attribute name="attrs">{'invisible': [('state','not in',('posted', 'cancel'))]}</attribute>
@@ -27,7 +27,7 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='number']" position="after">
-                    <field name="cancel_move_id"/>
+                    <field name="cancel_move_id" attrs="{'invisible': [('cancel_move_id', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//page[@string='Journal Items']" position="attributes">
                     <attribute name="attrs">{'invisible': [('state','not in',('posted', 'cancel'))]}</attribute>
