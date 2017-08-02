@@ -41,7 +41,7 @@ class InovicesCreatePaymentWizard(models.TransientModel):
         invoice_ids = self._context.get('active_ids', [])
         invoices = self.env['account.invoice'].browse(invoice_ids)
         # Pass due date to value date (if only 1 due date)
-        date_dues = invoices.mapped('date_due')
+        date_dues = list(set(invoices.mapped('date_due')))
         date_due = len(date_dues) == 1 and date_dues[0] or False
         res = invoices.action_create_payment()
         res['context'].update({
