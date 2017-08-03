@@ -222,6 +222,29 @@ class AccountVoucher(models.Model):
                     'validate_date': fields.Date.today()})
         return result
 
+    @api.multi
+    def recompute_voucher_lines(self, partner_id, journal_id,
+                                price, currency_id, ttype, date):
+        """ Always check reconcile """
+        res = super(AccountVoucher, self).recompute_voucher_lines(
+            partner_id, journal_id,
+            price, currency_id, ttype, date)
+        value = res['value']
+        VoucherLine = self.env['account.voucher.line']
+        for vtype in ['line_cr_ids', 'line_dr_ids']:
+            line_ids = []
+            for l in value[vtype]:
+                reconcile = True
+                vals = VoucherLine.onchange_reconcile(
+                    partner_id, l['move_line_id'], l['amount_original'],
+                    reconcile, False, l['amount_unreconciled'])
+                vals['value']['reconcile'] = reconcile
+                l.update(vals['value'])
+                line_ids.append(l)
+            value[vtype] = line_ids
+        res['value'] = value
+        return res
+
 
 class AccountVoucherLine(models.Model):
     _inherit = 'account.voucher.line'
