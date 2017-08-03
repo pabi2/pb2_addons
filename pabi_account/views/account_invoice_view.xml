@@ -30,6 +30,16 @@
                 </xpath>
             </field>
         </record>
+        <record model="ir.ui.view" id="invoice_form2">
+            <field name="name">invoice.form2</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="l10n_th_account.invoice_form_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Tax']/field/tree/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
 
         # Supplier Invoice
         <record model="ir.ui.view" id="view_invoice_supplier">
@@ -83,6 +93,16 @@
                     <button class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text" context="{'default_partner_id': partner_id, 'default_payment_type': payment_type}">
                         <field string="Payments" name="payment_count" widget="statinfo"/>
                     </button>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="invoice_supplier_form6">
+            <field name="name">account.invoice.supplier.form6</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="l10n_th_account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Tax']/field/tree/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
             </field>
         </record>
