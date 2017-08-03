@@ -19,7 +19,7 @@ class AccountInvoice(models.Model):
         action = action_id.read([])[0]
         ctx = ast.literal_eval(action['context'])
         ctx.update({
-            'filter_by_invoice_ids': self.ids  # account_move_line.search()
+            'filter_invoices': self.ids  # account_move_line.search()
         })
         action['context'] = ctx
         action['views'].reverse()

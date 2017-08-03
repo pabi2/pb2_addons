@@ -32,6 +32,7 @@
     "data": [
         "security/security_group.xml",
         "security/ir.model.access.csv",
+        "security/model_no_delete.xml",
         "wizard/approve_bank_account_wizard.xml",
         "wizard/print_wht_cert_wizard.xml",
         "views/account_view.xml",

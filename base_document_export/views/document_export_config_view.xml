@@ -6,11 +6,12 @@
             <field name="name">view.document.export.config.lines.tree</field>
             <field name="model">document.export.config.lines</field>
             <field name="arch" type="xml">
-                <tree string="Document Export Configuration Lines" editable="bottom">
+                <tree string="Document Export Configuration Lines" editable="bottom"
+                  colors="gray:mandatory==False;blue:mandatory==True">
                     <field name="sequence" />
                     <field name="model_id"/>
-                    <field name="field_code" />
-                    <field name="default_value"/>
+                    <field name="field_code" attrs="{'required': [('mandatory', '=', True), ('default_value', '=', False)]}" />
+                    <field name="default_value" attrs="{'required': [('mandatory', '=', True), ('field_code', '=', False)]}" />
                     <field name="notes"/>
                     <field name="length" />
                     <field name="mandatory" />

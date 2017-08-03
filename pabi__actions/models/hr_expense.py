@@ -65,7 +65,7 @@ class HRExpense(models.Model):
         })
         val = voucher.\
             with_context({
-                'filter_by_invoice_ids': [invoice.id]}).\
+                'filter_invoices': [invoice.id]}).\
             onchange_partner_id(
                 voucher.partner_id.id,
                 voucher.journal_id.id,
