@@ -6,13 +6,15 @@
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="priority" eval="20"/>
             <field name="arch" type="xml">
-                <notebook position="inside" >
+                <page string="Description" position="after" >
                     <page string="Attachments">
                         <field name="attachment_ids"
-                            context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree'}"/>
+                            context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree',
+                                      'default_type': 'url'}"/>
                     </page>
-                </notebook>
+                </page>
             </field>
         </record>
     </data>
