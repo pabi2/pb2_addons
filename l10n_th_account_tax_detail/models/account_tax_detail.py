@@ -48,15 +48,14 @@ class InvoiceVoucherTaxDetail(object):
     @api.multi
     def _check_tax_detail_info(self):
         for doc in self:
-            for tax in doc.tax_line:
-                if tax.tax_code_type != 'normal':
-                    continue
-                for detail in tax.detail_ids:
-                    if (not detail.partner_id or
-                            not detail.invoice_number or
-                            not detail.invoice_date):
-                        raise ValidationError(
-                            _('Some data in Tax Detail is not filled!'))
+            taxes = doc.tax_line.filtered(lambda l:
+                                          l.tax_code_type == 'normal')
+            for tax in taxes:
+                if tax.detail_ids.filtered(lambda l: not (l.partner_id and
+                                                          l.invoice_number and
+                                                          l.invoice_date)):
+                    raise ValidationError(
+                        _('Some data in Tax Detail is not filled!'))
         return True
 
     @api.model
