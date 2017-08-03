@@ -6,6 +6,7 @@ from openerp.exceptions import ValidationError
 class DocumentExportConfigLine(models.Model):
     _name = 'document.export.config.lines'
     _description = 'Document Export Configuration Lines'
+    _order = 'sequence'
 
     @api.constrains('sequence', 'length')
     def _check_sequence(self):

@@ -22,7 +22,7 @@ class AccountMoveLine(models.Model):
                 net_args = self._prepare_net_args(args, account_type)
                 net_move_line_ids = \
                     self.with_context(allow_net_payment=False,
-                                      filter_by_invoice_ids=[]).\
+                                      filter_invoices=[]).\
                     search(net_args)
                 # Add move_line_ids form the opposite side with OR operator
                 x_args = []

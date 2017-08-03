@@ -184,7 +184,7 @@ class AccountInvoice(models.Model):
             "[('id','in', [" + ','.join(map(str, voucher_ids)) + "])]"
         ctx = ast.literal_eval(action['context'])
         ctx.update({
-            'filter_by_invoice_ids': self.ids  # account_move_line.search()
+            'filter_invoices': self.ids  # account_move_line.search()
         })
         action['context'] = ctx
         return action

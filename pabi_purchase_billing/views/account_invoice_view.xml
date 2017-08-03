@@ -11,7 +11,7 @@
                 </xpath>
             </field>
         </record>
-        
+
         <record id="invoice_tree" model="ir.ui.view">
             <field name="name">invoice.supplier.tree</field>
             <field name="model">account.invoice</field>
@@ -22,13 +22,13 @@
                 </xpath>
             </field>
         </record>
-  
+
         <record id="view_account_invoice_filter" model="ir.ui.view">
             <field name="name">account.invoice.select</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter" />
             <field name="arch" type="xml">
-                <field name="user_id" position="after">
+                <field name="user_id" position="before">
                     <field name="purchase_billing_id" />
                 </field>
                 <filter name="group_by_partner_id" position="after">

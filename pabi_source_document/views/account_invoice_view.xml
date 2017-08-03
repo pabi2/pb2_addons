@@ -7,7 +7,7 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
             <field name="arch" type="xml">
-                <xpath expr="//search" position="inside">
+                <xpath expr="/search/field[@name='user_id']" position="before">
                     <field name="source_document" string="Source Document Ref."/>
                     <field name="source_document_type" string="Source Document Type"/>
                 </xpath>
