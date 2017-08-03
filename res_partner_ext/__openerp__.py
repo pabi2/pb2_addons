@@ -17,7 +17,6 @@ Partner:
 * vat: Tax ID, 13 digits
 * taxbranch: Tax Branc, 5 digits
 * create_date: Make create date callable
-* single_category_id: Display only 1 partner tag is allowed in this system
 * require_taxid: whether Tax ID is required, based on Partner Tag
 * require_taxbranch: Whether Tax Branch is required, based on Partner Tag
 * is_government: Whether this partner is government, based on Partner Tag

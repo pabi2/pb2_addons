@@ -364,7 +364,7 @@
             <field name="name">view.account.asset.line.tree</field>
             <field name="model">account.asset.line</field>
             <field name="arch" type="xml">
-                <tree string="Depreciation Lines" colors="blue:(move_check == False) and (init_entry == False)" >
+                <tree string="Depreciation Lines" colors="blue:(move_check == False) and (init_entry == False)" create="0" delete="0">
                     <field name="asset_id"/>
                     <field name="type"/>
                     <field name="fiscalyear_id"/>

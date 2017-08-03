@@ -26,6 +26,13 @@ class AccountInvoice(models.Model):
         * Flag = -1 when amount invoice < amount expense.
         """
     )
+    diff_expense_amount_adjusted = fields.Float(
+        string='Adjusted Amount',
+        compute='_compute_diff_expense_amount_flag',
+        readonly=True,
+        default=0.0,
+        help="New adjusted amount in invoice, comparing to expense amount",
+    )
     diff_expense_amount_reason = fields.Char(
         string='Amount Diff Reason',
         readonly=True,
@@ -38,11 +45,11 @@ class AccountInvoice(models.Model):
     def _compute_diff_expense_amount_flag(self):
         for rec in self:
             if rec.expense_id:
-                rec.diff_expense_amount_flag = 0
                 clear_amount = sum([x.price_subtotal < 0.0 and
                                     x.price_subtotal or 0.0
                                     for x in rec.invoice_line])
                 amount = rec.amount_total - clear_amount
+                rec.diff_expense_amount_adjusted = amount
                 rec.diff_expense_amount_flag = \
                     float_compare(amount, rec.amount_expense_request,
                                   precision_digits=1)

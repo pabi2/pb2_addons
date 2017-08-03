@@ -291,7 +291,15 @@
                     <group>
                         <field name="name"/>
                         <field name="code"/>
-                        <field name="web_method_ids"/>
+                        <field name="web_method_ids">
+                            <tree editable="bottom">
+                                <field name="sequence"/>
+                                <field name="method_id"/>
+                                <field name="doctype_id"/>
+                                <field name="price_range_id"/>
+                                <field name="condition_id"/>
+                            </tree>
+                        </field>
                     </group>
                 </form>
             </field>

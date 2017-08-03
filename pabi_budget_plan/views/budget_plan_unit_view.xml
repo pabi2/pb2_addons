@@ -235,11 +235,12 @@
                     <group expand="0" string="Group By">
                         <filter string="Org" context="{'group_by':'org_id'}"/>
                         <filter string="Sector" context="{'group_by':'sector_id'}"/>
-                        <filter string="Subsector" context="{'group_by':'subsection_id'}"/>
+                        <filter string="Subsector" context="{'group_by':'subsector_id'}"/>
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
-                        <filter string="Mission" context="{'group_by':'mission'}"/>
+                        <filter string="Mission" context="{'group_by':'mission_id'}"/>
                         <filter string="Program" context="{'group_by':'program_rpt_id'}"/>
+                        <filter string="Activity Group" context="{'group_by':'activity_group_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                         <filter string="Status" context="{'group_by':'status'}"/>
                     </group>

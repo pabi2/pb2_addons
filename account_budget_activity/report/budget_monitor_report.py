@@ -54,6 +54,9 @@ class BudgetMonitorReport(models.Model):
     amount_actual = fields.Float(
         string='Actual',
     )
+    amount_consumed = fields.Float(
+        string='Consumed',
+    )
     amount_balance = fields.Float(
         string='Balance',
     )
@@ -93,7 +96,7 @@ class BudgetMonitorReport(models.Model):
             -----> doc_ref, doc_id,
             planned_amount, released_amount, amount_so_commit,
             amount_pr_commit, amount_po_commit, amount_exp_commit,
-            amount_actual, amount_balance,
+            amount_actual, amount_consumed, amount_balance,
             coalesce(pa1.id, pa2.id) as product_activity_id,
             %s
             from
@@ -102,7 +105,8 @@ class BudgetMonitorReport(models.Model):
             planned_amount, released_amount,
             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
             0.0 as amount_po_commit, 0.0 as amount_exp_commit,
-            0.0 as amount_actual, released_amount as amount_balance,
+            0.0 as amount_actual, 0.0 as amount_consumed,
+            released_amount as amount_balance,
             -- Dimensions
             %s
             from budget_plan_report
@@ -113,7 +117,7 @@ class BudgetMonitorReport(models.Model):
             0.0 as planned_amount, 0.0 as released_amount,
             amount_so_commit, amount_pr_commit,
             amount_po_commit, amount_exp_commit,
-            amount_actual,
+            amount_actual, amount_consumed,
             case when budget_method = 'expense'
                 then -amount else amount end as amount_balance,
             -- Dimensions

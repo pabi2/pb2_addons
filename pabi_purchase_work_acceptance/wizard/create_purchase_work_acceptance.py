@@ -141,6 +141,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _get_contract_end_date(self, order):
         THHoliday = self.env['thai.holiday']
+        if not order.date_contract_start:
+            raise ValidationError(_('No contract start date!'))
         start_date = datetime.datetime.strptime(
             order.date_contract_start,
             "%Y-%m-%d",

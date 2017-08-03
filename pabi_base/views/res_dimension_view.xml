@@ -106,6 +106,9 @@
             <field name="model">res.taxbranch</field>
             <field name="arch" type="xml">
                 <form string="Tax Branch">
+                    <div>
+                        <field name="logo" widget="image"  class="oe_avatar oe_left"/>
+                    </div>
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" class="oe_inline" placeholder="Name"/>

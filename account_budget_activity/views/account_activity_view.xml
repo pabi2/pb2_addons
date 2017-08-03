@@ -70,6 +70,7 @@
                                     <field name="amount_po_commit"/>
                                     <field name="amount_exp_commit"/>
                                     <field name="amount_actual"/>
+                                    <field name="amount_consumed"/>
                                     <field name="amount_balance"/>
                                 </tree>
                             </field>
@@ -193,6 +194,7 @@
                                     <field name="amount_pr_commit"/>
                                     <field name="amount_po_commit"/>
                                     <field name="amount_exp_commit"/>
+                                    <field name="amount_consumed"/>
                                     <field name="amount_actual"/>
                                     <field name="amount_balance"/>
                                 </tree>

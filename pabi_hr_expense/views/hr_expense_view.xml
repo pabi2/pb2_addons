@@ -31,6 +31,7 @@
 			<field name="name">hr.expense.form</field>
 			<field name="model">hr.expense.expense</field>
 			<field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+			<field name="priority" eval="10"/>
 			<field name="arch" type="xml">
 				<button name="validate" position="attributes">
 					<attribute name="string">Accept</attribute>
@@ -88,7 +89,7 @@
 				</xpath>
 				<!-- End Invisible Columns-->
 
-				<notebook position="inside">
+				<page string="Description" position="after" >
 					<page string="Due History" attrs="{'invisible': [('is_employee_advance', '=', False)]}">
 						<group>
 							<group>
@@ -126,7 +127,7 @@
 							</tree>
 						</field>
 					</page>
-				</notebook>
+				</page>
 
 				<xpath expr="/form/sheet/notebook/page/group/div" position="inside">
 					<separator string="Note for Advance"/>

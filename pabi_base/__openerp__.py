@@ -40,6 +40,7 @@ org -> sector -> subsector -> division -> section -> costcenter
         'security/security_groups.xml',
         'security/ir.model.access.csv',
         # views
+        'views/base_import.xml',
         'views/menu_view.xml',
         'views/res_fund_view.xml',
         'views/res_spa_structure_view.xml',

@@ -18,14 +18,14 @@ class BudgetConsumeReport(ChartField, models.Model):
         string='Report Program',
     )
 
-    def _get_sql_view(self):
-        sql_view = super(BudgetConsumeReport, self)._get_sql_view()
-        join_query = """
-            left join res_section section on section.id = aal.section_id
-            left join res_project project on project.id = aal.project_id
-        """
-        sql_view = sql_view + join_query
-        return sql_view
+    # def _get_sql_view(self):
+    #     sql_view = super(BudgetConsumeReport, self)._get_sql_view()
+    #     join_query = """
+    #         left join res_section section on section.id = aal.section_id
+    #         left join res_project project on project.id = aal.project_id
+    #     """
+    #     sql_view = sql_view + join_query
+    #     return sql_view
 
     def _get_dimension(self):
         dimensions = super(BudgetConsumeReport, self)._get_dimension()

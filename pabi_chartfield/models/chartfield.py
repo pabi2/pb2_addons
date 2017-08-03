@@ -651,6 +651,73 @@ class ChartField(object):
                         rec.with_context(MyModelLoopBreaker=True).\
                             write({'fund_id': rec._get_default_fund()})
 
+    @api.model
+    def _record_value_by_type(self, record, key):
+        if self._fields[key].type == 'many2one':
+            return record[key] and record[key].name or 'None'
+        else:
+            return (str(record[key]).isdigit() and
+                    '{:,.2f}'.format(record[key]) or
+                    record[key])
+
+    @api.model
+    def _data_value_by_type(self, data, key):
+        if self._fields[key].type == 'many2one':
+            Model = self.env[self._fields[key].comodel_name]
+            return data[key] and Model.browse(data[key]).name or 'None'
+        else:
+            return (str(data[key]).isdigit() and
+                    '{:,.2f}'.format(data[key]) or
+                    data[key])
+
+    @api.model
+    def _change_content(self, vals, todos):
+        """ This method is used to build log for chatter purposes """
+        messages = []
+        for field in todos:
+            if field in vals:
+                title = todos[field][0]
+                res_model = todos[field][1]
+                res_field = todos[field][2]
+                # Case Add
+                add_lines = filter(lambda x: x[0] == 0, vals[field])
+                if add_lines:
+                    message = '<h3>%s</h3>' % (title + ' add(s)')
+                    message += '<ul>'
+                    for line in add_lines:
+                        res_id = line[2].get(res_field, False)
+                        res = self.env[res_model].browse(res_id)
+                        message += '<li><b>%s</b></li>' % (res.name, )
+                    message += '</ul>'
+                    messages.append(message)
+                # Case Delete
+                delete_lines = filter(lambda x: x[0] == 2, vals[field])
+                if delete_lines:
+                    message = '<h3>%s</h3>' % (title + ' delete(s)')
+                    message += '<ul>'
+                    for line in delete_lines:
+                        xline = self.browse(line[1])
+                        message += '<li><b>%s</b></li>' % xline[res_field].name
+                    message += '</ul>'
+                    messages.append(message)
+                # Case Update
+                change_lines = filter(lambda x: x[0] == 1, vals[field])
+                if change_lines:
+                    message = '<h3>%s</h3>' % (title + ' change(s)')
+                    for line in change_lines:
+                        xline = self.browse(line[1])
+                        message += '<b>%s</b><ul>' % xline[res_field].name
+                        for key in line[2]:
+                            field_name = self._fields[key].string
+                            old_val = self._record_value_by_type(xline, key)
+                            new_val = self._data_value_by_type(line[2], key)
+                            message += _(
+                                '<li><b>%s</b>: %s → %s</li>'
+                            ) % (field_name, old_val, new_val)
+                        message += '</ul>'
+                    messages.append(message)
+        return messages
+
 
 class ChartFieldAction(ChartField):
     """ Chartfield + Onchange for Document Transaction

@@ -11,7 +11,7 @@
                     <div>
                         <div>
                             <field name="pay_to" class="oe_inline"/>
-                            <field name="internal_charge" class="oe_inline" />
+                            <field name="internal_charge" class="oe_inline" invisible="1"/>
                         </div>
                         <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
                             <label for="internal_section_id" string="Section"/>

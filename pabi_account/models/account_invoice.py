@@ -78,6 +78,14 @@ class AccountInvoice(models.Model):
         self.income_tax_form = \
             self.has_wht and self.partner_id.income_tax_form or False
 
+    @api.model
+    def create(self, vals):
+        """ As invoice created, set default income_tax_form, if needed """
+        rec = super(AccountInvoice, self).create(vals)
+        if rec.has_wht:
+            rec.income_tax_form = rec.partner_id.income_tax_form
+        return rec
+
     @api.multi
     @api.depends('invoice_line')
     def _compute_invoice_description(self):
@@ -133,7 +141,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def invoice_validate(self):
-        result = super(AccountInvoice, self).invoice_validate()
+        result = super(AccountInvoice, self.sudo()).invoice_validate()
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})

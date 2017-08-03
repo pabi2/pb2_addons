@@ -101,10 +101,8 @@ class AccountVoucher(models.Model):
     def _compute_income_tax_form(self):
         for voucher in self:
             invoices = voucher.line_ids.mapped('move_line_id.invoice')
-            forms = []
-            for invoice in invoices:
-                if invoice.has_wht and invoice.income_tax_form:
-                    forms.append(invoice.income_tax_form)
+            forms = list(set(invoices.filtered('has_wht').
+                             mapped('income_tax_form')))
             if forms:
                 if len(forms) != 1:
                     raise ValidationError(
@@ -216,9 +214,12 @@ class AccountVoucher(models.Model):
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()
-        for voucher in self:
-            voucher.write({'validate_user_id': self.env.user.id,
-                           'validate_date': fields.Date.today()})
+        # For NSTDA, not writeoff_amount allowed
+        if self.filtered('writeoff_amount'):
+            raise ValidationError(_('Difference Amount must be 0.0 '
+                                    'to validate this document!'))
+        self.write({'validate_user_id': self.env.user.id,
+                    'validate_date': fields.Date.today()})
         return result
 
 

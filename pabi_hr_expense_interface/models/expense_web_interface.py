@@ -396,8 +396,9 @@ class HRExpense(models.Model):
         alfresco = xmlrpclib.ServerProxy(connect_string)
         return alfresco
 
-    @api.model
+    @api.multi
     def send_signal_to_pabiweb(self, signal, comment=''):
+        self.ensure_one()
         alfresco = self._get_alfresco_connect()
         if alfresco is False:
             return False
@@ -419,8 +420,9 @@ class HRExpense(models.Model):
             )
         return result
 
-    @api.model
+    @api.multi
     def send_comment_to_pabiweb(self, status, status_th, comment):
+        self.ensure_one()
         alfresco = self._get_alfresco_connect()
         if alfresco is False:
             return False

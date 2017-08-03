@@ -49,7 +49,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
-        track_visibility='onchange',
     )
     plan_revenue_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -60,7 +59,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
         domain=[('budget_method', '=', 'revenue')],  # Have domain
-        track_visibility='onchange',
     )
     plan_expense_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -71,7 +69,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
         domain=[('budget_method', '=', 'expense')],  # Have domain
-        track_visibility='onchange',
     )
     plan_summary_revenue_line_ids = fields.One2many(
         'budget.plan.unit.summary',
@@ -197,10 +194,25 @@ class BudgetPlanUnit(BPCommon, models.Model):
             raise ValidationError(_('Only submitted plan can be selected!'))
         self.action_approve()
 
+    @api.multi
+    def write(self, vals):
+        todo = {'plan_expense_line_ids': ('Expense line',
+                                          'account.activity.group',
+                                          'activity_group_id'),
+                'plan_revenue_line_ids': ('Revenue line',
+                                          'account.activity.group',
+                                          'activity_group_id')}
+        PlanLine = self.env['budget.plan.unit.line']
+        messages = PlanLine._change_content(vals, todo)
+        for message in messages:
+            self.message_post(body=message)
+        return super(BudgetPlanUnit, self).write(vals)
+
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
     _description = "Unit - Budget Plan Line"
+    _rec_name = 'activity_group_id'
 
     # COMMON
     chart_view = fields.Selection(

@@ -167,6 +167,9 @@ class ResTaxbranch(ResCommon, models.Model):
     _name = 'res.taxbranch'
     _description = 'Tax Branch'
 
+    logo = fields.Binary(
+        string='Logo',
+    )
     street = fields.Char(
         string='Street',
         translate=True,
