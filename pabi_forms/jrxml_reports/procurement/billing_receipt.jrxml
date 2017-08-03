@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.6500000000000001"/>
-	<property name="ireport.x" value="103"/>
-	<property name="ireport.y" value="856"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -111,16 +111,24 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
-ai.name,
+ai.number as name,
 ai.date_invoice,
-ai.reference,
+(
+SELECT po.name from
+purchase_order_line pol
+LEFT JOIN purchase_order po ON pol.order_id = po.id
+LEFT JOIN purchase_order_line_invoice_rel polir ON polir.order_line_id = pol.id
+LEFT JOIN account_invoice ai2 ON polir.invoice_id = ai2.id
+WHERE ai2.id = ai.id
+LIMIT 1
+) as reference,
 ai.amount_total,
 string_agg(pol.name,',') as product_description
 FROM account_invoice ai
 LEFT JOIN purchase_order_line pol
 ON pol.order_id = (SELECT po.id FROM purchase_order po WHERE po.name = ai.reference)
 WHERE ai.purchase_billing_id = $P{ids}
-GROUP BY ai.name,ai.date_invoice,
+GROUP BY ai.number,ai.id,ai.name,ai.date_invoice,
 ai.reference,
 ai.amount_total]]>
 		</queryString>
@@ -432,7 +440,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="5" y="0" width="111" height="18"/>
 								<textElement textAlignment="Left" lineSpacing="Single">
 									<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -464,7 +472,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField pattern="" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 								<reportElement mode="Transparent" x="10" y="0" width="175" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 								<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 									<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -479,7 +487,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField pattern="#,##0.00" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="61" height="18"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -781,7 +789,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="0" y="0" width="35" height="18"/>
 								<textElement textAlignment="Center" lineSpacing="Single">
 									<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -796,7 +804,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="5" y="0" width="111" height="18"/>
 								<textElement textAlignment="Left" lineSpacing="Single">
 									<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -813,7 +821,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement x="4" y="0" width="65" height="18"/>
 								<textElement textAlignment="Center" lineSpacing="Single">
 									<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -828,7 +836,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField pattern="" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 								<reportElement mode="Transparent" x="10" y="0" width="175" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 								<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 									<font fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -843,7 +851,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<leftPen lineWidth="1.0"/>
 								<rightPen lineWidth="1.0"/>
 							</box>
-							<textField pattern="#,##0.00" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="61" height="18"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
