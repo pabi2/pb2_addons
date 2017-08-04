@@ -176,18 +176,23 @@ class PaymentExport(models.Model):
     def _onchange_journal_id(self):
         self.cheque_lot_id = False
 
-    @api.onchange('journal_id', 'cheque_lot_id', 'date_value')
+    @api.onchange('journal_id', 'cheque_lot_id', 'date_value', 'transfer_type')
     def _onchange_compute_payment_export_line(self):
         self.line_ids = False
         self.line_ids = []
-        if not self.journal_id or not self.date_value:  # At least
+        if not (self.journal_id and self.date_value):  # At least
             return
-        if self.is_cheque_lot and not self.cheque_lot_id:  # Case Lot
+        if not self.transfer_type and \
+                (self.is_cheque_lot and not self.cheque_lot_id):  # Case Lot
             return
         Voucher = self.env['account.voucher']
+        # Prepare voucher domain
         dom = [('journal_id', '=', self.journal_id.id),
                ('date_value', '=', self.date_value),
                ('state', '=', 'posted')]
+        if self.transfer_type:
+            dom.append(('transfer_type', '=', self.transfer_type))
+        # Prepare export lines
         ExportLine = self.env['payment.export.line']
         # Case Cheque, make sure it has not been in any valid cheque before
         if self.is_cheque_lot:
