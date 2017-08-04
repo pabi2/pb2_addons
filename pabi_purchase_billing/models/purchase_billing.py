@@ -98,8 +98,9 @@ class PurchaseBilling(models.Model):
             check_string = THHoliday.find_previous_working_day(check)
             final_check_day = datetime.datetime.\
                 strptime(check_string, '%Y-%m-%d').date().day
-            if 0 < int(final_check_day) < 29 and int(final_check_day) \
-                    not in date_list:
+            #  if 0 < int(final_check_day) < 29 and int(final_check_day) \
+            #          not in date_list:
+            if int(final_check_day) not in date_list:
                 date_list.append(int(final_check_day))
             else:
                 raise ValidationError(
