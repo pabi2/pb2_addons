@@ -25,9 +25,9 @@
             <field name="model">document.export.config</field>
             <field name="arch" type="xml">
                 <tree string="Document Export Configuration" >
-                    <field name="date" />
-                    <field name="user_id" />
-                    <field name="company_id" />
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
                 </tree>
             </field>
         </record>

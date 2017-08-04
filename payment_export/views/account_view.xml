@@ -31,7 +31,7 @@
                         <field name="export_config_ids">
                             <tree editable="bottom">
                                 <field name="transfer_type"/>
-                                <field name="config_id"/>
+                                <field name="config_id" required="1"/>
                             </tree>
                         </field>
                     </page>
