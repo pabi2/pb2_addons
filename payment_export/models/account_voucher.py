@@ -62,6 +62,10 @@ class AccountVoucher(models.Model):
         res['value']['transfer_type'] = False
         return res
 
+    @api.onchange('payment_type')
+    def _onchange_payment_type(self):
+        self.transfer_type = False
+
     @api.onchange('transfer_type')
     def _onchange_transfer_type(self):
         if self.transfer_type:
