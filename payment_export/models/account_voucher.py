@@ -45,9 +45,31 @@ class AccountVoucher(models.Model):
         readonly=True,
     )
 
-    @api.one
+    @api.multi
     @api.depends('journal_id')
     def _compute_is_cheque_lot(self):
-        Lot = self.env['cheque.lot']
-        lots = Lot.search([('journal_id', '=', self.journal_id.id)])
-        self.is_cheque_lot = lots and True or False
+        for rec in self:
+            Lot = self.env['cheque.lot']
+            lots = Lot.search([('journal_id', '=', rec.journal_id.id)])
+            rec.is_cheque_lot = lots and True or False
+
+    @api.multi
+    def onchange_partner_id(self, partner_id, journal_id, amount,
+                            currency_id, ttype, date):
+        res = super(AccountVoucher, self).\
+            onchange_partner_id(partner_id, journal_id, amount,
+                                currency_id, ttype, date)
+        res['value']['transfer_type'] = False
+        return res
+
+    @api.onchange('payment_type')
+    def _onchange_payment_type(self):
+        self.transfer_type = False
+
+    @api.onchange('transfer_type')
+    def _onchange_transfer_type(self):
+        if self.transfer_type:
+            default_bank = self.partner_id.bank_ids.filtered('default')
+            self.supplier_bank_id = default_bank
+        else:
+            self.supplier_bank_id = False
