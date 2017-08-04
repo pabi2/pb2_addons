@@ -26,7 +26,8 @@ class DocumentExportParser(models.TransientModel):
     config_id = fields.Many2one(
         'document.export.config',
         string='Export Format',
-        required=True,
+        required=False,
+        ondelete='set null'
     )
 
     @api.model

@@ -12,7 +12,7 @@
                             <field name="file_type"/>
                         </group>
                         <group>
-                            <field name="config_id" widget="selection"/>
+                            <field name="config_id" widget="selection" required="1"/>
                         </group>
                     </group>
                     <footer>

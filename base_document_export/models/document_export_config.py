@@ -89,16 +89,19 @@ class DocumentExportConfig(models.Model):
         'document.export.config.lines',
         'header_configure_id',
         string='Header Configurations',
+        copy=True,
     )
     footer_config_line_ids = fields.One2many(
         'document.export.config.lines',
         'footer_configure_id',
         string='Footer Configurations',
+        copy=True,
     )
     detail_config_line_ids = fields.One2many(
         'document.export.config.lines',
         'detail_configure_id',
         string='Details Configurations',
+        copy=True,
     )
     delimiter_symbol = fields.Char(
         string="Joining Delimiter",

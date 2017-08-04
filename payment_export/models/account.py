@@ -61,7 +61,8 @@ class JournalExportConfig(models.Model):
     config_id = fields.Many2one(
         'document.export.config',
         string='Export Pack',
-        required=True,
+        required=False,
+        ondelete='set null',
     )
     _sql_constraints = [
         ('export_config_uniq', 'unique(journal_id, transfer_type, config_id)',
