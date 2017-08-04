@@ -34,7 +34,7 @@ class PurchaseBilling(models.Model):
     )
     user_id = fields.Many2one(
         'res.users',
-        string='Perpared By',
+        string='Prepared By',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
