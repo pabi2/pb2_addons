@@ -64,6 +64,10 @@ class AccountInvoice(models.Model):
                         'Preparint Number must be unique!')]
 
     @api.multi
+    def confirm_paid(self):
+        return super(AccountInvoice, self.sudo()).confirm_paid()
+
+    @api.multi
     @api.depends('invoice_line.invoice_line_tax_id')
     def _compute_has_wht(self):
         for rec in self:
