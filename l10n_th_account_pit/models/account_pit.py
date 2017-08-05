@@ -124,9 +124,12 @@ class PersonalIncomeTax(models.Model):
     def _compute_amount_wht(self):
         for rec in self:
             if rec.posted:
-                amount_wht = self._calculate_pit_amount_wht(rec.date,
-                                                            rec.partner_id.id,
-                                                            rec.amount_income)
+                # kittiu: we now allow to change amount wht
+                # otherwise, we should use _calculate_pit_amount_wht()
+                amount_wht = rec.precalc_wht
+                # amount_wht = self._calculate_pit_amount_wht(rec.date,
+                #                                             rec.partner_id.id,
+                #                                             rec.amount_income)
                 rec.amount_wht = amount_wht
 
     @api.onchange('amount_income', 'partner_id', 'voucher_id')
