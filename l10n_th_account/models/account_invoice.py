@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -86,6 +87,9 @@ class AccountInvoiceLine(models.Model):
                 account_id = company.account_retention_customer.id
             else:
                 account_id = company.account_retention_supplier.id
+            if not account_id:
+                raise ValidationError(
+                    _('No account for retention has been configured!'))
             res.append({
                 'type': 'src',
                 'name': _('Retention Amount'),

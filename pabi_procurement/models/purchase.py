@@ -618,4 +618,6 @@ class PurchaseOrderCommittee(models.Model):
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+        index=True,
+        ondelete='cascade',
     )
