@@ -104,6 +104,23 @@ class PaymentExport(models.Model):
         store=True,
         copy=False,
     )
+    sum_export_amount = fields.Float(
+        compute="_compute_sum_amount",
+        string="Sum Export Amount",
+        store=True,
+        copy=False,
+    )
+    sum_export_total = fields.Float(
+        compute="_compute_sum_amount",
+        string="Sum Export Total",
+        store=True,
+        copy=False,
+    )
+    num_export_line = fields.Integer(
+        compute="_compute_num_line",
+        string="Num Export Lines",
+        copy=False,
+    )
     num_line = fields.Integer(
         compute="_compute_num_line",
         string="Num Lines",
@@ -136,20 +153,20 @@ class PaymentExport(models.Model):
                  'line_ids.amount_total')
     def _compute_sum_amount(self):
         for export in self:
-            sum_amount = 0.0
-            sum_total = 0.0
-            for line in export.line_ids:
-                if line.use_export_line:
-                    sum_amount += line.amount
-                    sum_total += line.amount_total
-            export.sum_amount = sum_amount
-            export.sum_total = sum_total
+            all_lines = export.line_ids
+            export_lines = all_lines.filtered('use_export_line')
+            export.sum_amount = sum(all_lines.mapped('amount'))
+            export.sum_total = sum(all_lines.mapped('amount_total'))
+            export.sum_export_amount = sum(export_lines.mapped('amount'))
+            export.sum_export_total = sum(export_lines.mapped('amount_total'))
 
     @api.multi
     @api.depends('line_ids')
     def _compute_num_line(self):
         for export in self:
             export.num_line = len(export.line_ids)
+            export.num_export_line = \
+                len(export.line_ids.filtered('use_export_line'))
 
     @api.multi
     @api.depends()
