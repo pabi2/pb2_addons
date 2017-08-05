@@ -366,7 +366,7 @@ class AccountTaxDetail(models.Model):
     def _create_sequence(self, doc_type, period):
         seq_vals = {'name': self._get_seq_name(doc_type, period),
                     'implementation': 'no_gap'}
-        new_sequence = self.env['ir.sequence'].create(seq_vals)
+        new_sequence = self.env['ir.sequence'].sudo().create(seq_vals)
         vals = self._prepare_taxdetail_seq(doc_type, period, new_sequence)
         return self.env['account.tax.detail.sequence'].create(vals)
 

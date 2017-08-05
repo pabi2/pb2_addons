@@ -742,7 +742,7 @@ class AccountVoucher(common_voucher, models.Model):
     def _create_sequence(self, income_tax_form, wht_period):
         seq_vals = {'name': self._get_seq_name(income_tax_form, wht_period),
                     'implementation': 'no_gap'}
-        new_sequence = self.env['ir.sequence'].create(seq_vals)
+        new_sequence = self.env['ir.sequence'].sudo().create(seq_vals)
         vals = self._prepare_wht_seq(income_tax_form, wht_period, new_sequence)
         return self.env['withholding.tax.sequence'].create(vals)
 
