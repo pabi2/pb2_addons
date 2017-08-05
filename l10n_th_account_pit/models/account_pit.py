@@ -244,6 +244,7 @@ class AccountPIT(models.Model):
         'account.pit.rate',
         'pit_id',
         string='Withholding Tax Rates',
+        copy=True,
     )
 
     @api.one

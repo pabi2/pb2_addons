@@ -16,9 +16,10 @@
                             context="{'pit_withhold': pit_withhold}"/>
                     </button>
                     <page string="Tax" position="after">
-                        <page string="PIT" attrs="{'invisible': [('tax_line_wht', '!=', [])]}">
+                        <page string="PIT" attrs="{'invisible': ['|', ('id', '=', False), ('tax_line_wht', '!=', [])]}">
                             <group>
                                 <group>
+                                    <field name="id" invisible="1"/>
                                     <field name="pit_withhold"/>
                                 </group>
                                 <group>
