@@ -5,7 +5,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
-class AccountDebitNote(models.Model):
+class AccountDebitNote(models.TransientModel):
     _name = "account.debitnote"
     _description = "Invoice Debit Note"
 
@@ -24,9 +24,9 @@ class AccountDebitNote(models.Model):
     date = fields.Date(
         string='Date',
         default=time.strftime('%Y-%m-%d'),
-        help=''' This date will be used as the invoice date
-        for debit note and period will be chosen accordingly!'''
-        )
+        help="This date will be used as the invoice date "
+        "for debit note and period will be chosen accordingly!"
+    )
     period = fields.Many2one('account.period', 'Force period')
     journal_id = fields.Many2one(
         'account.journal',
