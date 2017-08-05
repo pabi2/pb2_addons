@@ -47,6 +47,7 @@ class DocumentExportParser(models.TransientModel):
         active_model =\
             self.env['ir.model'].search([('model', '=', active_model)])
         active_id = self._context.get('active_id', False)
+        print active_model.model
         payment_export_record = self.env[active_model.model].browse(active_id)
         data_list = []
         # for header part
@@ -73,8 +74,10 @@ class DocumentExportParser(models.TransientModel):
                                        'value': '001'})
         data_list.append(header_config_lines)
         # for Line Detail part
-        if payment_export_record.line_ids:
-            for export_line in payment_export_record.line_ids:
+        export_lines = \
+            payment_export_record.line_ids.filtered('use_export_line')
+        if export_lines:
+            for export_line in export_lines:
                 line_detail_config_lines = \
                     config_id.detail_config_line_ids.\
                     read(config_fields_to_read)
