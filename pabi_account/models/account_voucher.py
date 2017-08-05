@@ -291,6 +291,9 @@ class AccountVoucherTax(models.Model):
         tax_move_by_taxbranch = self.env.user.company_id.tax_move_by_taxbranch
         if tax_move_by_taxbranch:
             wht_taxbranch_id = self.env.user.company_id.wht_taxbranch_id.id
+            if not wht_taxbranch_id:
+                raise ValidationError(
+                    _('No Taxbranch for Withholding Tax has been configured!'))
             for r in res:
                 if 'tax_code_type' in r and r['tax_code_type'] == 'wht' \
                         and wht_taxbranch_id:

@@ -127,5 +127,5 @@
 "","","","","","","","","","","54","pabi_account_debt_transfer.model_payment_export_line","","","Payee Fax Number","20","False","","","","","","",""
 "","","","","","","","","","","55","pabi_account_debt_transfer.model_payment_export_line","","","Payee Mobile Phone Number","20","False","","","","","","",""
 "","","","","","","","","","","56","pabi_account_debt_transfer.model_payment_export_line","","","Payee E-mail Address","70","False","","","","","","",""
-"","","","","","","","","","","","","","","","","","2","pabi_attachment_helper.model_payment_export","value = object.num_line","","Total No. of Credits","6","True"
-"","","","","","","","","","","","","","","","","","3","pabi_attachment_helper.model_payment_export","value = object.sum_total","","Total Amount","16","True"
+"","","","","","","","","","","","","","","","","","2","pabi_attachment_helper.model_payment_export","value = object.num_export_line","","Total No. of Credits","6","True"
+"","","","","","","","","","","","","","","","","","3","pabi_attachment_helper.model_payment_export","value = object.sum_export_total","","Total Amount","16","True"
