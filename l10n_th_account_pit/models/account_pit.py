@@ -245,9 +245,6 @@ class AccountPIT(models.Model):
         'pit_id',
         string='Withholding Tax Rates',
     )
-    _sql_constraints = [
-        ('year_uniq', 'unique (calendar_year)', 'The year must be unique !'),
-    ]
 
     @api.one
     @api.depends('calendar_year')
