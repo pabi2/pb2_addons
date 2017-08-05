@@ -16,6 +16,7 @@ class AccountVoucher(models.Model):
     pit_withhold = fields.Boolean(
         string='Withhold PIT',
         default=False,
+        readonly=True,
         states={'draft': [('readonly', False)]},
     )
 
