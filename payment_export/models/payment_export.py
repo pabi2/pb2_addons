@@ -116,15 +116,26 @@ class PaymentExport(models.Model):
     )
 
     @api.multi
+    def _assign_line_sequence(self):
+        for export in self:
+            i = 1
+            for line in export.line_ids:
+                line.write({'sequence': i})
+                i += 1
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', '/') == '/':
+            vals['name'] = self.env['ir.sequence'].get('payment.export') or '/'
+        export = super(PaymentExport, self).create(vals)
+        export._assign_line_sequence()
+        return export
+
+    @api.multi
     def write(self, vals):
         res = super(PaymentExport, self).write(vals)
         if 'line_ids' in vals:
-            for export in self:
-                i = 1
-                for line in export.line_ids:
-                    print line.id
-                    line.write({'sequence': i})
-                    i += 1
+            self._assign_line_sequence()
         return res
 
     @api.onchange('transfer_type')
@@ -136,12 +147,6 @@ class PaymentExport(models.Model):
     def _onchange_cheque_lot_id(self):
         if self.cheque_lot_id:
             self.transfer_type = False
-
-    @api.model
-    def create(self, vals):
-        if vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence'].get('payment.export') or '/'
-        return super(PaymentExport, self).create(vals)
 
     @api.depends('line_ids',
                  'line_ids.amount',
