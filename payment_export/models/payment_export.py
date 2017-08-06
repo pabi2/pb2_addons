@@ -18,6 +18,7 @@ class PaymentExport(models.Model):
         'account.journal',
         string='Payment Method',
         required=True,
+        domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
     transfer_type = fields.Selection(
         [('direct', 'DIRECT'),

@@ -14,8 +14,11 @@
                     <field name="name"/>
                     <field name="cheque_register_id"/>
                     <field name="voucher_id"/>
+                    <filter string="Draft" domain="[('state','=','draft')]" name="draft"/>
+                    <filter string="Done" domain="[('state','=','done')]" name="done"/>
                     <group expand="0" string="Group By...">
                         <filter string="Payment Method" domain="[]" context="{'group_by':'journal_id'}"/>
+                        <filter string="State" domain="[]" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
