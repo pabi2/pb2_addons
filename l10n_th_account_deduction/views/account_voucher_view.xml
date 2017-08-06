@@ -44,7 +44,7 @@
                                 <field name="account_id" domain="[('type','not in',['view', 'closed'])]"/>
                                 <field name="amount" sum="Total Amount"/>
                                 <field name="note"/>
-                                <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                                <field name="analytic_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                             </tree>
                         </field>
                     </page>
@@ -84,7 +84,7 @@
                                 <field name="account_id" domain="[('type','not in',['view', 'closed'])]"/>
                                 <field name="amount" sum="Total Amount"/>
                                 <field name="note"/>
-                                <field name="analytic_id" groups="analytic.group_analytic_accounting"/>
+                                <field name="analytic_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                             </tree>
                         </field>
                     </page>

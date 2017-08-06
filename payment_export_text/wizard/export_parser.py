@@ -74,8 +74,7 @@ class DocumentExportParser(models.TransientModel):
                                        'value': '001'})
         data_list.append(header_config_lines)
         # for Line Detail part
-        export_lines = \
-            payment_export_record.line_ids.filtered('use_export_line')
+        export_lines = payment_export_record.line_ids
         if export_lines:
             for export_line in export_lines:
                 line_detail_config_lines = \

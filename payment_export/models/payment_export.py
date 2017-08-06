@@ -104,23 +104,6 @@ class PaymentExport(models.Model):
         store=True,
         copy=False,
     )
-    sum_export_amount = fields.Float(
-        compute="_compute_sum_amount",
-        string="Sum Export Amount",
-        store=True,
-        copy=False,
-    )
-    sum_export_total = fields.Float(
-        compute="_compute_sum_amount",
-        string="Sum Export Total",
-        store=True,
-        copy=False,
-    )
-    num_export_line = fields.Integer(
-        compute="_compute_num_line",
-        string="Num Export Lines",
-        copy=False,
-    )
     num_line = fields.Integer(
         compute="_compute_num_line",
         string="Num Lines",
@@ -149,24 +132,17 @@ class PaymentExport(models.Model):
 
     @api.depends('line_ids',
                  'line_ids.amount',
-                 'line_ids.use_export_line',
                  'line_ids.amount_total')
     def _compute_sum_amount(self):
         for export in self:
-            all_lines = export.line_ids
-            export_lines = all_lines.filtered('use_export_line')
-            export.sum_amount = sum(all_lines.mapped('amount'))
-            export.sum_total = sum(all_lines.mapped('amount_total'))
-            export.sum_export_amount = sum(export_lines.mapped('amount'))
-            export.sum_export_total = sum(export_lines.mapped('amount_total'))
+            export.sum_amount = sum(export.line_ids.mapped('amount'))
+            export.sum_total = sum(export.line_ids.mapped('amount_total'))
 
     @api.multi
     @api.depends('line_ids')
     def _compute_num_line(self):
         for export in self:
             export.num_line = len(export.line_ids)
-            export.num_export_line = \
-                len(export.line_ids.filtered('use_export_line'))
 
     @api.multi
     @api.depends()
@@ -220,8 +196,7 @@ class PaymentExport(models.Model):
             dom.append(('id', 'not in', chequed_voucher_ids))
         else:  # Other cases, make sure it has not been exported before
             lines = ExportLine.search(
-                [('use_export_line', '=', True),
-                 ('export_id.state', '=', 'done'),
+                [('export_id.state', '=', 'done'),
                  ('export_id.date_value', '=', self.date_value)],
             )
             exported_voucher_ids = [x.voucher_id.id for x in lines]
@@ -232,7 +207,6 @@ class PaymentExport(models.Model):
         for voucher in vouchers:
             export_line = ExportLine.new()
             export_line.sequence = i
-            export_line.use_export_line = True
             export_line.voucher_id = voucher
             export_line.amount = voucher.amount
             self.line_ids += export_line
@@ -248,24 +222,21 @@ class PaymentExport(models.Model):
             return
         ChequeLot = self.env['cheque.lot']
         for rec in self:
-            limit = len(filter(lambda l: (l.use_export_line), rec.line_ids))
+            limit = len(rec.line_ids)
             cheque_lot_id = rec.cheque_lot_id.id
             res = ChequeLot.get_draft_cheque_register_range(cheque_lot_id,
                                                             limit)
             for i in range(limit):
-                if rec.line_ids[i].use_export_line:
-                    rec.line_ids[i].cheque_register_id = res[i]
+                rec.line_ids[i].cheque_register_id = res[i]
 
     @api.multi
     def action_done(self):
         for export in self:
             if not export.line_ids:
                 raise ValidationError(_('No Export Lines'))
-            voucher_ids = [x.use_export_line and x.voucher_id.id
-                           for x in export.line_ids]
+            voucher_ids = [x.voucher_id.id for x in export.line_ids]
             exported_lines = self.env['payment.export.line'].\
                 search([('voucher_id', 'in', voucher_ids),
-                        ('use_export_line', '=', True),
                         ('export_id.state', '=', 'done')])
             if exported_lines:
                 vouchers = [x.voucher_id.number for x in exported_lines]
@@ -275,39 +246,38 @@ class PaymentExport(models.Model):
             # Case Cheque only
             if export.is_cheque_lot:
                 for line in export.line_ids:
-                    if line.use_export_line:
-                        if not line.cheque_register_id:
-                            raise ValidationError(
-                                _('Some Payments is not assigned with Cheque '
-                                  'Number!\nPlease click Assign Cheque Number.'
-                                  ))
-                        if line.cheque_register_id.voucher_id:
-                            raise ValidationError(
-                                _('Cheque Number %s is occupied, \
-                                    please reassign again!')
-                                % (line.cheque_register_id.number))
-                        if line.cheque_register_id.void:
-                            raise ValidationError(
-                                _('Cheque Number %s is voided, please reassign'
-                                  ' again!')
-                                % (line.cheque_register_id.number))
-                        line.cheque_register_id.write(
-                            {'voucher_id': line.voucher_id.id,
-                             'payment_export_id': export.id}
-                        )
-                        cheque_register = line.cheque_register_id
-                        cheque_lot = cheque_register.cheque_lot_id
-                        cheque_number = cheque_register.number
-                        cheque_date = export.date_value
-                        bank_name = cheque_lot.journal_id.bank_id.name
-                        bank_branch = cheque_lot.journal_id.bank_id.bank_branch
-                        line.voucher_id.write({
-                            'date_cheque': cheque_date,
-                            'number_cheque': cheque_number,
-                            'bank_cheque': bank_name,
-                            'bank_branch': bank_branch,
-                        })
-                        line.write({'exported': True})
+                    if not line.cheque_register_id:
+                        raise ValidationError(
+                            _('Some Payments is not assigned with Cheque '
+                              'Number!\nPlease click Assign Cheque Number.'
+                              ))
+                    if line.cheque_register_id.voucher_id:
+                        raise ValidationError(
+                            _('Cheque Number %s is occupied, \
+                                please reassign again!')
+                            % (line.cheque_register_id.number))
+                    if line.cheque_register_id.void:
+                        raise ValidationError(
+                            _('Cheque Number %s is voided, please reassign'
+                              ' again!')
+                            % (line.cheque_register_id.number))
+                    line.cheque_register_id.write(
+                        {'voucher_id': line.voucher_id.id,
+                         'payment_export_id': export.id}
+                    )
+                    cheque_register = line.cheque_register_id
+                    cheque_lot = cheque_register.cheque_lot_id
+                    cheque_number = cheque_register.number
+                    cheque_date = export.date_value
+                    bank_name = cheque_lot.journal_id.bank_id.name
+                    bank_branch = cheque_lot.journal_id.bank_id.bank_branch
+                    line.voucher_id.write({
+                        'date_cheque': cheque_date,
+                        'number_cheque': cheque_number,
+                        'bank_cheque': bank_name,
+                        'bank_branch': bank_branch,
+                    })
+                    line.write({'exported': True})
         self.write({'state': 'done'})
 
     @api.multi
@@ -315,12 +285,11 @@ class PaymentExport(models.Model):
         self.write({'state': 'cancel'})
         for rec in self:
             for line in rec.line_ids:
-                if line.use_export_line:
-                    line.cheque_register_id.write(
-                        {'voucher_id': False,
-                         'payment_export_id': False}
-                    )
-                    line.write({'exported': False})
+                line.cheque_register_id.write(
+                    {'voucher_id': False,
+                     'payment_export_id': False}
+                )
+                line.write({'exported': False})
 
     @api.multi
     def action_draft(self):
@@ -370,11 +339,6 @@ class PaymentExportLine(models.Model):
     exported = fields.Boolean(
         string='Exported',
         default=False,
-    )
-    use_export_line = fields.Boolean(
-        string="Use line",
-        default=True,
-        copy=False,
     )
     amount_fee = fields.Float(
         string="Fee",
