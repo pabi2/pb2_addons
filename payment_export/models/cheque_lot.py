@@ -17,6 +17,7 @@ class ChequeLot(models.Model):
         'account.journal',
         string='Payment Method',
         required=True,
+        domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
     cheque_number_from = fields.Char(
         string='Cheque Number From',
