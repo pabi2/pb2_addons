@@ -23,6 +23,8 @@ class AccountVoucher(models.Model):
     @api.multi
     def proforma_voucher(self):
         for voucher in self:
+            if voucher.pit_line and voucher.tax_line_wht:
+                raise ValidationError(_('WHT and PIT can not coexists!'))
             for line in voucher.pit_line:
                 line.action_post()
         return super(AccountVoucher, self).proforma_voucher()
@@ -58,14 +60,14 @@ class AccountVoucher(models.Model):
                 self.date, pit_line.partner_id.id, pit_line.amount_income)
             self.pit_line += pit_line
 
-    @api.model
-    def _validate_pit_to_deduction(self, voucher):
-        if len(voucher.pit_line) != 1:
-            raise ValidationError(
-                _('> 1 PIT Line not allowed!'))
-        if voucher.partner_id != voucher.pit_line[0].partner_id:
-            raise ValidationError(
-                _('Supplier in PIT line is different from the payment!'))
+    # @api.model
+    # def _validate_pit_to_deduction(self, voucher):
+    #     if len(voucher.pit_line) != 1:
+    #         raise ValidationError(
+    #             _('> 1 PIT Line not allowed!'))
+    #     if voucher.partner_id != voucher.pit_line[0].partner_id:
+    #         raise ValidationError(
+    #             _('Supplier in PIT line is different from the payment!'))
 
     # Do not delete yet.
     # @api.multi
