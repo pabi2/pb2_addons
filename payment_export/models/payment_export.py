@@ -107,12 +107,24 @@ class PaymentExport(models.Model):
     num_line = fields.Integer(
         compute="_compute_num_line",
         string="Num Lines",
-        copy=False,
+        store=True,
     )
     cancel_reason_txt = fields.Char(
         string="Description",
         readonly=True,
     )
+
+    @api.multi
+    def write(self, vals):
+        res = super(PaymentExport, self).write(vals)
+        if 'line_ids' in vals:
+            for export in self:
+                i = 1
+                for line in export.line_ids:
+                    print line.id
+                    line.write({'sequence': i})
+                    i += 1
+        return res
 
     @api.onchange('transfer_type')
     def _onchange_transfer_type(self):
@@ -203,14 +215,11 @@ class PaymentExport(models.Model):
             dom.append(('id', 'not in', exported_voucher_ids))
         vouchers = Voucher.search(dom, order='id',
                                   limit=self.cheque_lot_id.remaining)
-        i = 1
         for voucher in vouchers:
             export_line = ExportLine.new()
-            export_line.sequence = i
             export_line.voucher_id = voucher
             export_line.amount = voucher.amount
             self.line_ids += export_line
-            i += 1
 
     @api.multi
     def action_export_payment_pack(self):
@@ -303,7 +312,6 @@ class PaymentExportLine(models.Model):
     sequence = fields.Integer(
         string='Sequence',
         readonly=True,
-        default=0,
     )
     export_id = fields.Many2one(
         'payment.export',

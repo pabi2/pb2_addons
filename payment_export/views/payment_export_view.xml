@@ -76,6 +76,7 @@
                                 <field name="company_id" groups="base.group_multi_company" readonly="1"/>
                                 <field name="sum_amount"/>
                                 <field name="sum_total"/>
+                                <field name="num_line"/>
                             </group>
                         </group>
                         <notebook>
