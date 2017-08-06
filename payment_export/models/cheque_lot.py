@@ -63,6 +63,14 @@ class ChequeLot(models.Model):
         string='Cheque Registers',
     )
 
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if rec.line_ids.filtered('voucher_id'):
+                raise ValidationError(
+                    _('This lot has been used, deletion no allowed!'))
+        return super(ChequeLot, self).unlink()
+
     # @api.onchange('bank_id')
     # def _onchange_bank_id(self):
     #     self.journal_id = False
