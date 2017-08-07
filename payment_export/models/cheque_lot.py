@@ -98,13 +98,25 @@ class ChequeLot(models.Model):
     @api.constrains('cheque_number_from', 'cheque_number_to')
     def _check_cheque_number(self):
         for rec in self:
+            # Check number only
             if not rec.cheque_number_from.isdigit() or \
                     not rec.cheque_number_to.isdigit():
                 raise ValidationError(
                     _('Cheque Number must not contain any character!'))
+            # Check valid range
             if int(rec.cheque_number_from) >= int(rec.cheque_number_to):
                 raise ValidationError(
                     _('Cheque Number From - To must be a valid number range!'))
+            # Check number length
+            SystemParam = self.env['ir.config_parameter']
+            length = SystemParam.get_param('cheque_lot_number_length') or 8
+            length = length.isdigit() and int(length) or 8
+            if len(rec.cheque_number_from) != int(length) or \
+                    len(rec.cheque_number_to) != length:
+                raise ValidationError(
+                    _('Cheque Number From - To must has %s digit!') %
+                    (length,))
+            # Check same number length
             if len(rec.cheque_number_from) != len(rec.cheque_number_to):
                 raise ValidationError(
                     _('Cheque Number From - To must be in same digit length!'))
