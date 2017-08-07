@@ -99,17 +99,17 @@ class PurchaseOrder(models.Model):
             # Create WA
             acceptance = False
             if po.state == 'approved':
-                WA = self.env['create.purchase.work.acceptance']
                 ctx = {'active_ids': [po.id]}
-                res = WA.with_context(ctx).default_get([])
-                wa = WA.create(res)
-                acceptance = wa.with_context(ctx)._prepare_acceptance()
+                CreateWA = self.env['create.purchase.work.acceptance']
+                res = CreateWA.with_context(ctx).default_get([])
+                create_wa = CreateWA.create(res)
+                acceptance = create_wa.with_context(ctx)._prepare_acceptance()
                 acceptance.write({'order_id': po.id})
                 # Evaluate
                 for line in acceptance.acceptance_line_ids:
                     line.write({'to_receive_qty': line.balance_qty})
             # If PO has IN, then do the transfer and create invoice
-            if po.has_stockable_product() and po.picking_ids and acceptance:
+            if po.has_stockable_product() and po.picking_ids:
                 po.picking_ids.write({'acceptance_id': acceptance.id})
                 # Transfer it
                 picking = po.picking_ids[0]
@@ -122,6 +122,15 @@ class PurchaseOrder(models.Model):
                 ctx = {'active_ids': [picking.id]}
                 stock_invoice = StockInvoice.with_context(ctx).create({})
                 stock_invoice.open_invoice()
+            else:  # No IN, create invoice from WA
+                WA = self.env['purchase.work.acceptance']
+                LineInvoice = self.env['purchase.order.line_invoice']
+                res = WA.open_order_line([acceptance.id])
+                ctx = {'active_model': 'purchase.work.acceptance',
+                       'active_id': acceptance.id}
+                res['context'].update(ctx)
+                line_inv = LineInvoice.with_context(res['context']).create({})
+                line_inv.makeInvoices()
             # Create Billing
             Billing = self.env['purchase.billing']
             billing = Billing.create({'partner_id': po.partner_id.id})
