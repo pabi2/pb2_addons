@@ -74,3 +74,17 @@ class PurchaseRequisition(models.Model):
         for purchase in purchases:
             purchase.write({'payment_term_id': 1})  # Immediate
         return purchase_ids
+
+
+class PurchaseOrder(models.Model):
+    _inherit = 'purchase.order'
+
+    @api.multi
+    def action_po_to_invoice(self):
+        invoice_ids = []
+        for po in self:
+            # To confirm, must start from draft
+            if po.state == 'draft':
+                po.wkf_validate_invoice_method()
+                po.wkf_confirm_order()
+        return invoice_ids

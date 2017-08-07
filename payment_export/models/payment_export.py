@@ -259,7 +259,7 @@ class PaymentExport(models.Model):
                             'remove to continue.') % (', '.join(vouchers),)
                 raise ValidationError(message)
             # Case Cheque only
-            if export.is_cheque_lot:
+            if export.is_cheque_lot and export.cheque_lot_id:
                 for line in export.line_ids:
                     if not line.cheque_register_id:
                         raise ValidationError(
