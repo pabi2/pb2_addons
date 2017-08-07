@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="cheque_lot_number_length" model="ir.config_parameter">
+            <field name="key">cheque_lot_number_length</field>
+            <field name="value">8</field>
+        </record>
+    </data>
+</openerp>
