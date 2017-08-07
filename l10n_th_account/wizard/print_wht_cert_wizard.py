@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.tools.float_utils import float_round as round
 from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.account_voucher \
     import WHT_CERT_INCOME_TYPE, TAX_PAYER
