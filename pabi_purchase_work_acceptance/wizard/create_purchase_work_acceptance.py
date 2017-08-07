@@ -226,7 +226,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'price_unit': act_line.line_id.price_unit,
                 }
                 lines.append([0, 0, line_vals])
-        acceptance.acceptance_line_ids = lines
+        acceptance.write({'acceptance_line_ids': lines})
         acceptance._compute_total_fine()
         return acceptance
 

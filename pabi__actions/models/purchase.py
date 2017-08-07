@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import ast
 import logging
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -81,10 +82,49 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def action_po_to_invoice(self):
-        invoice_ids = []
+        if len(self) > 1:
+            raise ValidationError(_('Please select only 1 PO'))
         for po in self:
             # To confirm, must start from draft
             if po.state == 'draft':
                 po.wkf_validate_invoice_method()
                 po.wkf_confirm_order()
-        return invoice_ids
+            # Release
+            if po.state == 'confirmed':
+                po.wkf_approve_order()
+                if po.has_stockable_product():
+                    po.action_picking_create()
+                else:
+                    po.picking_done()
+            # Create WA
+            acceptance = False
+            if po.state == 'approved':
+                WA = self.env['create.purchase.work.acceptance']
+                ctx = {'active_ids': [po.id]}
+                res = WA.with_context(ctx).default_get([])
+                wa = WA.create(res)
+                acceptance = wa.with_context(ctx)._prepare_acceptance()
+                acceptance.write({'order_id': po.id})
+                # Evaluate
+                for line in acceptance.acceptance_line_ids:
+                    line.write({'to_receive_qty': line.balance_qty})
+            # If PO has IN, then do the transfer and create invoice
+            if po.has_stockable_product() and po.picking_ids and acceptance:
+                po.picking_ids.write({'acceptance_id': acceptance.id})
+                # Transfer it
+                picking = po.picking_ids[0]
+                res = picking.do_enter_transfer_details()
+                Transfer = self.env['stock.transfer_details']
+                transfer = Transfer.browse(res['res_id'])
+                res = transfer.do_detailed_transfer()
+                # Create invoice
+                StockInvoice = self.env['stock.invoice.onshipping']
+                ctx = {'active_ids': [picking.id]}
+                stock_invoice = StockInvoice.with_context(ctx).create({})
+                stock_invoice.open_invoice()
+            # Create Billing
+            Billing = self.env['purchase.billing']
+            billing = Billing.create({'partner_id': po.partner_id.id})
+            billing._onchange_partner_id()
+            billing.supplier_invoice_ids = po.invoice_ids
+            billing.validate_billing()
