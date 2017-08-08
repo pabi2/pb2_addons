@@ -26,6 +26,7 @@
                     <field name="cheque_number_from"/>
                     <field name="cheque_number_to"/>
                     <field name="next_number"/>
+                    <field name="remaining"/>
                     <field name="user_id"/>
                     <field name="state"/>
                 </tree>

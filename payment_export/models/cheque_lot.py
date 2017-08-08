@@ -248,3 +248,8 @@ class ChequeRegister(models.Model):
         string='Payment Export',
         readonly=True,
     )
+    _sql_constraints = [
+        ('number_unique',
+         'unique(number, journal_id)',
+         'Cheque number must be unique of the same payment method!')
+    ]
