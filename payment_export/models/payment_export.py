@@ -271,7 +271,8 @@ class PaymentExport(models.Model):
             voucher_ids = [x.voucher_id.id for x in export.line_ids]
             exported_lines = self.env['payment.export.line'].\
                 search([('voucher_id', 'in', voucher_ids),
-                        ('export_id.state', '=', 'done')])
+                        ('export_id.state', '=', 'done'),
+                        ('void', '=', False)])
             if exported_lines:
                 vouchers = [x.voucher_id.number for x in exported_lines]
                 message = _('Following payment had been exported.\n%s\nPlease '
