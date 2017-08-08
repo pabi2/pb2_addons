@@ -20,6 +20,13 @@ class PaymentExport(models.Model):
         required=True,
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
+    payment_type = fields.Selection(
+        [('cheque', 'Cheque'),
+         ('transfer', 'Transfer')],
+        string='Payment Type',
+        compute='_compute_payment_type',
+        store=True,
+    )
     transfer_type = fields.Selection(
         [('direct', 'DIRECT'),
          ('smart', 'SMART')
@@ -59,6 +66,7 @@ class PaymentExport(models.Model):
         'res.users',
         string='Responsible',
         required=True,
+        readonly=True,
         default=lambda self: self.env.user,
     )
     line_ids = fields.One2many(
@@ -182,6 +190,17 @@ class PaymentExport(models.Model):
         Lot = self.env['cheque.lot']
         lots = Lot.search([('journal_id', '=', self.journal_id.id)])
         self.is_cheque_lot = lots and True or False
+
+    @api.multi
+    @api.depends('transfer_type', 'cheque_lot_id')
+    def _compute_payment_type(self):
+        for rec in self:
+            if rec.transfer_type:
+                rec.payment_type = 'transfer'
+            elif rec.cheque_lot_id:
+                rec.payment_type = 'cheque'
+            else:
+                rec.payment_type = False
 
     @api.onchange('journal_id')
     def _onchange_journal_id(self):
@@ -324,6 +343,13 @@ class PaymentExportLine(models.Model):
         string='Payment Export',
         ondelete='cascade',
         index=True,
+    )
+    payment_type = fields.Selection(
+        [('cheque', 'Cheque'),
+         ('transfer', 'Transfer')],
+        string='Payment Type',
+        related='export_id.payment_type',
+        store=True,
     )
     cheque_register_id = fields.Many2one(
         'cheque.register',
