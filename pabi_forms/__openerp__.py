@@ -24,6 +24,7 @@
         'data/asset_data.xml',
         'data/hr_salary_data.xml',
         'print_journal_entries/print_voucher_wizard.xml',
+        'print_payment_export/print_payment_export_wizard.xml',
     ],
     'installable': True,
     'auto_install': False,

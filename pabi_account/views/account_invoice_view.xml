@@ -145,6 +145,12 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group/label[@for='reference_type']" position="attributes">
+                    <attribute name="invisible">True</attribute>"
+                </xpath>
+                <xpath expr="/form/sheet/group/group/div" position="attributes">
+                    <attribute name="invisible">True</attribute>"
+                </xpath>
                 <!-- Will try to use super source document instead -->
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">True</attribute>

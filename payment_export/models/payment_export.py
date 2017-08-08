@@ -122,6 +122,11 @@ class PaymentExport(models.Model):
         string="Description",
         readonly=True,
     )
+    exported = fields.Boolean(
+        string='Pack Exported',
+        default=False,
+        help="Only if exported pack, will allow printing Payment Export",
+    )
 
     @api.multi
     def _assign_line_sequence(self):
