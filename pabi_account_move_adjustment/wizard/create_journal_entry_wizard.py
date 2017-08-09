@@ -14,13 +14,13 @@ class CreateJournalEntryWizard(models.TransientModel):
         required=True,
     )
 
-    @api.model
-    def view_init(self, fields_list):
-        invoice_id = self._context.get('active_id')
-        invoice = self.env['account.invoice'].browse(invoice_id)
-        if invoice.adjust_move_id:
-            raise ValidationError(
-                _('The adjustmnet journal entry already created!'))
+    # @api.model
+    # def view_init(self, fields_list):
+    #     invoice_id = self._context.get('active_id')
+    #     invoice = self.env['account.invoice'].browse(invoice_id)
+    #     if invoice.adjust_move_id:
+    #         raise ValidationError(
+    #             _('The adjustmnet journal entry already created!'))
 
     @api.multi
     def create_journal_entry(self):
