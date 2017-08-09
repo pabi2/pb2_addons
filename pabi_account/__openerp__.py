@@ -23,6 +23,7 @@
         "l10n_th_account_tax_detail",
         "pabi_base",
         "pabi_chartfield",
+        "pabi_chartfield_merged",
         "pabi_account_move_document_ref",
         # "account_move_line_doc_ref",
         "hr_expense_auto_invoice",
