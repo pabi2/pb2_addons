@@ -8,25 +8,8 @@ def print_voucher_parser(cr, uid, ids, data, context):
     }
 
 
-# KV Voucher && DV Voucher
 jasper_reports.report_jasper(
-    'report.invoice.voucher',  # report_name in account_data.xml
-    'account.move',  # Model View name
-    parser=print_voucher_parser
-)
-
-
-# PV Voucher && RC Voucher
-jasper_reports.report_jasper(
-    'report.payment.voucher',  # report_name in account_data.xml
-    'account.move',  # Model View name
-    parser=print_voucher_parser
-)
-
-
-# RV Voucher
-jasper_reports.report_jasper(
-    'report.bank.receipt.voucher',  # report_name in account_data.xml
+    'report.print_voucher',
     'account.move',  # Model View name
     parser=print_voucher_parser
 )

@@ -60,6 +60,22 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAmtInWords((new BigDecimal($V{string_total}==null?0:$V{string_total})).setScale(2).toString(),"THB")]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement x="254" y="24" width="84" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="247" y="25" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[A/C Payee Only]]></text>
+			</staticText>
+			<line>
+				<reportElement x="254" y="45" width="84" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="473" y="60" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[XXXXX]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

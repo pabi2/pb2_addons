@@ -47,7 +47,6 @@ class DocumentExportParser(models.TransientModel):
         active_model =\
             self.env['ir.model'].search([('model', '=', active_model)])
         active_id = self._context.get('active_id', False)
-        print active_model.model
         payment_export_record = self.env[active_model.model].browse(active_id)
         data_list = []
         # for header part

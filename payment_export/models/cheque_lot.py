@@ -33,6 +33,8 @@ class ChequeLot(models.Model):
         'res.users',
         string='Responsible',
         required=False,
+        readonly=True,
+        default=lambda self: self.env.user,
     )
     next_number = fields.Char(
         string='Next Cheque Number',
@@ -45,6 +47,11 @@ class ChequeLot(models.Model):
         readonly=True,
         store=True,
         help="This field show the remaining valid cheque to use",
+    )
+    dirty = fields.Boolean(
+        string='Dirty',
+        compute='_compute_remaining',
+        help="Dirty remaining is not equal to number of lines"
     )
     state = fields.Selection(
         [('active', 'Active'),
@@ -84,6 +91,7 @@ class ChequeLot(models.Model):
                                       ('voucher_id', '=', False),
                                       ('void', '!=', True)])._ids)
             lot.remaining = count
+            lot.dirty = lot.remaining != len(lot.line_ids)
 
     @api.multi
     @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
@@ -153,6 +161,20 @@ class ChequeLot(models.Model):
         cheque_lot = super(ChequeLot, self).create(vals)
         cheque_lot._generate_cheque_register()
         return cheque_lot
+
+    @api.multi
+    def write(self, vals):
+        res = super(ChequeLot, self).write(vals)
+        for cheque_lot in self:
+            if 'cheque_number_form' in vals or 'cheque_number_to' in vals:
+                if cheque_lot.line_ids.filtered(lambda l:  # if any is used.
+                                                l.voucher_id or l.void):
+                    raise ValidationError(
+                        _('Renumbering is not allowed, some lines used!'))
+                else:
+                    cheque_lot.line_ids.unlink()
+                    cheque_lot._generate_cheque_register()
+        return res
 
     @api.multi
     def open_cheque_register(self):
@@ -226,3 +248,8 @@ class ChequeRegister(models.Model):
         string='Payment Export',
         readonly=True,
     )
+    _sql_constraints = [
+        ('number_unique',
+         'unique(number, journal_id)',
+         'Cheque number must be unique of the same payment method!')
+    ]
