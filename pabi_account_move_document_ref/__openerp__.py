@@ -23,6 +23,7 @@
         'pabi_interface',
         'pabi_chartfield',
         'pabi_budget_internal_charge',
+        # This module can not depend on pabi_account_move_adjustment !!!
     ],
     'demo': [],
     'data': [

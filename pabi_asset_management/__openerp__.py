@@ -14,7 +14,7 @@
         "pabi_invest_construction",
         "pabi_chartfield_merged",
         "pabi_xls",
-        "pabi_account_move_adjustment",
+        # "pabi_account_move_adjustment",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
