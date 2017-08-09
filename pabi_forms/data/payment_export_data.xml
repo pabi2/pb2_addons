@@ -19,7 +19,7 @@
         <record id="payment_export_form_values" model="ir.values">
             <field name="name">Payment Export</field>
             <field name="model">payment.export</field>
-            <field name="key2" eval="'client_print_multi'"/>
+      			<field name="key2" eval="False"/>
             <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payment_export_form)"/>
         </record>
 
@@ -41,7 +41,7 @@
         <record id="cheque_form_values" model="ir.values">
             <field name="name">Cheque</field>
             <field name="model">payment.export</field>
-            <field name="key2" eval="'client_print_multi'"/>
+      			<field name="key2" eval="False"/>
             <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cheque_form)"/>
         </record>
     </data>
