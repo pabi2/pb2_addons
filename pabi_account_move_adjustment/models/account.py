@@ -53,15 +53,15 @@ class AccountMove(models.Model):
                     [('move_id', 'in', move.line_id.ids)]).unlink()
         return super(AccountMove, self).button_cancel()
 
-    @api.model
-    def create(self, vals):
-        move = super(AccountMove, self).create(vals)
-        ref_invoice = vals.get('ref', False)
-        if ref_invoice:
-            Invoice = self.env['account.invoice']
-            invoice = Invoice.search([('number', '=', ref_invoice)])
-            invoice.adjust_move_id = move
-        return move
+    # @api.model
+    # def create(self, vals):
+    #     move = super(AccountMove, self).create(vals)
+    #     ref_invoice = vals.get('ref', False)
+    #     if ref_invoice:
+    #         Invoice = self.env['account.invoice']
+    #         invoice = Invoice.search([('number', '=', ref_invoice)])
+    #         invoice.adjust_move_id = move
+    #     return move
 
 
 class AccountMoveLine(models.Model):
