@@ -153,6 +153,9 @@
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='chartfield_id']" position="attributes">
                     <attribute name="attrs">{'readonly': ['|', ('id', '!=', False), ('require_chartfield', '=', False)]}</attribute>
                 </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='fund_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('require_chartfield', '=', False)]}</attribute>
+                </xpath>
             </field>
         </record>
 
