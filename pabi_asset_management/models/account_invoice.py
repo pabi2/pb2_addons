@@ -13,3 +13,13 @@ class AccountInvoiceLine(models.Model):
             if rec.asset_profile_id or rec.asset_id:
                 raise ValidationError(
                     _('For PABI2, creating asset on invoice is not allowed.'))
+
+    @api.multi
+    def onchange_account_id(self, product_id, partner_id, inv_type,
+                            fposition_id, account_id):
+        """ For PABI2, never assigin asset profile in invoice """
+        res = super(AccountInvoiceLine, self).onchange_account_id(
+            product_id, partner_id, inv_type, fposition_id, account_id)
+        if 'value' in res:
+            res['value'].update({'asset_profile_id': False})
+        return res
