@@ -51,7 +51,7 @@ class AccountVoucher(models.Model):
 
     @api.onchange('pit_withhold')
     def _onchange_pit_withhold(self):
-        self.pit_line = []
+        self.pit_line = False
         if self.pit_withhold:
             pit_line = self.env['personal.income.tax'].new()
             pit_line.partner_id = self.partner_id
