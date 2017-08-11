@@ -23,6 +23,7 @@
                 <xpath expr="//field[@name='date']" position="after">
                     <field name="validate_user_id"/>
                     <field name="validate_date"/>
+                    <field name="voucher_description" invisible="1"/>
                 </xpath>
                 <xpath expr="//sheet/field[@name='account_id']" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
