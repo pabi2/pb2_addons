@@ -4,7 +4,8 @@
     "version": "1.0",
     "description": """
 
-All configuration for name_search in one place
+- All configuration for name_search in one place
+- Extend search on invoice/payment/journal entry, i.e., PV001-PV005,PV006,PV007
 
     """,
     "website": "https://ecosoft.co.th/",
