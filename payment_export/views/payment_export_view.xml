@@ -2,8 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_payment_export" name="Payment Exports" parent="account.menu_finance"
-            sequence="4" groups="account.group_account_user,account.group_account_manager"/>
+        <menuitem id="menu_payment_export" name="Payment Exports" parent="account.menu_finance" sequence="4" groups="account.group_account_user,account.group_account_manager"/>
 
         # Payment Export
         <record id="view_payment_export_filter" model="ir.ui.view">
@@ -94,6 +93,7 @@
                         </group>
                         <notebook>
                             <page string="Supplier Payment &amp; Cheque Number">
+                                <field name="line_filter" placeholder="Extend search with comma and between. e.g., PV170001-PV170010,PV170030,PV170035"/>
                                 <field name="line_ids">
                                     <tree create="0" editable="bottom">
                                         <field name="export_id" invisible="1"/>

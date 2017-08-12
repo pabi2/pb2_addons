@@ -19,7 +19,6 @@
         'pabi_chartfield',
         'pabi_chartfield_merged',
         'pabi_asset_management',
-        'base_name_search_improved',
     ],
     "data": [
         'ir.model.csv',

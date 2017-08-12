@@ -127,6 +127,10 @@ class PaymentExport(models.Model):
         default=False,
         help="Only if exported pack, will allow printing Payment Export",
     )
+    line_filter = fields.Char(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
 
     @api.multi
     def _assign_line_sequence(self):
@@ -211,7 +215,9 @@ class PaymentExport(models.Model):
     def _onchange_journal_id(self):
         self.cheque_lot_id = False
 
-    @api.onchange('journal_id', 'cheque_lot_id', 'date_value', 'transfer_type')
+    @api.onchange('journal_id', 'cheque_lot_id',
+                  'date_value', 'transfer_type',
+                  'line_filter')
     def _onchange_compute_payment_export_line(self):
         self.line_ids = False
         self.line_ids = []
@@ -227,6 +233,8 @@ class PaymentExport(models.Model):
                ('state', '=', 'posted')]
         if self.transfer_type:
             dom.append(('transfer_type', '=', self.transfer_type))
+        if self.line_filter:
+            dom.append(('number', 'ilike', self.line_filter))
         # Prepare export lines
         ExportLine = self.env['payment.export.line']
         # Case Cheque, make sure it has not been in any valid cheque before

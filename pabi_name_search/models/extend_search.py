@@ -61,7 +61,7 @@ class ExtendSearch(object):
     def _extend_search_arg(self, args):
         new_args = []
         for arg in args:
-            if isinstance(arg, list) and arg[1] == 'ilike':
+            if isinstance(arg, (list, tuple)) and arg[1] == 'ilike':
                 field = arg[0]
                 name = arg[2]
                 _ids = self._search_name_to_ids(self._table, field, name)
