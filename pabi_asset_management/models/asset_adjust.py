@@ -44,16 +44,10 @@ class AccountAssetAdjust(models.Model):
         string='Note',
         copy=False,
     )
-    adjust_line_ids = fields.One2many(
-        'account.asset.adjust.line',
-        'adjust_id',
-        string='Asset Adjustment',
-        copy=False,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
     adjust_type = fields.Selection(
-        [('asset_type', 'Change Asset Type')],
+        [('asset_type', 'Change Asset Type'),
+         ('asset_to_expense', 'Asset => Expense'),
+         ('expense_to_asset', 'Expense => Asset')],
         string='Adjust Type',
         copy=True,
         required=True,
@@ -61,8 +55,8 @@ class AccountAssetAdjust(models.Model):
         states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
-        [('draft', 'Source Assets'),
-         ('done', 'Adjustred'),
+        [('draft', 'Draft'),
+         ('done', 'Adjusted'),
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
@@ -75,6 +69,30 @@ class AccountAssetAdjust(models.Model):
         string='Ref Supplier Invoice',
         domain=[('type', '=', 'in_invoice'),
                 ('state', 'in', ('open', 'paid'))],
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    adjust_line_ids = fields.One2many(
+        'account.asset.adjust.line',
+        'adjust_id',
+        string='Asset Adjustment',
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    adjust_asset_to_expense_ids = fields.One2many(
+        'account.asset.adjust.asset_to_expense',
+        'adjust_id',
+        string='Asset to Expense Adjustment',
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    adjust_expense_to_asset_ids = fields.One2many(
+        'account.asset.adjust.expense_to_asset',
+        'adjust_id',
+        string='Expense to Asset Adjustment',
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -103,35 +121,71 @@ class AccountAssetAdjust(models.Model):
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
+    @api.model
+    def get_invoice_line_assets(self, invoice):
+        Asset = self.env['account.asset']
+        invoice_lines = invoice.invoice_line
+        if not invoice_lines:
+            return False
+        asset_lines = invoice_lines.filtered('product_id.asset')
+        asset_moves = asset_lines.mapped('move_id')
+        asset_picks = asset_moves.mapped('picking_id')
+        assets = Asset.with_context(active_test=False).\
+            search([('picking_id', 'in', asset_picks.ids)])
+        return assets
+
     @api.onchange('adjust_type', 'invoice_id')
     def _onchange_adjust_type_invoice(self):
         self.adjust_line_ids = False
-        if not (self.adjust_type == 'asset_type' and self.invoice_id):
+        self.adjust_asset_to_expense_ids = False
+        self.adjust_expense_to_asset_ids = False
+        if not self.invoice_id:
             return
-        invoice_asset_lines = self.invoice_id.\
-            invoice_line.filtered(lambda l: l.product_id.asset)
-        asset_moves = invoice_asset_lines.mapped('move_id')
-        asset_picks = asset_moves.mapped('picking_id')
-        Asset = self.env['account.asset']
-        assets = Asset.search([('picking_id', 'in', asset_picks.ids)])
         # Check if this adjustment is created from Suplier Invoice action
         src_invoice_id = self._context.get('default_invoice_id', False)
-        adjust_asset_type_dict = \
-            self._context.get('adjust_asset_type_dict', {})
-        for asset in assets:
-            if src_invoice_id and \
-                    str(asset.product_id.id) not in adjust_asset_type_dict:
-                continue
-            adjust_line = self.env['account.asset.adjust.line'].new()
-            adjust_line.asset_id = asset
-            # adjust_line.date_remove = fields.Date.context_today(self)
-            # STD-REMOVE
-            # adjust_line._onchange_asset_id()
-            # --
-            # New Asset
-            adjust_line.product_id = \
-                adjust_asset_type_dict[str(asset.product_id.id)]
-            self.adjust_line_ids += adjust_line
+        if self.adjust_type == 'asset_type':
+            assets = self.get_invoice_line_assets(self.invoice_id)
+            values = self._context.get('adjust_asset_type_dict', {})
+            for asset in assets:
+                if src_invoice_id and str(asset.product_id.id) not in values:
+                    continue
+                adjust_line = self.env['account.asset.adjust.line'].new()
+                adjust_line.asset_id = asset
+                # adjust_line.date_remove = fields.Date.context_today(self)
+                # STD-REMOVE
+                # adjust_line._onchange_asset_id()
+                # --
+                # New Asset
+                adjust_line.product_id = \
+                    values and values[str(asset.product_id.id)] or False
+                self.adjust_line_ids += adjust_line
+        elif self.adjust_type == 'asset_to_expense':
+            assets = self.get_invoice_line_assets(self.invoice_id)
+            values = self._context.get('asset_to_expense_dict', {})
+            for asset in assets:
+                if src_invoice_id and str(asset.product_id.id) not in values:
+                    continue
+                adjust_line = \
+                    self.env['account.asset.adjust.asset_to_expense'].new()
+                adjust_line.asset_id = asset
+                adjust_line.account_id = \
+                    values and values[str(asset.product_id.id)] or False
+                self.adjust_asset_to_expense_ids += adjust_line
+        elif self.adjust_type == 'expense_to_asset':
+            accounts = self.invoice_id.invoice_line.mapped('account_id')
+            values = self._context.get('expense_to_asset_dict', {})
+            for account in accounts:
+                if src_invoice_id and str(account.id) not in values:
+                    continue
+                adjust_line = \
+                    self.env['account.asset.adjust.expense_to_asset'].new()
+                adjust_line.account_id = account
+                adjust_line.product_id = \
+                    values and values[str(account.id)][0] or False
+                quantity = values and values[str(account.id)][1] or 1
+                print adjust_line
+                for i in range(quantity):
+                    self.adjust_expense_to_asset_ids += adjust_line
 
     @api.multi
     def _adjust_asset_type(self):
@@ -143,9 +197,8 @@ class AccountAssetAdjust(models.Model):
         self.ensure_one()
         if not self.adjust_line_ids:
             raise ValidationError(_('No asset to remove!'))
-        if self.adjust_line_ids.filtered(lambda l: l.asset_id.state != 'open'):
-            raise ValidationError(_('Only running asset can be adjusted!'))
-        for line in self.adjust_line_ids:
+        for line in self.adjust_line_ids.\
+                filtered(lambda l: l.asset_id.state == 'open'):
             # Simple Removal (same as in asset removal)
             asset = line.asset_id
             ctx = {'active_ids': [asset.id], 'active_id': asset.id}
@@ -162,21 +215,6 @@ class AccountAssetAdjust(models.Model):
             line.write({'ref_asset_id': new_asset.id,
                         'active': False})
 
-    @api.multi
-    def _remove_adjusting_assets(self):
-        self.ensure_one()
-        if not self.adjust_line_ids:
-            raise ValidationError(_('No asset to remove!'))
-        if self.adjust_line_ids.filtered(lambda l: l.asset_id.state != 'open'):
-            raise ValidationError(_('Only running asset can be adjusted!'))
-        for line in self.adjust_line_ids:
-            asset = line.asset_id
-            ctx = {'active_ids': [asset.id], 'active_id': asset.id}
-            if asset.value_residual:
-                ctx.update({'early_removal': True})
-            line.with_context(ctx).remove()
-            asset.status = line.target_status
-
 
 class AccountAssetAdjustLine(models.Model):
     _name = 'account.asset.adjust.line'
@@ -191,11 +229,22 @@ class AccountAssetAdjustLine(models.Model):
     asset_id = fields.Many2one(
         'account.asset',
         string='Origin Asset',
+        required=True,
         domain=[('type', '!=', 'view'),
                 ('profile_type', 'not in', ('ait', 'auc')),
                 ('state', '=', 'open'),
                 '|', ('active', '=', True), ('active', '=', False)],
         help="Asset to be removed, as it create new asset of the same value",
+    )
+    asset_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('open', 'Running'),
+         ('close', 'Close'),
+         ('removed', 'Removed')],
+        string='Status',
+        related='asset_id.state',
+        readonly=True,
+        store=True,
     )
     product_id = fields.Many2one(
         'product.product',
@@ -249,6 +298,97 @@ class AccountAssetAdjustLine(models.Model):
     #             Remove._default_account_residual_value_id()
     #         self.posting_regime = Remove._get_posting_regime()
     # --
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        self.asset_name = self.product_id.name
+
+
+class AccountAssetAdjustAssetToExpense(models.Model):
+    _name = 'account.asset.adjust.asset_to_expense'
+
+    adjust_id = fields.Many2one(
+        'account.asset.adjust',
+        string='Asset Adjust',
+        index=True,
+        ondelete='cascade',
+    )
+    asset_id = fields.Many2one(
+        'account.asset',
+        string='Origin Asset',
+        required=True,
+        domain=[('type', '!=', 'view'),
+                ('profile_type', 'not in', ('ait', 'auc')),
+                ('state', '=', 'open'),
+                '|', ('active', '=', True), ('active', '=', False)],
+        help="Asset to be removed, as it create new asset of the same value",
+    )
+    asset_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('open', 'Running'),
+         ('close', 'Close'),
+         ('removed', 'Removed')],
+        string='Status',
+        related='asset_id.state',
+        readonly=True,
+        store=True,
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Expense Account',
+        required=True,
+    )
+    _sql_constraints = [
+        ('asset_id_unique',
+         'unique(asset_id, adjust_id)',
+         'Duplicate assets selected!')
+    ]
+
+
+class AccountAssetAdjustExpenseToAsset(models.Model):
+    _name = 'account.asset.adjust.expense_to_asset'
+
+    adjust_id = fields.Many2one(
+        'account.asset.adjust',
+        string='Asset Adjust',
+        index=True,
+        ondelete='cascade',
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Expense Account',
+        required=True,
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Asset Type',
+        required=True,
+        domain=[('asset', '=', True)],
+        help="Asset to be removed, as it create new asset of the same value",
+    )
+    asset_name = fields.Char(
+        string='Asset Name',
+        required=True,
+        help="Default with original asset name, but can be chagned.",
+    )
+    asset_profile_id = fields.Many2one(
+        'account.asset.profile',
+        related='product_id.asset_profile_id',
+        string='To Asset Profile',
+        store=True,
+        readonly=True,
+    )
+    amount = fields.Float(
+        string='Asset Value',
+        required=True,
+    )
+    _sql_constraints = [
+        ('asset_id_unique',
+         'unique(asset_id, adjust_id)',
+         'Duplicate assets selected!'),
+        ('positive_amount', 'check(amount > 0)',
+         'Amount must be positive!')
+    ]
 
     @api.onchange('product_id')
     def _onchange_product_id(self):

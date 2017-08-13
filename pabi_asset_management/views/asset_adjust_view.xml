@@ -39,10 +39,11 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Adjust Assets">
+                            <page string="Adjust Assets" attrs="{'invisible': [('adjust_type', '!=', 'asset_type')]}">
                                 <field name="adjust_line_ids">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" colors="gray:asset_state != 'open'">
                                         <field name="asset_id"/>
+                                        <field name="asset_state"/>
                                         <!-- STD-REMOVE -->
                                         <!-- <field name="date_remove"/>
                                         <field name="posting_regime"/>
@@ -52,12 +53,32 @@
                                         <field name="sale_value"/>
                                         <field name="account_sale_id" attrs="{'required': [('sale_value', '>', 0.0)]}"/>
                                         <field name="period_id" invisible="1"/>
-                                        <field name="target_status"/> -->
-                                        <!-- -->
+                                        -->
+                                        <field name="target_status"/>
                                         <field name="product_id"/>
                                         <field name="asset_name"/>
                                         <field name="asset_profile_id"/>
                                         <field name="ref_asset_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Asset to Expense" attrs="{'invisible': [('adjust_type', '!=', 'asset_to_expense')]}">
+                                <field name="adjust_asset_to_expense_ids">
+                                    <tree editable="bottom" colors="gray:asset_state != 'open'">
+                                        <field name="asset_id"/>
+                                        <field name="asset_state"/>
+                                        <field name="account_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Expense to Asset" attrs="{'invisible': [('adjust_type', '!=', 'expense_to_asset')]}">
+                                <field name="adjust_expense_to_asset_ids">
+                                    <tree editable="bottom">
+                                        <field name="account_id"/>
+                                        <field name="product_id"/>
+                                        <field name="asset_name"/>
+                                        <field name="asset_profile_id"/>
+                                        <field name="amount"/>
                                     </tree>
                                 </field>
                             </page>

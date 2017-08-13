@@ -34,6 +34,23 @@
                             </tree>
                         </field>
                     </group>
+                    <group attrs="{'invisible': [('adjust_type', '!=', 'asset_to_expense')]}">
+                        <field name="asset_to_expense_ids" nolabel="1">
+                            <tree create="0" editable="bottom">
+                                <field name="from_product_id"/>
+                                <field name="to_account_id"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group attrs="{'invisible': [('adjust_type', '!=', 'expense_to_asset')]}">
+                        <field name="expense_to_asset_ids" nolabel="1">
+                            <tree create="0" editable="bottom">
+                                <field name="from_account_id"/>
+                                <field name="to_product_id"/>
+                                <field name="quantity"/>
+                            </tree>
+                        </field>
+                    </group>
                     <footer>
                         <button name="create_asset_adjust" type="object"
                           string="Create Asset Adjustment" class="oe_highlight"/>

@@ -8,14 +8,26 @@ class CreateAssetAdjustWizard(models.TransientModel):
     _name = 'create.asset.adjust.wizard'
 
     adjust_type = fields.Selection(
-        [('asset_type', 'Change Asset Type')],
+        [('asset_type', 'Change Asset Type'),
+         ('asset_to_expense', 'Asset => Expense'),
+         ('expense_to_asset', 'Expense => Asset')],
         string='Type of Adjustment',
         required=True,
     )
     adjust_asset_type_ids = fields.One2many(
-        'asset.adjust.asset.type',
+        'adjust.asset.type',
         'wizard_id',
         string='Adjust Asset Type',
+    )
+    asset_to_expense_ids = fields.One2many(
+        'asset.to.expense',
+        'wizard_id',
+        string='Asset => Expense',
+    )
+    expense_to_asset_ids = fields.One2many(
+        'expense.to.asset',
+        'wizard_id',
+        string='Expense => Asset',
     )
 
     @api.model
@@ -54,38 +66,61 @@ class CreateAssetAdjustWizard(models.TransientModel):
                        'views': False})
         ctx = ast.literal_eval(result['context'])
         invoice_id = self._context.get('active_id')
-        adjust_asset_types = [(x.from_product_id.id, x.to_product_id.id)
+        # Adjust Asset Type values
+        adjust_asset_types = [(x.from_product_id.id,
+                               x.to_product_id.id)
                               for x in self.adjust_asset_type_ids]
+        # Asset to Expense
+        asset_to_expenses = [(x.from_product_id.id,
+                              x.to_account_id.id)
+                             for x in self.asset_to_expense_ids]
+        # Expense to Asset
+        expense_to_assets = [(x.from_account_id.id,
+                              (x.to_product_id.id, x.quantity))
+                             for x in self.expense_to_asset_ids]
         ctx.update({'default_adjust_type': self.adjust_type,
                     'default_invoice_id': invoice_id,
-                    'adjust_asset_type_dict': dict(adjust_asset_types)})
+                    'adjust_asset_type_dict': dict(adjust_asset_types),
+                    'asset_to_expense_dict': dict(asset_to_expenses),
+                    'expense_to_asset_dict': dict(expense_to_assets)})
         result['context'] = ctx
         return result
 
     @api.onchange('adjust_type')
     def _onchange_adjust_type(self):
         self.adjust_asset_type_ids = False
+        self.expense_to_asset_ids = False
+        self.asset_to_expense_ids = False
         if not self.adjust_type:
             return
-        if self.adjust_type == 'asset_type':
-            Invoice = self.env['account.invoice']
-            Asset = self.env['account.asset']
-            invoice = Invoice.browse(self._context.get('active_id', False))
-            invoice_lines = invoice.invoice_line
-            if invoice_lines:
-                asset_lines = invoice_lines.filtered('product_id.asset')
-                asset_moves = asset_lines.mapped('move_id')
-                asset_picks = asset_moves.mapped('picking_id')
-                assets = Asset.search([('picking_id', 'in', asset_picks.ids)])
-                asset_types = assets.mapped('product_id')
-                for asset_type in asset_types:
-                    line = self.env['asset.adjust.asset.type'].new()
-                    line.from_product_id = asset_type
-                    self.adjust_asset_type_ids += line
+        invoice_id = self._context.get('active_id', False)
+        invoice = self.env['account.invoice'].browse(invoice_id)
+        TYPES = {
+            'asset_type': ('adjust.asset.type', 'adjust_asset_type_ids'),
+            'asset_to_expense': ('asset.to.expense', 'asset_to_expense_ids'),
+            'expense_to_asset': ('expense.to.asset', 'expense_to_asset_ids'), }
+        # Asset to ....
+        if self.adjust_type in ('asset_type', 'asset_to_expense'):
+            AssetAdjust = self.env['account.asset.adjust']
+            assets = AssetAdjust.get_invoice_line_assets(invoice)
+            asset_types = assets.mapped('product_id')
+            for asset_type in asset_types:
+                line = self.env[TYPES[self.adjust_type][0]].new()
+                line.from_product_id = asset_type
+                self[TYPES[self.adjust_type][1]] += line
+        # Expense to Asset
+        if self.adjust_type in ('expense_to_asset'):
+            accounts = invoice.invoice_line.mapped('account_id')
+            for account in accounts:
+                line = self.env[TYPES[self.adjust_type][0]].new()
+                line.from_account_id = account
+                line.quantity = 1
+                self[TYPES[self.adjust_type][1]] += line
 
 
-class AssetAdjustAssetType(models.TransientModel):
-    _name = 'asset.adjust.asset.type'
+class AdjustAssetType(models.TransientModel):
+    _name = 'adjust.asset.type'
+    # _inherit = 'account.asset.remove'
 
     wizard_id = fields.Many2one(
         'create.asset.adjust.wizard',
@@ -104,3 +139,56 @@ class AssetAdjustAssetType(models.TransientModel):
         required=True,
         domain=[('asset', '=', True)],
     )
+
+
+class AssetToExpense(models.TransientModel):
+    _name = 'asset.to.expense'
+    # _inherit = 'account.asset.remove'
+
+    wizard_id = fields.Many2one(
+        'create.asset.adjust.wizard',
+        string='Asset Adjust',
+        readonly=True,
+    )
+    from_product_id = fields.Many2one(
+        'product.product',
+        string='From Asset Type',
+        required=True,
+        domain=[('asset', '=', True)],
+    )
+    to_account_id = fields.Many2one(
+        'account.account',
+        string='To Expense',
+        required=True,
+        domain=[('type', '!=', 'view')],
+    )
+
+
+class ExpenseToAsset(models.TransientModel):
+    _name = 'expense.to.asset'
+    # _inherit = 'account.asset.remove'
+
+    wizard_id = fields.Many2one(
+        'create.asset.adjust.wizard',
+        string='Asset Adjust',
+        readonly=True,
+    )
+    from_account_id = fields.Many2one(
+        'account.account',
+        string='To Expense',
+        required=True,
+        domain=[('type', '!=', 'view')],
+    )
+    to_product_id = fields.Many2one(
+        'product.product',
+        string='To Asset Type',
+        required=True,
+        domain=[('asset', '=', True)],
+    )
+    quantity = fields.Integer(
+        string='Asset Quantity',
+        required=True,
+    )
+    _sql_constraints = [
+        ('positive_qty', 'check(quantity > 0)',
+         'Negative quantity not allowed!')]
