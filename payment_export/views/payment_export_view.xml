@@ -53,7 +53,8 @@
             <field name="arch" type="xml">
                 <form string="Payment Export">
                     <header>
-                        <button name="action_done" string="Done" states="draft" type="object" class="oe_highlight"/>
+                        <!-- Auto done when print -->
+                        <!-- <button name="action_done" string="Done" states="draft" type="object" class="oe_highlight"/> -->
                         <!--                    <button name="action_cancel" string="Cancel" states="done" type="object" />-->
                         <button name="%(action_payment_export_cancel)d" string="Cancel" states="done" type="action"/>
                         <!--                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" /-->
