@@ -20,6 +20,7 @@
 ##############################################################################
 
 from __future__ import division
+from ast import literal_eval
 from openerp import models, api
 
 
@@ -56,8 +57,16 @@ class PurchaseLineInvoice(models.TransientModel):
     def makeInvoices(self):
         res = super(PurchaseLineInvoice, self).makeInvoices()
         if self._context['active_model'] == 'purchase.work.acceptance':
+            # Newly created invoice
+            invoice_dom = literal_eval(res.get('domain', 'False'))
+            invoice_ids = invoice_dom and invoice_dom[0][2] or []
+            # WA
             active_id = self._context['active_id']
             WAcceptance = self.env['purchase.work.acceptance']
             acceptance = WAcceptance.browse(active_id)
             acceptance.invoice_created = True
+            if invoice_ids and acceptance.supplier_invoice:
+                invoices = self.env['account.invoice'].browse(invoice_ids)
+                invoices.write({'supplier_invoice_number':
+                                acceptance.supplier_invoice})
         return res
