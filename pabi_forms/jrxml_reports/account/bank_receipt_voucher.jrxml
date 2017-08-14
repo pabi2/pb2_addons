@@ -151,7 +151,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["BANK RECEIPT VOUCHER"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Received Voucher"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="69" width="149" height="15"/>

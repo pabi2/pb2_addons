@@ -20,6 +20,7 @@ class AccountVoucher(models.Model):
         res = super(AccountVoucher, self).\
             onchange_partner_id(partner_id, journal_id, amount,
                                 currency_id, ttype, date)
+        res = res or {'value': {}}
         res['value']['transdebt_partner_id'] = False
         res['value']['is_transdebt'] = False
         # res['domain'] = 'domain' in res and res['domain'] or {}
