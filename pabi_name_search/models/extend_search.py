@@ -6,7 +6,7 @@ from openerp import models, api, fields, _
 class ExtendSearch(object):
 
     @api.model
-    def _search_name_to_ids(self, model, field, value):
+    def _search_name_to_ids(self, field, value):
         """ name search can as complex, i.e., PV001-PV005,PV006,PV007 """
         # Commas
         values = [x.lower() for x in value.split(',')]
@@ -50,7 +50,7 @@ class ExtendSearch(object):
             where %s ilike '%s'
             or lower(%s) in %s
             or lower(%s) in %s
-        """ % (model,
+        """ % (self._table,
                field, '%%%s%%' % value,
                field, values_str,
                field, ex_values_str))
@@ -61,11 +61,13 @@ class ExtendSearch(object):
     def _extend_search_arg(self, args):
         new_args = []
         for arg in args:
-            if isinstance(arg, (list, tuple)) and arg[1] == 'ilike':
-                field = arg[0]
-                name = arg[2]
-                _ids = self._search_name_to_ids(self._table, field, name)
-                new_args.append(['id', 'in', _ids])
+            if isinstance(arg, (list, tuple)):
+                (field, oper, name) = arg
+                if oper == 'ilike' and self._fields[field].type == 'char':
+                    _ids = self._search_name_to_ids(field, name)
+                    new_args.append(['id', 'in', _ids])
+                else:
+                    new_args.append(arg)
             else:
                 new_args.append(arg)
         return new_args

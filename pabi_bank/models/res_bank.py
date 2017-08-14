@@ -21,6 +21,7 @@ class ResPartnerBank(models.Model):
     bank_branch = fields.Many2one(
         'res.bank.branch',
         domain="[('bank_id', '=', bank)]",
+        required=True,  # for PABI2, this is required
     )
 
     @api.onchange('bank')
