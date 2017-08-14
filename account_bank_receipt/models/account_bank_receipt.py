@@ -33,7 +33,7 @@ class AccountBankReceipt(models.Model):
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
-        domain=[('type', '=', 'bank'), ('intransit', '=', True)],
+        domain=[('type', 'in', ('bank', 'cash')), ('intransit', '=', True)],
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
