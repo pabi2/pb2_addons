@@ -6,9 +6,7 @@ class ResPartnerBank(models.Model):
     _inherit = 'res.partner.bank'
 
     active = fields.Boolean(
-        string='Approved',
-        default=False,
-        readonly=True,
+        default=True,
         help='Only for NSTDA, the new Bank Account has to get approved first. '
         'As such, it will default as False',
     )

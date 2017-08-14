@@ -32,12 +32,6 @@ class ResCompany(models.Model):
         'res.taxbranch',
         string="Taxbranch for Withholding Tax",
     )
-    bank_account_approver_ids = fields.Many2many(
-        'res.users',
-        'res_company_bank_approver_rel',
-        'company_id', 'user_id',
-        string='Bank Account Approvers',
-    )
     bank_ids = fields.One2many(
         domain=['|', ('active', '=', False), ('active', '=', True)],
     )
