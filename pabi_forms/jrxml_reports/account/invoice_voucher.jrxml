@@ -42,7 +42,7 @@
 		<fieldDescription><![CDATA[document_id/source_document]]></fieldDescription>
 	</field>
 	<field name="fund" class="java.lang.String">
-		<fieldDescription><![CDATA[invoice_line/fund_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/invoice_line/fund_id/name]]></fieldDescription>
 	</field>
 	<field name="activity_group" class="java.lang.String">
 		<fieldDescription><![CDATA[line_id/activity_group_id/name]]></fieldDescription>
@@ -79,7 +79,7 @@
 		<fieldDescription><![CDATA[line_id/cost_control_id/code]]></fieldDescription>
 	</field>
 	<field name="supplier_invoice_number" class="java.lang.String">
-		<fieldDescription><![CDATA[supplier_invoice_number]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/supplier_invoice_number]]></fieldDescription>
 	</field>
 	<field name="project" class="java.lang.String">
 		<fieldDescription><![CDATA[line_id/project_id/code]]></fieldDescription>
