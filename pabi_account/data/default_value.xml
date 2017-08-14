@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+
+      <record id="value_no_default_payment_method" model="ir.values">
+          <field name="name">journal_id</field>
+          <field name="model">account.voucher</field>
+          <field name="key">default</field>
+          <field name="key2"></field>
+          <field name="company_id" ref="base.main_company"/>
+          <field name="value_unpickle">False</field>
+        </record>
+
+    </data>
+</openerp>

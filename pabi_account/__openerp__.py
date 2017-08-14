@@ -30,6 +30,7 @@
         "account_invoice_create_payment",
     ],
     "data": [
+        "data/default_value.xml",
         "security/security_group.xml",
         "security/ir.model.access.csv",
         "security/model_no_delete.xml",

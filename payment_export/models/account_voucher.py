@@ -59,6 +59,7 @@ class AccountVoucher(models.Model):
         res = super(AccountVoucher, self).\
             onchange_partner_id(partner_id, journal_id, amount,
                                 currency_id, ttype, date)
+        res = res or {'value': {}}
         res['value']['transfer_type'] = False
         return res
 
