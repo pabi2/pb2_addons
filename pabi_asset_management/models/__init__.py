@@ -6,6 +6,7 @@ from . import asset_transfer
 from . import asset_changeowner
 from . import asset_request
 from . import asset_removal
+from . import asset_adjust
 from . import asset_location
 from . import product
 from . import purchase_requisition

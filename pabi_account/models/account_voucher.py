@@ -110,7 +110,6 @@ class AccountVoucher(models.Model):
                 voucher.income_tax_form = forms[0]
 
     @api.multi
-    @api.depends('line_ids')
     def _compute_voucher_description(self):
         for voucher in self:
             items = []
@@ -118,12 +117,13 @@ class AccountVoucher(models.Model):
             for line in voucher.line_ids:
                 invoice = line.move_line_id.invoice
                 amount = line.amount
-                invoice_number = '%10s' % invoice.number
-                amount_str = '%15s' % '{:,}'.format(amount)
-                items.append('%s %s' % (invoice_number, amount_str))
-                if len(items) == 3:
-                    description += '      '.join(items) + '\n'
-                    items = []
+                if invoice.internal_number:
+                    invoice_number = '%10s' % invoice.internal_number
+                    amount_str = '%15s' % '{:,.2f}'.format(amount)
+                    items.append('%s %s' % (invoice_number, amount_str))
+                    if len(items) == 3:
+                        description += '      '.join(items) + '\n'
+                        items = []
             voucher.voucher_description = description
 
     @api.multi
@@ -234,6 +234,8 @@ class AccountVoucher(models.Model):
         for vtype in ['line_cr_ids', 'line_dr_ids']:
             line_ids = []
             for l in value[vtype]:
+                if not isinstance(l, dict):
+                    continue
                 reconcile = True
                 vals = VoucherLine.onchange_reconcile(
                     partner_id, l['move_line_id'], l['amount_original'],

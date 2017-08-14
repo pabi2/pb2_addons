@@ -9,6 +9,7 @@
         "account_voucher",
         "l10n_th_fields",
         "base_document_export",
+        # "pabi_name_search",
     ],
     "description": """
 

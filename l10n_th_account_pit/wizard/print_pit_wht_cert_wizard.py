@@ -71,7 +71,8 @@ class PrintPITWhtCertWizard(models.TransientModel):
         WHTLine = self.env['pit.wht.cert.tax.line']
         pit_lines = self.supplier_partner_id.pit_line.filtered(
             lambda l: l.calendar_year == self.calendaryear_id.calendar_name)
-        for line in pit_lines:
+        for line in pit_lines.filtered(lambda l:
+                                       l.voucher_id.state == 'posted'):
             wht_line = WHTLine.new()
             wht_line.voucher_id = line.voucher_id
             wht_line.date = line.date
@@ -119,9 +120,11 @@ class PrintPITWhtCertWizard(models.TransientModel):
     def _get_summary_by_type(self, column, ttype='all'):
         wht_lines = self.wht_line
         if column == 'base':
-            return sum([x.base for x in wht_lines])
+            return abs(sum(wht_lines.filtered(
+                lambda l: l.voucher_id.state == 'posted').mapped('base')))
         if column == 'tax':
-            return sum([x.amount for x in wht_lines])
+            return abs(sum(wht_lines.filtered(
+                lambda l: l.voucher_id.state == 'posted').mapped('amount')))
 
     @api.model
     def _prepare_address(self, partner):
