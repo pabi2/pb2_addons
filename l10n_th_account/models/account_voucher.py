@@ -137,7 +137,7 @@ class AccountVoucher(common_voucher, models.Model):
             return super(AccountVoucher, self).proforma_voucher()
         except psycopg2.OperationalError:
             raise ValidationError(
-                _('Muliple client accessing same resource!\n'
+                _('Multiple client accessing same resource!\n'
                   'Please try again!'))
         except:
             raise
