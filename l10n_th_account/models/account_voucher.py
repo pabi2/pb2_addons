@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import psycopg2
 import time
 from datetime import datetime
 from openerp import models, fields, api, _
@@ -129,6 +130,17 @@ class AccountVoucher(common_voucher, models.Model):
          'unique (wht_period_id, wht_sequence, income_tax_form)',
          'WHT Sequence must be unique!'),
     ]
+
+    @api.multi
+    def proforma_voucher(self):
+        try:
+            return super(AccountVoucher, self).proforma_voucher()
+        except psycopg2.OperationalError:
+            raise ValidationError(
+                _('Muliple client accessing same resource!\n'
+                  'Please try again!'))
+        except:
+            raise
 
     @api.model
     def _calc_writeoff_amount(self, voucher):
