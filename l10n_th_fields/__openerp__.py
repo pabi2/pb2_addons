@@ -14,7 +14,7 @@
     'images': [],
     'depends': ['sale',
                 'account_voucher',
-                'account_bank_receipt',
+                # 'account_bank_receipt',
                 ],
     'demo': [],
     'data': [

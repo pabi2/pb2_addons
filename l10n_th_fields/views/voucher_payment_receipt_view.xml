@@ -25,7 +25,7 @@
             <field name="arch" type="xml">
                 <field name="date" position="after">
                     <field name="date_value" attrs="{'invisible': [('type', '!=', 'receipt')],
-                                                     'required': [('type', '=', 'receipt'), ('intransit', '=', False)]}"/>
+                                                     'required': [('type', '=', 'receipt')]}"/>
                     <!-- <field name="date_value" attrs="{'invisible': ['|', ('type', '!=', 'receipt'), ('intransit', '=', True)],
                                                      'required': [('type', '=', 'receipt'), ('intransit', '=', False)]}"/> -->
                 </field>
