@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import psycopg2
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, fields, api
 
 REFERENCE_SELECT = [('account.invoice', 'Invoice'),
                     ('account.voucher', 'Voucher'),
@@ -178,69 +176,61 @@ class AccountMove(models.Model):
                  'ref',  # check for stock.picking case, as it has no move_id
                  )
     def _compute_document(self):
-        try:
-            for rec in self:
-                document = False
-                # Invoice
-                if rec.invoice_ids:
-                    document = rec.invoice_ids[0]
-                elif rec.invoice_cancel_ids:
-                    document = rec.invoice_cancel_ids[0]
-                elif rec.invoice_clear_prepaid_ids:
-                    document = rec.invoice_clear_prepaid_ids[0]
-                # Voucher
-                elif rec.voucher_ids:
-                    document = rec.voucher_ids[0]
-                elif rec.voucher_cancel_ids:
-                    document = rec.voucher_cancel_ids[0]
-                elif rec.voucher_recognize_vat_ids:
-                    document = rec.voucher_recognize_vat_ids[0]
-                # Bank Receipt
-                elif rec.bank_receipt_ids:
-                    document = rec.bank_receipt_ids[0]
-                elif rec.bank_receipt_cancel_ids:
-                    document = rec.bank_receipt_cancel_ids[0]
-                # Salary Expense
-                elif rec.salary_expense_ids:
-                    document = rec.salary_expense_ids[0]
-                elif rec.salary_expense_cancel_ids:
-                    document = rec.salary_expense_cancel_ids[0]
-                # Expense IC
-                elif rec.expense_rev_ic_ids:
-                    document = rec.expense_rev_ic_ids[0]
-                elif rec.expense_exp_ic_ids:
-                    document = rec.expense_exp_ic_ids[0]
-                # Account Interface
-                elif rec.account_interface_ids:
-                    document = rec.account_interface_ids[0]
-                elif rec.ref:  # Last chance for picking, it not have move_id
-                    Picking = self.env['stock.picking']
-                    picking = Picking.search([('name', '=', rec.ref)])
-                    document = picking and picking[0] or False
+        for rec in self:
+            document = False
+            # Invoice
+            if rec.invoice_ids:
+                document = rec.invoice_ids[0]
+            elif rec.invoice_cancel_ids:
+                document = rec.invoice_cancel_ids[0]
+            elif rec.invoice_clear_prepaid_ids:
+                document = rec.invoice_clear_prepaid_ids[0]
+            # Voucher
+            elif rec.voucher_ids:
+                document = rec.voucher_ids[0]
+            elif rec.voucher_cancel_ids:
+                document = rec.voucher_cancel_ids[0]
+            elif rec.voucher_recognize_vat_ids:
+                document = rec.voucher_recognize_vat_ids[0]
+            # Bank Receipt
+            elif rec.bank_receipt_ids:
+                document = rec.bank_receipt_ids[0]
+            elif rec.bank_receipt_cancel_ids:
+                document = rec.bank_receipt_cancel_ids[0]
+            # Salary Expense
+            elif rec.salary_expense_ids:
+                document = rec.salary_expense_ids[0]
+            elif rec.salary_expense_cancel_ids:
+                document = rec.salary_expense_cancel_ids[0]
+            # Expense IC
+            elif rec.expense_rev_ic_ids:
+                document = rec.expense_rev_ic_ids[0]
+            elif rec.expense_exp_ic_ids:
+                document = rec.expense_exp_ic_ids[0]
+            # Account Interface
+            elif rec.account_interface_ids:
+                document = rec.account_interface_ids[0]
+            elif rec.ref:  # Last chance for picking, as it not have move_id
+                Picking = self.env['stock.picking']
+                picking = Picking.search([('name', '=', rec.ref)])
+                document = picking and picking[0] or False
 
-                # Assign reference
-                if document:
-                    rec.document_id = '%s,%s' % (document._name, document.id)
-                    if document._name in ('stock.picking',
-                                          'account.bank.receipt'):
-                        rec.document = document.name
-                    elif document._name == 'account.invoice':
-                        rec.document = document.internal_number
-                    else:
-                        rec.document = document.number
-                    rec.doctype = self._get_doctype(document._name, document)
-                    if 'date_value' in document._fields:
-                        rec.date_value = document.date_value
+            # Assign reference
+            if document:
+                rec.document_id = '%s,%s' % (document._name, document.id)
+                if document._name in ('stock.picking', 'account.bank.receipt'):
+                    rec.document = document.name
+                elif document._name == 'account.invoice':
+                    rec.document = document.internal_number
                 else:
-                    rec.doctype = 'adjustment'  # <-- Not related to any doc
-                if not rec.date_value:
-                    rec.date_value = rec.date  # No Value Date, same as date
-        except psycopg2.OperationalError:
-            raise ValidationError(
-                _('Muliple client accessing same resource!\n'
-                  'Please try again!'))
-        except:
-            raise
+                    rec.document = document.number
+                rec.doctype = self._get_doctype(document._name, document)
+                if 'date_value' in document._fields:
+                    rec.date_value = document.date_value
+            else:
+                rec.doctype = 'adjustment'  # <-- Not related to any doc
+            if not rec.date_value:
+                rec.date_value = rec.date  # No Value Date, same as date
 
     @api.model
     def _get_doctype(self, model, document):
