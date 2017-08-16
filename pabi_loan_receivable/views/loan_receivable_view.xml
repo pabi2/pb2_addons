@@ -170,6 +170,7 @@
                                 <field name="operating_unit_id"/>
                                 <field name="account_receivable_id" domain="[('type','=', 'receivable')]"/>
                                 <field name="supplier_invoice_id" invisible="1" context="{'default_type': 'in_invoice', 'form_view_ref': 'account.invoice_supplier_form'}"/>
+                                <field name="project"/>
                             </group>
                             <group>
                                 <field name="amount_loan_total"/>
