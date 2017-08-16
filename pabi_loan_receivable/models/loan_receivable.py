@@ -78,7 +78,7 @@ class LoanCustomerAgreement(models.Model):
     )
     borrower_partner_id = fields.Many2one(
         'res.partner',
-        string='Borrower',
+        string='Customer CD',
         domain=[('customer', '=', True)],
         required=True,
         readonly=True,
@@ -241,6 +241,9 @@ class LoanCustomerAgreement(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    project = fields.Char(
+        string='Project CD',
     )
 
     @api.onchange('mou_id')
