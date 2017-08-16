@@ -157,8 +157,9 @@
                         </div>
                         <group>
                             <group>
-                                <field name="partner_id"/>
+                                <field name="borrower_partner_id"/>
                                 <field name="mou_id"/>
+                                <field name="partner_id"/>
                                 <field name="mou_bank" invisible="1"/>
                                 <field name="bank_id"/>
                                 <label for="section_id"/>
