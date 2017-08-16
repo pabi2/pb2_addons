@@ -69,7 +69,6 @@ class AccountMoveLine(models.Model):
 
     @api.onchange('activity_id')
     def _onchange_activity_id(self):
-        print self._context
         if self._context.get('default_doctype', False) == 'adjustment':
             self.account_id = self.activity_id.account_id
 
