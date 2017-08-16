@@ -76,11 +76,27 @@ class LoanCustomerAgreement(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    borrower_partner_id = fields.Many2one(
+        'res.partner',
+        string='Borrower',
+        domain=[('customer', '=', True)],
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     mou_id = fields.Many2one(
         'loan.bank.mou',
         string='MOU',
         required=True,
         ondelete='restrict',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Customer (bank)',
+        domain=[('customer', '=', True)],
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -97,14 +113,6 @@ class LoanCustomerAgreement(models.Model):
         domain="[('partner_id', '!=', False), ('bank', '=', mou_bank)]",
         states={'draft': [('readonly', False)]},
         required=True,
-    )
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Customer',
-        domain=[('customer', '=', True)],
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     amount_loan_total = fields.Float(
         string='Total Loan Amount from Bank',
@@ -234,6 +242,11 @@ class LoanCustomerAgreement(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+
+    @api.onchange('mou_id')
+    def _onchange_mou_id(self):
+        self.partner_id = self.mou_id.partner_id
+        self.bank_id = self.mou_id.bank_id
 
     @api.multi
     def _compute_invoice_count(self):
