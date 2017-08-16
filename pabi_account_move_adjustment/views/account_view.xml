@@ -51,7 +51,7 @@
                     </group>
                     <notebook>
                         <page string="Journal Items">
-                            <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id }">
+                            <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
                                 <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
                                     <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                     <field name="product_id" invisible="1"/>
@@ -107,7 +107,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="account.view_account_move_filter"/>
             <field name="domain" eval="[('doctype', '=', 'adjustment'), ('journal_id', '=', ref('journal_adjust_budget'))]"/>
-            <field name="context" eval="{'default_journal_id': ref('journal_adjust_budget')}"/>
+            <field name="context" eval="{'default_journal_id': ref('journal_adjust_budget'), 'default_doctype': 'adjustment'}"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a journal entry for general adjustment that affect budget.
@@ -169,7 +169,7 @@
                     </group>
                     <notebook>
                         <page string="Journal Items">
-                            <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id }">
+                            <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
                                 <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
                                     <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                     <field name="product_id" invisible="1"/>
@@ -225,7 +225,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="account.view_account_move_filter"/>
             <field name="domain" eval="[('doctype', '=', 'adjustment'), ('journal_id', '=', ref('journal_adjust_no_budget'))]"/>
-            <field name="context" eval="{'default_journal_id': ref('journal_adjust_no_budget')}"/>
+            <field name="context" eval="{'default_journal_id': ref('journal_adjust_no_budget'), 'default_doctype': 'adjustment'}"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a journal entry for general adjustment that will not affect budget.

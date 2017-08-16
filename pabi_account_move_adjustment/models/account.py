@@ -67,6 +67,12 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
+    @api.onchange('activity_id')
+    def _onchange_activity_id(self):
+        print self._context
+        if self._context.get('default_doctype', False) == 'adjustment':
+            self.account_id = self.activity_id.account_id
+
     @api.multi
     def create_analytic_lines(self):
         """ For balance sheet item, do not create analytic line """
