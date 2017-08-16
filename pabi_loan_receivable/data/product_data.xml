@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="product_loan_cd" model="product.product">
+            <field name="name">Loan CD</field>
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_1"/>
+        </record>
+    </data>
+</openerp>

@@ -12,12 +12,17 @@ class LoanBankMOU(models.Model):
         required=True,
         copy=False,
     )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier (bank)',
+        required=True,
+        domain=[('supplier', '=', True)],
+    )
     bank_id = fields.Many2one(
         'res.partner.bank',
         string='Bank',
         required=True,
-        # domain=[('partner_id', '!=', False)],
-        help="Bank Account of the end customer",
+        domain="[('partner_id', '=', partner_id)]",
     )
     max_installment = fields.Integer(
         string='Max Installment',
@@ -52,6 +57,11 @@ class LoanBankMOU(models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
     ]
+
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        self.product_id = self.env.ref('pabi_loan_receivable.product_loan_cd')
+        self.bank_id = False
 
 
 class LoanCustomerAgreement(models.Model):
@@ -271,22 +281,34 @@ class LoanCustomerAgreement(models.Model):
         amount = self.amount_loan_total * self.mou_id.loan_ratio
         self.amount_receivable = amount
 
-    @api.one
+    @api.multi
     @api.constrains('monthly_due_type', 'date_specified')
     def _check_date_specified(self):
-        if self.monthly_due_type == 'specific' and \
-                (self.date_specified < 1 or self.date_specified > 28):
-            raise Warning(_('Specified date must be between 1 - 28'))
+        for rec in self:
+            if rec.monthly_due_type == 'specific' and \
+                    (rec.date_specified < 1 or rec.date_specified > 28):
+                raise ValidationError(
+                    _('Specified date must be between 1 - 28'))
 
-    @api.one
+    @api.multi
+    @api.constrains('installment')
+    def _check_installment(self):
+        for rec in self:
+            if rec.installment > rec.mou_id.max_installment:
+                raise ValidationError(
+                    _('Number of Installment exceed limit in MOU'))
+
+    @api.multi
     @api.constrains('state', 'amount_receivable', 'amount_loan_total',
                     'installment')
     def _check_amount(self):
-        if self.state not in ('draft', 'cancel'):
-            if not self.amount_receivable or not self.amount_loan_total:
-                raise Warning(_('Loan amount can not be zero!'))
-            if self.installment <= 0:
-                raise Warning(_('Installment must be a positive number!'))
+        for rec in self:
+            if rec.state not in ('draft', 'cancel'):
+                if not rec.amount_receivable or not rec.amount_loan_total:
+                    raise ValidationError(_('Loan amount can not be zero!'))
+                if rec.installment <= 0:
+                    raise ValidationError(
+                        _('Installment must be a positive number!'))
 
     @api.multi
     def open_bank_invoices(self):
