@@ -55,6 +55,7 @@
                         <group>
                             <field name="partner_id" />
                             <field name="user_id" />
+                            <field name="currency_id"/>
                         </group>
                         <group>
                             <field name="date" />
@@ -69,7 +70,7 @@
                     <notebook>
                         <page string="Supplier Invoices" >
                             <field name="supplier_invoice_ids"
-                                domain="[('state', '=', 'draft'), ('partner_id', '=', partner_id), ('type', 'in', ('in_invoice', 'in_refund'))]" >
+                                domain="[('state', '=', 'draft'), ('partner_id', '=', partner_id), ('currency_id', '=', currency_id), ('type', 'in', ('in_invoice', 'in_refund'))]" >
                                 <tree>
                                     <field name="purchase_ids"/>
                                     <field name="supplier_invoice_number"/>
@@ -87,7 +88,7 @@
                             <group class="oe_subtotal_footer oe_right">
                                 <h2>
                                     <label for="amount_total"/>
-                                    <field name="amount_total" class="oe_inline"/>
+                                    <field name="amount_total" class="oe_inline" widget='monetary' options='{"currency_field": "currency_id"}'/>
                                 </h2>
                             </group>
                             </group>
