@@ -117,7 +117,7 @@ class AccountVoucher(models.Model):
             for line in voucher.line_ids:
                 invoice = line.move_line_id.invoice
                 amount = line.amount
-                if invoice.internal_number:
+                if invoice.internal_number and amount > 0.0:
                     invoice_number = '%10s' % invoice.internal_number
                     amount_str = '%15s' % '{:,.2f}'.format(amount)
                     items.append('%s %s' % (invoice_number, amount_str))

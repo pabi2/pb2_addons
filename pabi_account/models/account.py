@@ -13,6 +13,12 @@ class AccountMove(models.Model):
     )
 
     @api.multi
+    def _write(self, vals):
+        if 'line_item_summary' in vals:
+            self._write({'narration': vals.get('line_item_summary', False)})
+        return super(AccountMove, self)._write(vals)
+
+    @api.multi
     @api.depends('line_id.name')
     def _compute_line_item_summary(self):
         for rec in self:

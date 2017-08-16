@@ -14,6 +14,12 @@ class PurchaseBilling(models.Model):
         readonly=True,
         copy=False,
     )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        default=lambda self: self.env.user.company_id.currency_id,
+        required=True,
+    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
@@ -126,6 +132,10 @@ class PurchaseBilling(models.Model):
             self.partner_id.property_supplier_payment_term.id,
             self.date)
         self.date_due = res['value']['date_due']
+        self.supplier_invoice_ids = False
+
+    @api.onchange('currency_id')
+    def _onchane_currency_id(self):
         self.supplier_invoice_ids = False
 
     @api.multi
