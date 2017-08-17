@@ -2,6 +2,7 @@
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
+from openerp.tools import float_compare
 
 
 class AccuontBankReceiptMultipleReconcile(models.Model):
@@ -75,9 +76,9 @@ class AccountBankReceipt(models.Model):
     @api.multi
     def validate_bank_receipt(self):
         for receipt in self:
-            if receipt.writeoff_amount != 0.0:
+            if float_compare(receipt.writeoff_amount, 0.0, 2) != 0:
                 raise ValidationError(
-                    _('Wrieteoff Amount must be 0.0 to validate!'))
+                    _('Writeoff Amount must be 0.0 to validate!'))
         res = super(AccountBankReceipt, self).validate_bank_receipt()
         return res
 
