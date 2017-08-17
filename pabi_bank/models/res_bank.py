@@ -5,6 +5,9 @@ from openerp import fields, models, api
 class ResBank(models.Model):
     _inherit = 'res.bank'
 
+    name = fields.Char(
+        translate=True,
+    )
     abbrev = fields.Char(
         string='Abbreviation',
         required=False,
