@@ -47,8 +47,8 @@
                 <field name="partner_id" position="after">
                     <field name="purchase_id"/>
                     <field name="product_id"/>
-                    <field name="picking_id" attrs="{'invisible': [('picking_id', '=', False)]}"/>
-                    <field name="adjust_id" attrs="{'invisible': [('adjust_id', '=', False)]}"/>/>
+                    <field name="picking_id"/>
+                    <field name="adjust_id"/>
                     <field name="status"/>
                 </field>
                 <group position="inside">
@@ -142,10 +142,11 @@
                 <xpath expr="//form/sheet/notebook/page[@string='General']//field[@name='partner_id']" position="after">
                     <field name="profile_type"/>
                     <field name="product_id"/>
-                    <field name="uom_id"/>
-                    <field name="picking_id"/>
-                    <field name="date_picking"/>
-                    <field name="purchase_id"/>
+                    <field name="uom_id" invisible="1"/>
+                    <field name="picking_id" attrs="{'invisible': [('picking_id', '=', False)]}"/>
+                    <field name="adjust_id" attrs="{'invisible': [('adjust_id', '=', False)]}"/>
+                    <field name="date_picking" attrs="{'invisible': [('date_picking', '=', False)]}"/>
+                    <field name="purchase_id" attrs="{'invisible': [('purchase_id', '=', False)]}"/>>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page//field[@name='account_analytic_id']" position="attributes">
                   <attribute name="invisible">True</attribute>
