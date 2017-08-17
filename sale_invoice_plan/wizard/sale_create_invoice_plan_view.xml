@@ -10,13 +10,13 @@
 	                    <group>
 	                        <field name="num_installment" />
 	                        <field name="order_amount" string="Order Amount" />
-	                        <field name="invoice_mode" />
+	                        <field name="invoice_mode" invisible="context.get('hide_invoice_plan_detail', False)"/>
 	                    </group>
 	                    <group>
-	                        <field name="use_deposit" invisble="context.get('hide_invoice_plan_detail', False)"/>
+	                        <field name="use_deposit" invisible="context.get('hide_invoice_plan_detail', False)"/>
 	                    </group>
                     </group>
-                   	<field name="installment_ids" nolabel="1" >
+                   	<field name="installment_ids" nolabel="1" invisible="context.get('hide_invoice_plan_detail', False)">
                     	<tree string="Installments" create="0" delete="0" editable="bottom">
 	                    	<field name="installment" />
 	                    	<field name="date_invoice" />
