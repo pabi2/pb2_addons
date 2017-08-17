@@ -131,15 +131,18 @@ class AccountAssetAdjust(models.Model):
     @api.depends('adjust_line_ids', 'adjust_expense_to_asset_ids')
     def _compute_assset_count(self):
         for rec in self:
+            ctx = {'active_test': False}
             # New
-            asset_ids = self.adjust_line_ids.mapped('ref_asset_id').ids
-            asset_ids += \
-                self.adjust_expense_to_asset_ids.mapped('ref_asset_id').ids
+            asset_ids = self.adjust_line_ids.\
+                with_context(ctx).mapped('ref_asset_id').ids
+            asset_ids += self.adjust_expense_to_asset_ids.\
+                with_context(ctx).mapped('ref_asset_id').ids
             rec.asset_count = len(asset_ids)
             # Old
-            old_asset_ids = self.adjust_line_ids.mapped('asset_id').ids
-            old_asset_ids = \
-                self.adjust_asset_to_expense_ids.mapped('asset_id').ids
+            old_asset_ids = self.adjust_line_ids.\
+                with_context(ctx).mapped('asset_id').ids
+            old_asset_ids += self.adjust_asset_to_expense_ids.\
+                with_context(ctx).mapped('asset_id').ids
             rec.old_asset_count = len(old_asset_ids)
 
     @api.model
@@ -279,7 +282,7 @@ class AccountAssetAdjustLine(models.Model):
         domain=[('type', '!=', 'view'),
                 ('profile_type', 'not in', ('ait', 'auc')),
                 ('state', '=', 'open'),
-                '|', ('active', '=', True), ('active', '=', False)],
+                ('adjust_id', '=', False)],
         help="Asset to be removed, as it create new asset of the same value",
     )
     asset_state = fields.Selection(
