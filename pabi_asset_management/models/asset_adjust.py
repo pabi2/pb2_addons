@@ -252,7 +252,7 @@ class AccountAssetAdjustLine(models.Model):
     )
     asset_id = fields.Many2one(
         'account.asset',
-        string='Origin Asset',
+        string='Origin Asset Item',
         required=True,
         domain=[('type', '!=', 'view'),
                 ('profile_type', 'not in', ('ait', 'auc')),
@@ -290,7 +290,7 @@ class AccountAssetAdjustLine(models.Model):
     )
     ref_asset_id = fields.Many2one(
         'account.asset',
-        string='New Asset',
+        string='New Asset Item',
         readonly=True,
     )
     target_status = fields.Many2one(

@@ -7,13 +7,13 @@
             <field name="arch" type="xml">
                 <form string="Create Invoice Plan">
                     <group>
-	                    <group>    
+	                    <group>
 	                        <field name="num_installment" />
 	                        <field name="order_amount" string="Order Amount" />
 	                        <field name="invoice_mode" />
 	                    </group>
 	                    <group>
-	                        <field name="use_deposit" />
+	                        <field name="use_deposit" invisble="context.get('hide_invoice_plan_detail', False)"/>
 	                    </group>
                     </group>
                    	<field name="installment_ids" nolabel="1" >
@@ -46,4 +46,3 @@
 
     </data>
 </openerp>
-
