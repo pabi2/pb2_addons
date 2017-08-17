@@ -28,6 +28,13 @@ class ResPartnerBank(models.Model):
     def _onchange_bank(self):
         self.bank_branch = False
 
+    @api.multi
+    def name_get(self):
+        res = []
+        for rec in self:
+            res.append((rec.id, '%s %s' % (rec.bank.abbrev, rec.acc_number)))
+        return res
+
 
 class ResBankBranch(models.Model):
     _name = 'res.bank.branch'
