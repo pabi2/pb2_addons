@@ -127,6 +127,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'account.asset.adjust',
         string='Adjustment',
         readonly=True,
+        copy=False,
         help="For asset that is created from the asset type adjustment",
     )
     date_picking = fields.Datetime(

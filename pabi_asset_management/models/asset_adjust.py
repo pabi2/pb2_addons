@@ -18,13 +18,21 @@ class AccountAssetAdjust(models.Model):
         readonly=True,
         copy=False,
     )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Adjustment Journal',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default=lambda self: self._default_journal(),
+    )
     date = fields.Date(
         string='Date',
         default=lambda self: fields.Date.context_today(self),
         required=True,
         copy=False,
         readonly=True,
-        states={'draft2': [('readonly', False)]},
+        states={'draft': [('readonly', False)]},
     )
     user_id = fields.Many2one(
         'res.users',
@@ -107,6 +115,13 @@ class AccountAssetAdjust(models.Model):
         compute='_compute_assset_count',
     )
 
+    @api.model
+    def _default_journal(self):
+        try:
+            return self.env.ref('pabi_asset_management.journal_asset')
+        except:
+            pass
+
     @api.multi
     def action_view_asset(self):
         self.ensure_one()
@@ -159,9 +174,8 @@ class AccountAssetAdjust(models.Model):
     @api.multi
     def action_done(self):
         for rec in self:
-            # rec._validate_asset_values()
             if rec.adjust_type == 'asset_type':
-                rec._adjust_asset_type()
+                rec.adjust_asset_type()
         self.write({'state': 'done'})
 
     @api.multi
@@ -230,12 +244,11 @@ class AccountAssetAdjust(models.Model):
                 adjust_line.product_id = \
                     values and values[str(account.id)][0] or False
                 quantity = values and values[str(account.id)][1] or 1
-                print adjust_line
                 for i in range(quantity):
                     self.adjust_expense_to_asset_ids += adjust_line
 
     @api.multi
-    def _adjust_asset_type(self):
+    def adjust_asset_type(self):
         """ The Concept
         * Remove the origin asset (asset removal)
         * Create new type of asset (direct creation)
@@ -250,19 +263,43 @@ class AccountAssetAdjust(models.Model):
             asset.write({'status': line.target_status.id,
                          'state': 'removed',
                          'active': False})
+            # Remove unposted lines
+            depre_lines = asset.depreciation_line_ids
+            depre_lines.filtered(
+                lambda l: not (l.move_check or l.init_entry)).unlink()
             # Simple duplicate to new asset type, name
             new_asset = asset.copy({
                 'profile_id': line.asset_profile_id.id,
                 'product_id': line.product_id.id,
                 'name': line.asset_name,
                 'type': 'view',  # so it won't crate journal now.
-                'purchase_id': False,
-                'picking_id': False,
+                'move_id': False,
                 'adjust_id': self.id,
                 'active': True,
+                'status': False,
             })
             new_asset.type = 'normal'
-            line.write({'ref_asset_id': new_asset.id})
+            line.ref_asset_id = new_asset.id
+            # Adjustment's journal entry
+            move = line.create_adjust_move()
+            # Set move_check equal to amount depreciated
+            new_asset.compute_depreciation_board()
+            depre_value = asset.value_depreciated
+            if depre_value:
+                amount = 0.0
+                depre_lines = new_asset.depreciation_line_ids.\
+                    filtered(lambda l: not l.init_entry)
+                for dline in depre_lines:
+                    amount += dline.amount
+                    if float_compare(depre_value, amount, 2) > 0:
+                        dline.move_id = move
+                    if float_compare(depre_value, amount, 2) == 0:
+                        dline.move_id = move
+                        break
+                    if float_compare(depre_value, amount, 2) < 0:
+                        raise ValidationError(
+                            _('Invalid depreciation board on new asset!'))
+            new_asset._compute_depreciation()
 
 
 class AccountAssetAdjustLine(models.Model):
@@ -324,6 +361,11 @@ class AccountAssetAdjustLine(models.Model):
         domain="[('map_state', '=', 'removed')]",
         required=True,
     )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        readonly=True,
+    )
     _sql_constraints = [
         ('asset_id_unique',
          'unique(asset_id, adjust_id)',
@@ -351,6 +393,109 @@ class AccountAssetAdjustLine(models.Model):
     @api.onchange('product_id')
     def _onchange_product_id(self):
         self.asset_name = self.product_id.name
+
+    @api.model
+    def _setup_move_data(self, journal, adjust_date,
+                         period, old_asset, new_asset):
+        move_data = {
+            'name': '/',
+            'date': adjust_date,
+            'ref': '%s,%s' % (old_asset.name, new_asset.name),
+            'period_id': period.id,
+            'journal_id': journal.id,
+        }
+        return move_data
+
+    @api.model
+    def _setup_move_line_data(self, asset, period, account, adjust_date,
+                              debit=False, credit=False, analytic_id=False):
+        move_line_data = {
+            'name': asset.name,
+            'ref': False,
+            'account_id': account.id,
+            'credit': credit,
+            'debit': debit,
+            'period_id': period.id,
+            # 'journal_id': asset.profile_id.journal_id.id,
+            'partner_id': asset.partner_id.id,
+            'analytic_account_id': analytic_id,
+            'date': adjust_date,
+            'asset_id': asset.id,
+            'state': 'valid',
+        }
+        return move_line_data
+
+    @api.multi
+    def create_adjust_move(self):
+        """
+        Dr: new asset - purchase value
+            Cr: old asset - purchase value
+        Dr: new - depre value (account_expense_depreciation_id) (budget)
+        Dr: old - depre accum value (account_depreciation_id)
+            Cr: new - depre accum value (account_depreciation_id)
+            Cr: old - depre value (account_expense_depreciation_id) (budget)
+        """
+        self.ensure_one()
+        created_move_ids = []
+        Period = self.env['account.period']
+        adjust = self.adjust_id
+        old_asset = self.asset_id
+        new_asset = self.ref_asset_id
+        adjust_date = adjust.date
+        ctx = dict(self._context,
+                   account_period_prefer_normal=True,
+                   company_id=old_asset.company_id.id,
+                   allow_asset=True, novalidate=True)
+        period = Period.with_context(ctx).find(adjust_date)
+        am_vals = self._setup_move_data(adjust.journal_id, adjust_date,
+                                        period, old_asset, new_asset)
+        move = self.env['account.move'].with_context(ctx).create(am_vals)
+        old_asset_acc = old_asset.profile_id.account_asset_id
+        new_asset_acc = new_asset.profile_id.account_asset_id
+        old_depr_acc = old_asset.profile_id.account_depreciation_id
+        new_depr_acc = new_asset.profile_id.account_depreciation_id
+        old_exp_acc = old_asset.profile_id.account_expense_depreciation_id
+        new_exp_acc = new_asset.profile_id.account_expense_depreciation_id
+        # Dr: new asset - purchase value
+        #     Cr: old asset - purchase value
+        purchase_value = old_asset.purchase_value
+        new_asset_debit = self._setup_move_line_data(
+            new_asset, period, new_asset_acc, adjust_date,
+            debit=purchase_value, credit=False,
+            analytic_id=new_asset.account_analytic_id.id)
+        old_asset_credit = self._setup_move_line_data(
+            old_asset, period, old_asset_acc, adjust_date,
+            debit=False, credit=purchase_value,
+            analytic_id=old_asset.account_analytic_id.id)
+        line_dict = [(0, 0, new_asset_debit), (0, 0, old_asset_credit)]
+        # Dr: new - depre value (account_expense_depreciation_id)(budget)
+        # Dr: old - depre accum value (account_depreciation_id)
+        #   Cr: new - depre accum value (account_depreciation_id)
+        #   Cr: old - depre value (account_expense_depreciation_id)(budget)
+        amount = old_asset.value_depreciated
+        new_depre_debit = self._setup_move_line_data(
+            new_asset, period, new_depr_acc, adjust_date,
+            debit=amount, credit=False,
+            analytic_id=new_asset.account_analytic_id.id)
+        old_depre_debit = self._setup_move_line_data(
+            old_asset, period, old_depr_acc, adjust_date,
+            debit=amount, credit=False, analytic_id=False)
+        new_exp_credit = self._setup_move_line_data(
+            new_asset, period, new_exp_acc, adjust_date,
+            debit=False, credit=amount, analytic_id=False)
+        old_exp_credit = self._setup_move_line_data(
+            old_asset, period, old_exp_acc, adjust_date,
+            debit=False, credit=amount,
+            analytic_id=old_asset.account_analytic_id.id)
+        line_dict += [(0, 0, new_depre_debit), (0, 0, old_depre_debit),
+                      (0, 0, new_exp_credit), (0, 0, old_exp_credit), ]
+        move.write({'line_id': line_dict})
+        created_move_ids.append(move.id)
+        if adjust.journal_id.entry_posted:
+            del ctx['novalidate']
+            move.with_context(ctx).post()
+        self.write({'move_id': move.id})
+        return move
 
 
 class AccountAssetAdjustAssetToExpense(models.Model):
@@ -382,10 +527,21 @@ class AccountAssetAdjustAssetToExpense(models.Model):
         readonly=True,
         store=True,
     )
+    target_status = fields.Many2one(
+        'account.asset.status',
+        string='Asset Status',
+        domain="[('map_state', '=', 'removed')]",
+        required=True,
+    )
     account_id = fields.Many2one(
         'account.account',
         string='Expense Account',
         required=True,
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        readonly=True,
     )
     _sql_constraints = [
         ('asset_id_unique',
@@ -434,6 +590,11 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
     ref_asset_id = fields.Many2one(
         'account.asset',
         string='New Asset',
+        readonly=True,
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
         readonly=True,
     )
     _sql_constraints = [

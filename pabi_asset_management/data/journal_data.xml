@@ -23,7 +23,7 @@
             <field name="update_posted">True</field>
         </record>
 
-        # Journal for Asset
+        # Journal for Asset Depre
         <record id="seq_journal_asset_depre_journal" model="ir.sequence">
             <field name="name">Depreciation Journal</field>
             <field name="code"></field>

@@ -40,6 +40,7 @@
                                 <field name="invoice_id"/>
                             </group>
                             <group>
+                                <field name="journal_id"/>
                                 <field name="user_id"/>
                                 <field name="date"/>
                             </group>
@@ -65,6 +66,7 @@
                                         <field name="asset_name"/>
                                         <field name="asset_profile_id"/>
                                         <field name="ref_asset_id"/>
+                                        <field name="move_id"/>
                                     </tree>
                                 </field>
                             </page>
@@ -73,7 +75,9 @@
                                     <tree editable="bottom" colors="gray:asset_state != 'open'">
                                         <field name="asset_id"/>
                                         <field name="asset_state"/>
+                                        <field name="target_status"/>
                                         <field name="account_id"/>
+                                        <field name="move_id"/>
                                     </tree>
                                 </field>
                             </page>
@@ -85,6 +89,7 @@
                                         <field name="asset_name"/>
                                         <field name="asset_profile_id"/>
                                         <field name="amount"/>
+                                        <field name="move_id"/>
                                     </tree>
                                 </field>
                             </page>
