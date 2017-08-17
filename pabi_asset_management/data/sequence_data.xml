@@ -109,5 +109,19 @@
             <field name="company_id" eval="False"/>
         </record>
 
+        <!-- Asset Adjust -->
+        <record id="seq_type_account_asset_adjust" model="ir.sequence.type">
+            <field name="name">Asset Adjust</field>
+            <field name="code">account.asset.adjust</field>
+        </record>
+
+        <record id="seq_account_asset_adjust" model="ir.sequence">
+            <field name="name">Asset Adjust</field>
+            <field name="code">account.asset.adjust</field>
+            <field name="prefix">ASJ</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
     </data>
 </openerp>

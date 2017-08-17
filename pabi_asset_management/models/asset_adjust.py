@@ -97,6 +97,31 @@ class AccountAssetAdjust(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    asset_count = fields.Integer(
+        string='Asset Count',
+        compute='_compute_assset_count',
+    )
+
+    @api.multi
+    def action_view_asset(self):
+        self.ensure_one()
+        action = self.env.ref('account_asset_management.account_asset_action')
+        result = action.read()[0]
+        asset_ids = self.adjust_line_ids.mapped('ref_asset_id').ids
+        asset_ids += \
+            self.adjust_expense_to_asset_ids.mapped('ref_asset_id').ids
+        dom = [('id', 'in', asset_ids)]
+        result.update({'domain': dom})
+        return result
+
+    @api.multi
+    @api.depends('adjust_line_ids', 'adjust_expense_to_asset_ids')
+    def _compute_assset_count(self):
+        for rec in self:
+            asset_ids = self.adjust_line_ids.mapped('ref_asset_id').ids
+            asset_ids += \
+                self.adjust_expense_to_asset_ids.mapped('ref_asset_id').ids
+            rec.asset_count = len(asset_ids)
 
     @api.model
     def create(self, vals):
@@ -209,6 +234,7 @@ class AccountAssetAdjust(models.Model):
                 'product_id': line.product_id.id,
                 'name': line.asset_name,
                 'type': 'view',  # so it won't crate journal now.
+                'active': True,
             })
             new_asset.type = 'normal'
             line.write({'ref_asset_id': new_asset.id})
@@ -379,6 +405,11 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
     amount = fields.Float(
         string='Asset Value',
         required=True,
+    )
+    ref_asset_id = fields.Many2one(
+        'account.asset',
+        string='New Asset',
+        readonly=True,
     )
     _sql_constraints = [
         ('asset_id_unique',
