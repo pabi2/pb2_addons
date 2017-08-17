@@ -199,21 +199,19 @@ class AccountAssetAdjust(models.Model):
             raise ValidationError(_('No asset to remove!'))
         for line in self.adjust_line_ids.\
                 filtered(lambda l: l.asset_id.state == 'open'):
-            # Simple Removal (same as in asset removal)
             asset = line.asset_id
-            ctx = {'active_ids': [asset.id], 'active_id': asset.id}
-            if asset.value_residual:
-                ctx.update({'early_removal': True})
-            line.with_context(ctx).remove()
-            asset.status = line.target_status
+            asset.write({'status': line.target_status.id,
+                         'state': 'removed',
+                         'active': False})
             # Simple duplicate to new asset type, name
             new_asset = asset.copy({
                 'profile_id': line.asset_profile_id.id,
                 'product_id': line.product_id.id,
                 'name': line.asset_name,
+                'type': 'view',  # so it won't crate journal now.
             })
-            line.write({'ref_asset_id': new_asset.id,
-                        'active': False})
+            new_asset.type = 'normal'
+            line.write({'ref_asset_id': new_asset.id})
 
 
 class AccountAssetAdjustLine(models.Model):
