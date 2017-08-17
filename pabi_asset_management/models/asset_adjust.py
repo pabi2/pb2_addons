@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import ast
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
@@ -97,31 +98,47 @@ class AccountAssetAdjust(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    old_asset_count = fields.Integer(
+        string='Old Asset Count',
+        compute='_compute_assset_count',
+    )
     asset_count = fields.Integer(
-        string='Asset Count',
+        string='New Asset Count',
         compute='_compute_assset_count',
     )
 
     @api.multi
     def action_view_asset(self):
         self.ensure_one()
+        old_asset = self._context.get('old_asset', False)
         action = self.env.ref('account_asset_management.account_asset_action')
         result = action.read()[0]
-        asset_ids = self.adjust_line_ids.mapped('ref_asset_id').ids
-        asset_ids += \
-            self.adjust_expense_to_asset_ids.mapped('ref_asset_id').ids
+        asset_ids = []
+        if old_asset:
+            asset_ids = self.adjust_line_ids.mapped('asset_id').ids
+        else:
+            asset_ids = self.adjust_line_ids.mapped('ref_asset_id').ids
+            asset_ids += \
+                self.adjust_expense_to_asset_ids.mapped('ref_asset_id').ids
         dom = [('id', 'in', asset_ids)]
         result.update({'domain': dom})
+        ctx = ast.literal_eval(result['context'])
+        ctx.update({'active_test': False})
+        result['context'] = ctx
         return result
 
     @api.multi
     @api.depends('adjust_line_ids', 'adjust_expense_to_asset_ids')
     def _compute_assset_count(self):
         for rec in self:
+            # New
             asset_ids = self.adjust_line_ids.mapped('ref_asset_id').ids
             asset_ids += \
                 self.adjust_expense_to_asset_ids.mapped('ref_asset_id').ids
             rec.asset_count = len(asset_ids)
+            # Old
+            old_asset_ids = self.adjust_line_ids.mapped('asset_id').ids
+            rec.old_asset_count = len(old_asset_ids)
 
     @api.model
     def create(self, vals):
@@ -234,6 +251,9 @@ class AccountAssetAdjust(models.Model):
                 'product_id': line.product_id.id,
                 'name': line.asset_name,
                 'type': 'view',  # so it won't crate journal now.
+                'purchase_id': False,
+                'picking_id': False,
+                'adjust_id': self.id,
                 'active': True,
             })
             new_asset.type = 'normal'

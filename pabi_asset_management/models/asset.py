@@ -123,6 +123,12 @@ class AccountAsset(ChartFieldAction, models.Model):
         store=True,
         readonly=True,
     )
+    adjust_id = fields.Many2one(
+        'account.asset.adjust',
+        string='Adjustment',
+        readonly=True,
+        help="For asset that is created from the asset type adjustment",
+    )
     date_picking = fields.Datetime(
         string='Picking Date',
         related='move_id.picking_id.date_done',
