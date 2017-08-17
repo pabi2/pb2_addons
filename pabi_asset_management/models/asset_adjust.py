@@ -138,6 +138,8 @@ class AccountAssetAdjust(models.Model):
             rec.asset_count = len(asset_ids)
             # Old
             old_asset_ids = self.adjust_line_ids.mapped('asset_id').ids
+            old_asset_ids = \
+                self.adjust_asset_to_expense_ids.mapped('asset_id').ids
             rec.old_asset_count = len(old_asset_ids)
 
     @api.model
