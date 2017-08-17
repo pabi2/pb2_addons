@@ -57,6 +57,7 @@ class sale_create_invoice_plan(models.TransientModel):
 
     @api.model
     def _validate_total_amount(self):
+        return True
         obj_precision = self.env['decimal.precision']
         prec = obj_precision.precision_get('Account')
         amount_total = sum([x.installment > 0 and x.amount or
@@ -64,7 +65,8 @@ class sale_create_invoice_plan(models.TransientModel):
         if round(amount_total, prec) != round(self.order_amount, prec):
             raise except_orm(
                 _('Amount Mismatch!'),
-                _("Total installment amount %d not equal to order amount %d!")
+                _("Total installment amount %d not "
+                  "equal to order amount %d!")
                 % (amount_total, self.order_amount))
 
     @api.one

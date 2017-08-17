@@ -196,7 +196,7 @@
                                     </group>
                                     <group></group>
                                 </group>
-                                <field name="invoice_plan_ids">
+                                <field name="invoice_plan_ids" invisible="1">
                                     <tree string="Installment Plan">
                                         <field name="sequence" widget="handle"/>
                                         <field name="order_id" invisible="1"/>
