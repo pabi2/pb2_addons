@@ -11,6 +11,7 @@
         'account_bank_receipt',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/account_bank_receipt_view.xml',
     ],
     'installable': True,
