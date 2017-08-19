@@ -163,10 +163,11 @@
                     <field name="fiscalyear_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciated_value']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">0</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']/tree/field[@name='amount']" position="after">
                     <field name="amount_accumulated"/>
+                    <field name="depreciation_base"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']" position="after">
                     <group>
