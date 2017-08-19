@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <form string="Asset">
                     <header>
-                        <button name="action_draft" states="done" string="Back to Draft" type="object" groups="account.group_account_user"/>
+                        <!-- <button name="action_draft" states="done" string="Back to Draft" type="object" groups="account.group_account_user"/> -->
                         <button name="action_done" states="draft" string="Adjust" type="object" class="oe_highlight" groups="account.group_account_user"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object" groups="account.group_account_user"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
@@ -89,6 +89,8 @@
                                         <field name="asset_name"/>
                                         <field name="asset_profile_id"/>
                                         <field name="amount"/>
+                                        <field name="asset_date"/>
+                                        <field name="ref_asset_id"/>
                                         <field name="move_id"/>
                                     </tree>
                                 </field>

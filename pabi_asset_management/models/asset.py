@@ -401,14 +401,19 @@ class AccountAsset(ChartFieldAction, models.Model):
         assets = self.filtered(lambda l: not l.no_depreciation)
         return super(AccountAsset, assets).compute_depreciation_board()
 
-    @api.multi
-    def onchange_profile_id(self, profile_id):
-        res = super(AccountAsset, self).onchange_profile_id(profile_id)
-        asset_profile = self.env['account.asset.profile'].browse(profile_id)
-        if asset_profile and not asset_profile.no_depreciation:
-            res['value']['salvage_value'] = asset_profile.salvage_value
-        return res
+    # @api.multi
+    # def onchange_profile_id(self, profile_id):
+    #     res = super(AccountAsset, self).onchange_profile_id(profile_id)
+    #     asset_profile = self.env['account.asset.profile'].browse(profile_id)
+    #     if asset_profile and not asset_profile.no_depreciation:
+    #         res['value']['salvage_value'] = asset_profile.salvage_value
+    #     return res
 
+    @api.onchange('profile_id')
+    def _onchange_profile_id(self):
+        super(AccountAsset, self)._onchange_profile_id()
+        if self.profile_id and not self.profile_id.no_depreciation:
+            self.salvage_value = self.profile_id.salvage_value
     # Method used in change owner and transfer
 
     @api.model
