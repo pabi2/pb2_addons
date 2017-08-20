@@ -56,6 +56,10 @@ class LoanBankMOU(models.Model):
     )
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
+        ('positive_loan_ratio', 'check(loan_ratio > 0)',
+         'Loan ratio must be positive number!'),
+        ('positive_max_installment', 'check(max_installment > 0)',
+         'Max installment must be positive number!!'),
     ]
 
     @api.onchange('partner_id')
@@ -245,6 +249,12 @@ class LoanCustomerAgreement(models.Model):
     project = fields.Char(
         string='Project CD',
     )
+    _sql_constraints = [
+        ('positive_installment', 'check(installment > 0)',
+         'Installment must be positive number!'),
+        ('positive_fy_penalty_rate', 'check(max_installment >= 0)',
+         'Penalty rate must be positive number!!'),
+    ]
 
     @api.onchange('mou_id')
     def _onchange_mou_id(self):
