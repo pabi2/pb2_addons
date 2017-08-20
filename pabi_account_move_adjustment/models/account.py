@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.addons.pabi_chartfield_merged.models.chartfield \
     import MergedChartField
+from openerp.exceptions import ValidationError
 
 
 MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
@@ -9,6 +10,12 @@ MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
+
+    @api.multi
+    def action_set_tax_sequence(self):
+        for rec in self:
+            rec.tax_detail_ids._compute_taxbranch_id()
+        return super(AccountMove, self).action_set_tax_sequence()
 
     @api.one
     def copy(self, default):
@@ -33,8 +40,11 @@ class AccountMove(models.Model):
 
     @api.multi
     def button_validate(self):
-        # For case adjustment journal only, create analytic when posted
         for move in self:
+            # Validate for tax detail
+            if move.line_id.mapped('tax_code_id') and not move.tax_detail_ids:
+                raise ValidationError(_('Please fill Tax Detail!'))
+            # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             if move.doctype == 'adjustment':
                 # Analytic
@@ -68,6 +78,27 @@ class AccountMove(models.Model):
 
 class AccountMoveLine(MergedChartField, models.Model):
     _inherit = 'account.move.line'
+
+    is_tax_line = fields.Boolean(
+        string='Is Tax Line',
+    )
+
+    @api.multi
+    @api.onchange('account_id')
+    def _onchange(self):
+        if self.account_id:
+            taxes = self.env['account.tax'].search([
+                ('account_collected_id', '=', self.account_id.id)])
+            if taxes:
+                tax_code = taxes[0].mapped('tax_code_id')
+                self.is_tax_line = True
+                self.tax_code_id = tax_code
+            else:
+                self.is_tax_line = False
+                self.tax_code_id = False
+        else:
+            self.is_tax_line = False
+            self.tax_code_id = False
 
     @api.onchange('activity_id')
     def _onchange_activity_id(self):

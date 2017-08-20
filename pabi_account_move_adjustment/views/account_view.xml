@@ -61,6 +61,9 @@
                                     <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
                                     <field name="name" string="Description"/>
                                     <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
+                                    <field name="is_tax_line" invisible="1"/>
+                                    <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
+                                    <field name="taxbranch_id" readonly="1"/>
                                     <field name="debit" sum="Total Debit"/>
                                     <field name="credit" sum="Total Credit"/>
                                     <field name="costcenter_id" readonly="1"/>
@@ -83,16 +86,18 @@
                             <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
                         </page>
                         <page string="Tax Detail">
-                            <button name="action_set_tax_sequence" string="Run Sequence" type="object"/>
+                            <button name="action_set_tax_sequence" string="Run Sequence" type="object" states="posted"/>
                             <field name="tax_detail_ids" context="{'default_doc_type': 'purchase'}">
                                 <tree editable="bottom" >
                                     <field name="doc_type"/>
                                     <field name="partner_id"/>
                                     <field name="period_id"/>
-                                    <field name="invoice_number"/>
-                                    <field name="invoice_date"/>
-                                    <field name="base" sum="Base"/>
-                                    <field name="amount" sum="Tax"/>
+                                    <field name="invoice_number" required="1"/>
+                                    <field name="invoice_date" required="1"/>
+                                    <field name="tax_id" string="Tax Type" required="1"/>
+                                    <field name="taxbranch_id" string="Tax Branch"/>
+                                    <field name="base" sum="Base" required="1"/>
+                                    <field name="amount" sum="Tax" required="1"/>
                                     <field name="tax_sequence_display"/>
                                     <field name="addition"/>
                                 </tree>
@@ -203,7 +208,7 @@
                             <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
                             <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
                         </page>
-                        <page string="Tax Detail">
+                        <!-- <page string="Tax Detail">
                             <button name="action_set_tax_sequence" string="Run Sequence" type="object"/>
                             <field name="tax_detail_ids" context="{'default_doc_type': 'purchase'}">
                                 <tree editable="bottom" >
@@ -218,7 +223,7 @@
                                     <field name="addition"/>
                                 </tree>
                             </field>
-                        </page>
+                        </page> -->
                     </notebook>
                 </form>
             </field>
