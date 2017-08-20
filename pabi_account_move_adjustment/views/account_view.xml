@@ -41,6 +41,7 @@
                             <field name="company_id" required="1" groups="base.group_multi_company"/>
                             <field name="partner_id" invisible="1"/>
                             <field name="to_be_reversed"/>
+                            <field name="reversal_id" attrs="{'invisible': [('to_be_reversed', '=', False), ('reversal_id', '=', False)]}"/>
                             <field name="doctype"/>
                         </group>
                         <group>
@@ -161,6 +162,7 @@
                             <field name="company_id" required="1" groups="base.group_multi_company"/>
                             <field name="partner_id" invisible="1"/>
                             <field name="to_be_reversed"/>
+                            <field name="reversal_id" attrs="{'invisible': [('to_be_reversed', '=', False), ('reversal_id', '=', False)]}"/>
                             <field name="doctype"/>
                         </group>
                         <group>
