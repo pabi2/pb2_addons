@@ -26,6 +26,7 @@ Note: following are arequiremen for system to properly create analytic line
         'account',
         'account_subscription_enhanced',
         'pabi_account_move_document_ref',
+        'pabi_chartfield_merged',
     ],
     'demo': [],
     'data': [
