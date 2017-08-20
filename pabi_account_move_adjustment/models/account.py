@@ -7,10 +7,6 @@ from openerp.addons.pabi_chartfield_merged.models.chartfield \
 MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 
 
-class AccountMoveLine(MergedChartField, models.Model):
-    _inherit = 'account.move.line'
-
-
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
@@ -70,7 +66,7 @@ class AccountMove(models.Model):
         return move
 
 
-class AccountMoveLine(models.Model):
+class AccountMoveLine(MergedChartField, models.Model):
     _inherit = 'account.move.line'
 
     @api.onchange('activity_id')
