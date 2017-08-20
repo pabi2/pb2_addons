@@ -47,7 +47,9 @@ class PABIXls(models.AbstractModel):
         return xls_ids
 
     @api.model
-    def xls_to_csv(self, model, file, header_map=None, extra_columns=None):
+    def xls_to_csv(self, model, file,
+                   header_map=None, extra_columns=None,
+                   auto_id=False):
         """ This function will convert a simple (header+line) XLS file to
             simple CSV file (header+line) and the header columns
         To map user column with database column
@@ -56,6 +58,7 @@ class PABIXls(models.AbstractModel):
         - extra_columns = [('name', 'ABC'), ('id', 10), ]
         If the import file have column id, we will use this column to create
         external id, and hence possible to return record id being created
+        if auto_id=Ture, system will add id filed with running number
         Return:
             - csv ready for import to Odoo
               'ID', 'Asset', ...
