@@ -250,7 +250,8 @@ class PABIBankStatement(models.Model):
                 continue
             self.env['pabi.xls'].import_xls(
                 'pabi.bank.statement.import', rec.import_file,
-                extra_columns=[('statement_id/.id', rec.id)])
+                extra_columns=[('statement_id/.id', rec.id)],
+                auto_id=True)
 
     @api.multi
     def _get_match_criteria(self):

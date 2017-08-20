@@ -31,6 +31,20 @@ class PABIXls(models.AbstractModel):
         return file_txt
 
     @api.model
+    def _add_id_column(self, file_txt):
+        i = 0
+        txt_lines = []
+        for line in file_txt.split('\n'):
+            if line and i == 0:
+                line = '"id",' + line
+            elif line:
+                line = '"' + str(i) + '",' + line
+            txt_lines.append(line)
+            i += 1
+        file_txt = '\n'.join(txt_lines)
+        return file_txt
+
+    @api.model
     def xldate_to_datetime(self, xldate):
         tempDate = datetime(1900, 1, 1)
         deltaDays = timedelta(days=int(xldate) - 2)
@@ -38,10 +52,12 @@ class PABIXls(models.AbstractModel):
         return xldate.strftime("%Y-%m-%d")
 
     @api.model
-    def import_xls(self, model, file, header_map=None, extra_columns=None):
+    def import_xls(self, model, file, header_map=None,
+                   extra_columns=None, auto_id=False):
         # 1) Convert form XLS to CSV
         header_fields, file_txt = self.xls_to_csv(
-            model, file, header_map=header_map, extra_columns=extra_columns)
+            model, file, header_map=header_map,
+            extra_columns=extra_columns, auto_id=auto_id)
         # 2) Do the import
         xls_ids = self.import_csv(model, header_fields, file_txt)
         return xls_ids
@@ -58,7 +74,7 @@ class PABIXls(models.AbstractModel):
         - extra_columns = [('name', 'ABC'), ('id', 10), ]
         If the import file have column id, we will use this column to create
         external id, and hence possible to return record id being created
-        if auto_id=Ture, system will add id filed with running number
+        if auto_id=Ture, system will add id field with running number
         Return:
             - csv ready for import to Odoo
               'ID', 'Asset', ...
@@ -136,8 +152,11 @@ class PABIXls(models.AbstractModel):
         # Create xml_ids if not already assigned
         if id_index == -1:
             _HEADER_FIELDS.insert(0, 'id')
-            xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
-            file_txt = self._add_column('id', xml_id, file_txt)
+            if auto_id:
+                file_txt = self._add_id_column(file_txt)
+            else:
+                xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
+                file_txt = self._add_column('id', xml_id, file_txt)
         # Map column name
         if header_map:
             _HEADER_FIELDS = [header_map.get(x.lower().strip(), False) and
