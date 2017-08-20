@@ -132,7 +132,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_account_asset_adjust">
-            <field name="name">Adjust</field>
+            <field name="name">Adjustment</field>
             <field name="res_model">account.asset.adjust</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="view_account_asset_adjust_tree"/>
@@ -140,6 +140,17 @@
         </record>
 
         <menuitem parent="menu_asset_actions" id="menu_action_account_asset_adjust" action="action_account_asset_adjust" groups="account.group_account_user"/>
+
+        <!-- Adjustment Menu in Accounting Module -->
+        <record model="ir.actions.act_window" id="action_account_asset_adjust2">
+            <field name="name">Asset Adjustment</field>
+            <field name="res_model">account.asset.adjust</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_asset_adjust_tree"/>
+            <field name="search_view_id" ref="view_account_asset_adjust_search"/>
+        </record>
+
+        <menuitem parent="account.menu_finance_entries" id="menu_action_account_asset_adjust2" action="action_account_asset_adjust2" groups="account.group_account_user" sequence="25"/>
 
     </data>
 </openerp>

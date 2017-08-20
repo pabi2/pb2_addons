@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.addons.pabi_chartfield_merged.models.chartfield \
+    import MergedChartField
 
 
 MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
+
+
+class AccountMoveLine(MergedChartField, models.Model):
+    _inherit = 'account.move.line'
 
 
 class AccountMove(models.Model):
