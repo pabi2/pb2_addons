@@ -12,6 +12,8 @@ class CreateJournalEntryWizard(models.TransientModel):
          ('no_budget', 'Adjust No-Budget (JN)')],
         string='Type of Adjustment',
         required=True,
+        readonly=True,
+        default='no_budget',
     )
 
     @api.model
