@@ -109,7 +109,7 @@ class AccountTaxDetail(models.Model):
     tax_id = fields.Many2one(
         'account.tax',
         ondelete='cascade',
-        readonly=True,
+        readonly=False,
     )
     tax_sequence = fields.Integer(
         string='Sequence',
