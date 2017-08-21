@@ -30,3 +30,11 @@ jasper_reports.report_jasper(
     'account.move',  # Model View name
     parser=print_voucher_parser
 )
+
+
+# Adjustment Voucher
+jasper_reports.report_jasper(
+    'report.adjustment.voucher',  # report_name in account_data.xml
+    'account.move',  # Model View name
+    parser=print_voucher_parser
+)

@@ -20,7 +20,8 @@ DOCTYPE_REPORT_MAP = {'incoming_shipment': False,
                       'interface_account': False,
                       'purchase_request': False,
                       'purchase_order': False,
-                      'sale_order': False}
+                      'sale_order': False,
+                      'adjustment': 'adjustment.voucher'}
 
 
 class PrintVoucherWizard(models.TransientModel):
