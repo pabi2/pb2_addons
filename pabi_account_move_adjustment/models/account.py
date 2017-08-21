@@ -42,8 +42,8 @@ class AccountMove(models.Model):
     def button_validate(self):
         for move in self:
             # Validate for tax detail
-            if move.line_id.mapped('tax_code_id') and not move.tax_detail_ids:
-                raise ValidationError(_('Please fill Tax Detail!'))
+            # if move.line_id.mapped('tax_code_id') and not move.tax_detail_ids:
+            #     raise ValidationError(_('Please fill Tax Detail!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             if move.doctype == 'adjustment':
