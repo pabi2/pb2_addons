@@ -42,10 +42,9 @@ class AccountMove(models.Model):
     def button_validate(self):
         for move in self:
             # Validate for tax detail
-            # if move.doctype == 'adjustment' and \
-            #         move.line_id.mapped('tax_code_id') and \
-            #         not move.tax_detail_ids:
-            #     raise ValidationError(_('Please fill Tax Detail!'))
+            if True in move.line_id.mapped('is_tax_line') \
+                    and not move.tax_detail_ids:
+                raise ValidationError(_('Please fill Tax Detail!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             if move.doctype == 'adjustment':
@@ -83,24 +82,23 @@ class AccountMoveLine(MergedChartField, models.Model):
 
     is_tax_line = fields.Boolean(
         string='Is Tax Line',
+        help="Flag to mark this line as require tax detial on adjustment",
     )
 
     @api.multi
     @api.onchange('account_id')
     def _onchange(self):
+        self.is_tax_line = False
+        self.tax_code_id = False
         if self.account_id:
             taxes = self.env['account.tax'].search([
                 ('account_collected_id', '=', self.account_id.id)])
             if taxes:
                 tax_code = taxes[0].mapped('tax_code_id')
-                self.is_tax_line = True
                 self.tax_code_id = tax_code
-            else:
-                self.is_tax_line = False
-                self.tax_code_id = False
-        else:
-            self.is_tax_line = False
-            self.tax_code_id = False
+                due_tax = taxes.filtered(lambda l: (l.is_undue_tax is False and
+                                                    l.is_wht is False))
+                self.is_tax_line = due_tax and True or False
 
     @api.onchange('activity_id')
     def _onchange_activity_id(self):
