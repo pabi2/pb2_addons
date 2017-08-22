@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountVoucher(models.Model):
@@ -74,3 +75,16 @@ class AccountVoucher(models.Model):
             self.supplier_bank_id = default_bank
         else:
             self.supplier_bank_id = False
+
+    @api.multi
+    def cancel_voucher(self):
+        for voucher in self:
+            Line = self.env['payment.export.line']
+            lines = Line.search([('voucher_id', '=', voucher.id)])
+            for line in lines:
+                if line and line.export_id and line.export_id.state == 'done':
+                    raise ValidationError(
+                        _('You can not unreconcile because %s '
+                          'used in payment export %s')
+                        % (voucher.number, line.export_id.name))
+        return super(AccountVoucher, self).cancel_voucher()

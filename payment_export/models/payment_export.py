@@ -281,6 +281,8 @@ class PaymentExport(models.Model):
         for export in self:
             if not export.line_ids:
                 raise ValidationError(_('No Export Lines'))
+            # Check Supplier Payment
+            export._check_payment_export_line()
             voucher_ids = [x.voucher_id.id for x in export.line_ids]
             exported_lines = self.env['payment.export.line'].\
                 search([('voucher_id', 'in', voucher_ids),
@@ -342,6 +344,16 @@ class PaymentExport(models.Model):
     @api.multi
     def action_draft(self):
         self.write({'state': 'draft'})
+
+    @api.multi
+    def _check_payment_export_line(self):
+        self.ensure_one()
+        for line in self.line_ids:
+            if line.voucher_id.state != 'posted':
+                raise ValidationError(
+                    _('%s state not equal posted, '
+                      'please refresh payment method or transfer type.')
+                    % (line.voucher_id.number))
 
 
 class PaymentExportLine(models.Model):
