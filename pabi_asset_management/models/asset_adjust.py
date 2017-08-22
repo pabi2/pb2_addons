@@ -384,6 +384,7 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
+            new_asset.validate()
 
     @api.multi
     def adjust_asset_to_expense(self):
@@ -426,6 +427,7 @@ class AccountAssetAdjust(models.Model):
             line.ref_asset_id = new_asset
             # Find amount from depreciation board
             new_asset.compute_depreciation_board()
+            new_asset.validate()
             depre_lines = new_asset.depreciation_line_ids.\
                 filtered(lambda l: not l.init_entry and
                          l.line_date <= fields.Date.context_today(self))
