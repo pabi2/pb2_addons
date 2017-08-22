@@ -230,6 +230,13 @@ class AccountAssetAdjust(models.Model):
                 adjust_line.product_id = \
                     values and values[str(asset.product_id.id)] or False
                 adjust_line.asset_name = adjust_line.product_id.name
+                # Budgeting
+                adjust_line.section_id = asset.section_id
+                adjust_line.project_id = asset.project_id
+                adjust_line.invest_asset_id = asset.invest_asset_id
+                adjust_line.invest_contruction_phase_id = \
+                    asset.invest_construction_phase_id
+                # --
                 self.adjust_line_ids += adjust_line
         # Asset => Expense
         elif self.adjust_type == 'asset_to_expense':
@@ -292,7 +299,7 @@ class AccountAssetAdjust(models.Model):
             lambda l: not (l.move_check or l.init_entry)).unlink()
 
     @api.multi
-    def _prepare_asset_dict(self, product, name):
+    def _prepare_asset_dict(self, product, name, analytic):
         profile = product.asset_profile_id
         vals = {
             'profile_id': profile.id,
@@ -313,18 +320,19 @@ class AccountAssetAdjust(models.Model):
             'salvage_value': (not profile.no_depreciation and
                               profile.salvage_value or False),
             'account_analytic_id': False,  # Do not copy, product_id is changed
+            # Dimension
+            'section_id': analytic.section_id.id,
+            'project_id': analytic.project_id.id,
+            'invest_asset_id': analytic.invest_asset_id.id,
+            'invest_construction_phase_id':
+            analytic.invest_construction_phase_id.id,
         }
         return vals
 
     @api.model
-    def _duplicate_asset(self, asset, product, asset_name):
-        asset_dict = self._prepare_asset_dict(product, asset_name)
+    def _duplicate_asset(self, asset, product, asset_name, analytic):
+        asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         new_asset = asset.copy(asset_dict)
-        # Recalculate analytyic
-        Analytic = self.env['account.analytic.account']
-        new_asset.account_analytic_id = \
-            Analytic.create_matched_analytic(new_asset)
-        # --
         asset.target_asset_ids += new_asset
         # Set back to normal
         new_asset.type = 'normal'
@@ -339,15 +347,9 @@ class AccountAssetAdjust(models.Model):
     @api.model
     def _create_asset(self, asset_date, amount, product, asset_name, analytic):
         Asset = self.env['account.asset']
-        asset_dict = self._prepare_asset_dict(product, asset_name)
+        asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         asset_dict.update({'date_start': asset_date,
                            'purchase_value': amount,
-                           # Dimension
-                           'section_id': analytic.section_id.id,
-                           'project_id': analytic.project_id.id,
-                           'invest_asset_id': analytic.invest_asset_id.id,
-                           'invest_construction_phase_id':
-                           analytic.invest_construction_phase_id.id,
                            })
         new_asset = Asset.create(asset_dict)
         # Set back to normal
@@ -362,38 +364,26 @@ class AccountAssetAdjust(models.Model):
         * Create collective moves
         """
         self.ensure_one()
+        Analytic = self.env['account.analytic.account']
         if not self.adjust_line_ids:
             raise ValidationError(_('No asset selected!'))
         for line in self.adjust_line_ids.\
                 filtered(lambda l: l.asset_id.state == 'open'):
+            line.account_analytic_id = \
+                Analytic.create_matched_analytic(line)
             # Remove
             asset = line.asset_id
             self._set_asset_as_removed(asset, line.target_status)
             # Simple duplicate to new asset type, name
             new_asset = self._duplicate_asset(asset, line.product_id,
-                                              line.asset_name)
+                                              line.asset_name,
+                                              line.account_analytic_id)
             line.ref_asset_id = new_asset
             # Create a collective journal entry
             move = line.create_account_move_asset_type()
             line.move_id = move
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
-            # depre_value = asset.value_depreciated
-            # if depre_value:
-            #     amount = 0.0
-            #     depre_lines = new_asset.depreciation_line_ids.\
-            #         filtered(lambda l: not l.init_entry)
-            #     for dline in depre_lines:
-            #         amount += dline.amount
-            #         if float_compare(depre_value, amount, 2) > 0:
-            #             dline.move_id = move
-            #         if float_compare(depre_value, amount, 2) == 0:
-            #             dline.move_id = move
-            #             break
-            #         if float_compare(depre_value, amount, 2) < 0:
-            #             raise ValidationError(
-            #                 _('Invalid depreciation board on new asset!'))
-            # new_asset._compute_depreciation()
 
     @api.multi
     def adjust_asset_to_expense(self):
@@ -479,7 +469,8 @@ class AccountAssetAdjust(models.Model):
         return move_line_data
 
 
-class AccountAssetAdjustLine(models.Model):
+class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
+                             models.Model):
     _name = 'account.asset.adjust.line'
     _description = 'Asset to Asset'
 
@@ -548,6 +539,12 @@ class AccountAssetAdjustLine(models.Model):
          'unique(asset_id, adjust_id)',
          'Duplicate assets selected!')
     ]
+
+    @api.model
+    def create(self, vals):
+        asset = super(AccountAssetAdjustLine, self).create(vals)
+        asset.update_related_dimension(vals)
+        return asset
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
