@@ -57,7 +57,7 @@
                                         <field name="asset_profile_id"/>
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
-                                        <field name="chartfield_id" invisible="0"/>
+                                        <field name="chartfield_id" required="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -72,7 +72,7 @@
                                           domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
                                         <field name="account_id"/>
                                         <field name="move_id"/>
-                                        <field name="chartfield_id" invisible="1"/>
+                                        <field name="chartfield_id" required="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -87,7 +87,7 @@
                                         <field name="asset_date"/>
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
-                                        <field name="chartfield_id" invisible="1"/>
+                                        <field name="chartfield_id" required="1"/>
                                     </tree>
                                 </field>
                             </page>
