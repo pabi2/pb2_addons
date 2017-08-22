@@ -80,7 +80,7 @@
                                         <field name="activity_id" required="0"
                                           domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
                                         <field name="account_id"/>
-                                        <field name="chartfield_id"/>
+                                        <field name="chartfield_id" invisible="1"/>
                                         <field name="move_id"/>
                                     </tree>
                                 </field>
@@ -96,7 +96,7 @@
                                         <field name="asset_date"/>
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
-                                        <field name="account_analytic_id" invisible="1"/>
+                                        <field name="chartfield_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>

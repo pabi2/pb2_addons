@@ -78,7 +78,7 @@ class CreateAssetAdjustWizard(models.TransientModel):
                              for x in self.asset_to_expense_ids]
         # Expense to Asset
         expense_to_assets = [(x.from_account_id.id, x.to_product_id.id,
-                              x.analytic_id.id, x.quantity)
+                              x.invoice_line_id.id, x.quantity)
                              for x in self.expense_to_asset_ids]
         ctx.update({'default_adjust_type': self.adjust_type,
                     'default_invoice_id': invoice_id,
@@ -112,13 +112,13 @@ class CreateAssetAdjustWizard(models.TransientModel):
                 self[TYPES[self.adjust_type][1]] += line
         # Expense to Asset
         if self.adjust_type in ('expense_to_asset'):
-            exp_lines = invoice.invoice_line.filtered(lambda l:
+            inv_lines = invoice.invoice_line.filtered(lambda l:
                                                       not l.product_id)
-            for exp_line in exp_lines:
+            for inv_line in inv_lines:
                 line = self.env[TYPES[self.adjust_type][0]].new()
-                line.from_account_id = exp_line.account_id
+                line.from_account_id = inv_line.account_id
                 line.quantity = 1
-                line.analytic_id = exp_line.account_analytic_id
+                line.invoice_line_id = inv_line
                 self[TYPES[self.adjust_type][1]] += line
 
 
@@ -192,9 +192,9 @@ class ExpenseToAsset(models.TransientModel):
         string='Asset Quantity',
         required=True,
     )
-    analytic_id = fields.Many2one(
-        'account.analytic.account',
-        string='Analytic Account',
+    invoice_line_id = fields.Many2one(
+        'account.invoice.line',
+        string='Invoice Line',
     )
     _sql_constraints = [
         ('positive_qty', 'check(quantity > 0)',

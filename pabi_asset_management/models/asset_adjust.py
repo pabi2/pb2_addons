@@ -264,7 +264,9 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.account_id = value[0]
                     adjust_line.product_id = value[1]
                     adjust_line.asset_name = adjust_line.product_id.name
-                    adjust_line.account_analytic_id = value[2]
+                    adjust_line.invoice_line_id = value[2]
+                    adjust_line.chartfield_id = \
+                        adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
@@ -335,11 +337,18 @@ class AccountAssetAdjust(models.Model):
         return new_asset
 
     @api.model
-    def _create_asset(self, asset_date, amount, product, asset_name):
+    def _create_asset(self, asset_date, amount, product, asset_name, analytic):
         Asset = self.env['account.asset']
         asset_dict = self._prepare_asset_dict(product, asset_name)
         asset_dict.update({'date_start': asset_date,
-                           'purchase_value': amount})
+                           'purchase_value': amount,
+                           # Dimension
+                           'section_id': analytic.section_id.id,
+                           'project_id': analytic.project_id.id,
+                           'invest_asset_id': analytic.invest_asset_id.id,
+                           'invest_construction_phase_id':
+                           analytic.invest_construction_phase_id.id,
+                           })
         new_asset = Asset.create(asset_dict)
         # Set back to normal
         new_asset.type = 'normal'
@@ -414,12 +423,16 @@ class AccountAssetAdjust(models.Model):
         * Create collective moves
         """
         self.ensure_one()
+        Analytic = self.env['account.analytic.account']
         if not self.adjust_expense_to_asset_ids:
             raise ValidationError(_('No asset selected!'))
         for line in self.adjust_expense_to_asset_ids:
+            line.account_analytic_id = \
+                Analytic.create_matched_analytic(line)
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
-                                           line.product_id, line.asset_name)
+                                           line.product_id, line.asset_name,
+                                           line.account_analytic_id)
             line.ref_asset_id = new_asset
             # Find amount from depreciation board
             new_asset.compute_depreciation_board()
@@ -763,7 +776,8 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
         return line_dict
 
 
-class AccountAssetAdjustExpenseToAsset(models.Model):
+class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
+                                       models.Model):
     _name = 'account.asset.adjust.expense_to_asset'
 
     adjust_id = fields.Many2one(
@@ -804,9 +818,9 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
         string='Asset Value',
         required=True,
     )
-    account_analytic_id = fields.Many2one(
-        'account.analytic.account',
-        string='Analytic',
+    invoice_line_id = fields.Many2one(
+        'account.invoice.line',
+        string='Invoice Line',
     )
     ref_asset_id = fields.Many2one(
         'account.asset',
@@ -825,6 +839,12 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
         ('positive_amount', 'check(amount > 0)',
          'Amount must be positive!')
     ]
+
+    @api.model
+    def create(self, vals):
+        asset = super(AccountAssetAdjustExpenseToAsset, self).create(vals)
+        asset.update_related_dimension(vals)
+        return asset
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
