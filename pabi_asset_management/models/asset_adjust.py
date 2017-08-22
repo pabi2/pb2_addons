@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import ast
 from openerp import models, fields, api, _
+from openerp.addons.account_budget_activity.models.account_activity \
+    import ActivityCommon
+from openerp.addons.pabi_chartfield_merged.models.chartfield \
+    import MergedChartField
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 
@@ -210,6 +214,9 @@ class AccountAssetAdjust(models.Model):
             return
         # Check if this adjustment is created from Suplier Invoice action
         src_invoice_id = self._context.get('default_invoice_id', False)
+        status_cancel = self.env.ref('pabi_asset_management.'
+                                     'asset_status_cancel')
+        # Change Asset Type
         if self.adjust_type == 'asset_type':
             assets = self.get_invoice_line_assets(self.invoice_id)
             values = self._context.get('adjust_asset_type_dict', {})
@@ -218,14 +225,13 @@ class AccountAssetAdjust(models.Model):
                     continue
                 adjust_line = self.env['account.asset.adjust.line'].new()
                 adjust_line.asset_id = asset
-                # adjust_line.date_remove = fields.Date.context_today(self)
-                # STD-REMOVE
-                # adjust_line._onchange_asset_id()
-                # --
+                adjust_line.target_status = status_cancel
                 # New Asset
                 adjust_line.product_id = \
                     values and values[str(asset.product_id.id)] or False
+                adjust_line.asset_name = adjust_line.product_id.name
                 self.adjust_line_ids += adjust_line
+        # Asset => Expense
         elif self.adjust_type == 'asset_to_expense':
             assets = self.get_invoice_line_assets(self.invoice_id)
             values = self._context.get('asset_to_expense_dict', {})
@@ -235,22 +241,40 @@ class AccountAssetAdjust(models.Model):
                 adjust_line = \
                     self.env['account.asset.adjust.asset_to_expense'].new()
                 adjust_line.asset_id = asset
-                adjust_line.account_id = \
-                    values and values[str(asset.product_id.id)] or False
+                adjust_line.target_status = status_cancel
+                vals = values and values[str(asset.product_id.id)] or False
+                adjust_line.account_id = vals and vals[0] or False
+                adjust_line.activity_group_id = vals and vals[1] or False
+                adjust_line.activity_id = vals and vals[2] or False
+                # Budgeting
+                adjust_line.section_id = asset.section_id
+                adjust_line.project_id = asset.project_id
+                adjust_line.invest_asset_id = asset.invest_asset_id
+                adjust_line.invest_contruction_phase_id = \
+                    asset.invest_construction_phase_id
+                # --
                 self.adjust_asset_to_expense_ids += adjust_line
+        # Expense => Asset
         elif self.adjust_type == 'expense_to_asset':
-            accounts = self.invoice_id.invoice_line.mapped('account_id')
-            values = self._context.get('expense_to_asset_dict', {})
-            for account in accounts:
-                if src_invoice_id and str(account.id) not in values:
-                    continue
-                adjust_line = \
-                    self.env['account.asset.adjust.expense_to_asset'].new()
-                adjust_line.account_id = account
-                adjust_line.product_id = \
-                    values and values[str(account.id)][0] or False
-                quantity = values and values[str(account.id)][1] or 1
-                for i in range(quantity):
+            if src_invoice_id:
+                values = self._context.get('expense_to_asset_dict', {})
+                for value in values:
+                    adjust_line = \
+                        self.env['account.asset.adjust.expense_to_asset'].new()
+                    adjust_line.account_id = value[0]
+                    adjust_line.product_id = value[1]
+                    adjust_line.asset_name = adjust_line.product_id.name
+                    adjust_line.account_analytic_id = value[2]
+                    quantity = value[3]
+                    for i in range(quantity):
+                        self.adjust_expense_to_asset_ids += adjust_line
+            else:
+                accounts = self.invoice_id.invoice_line.\
+                    filtered(lambda l: not l.product_id).mapped('account_id')
+                for account in accounts:
+                    adjust_line = \
+                        self.env['account.asset.adjust.expense_to_asset'].new()
+                    adjust_line.account_id = account
                     self.adjust_expense_to_asset_ids += adjust_line
 
     @api.model
@@ -286,6 +310,7 @@ class AccountAssetAdjust(models.Model):
             'prorata': profile.prorata,
             'salvage_value': (not profile.no_depreciation and
                               profile.salvage_value or False),
+            'account_analytic_id': False,  # Do not copy, product_id is changed
         }
         return vals
 
@@ -293,9 +318,15 @@ class AccountAssetAdjust(models.Model):
     def _duplicate_asset(self, asset, product, asset_name):
         asset_dict = self._prepare_asset_dict(product, asset_name)
         new_asset = asset.copy(asset_dict)
+        # Recalculate analytyic
+        Analytic = self.env['account.analytic.account']
+        new_asset.account_analytic_id = \
+            Analytic.create_matched_analytic(new_asset)
+        # --
+        asset.target_asset_ids += new_asset
         # Set back to normal
         new_asset.type = 'normal'
-        # also duplicate lines
+        # Also duplicate lines
         previous_id = False
         for line in asset.depreciation_line_ids.filtered(lambda l:
                                                          not l.init_entry):
@@ -362,10 +393,13 @@ class AccountAssetAdjust(models.Model):
         * Create collective moves
         """
         self.ensure_one()
+        Analytic = self.env['account.analytic.account']
         if not self.adjust_asset_to_expense_ids:
             raise ValidationError(_('No asset selected!'))
         for line in self.adjust_asset_to_expense_ids.\
                 filtered(lambda l: l.asset_id.state == 'open'):
+            line.account_analytic_id = \
+                Analytic.create_matched_analytic(line)
             # Remove Assets
             asset = line.asset_id
             self._set_asset_as_removed(asset, line.target_status)
@@ -414,6 +448,8 @@ class AccountAssetAdjust(models.Model):
     @api.model
     def _setup_move_line_data(self, name, asset, period, account, adjust_date,
                               debit=False, credit=False, analytic_id=False):
+        if not debit and not credit:
+            return False
         move_line_data = {
             'name': name,
             'ref': False,
@@ -433,7 +469,6 @@ class AccountAssetAdjust(models.Model):
 class AccountAssetAdjustLine(models.Model):
     _name = 'account.asset.adjust.line'
     _description = 'Asset to Asset'
-    # _inherit = 'account.asset.remove'
 
     adjust_id = fields.Many2one(
         'account.asset.adjust',
@@ -487,7 +522,7 @@ class AccountAssetAdjustLine(models.Model):
     target_status = fields.Many2one(
         'account.asset.status',
         string='Asset Status',
-        domain="[('map_state', '=', 'removed')]",
+        domain="[('map_state', 'in', ('removed', 'draft'))]",
         required=True,
     )
     move_id = fields.Many2one(
@@ -549,6 +584,7 @@ class AccountAssetAdjustLine(models.Model):
             * LV Asset to Asset (no depre on old asset)
             * Asset to LV Asset (no depre on new asset)
         """
+        line_dict = []
         AssetAdjust = self.env['account.asset.adjust']
         old_asset_acc = old_asset.profile_id.account_asset_id
         new_asset_acc = new_asset.profile_id.account_asset_id
@@ -559,22 +595,23 @@ class AccountAssetAdjustLine(models.Model):
         # Dr: new asset - asset value
         #     Cr: old asset - asset value
         purchase_value = old_asset.purchase_value
-        new_asset_debit = AssetAdjust._setup_move_line_data(
-            new_asset.name, new_asset, period, new_asset_acc, adjust_date,
-            debit=purchase_value, credit=False,
-            analytic_id=new_asset.account_analytic_id.id)
-        old_asset_credit = AssetAdjust._setup_move_line_data(
-            old_asset.name, old_asset, period, old_asset_acc, adjust_date,
-            debit=False, credit=purchase_value,
-            analytic_id=old_asset.account_analytic_id.id)
-        line_dict = [(0, 0, new_asset_debit), (0, 0, old_asset_credit)]
+        if purchase_value:
+            new_asset_debit = AssetAdjust._setup_move_line_data(
+                new_asset.name, new_asset, period, new_asset_acc, adjust_date,
+                debit=purchase_value, credit=False,
+                analytic_id=new_asset.account_analytic_id.id)
+            old_asset_credit = AssetAdjust._setup_move_line_data(
+                old_asset.name, old_asset, period, old_asset_acc, adjust_date,
+                debit=False, credit=purchase_value,
+                analytic_id=old_asset.account_analytic_id.id)
+            line_dict += [(0, 0, new_asset_debit), (0, 0, old_asset_credit)]
         # Dr: old - depre accum value (account_depreciation_id)
         #   Cr: old - depre value (account_expense_depreciation_id)(budget)
         # Dr: new - depre value (account_expense_depreciation_id)(budget)
         #   Cr: new - depre accum value (account_depreciation_id)
         amount_depre = old_asset.value_depreciated
         # Old
-        if not old_asset.profile_id.no_depreciation:
+        if amount_depre and not old_asset.profile_id.no_depreciation:
             old_depre_debit = AssetAdjust._setup_move_line_data(
                 old_asset.name, old_asset, period, old_depr_acc, adjust_date,
                 debit=amount_depre, credit=False, analytic_id=False)
@@ -584,7 +621,7 @@ class AccountAssetAdjustLine(models.Model):
                 analytic_id=old_asset.account_analytic_id.id)
             line_dict += [(0, 0, old_depre_debit), (0, 0, old_exp_credit), ]
         # New
-        if not new_asset.profile_id.no_depreciation:
+        if amount_depre and not new_asset.profile_id.no_depreciation:
             new_depre_debit = AssetAdjust._setup_move_line_data(
                 new_asset.name, new_asset, period, new_exp_acc, adjust_date,
                 debit=amount_depre, credit=False,
@@ -596,7 +633,8 @@ class AccountAssetAdjustLine(models.Model):
         return line_dict
 
 
-class AccountAssetAdjustAssetToExpense(models.Model):
+class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
+                                       models.Model):
     _name = 'account.asset.adjust.asset_to_expense'
 
     adjust_id = fields.Many2one(
@@ -628,7 +666,7 @@ class AccountAssetAdjustAssetToExpense(models.Model):
     target_status = fields.Many2one(
         'account.asset.status',
         string='Asset Status',
-        domain="[('map_state', '=', 'removed')]",
+        domain="[('map_state', 'in', ('removed', 'draft'))]",
         required=True,
     )
     account_id = fields.Many2one(
@@ -646,6 +684,12 @@ class AccountAssetAdjustAssetToExpense(models.Model):
          'unique(asset_id, adjust_id)',
          'Duplicate assets selected!')
     ]
+
+    @api.model
+    def create(self, vals):
+        asset = super(AccountAssetAdjustAssetToExpense, self).create(vals)
+        asset.update_related_dimension(vals)
+        return asset
 
     @api.multi
     def create_account_move_asset_to_expense(self):
@@ -685,6 +729,7 @@ class AccountAssetAdjustAssetToExpense(models.Model):
     @api.model
     def _prepare_move_line_asset_to_expense(self, old_asset, exp_acc,
                                             period, adjust_date):
+        line_dict = []
         AssetAdjust = self.env['account.asset.adjust']
         old_asset_acc = old_asset.profile_id.account_asset_id
         old_depr_acc = old_asset.profile_id.account_depreciation_id
@@ -692,20 +737,21 @@ class AccountAssetAdjustAssetToExpense(models.Model):
         # Dr: expense - asset value
         #     Cr: old asset - asset value
         purchase_value = old_asset.purchase_value
-        expense_debit = AssetAdjust._setup_move_line_data(
-            exp_acc.name, False, period, exp_acc, adjust_date,
-            debit=purchase_value, credit=False,
-            analytic_id=old_asset.account_analytic_id.id)
-        old_asset_credit = AssetAdjust._setup_move_line_data(
-            old_asset.name, old_asset, period, old_asset_acc, adjust_date,
-            debit=False, credit=purchase_value,
-            analytic_id=False)
-        line_dict = [(0, 0, expense_debit), (0, 0, old_asset_credit)]
+        if purchase_value:
+            expense_debit = AssetAdjust._setup_move_line_data(
+                exp_acc.name, False, period, exp_acc, adjust_date,
+                debit=purchase_value, credit=False,
+                analytic_id=self.account_analytic_id.id)
+            old_asset_credit = AssetAdjust._setup_move_line_data(
+                old_asset.name, old_asset, period, old_asset_acc, adjust_date,
+                debit=False, credit=purchase_value,
+                analytic_id=False)
+            line_dict += [(0, 0, expense_debit), (0, 0, old_asset_credit)]
         # Dr: old - depre accum value (account_depreciation_id)
         #   Cr: old - depre value (account_expense_depreciation_id)(budget)
         amount_depre = old_asset.value_depreciated
         # Old
-        if not old_asset.profile_id.no_depreciation:
+        if amount_depre and not old_asset.profile_id.no_depreciation:
             old_depre_debit = AssetAdjust._setup_move_line_data(
                 old_asset.name, old_asset, period, old_depr_acc, adjust_date,
                 debit=amount_depre, credit=False, analytic_id=False)
@@ -757,6 +803,10 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
     amount = fields.Float(
         string='Asset Value',
         required=True,
+    )
+    account_analytic_id = fields.Many2one(
+        'account.analytic.account',
+        string='Analytic',
     )
     ref_asset_id = fields.Many2one(
         'account.asset',
@@ -820,6 +870,7 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
     def _prepare_move_line_expense_to_asset(self, new_asset, exp_acc,
                                             period, adjust_date,
                                             amount_depre):
+        line_dict = []
         AssetAdjust = self.env['account.asset.adjust']
         new_asset_acc = new_asset.profile_id.account_asset_id
         new_depr_acc = new_asset.profile_id.account_depreciation_id
@@ -827,19 +878,19 @@ class AccountAssetAdjustExpenseToAsset(models.Model):
         # Dr: new asset - asset value
         #     Cr: expense - asset value
         purchase_value = new_asset.purchase_value
-        new_asset_debit = AssetAdjust._setup_move_line_data(
-            new_asset.name, new_asset, period, new_asset_acc, adjust_date,
-            debit=purchase_value, credit=False,
-            analytic_id=False)
-        expenese_credit = AssetAdjust._setup_move_line_data(
-            exp_acc.name, False, period, exp_acc, adjust_date,
-            debit=False, credit=purchase_value,
-            analytic_id=new_asset.account_analytic_id.id)
-        line_dict = [(0, 0, new_asset_debit), (0, 0, expenese_credit)]
+        if purchase_value:
+            new_asset_debit = AssetAdjust._setup_move_line_data(
+                new_asset.name, new_asset, period, new_asset_acc, adjust_date,
+                debit=purchase_value, credit=False,
+                analytic_id=False)
+            expenese_credit = AssetAdjust._setup_move_line_data(
+                exp_acc.name, False, period, exp_acc, adjust_date,
+                debit=False, credit=purchase_value,
+                analytic_id=new_asset.account_analytic_id.id)
+            line_dict += [(0, 0, new_asset_debit), (0, 0, expenese_credit)]
         # Dr: new - depre value (account_expense_depreciation_id)(budget)
         #   Cr: new - depre accum value (account_depreciation_id)
-        if not new_asset.profile_id.no_depreciation:
-
+        if amount_depre and not new_asset.profile_id.no_depreciation:
             new_exp_debit = AssetAdjust._setup_move_line_data(
                 new_asset.name, new_asset, period, new_exp_acc, adjust_date,
                 debit=amount_depre, credit=False,

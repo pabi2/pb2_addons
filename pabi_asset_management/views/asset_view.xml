@@ -101,7 +101,10 @@
                         <div>Journal<br/>Entries</div>
                     </button>
                     <button type="object" name="open_source_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('source_asset_count', '=', 0)]}">
-                        <field name="source_asset_count" widget="statinfo" string="Source Assets"/>
+                        <field name="source_asset_count" widget="statinfo" string="From Asset(s)"/>
+                    </button>
+                    <button type="object" name="open_target_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('target_asset_count', '=', 0)]}">
+                        <field name="target_asset_count" widget="statinfo" string="To Asset(s)"/>
                     </button>
                 </button>
                 <group colspan="4" col="4" position="replace">
@@ -110,7 +113,6 @@
                             <field name="type" invisible="1"/>
                             <field name="parent_id"/>
                             <field name="code2"/>
-                            <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_ids', '=', [])]}"/>
                         </group>
                         <group>
                             <field name="company_id" widget="selection" groups="base.group_multi_company"/>
@@ -118,6 +120,8 @@
                             <field name="move_line_check" invisible="1"/>
                             <field name="status" widget="selection"/>
                             <field name="status_code" invisible="1"/>
+                            <field name="source_asset_ids" widget="many2many_tags" attrs="{'invisible': [('source_asset_count', '=', 0)]}"/>
+                            <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_count', '=', 0)]}"/>
                             <field name="deliver_to" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
                             <field name="deliver_date" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
                         </group>
@@ -142,11 +146,10 @@
                 <xpath expr="//form/sheet/notebook/page[@string='General']//field[@name='partner_id']" position="after">
                     <field name="profile_type"/>
                     <field name="product_id"/>
-                    <field name="uom_id" invisible="1"/>
-                    <field name="picking_id" attrs="{'invisible': [('picking_id', '=', False)]}"/>
-                    <field name="adjust_id" attrs="{'invisible': [('adjust_id', '=', False)]}"/>
-                    <field name="date_picking" attrs="{'invisible': [('date_picking', '=', False)]}"/>
-                    <field name="purchase_id" attrs="{'invisible': [('purchase_id', '=', False)]}"/>>
+                    <field name="picking_id"/>
+                    <field name="purchase_id"/>
+                    <field name="date_picking"/>
+                    <field name="adjust_id"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page//field[@name='account_analytic_id']" position="attributes">
                   <attribute name="invisible">True</attribute>

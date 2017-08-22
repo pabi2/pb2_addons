@@ -38,7 +38,10 @@
                         <field name="asset_to_expense_ids" nolabel="1">
                             <tree create="0" editable="bottom">
                                 <field name="from_product_id"/>
-                                <field name="to_account_id"/>
+                                <field name="activity_group_id" required="0" invisible="0" string="To Activity Group"/>
+                                <field name="activity_id" required="0" string="To Activity"
+                                  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
+                                <field name="account_id"/>
                             </tree>
                         </field>
                     </group>
@@ -48,6 +51,7 @@
                                 <field name="from_account_id"/>
                                 <field name="to_product_id"/>
                                 <field name="quantity"/>
+                                <field name="analytic_id" invisible="1"/>
                             </tree>
                         </field>
                     </group>

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import ast
 from openerp import models, fields, api, _
+from openerp.addons.account_budget_activity.models.account_activity \
+    import ActivityCommon
 from openerp.exceptions import ValidationError
 
 
@@ -67,22 +69,22 @@ class CreateAssetAdjustWizard(models.TransientModel):
         ctx = ast.literal_eval(result['context'])
         invoice_id = self._context.get('active_id')
         # Adjust Asset Type values
-        adjust_asset_types = [(x.from_product_id.id,
-                               x.to_product_id.id)
+        adjust_asset_types = [(x.from_product_id.id, x.to_product_id.id)
                               for x in self.adjust_asset_type_ids]
         # Asset to Expense
-        asset_to_expenses = [(x.from_product_id.id,
-                              x.to_account_id.id)
+        asset_to_expenses = [(x.from_product_id.id, (x.account_id.id,
+                                                     x.activity_group_id.id,
+                                                     x.activity_id.id))
                              for x in self.asset_to_expense_ids]
         # Expense to Asset
-        expense_to_assets = [(x.from_account_id.id,
-                              (x.to_product_id.id, x.quantity))
+        expense_to_assets = [(x.from_account_id.id, x.to_product_id.id,
+                              x.analytic_id.id, x.quantity)
                              for x in self.expense_to_asset_ids]
         ctx.update({'default_adjust_type': self.adjust_type,
                     'default_invoice_id': invoice_id,
                     'adjust_asset_type_dict': dict(adjust_asset_types),
                     'asset_to_expense_dict': dict(asset_to_expenses),
-                    'expense_to_asset_dict': dict(expense_to_assets)})
+                    'expense_to_asset_dict': expense_to_assets})
         result['context'] = ctx
         return result
 
@@ -110,11 +112,13 @@ class CreateAssetAdjustWizard(models.TransientModel):
                 self[TYPES[self.adjust_type][1]] += line
         # Expense to Asset
         if self.adjust_type in ('expense_to_asset'):
-            accounts = invoice.invoice_line.mapped('account_id')
-            for account in accounts:
+            exp_lines = invoice.invoice_line.filtered(lambda l:
+                                                      not l.product_id)
+            for exp_line in exp_lines:
                 line = self.env[TYPES[self.adjust_type][0]].new()
-                line.from_account_id = account
+                line.from_account_id = exp_line.account_id
                 line.quantity = 1
+                line.analytic_id = exp_line.account_analytic_id
                 self[TYPES[self.adjust_type][1]] += line
 
 
@@ -141,9 +145,8 @@ class AdjustAssetType(models.TransientModel):
     )
 
 
-class AssetToExpense(models.TransientModel):
+class AssetToExpense(ActivityCommon, models.TransientModel):
     _name = 'asset.to.expense'
-    # _inherit = 'account.asset.remove'
 
     wizard_id = fields.Many2one(
         'create.asset.adjust.wizard',
@@ -156,9 +159,9 @@ class AssetToExpense(models.TransientModel):
         required=True,
         domain=[('asset', '=', True)],
     )
-    to_account_id = fields.Many2one(
+    account_id = fields.Many2one(
         'account.account',
-        string='To Expense',
+        string='To Expense Account',
         required=True,
         domain=[('type', '!=', 'view')],
     )
@@ -188,6 +191,10 @@ class ExpenseToAsset(models.TransientModel):
     quantity = fields.Integer(
         string='Asset Quantity',
         required=True,
+    )
+    analytic_id = fields.Many2one(
+        'account.analytic.account',
+        string='Analytic Account',
     )
     _sql_constraints = [
         ('positive_qty', 'check(quantity > 0)',
