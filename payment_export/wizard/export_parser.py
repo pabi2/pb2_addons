@@ -14,6 +14,9 @@ class DocumentExportParser(models.TransientModel):
         payment_export_id = self.env.context.get('active_id', False)
         model = self.env.context.get('active_model', '')
         payment_export = self.env[model].browse(payment_export_id)
+        # Check case payment export
+        if model in ['payment.export']:
+            payment_export._check_payment_export_line()
         payment_export.write({'exported': True,
                               'state': 'done'})
         return attachment_id
