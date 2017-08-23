@@ -351,9 +351,8 @@ class PaymentExport(models.Model):
         for line in self.line_ids:
             if line.voucher_id.state != 'posted':
                 raise ValidationError(
-                    _('%s state not equal posted, '
-                      'please refresh payment method or transfer type.')
-                    % (line.voucher_id.number))
+                    _('Some export line is not valid, please refresh '
+                      'by changing payment method or transfer type.'))
 
 
 class PaymentExportLine(models.Model):
