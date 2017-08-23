@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Budget Breakdown
+		<record id="report_budget_breakdown" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">budget.breakdown</field>
+			<field name="name">Budget Breakdown</field>
+			<field name="report_name">report_budget_breakdown</field>
+			<field name="report_rml">pabi_budget_plan/report/budget_breakdown.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_budget_breakdown_values" model="ir.values">
+			<field name="name">Budget Breakdown</field>
+			<field name="model">budget.breakdown</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_budget_breakdown)"/>
+		</record>
+    </data>
+</openerp>

@@ -284,6 +284,13 @@ class BudgetBreakdown(models.Model):
                                   'policy_amount': line.policy_amount})
         self.write({'state': 'done'})
 
+    @api.multi
+    def export_report_budget_breakdown(self):
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'report_budget_breakdown',
+        }
+
 
 class BudgetBreakdownLine(ChartField, models.Model):
     _name = 'budget.breakdown.line'

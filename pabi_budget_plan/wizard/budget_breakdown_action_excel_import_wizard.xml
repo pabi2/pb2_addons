@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_budget_breakdown_action_excel_import" model="ir.ui.view">
+            <field name="name">view.budget.breakdown.action.excel.import</field>
+            <field name="model">budget.breakdown.action.excel.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Budget Breakdown Action Excel Import">
+                    <group>
+                        <group>
+                            <field name="import_file"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <footer>
+                        <button string="Import" name="action_import_xls" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_budget_breakdown_action_excel_import" model="ir.actions.act_window">
+            <field name="name">Budget Breakdown Action Excel Import</field>
+            <field name="res_model">budget.breakdown.action.excel.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_breakdown_action_excel_import"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
