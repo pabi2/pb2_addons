@@ -84,7 +84,7 @@ class AccountVoucher(models.Model):
             for line in lines:
                 if line and line.export_id and line.export_id.state == 'done':
                     raise ValidationError(
-                        _('You can not unreconcile because %s '
-                          'used in payment export %s')
-                        % (voucher.number, line.export_id.name))
+                        _('This payment can not be unreconciled, '
+                          'it was in already exported by %s')
+                        % (line.export_id.name,))
         return super(AccountVoucher, self).cancel_voucher()
