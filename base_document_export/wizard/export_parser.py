@@ -11,7 +11,7 @@ from openerp.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
-DELIMITER = '~'
+DELIMITER = ''
 
 
 class DocumentExportParser(models.TransientModel):

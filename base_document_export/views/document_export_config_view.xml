@@ -57,8 +57,20 @@
                         <separator string="Header Configurations"/>
                         <field name="header_config_line_ids" />
                         <separator string="Details Configurations"/>
+                        <group>
+                            <group>
+                                <field name="line_number_max"/>
+                            </group>
+                            <group></group>
+                        </group>
                         <field name="detail_config_line_ids"/>
                         <separator string="Footer Configurations"/>
+                        <group>
+                            <group>
+                                <field name="footer_disabled"/>
+                            </group>
+                            <group></group>
+                        </group>
                         <field name="footer_config_line_ids"/>
                     </sheet>
                 </form>
