@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-from openerp import models, fields, api, _
+from openerp import models, api
 
 
 class AccountUseModel(models.TransientModel):

@@ -23,23 +23,27 @@ class GenerateBudgetPlan(models.TransientModel):
     @api.multi
     def action_generate_budget_plan(self):
         self.ensure_one()
-        plan_ids = []
-        fiscalyear_id = self.fiscalyear_id.id
-        if self.chart_view == 'unit_base':
-            UnitBase = self.env['budget.plan.unit']
-            plan_ids = UnitBase.generate_plans(fiscalyear_id=fiscalyear_id)
-        elif self.chart_view == 'project_base':
-            ProjectBase = self.env['budget.plan.project']
-            plan_ids = ProjectBase.generate_plans(fiscalyear_id=fiscalyear_id)
-        elif self.chart_view == 'personnel':
-            Personnel = self.env['budget.plan.personnel']
-            plan_ids = Personnel.generate_plans(fiscalyear_id=fiscalyear_id)
-        elif self.chart_view == 'invest_asset':
-            InvestAsset = self.env['budget.plan.invest.asset']
-            plan_ids = InvestAsset.generate_plans(fiscalyear_id=fiscalyear_id)
-        else:
+        _DICT = {
+            'unit_base': (
+                'budget.plan.unit',
+                'pabi_budget_plan.action_budget_plan_unit_view'),
+            'project_base': (
+                'budget.plan.project',
+                'pabi_budget_plan.action_budget_plan_project_view'),
+            'personnel': (
+                'budget.plan.personnel',
+                'pabi_budget_plan.action_budget_plan_personnel_view'),
+            'invest_asset': (
+                'budget.plan.invest.asset',
+                'pabi_budget_plan.action_budget_plan_invest_asset_view'),
+        }
+        if self.chart_view not in _DICT.keys():
             raise ValidationError(_('Selected budget view is not valid!'))
-        action = self.env.ref('pabi_budget_plan.action_budget_plan_unit_view')
+        fiscalyear_id = self.fiscalyear_id.id
+        model = _DICT[self.chart_view][0]
+        view = _DICT[self.chart_view][1]
+        plan_ids = self.env[model].generate_plans(fiscalyear_id=fiscalyear_id)
+        action = self.env.ref(view)
         result = action.read()[0]
         dom = [('id', '=', plan_ids)]
         result.update({'domain': dom})

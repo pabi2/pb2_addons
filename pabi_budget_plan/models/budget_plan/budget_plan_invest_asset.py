@@ -107,10 +107,17 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         orgs = self.env['res.org'].search([('id', 'not in', _ids)])
         plan_ids = []
         for org in orgs:
-            plan = self.create({'fiscalyear_id': fiscalyear_id,
-                                'org_id': org.id,
-                                'user_id': False})
-            plan_ids.append(plan.id)
+            # For Invest Asset, convert from Asset Plan if available
+            asset_plan = self.env['invest.asset.plan'].search(
+                [('fiscalyear_id', '=', fiscalyear_id),
+                 ('org_id', '=', org.id)])
+            if asset_plan:
+                plan_ids += asset_plan.convert_to_budget_plan()
+            else:
+                plan = self.create({'fiscalyear_id': fiscalyear_id,
+                                    'org_id': org.id,
+                                    'user_id': False})
+                plan_ids.append(plan.id)
         return plan_ids
 
     @api.multi

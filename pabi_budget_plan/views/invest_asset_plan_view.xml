@@ -13,79 +13,86 @@
                         <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"/>
                         <button string="Reset to Draft" name="button_draft" states="cancel" type="object"/>
                         <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,reject,approve"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,done"/>
                     </header>
-                    <div class="oe_title">
-                        <br/>
-                        <label for="name" class="oe_edit_only"/>
-                        <h1>
-                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
-                        </h1>
-                    </div>
-                    <div class="oe_right oe_button_box" name="buttons">
-                        <br/>
-                        <button name="%(action_asset_plan_to_budget_plan)d" type="action" string="Convert to Budget Plan"/>
-                    </div>
-                    <group>
+                    <sheet>
+                        <div class="oe_title">
+                            <br/>
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button name="%(action_asset_plan_to_budget_plan)d" type="action"
+                                string="Convert to Budget Plan" states="approve"/>
+                            <button name="generate_invest_asset" type="object" invisible="1" string="Create Investment Asset Masters"/>
+                            <button type="object" name="action_view_invest_asset" class="oe_stat_button" icon="fa-gears" attrs="{'invisible': [('invest_asset_count', '=', 0)]}">
+                                <field name="invest_asset_count" widget="statinfo" string="Invest Assets"/>
+                            </button>
+                        </div>
                         <group>
-                            <field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
-                            <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
-                            <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <group>
+                                <field name="org_id" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
+                                <field name="creating_user_id" attrs="{'readonly': [('state','!=','draft')]}" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_user']}"/>
+                                <field name="validating_user_id" readonly="True" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="date_submit"/>
+                                <field name="date_approve"/>
+                                <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    -
+                                    <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
+                                </div>
+                            </group>
                         </group>
-                        <group>
-                            <field name="date"/>
-                            <field name="date_submit"/>
-                            <field name="date_approve"/>
-                            <field name="fiscalyear_id" attrs="{'readonly':[('state','!=','draft')]}"/>
-                            <label for="date_from" string="Duration" attrs="{'readonly':[('state','!=','draft')]}"/>
-                            <div>
-                                <field name="date_from" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                -
-                                <field name="date_to" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}" nolabel="1"/>
-                            </div>
-                        </group>
-                    </group>
-                    <h2>
-                        <label for="verified_amount"/><field name="verified_amount" class="oe_inline"/>
-                    </h2>
-                    <button name="%(action_invest_asset_selection)d" string="⇒ Mass Update Select" type="action" class="oe_link"/>
-                    <field name="item_ids" colspan="4" nolabel="1" context="{'default_org_id': org_id, 'default_fiscalyear_id': fiscalyear_id,
+                        <h2>
+                            <label for="verified_amount"/><field name="verified_amount" class="oe_inline"/>
+                        </h2>
+                        <button name="%(action_invest_asset_selection)d" string="⇒ Mass Update Select" type="action" class="oe_link"/>
+                        <field name="item_ids" colspan="4" nolabel="1" context="{'default_org_id': org_id, 'default_fiscalyear_id': fiscalyear_id,
                  				'form_view_ref': 'view_invest_asset_plan_item_form'}">
-                        <tree string="Asset Lines" colors="grey:select==False;blue:select==True">
-                            <field name="select"/>
-                            <field name="plan_id" invisible="1"/>
-                            <field name="fiscalyear_id" invisible="1"/>
-                            <field name="org_id" invisible="1"/>
-                            <field name="section_id" invisible="0"/>
-                            <field name="division_id" invisible="0"/>
-                            <field name="program_group_id" invisible="0"/>
-                            <field name="priority" invisible="0"/>
-                            <field name="invest_asset_categ_id" invisible="0"/>
-                            <field name="asset_common_name" invisible="0"/>
-                            <field name="asset_name" invisible="0"/>
-                            <field name="request_user_id" invisible="0"/>
-                            <field name="location" invisible="0"/>
-                            <field name="quantity_plan" invisible="0" sum="Planned Quantity"/>
-                            <field name="quantity" invisible="0" sum="Verified Quantity"/>
-                            <field name="price_unit" invisible="0" sum="Unit Price"/>
-                            <field name="price_subtotal" invisible="0" sum="Subtotal"/>
-                            <field name="price_other" invisible="0" sum="Others"/>
-                            <field name="price_total" invisible="0" sum="Total"/>
-                            <field name="reason_purchase" invisible="0"/>
-                            <field name="reason_purchase_text" invisible="0"/>
-                            <field name="planned_utilization" invisible="0"/>
-                            <field name="quotation_document" invisible="0"/>
-                            <field name="specification_document" invisible="0"/>
-                            <field name="specification_summary" invisible="0"/>
-                            <field name="total_commitment" invisible="0" sum="Total Commitment"/>
+                            <tree string="Asset Lines" colors="grey:select==False;blue:select==True">
+                                <field name="select"/>
+                                <field name="plan_id" invisible="1"/>
+                                <field name="fiscalyear_id" invisible="1"/>
+                                <field name="org_id" invisible="1"/>
+                                <field name="section_id" invisible="0"/>
+                                <field name="division_id" invisible="0"/>
+                                <field name="program_group_id" invisible="0"/>
+                                <field name="priority" invisible="0"/>
+                                <field name="invest_asset_id" invisible="1"/>
+                                <field name="invest_asset_categ_id" invisible="0"/>
+                                <field name="asset_common_name" invisible="0"/>
+                                <field name="asset_name" invisible="0"/>
+                                <field name="request_user_id" invisible="0"/>
+                                <field name="location" invisible="0"/>
+                                <field name="quantity_plan" invisible="0" sum="Planned Quantity"/>
+                                <field name="quantity" invisible="0" sum="Verified Quantity"/>
+                                <field name="price_unit" invisible="0" sum="Unit Price"/>
+                                <field name="price_subtotal" invisible="0" sum="Subtotal"/>
+                                <field name="price_other" invisible="0" sum="Others"/>
+                                <field name="price_total" invisible="0" sum="Total"/>
+                                <field name="reason_purchase" invisible="0"/>
+                                <field name="reason_purchase_text" invisible="0"/>
+                                <field name="planned_utilization" invisible="0"/>
+                                <field name="quotation_document" invisible="0"/>
+                                <field name="specification_document" invisible="0"/>
+                                <field name="specification_summary" invisible="0"/>
+                                <!-- <field name="total_commitment" invisible="0" sum="Total Commitment"/>
                             <field name="pr_commitment" invisible="0" sum="PR Commitment"/>
                             <field name="po_commitment" invisible="0" sum="PO Commitment"/>
                             <field name="exp_commitment" invisible="0" sum="Expense Commitment"/>
                             <field name="actual_amount" invisible="0" sum="Actual Amount"/>
                             <field name="total_commit_and_actual" invisible="0" sum="Total Commitment + Actual"/>
-                            <field name="budget_residual" invisible="0" sum="Budget Residual"/>
-                        </tree>
-                    </field>
+                            <field name="budget_residual" invisible="0" sum="Budget Residual"/> -->
+                            </tree>
+                        </field>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -178,13 +185,13 @@
                     <field name="quotation_document" invisible="0"/>
                     <field name="specification_document" invisible="0"/>
                     <field name="specification_summary" invisible="0"/>
-                    <field name="total_commitment" invisible="0" sum="Total Commitment"/>
+                    <!-- <field name="total_commitment" invisible="0" sum="Total Commitment"/>
                     <field name="pr_commitment" invisible="0" sum="PR Commitment"/>
                     <field name="po_commitment" invisible="0" sum="PO Commitment"/>
                     <field name="exp_commitment" invisible="0" sum="Expense Commitment"/>
                     <field name="actual_amount" invisible="0" sum="Actual Amount"/>
                     <field name="total_commit_and_actual" invisible="0" sum="Total Commitment + Actual"/>
-                    <field name="budget_residual" invisible="0" sum="Budget Residual"/>
+                    <field name="budget_residual" invisible="0" sum="Budget Residual"/> -->
                 </tree>
             </field>
         </record>
@@ -244,7 +251,7 @@
                             <field name="price_total" invisible="0"/>
                         </group>
                     </group>
-                    <group string="Budgeting">
+                    <!-- <group string="Budgeting">
                         <group>
                             <field name="total_commitment" invisible="0"/>
                             <field name="pr_commitment" invisible="0"/>
@@ -256,7 +263,7 @@
                             <field name="total_commit_and_actual" invisible="0"/>
                             <field name="budget_residual" invisible="0"/>
                         </group>
-                    </group>
+                    </group> -->
                     <group string="Reasons">
                         <field name="reason_purchase" invisible="0"/>
                         <field name="reason_purchase_text" invisible="0"/>

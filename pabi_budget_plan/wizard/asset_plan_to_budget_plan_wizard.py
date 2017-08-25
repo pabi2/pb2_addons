@@ -8,4 +8,5 @@ class AssetPlanToBudgetPlanWizard(models.TransientModel):
     @api.multi
     def asset_plan_to_budget_plan(self):
         active_ids = self._context.get('active_ids', False)
-        self.env['invest.asset.plan'].convert_to_budget_plan(active_ids)
+        asset_plans = self.env['invest.asset.plan'].browse(active_ids)
+        asset_plans.convert_to_budget_plan()

@@ -6,13 +6,16 @@
             <field name="model">asset.plan.to.budget.plan.wizard</field>
             <field name="arch" type="xml">
                 <form string="Convert Asset Plan to Budget Plan">
-                	<p class="oe_grey" >
-                		This will convert the Investment Asset Plan into Budget Plan.
-                	</p>
+                    <p class="oe_grey">
+                        This will convert the Investment Asset Plan into Budget Plan.
+                    </p>
+                    <p class="oe_grey">
+                        During conversion time, system will also create investment asset master as the mean for budget control.
+                    </p>
                     <footer>
                         <button name="asset_plan_to_budget_plan" string="Convert to Budget Plan" type="object" class="oe_highlight"/>
                         or
-                        <button string="Cancel" class="oe_link" special="cancel" />
+                        <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                 </form>
             </field>
@@ -30,4 +33,3 @@
 
     </data>
 </openerp>
-
