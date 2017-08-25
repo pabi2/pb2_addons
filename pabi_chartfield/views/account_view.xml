@@ -16,6 +16,7 @@
                     <field name="subsector_id"/>
                     <field name="division_id"/>
                     <field name="section_id"/>
+                    <field name="costcenter_id"/>
                 </xpath>
             </field>
         </record>
@@ -34,6 +35,7 @@
                     <field name="subsector_id"/>
                     <field name="division_id"/>
                     <field name="section_id"/>
+                    <field name="costcenter_id"/>
                 </xpath>
             </field>
         </record>

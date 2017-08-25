@@ -2,6 +2,7 @@
 from . import chartfield
 from . import purchase
 from . import sale
+from . import account
 from . import account_invoice
 from . import hr_expense
 from . import hr_salary

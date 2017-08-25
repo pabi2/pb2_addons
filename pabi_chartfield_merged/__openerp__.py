@@ -12,6 +12,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/account_view.xml',
         'views/account_invoice_view.xml',
         'views/chartfield_view.xml',
         'views/hr_expense_view.xml',

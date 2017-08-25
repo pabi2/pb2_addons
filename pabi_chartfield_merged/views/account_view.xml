@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_model_line_form" model="ir.ui.view">
+            <field name="name">account.model.line.form</field>
+            <field name="model">account.model.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.view_model_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group/field[@name='costcenter_id']" position="after">
+                    <field name="require_chartfield" invisible="1"/>
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="/form/group/field[@name='org_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='costcenter_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='sector_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='subsector_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='division_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/form/group/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_model_line_tree" model="ir.ui.view">
+            <field name="name">account.model.line.tree</field>
+            <field name="model">account.model.line</field>
+            <field name="inherit_id" ref="pabi_chartfield.view_model_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='costcenter_id']" position="after">
+                    <field name="require_chartfield" invisible="1"/>
+                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                </xpath>
+                <xpath expr="/tree/field[@name='org_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="/tree/field[@name='costcenter_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="/tree/field[@name='sector_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/tree/field[@name='subsector_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/tree/field[@name='division_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="/tree/field[@name='section_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
