@@ -120,6 +120,13 @@ class BudgetPolicy(models.Model):
         readonly=False,
         states={'done': [('readonly', True)]},
     )
+    invest_asset_line_ids = fields.One2many(
+        'budget.policy.line',
+        'policy_id',
+        string='Policy Lines',
+        readonly=False,
+        states={'done': [('readonly', True)]},
+    )
     message = fields.Text(
         string='Messages',
         readonly=True,
@@ -248,12 +255,16 @@ class BudgetPolicy(models.Model):
             rec.date_to = rec.fiscalyear_id.date_stop
 
     @api.multi
-    @api.depends('line_ids', 'unit_base_line_ids')
+    @api.depends('line_ids',
+                 'unit_base_line_ids',
+                 'invest_asset_line_ids')
     def _compute_all(self):
         for rec in self:
             lines = False
             if rec.unit_base_line_ids:
                 lines = rec.unit_base_line_ids
+            if rec.invest_asset_line_ids:
+                lines = rec.invest_asset_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
@@ -266,38 +277,55 @@ class BudgetPolicy(models.Model):
             policy.line_ids.unlink()
             lines = []
             # 1st policy
-            v0_lines = self.search([('revision', '=', '0')]).line_ids
+            v0_lines = self.search(
+                [('revision', '=', '0'),
+                 ('chart_view', '=', policy.chart_view)]).line_ids
             # latest policy
             latest_lines = self.search(
-                [('revision', '=', str(int(policy.revision) - 1))]).line_ids
+                [('revision', '=', str(int(policy.revision) - 1)),
+                 ('chart_view', '=', policy.chart_view)]).line_ids
 
-            # Unit Base
-            if policy.chart_view == 'unit_base':
-                # For Revision 0, compare with Budget Plan
-                orgs = self.env['res.org'].search([])
-                for org in orgs:
-                    # Total plan for each org
-                    plans = self.env['budget.plan.unit'].search([
-                        ('org_id', '=', org.id),
-                        ('fiscalyear_id', '=', policy.fiscalyear_id.id)])
-                    planned_expense = sum(plans.mapped('planned_expense'))
-                    vals = {'org_id': org.id,
-                            'planned_amount': planned_expense, }
-                    # V0 and latest policy
-                    if policy.revision != '0':
-                        v0_line = v0_lines.filtered(lambda l: l.org_id == org)
-                        lastest_line = latest_lines.filtered(lambda l:
-                                                             l.org_id == org)
-                        v0_policy_amount = v0_line.policy_amount
-                        latest_policy_amount = lastest_line.policy_amount
-                        vals.update({
-                            'v0_policy_amount': v0_policy_amount,
-                            'latest_policy_amount': latest_policy_amount,
-                        })
-                    lines.append((0, 0, vals))
-                policy.write({'unit_base_line_ids': lines})
+            _DICT = {
+                'unit_base': ('budget.plan.unit', 'res.org', 'org_id',
+                              'unit_base_line_ids'),
+                'invest_asset': ('budget.plan.invest.asset', False, False,
+                                 'invest_asset_line_ids')
+            }
 
-            # Other structure...
+            # Use company id, to handle case NSTDA level
+            company = self.env.user.company_id
+
+            plan_model = _DICT[policy.chart_view][0]
+            model = _DICT[policy.chart_view][1]
+            field = _DICT[policy.chart_view][2] or company.id
+            policy_line = _DICT[policy.chart_view][3]
+            entity_ids = model and \
+                self.env[model].search([]).ids or [company.id]
+
+            # For Revision 0, compare with Budget Plan
+            for entity_id in entity_ids:
+                plan_dom = [('fiscalyear_id', '=', policy.fiscalyear_id.id),
+                            (field, '=', entity_id)]
+                # Total plan for each entity
+                plans = self.env[plan_model].search(plan_dom)
+                planned_expense = sum(plans.mapped('planned_expense'))
+                vals = {'planned_amount': planned_expense, }
+                if model:
+                    vals.update({field: entity_id})
+                # V0 and latest policy
+                if policy.revision != '0':
+                    v0_line = not model and v0_lines[0] or \
+                        v0_lines.filtered(lambda l: l[field] == entity_id)
+                    lastest_line = not model and latest_lines[0] or \
+                        latest_lines.filtered(lambda l: l[field] == entity_id)
+                    v0_policy_amount = v0_line.policy_amount
+                    latest_policy_amount = lastest_line.policy_amount
+                    vals.update({
+                        'v0_policy_amount': v0_policy_amount,
+                        'latest_policy_amount': latest_policy_amount,
+                    })
+                lines.append((0, 0, vals))
+            policy.write({policy_line: lines})
 
         self.message_post(body=_('Regenerate Policy Lines, all amount reset!'))
 
@@ -307,18 +335,20 @@ class BudgetPolicy(models.Model):
 
     @api.multi
     def action_done(self):
+        _DICT = {'unit_base': 'budget.plan.unit'}
         for policy in self:
             policy._validate_policy_amount()
-            if policy.chart_view == 'unit_base':
-                valid = policy._validate_policy_unit_base()
+            if policy.chart_view in _DICT.keys():
+                valid = policy._validate_policy()
                 if not valid:
                     continue
-                policy._create_breakdown_unit_base()
+                policy._create_breakdown()
                 policy.write({'state': 'done'})
                 # update plans to done
-                plans = self.env['budget.plan.unit'].search([
+                model = _DICT[policy.chart_view]
+                plans = self.env[model].search([
                     ('fiscalyear_id', '=', self.fiscalyear_id.id),
-                    ('state', '=', 'accept')])
+                    ('state', 'in', ('accept', 'done'))])
                 plans.write({'state': 'done'})
             else:
                 raise ValidationError(
@@ -332,34 +362,49 @@ class BudgetPolicy(models.Model):
             raise ValidationError(_('Overall policy amount mismatch!'))
 
     @api.multi
-    def _validate_policy_unit_base(self):
+    def _validate_policy(self):
         """ Check relelated budget plan
-        - Each org, the budget plan of all its section must be accepted
+        - Each entity (based in chart_view),
+          the budget plan of all its sub_entity must be accepted
         """
         self.ensure_one()
+        _DICT = {
+            'unit_base': ('budget.plan.unit', 'org_id',
+                          'res.section', 'section_id'),
+            'invest_asset': ('budget.plan.invest.asset', False,
+                             'res.org', 'org_id'),
+        }
+        plan_model = _DICT[self.chart_view][0]
+        entity_field = _DICT[self.chart_view][1]
+        sub_entity_model = _DICT[self.chart_view][2]
+        sub_entity_field = _DICT[self.chart_view][3]
+
         res = {'valid': True, 'message': ''}
         msg = []
-        Section = self.env['res.section']
-        Plan = self.env['budget.plan.unit']
-        for org_policy in self.line_ids:
-            org = org_policy.org_id
+        SubEntity = self.env[sub_entity_model]
+        Plan = self.env[plan_model]
+        for policy_line in self.line_ids:
+            entity = entity_field and policy_line[entity_field] or False
+            if not entity:
+                entity = self.env.user.company_id
+                entity_field = entity.id
             msg.append('====================== %s ======================'
-                       % (org.name_short,))
+                       % (entity.name,))
             # Active sections of this org
-            sections = Section.search([('org_id', '=', org.id)])
+            sub_entities = SubEntity.search([(entity_field, '=', entity.id)])
             # Active plans of this org
             plans = Plan.search([
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
-                ('org_id', '=', org.id),
-                ('state', '=', 'accept')])
-            # All sections must have valid plans
-            if len(sections) != len(plans):
+                (entity_field, '=', entity.id),
+                ('state', 'in', ('accept', 'done'))])
+            # All entity must have valid plans
+            if len(sub_entities) != len(plans):
                 res['valid'] = False
-                msg.append("Plan of following sections not accepted.")
-                invalid_sections = sections.filtered(
-                    lambda l: l.id not in plans.mapped('section_id').ids)
+                msg.append("Plan of following entity not accepted.")
+                invalid_sections = sub_entities.filtered(
+                    lambda l: l.id not in plans.mapped(sub_entity_field).ids)
                 for s in invalid_sections:
-                    msg.append("* [%s] %s" % (s.code, s.name_short))
+                    msg.append("* %s" % s.name_get()[0][1])
             else:
                 msg.append("Ready...")
         res['message'] = '\n'.join(msg)
@@ -372,7 +417,7 @@ class BudgetPolicy(models.Model):
             return False
 
     @api.multi
-    def _create_breakdown_unit_base(self):
+    def _create_breakdown(self):
         self.ensure_one()
         Breakdown = self.env['budget.breakdown']
         # For each policy line, create a breakdown
@@ -426,6 +471,8 @@ class BudgetPolicyLine(ChartField, models.Model):
             chart_view = rec.policy_id.chart_view
             if chart_view == 'unit_base':
                 rec.name = rec.org_id.name_short
+            elif chart_view == 'invest_asset':
+                rec.name = 'NSTDA'
             # Continue with other dimension
             else:
                 rec.name = 'n/a'
@@ -451,7 +498,6 @@ class BudgetPolicyLine(ChartField, models.Model):
         title = _('Policy amount change(s)')
         message = '<h3>%s</h3><ul>' % title
         for rec in self:
-            print rec
             obj = rec[POLICY_LEVEL[policy.chart_view]]
             message += _(
                 '<li><b>%s</b>: %s → %s</li>'

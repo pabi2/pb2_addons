@@ -34,6 +34,9 @@ class GenerateBudgetPlan(models.TransientModel):
         elif self.chart_view == 'personnel':
             Personnel = self.env['budget.plan.personnel']
             plan_ids = Personnel.generate_plans(fiscalyear_id=fiscalyear_id)
+        elif self.chart_view == 'invest_asset':
+            InvestAsset = self.env['budget.plan.invest.asset']
+            plan_ids = InvestAsset.generate_plans(fiscalyear_id=fiscalyear_id)
         else:
             raise ValidationError(_('Selected budget view is not valid!'))
         action = self.env.ref('pabi_budget_plan.action_budget_plan_unit_view')

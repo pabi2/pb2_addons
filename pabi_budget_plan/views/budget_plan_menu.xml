@@ -37,16 +37,6 @@
         </record>
         <menuitem action="action_policy_personnel"  id="menu_policy_personne" sequence="30" parent="menu_action_budget_policy" groups="pabi_base.group_cooperate_budget" />
 
-        <record id="action_policy_invest_asset" model="ir.actions.server">
-            <field name="name">Investment Asset</field>
-            <field name="condition">True</field>
-            <field name="type">ir.actions.server</field>
-            <field name="model_id" ref="model_budget_plan_unit"/>
-            <field name="state">code</field>
-            <field name="code">self.show_message(cr, uid, [], context=context)</field>
-        </record>
-        <menuitem action="action_policy_invest_asset"  id="menu_policy_invest_asset" sequence="40" parent="menu_action_budget_policy" groups="pabi_base.group_cooperate_budget" />
-
         <record id="action_policy_invest_construction" model="ir.actions.server">
             <field name="name">Investment Construction</field>
             <field name="condition">True</field>
@@ -77,16 +67,6 @@
             <field name="code">self.show_message(cr, uid, [], context=context)</field>
         </record>
         <menuitem  action="action_breakdown_personnel" sequence="30" id="menu_breakdown_personnel" parent="menu_action_budget_breakdown" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
-
-        <record id="action_breakdown_invest_asset" model="ir.actions.server">
-            <field name="name">Investment Asset</field>
-            <field name="condition">True</field>
-            <field name="type">ir.actions.server</field>
-            <field name="model_id" ref="model_budget_plan_unit"/>
-            <field name="state">code</field>
-            <field name="code">self.show_message(cr, uid, [], context=context)</field>
-        </record>
-        <menuitem  action="action_breakdown_invest_asset" sequence="40" id="menu_breakdown_invest_asset" parent="menu_action_budget_breakdown" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
 
         <record id="action_breakdown_invest_construction" model="ir.actions.server">
             <field name="name">Investment Construction</field>

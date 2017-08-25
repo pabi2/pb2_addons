@@ -129,6 +129,15 @@ class BudgetBreakdown(models.Model):
         string='Unit Based Breakdown Lines',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'unit_base')],
+    )
+    invest_asset_line_ids = fields.One2many(
+        'budget.breakdown.line',
+        'breakdown_id',
+        string='Invest Asset Breakdown Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'invest_asset')],
     )
     _sql_constraints = [
         ('uniq_breakdown', 'unique(policy_line_id)',
@@ -145,11 +154,13 @@ class BudgetBreakdown(models.Model):
     @api.multi
     def action_open_budget(self):
         self.ensure_one()
-        act = False
-        if self.chart_view == 'unit_base':
-            act = 'account_budget_activity.act_account_budget_view'
+        _ACTION = {
+            'unit_base': 'account_budget_activity.act_account_budget_view',
+            'invest_asset':
+            'pabi_chartfield.act_account_budget_view_invest_asset',
+        }
         # elif self.chart_view == 'invest_asset':
-        action = self.env.ref(act)
+        action = self.env.ref(_ACTION[self.chart_view])
         result = action.read()[0]
         budget_ids = self.line_ids.mapped(lambda l: l.budget_id).ids
         result.update({'domain': [('id', 'in', budget_ids)]})
@@ -162,10 +173,11 @@ class BudgetBreakdown(models.Model):
         _prefix2 = {'unit_base': 'UNIT',
                     'invest_asset': 'ASSET'}
         _prefix3 = {'unit_base': 'org_id',
-                    'invest_asset': 'org_id'}
+                    'invest_asset': False}
         prefix2 = _prefix2[self.chart_view]
-        obj = self[_prefix3[self.chart_view]]
-        prefix3 = obj.code or obj.name_short or obj.name
+        obj = _prefix3[self.chart_view] and \
+            self[_prefix3[self.chart_view]] or False
+        prefix3 = obj and (obj.code or obj.name_short or obj.name) or 'NSTDA'
         name = '%s/%s/%s/%s/V%s' % (_prefix, prefix2, self.fiscalyear_id.code,
                                     prefix3, self.revision)
         return name
@@ -192,12 +204,14 @@ class BudgetBreakdown(models.Model):
         return res
 
     @api.multi
-    @api.depends('line_ids', 'unit_base_line_ids')
+    @api.depends('line_ids', 'unit_base_line_ids', 'invest_asset_line_ids')
     def _compute_all(self):
         for rec in self:
             lines = False
             if rec.unit_base_line_ids:
                 lines = rec.unit_base_line_ids
+            if rec.invest_asset_line_ids:
+                lines = rec.invest_asset_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
@@ -207,6 +221,7 @@ class BudgetBreakdown(models.Model):
     @api.onchange('policy_line_id')
     def _onchange_policy_line_id(self):
         self.unit_base_line_ids = False
+        self.invest_asset_line_ids = False
 
     @api.multi
     def action_done(self):
@@ -221,54 +236,116 @@ class BudgetBreakdown(models.Model):
             breakdown.generate_budget_control()
         self.write({'state': 'done'})
 
+    # @api.multi
+    # def _generate_breakdown_line_unit_base(self):
+    #     for breakdown in self:
+    #         if breakdown.chart_view != 'unit_base':
+    #             raise ValidationError(_('Not a unit based breakdown!'))
+    #         breakdown.line_ids.unlink()
+    #         lines = []
+    #         Budget = self.env['account.budget']
+    #         BudgetPlanUnit = self.env['budget.plan.unit']
+    #         plans = BudgetPlanUnit.search([
+    #             ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
+    #             ('org_id', '=', breakdown.org_id.id),
+    #             ('state', '=', 'accept')])
+    #         budgets = Budget.search([
+    #             ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
+    #             ('org_id', '=', breakdown.org_id.id),
+    #             ('chart_view', '=', breakdown.chart_view)])
+    #         # Existing budgets, get section dict {seciton_id: budget_id}
+    #         sec_bud_dict = dict([(x.section_id.id, x.id) for x in budgets])
+    #         # Create line from plans first
+    #         for plan in plans:
+    #             budget_plan_id = '%s,%s' % (BudgetPlanUnit._name, plan.id)
+    #             section_id = plan.section_id.id
+    #             vals = {
+    #                 'budget_plan_id': budget_plan_id,
+    #                 'budget_id': sec_bud_dict.get(section_id, False),
+    #                 'section_id': plan.section_id.id,
+    #             }
+    #             lines.append((0, 0, vals))
+    #         # Create line for budget that don't have plan, manual create
+    #         budgets = budgets.filtered(lambda l: l.section_id
+    #                                    not in plans.mapped('section_id'))
+    #         for budget in budgets:
+    #             vals = {
+    #                 'budget_plan_id': False,
+    #                 'budget_id': budget.id,
+    #                 'section_id': budget.section_id.id,
+    #             }
+    #             lines.append((0, 0, vals))
+    #         breakdown.write({'unit_base_line_ids': lines})
+
     @api.multi
-    def _generate_breakdown_line_unit_base(self):
+    def generate_breakdown_line(self):
         for breakdown in self:
-            if breakdown.chart_view != 'unit_base':
-                raise ValidationError(_('Not a unit based breakdown!'))
+            _DICT = {'unit_base': ('budget.plan.unit',
+                                   'org_id', 'section_id',
+                                   'unit_base_line_ids'),
+                     'invest_asset': ('budget.plan.invest.asset',
+                                      False, 'org_id',
+                                      'invest_asset_line_ids'), }
+            if breakdown.chart_view not in _DICT.keys():
+                raise ValidationError(
+                    _('This budget structure is not supported!'))
+
             breakdown.line_ids.unlink()
             lines = []
+            company = self.env.user.company_id
+            plan_model = _DICT[breakdown.chart_view][0]
+            entity_field = _DICT[breakdown.chart_view][1]
+            sub_entity_field = _DICT[breakdown.chart_view][2]
+            breakdown_line_field = _DICT[breakdown.chart_view][3]
+            entity_id = entity_field and breakdown[entity_field].id
+            if not entity_field:
+                entity_field = company.id
+                entity_id = company.id
+
             Budget = self.env['account.budget']
-            BudgetPlanUnit = self.env['budget.plan.unit']
-            plans = BudgetPlanUnit.search([
+            BudgetPlan = self.env[plan_model]
+            plans = BudgetPlan.search([
                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
-                ('org_id', '=', breakdown.org_id.id),
-                ('state', '=', 'accept')])
+                (entity_field, '=', entity_id),
+                ('state', 'in', ('accept', 'done'))])
             budgets = Budget.search([
                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
-                ('org_id', '=', breakdown.org_id.id),
+                (entity_field, '=', entity_id),
                 ('chart_view', '=', breakdown.chart_view)])
-            # Existing budgets, get section dict {seciton_id: budget_id}
-            sec_bud_dict = dict([(x.section_id.id, x.id) for x in budgets])
+            # Existing budgets, sub_entity_dict, i.e.,  {seciton_id: budget_id}
+            ent_bud_dict = \
+                dict([(x[sub_entity_field].id, x.id) for x in budgets])
             # Create line from plans first
             for plan in plans:
-                budget_plan_id = '%s,%s' % (BudgetPlanUnit._name, plan.id)
-                section_id = plan.section_id.id
+                budget_plan_id = '%s,%s' % (BudgetPlan._name, plan.id)
+                sub_entity_id = plan[sub_entity_field].id
                 vals = {
                     'budget_plan_id': budget_plan_id,
-                    'budget_id': sec_bud_dict.get(section_id, False),
-                    'section_id': plan.section_id.id,
+                    'budget_id': ent_bud_dict.get(sub_entity_id, False),
+                    sub_entity_field: plan[sub_entity_field].id,
                 }
                 lines.append((0, 0, vals))
             # Create line for budget that don't have plan, manual create
-            budgets = budgets.filtered(lambda l: l.section_id
-                                       not in plans.mapped('section_id'))
+            if sub_entity_field:
+                budgets = budgets.filtered(
+                    lambda l: l[sub_entity_field]
+                    not in plans.mapped(sub_entity_field))
             for budget in budgets:
                 vals = {
                     'budget_plan_id': False,
                     'budget_id': budget.id,
-                    'section_id': budget.section_id.id,
+                    sub_entity_field: budget[sub_entity_field].id,
                 }
                 lines.append((0, 0, vals))
-            breakdown.write({'unit_base_line_ids': lines})
+            breakdown.write({breakdown_line_field: lines})
 
-    @api.multi
-    def generate_breakdown_line(self):
-        # Unit Base
-        breakdowns = self.filtered(lambda l: l.chart_view == 'unit_base')
-        if breakdowns:
-            breakdowns._generate_breakdown_line_unit_base()
-        # Other structure...
+    # @api.multi
+    # def generate_breakdown_line(self):
+    #     # Unit Base
+    #     breakdowns = self.filtered(lambda l: l.chart_view == 'unit_base')
+    #     if breakdowns:
+    #         breakdowns._generate_breakdown_line_unit_base()
+    #     # Other structure...
 
     @api.multi
     def generate_budget_control(self):
@@ -304,7 +381,8 @@ class BudgetBreakdownLine(ChartField, models.Model):
     )
     # References
     budget_plan_id = fields.Reference(
-        [('budget.plan.unit', 'Budget Plan - Unit Based'), ],
+        [('budget.plan.unit', 'Budget Plan - Unit Based'),
+         ('budget.plan.invest.asset', 'Budget Plan - Investment Asset'), ],
         string='Budget Plan',
         readonly=True,
         ondelete='set null',
@@ -362,8 +440,10 @@ class BudgetBreakdownLine(ChartField, models.Model):
     @api.depends('breakdown_id')
     def _compute_amount(self):
         for line in self:
-            line.planned_amount = line.budget_plan_id.planned_expense or 0.0
-            line.latest_policy_amount = line.budget_id.policy_amount or 0.0
+            line.planned_amount = line.budget_plan_id and \
+                line.budget_plan_id.planned_expense or 0.0
+            line.latest_policy_amount = line.budget_id and \
+                line.budget_id.policy_amount or 0.0
 
     @api.model
     def _change_amount_content(self, breakdown, new_amount):
