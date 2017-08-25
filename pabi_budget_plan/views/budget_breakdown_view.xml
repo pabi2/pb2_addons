@@ -33,7 +33,7 @@
                         <group>
                             <group>
                                 <field name="policy_line_id" invisible="1"/>
-                                <field name="org_id" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                                <field name="org_id" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}"/>
                                 <field name="fiscalyear_id"/>
                                 <field name="revision"/>
                             </group>
