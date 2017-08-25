@@ -216,6 +216,12 @@ class AccountAnalyticAccount(models.Model):
     )
 
     @api.model
+    def update_dict_by_analytic(self, update_dict):
+        """ Given analytic_id, return dict with udpated dimension """
+        for d in self._analytic_dimensions():
+            update_dict.update({d: self[d].id})
+
+    @api.model
     def _analytic_dimensions(self):
         dimensions = [
             'product_id',
@@ -229,7 +235,8 @@ class AccountAnalyticAccount(models.Model):
         dimensions = self._analytic_dimensions()
         domain = []
         for dimension in dimensions:
-            domain.append((dimension, '=', rec[dimension].id))
+            if dimension in rec._fields:
+                domain.append((dimension, '=', rec[dimension].id))
         return domain
 
     @api.model

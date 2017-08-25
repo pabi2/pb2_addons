@@ -2,10 +2,30 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon
-from openerp.addons.account_budget_activity.models.account_activity \
-    import ActivityCommon
+# from openerp.addons.account_budget_activity.models.account_activity \
+#     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
+
+_STATUS = [('1', 'Draft'),
+           ('2', 'Submitted'),
+           ('3', 'Approved'),
+           ('4', 'Cancelled'),
+           ('5', 'Rejected'),
+           ('6', 'Verified'),
+           ('7', 'Accepted'),
+           ('8', 'Done'),
+           ]
+
+_STATE_TO_STATUS = {'draft': '1',
+                    'submit': '2',
+                    'approve': '3',
+                    'cancel': '4',
+                    'reject': '5',
+                    'verify': '6',
+                    'accept': '7',
+                    'done': '8',
+                    }
 
 
 class BudgetPlanInvestAsset(BPCommon, models.Model):
@@ -50,10 +70,24 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         string='Org',
         required=True,
     )
+    # Converted to equivalant status
+    status = fields.Selection(
+        _STATUS,
+        string='Status',
+        compute='_compute_status',
+        store=True,
+        help="This virtual field is being used to sort the status in view",
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
     ]
+
+    @api.multi
+    @api.depends('state')
+    def _compute_status(self):
+        for rec in self:
+            rec.status = _STATE_TO_STATUS[rec.state]
 
     @api.model
     def create(self, vals):
@@ -90,8 +124,19 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
                                                       line_src_model)
         return budget
 
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        """ Add additional filter criteria """
+        return super(BudgetPlanInvestAsset, self).\
+            search(self.search_args(args), offset=offset,
+                   limit=limit, order=order, count=count)
 
-class BudgetPlanInvestAssetLine(BPLMonthCommon, ActivityCommon, models.Model):
+    # Actions
+
+    # --
+
+
+class BudgetPlanInvestAssetLine(BPLMonthCommon, models.Model):
     _name = 'budget.plan.invest.asset.line'
     _description = "Invest Asset - Budget Plan Line"
 
@@ -112,12 +157,32 @@ class BudgetPlanInvestAssetLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    section_id = fields.Many2one(
+        related='invest_asset_id.owner_section_id',
+        store=True,
+        readonly=True,
+    )
     item_id = fields.Many2one(
         'invest.asset.plan.item',
         string='Asset Info',
         ondelete='restrict',
         readonly=True,
     )
+    # Converted to equivalant status
+    status = fields.Selection(
+        _STATUS,
+        related='plan_id.status',
+        string='Status',
+        store=True,
+        help="This virtual field is being used to sort the status in view",
+    )
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        """ Add additional filter criteria """
+        return super(BudgetPlanInvestAssetLine, self).\
+            search(self.search_args(args), offset=offset,
+                   limit=limit, order=order, count=count)
 
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.

@@ -51,22 +51,13 @@
                                     <tree editable="bottom" colors="gray:asset_state != 'open'">
                                         <field name="asset_id"/>
                                         <field name="asset_state"/>
-                                        <!-- STD-REMOVE -->
-                                        <!-- <field name="date_remove"/>
-                                        <field name="posting_regime"/>
-                                        <field name="account_plus_value_id" attrs="{'required': [('posting_regime', '!=', 'residual_value')]}"/>
-                                        <field name="account_min_value_id" attrs="{'required': [('posting_regime', '!=', 'residual_value')]}"/>
-                                        <field name="account_residual_value_id" attrs="{'required': [('posting_regime', '=', 'residual_value')]}"/>
-                                        <field name="sale_value"/>
-                                        <field name="account_sale_id" attrs="{'required': [('sale_value', '>', 0.0)]}"/>
-                                        <field name="period_id" invisible="1"/>
-                                        -->
                                         <field name="target_status"/>
                                         <field name="product_id"/>
                                         <field name="asset_name"/>
                                         <field name="asset_profile_id"/>
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
+                                        <field name="chartfield_id" required="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -76,8 +67,12 @@
                                         <field name="asset_id"/>
                                         <field name="asset_state"/>
                                         <field name="target_status"/>
+                                        <field name="activity_group_id" required="0" invisible="0"/>
+                                        <field name="activity_id" required="0"
+                                          domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
                                         <field name="account_id"/>
                                         <field name="move_id"/>
+                                        <field name="chartfield_id" required="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -92,6 +87,7 @@
                                         <field name="asset_date"/>
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
+                                        <field name="chartfield_id" required="1"/>
                                     </tree>
                                 </field>
                             </page>

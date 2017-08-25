@@ -245,20 +245,24 @@ class AccountAsset(ChartFieldAction, models.Model):
         'account.asset',
         'account_asset_source_target_rel',
         'source_asset_id', 'target_asset_id',
-        string='Transferred to Asset',
+        string='To Asset(s)',
         help="In case of transfer, this field show asset created by this one",
         readonly=True,
     )
-    source_asset_count = fields.Integer(
+    target_asset_count = fields.Integer(
         string='Source Asset Count',
-        compute='_compute_source_asset_count',
+        compute='_compute_asset_count',
     )
     source_asset_ids = fields.Many2many(
         'account.asset',
         'account_asset_source_target_rel',
         'target_asset_id', 'source_asset_id',
-        string='Source Assets',
+        string='From Asset(s)',
         help="List of source asset that has been transfer to this one",
+    )
+    source_asset_count = fields.Integer(
+        string='Source Asset Count',
+        compute='_compute_asset_count',
     )
     image = fields.Binary(
         string='Image',
@@ -354,11 +358,12 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     @api.multi
     @api.depends()
-    def _compute_source_asset_count(self):
+    def _compute_asset_count(self):
         for asset in self:
-            _ids = self.with_context(active_test=False).\
-                search([('target_asset_ids', 'in', [asset.id])])._ids
-            asset.source_asset_count = len(_ids)
+            # _ids = self.with_context(active_test=False).\
+            #     search([('target_asset_ids', 'in', [asset.id])])._ids
+            asset.source_asset_count = len(asset.source_asset_ids)
+            asset.target_asset_count = len(asset.target_asset_ids)
 
     @api.model
     def create(self, vals):

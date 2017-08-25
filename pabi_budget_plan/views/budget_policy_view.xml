@@ -58,7 +58,7 @@
                                 </div>
                                 <span colspan="2" style="color: red;" attrs="{'invisible': [('message', '=', False)]}">
                                     <p color="red">
-                                        There are some error occur. Please see detail in Error Message tab.
+                                        There are some errors. Please see detail in Error Message tab.
                                     </p>
                                 </span>
                             </group>
@@ -74,19 +74,29 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Unit Base">
-                                <field name="unit_base_line_ids" colspan="4" nolabel="1" attrs="{'invisible': [('revision', '!=', '0')]}">
+                            <page string="Policy Lines">
+                                <separator string="Unit Based" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}"/>
+                                <separator string="Investment Asset" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}"/>
+                                <!-- Unit Based -->
+                                <field name="unit_base_line_ids" colspan="4" nolabel="1" attrs="{'invisible': ['|', ('chart_view', '!=', 'unit_base'), ('revision', '!=', '0')]}">
                                     <tree editable="bottom" create="0" delete="0">
-                                        <field name="org_id" invisible="1"/>
-                                        <field name="name" string="Org"/>
+                                        <field name="name" string="Entity"/>
                                         <field name="planned_amount"/>
                                         <field name="policy_amount"/>
                                     </tree>
                                 </field>
+                                <!-- Invest Asset -->
+                                <field name="invest_asset_line_ids" colspan="4" nolabel="1" attrs="{'invisible': ['|', ('chart_view', '!=', 'invest_asset'), ('revision', '!=', '0')]}">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="name" string="Entity"/>
+                                        <field name="planned_amount"/>
+                                        <field name="policy_amount"/>
+                                    </tree>
+                                </field>
+                                <!-- For all dimensions -->
                                 <field name="line_ids" colspan="4" nolabel="1" attrs="{'invisible': [('revision', '=', '0')]}">
                                     <tree editable="bottom" create="0" delete="0">
-                                        <field name="org_id" invisible="1"/>
-                                        <field name="name" string="Org"/>
+                                        <field name="name" string="Entity"/>
                                         <field name="v0_policy_amount"/>
                                         <field name="latest_policy_amount"/>
                                         <field name="policy_amount"/>
@@ -127,6 +137,7 @@
             </field>
         </record>
 
+        # Unit Based Policy
         <record model="ir.actions.act_window" id="action_budget_policy_unit_view">
             <field name="name">Unit Based</field>
             <field name="res_model">budget.policy</field>
@@ -142,7 +153,25 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_unit_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_unit_view" sequence="6"/>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_unit_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_unit_view" sequence="10"/>
+
+        # Project Based # Personnel # Invest Asset
+        <record model="ir.actions.act_window" id="action_budget_policy_invest_asset_view">
+            <field name="name">Investment Asset</field>
+            <field name="res_model">budget.policy</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_policy_tree"/>
+            <field name="search_view_id" ref="view_budget_policy_search"/>
+            <field name="domain">[('chart_view', '=', 'invest_asset')]</field>
+            <field name="context">{'default_chart_view': 'invest_asset'}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new budget policy for investment asset structure.
+                </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_invest_asset_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_invest_asset_view" sequence="40"/>
 
     </data>
 </openerp>

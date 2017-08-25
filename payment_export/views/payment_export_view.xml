@@ -81,7 +81,7 @@
                                 <field name="user_id"/>
                                 <field name="transfer_type" attrs="{'required': [('cheque_lot_id', '=', False)]}"/>
                                 <field name="cheque_lot_id" attrs="{'required': [('transfer_type', '=', False)]}"/>
-                                <field name="is_cheque_lot" invisible="1"/>
+                                <!-- <field name="is_cheque_lot" invisible="1"/> -->
                             </group>
                             <group>
                                 <field name="exported" invisible="1"/>

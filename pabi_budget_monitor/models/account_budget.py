@@ -293,7 +293,7 @@ class AccountBudget(models.Model):
             'unit_base': 'section_id',
             'project_base': 'project_id',
             'personnel': 'personnel_costcenter_id',
-            'invest_asset': 'investment_asset_id',
+            'invest_asset': 'invest_asset_id',
             'invest_construction': 'invest_construction_phase_id'}
         dimension = budget_type_dict[self.chart_view]
         dom.append((dimension, '=', self[dimension].id))

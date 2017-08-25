@@ -35,10 +35,10 @@ class PaymentExport(models.Model):
         help="- DIRECT is transfer within same bank.\n"
         "- SMART is transfer is between different bank."
     )
-    is_cheque_lot = fields.Boolean(
-        string='Is Cheque Lot Available',
-        compute='_compute_is_cheque_lot',
-    )
+    # is_cheque_lot = fields.Boolean(
+    #     string='Is Cheque Lot Available',
+    #     compute='_compute_is_cheque_lot',
+    # )
     cheque_lot_id = fields.Many2one(
         'cheque.lot',
         string='Cheque Lot',
@@ -193,12 +193,12 @@ class PaymentExport(models.Model):
             export.cheque_number_from = res[0]
             export.cheque_number_to = res[1]
 
-    @api.one
-    @api.depends('journal_id')
-    def _compute_is_cheque_lot(self):
-        Lot = self.env['cheque.lot']
-        lots = Lot.search([('journal_id', '=', self.journal_id.id)])
-        self.is_cheque_lot = lots and True or False
+    # @api.one
+    # @api.depends('journal_id')
+    # def _compute_is_cheque_lot(self):
+    #     Lot = self.env['cheque.lot']
+    #     lots = Lot.search([('journal_id', '=', self.journal_id.id)])
+    #     self.is_cheque_lot = lots and True or False
 
     @api.multi
     @api.depends('transfer_type', 'cheque_lot_id')
@@ -223,8 +223,7 @@ class PaymentExport(models.Model):
         self.line_ids = []
         if not (self.journal_id and self.date_value):  # At least
             return
-        if not self.transfer_type and \
-                (self.is_cheque_lot and not self.cheque_lot_id):  # Case Lot
+        if not self.transfer_type and not self.cheque_lot_id:
             return
         Voucher = self.env['account.voucher']
         # Prepare voucher domain
@@ -238,13 +237,15 @@ class PaymentExport(models.Model):
         # Prepare export lines
         ExportLine = self.env['payment.export.line']
         # Case Cheque, make sure it has not been in any valid cheque before
-        if self.is_cheque_lot:
+        # if self.is_cheque_lot:
+        if self.cheque_lot_id:
             chequed_voucher_ids = [x.voucher_id.id
                                    for x in self.cheque_lot_id.line_ids
                                    if x.voucher_id and not x.void]
             dom.append(('cheque_lot_id', '=', self.cheque_lot_id.id))
             dom.append(('id', 'not in', chequed_voucher_ids))
-        else:  # Other cases, make sure it has not been exported before
+        # else:
+        elif self.transfer_type:  # Export case, has not been exported before
             lines = ExportLine.search(
                 [('export_id.state', '=', 'done'),
                  ('export_id.date_value', '=', self.date_value)],
@@ -265,7 +266,8 @@ class PaymentExport(models.Model):
 
     @api.multi
     def action_assign_cheque_number(self):
-        if not self.is_cheque_lot:
+        # if not self.is_cheque_lot:
+        if not self.cheque_lot_id:
             return
         ChequeLot = self.env['cheque.lot']
         for rec in self:
@@ -294,7 +296,8 @@ class PaymentExport(models.Model):
                             'remove to continue.') % (', '.join(vouchers),)
                 raise ValidationError(message)
             # Case Cheque only
-            if export.is_cheque_lot and export.cheque_lot_id:
+            # if export.is_cheque_lot and export.cheque_lot_id:
+            if export.cheque_lot_id:
                 for line in export.line_ids:
                     if not line.cheque_register_id:
                         raise ValidationError(
