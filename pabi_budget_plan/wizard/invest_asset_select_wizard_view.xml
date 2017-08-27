@@ -15,11 +15,12 @@
             <field name="invset_asset_wiz_line_ids">
                 <tree editable="bottom" create="false" delete="false">
                     <field name="select"/>
-                    <field name="invest_asset_plan_item_id" invisible="True" domain="[('plan_id', '=', parent.invest_plan_id)]"/>
+                    <field name="invest_asset_plan_item_id" invisible="1" domain="[('plan_id', '=', parent.invest_plan_id)]"/>
+                    <field name="asset_name"/>
                     <field name="section_id"/>
-                    <field name="division_id"/> 
-                    <field name="priority"/> 
-                    <field name="quantity"/> 
+                    <field name="division_id"/>
+                    <field name="priority"/>
+                    <field name="quantity"/>
                     <field name="price_total"/>
                 </tree>
             </field>

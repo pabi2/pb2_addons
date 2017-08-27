@@ -36,9 +36,10 @@ class InvestAssetSelect(models.TransientModel):
             vals = {
                 'invest_asset_plan_item_id': item.id,
                 'select': item.select,
+                'asset_name': item.asset_name,
                 'section_id': item.section_id.id,
                 'division_id': item.division_id.id,
-                'priority':  item.priority,
+                'priority': item.priority,
                 'quantity': item.quantity,
                 'price_total': item.price_total,
             }
@@ -58,6 +59,10 @@ class InvestAssetSelectLine(models.TransientModel):
     select = fields.Boolean(
         string='Select',
         default=True,
+    )
+    asset_name = fields.Char(
+        string='Asset Name',
+        readonly=True,
     )
     invest_asset_wiz_id = fields.Many2one(
         'invest.asset.selection.wiz',
