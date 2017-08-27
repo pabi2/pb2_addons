@@ -5,6 +5,9 @@ from openerp import fields, models, api, _
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    donor = fields.Char(
+        string='Donor',
+    )
     asset_ids = fields.One2many(
         'account.asset',
         'picking_id',
@@ -20,6 +23,10 @@ class StockPicking(models.Model):
         string='Aquisition Method',
         help="In case of direct receive, user will manually choose it."
     )
+
+    @api.onchange('partner_id')
+    def _onchane_partner_id(self):
+        self.donor = False
 
     @api.multi
     def action_view_asset(self):
@@ -55,13 +62,6 @@ class StockPicking(models.Model):
             'nodestroy': True,
             'domain': [('id', 'in', moves.ids)],
         }
-
-    @api.multi
-    def action_confirm_and_transfer(self):
-        self.ensure_one()
-        self = self.with_context(skip_work_acceptance=True)
-        self.action_confirm()
-        return self.do_enter_transfer_details()
 
 
 class StockMove(models.Model):

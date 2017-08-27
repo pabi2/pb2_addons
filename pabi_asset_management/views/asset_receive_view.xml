@@ -10,7 +10,12 @@
             <field name="arch" type="xml">
                 <form string="Transfer">
                     <header>
-                        <button name="action_confirm_and_transfer" states="draft" string="Confirm &amp; Transfer" type="object" class="oe_highlight" groups="purchase.group_purchase_user"/>
+                        <button name="action_confirm" states="draft" string="Confirm" type="object"
+                          context="{'skip_work_acceptance': True}"
+                          class="oe_highlight" groups="purchase.group_purchase_user"/>
+                        <button name="do_enter_transfer_details" states="assigned" string="Transfer" type="object"
+                          context="{'skip_work_acceptance': True}"
+                          class="oe_highlight" groups="purchase.group_purchase_user"/>
                         <button name="action_cancel" states="draft" string="Cancel Transfer" groups="purchase.group_purchase_user" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"shipping_except":"red","invoice_except":"red","waiting_date":"blue"}'/>
                     </header>
@@ -31,8 +36,9 @@
                         <group>
                             <group>
                                 <field name="partner_id"/>
+                                <field name="donor" attrs="{'invisible': [('partner_id', '!=', False)]}"/>
                                 <field name="backorder_id" readonly="1" attrs="{'invisible': [('backorder_id','=',False)]}"/>
-                                <field name="asset_purchase_method_id" domain="[('direct', '=', True)]" required="1"/>
+                                <field name="asset_purchase_method_id" domain="[('direct', '=', True)]" required="1" widget="selection"/>
                             </group>
                             <group>
                                 <field name="date"/>
