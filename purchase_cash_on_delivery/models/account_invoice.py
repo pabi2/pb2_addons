@@ -34,10 +34,7 @@ class AccountInvoice(models.Model):
         cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
                                     'cash_on_delivery_payment_term', False)
         for rec in self:
-            if rec.payment_term == cod_pay_term:
-                rec.is_prepaid = True
-            else:
-                rec.is_prepaid = False
+            rec.is_prepaid = rec.payment_term == cod_pay_term
 
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):

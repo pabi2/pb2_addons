@@ -17,6 +17,7 @@
     "data": [
         "data/payment_export_sequence.xml",
         "data/config_parameter.xml",
+        # "export_template/document.export.config.csv",# It will be duplicated
         "security/ir.model.access.csv",
         "views/account_view.xml",
         "wizard/cancel_reason_view.xml",

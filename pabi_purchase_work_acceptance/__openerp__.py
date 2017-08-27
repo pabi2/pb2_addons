@@ -23,6 +23,7 @@ PABI2 - Purchase Work Acceptance
     "installable": True,
     "depends": [
         "stock",
+        "purchase_cash_on_delivery",
         "pabi_procurement",
     ],
     "data": [
