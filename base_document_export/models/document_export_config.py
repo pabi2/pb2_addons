@@ -105,5 +105,13 @@ class DocumentExportConfig(models.Model):
     )
     delimiter_symbol = fields.Char(
         string="Joining Delimiter",
-        required=True,
+        required=False,
+    )
+    footer_disabled = fields.Boolean(
+        string='Disabled',
+        default=False,
+    )
+    line_number_max = fields.Integer(
+        string='Line Number Max',
+        help='If not defined or value equal "0", this will show infinity line',
     )

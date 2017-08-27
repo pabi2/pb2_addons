@@ -4,6 +4,7 @@ import base64
 import tempfile
 from openerp import api, fields, models, _
 from openerp.tools.safe_eval import safe_eval as eval
+from openerp.exceptions import ValidationError
 
 
 class DocumentExportParser(models.TransientModel):
@@ -23,8 +24,10 @@ class DocumentExportParser(models.TransientModel):
         temp.write(line_text)
         result = base64.b64encode(line_text)
         (dirName, fileName) = os.path.split(path)
+        filename = payment_model == 'payment.export' and \
+            self.env[payment_model].browse(payment_id).name or 'payment'
         attachment_id = self.env['ir.attachment'].create({
-            'name': 'payment' + '.' + self.file_type,
+            'name': filename + '.' + self.file_type,
             'datas': result,
             'datas_fname': fileName,
             'res_model': payment_model,
@@ -65,15 +68,15 @@ class DocumentExportParser(models.TransientModel):
             else:
                 value = line['default_value'] and line['default_value'] or ''
                 line.update({'value': value})
-        header_config_lines.insert(0, {'length': 3,
-                                       'mandatory': True,
-                                       'sequence': 0,
-                                       'field_code': '',
-                                       'id': 0,
-                                       'value': '001'})
         data_list.append(header_config_lines)
         # for Line Detail part
         export_lines = payment_export_record.line_ids
+        # If defined line number max
+        if config_id.line_number_max not in [False, 0] and \
+                len(export_lines) > config_id.line_number_max:
+            raise ValidationError(
+                _('This bank allows only %s lines')
+                % (config_id.line_number_max,))
         if export_lines:
             for export_line in export_lines:
                 line_detail_config_lines = \
@@ -98,14 +101,10 @@ class DocumentExportParser(models.TransientModel):
                         value = line['default_value'] and\
                             line['default_value'] or ''
                         line.update({'value': value})
-                if line_detail_config_lines:
-                    line_detail_config_lines.insert(0, {'length': 3,
-                                                        'mandatory': True,
-                                                        'sequence': 0,
-                                                        'field_code': '',
-                                                        'id': 0,
-                                                        'value': '003'})
                 data_list.append(line_detail_config_lines)
+        # If not use footer
+        if config_id.footer_disabled:
+            return data_list
         # for footer part
         footer_config_lines =\
             config_id.footer_config_line_ids.read(config_fields_to_read)
@@ -122,11 +121,5 @@ class DocumentExportParser(models.TransientModel):
             else:
                 value = line['default_value'] and line['default_value'] or ''
                 line.update({'value': value})
-        footer_config_lines.insert(0, {'length': 3,
-                                       'mandatory': True,
-                                       'sequence': 0,
-                                       'field_code': '',
-                                       'id': 0,
-                                       'value': '100'})
         data_list.append(footer_config_lines)
         return data_list
