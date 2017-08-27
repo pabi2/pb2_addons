@@ -127,7 +127,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         for order_line in order_lines:
             if order_line.invoiced_qty >= order_line.product_qty:
                 completed_line += 1
-        if completed_line == len(order_lines):
+        if completed_line == len(order_lines) and \
+                order.invoice_method == 'picking':
             raise ValidationError(
                 _("""Can't create new work acceptance.
                 This order's shipments may be completed.

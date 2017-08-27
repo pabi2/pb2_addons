@@ -1,10 +1,24 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
+from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
+
+    is_prepaid = fields.Boolean(
+        string='Cash on Delivery',
+        compute='_compute_is_prepaid',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('payment_term_id')
+    def _compute_is_prepaid(self):
+        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+                                    'cash_on_delivery_payment_term', False)
+        for rec in self:
+            rec.is_prepaid = rec.payment_term_id == cod_pay_term
 
     @api.onchange('payment_term_id', 'invoice_method')
     def _onchange_cash_on_delivery(self):

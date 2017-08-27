@@ -604,15 +604,19 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _name = 'purchase.work.acceptance.line'
     _description = 'Purchase Work Acceptance Line'
 
-    @api.model
+    @api.multi
     @api.depends('acceptance_id', 'line_id')
     def _compute_get_balance_qty(self):
         for acc_line in self:
             if acc_line.line_id.order_id.invoice_method == 'invoice_plan':
                 acc_line.balance_qty = acc_line.line_id.product_qty
             else:
-                acc_line.balance_qty = (acc_line.line_id.product_qty -
-                                        acc_line.line_id.invoiced_qty)
+                if acc_line.acceptance_id.order_id.is_prepaid:
+                    acc_line.balance_qty = (acc_line.line_id.product_qty -
+                                            acc_line.line_id.received_qty)
+                else:
+                    acc_line.balance_qty = (acc_line.line_id.product_qty -
+                                            acc_line.line_id.invoiced_qty)
 
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
