@@ -10,6 +10,7 @@
         'account_budget_activity',
         'pabi_chartfield',
         'pabi_procurement',
+        'pabi_xls',
         # 'document_status_history',
     ],
     'data': [
@@ -19,6 +20,7 @@
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'data/actions.xml',
+        'data/report_data.xml',
         'data/default_value.xml',
         # 'data/history_rule.xml',
         'views/budget_plan_menu.xml',
@@ -26,6 +28,7 @@
         'wizard/asset_plan_to_budget_plan_wizard.xml',
         'wizard/invest_asset_select_wizard_view.xml',
         'wizard/generate_budget_plan_wizard.xml',
+        'wizard/budget_breakdown_action_excel_import_wizard.xml',
         'views/account_budget_view.xml',
         'views/budget_plan_unit_view.xml',
         'views/budget_plan_project_view.xml',
