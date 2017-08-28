@@ -14,7 +14,7 @@ class AccountBankReceipt(models.Model):
         string='Name',
         size=64,
         readonly=True,
-        default='/',
+        # default='/',
         copy=False,
     )
     bank_intransit_ids = fields.One2many(
@@ -229,12 +229,12 @@ class AccountBankReceipt(models.Model):
             receipt.write({'state': 'draft'})
         return True
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence'].\
-                next_by_code('account.bank.receipt')
-        return super(AccountBankReceipt, self).create(vals)
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('name', '/') == '/':
+    #         vals['name'] = self.env['ir.sequence'].\
+    #             next_by_code('account.bank.receipt')
+    #     return super(AccountBankReceipt, self).create(vals)
 
     @api.model
     def _prepare_account_move_vals(self, receipt):
@@ -242,12 +242,13 @@ class AccountBankReceipt(models.Model):
         Period = self.env['account.period']
         period_ids = Period.find(dt=date)
         # period_ids will always have a value, cf the code of find()
+        number = self.env['ir.sequence'].next_by_code('account.bank.receipt')
         move_vals = {
             'journal_id': receipt.journal_id.id,
             'date': date,
             'period_id': period_ids[0].id,
-            'name': receipt.name,
-            'ref': receipt.name,
+            'name': number,
+            'ref': number,
         }
         return move_vals
 
@@ -322,7 +323,8 @@ class AccountBankReceipt(models.Model):
             counter_vals['move_id'] = move.id
             MoveLine.create(counter_vals)
             move.post()
-            receipt.write({'state': 'done',
+            receipt.write({'name': move.name,
+                           'state': 'done',
                            'move_id': move.id,
                            'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.context_today(self),

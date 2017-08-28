@@ -6,7 +6,7 @@ class AccountBankReceipt(models.Model):
     _inherit = 'account.bank.receipt'
 
     @api.model
-    def create(self, vals):
+    def _prepare_account_move_vals(self, receipt):
         # Find doctype_id
         refer_type = 'bank_receipt'
         doctype = self.env['res.doctype'].get_doctype(refer_type)
@@ -14,4 +14,5 @@ class AccountBankReceipt(models.Model):
         # --
         self = self.with_context(doctype_id=doctype.id,
                                  fiscalyear_id=fiscalyear_id)
-        return super(AccountBankReceipt, self).create(vals)
+        return super(AccountBankReceipt, self).\
+            _prepare_account_move_vals(receipt)
