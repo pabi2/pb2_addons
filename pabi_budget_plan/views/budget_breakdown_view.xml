@@ -59,6 +59,8 @@
                         </group>
                         <notebook>
                             <page string="Section Policy Amount" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                                <button name="export_report_budget_breakdown" string="Export to Excel" type="object" class="oe_highlight oe_right"/>
+                                <button name="%(action_budget_breakdown_action_excel_import)d" string="Import from Excel" type="action" class="oe_right"/>
                                 <field name="unit_base_line_ids" colspan="4" nolabel="1">
                                     <tree editable="bottom" create="0" delete="0" string="Budget" colors="blue:budget_state=='draft';black:budget_state=='done'">
                                         <field name="section_id" readonly="1"/>
@@ -77,16 +79,16 @@
                             <page string="Org Policy Amount" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
                                 <field name="invest_asset_line_ids" colspan="4" nolabel="1">
                                     <tree editable="bottom" create="0" delete="0" string="Budget" colors="blue:budget_state=='draft';black:budget_state=='done'">
-                                      <field name="org_id" readonly="1"/>
-                                      <field name="budget_plan_id" invisible="1"/>
-                                      <field name="planned_amount" sum="Planned Amount"/>
-                                      <field name="budget_id" invisible="1"/>
-                                      <field name="past_consumed" sum="Consumed"/>
-                                      <field name="future_plan" invisible="1"/>
-                                      <field name="rolling" sum="Rolling"/>
-                                      <field name="latest_policy_amount" sum="Latest Policy Amount"/>
-                                      <field name="policy_amount" sum="Policy Amount"/>
-                                      <field name="budget_state" invisible="1"/>
+                                        <field name="org_id" readonly="1"/>
+                                        <field name="budget_plan_id" invisible="1"/>
+                                        <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="budget_id" invisible="1"/>
+                                        <field name="past_consumed" sum="Consumed"/>
+                                        <field name="future_plan" invisible="1"/>
+                                        <field name="rolling" sum="Rolling"/>
+                                        <field name="latest_policy_amount" sum="Latest Policy Amount"/>
+                                        <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>

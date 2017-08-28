@@ -361,6 +361,26 @@ class BudgetBreakdown(models.Model):
                                   'policy_amount': line.policy_amount})
         self.write({'state': 'done'})
 
+    @api.multi
+    def export_report_budget_breakdown(self):
+        self.ensure_one()
+        # Create ID for budget.breakdown.line, so it can be imported.
+        # I.e. budget_breakdown_line.1, ext.1234
+        ModelData = self.env['ir.model.data']
+        for line in self.line_ids:
+            xml_id = line.get_external_id([line.id])
+            if not xml_id or (line.id in xml_id and xml_id[line.id] == ''):
+                ModelData.create({'name': str(line.id),
+                                  'module': 'budget_breakdown_line',
+                                  'model': 'budget.breakdown.line',
+                                  'res_id': line.id,
+                                  })
+        # --
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'report_budget_breakdown',
+        }
+
 
 class BudgetBreakdownLine(ChartField, models.Model):
     _name = 'budget.breakdown.line'
