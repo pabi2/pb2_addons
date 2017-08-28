@@ -93,11 +93,8 @@ class HRSalaryExpense(models.Model):
         }"""
         user = self.env['res.users']
         res = {}
-        print af_info
         salary = self.search([('number', '=', af_info['name'])])
         uid = user.search([('login', '=', af_info['approve_uid'])])
-        print uid
-        print salary
         if len(salary) != 1:
             res.update({
                 'is_success': False,
@@ -117,7 +114,6 @@ class HRSalaryExpense(models.Model):
                     'type': 'url',
                 })
                 # Change states
-                print uid.id
                 salary.write({
                     'approve_user_id': uid.id,
                     'date_approve': fields.Date.context_today(self),
