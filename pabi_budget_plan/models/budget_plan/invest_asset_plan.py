@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class InvestAssetPlan(models.Model):
@@ -165,6 +166,23 @@ class InvestAssetPlan(models.Model):
         })
         return True
 
+    @api.model
+    def generate_plans(self, fiscalyear_id=None):
+        if not fiscalyear_id:
+            raise ValidationError(_('No fiscal year provided!'))
+        # Find existing plans, and exclude them
+        plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
+        _ids = plans.mapped('org_id')._ids
+        # Find orgs
+        orgs = self.env['res.org'].search([('id', 'not in', _ids)])
+        plan_ids = []
+        for org in orgs:
+            plan = self.create({'fiscalyear_id': fiscalyear_id,
+                                'org_id': org.id,
+                                'user_id': False})
+            plan_ids.append(plan.id)
+        return plan_ids
+
     @api.one
     @api.depends('item_ids', 'item_ids.select')
     def _compute_verified(self):
@@ -186,9 +204,11 @@ class InvestAssetPlan(models.Model):
 
     @api.model
     def _prepare_plan_line(self, item):
+        invest_asset = item.invest_asset_id
         data = {
             'item_id': item.id,
-            'invest_asset_id': item.invest_asset_id.id,
+            'invest_asset_id': invest_asset.id,
+            'fund_id': invest_asset.fund_ids and invest_asset.fund_ids[0].id,
             'program_group_id': item.program_group_id.id,
             'm1': item.price_total,
         }

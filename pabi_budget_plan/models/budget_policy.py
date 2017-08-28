@@ -193,11 +193,12 @@ class BudgetPolicy(models.Model):
     @api.multi
     def action_open_breakdown(self):
         self.ensure_one()
-        act = False
-        if self.chart_view == 'unit_base':
-            act = 'pabi_budget_plan.action_unit_base_breakdown_view'
-        # elif self.chart_view == 'invest_asset':
-        action = self.env.ref(act)
+        _ACTION = {
+            'unit_base': 'pabi_budget_plan.action_unit_base_breakdown_view',
+            'invest_asset':
+            'pabi_budget_plan.action_invest_asset_breakdown_view',
+        }
+        action = self.env.ref(_ACTION[self.chart_view])
         result = action.read()[0]
         result.update({'domain': [('id', 'in', self.breakdown_ids.ids)]})
         return result
@@ -335,7 +336,8 @@ class BudgetPolicy(models.Model):
 
     @api.multi
     def action_done(self):
-        _DICT = {'unit_base': 'budget.plan.unit'}
+        _DICT = {'unit_base': 'budget.plan.unit',
+                 'invest_asset': 'budget.plan.invest.asset'}
         for policy in self:
             policy._validate_policy_amount()
             if policy.chart_view in _DICT.keys():
