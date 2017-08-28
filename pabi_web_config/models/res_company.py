@@ -28,6 +28,9 @@ class ResCompany(models.Model):
     pabiweb_active = fields.Boolean(
         string="Open Connection to PABI Web.",
     )
+    pabiweb_hr_url = fields.Char(
+        string='PABI Web URL for HR Salary',
+    )
     pabiweb_exp_url = fields.Char(
         string='PABI Web URL for Expense',
     )

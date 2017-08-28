@@ -23,6 +23,14 @@
                             </div>
                             <div attrs="{'invisible': [('pabiweb_active', '=', False)]}" >
                                 <br/>
+                                <label for="pabiweb_hr_url"/>
+                                <field name="pabiweb_hr_url" attrs="{'required': [('pabiweb_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)], 'required': [('pabiweb_active', '=', True)]}" >
+                              <p class="oe_gray">e.g., http://%s:%s@10.226.202.134/alfresco/s/pb/hr/inf</p>
+                            </div>
+                            <div attrs="{'invisible': [('pabiweb_active', '=', False)]}" >
+                                <br/>
                                 <label for="pabiweb_exp_url"/>
                                 <field name="pabiweb_exp_url" attrs="{'required': [('pabiweb_active', '=', True)]}" class="oe_inline"/>
                             </div>
