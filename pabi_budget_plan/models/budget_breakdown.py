@@ -159,7 +159,6 @@ class BudgetBreakdown(models.Model):
             'invest_asset':
             'pabi_chartfield.act_account_budget_view_invest_asset',
         }
-        # elif self.chart_view == 'invest_asset':
         action = self.env.ref(_ACTION[self.chart_view])
         result = action.read()[0]
         budget_ids = self.line_ids.mapped(lambda l: l.budget_id).ids
