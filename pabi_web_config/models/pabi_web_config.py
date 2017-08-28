@@ -15,6 +15,10 @@ class PABIWebConfigSettings(models.TransientModel):
         string="Open Connection to PABI Web.",
         related='company_id.pabiweb_active',
     )
+    pabiweb_hr_url = fields.Char(
+        string='PABI Web URL for HR Salary',
+        related='company_id.pabiweb_hr_url',
+    )
     pabiweb_exp_url = fields.Char(
         string='PABI Web URL for Expense',
         related='company_id.pabiweb_exp_url',

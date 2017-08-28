@@ -33,6 +33,9 @@
                         </button>
                     </div>
                 </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/field[@name='move_ids']/tree/field[@name='ref']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <!-- <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
@@ -69,6 +72,9 @@
                     <field name="research_type" widget="radio" />
                     <field name="contract_number" attrs="{'invisible': [('research_type', '=', False)]}"/>
                 </field>
+                <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/field[@name='move_ids']/tree/field[@name='ref']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <!-- <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
