@@ -21,5 +21,6 @@ Functions
         "base",
     ],
     "data": [
+        "data/config_data.xml",
     ],
 }
