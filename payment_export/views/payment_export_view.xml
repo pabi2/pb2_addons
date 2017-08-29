@@ -53,10 +53,12 @@
             <field name="arch" type="xml">
                 <form string="Payment Export">
                     <header>
-                        <!-- Auto done when print -->
-                        <!-- <button name="action_done" string="Done" states="draft" type="object" class="oe_highlight"/> -->
-                        <!--                    <button name="action_cancel" string="Cancel" states="done" type="object" />-->
-                        <button name="%(action_payment_export_cancel)d" string="Cancel" states="done" type="action"/>
+                        <!-- Auto done when print for transfer case -->
+                        <button name="action_done" string="Done"
+                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('transfer_type', '!=', False)]}"
+                          type="object" class="oe_highlight"/>
+                        <!--                    <button name="action_cancel" string="Cancel" states="done" type="object" />
+                        <button name="%(action_payment_export_cancel)d" string="Cancel" states="done" type="action"/>-->
                         <!--                    <button name="action_draft" string="Reset to Draft" states="cancel" type="object" /-->
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
