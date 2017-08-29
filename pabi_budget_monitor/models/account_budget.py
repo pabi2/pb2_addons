@@ -33,7 +33,7 @@ class AccountBudget(models.Model):
         # 'invest_asset_categ_id': 'Invest. Asset Category',  # (not dimension)
         'invest_asset_id': 'Invest. Asset',
         # - Construction
-        'invest_construct_id': 'Construction',
+        'invest_construction_id': 'Construction',
         'invest_construction_phase_id': 'Construction Phase',
     }
 
@@ -115,6 +115,7 @@ class AccountBudget(models.Model):
         for l in doc_lines:
             val = ()
             for f in args:
+                print args
                 val += (l[f],)
             if False not in val:
                 combinations.append(val)
