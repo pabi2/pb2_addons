@@ -31,11 +31,12 @@ class AccountJournal(models.Model):
     def _compute_bank_id(self):
         Bank = self.env['res.partner.bank']
         for journal in self:
-            banks = Bank.search([('journal_id', '=', journal.id)])
+            banks = Bank.search([('journal_id', '=', journal.id),
+                                 ('state', '=', 'CA')])  # Current
             if banks and len(banks._ids) > 1:
                 raise ValidationError(
                     _('Journal %s is used in more than '
-                      'one bank account!') % (journal.name,))
+                      'one current bank account!') % (journal.name,))
             journal.bank_id = banks and banks[0] or False
 
 

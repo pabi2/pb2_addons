@@ -322,8 +322,9 @@ class PaymentExport(models.Model):
                     cheque_lot = cheque_register.cheque_lot_id
                     cheque_number = cheque_register.number
                     cheque_date = export.date_value
-                    bank_name = cheque_lot.journal_id.bank_id.name
-                    bank_branch = cheque_lot.journal_id.bank_id.bank_branch
+                    bank = cheque_lot.journal_id.bank_id
+                    bank_name = bank and bank.name_get()[0][1]
+                    bank_branch = bank and bank.bank_branch.name_get()[0][1]
                     line.voucher_id.write({
                         'date_cheque': cheque_date,
                         'number_cheque': cheque_number,
