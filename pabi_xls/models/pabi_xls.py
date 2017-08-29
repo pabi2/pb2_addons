@@ -84,7 +84,9 @@ class PABIXls(models.AbstractModel):
               ['id', 'asset_id', ...]
         """
         decoded_data = base64.decodestring(file)
-        ftemp = 'temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
+        ConfParam = self.env['ir.config_parameter']
+        ptemp = ConfParam.get_param('path_file_temp')
+        ftemp = ptemp + '/temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
         f = open(ftemp + '.xls', 'wb+')
         f.write(decoded_data)
         f.seek(0)
