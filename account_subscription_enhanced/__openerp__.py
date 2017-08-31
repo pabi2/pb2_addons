@@ -26,6 +26,7 @@ This module enhance Define Recurring Enteries window with followings,
         'l10n_th_account',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/account_data.xml',
         'views/account_view.xml',
         'wizard/account_subscription_generate_view.xml',

@@ -226,5 +226,5 @@ class PABIPartnerDunningPrintHistory(models.Model):
         result = []
         for history in self:
             result.append((history.id, "(%s) %s" %
-                          (history.report_type, history.date_print)))
+                           (history.report_type, history.date_print)))
         return result
