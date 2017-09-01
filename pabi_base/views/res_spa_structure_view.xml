@@ -325,6 +325,18 @@
                                 </tree>
                             </field>
                         </page>
+                        <page string="Other Info">
+                            <group>
+                                <group>
+                                    <field name="fund_type_id"/>
+                                    <field name="operation_id"/>
+                                </group>
+                                <group>
+                                    <field name="project_type_id"/>
+                                    <field name="master_plan_id"/>
+                                </group>
+                            </group>
+                        </page>
                     </notebook>
                 </form>
             </field>

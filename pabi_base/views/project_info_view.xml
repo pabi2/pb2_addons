@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Fund Type -->
+        <record id="action_project_fund_type" model="ir.actions.act_window">
+            <field name="name">Fund Type</field>
+            <field name="res_model">project.fund.type</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Fund Type" id="menu_project_fund_type" action="action_project_fund_type" parent="menu_res_project" sequence="10"/>
+
+        <!-- Type -->
+        <record id="action_project_type" model="ir.actions.act_window">
+            <field name="name">Type</field>
+            <field name="res_model">project.type</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Type" id="menu_project_type" action="action_project_type" parent="menu_res_project" sequence="20"/>
+
+        <!-- Operation -->
+        <record id="action_project_operation" model="ir.actions.act_window">
+            <field name="name">Operation</field>
+            <field name="res_model">project.operation</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Operation" id="menu_project_operation" action="action_project_operation" parent="menu_res_project" sequence="30"/>
+
+        <!-- Master Plan -->
+        <record id="action_project_master_plan" model="ir.actions.act_window">
+            <field name="name">Master Plan</field>
+            <field name="res_model">project.master.plan</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Master Plan" id="menu_project_master_plan" action="action_project_master_plan" parent="menu_res_project" sequence="40"/>
+
+    </data>
+</openerp>

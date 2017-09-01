@@ -36,6 +36,7 @@ org -> sector -> subsector -> division -> section -> costcenter
     "data": [
         # Data
         'data/fund_data.xml',
+        'data/project_info_data.xml',
         # security
         'security/security_groups.xml',
         'security/ir.model.access.csv',
@@ -48,6 +49,7 @@ org -> sector -> subsector -> division -> section -> costcenter
         'views/res_personnel_structure_view.xml',
         'views/res_investment_structure_view.xml',
         'views/res_dimension_view.xml',
+        'views/project_info_view.xml',
     ],
     "demo": [
     ]
