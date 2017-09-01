@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="unreconciled_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.2100000000000075"/>
+	<property name="ireport.zoom" value="0.8264462809917404"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="style1" mode="Opaque" backcolor="#F5FF00">
@@ -87,7 +87,7 @@ order by id, source]]>
 	<group name="UniqueID" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
 		<groupHeader>
-			<band height="116">
+			<band height="128">
 				<textField>
 					<reportElement style="nostyle" mode="Transparent" x="0" y="18" width="802" height="25"/>
 					<textElement textAlignment="Center" markup="none">
@@ -120,60 +120,60 @@ $F{report_type} == "bank_receipt" ? "รายงานเงินเข้า�
 					<textFieldExpression class="java.util.Date"><![CDATA[$F{date_report}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="nostyle" mode="Transparent" x="0" y="76" width="140" height="20"/>
+					<reportElement style="nostyle" mode="Transparent" x="0" y="81" width="140" height="18"/>
 					<textElement markup="none">
 						<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[Bank Account:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="nostyle" mode="Transparent" x="0" y="96" width="140" height="20"/>
+					<reportElement style="nostyle" mode="Transparent" x="0" y="108" width="140" height="20"/>
 					<textElement markup="none">
 						<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[Bank Name:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="nostyle" mode="Transparent" x="422" y="76" width="140" height="20"/>
+					<reportElement style="nostyle" mode="Transparent" x="422" y="81" width="140" height="18"/>
 					<textElement markup="none">
 						<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[Account Code:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="nostyle" mode="Transparent" x="422" y="96" width="140" height="20"/>
+					<reportElement style="nostyle" mode="Transparent" x="422" y="108" width="140" height="20"/>
 					<textElement markup="none">
 						<font size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[Bank Name:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="140" y="76" width="282" height="20"/>
-					<textElement>
-						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_account_name}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="140" y="96" width="282" height="20"/>
+					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="140" y="108" width="282" height="20"/>
 					<textElement>
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="562" y="76" width="240" height="20"/>
+					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="562" y="81" width="240" height="18"/>
 					<textElement>
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{account_code}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="562" y="96" width="240" height="20"/>
+					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="562" y="108" width="240" height="20"/>
 					<textElement>
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{account_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="nostyle" stretchType="RelativeToTallestObject" mode="Transparent" x="140" y="81" width="282" height="18"/>
+					<textElement>
+						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_account_name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
