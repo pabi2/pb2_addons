@@ -50,10 +50,21 @@ class PABIBankStatement(models.Model):
         'account.journal',
         string='Payment Method',
         domain=[('type', '=', 'bank')],
+        required=True,
+    )
+    partner_bank_id = fields.Many2one(
+        'res.partner.bank',
+        string='Bank Account',
+        domain=lambda self: [('partner_id', '=',
+                              self.env.user.company_id.partner_id.id)],
+        required=True,
     )
     account_id = fields.Many2one(
         'account.account',
+        related='journal_id.default_debit_account_id',
         string='Account',
+        store=True,
+        readonly=True,
     )
     doctype = fields.Selection(
         [('payment', 'Supplier Payment'),
@@ -86,16 +97,6 @@ class PABIBankStatement(models.Model):
         default=lambda self: fields.Date.context_today(self),
         readonly=True,
     )
-    date_from = fields.Date(
-        string='From Date',
-        required=True,
-        default=lambda self: fields.Date.context_today(self),
-    )
-    date_to = fields.Date(
-        string='To Date',
-        required=True,
-        default=lambda self: fields.Date.context_today(self),
-    )
     item_ids = fields.One2many(
         'pabi.bank.statement.item',
         'statement_id',
@@ -107,10 +108,6 @@ class PABIBankStatement(models.Model):
         'statement_id',
         string='Statement Import',
         copy=False,
-    )
-    import_error = fields.Text(
-        string='Import Errors',
-        readonly=True,
     )
     _sql_constraints = [
         ('name_unique', 'unique (name)', 'Bank Statement name must be unique!')
@@ -153,12 +150,17 @@ class PABIBankStatement(models.Model):
             self.transfer_type = False
 
     @api.onchange('journal_id')
-    def _onchange_journal_id(self):
-        if self.journal_id.default_debit_account_id != \
-                self.journal_id.default_credit_account_id:
-            self.account_id = False
-        else:
-            self.account_id = self.journal_id.default_debit_account_id
+    def onchange_journal_id(self):
+        self.partner_bank_id = False
+        if self.journal_id:
+            BankAcct = self.env['res.partner.bank']
+            banks = BankAcct.search([('journal_id', '=', self.journal_id.id)])
+            print banks
+            if self.report_type == 'bank_receipt':
+                banks = banks.filtered(lambda l: l.state == 'SA')
+            else:
+                banks = banks.filtered(lambda l: l.state == 'CA')
+            self.partner_bank_id = banks and banks[0] or False
 
     @api.multi
     def _prepare_move_items(self, move_lines):
@@ -195,14 +197,11 @@ class PABIBankStatement(models.Model):
         MoveLine = self.env['account.move.line']
         for rec in self:
             rec.item_ids.unlink()
-            rec.import_error = False
-            # Primary filter
-            domain = [('date_value', '>=', rec.date_from),
-                      ('date_value', '<=', rec.date_to), ]
-            if rec.journal_id:
-                domain.append(('journal_id', '=', rec.journal_id.id))
-            if rec.account_id:
-                domain.append(('account_id', '=', rec.account_id.id))
+            rec.import_ids.unlink()
+            # Primary filter, only PV not previously matched.
+            domain = [('match_import_id', '=', False),
+                      ('journal_id', '=', rec.journal_id.id),
+                      ('account_id', '=', rec.account_id.id)]
             if rec.doctype:
                 domain.append(('doctype', '=', rec.doctype))
             move_lines = MoveLine.search(domain)
@@ -245,7 +244,6 @@ class PABIBankStatement(models.Model):
     def action_import_xls(self):
         for rec in self:
             rec.import_ids.unlink()
-            rec.import_error = False
             if not rec.import_file:
                 continue
             self.env['pabi.xls'].import_xls(
@@ -274,7 +272,7 @@ class PABIBankStatement(models.Model):
         elif self.match_method == 'date_value':
             # Match by document nubmer (PV) and amount
             match_criteria = """
-                item.date_vallue = import.date_vallue
+                item.date_value = import.date_value
                 and ((item.debit > 0 and item.debit = import.credit) or
                     (item.credit > 0 and item.credit = import.debit))
             """
@@ -285,7 +283,9 @@ class PABIBankStatement(models.Model):
         for rec in self:
             # Clear old matching
             rec.item_ids.write({'match_import_id': False})
-            rec.import_ids.write({'match_item_id': False})
+            rec.item_ids.mapped('move_line_id').\
+                write({'match_import_id': False})  # on move line
+            rec.import_ids.write({'match_import_id': False})
             match_criteria = rec._get_match_criteria()
             if not match_criteria:
                 raise ValidationError(_('No Reconcile Patter found!'))
@@ -300,6 +300,19 @@ class PABIBankStatement(models.Model):
                 limit 1)
                 where statement_id = %s
             """ % (match_criteria, rec.id, rec.id, rec.id))
+            # Update move line's match_item_id
+            rec._cr.execute("""
+                update account_move_line move set match_import_id =
+                (select item.match_import_id
+                from account_move_line move2 join
+                pabi_bank_statement_item item on item.move_line_id = move2.id
+                where move.id = move2.id
+                and item.statement_id = %s
+                limit 1)
+                where id in (select move_line_id
+                             from pabi_bank_statement_item
+                             where statement_id = %s)
+            """ % (rec.id, rec.id))
             # Update Bank (import), based on what already matched
             rec._cr.execute("""
                 update pabi_bank_statement_import bank set match_item_id =
@@ -310,6 +323,22 @@ class PABIBankStatement(models.Model):
                 limit 1)
                 where statement_id = %s
             """ % (rec.id, rec.id))
+
+            # Finally, if some line was matched before in other statement
+            print rec.id
+            rec._cr.execute("""
+                update pabi_bank_statement_import new
+                set prev_match_statement_id =
+                (select statement_id
+                from pabi_bank_statement_import old
+                where old.debit = new.debit and old.credit = new.credit
+                and (old.document = new.document
+                     or old.cheque_number = new.cheque_number)
+                and old.match_item_id is not null
+                limit 1)
+                where match_item_id is null
+                and statement_id = %s
+            """ % (rec.id, ))
         return
 
     # @api.multi
@@ -434,5 +463,10 @@ class PABIBankStatementImport(models.Model):
     match_item_id = fields.Many2one(
         'pabi.bank.statement.item',
         string='Matched ID',
+        ondelete='set null',
+    )
+    prev_match_statement_id = fields.Many2one(
+        'pabi.bank.statement',
+        string='Matched Previously',
         ondelete='set null',
     )
