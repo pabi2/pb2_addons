@@ -51,6 +51,17 @@ class ResPartner(models.Model):
         related='category_id.require_payable_account',
     )
 
+    @api.model
+    def _commercial_fields(self):
+        res = super(ResPartner, self)._commercial_fields()
+        active_id = self._context.get('active_id')
+        active_model = self._context.get('active_model')
+        if active_id and active_model == 'res.partner':
+            partner = self.browse(active_id)
+            if not partner.category_id.default_parent_vat:
+                res.remove('vat')
+        return res
+
     @api.multi
     @api.constrains('vat', 'taxbranch', 'category_id')
     def _check_vat_taxbranch_unique(self):
@@ -314,6 +325,11 @@ class ResPartnerCategory(models.Model):
         string='Unique Contact Names',
         default=True,
         help="When create this partner, validate for name uniqueness",
+    )
+    default_parent_vat = fields.Boolean(
+        string="Default with Company's Tax ID",
+        default=True,
+        help="For a contact, we can set to use parent tax id by default",
     )
 
     @api.multi

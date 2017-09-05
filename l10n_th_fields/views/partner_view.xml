@@ -9,11 +9,11 @@
             <field name="arch" type="xml">
                 <field name="display_name" position="after">
                     <field name="vat" string="Tax ID"/>
-                    <field name="taxbranch" string="Tax Branch ID"/>
+                    <field name="taxbranch"/>
                 </field>
             </field>
         </record>
-        
+
         <record id="view_partner_form" model="ir.ui.view">
             <field name="name">view.partner.form</field>
             <field name="model">res.partner</field>

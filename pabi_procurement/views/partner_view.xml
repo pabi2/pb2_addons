@@ -20,7 +20,8 @@
                 </p>
             </field>
         </record>
-        <record model="ir.ui.view" id="view_partner_form_ext">
+        <!-- Editing partner view should alwasy be in res_partner_ext -->
+        <!-- <record model="ir.ui.view" id="view_partner_form_ext">
             <field name="name">view.partner.form.ext</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="res_partner_ext.view_partner_form_ext"/>
@@ -33,10 +34,7 @@
                         <field name="taxbranch"/>
                     </group>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='is_government']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
             </field>
-        </record>
+        </record> -->
     </data>
 </openerp>

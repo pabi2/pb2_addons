@@ -111,7 +111,6 @@
                 <field name="function" position="before">
                     <field name="require_taxid" invisible="1"/>
                     <field name="require_taxbranch" invisible="1"/>
-                    <field name="is_government" string="Government"/>
                     <field name="vat" string="Tax ID" attrs="{'required': [('require_taxid', '=', True)]}"/>
                     <field name="taxbranch" string="Tax Branch ID" attrs="{'required': [('require_taxbranch', '=', True)]}"/>
                 </field>
@@ -120,7 +119,8 @@
                 </xpath>
                 <xpath expr="//kanban/templates//table[@class='oe_kanban_table']//h4" position="after">
                     <div t-if="record.taxbranch.raw_value">Tax Branch:
-                        <field name="taxbranch"/></div>
+                        <field name="taxbranch"/>
+                    </div>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@string='Contacts']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('id','=',False), ('is_company','=',False), ('child_ids', '=', [])]}</attribute>
@@ -149,7 +149,6 @@
                             <field name="fax"/>
                         </group>
                         <group>
-                            <field name="is_government" string="Government"/>
                             <field name="vat" string="Tax ID"/>
                             <field name="taxbranch" string="Tax Branch ID"/>
                             <field name="user_ids" invisible="1"/>
@@ -197,6 +196,7 @@
                 <field name="active" position="after">
                     <field name="check_partner_name_unique"/>
                     <field name="check_contact_name_unique"/>
+                    <field name="default_parent_vat"/>
                 </field>
             </field>
         </record>
