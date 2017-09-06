@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <openerp>
     <data>
+
+        <!-- Partner menu as list view and default both customer and supplier -->
+        <record id="base.action_partner_customer_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_customer': 1,'default_customer': 1,'default_supplier': 1}</field>
+        </record>
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_supplier': 1,'default_customer': 1,'default_supplier': 1}</field>
+        </record>
+
 
         <record id="base.action_partner_form_view1" model="ir.actions.act_window.view">
             <field eval="10" name="sequence"/>
