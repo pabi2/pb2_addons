@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+
+		<record id="view_voucher_create_bank_payment" model="ir.ui.view">
+			<field name="name">view.voucher.create.bank.payment</field>
+			<field name="model">voucher.create.bank.payment.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Create Bank Payment">
+					<p class="oe_grey">
+						From Payment Bank Intransit, this action will create draft Bank Payment. Once money is withdraw from target bank,
+						you can specify the bank account in Bank Payment and complete the operation.
+					</p>
+					<group>
+						<group>
+							<field name="payment_date"/>
+						</group>
+						<group>
+						</group>
+					</group>
+					<footer>
+						<button name="voucher_create_bank_payment" type="object" string="Create Bank Payment" class="oe_highlight"/>
+						or
+						<button special="cancel" class="oe_link" string="Cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+    <act_window id="action_voucher_create_bank_payment_multi"
+        multi="True"
+        key2="client_action_multi" name="Create Bank Payment"
+        res_model="voucher.create.bank.payment.wizard" src_model="account.voucher"
+        view_mode="form" target="new" view_type="form" context="{'bank_type': 'payment'}" />
+
+		<record id="action_voucher_create_bank_payment" model="ir.actions.act_window">
+			<field name="name">Create Bank Payment</field>
+			<field name="res_model">voucher.create.bank.payment.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="context">{}</field>
+			<field name="target">new</field>
+		</record>
+
+	</data>
+</openerp>
