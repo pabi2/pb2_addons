@@ -129,10 +129,7 @@ class SalesOrder(models.Model):
         res = {}
         # Final Preparation of fields and data
         fields, data = self._finalize_data_to_load(data_dict)
-        print fields
-        print data
         load_res = self.load(fields, data)
-        print load_res
         res_id = load_res['ids'] and load_res['ids'][0] or False
         if not res_id:
             res = {
