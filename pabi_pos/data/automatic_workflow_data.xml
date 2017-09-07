@@ -4,7 +4,7 @@
         <!-- Configure for each POS Machine -->
 
         <record id="pos_order" model="sale.workflow.process">
-            <field name="name">POS :: Confirmed + Transfered + Invoiced</field>
+            <field name="name">POS</field>
             <field name="picking_policy">one</field>
             <field name="order_policy">manual</field>
             <field name="invoice_quantity">order</field>
@@ -17,6 +17,10 @@
             <field name="warning"></field>
             <!-- NSTDA Specific -->
             <field name="run_now" eval="1"/>
+            <field name="operating_unit_id" eval="ref('base.res_ou_1')"/>
+            <field name="warehouse_id" eval="ref('pabi_pos.stock_warehouse_bookshop')"/>
+            <field name="taxbranch_id" eval="ref('base.res_taxbranch_4')"/>
+            <field name="section_id" eval="ref('base.res_section_1')"/>
         </record>
 
     </data>

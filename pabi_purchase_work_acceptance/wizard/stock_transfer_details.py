@@ -14,7 +14,8 @@ class StockTransferDetails(models.TransientModel):
         picking = Picking.browse(picking_ids)
         res = super(StockTransferDetails, self).default_get(fields)
         skip_wa = self._context.get('skip_work_acceptance', False)
-        if picking.picking_type_code == 'incoming' and not skip_wa:
+        if picking.picking_type_code == 'incoming' and not skip_wa and \
+                not picking.move_lines.filtered('origin_returned_move_id'):
             if len(picking.acceptance_id.acceptance_line_ids) == 0:
                 raise ValidationError(
                     _("You have to input Work Acceptance first."))

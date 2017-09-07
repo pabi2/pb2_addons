@@ -9,8 +9,10 @@
                 <xpath expr="/form" position="inside">
                     <group string="PABI2">
                         <field name="run_now"/>
-                        <field name="chartfield_id" required="1"/>
+                        <field name="operating_unit_id" required="1"/>
                         <field name="taxbranch_id" required="1"/>
+                        <field name="warehouse_id" required="1"/>
+                        <field name="section_id" required="1"/>
                     </group>
                 </xpath>
             </field>

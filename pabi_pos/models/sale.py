@@ -42,15 +42,5 @@ class SaleOrderLine(models.Model):
         process_id = self._context.get('workflow_process_id', False)
         if process_id:
             process = self.env['sale.workflow.process'].browse(process_id)
-            chartfield = process.chartfield_id
-            if chartfield.model == 'res.section':
-                res['section_id'] = chartfield.res_id
-            if chartfield.model == 'res.project':
-                res['project_id'] = chartfield.res_id
-            if chartfield.model == 'res.invest.construction.phase':
-                res['invest_construction_phase_id'] = chartfield.res_id
-            if chartfield.model == 'res.invest.asset':
-                res['invest_asset_id'] = chartfield.res_id
-            if chartfield.model == 'res.project':
-                res['project_id'] = chartfield.res_id
+            res['section_id'] = process.section_id.id
         return res
