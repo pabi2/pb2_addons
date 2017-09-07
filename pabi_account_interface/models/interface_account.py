@@ -55,7 +55,7 @@ class InterfaceAccountEntry(models.Model):
                     'project_id': False,
                     'taxbranch_id': u'ศูนย์เทคโนโลยีโลหะและวัสดุแห่งชาติ',
                     'date': u'2017-01-13',
-                    'date_maturity':  u'',
+                    'date_maturity': u'',
                 },
                 {
                     'name': u'Debit Line-2',
@@ -77,7 +77,7 @@ class InterfaceAccountEntry(models.Model):
                     'project_id': False,
                     'taxbranch_id': False,
                     'date': u'2017-01-13',
-                    'date_maturity':  u'',
+                    'date_maturity': u'',
                 }
             ]
         }
