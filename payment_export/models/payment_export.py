@@ -20,6 +20,12 @@ class PaymentExport(models.Model):
         required=True,
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
+    partner_bank_id = fields.Many2one(
+        'res.partner.bank',
+        string='Bank Account',
+        domain="[('partner_id', '=', company_partner_id)]",
+        required=True,
+    )
     payment_type = fields.Selection(
         [('cheque', 'Cheque'),
          ('transfer', 'Transfer')],
@@ -101,6 +107,12 @@ class PaymentExport(models.Model):
         required=True,
         default=lambda self: self.env.user.company_id,
     )
+    company_partner_id = fields.Many2one(
+        'res.partner',
+        string='Company Partner',
+        related='company_id.partner_id',
+        readonly=True,
+    )
     sum_amount = fields.Float(
         compute="_compute_sum_amount",
         string="Sum Amount",
@@ -131,6 +143,15 @@ class PaymentExport(models.Model):
         string='Filter',
         help="More filter. You can use complex search with comma and between.",
     )
+
+    @api.onchange('journal_id')
+    def onchange_journal_id(self):
+        self.partner_bank_id = False
+        if self.journal_id:
+            BankAcct = self.env['res.partner.bank']
+            banks = BankAcct.search([('journal_id', '=', self.journal_id.id),
+                                     ('state', '=', 'CA')])
+            self.partner_bank_id = banks and banks[0] or False
 
     @api.multi
     def _assign_line_sequence(self):
@@ -319,12 +340,13 @@ class PaymentExport(models.Model):
                          'payment_export_id': export.id}
                     )
                     cheque_register = line.cheque_register_id
-                    cheque_lot = cheque_register.cheque_lot_id
                     cheque_number = cheque_register.number
                     cheque_date = export.date_value
-                    bank = cheque_lot.journal_id.bank_id
+                    # bank account
+                    bank = export.partner_bank_id
                     bank_name = bank and bank.name_get()[0][1]
                     bank_branch = bank and bank.bank_branch.name_get()[0][1]
+                    # --
                     line.voucher_id.write({
                         'date_cheque': cheque_date,
                         'number_cheque': cheque_number,

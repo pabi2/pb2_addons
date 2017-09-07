@@ -49,7 +49,7 @@ class PABIUnreconciledReport(models.Model):
             left outer join account_account acct
                 on acct.id = a.account_id
             left outer join res_partner_bank bank
-                on bank.journal_id = a.journal_id
+                on bank.id = a.partner_bank_id
             left outer join res_users usr
                 on usr.id = b.validate_user_id
             left outer join res_partner rp on rp.id = usr.partner_id

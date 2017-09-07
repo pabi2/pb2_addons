@@ -17,10 +17,6 @@ class ResPartner(models.Model):
     create_date = fields.Datetime(
         readonly=True,
     )
-    is_government = fields.Boolean(
-        string='Government',
-        compute='_is_government',
-    )
     search_key = fields.Char(
         string='Search Key',
         compute='_get_search_key',
@@ -42,57 +38,96 @@ class ResPartner(models.Model):
         'res.partner.category',
         string='Supplier Category',
     )
-    customer_category_id = fields.Many2one(
-        'res.partner.category',
-        string='Customer Category',
-    )
     tag_ids = fields.Many2many(
         'res.partner.tag',
         string='Tags',
     )
-    is_shop = fields.Boolean(
-        string='Shop',
+    require_receivable_account = fields.Boolean(
+        string='Require Receivable Account',
+        related='category_id.require_receivable_account',
+    )
+    require_payable_account = fields.Boolean(
+        string='Require Payable Account',
+        related='category_id.require_payable_account',
     )
 
-    @api.one
-    @api.constrains('name', 'supplier', 'customer', 'is_shop')
-    def _check_partner_name(self):
-        partner_ids = self.search([('name', '=', self.name),
-                                   '|', ('supplier', '=', True),
-                                   ('customer', '=', True)])
-        if len(partner_ids) > 1 and not self.is_shop:
-            raise ValidationError("Partner Name must be unique!")
+    @api.model
+    def _commercial_fields(self):
+        res = super(ResPartner, self)._commercial_fields()
+        active_id = self._context.get('active_id')
+        active_model = self._context.get('active_model')
+        if active_id and active_model == 'res.partner':
+            partner = self.browse(active_id)
+            if not partner.category_id.default_parent_vat:
+                res.remove('vat')
+        return res
 
-    @api.one
-    @api.constrains('vat', 'taxbranch', 'category_id', 'is_shop')
+    @api.multi
+    @api.constrains('vat', 'taxbranch', 'category_id')
     def _check_vat_taxbranch_unique(self):
-        if not self.is_government and \
-                self.category_id.require_tax_branch_unique:
-            partners = self.search([('vat', '=', self.vat),
-                                    ('taxbranch', '=', self.taxbranch)])
-            if len(partners) > 1 and not self.is_shop:
-                raise ValidationError(_(
-                    "Tax ID + Tax Branch ID must be unique for "
-                    "non-governmental organization!"))
+        for rec in self:
+            if rec.category_id.require_tax_branch_unique:
+                partners = self.search([('vat', '=', rec.vat),
+                                        ('taxbranch', '=', rec.taxbranch)])
+                if len(partners) > 1:
+                    raise ValidationError(_(
+                        "Tax ID + Tax Branch ID must be unique!"))
 
-    @api.one
+    @api.multi
     @api.constrains('vat')
     def _check_vat(self):
-        if self.require_taxid and self.vat > 0 and len(self.vat) != 13:
-            raise ValidationError(_("Tax ID must be 13 digits!"))
+        for rec in self:
+            if rec.require_taxid and rec.vat > 0 and len(rec.vat) != 13:
+                raise ValidationError(_("Tax ID must be 13 digits!"))
 
-    @api.one
+    @api.multi
     @api.constrains('taxbranch')
     def _check_taxbranch(self):
-        if self.require_taxbranch and self.taxbranch > 0 and \
-                len(self.taxbranch) != 5:
-            raise ValidationError("Tax Branch ID must be 5 digits!")
+        for rec in self:
+            if rec.require_taxbranch and rec.taxbranch > 0 and \
+                    len(rec.taxbranch) != 5:
+                raise ValidationError("Tax Branch ID must be 5 digits!")
 
-    @api.one
+    @api.multi
     @api.constrains('is_company', 'parent_id', 'child_ids')
     def _check_is_company(self):
-        if not self.is_company and self.child_ids:
-            raise ValidationError(_("A contact must not have child companies"))
+        for rec in self:
+            if not rec.is_company and rec.child_ids:
+                raise ValidationError(
+                    _("A contact must not have child companies"))
+
+    @api.multi
+    @api.constrains('name')
+    def _check_partner_name(self):
+        for rec in self:
+            if rec.category_id.check_partner_name_unique:
+                partners = self.search([('is_company', '=', True),
+                                        ('parent_id', '=', False),
+                                        ('name', '=', rec.name),
+                                        '|', ('supplier', '=', True),
+                                        ('customer', '=', True)])
+                if len(partners) > 1:
+                    raise ValidationError(_("Partner name must be unique!"))
+
+    @api.multi
+    @api.constrains('child_ids', 'name')
+    def _check_contact_name_unique(self):
+        for rec in self:
+            # Edit from company's contact
+            if rec.child_ids and rec.category_id.check_contact_name_unique:
+                names = rec.child_ids.mapped('name')
+                counter = {x: names.count(x) for x in names}
+                for count in counter.values():
+                    if count > 1:
+                        raise ValidationError(
+                            _("Contact name must be unique!"))
+            # Edit from contact itself
+            if rec.parent_id and \
+                    rec.parent_id.category_id.check_contact_name_unique:
+                partners = self.search([('parent_id', '=', rec.parent_id.id),
+                                        ('name', '=', rec.name)])
+                if len(partners) > 1:
+                    raise ValidationError(_("Contact name must be unique!"))
 
     @api.model
     def create(self, vals):
@@ -147,15 +182,10 @@ class ResPartner(models.Model):
     @api.v7
     def onchange_address(self, cr, uid, ids,
                          use_parent_address, parent_id, context=None):
-        result = super(ResPartner, self).\
-            onchange_address(
-                cr,
-                uid,
-                ids,
-                use_parent_address,
-                parent_id,
-                context=context
-            )
+        result = super(ResPartner, self).onchange_address(cr, uid, ids,
+                                                          use_parent_address,
+                                                          parent_id,
+                                                          context=context)
         parent = self.browse(cr, uid, parent_id, context=context)
         category_id = parent.category_id.id or False
         if category_id:
@@ -167,27 +197,23 @@ class ResPartner(models.Model):
                     {'value': {'category_id': category_id}})
         return result
 
-    @api.one
+    @api.multi
     @api.depends('category_id', 'parent_id')
     def _get_require_taxbranch(self):
-        if self.parent_id:  # If a contact, never set as required.
-            self.require_taxid = False
-            self.require_taxbranch = False
-        elif self.category_id:
-            self.require_taxid = self.category_id.require_taxid
-            self.require_taxbranch = self.category_id.require_taxbranch
+        for rec in self:
+            if rec.parent_id:  # If a contact, never set as required.
+                rec.require_taxid = False
+                rec.require_taxbranch = False
+            elif rec.category_id:
+                rec.require_taxid = rec.category_id.require_taxid
+                rec.require_taxbranch = rec.category_id.require_taxbranch
 
-    @api.one
-    @api.depends('category_id')
-    def _is_government(self):
-        # TODO: set False for now
-        self.is_government = False
-
-    @api.one
+    @api.multi
     @api.depends('name')
     def _get_search_key(self):
-        if type(self.id) in (int,):
-            self.search_key = '%0*d' % (7, self.id)
+        for rec in self:
+            if type(rec.id) in (int,):
+                rec.search_key = '%0*d' % (7, rec.id)
 
     @api.onchange('category_id')
     def _onchange_category_id(self):
@@ -238,27 +264,47 @@ class ResPartnerCategory(models.Model):
         'res.partner.category',
         domain="[('parent_id', '=', False)]",
     )
+    require_payable_account = fields.Boolean(
+        string='Require Payable Account',
+        default=True,
+    )
     payable_account_id = fields.Many2one(
         'account.account',
         string='Account Payable',
         domain="[('type', '=', 'payable')]",
         help="This account will be used as default payable account "
-        "for a partner, when it is being created.",)
+        "for a partner, when it is being created.",
+    )
+    require_receivable_account = fields.Boolean(
+        string='Require Receivable Account',
+        default=True,
+    )
     receivable_account_id = fields.Many2one(
         'account.account',
         string='Account Receivable',
         domain="[('type', '=', 'receivable')]",
         help="This account will be used as default receivable account "
-        "for a partner, when it is being created.",)
+        "for a partner, when it is being created.",
+    )
+    property_account_receivable = fields.Many2one(
+        'account.account',
+        required=False,
+    )
+    property_account_payable = fields.Many2one(
+        'account.account',
+        required=False,
+    )
     require_taxid = fields.Boolean(
         string='Require Tax ID',
         default=False,
-        help="When create partner in this category, always require Tax ID")
+        help="When create partner in this category, always require Tax ID",
+    )
     require_taxbranch = fields.Boolean(
         string='Require Tax Branch ID',
         default=False,
         help="When create partner in this category, "
-        "always require TTax Branch ID")
+        "always require Tax Branch ID",
+    )
     fiscal_position_id = fields.Many2one(
         'account.fiscal.position',
         string='Default Fiscal Position',
@@ -268,7 +314,23 @@ class ResPartnerCategory(models.Model):
     require_tax_branch_unique = fields.Boolean(
         string='Validate Tax/Branch Unique',
         help="Non-Government, checking this flag will ensure that Tax ID "
-        "and Branch combination must be unique per company of this category")
+        "and Branch combination must be unique per company of this category",
+    )
+    check_partner_name_unique = fields.Boolean(
+        string='Unique Partner Name',
+        default=True,
+        help="When create this partner, validate for name uniqueness",
+    )
+    check_contact_name_unique = fields.Boolean(
+        string='Unique Contact Names',
+        default=True,
+        help="When create this partner, validate for name uniqueness",
+    )
+    default_parent_vat = fields.Boolean(
+        string="Default with Company's Tax ID",
+        default=True,
+        help="For a contact, we can set to use parent tax id by default",
+    )
 
     @api.multi
     def name_get(self):
@@ -276,6 +338,14 @@ class ResPartnerCategory(models.Model):
         for category in self:
             res.append((category.id, category.name))
         return res
+
+    @api.onchange('require_receivable_account')
+    def _onchange_require_receivable_account(self):
+        self.receivable_account_id = False
+
+    @api.onchange('require_payable_account')
+    def _onchange_require_payable_account(self):
+        self.payable_account_id = False
 
 
 class ResPartnerTag(models.Model):

@@ -13,31 +13,11 @@ class AccountJournal(models.Model):
         copy=False,
         help="Journal of type 'bank' can contain cheque lot",
     )
-    bank_id = fields.Many2one(
-        'res.partner.bank',
-        string='Bank Account',
-        compute='_compute_bank_id',
-        readonly=True,
-        help="Virtual bank accout. As 1 journal is for 1 bank",
-    )
     export_config_ids = fields.One2many(
         'journal.export.config',
         'journal_id',
         string='Payment Export Pack',
     )
-
-    @api.multi
-    @api.depends()
-    def _compute_bank_id(self):
-        Bank = self.env['res.partner.bank']
-        for journal in self:
-            banks = Bank.search([('journal_id', '=', journal.id),
-                                 ('state', '=', 'CA')])  # Current
-            if banks and len(banks._ids) > 1:
-                raise ValidationError(
-                    _('Journal %s is used in more than '
-                      'one current bank account!') % (journal.name,))
-            journal.bank_id = banks and banks[0] or False
 
 
 class JournalExportConfig(models.Model):

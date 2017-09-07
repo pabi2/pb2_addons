@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="action_pos_orders" model="ir.actions.act_window">
+            <field name="name">POS Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sale.view_sales_order_filter"/>
+            <field name="context" eval="{'default_workflow_process_id': ref('pabi_pos.pos_order'), 'default_order_type': 'sale_order'}"/>
+            <field name="domain">[('workflow_process_id', '!=', False)]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a POS Order.
+                </p><p>
+                    Odoo will help you efficiently handle the complete sales flow:
+                    pos order, delivery, invoicing and payment.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="action_pos_orders" id="menu_pos_order" parent="base.menu_sales" sequence="7" groups="base.group_sale_salesman,base.group_sale_manager"/>
+
+
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">view.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field[@name='order_line']" position="attributes">
+                    <attribute name="context">{'order_type': order_type,
+                                               'workflow_process_id': workflow_process_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

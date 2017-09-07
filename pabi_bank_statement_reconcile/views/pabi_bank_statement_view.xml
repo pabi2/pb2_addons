@@ -10,9 +10,9 @@
             <field name="arch" type="xml">
                 <form string="Bank Statement" class="oe_form_configuration">
                     <div class="oe_button_box oe_right">
-                        <button name="action_get_statement" string="Get Statement" type="object" class="oe_inline"/>
-                        <button name="action_import_xls" string="Import Data" type="object" class="oe_inline" attrs="{'invisible': [('import_file', '=', False)]}"/>
-                        <button name="action_reconcile" string="Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('import_ids', '=', [])]}"/>
+                        <button name="action_get_statement" string="1) Get Statement" type="object" class="oe_inline"/>
+                        <button name="action_import_xls" string="2) Import Data" type="object" class="oe_inline" attrs="{'invisible': [('import_file', '=', False)]}"/>
+                        <button name="action_reconcile" string="3) Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('import_ids', '=', [])]}"/>
                     </div>
                     <div class="oe_title">
                         <h1>
@@ -32,18 +32,17 @@
                             <field name="import_file" filename="import_file_name"/>
                         </group>
                     </group>
-                    <group>
-                        <group string="Filtered By">
+                    <group string="Filtered By">
+                        <group>
                             <field name="doctype"/>
                             <field name="no_cancel_doc" attrs="{'invisible': [('doctype', '=', False)]}"/>
                             <field name="payment_type"/>
                             <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')]}"/>
-                            <field name="journal_id"/>
-                            <field name="account_id"/>
                         </group>
-                        <group string="Value Date">
-                            <field name="date_from"/>
-                            <field name="date_to"/>
+                        <group>
+                            <field name="journal_id"/>
+                            <field name="partner_bank_id"/>
+                            <field name="account_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -77,9 +76,9 @@
                                     <field name="debit" sum="Debit"/>
                                     <field name="credit" sum="Credit"/>
                                     <field name="match_item_id" widget="many2onebutton" string="Reconciled"/>
+                                    <field name="prev_match_statement_id" widget="many2one_clickable"/>
                                 </tree>
                             </field>
-                            <field name="import_error"/>
                         </page>
                     </notebook>
                 </form>
@@ -93,8 +92,8 @@
                 <tree string="Bank Statement">
                     <field name="name"/>
                     <field name="journal_id"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
+                    <field name="date_report"/>
+                    <field name="report_type"/>
                 </tree>
             </field>
         </record>

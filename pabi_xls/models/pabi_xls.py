@@ -38,7 +38,7 @@ class PABIXls(models.AbstractModel):
             if line and i == 0:
                 line = '"id",' + line
             elif line:
-                line = '"' + str(i) + '",' + line
+                line = '%s.%s' % ('pabi_xls', uuid.uuid4()) + ',' + line
             txt_lines.append(line)
             i += 1
         file_txt = '\n'.join(txt_lines)

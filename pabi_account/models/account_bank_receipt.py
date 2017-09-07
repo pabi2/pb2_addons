@@ -8,8 +8,8 @@ class AccountBankReceipt(models.Model):
 
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
-        domain="[('partner_id', '=', company_partner_id),"
-        "('state', '=', 'SA')]",
+        domain="[('partner_id', '=', company_partner_id)]",
+        required=True,
     )
     bank_account_id = fields.Many2one(
         'account.account',
@@ -17,12 +17,6 @@ class AccountBankReceipt(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
-    )
-    partner_bank_id_readonly = fields.Many2one(
-        'res.partner.bank',
-        related='partner_bank_id',
-        string='Bank Account',
-        readonly=True,
     )
 
     @api.onchange('bank_account_id')

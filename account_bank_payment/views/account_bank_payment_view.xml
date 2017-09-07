@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- shorten version of move line -->
+        <record id="view_account_move_line_tree" model="ir.ui.view">
+            <field name="name">view.account.move.line.tree</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="period_id" readonly="1"/>
+                    <field name="date" readonly="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="ref" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="account_id" readonly="1"/>
+                    <field name="debit" sum="Total Debit" readonly="1"/>
+                    <field name="credit" sum="Total Credit" readonly="1"/>
+                    <field name="reconcile_id" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_bank_payment_view_form" model="ir.ui.view">
+            <field name="name">account.bank.payment.form</field>
+            <field name="model">account.bank.payment</field>
+            <field name="arch" type="xml">
+                <form string="Bank Payment">
+                    <header>
+                        <button name="validate_bank_payment" states="draft" string="Validate" type="object" class="oe_highlight"/>
+                        <button name="backtodraft" states="cancel" string="Back to Draft" type="object"/>
+                        <button name="cancel_bank_payment" states="done" string="Cancel" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="Bank Payment"/>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <group name="main">
+                            <group name="left">
+                                <field name="payment_date"/>
+                                <field name="journal_id" widget="selection"/>
+                                <field name="journal_default_account_id" invisible="1"/>
+                                <field name="currency_id" groups="base.group_multi_currency"/>
+                                <field name="partner_bank_id"/>
+                                <field name="bank_account_id"/>
+                            </group>
+                            <group name="right">
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="company_partner_id" invisible="1"/>
+                                <field name="currency_none_same_company_id" invisible="1"/>
+                                <field name="intransit_count"/>
+                                <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="move_id"/>
+                                <field name="validate_user_id"/>
+                                <field name="validate_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Bank Intransit" name="bank_intransit">
+                                <field
+                                    name="bank_intransit_ids"
+                                    nolabel="1"
+                                    widget="many2many"
+                                    domain="[('reconcile_id', '=', False),
+                                              ('credit', '>', 0),
+                                              ('currency_id', '=', currency_none_same_company_id),
+                                              ('journal_id', '=', journal_id),
+                                              ('account_id', '=', journal_default_account_id)]"
+                                    context="{'currency': currency_id,
+                                          'journal_id': journal_id,
+                                          'tree_view_ref': 'account_bank_payment.view_account_move_line_tree'}" />
+                                <field name="note"/>
+                            </page>
+                            <page string="Journal Items" attrs="{'invisible': [('state','in', ('draft'))]}">
+                                <field name="move_ids" readonly="1">
+                                    <tree string="Journal Items">
+                                        <field name="move_id"/>
+                                        <field name="ref"/>
+                                        <field name="date"/>
+                                        <field name="statement_id"/>
+                                        <field name="partner_id"/>
+                                        <field name="account_id"/>
+                                        <field name="name"/>
+                                        <field name="debit" sum="Total Debit"/>
+                                        <field name="credit" sum="Total Credit"/>
+                                        <field name="state"/>
+                                        <field name="reconcile_id"/>
+                                        <field name="amount_currency" groups="base.group_multi_currency"/>
+                                        <field name="currency_id" groups="base.group_multi_currency"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_bank_payment_view_tree" model="ir.ui.view">
+            <field name="name">account.bank.payment.tree</field>
+            <field name="model">account.bank.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Bank Payment" colors="blue:state=='draft';">
+                    <field name="name"/>
+                    <field name="payment_date"/>
+                    <field name="journal_id"/>
+                    <field name="partner_bank_id"/>
+                    <field name="intransit_count"/>
+                    <field name="total_amount"/>
+                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="is_reconcile"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_bank_payment_search" model="ir.ui.view">
+            <field name="name">account.bank.payment.search</field>
+            <field name="model">account.bank.payment</field>
+            <field name="arch" type="xml">
+                <search string="Bank Payment Search">
+                    <field name="name" string="Bank Payment"/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                    <group string="Group By" name="groupby">
+                        <filter name="date_groupby" string="Payment Date" context="{'group_by': 'payment_date'}"/>
+                        <filter name="journal_groupby" string="Journal" context="{'group_by': 'journal_id'}"/>
+                        <filter name="currency_groupby" string="Currency" context="{'group_by': 'currency_id'}"/>
+                        <filter name="partner_bank_groupby" string="Bank Account" context="{'group_by': 'partner_bank_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_bank_payment_tree" model="ir.actions.act_window">
+            <field name="name">Bank Payments</field>
+            <field name="res_model">account.bank.payment</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="action_bank_payment_tree" id="menu_bank_payment_tree" parent="account.menu_finance_bank_and_cash" sequence="30"/>
+
+    </data>
+</openerp>

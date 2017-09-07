@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <openerp>
     <data>
+
+        <!-- Partner menu as list view and default both customer and supplier -->
+        <record id="base.action_partner_customer_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_customer': 1,'default_customer': 1,'default_supplier': 1}</field>
+        </record>
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_supplier': 1,'default_customer': 1,'default_supplier': 1}</field>
+        </record>
+
 
         <record id="base.action_partner_form_view1" model="ir.actions.act_window.view">
             <field eval="10" name="sequence"/>
@@ -13,46 +23,45 @@
             <field name="context">{}</field>
         </record>
 
-    	<record id="view_res_partner_filter_ext" model="ir.ui.view">
+        <record id="view_res_partner_filter_ext" model="ir.ui.view">
             <field name="name">view.res.partner.filter.ext</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="arch" type="xml">
-            	<field name="name" position="attributes">
-            		<attribute name="filter_domain">
-            			['|','|','|','|','|',('name','ilike',self),('display_name','ilike',self),('ref','=',self),
-            			('email','ilike',self),('search_key','ilike',self),('vat','ilike',self)]
-            		</attribute>
-            	</field>
-            	<group position="inside">
-                       <filter string="Category" context="{'group_by': 'category_id'}"/>
-		        </group>
+                <field name="name" position="attributes">
+                    <attribute name="filter_domain">
+                        ['|','|','|','|','|',('name','ilike',self),('display_name','ilike',self),('ref','=',self), ('email','ilike',self),('search_key','ilike',self),('vat','ilike',self)]
+                    </attribute>
+                </field>
+                <group position="inside">
+                    <filter string="Category" context="{'group_by': 'category_id'}"/>
+                </group>
             </field>
         </record>
 
-    	<record id="view_partner_tree_ext" model="ir.ui.view">
+        <record id="view_partner_tree_ext" model="ir.ui.view">
             <field name="name">view.partner.tree.ext</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_tree"/>
             <field name="arch" type="xml">
-		        <field name="display_name" position="before">
-                	<field name="title"/>
-		        </field>
-		        <field name="display_name" position="after">
-                	<field name="category_id" string="Category"/>
-		            <!--<field name="vat" string="Tax ID"/>-->
-		            <!--<field name="taxbranch" string="Tax Branch ID"/>-->
-		        </field>
-		        <field name="phone" position="after">
-                	<field name="mobile"/>
-		        </field>
+                <field name="display_name" position="before">
+                    <field name="title"/>
+                </field>
+                <field name="display_name" position="after">
+                    <field name="category_id" string="Category"/>
+                    <!--<field name="vat" string="Tax ID"/>-->
+                    <!--<field name="taxbranch" string="Tax Branch ID"/>-->
+                </field>
+                <field name="phone" position="after">
+                    <field name="mobile"/>
+                </field>
                 <field name="email" position="after">
                     <field name="search_key"/>
-		        </field>
+                </field>
             </field>
         </record>
 
-    	<record id="l10n_th_view_partner_form" model="ir.ui.view">
+        <record id="l10n_th_view_partner_form" model="ir.ui.view">
             <field name="name">l10n_th.view.partner.form.ext</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="l10n_th_fields.view_partner_form"/>
@@ -69,98 +78,100 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_receivable']" position="after">
+                    <field name="require_receivable_account" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_receivable']" position="attributes">
+                    <attribute name="attrs">{'required': [('require_receivable_account', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_payable']" position="after">
+                    <field name="require_payable_account" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_payable']" position="attributes">
+                    <attribute name="attrs">{'required': [('require_payable_account', '=', True)]}</attribute>
+                </xpath>
+                <!-- For some reason, without using replace, it got error in install -->
                 <field name="category_id" position="replace">
-					<field name="category_id" placeholder="Supplier Category..."/>
-                    <field name="customer_category_id" placeholder="Customer Category..."/>
-                    <field name="tag_ids" widget="many2many_tags" placeholder="Tags..." style="width: 70%%"/>
-				</field>
-	            <field name="category_id" position="attributes" >
-	            	<!--<attribute name="domain">[('parent_id','=',False)]</attribute>-->
-	            	<attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'required': [('supplier','=',True)]}</attribute>
-	            </field>
-	            <field name="customer_category_id" position="attributes" >
-	            	<!--<attribute name="domain">[('parent_id','=',False)]</attribute>-->
-	            	<attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'required': [('customer','=',True)]}</attribute>
-	            </field>
-				<xpath expr="/form/sheet/group//field[@name='title']" position="replace" />
-				<field name="name" position="attributes">
-					<attribute name="style">width: 100%%</attribute>
-				</field>
-				<field name="name" position="before">
-	            	<field name="title" style="width: 50%%"  options='{"no_open": True}' placeholder="Title"/>
-				</field>
-	            <field name="name" position="after">
-	            	<field name="id" invisible="1"/>
-                	<field name="search_key"/>
+                    <field name="category_id" placeholder="Category..." domain="[('parent_id','=',False)]"/>
+                </field>
+                <!-- <field name="category_id" position="attributes">
+                    <attribute name="domain">[('parent_id','=',False)]</attribute>
+                </field> -->
+                <xpath expr="/form/sheet/group//field[@name='title']" position="replace"/>
+                <field name="name" position="attributes">
+                    <attribute name="style">width: 100%%</attribute>
+                </field>
+                <field name="name" position="before">
+                    <field name="title" style="width: 50%%" options='{"no_open": True}' placeholder="Title"/>
+                </field>
+                <field name="name" position="after">
+                    <field name="id" invisible="1"/>
+                    <field name="search_key"/>
                 </field>
                 <xpath expr="/form/sheet/notebook/page//field[@name='comment']" position="after">
-                	<p>
-                		<div class="oe_right">
-                			<label string="Creation Date" /><field name="create_date" />
-                		</div>
-                	</p>
+                    <p>
+                        <div class="oe_right">
+                            <label string="Creation Date"/><field name="create_date"/>
+                        </div>
+                    </p>
                 </xpath>
-	            <field name="city" position="attributes">
-	            	<attribute name="invisible">1</attribute>
-	            </field>
-		        <field name="function" position="before">
-		        	<field name="require_taxid" invisible="1"/>
-		        	<field name="require_taxbranch" invisible="1"/>
-		            <field name="is_government" string="Government"/>
-                    <field name="is_shop"/>
-		            <field name="vat" string="Tax ID" attrs="{'required': [('require_taxid', '=', True)]}"/>
-		            <field name="taxbranch" string="Tax Branch ID" attrs="{'required': [('require_taxbranch', '=', True)]}"/>
-		        </field>
-				<xpath expr="//kanban/field[@name='name']" position="after">
-                	<field name="taxbranch" />
+                <field name="city" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="function" position="before">
+                    <field name="require_taxid" invisible="1"/>
+                    <field name="require_taxbranch" invisible="1"/>
+                    <field name="vat" string="Tax ID" attrs="{'required': [('require_taxid', '=', True)]}"/>
+                    <field name="taxbranch" string="Tax Branch ID" attrs="{'required': [('require_taxbranch', '=', True)]}"/>
+                </field>
+                <xpath expr="//kanban/field[@name='name']" position="after">
+                    <field name="taxbranch"/>
                 </xpath>
                 <xpath expr="//kanban/templates//table[@class='oe_kanban_table']//h4" position="after">
-                	<div t-if="record.taxbranch.raw_value">Tax Branch: <field name="taxbranch"/></div>
+                    <div t-if="record.taxbranch.raw_value">Tax Branch:
+                        <field name="taxbranch"/>
+                    </div>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@string='Contacts']" position="attributes">
-                	<attribute name="attrs">{'invisible': ['|', ('id','=',False), ('is_company','=',False), ('child_ids', '=', [])]}</attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('id','=',False), ('is_company','=',False), ('child_ids', '=', [])]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/form[@string='Contact']//field[@name='category_id']" position="attributes">
-                	<attribute name="readonly">True</attribute> <!-- Do not allow changing of category_id, it will always follow parent. -->
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field/form[@string='Contact']//field[@name='category_id']" position="after">
-                	<field name="customer_category_id" readonly="1"/>
+                    <attribute name="readonly">True</attribute>
+                    <!-- Do not allow changing of category_id, it will always follow parent. -->
                 </xpath>
 
-               	<!-- Address Type = Readonly, as such, it can be "Contact" only -->
+                <!-- Address Type = Readonly, as such, it can be "Contact" only -->
                 <xpath expr="/form/sheet/group/group//field[@name='type']" position="attributes">
-                	<attribute name="readonly">True</attribute>
+                    <attribute name="readonly">True</attribute>
                 </xpath>
-               	<xpath expr="/form/sheet/notebook/page/field/form/sheet/div/h1" position="before">
-	            	<h3>
-	            		<field name="title" placeholder="Title" domain="[('domain','=','contact')]" style="width: 70%%" options='{"no_open": True}'/>
-	            	</h3>
-               	</xpath>
-               	<xpath expr="/form/sheet/notebook/page/field/form/sheet/group" position="replace">
-					<group>
+                <xpath expr="/form/sheet/notebook/page/field/form/sheet/div/h1" position="before">
+                    <h3>
+                        <field name="title" placeholder="Title" domain="[('domain','=','contact')]" style="width: 70%%" options='{"no_open": True}'/>
+                    </h3>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/form/sheet/group" position="replace">
+                    <group>
                         <group>
-	                        <field name="function" placeholder="e.g. Sales Director"/>
-	                        <field name="email"/>
-	                        <field name="phone"/>
-	                        <field name="mobile"/>
+                            <field name="function" placeholder="e.g. Sales Director"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
                             <field name="fax"/>
                         </group>
-                       	<group>
-				            <field name="is_government" string="Government"/>
-                            <field name="is_shop"/>
-				            <field name="vat" string="Tax ID"/>
-				            <field name="taxbranch" string="Tax Branch ID"/>
+                        <group>
+                            <field name="vat" string="Tax ID"/>
+                            <field name="taxbranch" string="Tax Branch ID"/>
                             <field name="user_ids" invisible="1"/>
                             <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
                         </group>
-               		</group>
+                    </group>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field//form[@string='Contact']//field[@name='type']" position="attributes">
-                	<attribute name="readonly">True</attribute>
+                    <attribute name="readonly">True</attribute>
                 </xpath>
-	            <field name="lang" position="attributes" >
-	            	<attribute name="invisible">True</attribute>
-	            </field>
+                <field name="lang" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
             </field>
         </record>
 
@@ -171,18 +182,31 @@
             <field name="inherit_id" ref="base.view_partner_category_form"/>
             <field name="arch" type="xml">
                 <group position="after">
-                	<group col="4" string="Tax ID / Branch ID">
-						<field name="require_taxid" />
-						<field name="require_tax_branch_unique" />
-						<field name="require_taxbranch" />
-                	</group>
-                    <group col="4" string="Accounting">
-                        <field name="receivable_account_id" />
-                        <field name="payable_account_id" />
-                        <field name="fiscal_position_id" />
+                    <group string="Tax ID / Branch ID">
+                        <group>
+                            <field name="require_taxid"/>
+                            <field name="require_taxbranch"/>
+                        </group>
+                        <group>
+                            <field name="require_tax_branch_unique"/>
+                        </group>
+                    </group>
+                    <group string="Accounting">
+                        <group>
+                            <field name="require_receivable_account"/>
+                            <field name="require_payable_account"/>
+                            <field name="fiscal_position_id"/>
+                        </group>
+                        <group>
+                            <field name="receivable_account_id" attrs="{'required': [('require_receivable_account', '=', True)]}"/>
+                            <field name="payable_account_id" attrs="{'required': [('require_payable_account', '=', True)]}"/>
+                        </group>
                     </group>
                 </group>
-                <field name="active" position="after">require_tax_branch_unique
+                <field name="active" position="after">
+                    <field name="check_partner_name_unique"/>
+                    <field name="check_contact_name_unique"/>
+                    <field name="default_parent_vat"/>
                 </field>
             </field>
         </record>
@@ -192,9 +216,9 @@
             <field name="model">res.partner.category</field>
             <field name="inherit_id" ref="base.view_partner_category_list"/>
             <field name="arch" type="xml">
-            	<field name="complete_name" position="after" >
-            		<field name="receivable_account_id" />
-            	</field>
+                <field name="complete_name" position="after">
+                    <field name="receivable_account_id"/>
+                </field>
             </field>
         </record>
 
@@ -239,22 +263,14 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to start a new Partner Tag.
-              </p>
+                <p class="oe_view_nocontent_create">
+                    Click to start a new Partner Tag.
+                </p>
             </field>
         </record>
 
-        <menuitem
-            id="purchase.menu_partner_categories_in_form" name="Partner Categories"
-            sequence="4"
-            parent="purchase.menu_purchase_partner_cat" groups="base.group_no_one"/>
+        <menuitem id="purchase.menu_partner_categories_in_form" name="Partner Categories" sequence="4" parent="purchase.menu_purchase_partner_cat" groups="base.group_no_one"/>
 
-        <menuitem action="action_partner_tag_form"
-            id="menu_partner_tag_form"
-            name="Partner Tags"
-            sequence="5"
-            parent="purchase.menu_purchase_partner_cat"
-            groups="base.group_no_one"/>
+        <menuitem action="action_partner_tag_form" id="menu_partner_tag_form" name="Partner Tags" sequence="5" parent="purchase.menu_purchase_partner_cat" groups="base.group_no_one"/>
     </data>
 </openerp>

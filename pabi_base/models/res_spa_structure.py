@@ -265,6 +265,23 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
         'res.program',
         string='Report Program',
     )
+    # Other Info
+    fund_type_id = fields.Many2one(
+        'project.fund.type',
+        string='Fund Type',
+    )
+    project_type_id = fields.Many2one(
+        'project.type',
+        string='Project Type',
+    )
+    operation_id = fields.Many2one(
+        'project.operation',
+        string='Operation',
+    )
+    master_plan_id = fields.Many2one(
+        'project.master.plan',
+        string='Master Plan',
+    )
     # prototype_ids = fields.One2many(
     #     'res.project.prototype',
     #     'project_id',

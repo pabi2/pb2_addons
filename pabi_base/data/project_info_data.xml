@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!-- Fund Type -->
+        <record id="project_fund_type_1" model="project.fund.type">
+            <field name="name">ภายในสวทช.</field>
+            <field name="code">1</field>
+        </record>
+        <record id="project_fund_type_2" model="project.fund.type">
+            <field name="name">นอกสวทช.เว้นเงินอุดหนุนรับ</field>
+            <field name="code">2</field>
+        </record>
+        <record id="project_fund_type_3" model="project.fund.type">
+            <field name="name">Matching Fund</field>
+            <field name="code">3</field>
+        </record>
+        <record id="project_fund_type_4" model="project.fund.type">
+            <field name="name">นอกสวทช.เงินอุดหนุนรับ</field>
+            <field name="code">4</field>
+        </record>
+        <record id="project_fund_type_9" model="project.fund.type">
+            <field name="name">สำนักงบประมาณ</field>
+            <field name="code">9</field>
+        </record>
+
+        <!-- Project Type -->
+        <record id="project_type_11" model="project.type">
+            <field name="name">ภายในสวทช.</field>
+            <field name="code">11</field>
+        </record>
+        <record id="project_type_12" model="project.type">
+            <field name="name">Research แหล่งเงินภายใน CPMO</field>
+            <field name="code">12</field>
+        </record>
+        <record id="project_type_13" model="project.type">
+            <field name="name">Research แหล่งเงินภายใน NC</field>
+            <field name="code">13</field>
+        </record>
+        <record id="project_type_14" model="project.type">
+            <field name="name">Research Extramural - CPMO</field>
+            <field name="code">14</field>
+        </record>
+        <record id="project_type_15" model="project.type">
+            <field name="name">Research Extramural - NC</field>
+            <field name="code">15</field>
+        </record>
+        <record id="project_type_21" model="project.type">
+            <field name="name">NResearch แหล่งเงินภายนอก</field>
+            <field name="code">21</field>
+        </record>
+        <record id="project_type_22" model="project.type">
+            <field name="name">NResearch แหล่งเงินภายใน CPMO</field>
+            <field name="code">22</field>
+        </record>
+        <record id="project_type_23" model="project.type">
+            <field name="name">NResearch แหล่งเงินภายใน NC</field>
+            <field name="code">23</field>
+        </record>
+        <record id="project_type_30" model="project.type">
+            <field name="name">Management Program / Cluster</field>
+            <field name="code">30</field>
+        </record>
+        <record id="project_type_90" model="project.type">
+            <field name="name">Construction</field>
+            <field name="code">90</field>
+        </record>
+
+        <!-- Project Operation -->
+        <record id="project_operation_1I" model="project.operation">
+            <field name="name">ดำเนินการเอง</field>
+            <field name="code">1I</field>
+        </record>
+        <record id="project_operation_2I" model="project.operation">
+            <field name="name">ดำเนินการร่วมกับหน่วยงานภายนอก</field>
+            <field name="code">2I</field>
+        </record>
+        <record id="project_operation_3E" model="project.operation">
+            <field name="name">สนับสนุนหน่วยงานภายนอก</field>
+            <field name="code">3E</field>
+        </record>
+
+        <!-- Project Master Plan -->
+        <record id="project_master_plan_21" model="project.master.plan">
+            <field name="name">การดำเนินการวิจัย พัฒนา ออกแบบและวิศวกรรม</field>
+            <field name="code">21</field>
+        </record>
+        <record id="project_master_plan_22" model="project.master.plan">
+            <field name="name">การสนับสนุนการวิจัย พัฒนา ออกแบบและวิศวกรรม</field>
+            <field name="code">22</field>
+        </record>
+        <record id="project_master_plan_23" model="project.master.plan">
+            <field name="name">การร่วมวิจัย พัฒนา ออกแบบและวิศวกรรม</field>
+            <field name="code">23</field>
+        </record>
+        <record id="project_master_plan_24" model="project.master.plan">
+            <field name="name">การรับจ้างวิจัย พัฒนา ออกแบบและวิศวกรรม</field>
+            <field name="code">24</field>
+        </record>
+        <record id="project_master_plan_31" model="project.master.plan">
+            <field name="name">สนับสนุนผลิตบุคลากรด้านวิจัย</field>
+            <field name="code">31</field>
+        </record>
+        <record id="project_master_plan_32" model="project.master.plan">
+            <field name="name">ยกระดับบุคลากรด้านการผลิต</field>
+            <field name="code">32</field>
+        </record>
+        <record id="project_master_plan_33" model="project.master.plan">
+            <field name="name">การพัฒนาเด็กและเยาวชน</field>
+            <field name="code">33</field>
+        </record>
+        <record id="project_master_plan_34" model="project.master.plan">
+            <field name="name">การสร้างความเข้าใจแก่สาธารณชน</field>
+            <field name="code">34</field>
+        </record>
+        <record id="project_master_plan_41" model="project.master.plan">
+            <field name="name">การส่งเสริมการถ่ายทอดเทคโนโลยี</field>
+            <field name="code">41</field>
+        </record>
+        <record id="project_master_plan_42" model="project.master.plan">
+            <field name="name">การให้บริการปรึกษาทางเทคโนโลยี</field>
+            <field name="code">42</field>
+        </record>
+        <record id="project_master_plan_43" model="project.master.plan">
+            <field name="name">การแสวงหากลไกการเชื่อมโยงใหม่</field>
+            <field name="code">43</field>
+        </record>
+        <record id="project_master_plan_51" model="project.master.plan">
+            <field name="name">กายภาพ (อาคารและครุภัณฑ์)</field>
+            <field name="code">51</field>
+        </record>
+        <record id="project_master_plan_52" model="project.master.plan">
+            <field name="name">นโยบายและกฎหมาย</field>
+            <field name="code">52</field>
+        </record>
+        <record id="project_master_plan_53" model="project.master.plan">
+            <field name="name">สถาบันเครือข่าย</field>
+            <field name="code">53</field>
+        </record>
+        <record id="project_master_plan_54" model="project.master.plan">
+            <field name="name">เครือข่ายสารสนเทศ</field>
+            <field name="code">54</field>
+        </record>
+        <record id="project_master_plan_55" model="project.master.plan">
+            <field name="name">ฐานข้อมูล</field>
+            <field name="code">55</field>
+        </record>
+        <record id="project_master_plan_56" model="project.master.plan">
+            <field name="name">บริการวิเคราะห์ทดสอบ ระบบมาตรฐาน</field>
+            <field name="code">56</field>
+        </record>
+        <record id="project_master_plan_61" model="project.master.plan">
+            <field name="name">การบริหารจัดการภายใน</field>
+            <field name="code">61</field>
+        </record>
+
+    </data>
+</openerp>

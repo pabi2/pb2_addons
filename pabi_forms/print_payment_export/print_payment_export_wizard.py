@@ -10,7 +10,7 @@ class PrintPaymentExportWizard(models.TransientModel):
         [('payment.export.form', 'Payment Export'),
          ('cheque.form', 'Cheque')],
         string='Report',
-        readonly=True,
+        readonly=False,
         default=lambda self: self._get_default_report(),
     )
 
