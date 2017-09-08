@@ -23,6 +23,7 @@ To issue the receipt, user will come to invoice and do the payment manually.
     "depends": [
         "sale_automatic_workflow",
         "pabi_chartfield",
+        "pabi_utils",
     ],
     "data": [
         "data/stock_data.xml",

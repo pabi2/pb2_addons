@@ -16,6 +16,7 @@
         "pabi_hr_expense",
         "pabi_attachment_helper",
         "pabi_web_config",
+        "pabi_utils",
     ],
     "data": [
     ],

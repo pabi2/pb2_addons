@@ -69,7 +69,7 @@ class PurchaseRequest(models.Model):
         data = data_dict.values()
         # Final Preparation of fields and data
         try:
-            fields, data = self._finalize_data_to_load(fields, data)
+            fields, data = self._prepare_data_to_load(fields, data)
             fields, data = self._add_line_data(fields, data)
             load_res = self.sudo().load(fields, data)
             res_id = load_res['ids'] and load_res['ids'][0] or False
@@ -267,20 +267,14 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_requisition(self, requisition):
         User = self.env['res.users']
         Employee = self.env['hr.employee']
-        ConfParam = self.env['ir.config_parameter']
-        users = User.search([('id', '=', self._uid)])
         assert len(requisition) == 1, \
             "Only 1 Call for Bids could be done at a time."
         file_prefix = self.env.user.company_id.pabiweb_file_prefix
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if not pabiweb_active:
-            return False
         Attachment = self.env['ir.attachment']
-        url = self.env.user.company_id.pabiweb_pcm_url
-        username = users.login
-        password = ConfParam.get_param('pabiweb_password')
-        connect_string = url % (username, password)
-        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
+        alfresco = \
+            self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
+        if not alfresco:
+            return False
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
             ('res_model', '=', 'purchase.requisition'),
@@ -368,16 +362,10 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition_cancel(self, requisition):
-        ConfParam = self.env['ir.config_parameter']
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if not pabiweb_active or \
-                not requisition.reject_reason_txt:
+        alfresco = \
+            self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
+        if not alfresco or not requisition.reject_reason_txt:
             return False
-        url = self.env.user.company_id.pabiweb_pcm_url
-        username = self.env.user.login
-        password = ConfParam.get_param('pabiweb_password')
-        connect_string = url % (username, password)
-        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         send_act = "3"
         comment = requisition.cancel_reason_txt or ''
         req_name = requisition.name
@@ -385,7 +373,7 @@ class PurchaseWebInterface(models.Model):
             'action': send_act,
             'pdNo': req_name,
             'comment': comment,
-            'reqBy': username,
+            'reqBy': self.env.user.login,
         }
         result = alfresco.ord.action(arg)
         if not result['success']:
@@ -396,21 +384,17 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_action_request(self, request, action):
-        ConfParam = self.env['ir.config_parameter']
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if not pabiweb_active:
+        alfresco = \
+            self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
+        if not alfresco:
             return False
-        url = self.env.user.company_id.pabiweb_pcm_url
-        username = self.env.user.login
-        password = ConfParam.get_param('pabiweb_password')
-        connect_string = url % (username, password)
-        alfresco = xmlrpclib.ServerProxy(connect_string, allow_none=True)
         if action == "accept":
             send_act = "C2"
         else:
             send_act = "X2"
         comment = request.reject_reason_txt or ''
-        result = alfresco.req.action(request.name, send_act, comment, username)
+        result = alfresco.req.action(request.name, send_act,
+                                     comment, self.env.user.login)
         if not result['success']:
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
