@@ -115,7 +115,6 @@ class AccountBudget(models.Model):
         for l in doc_lines:
             val = ()
             for f in args:
-                print args
                 val += (l[f],)
             if False not in val:
                 combinations.append(val)

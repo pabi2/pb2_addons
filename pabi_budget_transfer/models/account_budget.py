@@ -46,7 +46,6 @@ class AccountBudget(models.Model):
             budgets = self.search(args)
             _ids = []
             for budget in budgets:
-                print budget.release_diff_rolling
                 if budget.release_diff_rolling >= 0.0:
                     _ids.append(budget.id)
             args += [('id', 'in', _ids)]
