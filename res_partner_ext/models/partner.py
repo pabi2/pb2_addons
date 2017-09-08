@@ -141,8 +141,8 @@ class ResPartner(models.Model):
     def _pre_category_change(self, vals):
         # Do not allow change of partner tag,
         # if it result in change of its accounting
-        check = self.env['ir.config_parameter'].\
-            get_param('res_partner_ext.no_partner_tag_change_account')
+        company = self.env.user.company_id
+        check = company.no_partner_tag_change_account
         check = check and check.lower() or 'false'
         if check == 'true' and vals.get('category_id', False):
             # Test whether index exists to prevent exception
