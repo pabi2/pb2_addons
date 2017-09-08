@@ -155,7 +155,6 @@ class PABIBankStatement(models.Model):
         if self.journal_id:
             BankAcct = self.env['res.partner.bank']
             banks = BankAcct.search([('journal_id', '=', self.journal_id.id)])
-            print banks
             if self.report_type == 'bank_receipt':
                 banks = banks.filtered(lambda l: l.state == 'SA')
             else:
@@ -325,7 +324,6 @@ class PABIBankStatement(models.Model):
             """ % (rec.id, rec.id))
 
             # Finally, if some line was matched before in other statement
-            print rec.id
             rec._cr.execute("""
                 update pabi_bank_statement_import new
                 set prev_match_statement_id =
