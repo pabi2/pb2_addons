@@ -17,3 +17,7 @@ class ResDoctype(models.Model):
         string='Sequence',
         domain=[('special_type', '=', 'doctype')],
     )
+    fiscal_reversal_sequence_ids = fields.One2many(
+        related='reversal_sequence_id.fiscal_ids',
+        string='Reversal Sequences by fiscalyear',
+    )

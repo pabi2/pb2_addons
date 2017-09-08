@@ -13,5 +13,36 @@
                 </field>
             </field>
         </record>
+
+        <record id="view_res_doctype_form" model="ir.ui.view">
+            <field name="name">view.res.doctype.form</field>
+            <field name="model">res.doctype</field>
+            <field name="inherit_id" ref="l10n_th_doctype_base.view_res_doctype_form"/>
+            <field name="arch" type="xml">
+                <field name="implementation" position="after" >
+                    <field name="with_reversal" readonly="1"/>
+                </field>
+                <group position="after">
+                    <group string="Reversal Sequences" attrs="{'invisible': [('with_reversal', '=', False)]}">
+                        <group string="Initial">
+                            <field name="reversal_sequence_id"/>
+                        </group>
+                        <group string="Sequences on Fiscal Years">
+                            <field name="fiscal_reversal_sequence_ids" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="fiscalyear_id"/>
+                                    <field name="sequence_id"/>
+                                    <field name="prefix"/>
+                                    <field name="number_next"/>
+                                </tree>
+                                <form>
+                                    <field name="sequence_id"/>
+                                </form>
+                            </field>
+                        </group>
+                    </group>
+                </group>
+            </field>
+        </record>
     </data>
 </openerp>

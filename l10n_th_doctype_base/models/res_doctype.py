@@ -30,6 +30,10 @@ class ResDoctype(models.Model):
         related='sequence_id.implementation',
         string='Implementation',
     )
+    fiscal_sequence_ids = fields.One2many(
+        related='sequence_id.fiscal_ids',
+        string='Sequences by fiscalyear',
+    )
 
     @api.model
     def get_doctype(self, refer_type):

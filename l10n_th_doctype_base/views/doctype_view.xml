@@ -8,7 +8,7 @@
             <field name="name">view.res.doctype.tree</field>
             <field name="model">res.doctype</field>
             <field name="arch" type="xml">
-                <tree string="Doctype" create="0" editable="1" delete="0">
+                <tree string="Doctype" create="0" delete="0">
                     <field name="name"/>
                     <field name="sequence_id"/>
                     <field name="refer_type" invisible="1"/>
@@ -23,16 +23,28 @@
             <field name="model">res.doctype</field>
             <field name="arch" type="xml">
                 <form string="Doctype">
-                    <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" class="oe_inline" placeholder="Name" readonly="1"/>
+                        <field name="refer_type" invisible="1"/>
                     </h1>
                     <group>
-                        <group>
+                        <group string="Initial">
                             <field name="sequence_id"/>
+                            <field name="prefix" readonly="1"/>
+                            <field name="implementation" readonly="1"/>
                         </group>
-                        <group>
-                            <field name="refer_type"/>
+                        <group string="Sequences on Fiscal Years">
+                            <field name="fiscal_sequence_ids" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="fiscalyear_id"/>
+                                    <field name="sequence_id"/>
+                                    <field name="prefix"/>
+                                    <field name="number_next"/>
+                                </tree>
+                                <form>
+                                    <field name="sequence_id"/>
+                                </form>
+                            </field>
                         </group>
                     </group>
                 </form>
