@@ -10,7 +10,7 @@
         'account_budget_activity',
         'pabi_chartfield',
         'pabi_procurement',
-        'pabi_xls',
+        'pabi_utils',
         # 'document_status_history',
     ],
     'data': [

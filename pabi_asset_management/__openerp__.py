@@ -13,7 +13,7 @@
         "account_budget_activity",
         "pabi_invest_construction",
         "pabi_chartfield_merged",
-        "pabi_xls",
+        "pabi_utils",
         # "pabi_account_move_adjustment",
     ],
     "description": """

@@ -219,33 +219,13 @@ class PABIBankStatement(models.Model):
             rec.write({'item_ids': rec._prepare_move_items(move_lines)})
         return
 
-    @api.model
-    def _add_column(self, column_name, column_value, file_txt):
-        i = 0
-        txt_lines = []
-        for line in file_txt.split('\n'):
-            if line and i == 0:
-                line = '"' + str(column_name) + '",' + line
-            elif line:
-                line = '"' + str(column_value) + '",' + line
-            txt_lines.append(line)
-            i += 1
-        file_txt = '\n'.join(txt_lines)
-        return file_txt
-
-    def xldate_to_datetime(self, xldate):
-        tempDate = datetime(1900, 1, 1)
-        deltaDays = timedelta(days=int(xldate) - 2)
-        xldate = (tempDate + deltaDays)
-        return xldate.strftime("%Y-%m-%d")
-
     @api.multi
     def action_import_xls(self):
         for rec in self:
             rec.import_ids.unlink()
             if not rec.import_file:
                 continue
-            self.env['pabi.xls'].import_xls(
+            self.env['pabi.utils.xls'].import_xls(
                 'pabi.bank.statement.import', rec.import_file,
                 extra_columns=[('statement_id/.id', rec.id)],
                 auto_id=True)

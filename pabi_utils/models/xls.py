@@ -38,7 +38,7 @@ class PABIUtilsXLS(models.AbstractModel):
             if line and i == 0:
                 line = '"id",' + line
             elif line:
-                line = '%s.%s' % ('pabi_xls', uuid.uuid4()) + ',' + line
+                line = '%s.%s' % ('xls', uuid.uuid4()) + ',' + line
             txt_lines.append(line)
             i += 1
         file_txt = '\n'.join(txt_lines)
@@ -120,7 +120,7 @@ class PABIUtilsXLS(models.AbstractModel):
                     type = ctype_text.get(ctype, 'unknown type')
                     if id_index == index and val:
                         # UUID replace id
-                        xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
+                        xml_id = '%s.%s' % ('xls', uuid.uuid4())
                         row_values[index] = xml_id
                     elif type == 'empty' or type == 'text' \
                         or type == 'bool' or type == 'error' \
@@ -157,7 +157,7 @@ class PABIUtilsXLS(models.AbstractModel):
             if auto_id:
                 file_txt = self._add_id_column(file_txt)
             else:
-                xml_id = '%s.%s' % ('pabi_xls', uuid.uuid4())
+                xml_id = '%s.%s' % ('xls', uuid.uuid4())
                 file_txt = self._add_column('id', xml_id, file_txt)
         # Map column name
         if header_map:
