@@ -26,6 +26,14 @@ class BudgetConsumeReport(ChartField, models.Model):
     #     """
     #     sql_view = sql_view + join_query
     #     return sql_view
+    def _get_from_clause(self):
+        sql_from = super(BudgetConsumeReport, self)._get_from_clause()
+        join_sql = """
+            left join res_section section on section.id = aal.section_id
+            left join res_project project on project.id = aal.project_id
+        """
+        sql_from += join_sql
+        return sql_from
 
     def _get_dimension(self):
         dimensions = super(BudgetConsumeReport, self)._get_dimension()

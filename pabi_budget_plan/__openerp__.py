@@ -21,7 +21,6 @@
         'data/sequence.xml',
         'data/actions.xml',
         'data/report_data.xml',
-        'data/default_value.xml',
         # 'data/history_rule.xml',
         'views/budget_plan_menu.xml',
         # 'wizard/convert_to_budget_control_wizard.xml',

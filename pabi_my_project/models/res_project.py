@@ -50,7 +50,7 @@ class ResProject(LogCommon, models.Model):
     pm_section_id = fields.Many2one(
         'res.section',
         string='Project Manager Section',
-        readonly=True,
+        required=True,
     )
     budget_plan_ids = fields.One2many(
         'res.project.budget.plan',

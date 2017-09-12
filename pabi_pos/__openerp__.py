@@ -26,8 +26,6 @@ To issue the receipt, user will come to invoice and do the payment manually.
         "pabi_utils",
     ],
     "data": [
-        "data/stock_data.xml",
-        "data/automatic_workflow_data.xml",
         "views/sale_view.xml",
         "views/sale_workflow_process_view.xml",
     ],
