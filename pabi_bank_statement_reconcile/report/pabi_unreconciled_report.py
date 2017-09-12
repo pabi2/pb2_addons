@@ -15,7 +15,7 @@ class PABIUnreconciledReport(models.Model):
         cr.execute("""CREATE or REPLACE VIEW %s as (
             select a.id, a.name, a.report_type, a.match_method, a.date_report,
                 a.doctype, a.payment_type, a.transfer_type, a.journal_id,
-                a.account_id, a.date_from, a.date_to,
+                a.account_id,
                 b.statement_id, b.source, b.document,
                 b.cheque_number, b.batch_code,
                 b.date_value, b.amount, b.validate_user_id, b.days_outstanding,
