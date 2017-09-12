@@ -48,7 +48,6 @@ Parent and Child (no multi level allowed)
 Default Partner to use the same Partner Tag of its parent
 
 Do not allow changing of Partner's Tag, if it result in change of accounting
-(system param, no_partner_tag_change_account = True)
 
 Partner field now searchable by many fields, i.e., Tax ID,
 Tax Branch, Name (en), Search Key
