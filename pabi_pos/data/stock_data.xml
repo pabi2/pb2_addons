@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<openerp>
-    <data noupdate="1">
-        <record id="stock_warehouse_bookshop" model="stock.warehouse">
-            <field name="name">Book Shop</field>
-            <field name="code">BS</field>
-        </record>
-    </data>
-</openerp>

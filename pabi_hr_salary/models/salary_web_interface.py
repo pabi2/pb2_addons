@@ -7,25 +7,13 @@ import xmlrpclib
 class HRSalaryExpense(models.Model):
     _inherit = 'hr.salary.expense'
 
-    @api.model
-    def _get_alfresco_connect(self):
-        ConfParam = self.env['ir.config_parameter']
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if not pabiweb_active:
-            return False
-        url = self.env.user.company_id.pabiweb_hr_url
-        username = self.env.user.login
-        password = ConfParam.get_param('pabiweb_password')
-        connect_string = url % (username, password)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
-        return alfresco
-
     @api.multi
     def send_signal_to_pabiweb(self, signal, salary_doc=False):
         """ Signal: '1' = Submit, '2' = Resubmit, '3' = Cancel
             For 1, 2, require salary_doc """
         self.ensure_one()
-        alfresco = self._get_alfresco_connect()
+        alfresco = \
+            self.env['pabi.web.config.settings']._get_alfresco_connect('hr')
         if alfresco is False:
             return False
         arg = {}

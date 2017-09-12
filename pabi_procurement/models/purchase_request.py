@@ -218,7 +218,7 @@ class PurchaseRequest(models.Model):
         self.amount_total = amount_untaxed + amount_tax
 
     @api.model
-    def _finalize_data_to_load(self, fields, data):
+    def _prepare_data_to_load(self, fields, data):
         # clear up attachment and committee data. will and them after create pr
         clear_up_fields = [
             'attachment_ids',

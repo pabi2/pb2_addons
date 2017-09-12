@@ -276,7 +276,7 @@ class HRExpense(models.Model):
         try:
             prepare_code = data_dict.get('preparer_code')
             data_dict = self._pre_process_hr_expense(data_dict)
-            res = self._create_hr_expense_expense(data_dict)
+            res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success'] is True:
                 expense = self.browse(res['result']['id'])
                 self._post_process_hr_expense(expense)
@@ -305,101 +305,11 @@ class HRExpense(models.Model):
             self._cr.rollback()
         return res
 
-    @api.model
-    def _finalize_data_to_load(self, data_dict):
-        """
-        This method will convert user friendly data_dict
-        to load() compatible fields/data
-        Currently it is working with multiple line table but with 1 level only
-        data_dict = {
-            'name': 'ABC',
-            'line_ids': ({'desc': 'DESC'},),
-            'line2_ids': ({'desc': 'DESC'},),
-        }
-        to
-        fields = ['name', 'line_ids/desc', 'line2_ids/desc']
-        data = [('ABC', 'DESC', 'DESC')]
-        """
-        fields = data_dict.keys()
-        data = data_dict.values()
-        line_count = 1
-        _table_fields = []  # Tuple fields
-        for key in fields:
-            if isinstance(data_dict[key], list) or \
-                    isinstance(data_dict[key], tuple):
-                _table_fields.append(key)
-        data_array = {}
-        for table in _table_fields:
-            data_array[table] = False
-            data_array[table + '_fields'] = False
-            if table in fields:
-                i = fields.index(table)
-                data_array[table] = data[i] or ()  # ({'x': 1, 'y': 2}, {})
-                del fields[i]
-                del data[i]
-                line_count = max(line_count, len(data_array[table]))
-            if data_array[table]:
-                data_array[table + '_fields'] = \
-                    [table + '/' + key for key in data_array[table][0].keys()]
-            fields += data_array[table + '_fields'] or []
-        # Data
-        datas = []
-        for i in range(0, line_count, 1):
-            record = []
-            for table in _table_fields:
-                data_array[table + '_data'] = False
-                if data_array[table + '_fields']:
-                    data_array[table + '_data'] = \
-                        (len(data_array[table]) > i and data_array[table][i] or
-                         {key: False for key in data_array[table + '_fields']})
-                record += data_array[table + '_data'] and \
-                    data_array[table + '_data'].values() or []
-            if i == 0:
-                datas += [tuple(data + record)]
-            else:
-                datas += [tuple([False for _x in data] + record)]
-        return fields, datas
-
-    @api.model
-    def _create_hr_expense_expense(self, data_dict):
-        res = {}
-        # Final Preparation of fields and data
-        fields, data = self._finalize_data_to_load(data_dict)
-        load_res = self.load(fields, data)
-        res_id = load_res['ids'] and load_res['ids'][0] or False
-        if not res_id:
-            res = {
-                'is_success': False,
-                'result': False,
-                'messages': [m['message'] for m in load_res['messages']],
-            }
-        else:
-            res = {
-                'is_success': True,
-                'result': {
-                    'id': res_id,
-                },
-                'messages': _('Document created successfully'),
-            }
-        return res
-
-    @api.model
-    def _get_alfresco_connect(self):
-        ConfParam = self.env['ir.config_parameter']
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if not pabiweb_active:
-            return False
-        url = self.env.user.company_id.pabiweb_exp_url
-        username = self.env.user.login
-        password = ConfParam.get_param('pabiweb_password')
-        connect_string = url % (username, password)
-        alfresco = xmlrpclib.ServerProxy(connect_string)
-        return alfresco
-
     @api.multi
     def send_signal_to_pabiweb(self, signal, comment=''):
         self.ensure_one()
-        alfresco = self._get_alfresco_connect()
+        alfresco = self.env['pabi.web.config.settings'].\
+            _get_alfresco_connect('exp')
         if alfresco is False:
             return False
         arg = {
@@ -423,7 +333,8 @@ class HRExpense(models.Model):
     @api.multi
     def send_comment_to_pabiweb(self, status, status_th, comment):
         self.ensure_one()
-        alfresco = self._get_alfresco_connect()
+        alfresco = \
+            self.env['pabi.web.config.settings']._get_alfresco_connect('exp')
         if alfresco is False:
             return False
         arg = {

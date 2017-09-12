@@ -214,7 +214,7 @@
 								</group>
 								<hr />
 								<label string="หมายเหตุ" for='description' />
-								<field name="description" nolable="1"
+								<field name="description" nolabel="1"
 									attrs="{'readonly':[('state','in',['C','X','Y','S','Z'])]}" />
 							</page>
 						</notebook>
@@ -278,7 +278,7 @@
 		</record>
 
 		<!-- window action -->
-		<!-- The following tag is an action definition for a "window action", that 
+		<!-- The following tag is an action definition for a "window action", that
 			is an action opening a view or a set of views -->
 		<record model="ir.actions.act_window" id="purchase_contract_action">
 			<field name="name">Purchase Contract</field>

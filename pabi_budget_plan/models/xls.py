@@ -11,8 +11,8 @@ RESTRICT_MODEL = ['budget.breakdown.line']
 HEADER_FIELDS = ['ID', 'Policy Amount']
 
 
-class PABIXls(models.AbstractModel):
-    _inherit = 'pabi.xls'
+class PABIUtilsXLS(models.AbstractModel):
+    _inherit = 'pabi.utils.xls'
 
     @api.model
     def xls_to_csv(self, model, file, header_map=None, extra_columns=None,
@@ -29,10 +29,9 @@ class PABIXls(models.AbstractModel):
               ['id', 'policy_amount']
         """
         if model not in RESTRICT_MODEL:
-            return super(PABIXls, self).xls_to_csv(model, file,
-                                                   header_map=header_map,
-                                                   extra_columns=extra_columns,
-                                                   auto_id=auto_id)
+            return super(PABIUtilsXLS, self).\
+                xls_to_csv(model, file, header_map=header_map,
+                           extra_columns=extra_columns, auto_id=auto_id)
 
         # --
         # For XLS (temp)

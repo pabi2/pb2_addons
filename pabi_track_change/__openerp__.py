@@ -10,6 +10,7 @@
         'res_partner_ext',
         'purchase_partner_invoice_method',
         'stock_request',
+        'pabi_asset_management',
     ],
     'installable': True,
     'auto_install': False,

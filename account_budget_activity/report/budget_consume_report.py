@@ -80,45 +80,52 @@ class BudgetConsumeReport(models.Model):
         string="Quarter",
     )
 
+    def _get_select_clause(self):
+        sql_select = """
+        select aal.id, aal.user_id, aal.date,
+            aal.fiscalyear_id,
+            -------------> aal.doc_ref, aal.doc_id,
+            -- Amount
+            case when aaj.budget_method = 'expense' then -amount
+                else amount end as amount,
+            -- Budget Method
+            aaj.budget_method,
+            -- Type
+            case when aaj.budget_commit_type = 'so_commit'
+                then aal.amount end as amount_so_commit,
+            case when aaj.budget_commit_type = 'pr_commit'
+                then - aal.amount end as amount_pr_commit,
+            case when aaj.budget_commit_type = 'po_commit'
+                then - aal.amount end as amount_po_commit,
+            case when aaj.budget_commit_type = 'exp_commit'
+                then - aal.amount end as amount_exp_commit,
+            case when aaj.budget_commit_type = 'actual'
+                    and aaj.budget_method = 'expense'
+                    then - aal.amount
+                when aaj.budget_commit_type = 'actual'
+                    and aaj.budget_method = 'revenue'
+                    then aal.amount end
+                as amount_actual,
+            -- Dimensions
+            %s
+        """ % (self._get_dimension(), )
+        return sql_select
+
+    def _get_from_clause(self):
+        sql_from = """
+            from account_analytic_line aal
+            join account_analytic_journal aaj on aaj.id = aal.journal_id
+        """
+        return sql_from
+
     def _get_sql_view(self):
         sql_view = """
         select *,
         amount_so_commit + amount_pr_commit + amount_po_commit +
         amount_exp_commit + amount_actual as amount_consumed
         from
-        (
-            select aal.id, aal.user_id, aal.date,
-                aal.fiscalyear_id,
-                -------------> aal.doc_ref, aal.doc_id,
-                -- Amount
-                case when aaj.budget_method = 'expense' then -amount
-                    else amount end as amount,
-                -- Budget Method
-                aaj.budget_method,
-                -- Type
-                case when aaj.budget_commit_type = 'so_commit'
-                    then aal.amount end as amount_so_commit,
-                case when aaj.budget_commit_type = 'pr_commit'
-                    then - aal.amount end as amount_pr_commit,
-                case when aaj.budget_commit_type = 'po_commit'
-                    then - aal.amount end as amount_po_commit,
-                case when aaj.budget_commit_type = 'exp_commit'
-                    then - aal.amount end as amount_exp_commit,
-                case when aaj.budget_commit_type = 'actual'
-                        and aaj.budget_method = 'expense'
-                        then - aal.amount
-                    when aaj.budget_commit_type = 'actual'
-                        and aaj.budget_method = 'revenue'
-                        then aal.amount end
-                    as amount_actual,
-                -- Dimensions
-                %s
-            from account_analytic_line aal
-            join account_analytic_journal aaj on aaj.id = aal.journal_id
-            left join res_section section on section.id = aal.section_id
-            left join res_project project on project.id = aal.project_id
-        ) a
-        """ % (self._get_dimension(),)
+        (%s %s) a
+        """ % (self._get_select_clause(), self._get_from_clause())
         return sql_view
 
     def _get_dimension(self):

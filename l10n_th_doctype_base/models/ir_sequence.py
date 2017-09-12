@@ -32,3 +32,22 @@ class IrSequence(models.Model):
             return super(IrSequence, self).next_by_code(sequence_code)
         number = self.next_by_doctype()
         return number or super(IrSequence, self).next_by_code(sequence_code)
+
+
+class IrSequenceFiscalyear(models.Model):
+    _inherit = 'account.sequence.fiscalyear'
+
+    prefix = fields.Char(
+        related='sequence_id.prefix',
+        string='Prefix',
+    )
+    implementation = fields.Selection(
+        [('standard', 'Standard'),
+         ('no_gap', 'No gap'), ],
+        related='sequence_id.implementation',
+        string='Implementation',
+    )
+    number_next = fields.Integer(
+        related='sequence_id.number_next',
+        string='Next Number',
+    )

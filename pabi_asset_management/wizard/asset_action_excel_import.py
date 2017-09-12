@@ -128,9 +128,9 @@ class AssetActionExcelImport(models.TransientModel):
         header_map = ACTION_TYPES[self.action_type].get('header_map', False)
         extra_columns = ACTION_TYPES[self.action_type].get('extra_columns',
                                                            False)
-        xml_ids = self.env['pabi.xls'].import_xls(model, self.import_file,
-                                                  header_map=header_map,
-                                                  extra_columns=extra_columns)
+        xml_ids = self.env['pabi.utils.xls'].\
+            import_xls(model, self.import_file,
+                       header_map=header_map, extra_columns=extra_columns)
         res_ids = [self.env.ref(xmlid).id for xmlid in xml_ids]
         return self._open_imported_records(model, res_ids)
 

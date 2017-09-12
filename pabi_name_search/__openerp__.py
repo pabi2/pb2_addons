@@ -19,6 +19,7 @@
         'pabi_chartfield',
         'pabi_chartfield_merged',
         'pabi_asset_management',
+        'pabi_budget_plan',
     ],
     "data": [
         'ir.model.csv',
