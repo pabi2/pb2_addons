@@ -8,7 +8,8 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="sale.view_sales_order_filter"/>
-            <field name="context" eval="{'default_workflow_process_id': ref('pabi_pos.pos_order'), 'default_order_type': 'sale_order'}"/>
+            <!-- <field name="context" eval="{'default_workflow_process_id': ref('pabi_pos.pos_order'), 'default_order_type': 'sale_order'}"/> -->
+            <field name="context" eval="{'default_order_type': 'sale_order'}"/>
             <field name="domain">[('workflow_process_id', '!=', False)]</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
