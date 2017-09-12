@@ -61,8 +61,6 @@ order by id, source]]>
 	<field name="transfer_type" class="java.lang.String"/>
 	<field name="journal_id" class="java.lang.Integer"/>
 	<field name="account_id" class="java.lang.Integer"/>
-	<field name="date_from" class="java.sql.Date"/>
-	<field name="date_to" class="java.sql.Date"/>
 	<field name="statement_id" class="java.lang.Integer"/>
 	<field name="source" class="java.lang.String"/>
 	<field name="document" class="java.lang.String"/>
