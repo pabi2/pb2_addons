@@ -143,8 +143,7 @@ class ResPartner(models.Model):
         # if it result in change of its accounting
         company = self.env.user.company_id
         check = company.no_partner_tag_change_account
-        check = check and check.lower() or 'false'
-        if check == 'true' and vals.get('category_id', False):
+        if check and vals.get('category_id', False):
             # Test whether index exists to prevent exception
             category = vals.get('category_id')
             if not category:
