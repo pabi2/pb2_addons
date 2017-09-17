@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Supplier Payment (BBL cheque)  -->
+		<record id="supplier_payment_bbl_cheque" model="ir.actions.report.xml">
+			<field name="string">Supplier Payment (BBL cheque)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">BBL cheque</field>
+			<field name="report_name">supplier.payment.bbl.cheque</field>
+			<field name="report_rml">pabi_account_cheque/jrxml_reports/supplier_payment_bbl_cheque.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="supplier_payment_bbl_cheque_values" model="ir.values">
+			<field name="name">Supplier Payment (BBL cheque)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_payment_bbl_cheque)"/>
+		</record>
+
+		<!-- Supplier Payment (KTB cheque)  -->
+		<record id="supplier_payment_ktb_cheque" model="ir.actions.report.xml">
+			<field name="string">Supplier Payment (KTB cheque)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">KTB cheque</field>
+			<field name="report_name">supplier.payment.ktb.cheque</field>
+			<field name="report_rml">pabi_account_cheque/jrxml_reports/supplier_payment_ktb_cheque.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="supplier_payment_ktb_cheque_values" model="ir.values">
+			<field name="name">Supplier Payment (KTB cheque)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="'client_print_multi'"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_payment_ktb_cheque)"/>
+		</record>
+    </data>
+</openerp>
