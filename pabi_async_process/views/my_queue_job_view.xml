@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_my_queue_job" model="ir.actions.act_window">
+            <field name="name">My Jobs</field>
+            <field name="res_model">queue.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('user_id', '=', uid)]</field>
+            <field name="context">{'search_default_pending': 1,
+                                   'search_default_enqueued': 1,
+                                   'search_default_started': 1,
+                                   'search_default_failed': 1}</field>
+            <field name="view_id" ref="connector.view_queue_job_tree"/>
+            <field name="search_view_id" ref="connector.view_queue_job_search"/>
+        </record>
+
+        <record id="my_queue_job" model="ir.ui.menu">
+            <field name="name">My Jobs</field>
+            <field name="sequence" eval="100"/>
+            <field name="action" ref="action_my_queue_job"/>
+            <field name="parent_id" ref="mail.mail_feeds"/>
+        </record>
+
+    </data>
+</openerp>

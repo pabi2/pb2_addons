@@ -12,7 +12,7 @@ class AccountVoucher(models.Model):
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
         context = self._context.copy()
-        module = 'pabi_account_cheque'
+        module = 'pabi_forms'
         bbl_cheque_ref = self.env.ref(
             module + '.' + 'supplier_payment_bbl_cheque').id
         ktb_cheque_ref = self.env.ref(
