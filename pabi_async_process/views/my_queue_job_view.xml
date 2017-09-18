@@ -23,5 +23,16 @@
             <field name="parent_id" ref="mail.mail_feeds"/>
         </record>
 
+        <record id="view_queue_job_tree" model="ir.ui.view">
+            <field name="name">view.queue.job.tree</field>
+            <field name="model">queue.job</field>
+            <field name="inherit_id" ref="connector.view_queue_job_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='model_name']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>

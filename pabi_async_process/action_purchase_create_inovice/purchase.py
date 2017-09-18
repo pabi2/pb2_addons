@@ -25,7 +25,7 @@ def related_purchase_order(session, thejob):
 
 @job
 @related_action(action=related_purchase_order)
-def action_invoice_create_enqueue(session, model_name, res_id):
+def action_purchase_create_invoice(session, model_name, res_id):
     try:
         session.pool[model_name].\
             action_invoice_create(session.cr, session.uid,
@@ -50,8 +50,8 @@ class PurchaseOrder(PabiAsync, models.Model):
             self._check_queue(func, doc_name=self.name)
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = '%s - Create Supplier Invoice(s)' % self.name
-            action_invoice_create_enqueue.delay(session, self._name, self.id,
-                                                description=description)
+            action_purchase_create_invoice.delay(session, self._name, self.id,
+                                                 description=description)
             self._cr.commit()
             self._check_queue(func, doc_name=self.name)
         else:
