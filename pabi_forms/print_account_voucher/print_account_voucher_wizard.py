@@ -4,89 +4,87 @@ from openerp.exceptions import ValidationError
 # from openerp.addons.pabi_account_move_document_ref.models.account_move \
 #     import INVOICE_DOCTYPE
 
-DOCTYPE_REPORT_MAP = {'supplier_net_payment': {
-                        'en': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': False,
-                              'payment': 'supplier_netpay_form_en',
-                             },
-                        'th': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': False,
-                              'payment': 'supplier_netpay_form_th',
-                             }
-                        },
-                      'customer_receipt': {
-                        'en': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': 'customer.receipt.form.en',
-                              'payment': False,
-                             },
-                        'th': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': 'customer.receipt.form.th',
-                              'payment': False,
-                             }
-                        },
-                      'customer_tax_receipt': {
-                        'en': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': 'customer.tax.receipt.form.en',
-                              'payment': False,
-                             },
-                        'th': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': 'customer.tax.receipt.form.th',
-                              'payment': False,
-                             }
-                        },
-                      'customer_tax_receipt200': {
-                        'en': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': 'customer.tax.receipt.200.form.en',
-                              'payment': False,
-                             },
-                        'th': {
-                              'sale': False,
-                              'purchase': False,
-                              'receipt': 'customer.tax.receipt.200.form.th',
-                              'payment': False,
-                             }
-                        },
-                      }
+DOCTYPE_REPORT_MAP = {
+    'supplier_net_payment': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': False,
+            'payment': 'supplier_netpay_form_en',
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': False,
+            'payment': 'supplier_netpay_form_th',
+        }
+    },
+    'customer_receipt': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.receipt.form.en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.receipt.form.th',
+            'payment': False,
+        }
+    },
+    'customer_tax_receipt': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.tax.receipt.form.en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.tax.receipt.form.th',
+            'payment': False,
+        }
+    },
+    'customer_tax_receipt200': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.tax.receipt.200.form.en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.tax.receipt.200.form.th',
+            'payment': False,
+        }
+    },
+}
 
 
 class PrintAccountVoucherWizard(models.TransientModel):
     _name = 'print.account.voucher.wizard'
 
-    doctype = fields.Selection([
-        ('sale', 'Sale'),
-        ('purchase', 'Purchase'),
-        ('payment', 'Payment'),
-        ('receipt', 'Receipt'),
-        ],
+    doctype = fields.Selection(
+        [('sale', 'Sale'),
+         ('purchase', 'Purchase'),
+         ('payment', 'Payment'),
+         ('receipt', 'Receipt'), ],
         string="Doctype",
         readonly=True,
         default=lambda self: self._get_default_doctype(),
     )
-
     doc_print = fields.Selection(
         selection='_get_voucher_doctype',
         string="Report Type",
         required=True,
     )
-
-    lang = fields.Selection([
-        ('en', 'English'),
-        ('th', 'Thai'),
-        ], default='en',
+    lang = fields.Selection(
+        [('en', 'English'),
+         ('th', 'Thai'), ],
+        default='en',
         string="Language",
         required=True,
     )
@@ -124,11 +122,9 @@ class PrintAccountVoucherWizard(models.TransientModel):
         if ids:
             voucher = self.env['account.voucher'].browse(ids[0])
             if voucher.type == 'receipt':
-                return[
-                    ('customer_receipt', 'Receipt'),
-                    ('customer_tax_receipt', 'Tax Receipt'),
-                    ('customer_tax_receipt200', 'Tax Receipt 200%'),
-                    ]
+                return[('customer_receipt', 'Receipt'),
+                       ('customer_tax_receipt', 'Tax Receipt'),
+                       ('customer_tax_receipt200', 'Tax Receipt 200%'), ]
             elif voucher.type == 'payment':
                 return [('supplier_net_payment', 'Net Payment')]
         return []
