@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_res_project_budget_plan_user,access_res_project_budget_plan_user,model_res_project_budget_plan,,1,1,1,1
+access_res_project_budget_release_user,access_res_project_release_user,model_res_project_budget_release,,1,1,1,1
+access_res_project_budget_summary_user,access_res_project_summary_user,model_res_project_budget_summary,,1,1,1,1
