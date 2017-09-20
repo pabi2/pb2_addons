@@ -50,6 +50,9 @@
                     <field name="validate_user_id"/>
                     <field name="validate_date"/>
                 </xpath>
+                <xpath expr="//button[@name='invoice_pay_customer']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
             </field>
         </record>
         <record model="ir.ui.view" id="invoice_form2">

@@ -31,14 +31,15 @@ class InvoiceVoucherTaxDetail(object):
                     doc_date = doc.date
                     domain = [('voucher_tax_id', '=', tax.id)]
                 sign = doc.type in ('out_refund') and -1 or 1
-                vals = TaxDetail._prepare_tax_detail(invoice_tax_id,
-                                                     voucher_tax_id,
-                                                     'sale',
-                                                     doc.partner_id.id,
-                                                     doc.number,
-                                                     doc_date,
-                                                     sign * tax.base,
-                                                     sign * tax.amount)
+                vals = TaxDetail.\
+                    _prepare_tax_detail(invoice_tax_id,
+                                        voucher_tax_id,
+                                        'sale',
+                                        doc.partner_id.id,
+                                        doc.number_preprint or doc.number,
+                                        doc_date,
+                                        sign * tax.base,
+                                        sign * tax.amount)
                 detail = TaxDetail.search(domain)
                 if detail:
                     detail.write(vals)

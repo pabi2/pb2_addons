@@ -7,6 +7,12 @@ from .account_tax_detail import InvoiceVoucherTaxDetail
 class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
     _inherit = 'account.voucher'
 
+    # If specified, will be used for sales tax detail.
+    # By default it not used, can be extended from other addons.
+    number_preprint = fields.Char(
+        string='Preprint Number',
+    )
+
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()
