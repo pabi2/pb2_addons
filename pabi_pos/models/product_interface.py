@@ -7,7 +7,8 @@ class ProductProduct(models.Model):
 
     @api.model
     def test_get_pos_product_count(self):
-        """ If product names not specified, it will retrieve all products """
+        """ If product names or default_code not specified,
+        it will retrieve all products in this POS machine """
         res = self.get_pos_product_count('POS', product_names=[])
         return res
 
