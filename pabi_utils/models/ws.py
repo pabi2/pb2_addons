@@ -26,7 +26,7 @@ class PABIUtilsWS(models.AbstractModel):
                 'result': {
                     'id': res_id,
                 },
-                'messages': _('Document created successfully'),
+                'messages': _('Record created successfully'),
             }
         return res
 

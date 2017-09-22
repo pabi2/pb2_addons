@@ -61,6 +61,7 @@ Partner is a required field if patner in ('customer', supplier') (View level)
     'depends': [
         'base',
         'l10n_th_fields',
+        'pabi_utils',
     ],
     'demo': [],
     'data': [
