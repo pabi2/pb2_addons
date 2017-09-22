@@ -50,6 +50,30 @@ class ResPartner(models.Model):
         string='Require Payable Account',
         related='category_id.require_payable_account',
     )
+    title_lang = fields.Char(
+        string='Title (lang)',
+        compute='_compute_title_lang',
+    )
+
+    @api.onchange('title')
+    def _onchange_title(self):
+        title_name = False
+        if self._context.get('lang', False) == 'th_TH':
+            title_name = self.title.with_context(lang='en_US').name_get()
+        if self._context.get('lang', False) == 'en_US':
+            title_name = self.title.with_context(lang='th_TH').name_get()
+        self.title_lang = title_name and title_name[0][1] or False
+
+    @api.multi
+    def _compute_title_lang(self):
+        trans_dict = {}
+        titles = self.mapped('title')
+        if self._context.get('lang', False) == 'th_TH':
+            trans_dict = dict(titles.with_context(lang='en_US').name_get())
+        if self._context.get('lang', False) == 'en_US':
+            trans_dict = dict(titles.with_context(lang='th_TH').name_get())
+        for rec in self:
+            rec.title_lang = trans_dict.get(rec.title.id)
 
     @api.model
     def _commercial_fields(self):
