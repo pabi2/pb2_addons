@@ -13,11 +13,12 @@ class HRSalaryExpense(models.Model):
     @api.multi
     def action_submit(self):
         self.ensure_one()
+        res = super(HRSalaryExpense, self).action_submit()
         salary_doc = self.print_hr_salary_expense_form()
         # '1' = Submit, '2' = Resubmit, '3' = Cancel
         # Note: I think resubmitted may not be used
         self.send_signal_to_pabiweb('1', salary_doc=salary_doc)
-        return super(HRSalaryExpense, self).action_submit()
+        return res
 
     @api.multi
     def print_hr_salary_expense_form(self):
