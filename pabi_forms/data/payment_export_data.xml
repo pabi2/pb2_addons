@@ -14,6 +14,7 @@
             <field name="jasper_report">True</field>
             <field name="jasper_output">pdf</field>
             <field name="copies">1</field>
+      			<field name="download_filename">${o.name}.pdf</field>
         </record>
 
         <record id="payment_export_form_values" model="ir.values">
@@ -36,6 +37,7 @@
             <field name="jasper_report">True</field>
             <field name="jasper_output">pdf</field>
             <field name="copies">1</field>
+      			<field name="download_filename">${o.name}.pdf</field>
         </record>
 
         <record id="cheque_form_values" model="ir.values">

@@ -15,6 +15,7 @@
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
 			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="pabi_unreconciled_report_pdf_values" model="ir.values">
@@ -37,6 +38,7 @@
 			<field name="jasper_output">xls</field>
 			<field name="copies">1</field>
 			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.name}.xls</field>
 		</record>
 
 		<record id="pabi_unreconciled_report_xls_values" model="ir.values">

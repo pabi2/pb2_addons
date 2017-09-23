@@ -16,6 +16,7 @@
         'account',
         'pabi_asset_management',
         'pabi_hr_salary',
+        'report_custom_filename',
     ],
     'data': [
         'data/procurement_data.xml',
