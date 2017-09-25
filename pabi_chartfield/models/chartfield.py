@@ -778,10 +778,13 @@ class ChartFieldAction(ChartField):
                 report_type = account.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')
-            else:
-                # kittiu: Was set to required, but I found AV base no account
-                # and must not required. Not sure it comply to all case ?
+            # kittiu: I found AV-Expense case no account and must not required.
+            # Not sure it comply to all case ?
+            elif 'is_advance_product_line' in rec and \
+                    rec.is_advance_product_line:  # Case product always
                 rec.require_chartfield = False
+            else:
+                rec.require_chartfield = True
             if not rec.require_chartfield:
                 rec.section_id = False
                 rec.project_id = False
@@ -789,6 +792,16 @@ class ChartFieldAction(ChartField):
                 rec.invest_asset_id = False
                 rec.invest_construction_phase_id = False
         return
+
+    @api.multi
+    @api.constrains('require_chartfield')
+    def _check_require_chartfield(self):
+        for rec in self:
+            if rec.require_chartfield:
+                if rec.section_id or rec.project_id or \
+                        rec.personnel_costcenter_id or rec.invest_asset_id or \
+                        rec.invest_construction_phase_id:
+                    raise ValidationError(_('Budget is not required!'))
 
     @api.multi
     def write(self, vals):
