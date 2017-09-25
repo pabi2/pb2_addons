@@ -70,7 +70,7 @@
         <record id="doctype_stock_borrow_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Stock Borrow</field>
             <field name="code"></field>
-            <field name="prefix">SR%(fy)s</field>
+            <field name="prefix">SB%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
