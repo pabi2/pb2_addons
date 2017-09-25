@@ -779,7 +779,9 @@ class ChartFieldAction(ChartField):
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')
             else:
-                rec.require_chartfield = True
+                # kittiu: Was set to required, but I found AV base no account
+                # and must not required. Not sure it comply to all case ?
+                rec.require_chartfield = False
             if not rec.require_chartfield:
                 rec.section_id = False
                 rec.project_id = False

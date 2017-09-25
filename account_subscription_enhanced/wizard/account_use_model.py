@@ -9,4 +9,6 @@ class AccountUseModel(models.TransientModel):
     def create_entries(self):
         end_period_date = self.env['account.period'].find().date_stop
         self = self.with_context(end_period_date=end_period_date)
-        return super(AccountUseModel, self).create_entries()
+        res = super(AccountUseModel, self).create_entries()
+        res.pop('views')  # Remove view, and it will use the priority one
+        return res
