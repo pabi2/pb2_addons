@@ -797,7 +797,7 @@ class ChartFieldAction(ChartField):
     @api.constrains('require_chartfield')
     def _check_require_chartfield(self):
         for rec in self:
-            if rec.require_chartfield:
+            if not rec.require_chartfield:
                 if rec.section_id or rec.project_id or \
                         rec.personnel_costcenter_id or rec.invest_asset_id or \
                         rec.invest_construction_phase_id:
