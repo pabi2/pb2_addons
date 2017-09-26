@@ -794,26 +794,18 @@ class ChartFieldAction(ChartField):
         return
 
     @api.multi
-    @api.constrains('require_chartfield')
-    def _check_require_chartfield(self):
-        for rec in self:
-            if not rec.require_chartfield:
-                if rec.section_id or rec.project_id or \
-                        rec.personnel_costcenter_id or rec.invest_asset_id or \
-                        rec.invest_construction_phase_id:
-                    raise ValidationError(_('Budget is not required!'))
-
-    @api.multi
     def write(self, vals):
         # For balance sheet account, always set no dimension
-        if vals.get('account_id', False):
-            account = self.env['account.account'].browse(vals['account_id'])
-            if account.user_type.report_type in ('asset', 'liability'):
-                vals['section_id'] = False
-                vals['project_id'] = False
-                vals['personnel_costcenter_id'] = False
-                vals['invest_asset_id'] = False
-                vals['invest_construction_phase_id'] = False
+        # Note by kittiu: NSTDA wants to remove this check, for NSTDA, it is ok
+        #                 Might change in the future.
+        # if vals.get('account_id', False):
+        #     account = self.env['account.account'].browse(vals['account_id'])
+        #     if account.user_type.report_type in ('asset', 'liability'):
+        #         vals['section_id'] = False
+        #         vals['project_id'] = False
+        #         vals['personnel_costcenter_id'] = False
+        #         vals['invest_asset_id'] = False
+        #         vals['invest_construction_phase_id'] = False
         res = super(ChartFieldAction, self).write(vals)
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)
