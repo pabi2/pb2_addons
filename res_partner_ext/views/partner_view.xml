@@ -93,6 +93,7 @@
                 <!-- For some reason, without using replace, it got error in install -->
                 <field name="category_id" position="replace">
                     <field name="category_id" placeholder="Category..." domain="[('parent_id','=',False)]"/>
+                    <field name="tag_ids" widget="many2many_tags" attrs="{'invisible': [('supplier', '=', False)], 'required': [('supplier', '=', True)]}"/>
                 </field>
                 <!-- <field name="category_id" position="attributes">
                     <attribute name="domain">[('parent_id','=',False)]</attribute>
