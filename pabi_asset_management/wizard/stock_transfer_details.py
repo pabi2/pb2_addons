@@ -32,3 +32,14 @@ class StockTransferDetails(models.TransientModel):
         res = super(StockTransferDetails, self).default_get(fields)
         res['item_ids'] = self._asset_split_line(res)
         return res
+
+    @api.one
+    def do_detailed_transfer(self):
+        # Pass Installament information to Asset
+        wa = self.picking_id.acceptance_id
+        if wa:
+            self = self.with_context({'work_acceptance_id': wa.id,
+                                      'installment': wa.installment,
+                                      'num_installment': wa.num_installment})
+        res = super(StockTransferDetails, self).do_detailed_transfer()
+        return res

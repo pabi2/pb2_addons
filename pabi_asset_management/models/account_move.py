@@ -54,6 +54,14 @@ class AccountMoveLine(models.Model):
             move_line.invest_asset_id.owner_section_id.id,
             'owner_project_id': move_line.project_id.id,
         }
+        # With context data about the installment
+        if self._context.get('work_acceptance_id', False):
+            installment = self._context.get('installment', False)
+            num_installment = self._context.get('num_installment', False)
+            vals.update({'installment': installment,
+                         'num_installment': num_installment,
+                         })
+        # --
         if not (vals['section_id'] or vals['project_id'] or
                 vals['invest_asset_id'] or
                 vals['invest_construction_phase_id']):

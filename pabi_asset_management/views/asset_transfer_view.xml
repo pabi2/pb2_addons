@@ -13,6 +13,7 @@
                     <field name="product_id"/>
                     <field name="profile_id"/>
                     <field name="purchase_id"/>
+                    <field name="installment_str"/>
                     <field name="depreciation_base"/>
                     <field name="status"/>
                     <field name="state"/>

@@ -285,8 +285,31 @@ class AccountAsset(ChartFieldAction, models.Model):
          ],
         string='Parent Type',
     )
+    installment = fields.Integer(
+        string='Installment',
+        readonly=True,
+        help="Installment, if related to PO's invoice plan",
+    )
+    num_installment = fields.Integer(
+        string='Number of Installment',
+        readonly=True,
+        help="Total Installment, if related to PO's invoice plan",
+    )
+    installment_str = fields.Char(
+        string='Installment',
+        compute='_compute_installment_str',
+        help="Nicely format installment vs number of installment",
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
+
+    @api.multi
+    @api.depends('installment')
+    def _compute_installment_str(self):
+        for rec in self:
+            if rec.installment:
+                rec.installment_str = '%s/%s' % (rec.installment,
+                                                 rec.num_installment)
 
     @api.multi
     def validate_asset_to_request(self):
