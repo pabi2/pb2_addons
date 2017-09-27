@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <!-- Directory Asset Action Import Temlates -->
+        <record model="document.directory" id="dir_asset_action_template">
+            <field name="name">Asset Actions Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+        </record>
+
         <!-- Asset Change Owner -->
         <record id="asset_changeowner_template" model="ir.attachment">
             <field name="datas"></field>
             <field name="datas_fname">asset_changeowner.xls</field>
             <field name="name">asset_changeowner.xls</field>
+            <field name="parent_id" eval="ref('dir_asset_action_template')"/>
         </record>
         <!-- Asset Transfer -->
         <record id="asset_transfer_template" model="ir.attachment">
             <field name="datas"></field>
             <field name="datas_fname">asset_transfer.xls</field>
             <field name="name">asset_transfer.xls</field>
+            <field name="parent_id" eval="ref('dir_asset_action_template')"/>
         </record>
         <!-- Asset Removal -->
         <record id="asset_removal_template" model="ir.attachment">
             <field name="datas"></field>
             <field name="datas_fname">asset_removal.xls</field>
             <field name="name">asset_removal.xls</field>
+            <field name="parent_id" eval="ref('dir_asset_action_template')"/>
         </record>
         <!-- Asset Direct Receive -->
         <record id="asset_receive_template" model="ir.attachment">
             <field name="datas"></field>
             <field name="datas_fname">asset_receive.xls</field>
             <field name="name">asset_receive.xls</field>
+            <field name="parent_id" eval="ref('dir_asset_action_template')"/>
         </record>
     </data>
 </openerp>
