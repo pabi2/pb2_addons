@@ -14,7 +14,7 @@
     'data': [
         'views/my_queue_job_view.xml',
         'action_purchase_create_inovice/create_invoice_view.xml',
-        'action_report_tax_report/tax_report_wizard.xml',
+        'action_run_tax_report/tax_report_wizard.xml',
     ],
     'installable': True,
     'application': False,
