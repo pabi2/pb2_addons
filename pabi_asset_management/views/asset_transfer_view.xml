@@ -82,7 +82,10 @@
                             </group>
                             <group>
                                 <field name="user_id"/>
+                                <field name="date_accept"/>
                                 <field name="date"/>
+                                <field name="date_diff" invisible="1"/>
+                                <field name="reason" attrs="{'invisible': [('date_diff', '=', False)], 'required': [('date_diff', '=', True)]}"/>
                             </group>
                         </group>
                         <notebook>

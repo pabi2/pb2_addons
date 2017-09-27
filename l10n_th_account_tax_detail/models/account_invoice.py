@@ -6,6 +6,12 @@ from .account_tax_detail import InvoiceVoucherTaxDetail
 class AccountInvoice(InvoiceVoucherTaxDetail, models.Model):
     _inherit = 'account.invoice'
 
+    # If specified, will be used for sales tax detail.
+    # By default it not used, can be extended from other addons.
+    number_preprint = fields.Char(
+        string='Preprint Number',
+    )
+
     @api.model
     def check_missing_tax(self):
         res = False  # Force not check missing tax

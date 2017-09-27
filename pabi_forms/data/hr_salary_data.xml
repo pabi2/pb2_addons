@@ -17,6 +17,7 @@
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
 			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 
 		<record id="hr_salary_approval_form_th_values" model="ir.values">

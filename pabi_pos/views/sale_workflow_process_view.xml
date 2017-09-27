@@ -8,13 +8,17 @@
             <field name="arch" type="xml">
                 <xpath expr="/form" position="inside">
                     <group string="PABI2">
-                        <field name="run_now"/>
+                        <field name="pos_partner_id"/>
                         <field name="operating_unit_id" required="1"/>
                         <field name="taxbranch_id" required="1"/>
                         <field name="warehouse_id" required="1"/>
-                        <field name="section_id" required="1"/>
+                        <field name="res_section_id" required="1"/>
                     </group>
                 </xpath>
+                <field name="property_journal_id" position="after">
+                    <field name="voucher_journal_id"/>
+                    <field name="partner_bank_id"/>
+                </field>
             </field>
         </record>
     </data>

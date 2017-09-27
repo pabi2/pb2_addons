@@ -11,7 +11,7 @@
                     <field name="partner_bank_id"/>
                 </xpath>
                 <xpath expr="//field[@name='bank_account_id']" position="attributes">
-                    <attribute name="context">{'company_bank_account_only': True}</attribute>
+                    <attribute name="context">{'company_bank_account_only': False}</attribute>
                 </xpath>
             </field>
         </record>

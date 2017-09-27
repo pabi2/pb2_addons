@@ -778,6 +778,11 @@ class ChartFieldAction(ChartField):
                 report_type = account.user_type.report_type
                 rec.require_chartfield = report_type not in ('asset',
                                                              'liability')
+            # kittiu: I found AV-Expense case no account and must not required.
+            # Not sure it comply to all case ?
+            elif 'is_advance_product_line' in rec and \
+                    rec.is_advance_product_line:  # Case product always
+                rec.require_chartfield = False
             else:
                 rec.require_chartfield = True
             if not rec.require_chartfield:
@@ -791,14 +796,16 @@ class ChartFieldAction(ChartField):
     @api.multi
     def write(self, vals):
         # For balance sheet account, always set no dimension
-        if vals.get('account_id', False):
-            account = self.env['account.account'].browse(vals['account_id'])
-            if account.user_type.report_type in ('asset', 'liability'):
-                vals['section_id'] = False
-                vals['project_id'] = False
-                vals['personnel_costcenter_id'] = False
-                vals['invest_asset_id'] = False
-                vals['invest_construction_phase_id'] = False
+        # Note by kittiu: NSTDA wants to remove this check, for NSTDA, it is ok
+        #                 Might change in the future.
+        # if vals.get('account_id', False):
+        #     account = self.env['account.account'].browse(vals['account_id'])
+        #     if account.user_type.report_type in ('asset', 'liability'):
+        #         vals['section_id'] = False
+        #         vals['project_id'] = False
+        #         vals['personnel_costcenter_id'] = False
+        #         vals['invest_asset_id'] = False
+        #         vals['invest_construction_phase_id'] = False
         res = super(ChartFieldAction, self).write(vals)
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)

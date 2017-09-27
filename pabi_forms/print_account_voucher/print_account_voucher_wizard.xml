@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <act_window name="Print Invoice"
+        <act_window name="Print Voucher"
             id="action_print_account_voucher_wizard"
             src_model="account.voucher"
             res_model="print.account.voucher.wizard"

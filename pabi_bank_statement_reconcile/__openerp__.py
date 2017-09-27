@@ -18,6 +18,7 @@ and result from bank statement
         'pabi_account',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/ir_sequence.xml',
         'data/report_data.xml',
         'views/pabi_bank_statement_view.xml',

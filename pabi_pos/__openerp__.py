@@ -11,9 +11,7 @@ This module use sale_automatic_workflow for sales order of type POS.
 When set automatic workflow = POS, the order will automatically,
 * Create and Validate Invoice
 * Create and Transfer Shipment
-
-To issue the receipt, user will come to invoice and do the payment manually.
-
+* Create and Pay Paymnet
     """,
     "website": "https://ecosoft.co.th/",
     "author": "Kitti U.",
@@ -24,9 +22,12 @@ To issue the receipt, user will come to invoice and do the payment manually.
         "sale_automatic_workflow",
         "pabi_chartfield",
         "pabi_utils",
+        "pabi_account",
     ],
     "data": [
+        "views/product_view.xml",
         "views/sale_view.xml",
         "views/sale_workflow_process_view.xml",
     ],
+    # "pre_init_hook": "pre_init_hook",  # Keeps the job running for now.
 }

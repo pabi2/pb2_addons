@@ -45,8 +45,9 @@ class AccountMoveLine(models.Model):
     def _budget_eligible_move_lines(self):
         move_lines = self.filtered(
             lambda l:
-            (l.account_id.user_type.report_type  # Not BS account
-             not in ('asset', 'liability')) and
+            # kittiu: It seem NSTDA asset to charge budget !!!
+            # (l.account_id.user_type.report_type  # Not BS account
+            #  not in ('asset', 'liability')) and
             (l.activity_id or l.product_id)  # Is Activity or Product
         )
         return move_lines

@@ -21,6 +21,7 @@
 			<field name="jasper_output">pdf</field>
 			<field name="copies">2</field>
 			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 
 		<record id="supplier_netpay_form_th_values" model="ir.values">
@@ -45,6 +46,7 @@
 			<field name="jasper_output">pdf</field>
 			<field name="copies">2</field>
 			<field name="force_locale">en_US</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 
 		<record id="supplier_netpay_form_en_values" model="ir.values">
@@ -70,6 +72,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_invoice_form_en_values" model="ir.values">
 			<field name="name">Customer Invoice/Refund (EN)</field>
@@ -92,6 +95,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_invoice_form_th_values" model="ir.values">
 			<field name="name">Customer Invoice/Refund (TH)</field>
@@ -99,8 +103,6 @@
 			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_invoice_form_th)"/>
 		</record>
-
-
 
 		<!-- Customer Receipt -->
 		<!-- EN -->
@@ -118,6 +120,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_receipt_form_en_values" model="ir.values">
 		<field name="name">Customer Receipt (EN)</field>
@@ -140,6 +143,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_receipt_form_th_values" model="ir.values">
 		<field name="name">Customer Receipt (TH)</field>
@@ -164,6 +168,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_tax_receipt_form_en_values" model="ir.values">
 			<field name="name">Customer Tax Receipt (EN)</field>
@@ -186,6 +191,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_tax_receipt_form_th_values" model="ir.values">
 			<field name="name">Customer Tax Receipt (TH)</field>
@@ -210,6 +216,8 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="attachment">object.number</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_tax_receipt_200_form_en_values" model="ir.values">
 			<field name="name">Customer Tax Receipt 200% (EN)</field>
@@ -232,6 +240,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_tax_receipt_200_form_th_values" model="ir.values">
 			<field name="name">Customer Tax Receipt 200% (TH)</field>
@@ -256,6 +265,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_tax_invoice_picking_form_en_values" model="ir.values">
 			<field name="name">Customer Tax Invoice Picking (EN)</field>
@@ -278,6 +288,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_tax_invoice_picking_form_th_values" model="ir.values">
 			<field name="name">Customer Tax Invoice Picking (TH)</field>
@@ -299,6 +310,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 		<record id="bank_receipt_voucher_values" model="ir.values">
 			<field name="name">Voucher</field>
@@ -322,6 +334,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="invoice_voucher_kv_values" model="ir.values">
@@ -344,6 +357,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="invoice_voucher_dv_values" model="ir.values">
@@ -368,6 +382,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="payment_voucher_pv_values" model="ir.values">
@@ -390,6 +405,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="payment_voucher_rc_values" model="ir.values">
@@ -415,6 +431,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="bank_receipt_voucher_values" model="ir.values">
@@ -439,6 +456,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="adjustment_voucher_values" model="ir.values">

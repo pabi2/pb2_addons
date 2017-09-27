@@ -15,6 +15,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_work_acceptance_values" model="ir.values">
@@ -37,6 +38,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_work_acceptance_values_1" model="ir.values">
@@ -59,6 +61,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_work_acceptance_values_2" model="ir.values">
@@ -81,6 +84,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_order_values" model="ir.values">
@@ -103,6 +107,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_order_en_values" model="ir.values">
@@ -125,6 +130,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="request_for_quotation_values" model="ir.values">
@@ -147,6 +153,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_order_1_values" model="ir.values">
@@ -169,6 +176,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_1" model="ir.values">
@@ -191,6 +199,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_2" model="ir.values">
@@ -213,6 +222,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_3" model="ir.values">
@@ -235,6 +245,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_4" model="ir.values">
@@ -257,6 +268,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_5" model="ir.values">
@@ -279,6 +291,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_6" model="ir.values">
@@ -301,6 +314,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_7" model="ir.values">
@@ -323,6 +337,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_8" model="ir.values">
@@ -345,6 +360,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_9" model="ir.values">
@@ -367,6 +383,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_10" model="ir.values">
@@ -389,6 +406,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_11" model="ir.values">
@@ -411,6 +429,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_values_12" model="ir.values">
@@ -433,6 +452,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="purchase_requisition_summary_values" model="ir.values">
@@ -455,6 +475,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
 		</record>
 
 		<record id="billing_receipt_values" model="ir.values">

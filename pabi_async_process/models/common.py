@@ -8,7 +8,6 @@ class PabiAsync(object):
     @api.model
     def _check_queue(self, enqueue_method, doc_name=False):
         task = "%s('%s', %s)" % (enqueue_method, self._name, self.id)
-        print task
         jobs = self.env['queue.job'].\
             search([('func_string', 'like', task),
                     ('state', 'not in', ('done', 'failed'))])

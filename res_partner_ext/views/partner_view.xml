@@ -102,7 +102,9 @@
                     <attribute name="style">width: 100%%</attribute>
                 </field>
                 <field name="name" position="before">
-                    <field name="title" style="width: 50%%" options='{"no_open": True}' placeholder="Title"/>
+                    <field name="title" style="width: 50%%" options='{"no_open": True}' placeholder="Title"
+                      attrs="{'invisible': [('is_company', '=', True)]}"/>
+                    <field name="title_lang" style="width: 50%%" attrs="{'invisible': [('is_company', '=', True)]}"/>
                 </field>
                 <field name="name" position="after">
                     <field name="id" invisible="1"/>

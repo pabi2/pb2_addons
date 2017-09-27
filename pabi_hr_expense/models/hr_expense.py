@@ -153,30 +153,35 @@ class HRExpense(models.Model):
         store=True,
     )
 
-    @api.one
-    @api.constrains('line_ids')
-    def _check_line_ids(self):
-        if not self.advance_expense_id:
-            return True
-        chart_fields = {
-            'project_id':
-            self.advance_expense_id.line_ids.mapped('project_id')._ids,
-            'section_id':
-            self.advance_expense_id.line_ids.mapped('section_id')._ids,
-            'invest_asset_id':
-            self.advance_expense_id.line_ids.mapped('invest_asset_id')._ids,
-            'invest_construction_phase_id':
-            self.advance_expense_id.line_ids.mapped(
-                'invest_construction_phase_id')._ids,
-        }
-        msg = _("You are selecting dimension which "
-                "has not been used in Advance %s."
-                % self.advance_expense_id.name_get()[0][1])
-        for line in self.line_ids:
-            for field in chart_fields:
-                if line[field]:
-                    if line[field].id not in chart_fields[field]:
-                        raise ValidationError(msg)
+    # This method is checking that budget in Clearning must be same as in AV
+    # But @Lek confirm AV must not have budget (may have in PABIWeb as info)
+    # As such, this one is not used. But we keep for history only.
+    # --
+    # @api.one
+    # @api.constrains('line_ids')
+    # def _check_line_ids(self):
+    #     if not self.advance_expense_id:
+    #         return True
+    #     chart_fields = {
+    #         'project_id':
+    #         self.advance_expense_id.line_ids.mapped('project_id')._ids,
+    #         'section_id':
+    #         self.advance_expense_id.line_ids.mapped('section_id')._ids,
+    #         'invest_asset_id':
+    #         self.advance_expense_id.line_ids.mapped('invest_asset_id')._ids,
+    #         'invest_construction_phase_id':
+    #         self.advance_expense_id.line_ids.mapped(
+    #             'invest_construction_phase_id')._ids,
+    #     }
+    #     msg = _("You are selecting dimension which "
+    #             "has not been used in Advance %s."
+    #             % self.advance_expense_id.name_get()[0][1])
+    #     for line in self.line_ids:
+    #         for field in chart_fields:
+    #             if line[field]:
+    #                 if line[field].id not in chart_fields[field]:
+    #                     raise ValidationError(msg)
+    # --
 
     @api.multi
     @api.depends(

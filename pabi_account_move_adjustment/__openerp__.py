@@ -34,6 +34,7 @@ Note: following are arequiremen for system to properly create analytic line
         'wizard/create_journal_entry_wizard.xml',
         'views/account_view.xml',
         'views/account_invoice_view.xml',
+        'views/account_move_priority_view.xml',
     ],
     'test': [
     ],

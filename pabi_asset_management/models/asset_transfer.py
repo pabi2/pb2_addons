@@ -18,12 +18,33 @@ class AccountAssetTransfer(models.Model):
         copy=False,
     )
     date = fields.Date(
-        string='Date',
+        string='Transfer Date',
         default=lambda self: fields.Date.context_today(self),
         required=True,
         copy=False,
         readonly=True,
         states={'draft2': [('readonly', False)]},
+        help="This date will be used as accouning date for the new asset.\n"
+        "It must be within this same month."
+    )
+    date_accept = fields.Date(
+        string='Commitee Accept Date',
+        required=True,
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'draft2': [('readonly', False)]},
+        help="If accept date not equal to transfer date, a reason is needed."
+    )
+    date_diff = fields.Boolean(
+        string='Date Diff',
+        compute='_compute_date_diff',
+    )
+    reason = fields.Char(
+        string='Reason',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'draft2': [('readonly', False)]},
     )
     user_id = fields.Many2one(
         'res.users',
@@ -66,7 +87,8 @@ class AccountAssetTransfer(models.Model):
     )
     transfer_type = fields.Selection(
         [('merge', 'Merge (many source -> 1 target)'),
-         ('split', 'Split (1 source -> many target)')],
+         ('split', 'Split (1 source -> many target)'),
+         ('transfer', 'Transfer (many source -> many target)')],
         string='Transfer Type',
         compute='_compute_transfer_type',
         store=True,
@@ -92,11 +114,42 @@ class AccountAssetTransfer(models.Model):
     )
 
     @api.multi
+    @api.depends('date', 'date_accept')
+    def _compute_date_diff(self):
+        for rec in self:
+            if rec.date and rec.date_accept:
+                rec.date_diff = rec.date != rec.date_accept
+            else:
+                rec.date_diff = False
+
+    @api.multi
+    @api.constrains('date', 'date_accept')
+    def _check_date(self):
+        Period = self.env['account.period']
+        for rec in self:
+            # If date diff, need readon
+            if rec.date != rec.date_accept and not rec.reason:
+                raise ValidationError(
+                    _('Accept date and transfer date is different, '
+                      'please provide a reason!'))
+            if Period.find(dt=rec.date) != Period.find():
+                raise ValidationError(
+                    _('Transfer date must be within current period!'))
+
+    @api.onchange('date', 'date_accept')
+    def _onchange_date(self):
+        if self.date == self.date_accept:
+            self.reason = False
+
+    @api.multi
     def _validate_asset_values(self):
-        if float_compare(self.source_asset_value,
-                         self.target_asset_value, 2) != 0:
-            raise ValidationError(
-                _('To transfer, source and target asset value must equal!'))
+        for rec in self:
+            if not rec.asset_ids and not rec.target_asset_ids:
+                raise ValidationError(_('Soure or target assets not filled!'))
+            if float_compare(rec.source_asset_value,
+                             rec.target_asset_value, 2) != 0:
+                raise ValidationError(
+                    _('To transfer, source and target value must equal!'))
 
     @api.multi
     @api.depends('asset_ids', 'target_asset_ids')
@@ -120,10 +173,12 @@ class AccountAssetTransfer(models.Model):
                 rec.transfer_type = 'split'
             elif len(rec.asset_ids) >= 1 and len(rec.target_asset_ids) == 1:
                 rec.transfer_type = 'merge'
+            elif len(rec.asset_ids) > 1 and len(rec.target_asset_ids) > 1:
+                rec.transfer_type = 'transfer'
             else:
                 raise ValidationError(
-                    _('You set up source/target assets incorrectly,\n'
-                      'only spliting (1-M) or merging (M-1) is allowed!'))
+                    _('You set up source/target assets incorrectly,\nonly '
+                      'split (1-M), merge (M-1), transfer (M-M) is allowed!'))
 
     @api.model
     def create(self, vals):

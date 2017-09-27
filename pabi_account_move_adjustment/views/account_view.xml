@@ -23,6 +23,7 @@
         <record id="view_journal_adjust_budget_form" model="ir.ui.view">
             <field name="name">view.journal.adjust.budget.form</field>
             <field name="model">account.move</field>
+            <field name="priority">16</field>
             <field name="arch" type="xml">
                 <form string="Account Entry">
                     <header>
