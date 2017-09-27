@@ -26,6 +26,10 @@ class AssetPurchaseMethod(models.Model):
         string='Name',
         required=True,
     )
+    code = fields.Char(
+        string='Code',
+        required=True,
+    )
     direct = fields.Boolean(
         string='Direct Receive',
         default=False,

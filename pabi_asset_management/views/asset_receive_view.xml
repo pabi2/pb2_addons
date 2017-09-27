@@ -75,7 +75,7 @@
                                       <field name="scrapped" invisible="1"/>
                                       <field name="availability" invisible="1"/>
                                       <field name="reserved_availability" invisible="1"/>
-                                      <field name="location_dest_id" groups="stock.group_locations"/>
+                                      <field name="location_dest_id" invisible="1"/>
                                       <field name="remaining_qty" invisible="1"/>
 
                                       <field name="asset_value"/>
@@ -83,7 +83,7 @@
                                       <!-- chart fields -->
                                       <field name="require_chartfield" invisible="1"/>
                                       <!-- <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/> -->
-                                      <field name="chartfield_id" required="1"/>
+                                      <field name="chartfield_id"/>
                                       <field name="project_id" invisible="1"/>
                                       <field name="section_id" invisible="1"/>
                                       <field name="invest_asset_id" invisible="1"/>

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
 
 
 class StockPicking(models.Model):
@@ -62,6 +63,21 @@ class StockPicking(models.Model):
             'nodestroy': True,
             'domain': [('id', 'in', moves.ids)],
         }
+
+    @api.multi
+    @api.constrains('asset_purchase_method_id', 'move_lines')
+    def _check_chartfield_id(self):
+        for rec in self:
+            if not rec.asset_purchase_method_id:
+                continue
+            elif rec.asset_purchase_method_id.code == '8':  # Donation
+                if rec.move_lines.filtered('chartfield_id'):
+                    raise ValidationError(
+                        _("For Donation, budget is not required!"))
+            else:
+                if rec.move_lines.filtered(lambda l: not l.chartfield_id):
+                    raise ValidationError(
+                        _('Budget is required for all assets'))
 
 
 class StockMove(models.Model):
