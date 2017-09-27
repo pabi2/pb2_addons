@@ -69,6 +69,7 @@
                     <field name="code"/>
                     <field name="name"/>
                     <field name="purchase_id"/>
+                    <field name="installment_str"/>
                     <field name="purchase_value"/>
                     <field name="date_start"/>
                     <field name="partner_id"/>

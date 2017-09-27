@@ -10,7 +10,7 @@
                     Now, you are going to create the work acceptance.
                 </p>
                  <group>
-                    <field name="select_invoice_plan"
+                    <field name="select_invoice_plan" widget="radio"
                            attrs="{
                                 'invisible':[('is_invoice_plan','!=',True)],
                                 'required':[('is_invoice_plan','=',True)],

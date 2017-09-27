@@ -479,6 +479,18 @@ class PurchaseWorkAcceptance(models.Model):
         readonly=True,
         help="Invoice that reference to this WA for panalty",
     )
+    installment = fields.Integer(
+        string='Installment',
+        readonly=True,
+        help="Installment, if this WA is created with PO's invoice plan",
+    )
+    num_installment = fields.Integer(
+        string='Number of Installment',
+        related='order_id.num_installment',
+        store=True,
+        readonly=True,
+        help="Total Installment, if this WA is created with PO's invoice plan",
+    )
 
     @api.multi
     @api.depends('invoice_ids', 'invoice_ids.state')

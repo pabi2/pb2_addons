@@ -207,6 +207,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'supplier_invoice': '-',
             'date_invoice': self.date_receive,
             'total_fine': 0,
+            'installment': self.select_invoice_plan,
         })
         acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
