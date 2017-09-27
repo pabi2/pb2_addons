@@ -28,6 +28,11 @@ def _extend_name_results_translation(self, domain, field_name,
     if result_count < limit:
         domain += [('id', 'not in', [x[0] for x in results])]
         trans_name = '%s,%s' % (self._model, field_name)
+        # kittiu: Sepcial Case for res_users, which use name from res_partner
+        special_case = trans_name == 'res.users,name'
+        if special_case:
+            trans_name = 'res.partner,name'
+        # --
         self._cr.execute("""
             SELECT res_id
             FROM ir_translation
@@ -37,6 +42,14 @@ def _extend_name_results_translation(self, domain, field_name,
         """ % ('%' + name + '%', '%' + name + '%', trans_name, limit))
         res = self._cr.dictfetchall()
         record_ids = [t['res_id'] for t in res]
+        # kittiu: Special case
+        if special_case:  # need to change from res.partner to res.users
+            partners = self.env['res.partner'].browse(record_ids)
+            user_ids = []
+            for partner in partners:
+                user_ids += partner.user_ids.ids
+            record_ids = user_ids
+        # --
         record_ids = self.browse(record_ids)
         results.extend(record_ids.name_get())
         results = list(set(results))
@@ -47,6 +60,11 @@ def _extend_search_results_translation(self, sub_domain):
     field_name = sub_domain[0]
     value = sub_domain[2]
     trans_name = '%s,%s' % (self._model, field_name)
+    # kittiu: Sepcial Case for res_users, which use name from res_partner
+    special_case = trans_name == 'res.users,name'
+    if special_case:
+        trans_name = 'res.partner,name'
+    # --
     if isinstance(value, str) or isinstance(value, unicode):
         self._cr.execute("""
             SELECT src
