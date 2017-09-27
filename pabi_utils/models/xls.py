@@ -204,5 +204,5 @@ class PABIUtilsXLS(models.AbstractModel):
             {'headers': True, 'separator': ',',
              'quoting': '"', 'encoding': 'utf-8'})
         if errors:
-            raise ValidationError(_(str(errors[0]['message'])))
+            raise ValidationError(errors[0]['message'].encode('utf-8'))
         return xml_ids

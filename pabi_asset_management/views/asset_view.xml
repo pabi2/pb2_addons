@@ -411,5 +411,17 @@
         <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_line"
           sequence="15" action="action_account_asset_line" groups="purchase.group_purchase_user,account.group_account_user"/>
 
+        <!-- Asset Actions Template (attachments) -->
+        <record id="action_asset_action_import_template" model="ir.actions.act_window">
+            <field name="name">Actions Templates (xls)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.attachment</field>
+            <field name="view_type">form</field>
+            <field name="domain" eval="[('parent_id', '=', ref('pabi_asset_management.dir_asset_action_template'))]" />
+        </record>
+        <menuitem action="action_asset_action_import_template" id="menu_asset_action_import_template"
+            parent="account_asset_management.menu_finance_config_assets" sequence="30"
+            groups="base.group_no_one"/>
+
     </data>
 </openerp>
