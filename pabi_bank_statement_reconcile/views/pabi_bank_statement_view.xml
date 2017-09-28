@@ -75,7 +75,8 @@
                                     <field name="batch_code"/>
                                     <field name="debit" sum="Debit"/>
                                     <field name="credit" sum="Credit"/>
-                                    <field name="match_item_id" widget="many2onebutton" string="Reconciled"/>
+                                    <field name="match_item_id" widget="many2onebutton" string="Reconciled"
+                                        attrs="{'invisible': [('prev_match_statement_id', '!=', False)]}"/>
                                     <field name="prev_match_statement_id" widget="many2one_clickable"/>
                                 </tree>
                             </field>
