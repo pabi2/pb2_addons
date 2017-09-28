@@ -57,6 +57,20 @@ class AccountAssetRemoval(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    asset_count = fields.Integer(
+        string='New Asset Count',
+        compute='_compute_assset_count',
+    )
+
+    @api.multi
+    @api.depends('removal_asset_ids')
+    def _compute_assset_count(self):
+        for rec in self:
+            ctx = {'active_test': False}
+            # New
+            asset_ids = self.removal_asset_ids.\
+                with_context(ctx).mapped('asset_id').ids
+            rec.asset_count = len(asset_ids)
 
     @api.model
     def default_get(self, field_list):
@@ -108,7 +122,7 @@ class AccountAssetRemoval(models.Model):
                     continue
                 asset = line.asset_id
                 ctx = {'active_ids': [asset.id], 'active_id': asset.id}
-                if asset.value_residual:
+                if asset.value_residual and not asset.no_depreciation:
                     ctx.update({'early_removal': True})
                 line.with_context(ctx).remove()
                 asset.status = line.target_status
@@ -124,6 +138,19 @@ class AccountAssetRemoval(models.Model):
     @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
+
+    @api.multi
+    def action_view_asset(self):
+        self.ensure_one()
+        Asset = self.env['account.asset']
+        action = self.env.ref('account_asset_management.account_asset_action')
+        result = action.read()[0]
+        asset_ids = self.removal_asset_ids.mapped('asset_id').ids
+        assets = Asset.with_context(active_test=False).search([('id', 'in',
+                                                                asset_ids)])
+        dom = [('id', 'in', assets.ids)]
+        result.update({'domain': dom})
+        return result
 
 
 class AccountAssetRemovalLine(models.Model):
