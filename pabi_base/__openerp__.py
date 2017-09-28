@@ -50,6 +50,7 @@ org -> sector -> subsector -> division -> section -> costcenter
         'views/res_investment_structure_view.xml',
         'views/res_dimension_view.xml',
         'views/project_info_view.xml',
+        'views/product_view.xml',
     ],
     "demo": [
     ]

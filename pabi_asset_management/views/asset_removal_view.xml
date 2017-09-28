@@ -15,7 +15,13 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_button_box oe_right">
+                            <button type="object" name="action_view_asset"
+                              class="oe_stat_button" icon="fa-building"
+                              attrs="{'invisible': [('asset_count', '=', 0)]}">
+                                <field name="asset_count" widget="statinfo" string="Assets"/>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
