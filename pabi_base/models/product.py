@@ -2,14 +2,18 @@
 from openerp import models, fields
 
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-    _order = 'default_code'  # Remove name sorting for performance improve
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
 
     sap_code = fields.Char(
         string='SAP Code',
         size=10,
     )
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+    _order = 'default_code'  # Remove name sorting for performance improve
 
 
 class ProductCategory(models.Model):
