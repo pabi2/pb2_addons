@@ -150,16 +150,20 @@ class PABIBankStatement(models.Model):
             self.transfer_type = False
 
     @api.onchange('journal_id')
-    def onchange_journal_id(self):
+    def _onchange_journal_id(self):
         self.partner_bank_id = False
         if self.journal_id:
             BankAcct = self.env['res.partner.bank']
             banks = BankAcct.search([('journal_id', '=', self.journal_id.id)])
-            if self.report_type == 'bank_receipt':
+            if self.doctype == 'bank_receipt':
                 banks = banks.filtered(lambda l: l.state == 'SA')
             else:
                 banks = banks.filtered(lambda l: l.state == 'CA')
             self.partner_bank_id = banks and banks[0] or False
+
+    @api.onchange('doctype')
+    def _onchange_doctype(self):
+        self.journal_id = False
 
     @api.multi
     def _prepare_move_items(self, move_lines):
