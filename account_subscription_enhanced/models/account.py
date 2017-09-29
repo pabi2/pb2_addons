@@ -218,9 +218,9 @@ class AccountSubscriptionLine(models.Model):
             move_ids.extend(_ids)
             # Amount case
             for line in lines_with_amount:
-                subline = line.with_context(subline_amount=line.amount)
+                context.update({'subline_amount': line.amount})
                 _ids = super(AccountSubscriptionLine,
-                             subline.with_context(context)).move_create()
+                             line.with_context(context)).move_create()
                 move_ids.extend(_ids)
         return move_ids
 
