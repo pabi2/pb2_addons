@@ -16,6 +16,19 @@
         <menuitem name="Configuration" groups="base.group_system" id="account_budget_activity.menu_action_account_budget_config" parent="account_budget_activity.menu_budgeting" sequence="120"/>
 
 
+        <!-- Import Templates -->
+        <record id="action_budget_plan_import_template" model="ir.actions.act_window">
+            <field name="name">Budget Plan Templates (xls)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.attachment</field>
+            <field name="view_type">form</field>
+            <field name="domain" eval="[('parent_id', '=', ref('pabi_budget_plan.dir_budget_plan_template'))]" />
+        </record>
+        <menuitem action="action_budget_plan_import_template" id="menu_budget_plan_import_template"
+            parent="account_budget_activity.menu_action_account_budget_config" sequence="200"
+            groups="base.group_no_one"/>
+
+
         # Temp Menu # TOBE DELETED
         <record id="action_policy_project" model="ir.actions.server">
             <field name="name">Project Based</field>

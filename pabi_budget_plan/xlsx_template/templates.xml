@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory Asset Action Import Temlates -->
+        <record model="document.directory" id="dir_budget_plan_template">
+            <field name="name">Budget Plan Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+        </record>
+
+        <!-- Unit Based Template -->
+        <record id="budget_plan_unit_base_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">budget.plan.unit</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_plan_unit_base.xls</field>
+            <field name="name">Unit Based Template</field>
+            <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Expense': {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name',
+                            'B2': 'org_id.name_short',
+                            'B3': 'section_id.code',
+                        },
+                    },
+                    'Activity Group': {
+                        '_HEAD_': {},
+                        'master_ag_ids[100]': {
+                            'A2': 'name',
+                            'B2': 'description',
+                        },
+                    },
+                },
+                '__IMPORT__': {
+                    'Expense': {
+                        'HEAD': {
+                            'B1': 'fiscalyear_id',
+                            'B2': 'org_id',
+                            'B3': 'section_id',
+                        },
+                        'line_ids[30]': {
+                            'B20': 'amount',
+                            'C20': 'activity_group_id',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

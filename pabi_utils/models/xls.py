@@ -5,6 +5,8 @@ import base64
 import os
 import xlrd
 import uuid
+import re
+import string
 from xlrd.sheet import ctype_text
 import unicodecsv
 from datetime import datetime, timedelta
@@ -15,6 +17,18 @@ from openerp.exceptions import ValidationError
 class PABIUtilsXLS(models.AbstractModel):
     _name = 'pabi.utils.xls'
     _description = 'XLS Helper for PABI2 project'
+
+    @api.model
+    def pos2idx(self, pos):
+        match = re.match(r"([a-z]+)([0-9]+)", pos, re.I)
+        if not match:
+            raise ValidationError(_('Position %s is not valid') % (pos, ))
+        col, row = match.groups()
+        col_num = 0
+        for c in col:
+            if c in string.ascii_letters:
+                col_num = col_num * 26 + (ord(c.upper()) - ord('A')) + 1
+        return (int(row) - 1, col_num - 1)
 
     @api.model
     def _add_column(self, column_name, column_value, file_txt):
@@ -53,11 +67,15 @@ class PABIUtilsXLS(models.AbstractModel):
 
     @api.model
     def import_xls(self, model, file, header_map=None,
-                   extra_columns=None, auto_id=False):
+                   extra_columns=None, auto_id=False,
+                   force_id=False):
         # 1) Convert form XLS to CSV
         header_fields, file_txt = self.xls_to_csv(
             model, file, header_map=header_map,
-            extra_columns=extra_columns, auto_id=auto_id)
+            extra_columns=extra_columns, auto_id=auto_id,
+            force_id=force_id)
+        print header_fields
+        print file_txt
         # 2) Do the import
         xls_ids = self.import_csv(model, header_fields, file_txt)
         return xls_ids
@@ -65,7 +83,7 @@ class PABIUtilsXLS(models.AbstractModel):
     @api.model
     def xls_to_csv(self, model, file,
                    header_map=None, extra_columns=None,
-                   auto_id=False):
+                   auto_id=False, force_id=False):
         """ This function will convert a simple (header+line) XLS file to
             simple CSV file (header+line) and the header columns
         To map user column with database column
@@ -73,8 +91,10 @@ class PABIUtilsXLS(models.AbstractModel):
         If there is additional fixed column value
         - extra_columns = [('name', 'ABC'), ('id', 10), ]
         If the import file have column id, we will use this column to create
-        external id, and hence possible to return record id being created
-        if auto_id=Ture, system will add id field with running number
+            external id, and hence possible to return record id being created
+        if auto_id=True, system will add id field with running number
+        if force_id=True, system will use ID from the original excel
+            force_id=False, system will replace ID with UUID
         Return:
             - csv ready for import to Odoo
               'ID', 'Asset', ...
@@ -85,7 +105,7 @@ class PABIUtilsXLS(models.AbstractModel):
         """
         decoded_data = base64.decodestring(file)
         ConfParam = self.env['ir.config_parameter']
-        ptemp = ConfParam.get_param('path_temp_file')
+        ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         ftemp = ptemp + '/temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
         f = open(ftemp + '.xls', 'wb+')
         f.write(decoded_data)
@@ -118,7 +138,7 @@ class PABIUtilsXLS(models.AbstractModel):
                 for index, val in enumerate(row_values):
                     ctype = st.cell(nrow, index).ctype
                     type = ctype_text.get(ctype, 'unknown type')
-                    if id_index == index and val:
+                    if id_index == index and val and not force_id:
                         # UUID replace id
                         xml_id = '%s.%s' % ('xls', uuid.uuid4())
                         row_values[index] = xml_id

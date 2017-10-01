@@ -115,10 +115,23 @@ class BudgetPlanUnit(BPCommon, models.Model):
         store=True,
         help="This virtual field is being used to sort the status in view",
     )
+    # Data for filing import template
+    master_ag_ids = fields.Many2many(
+        'account.activity.group',
+        sring='Activity Grups Master Data',
+        compute='_compute_master_ag_ids',
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(section_id, fiscalyear_id)',
          'Duplicated budget plan for the same section is not allowed!'),
     ]
+
+    @api.multi
+    @api.depends()
+    def _compute_master_ag_ids(self):
+        ActivityGroup = self.env['account.activity.group']
+        for rec in self:
+            rec.master_ag_ids = ActivityGroup.search([]).ids
 
     @api.multi
     @api.depends('state')
