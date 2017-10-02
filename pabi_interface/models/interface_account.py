@@ -706,26 +706,49 @@ class InterfaceAccountChecker(models.AbstractModel):
         if False in partner_ids:
             raise ValidationError(_('Alll lines must have same partner!'))
 
+    # @api.model
+    # def _check_line_dimension(self, inf):
+    #     # For account non asset/liability line must have section/project
+    #     for line in inf.line_ids:
+    #         report_type = line.account_id.user_type.report_type
+    #         if report_type not in ('asset', 'liability'):
+    #             if not line.section_id and not line.project_id:
+    #                 raise ValidationError(
+    #                     _('%s is non-banlance sheet item, it requires '
+    #                       'Section/Project') % (line.account_id.code,))
+    #             if not line.activity_id or not line.activity_group_id:
+    #                 raise ValidationError(
+    #                     _('%s is non-banlance sheet item, it requires '
+    #                       'Activity Group and Activity') %
+    #                     (line.account_id.code,))
+    #         else:
+    #             if line.section_id or line.project_id:
+    #                 raise ValidationError(
+    #                  _('%s is banlance sheet item, it do not require AG/A '
+    #                       'or Section/Project') % (line.account_id.code,))
+    #     for line in inf.line_ids:
+    #         if line.activity_id and \
+    #                 line.activity_id.account_id != line.account_id:
+    #             raise ValidationError(
+    #                 _('%s does not belong to activity %s') %
+    #                 (line.account_id.code, line.activity_id.name))
+
     @api.model
     def _check_line_dimension(self, inf):
-        # For account non asset/liability line must have section/project
+        # For product / activity line must have section/project
+        Budget = self.env['account.budget']
         for line in inf.line_ids:
-            report_type = line.account_id.user_type.report_type
-            if report_type not in ('asset', 'liability'):
+            if Budget.trx_budget_required(line):
                 if not line.section_id and not line.project_id:
                     raise ValidationError(
-                        _('%s is non-banlance sheet item, it requires '
-                          'Section/Project') % (line.account_id.code,))
-                if not line.activity_id or not line.activity_group_id:
-                    raise ValidationError(
-                        _('%s is non-banlance sheet item, it requires '
-                          'Activity Group and Activity') %
-                        (line.account_id.code,))
+                        _('%s is product/activity line, it requires '
+                          'Section/Project') % (line.name,))
             else:
                 if line.section_id or line.project_id:
                     raise ValidationError(
-                        _('%s is banlance sheet item, it do not require AG/A '
-                          'or Section/Project') % (line.account_id.code,))
+                        _('%s is product/activity line, it does not require '
+                          'Section/Project') % (line.name,))
+        # Check activity account
         for line in inf.line_ids:
             if line.activity_id and \
                     line.activity_id.account_id != line.account_id:
