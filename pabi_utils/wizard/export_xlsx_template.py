@@ -35,6 +35,7 @@ def split_row_col(pos):
 
 
 def get_sheet_by_name(book, name):
+    """ Get sheet by name for openpyxl """
     i = 0
     for sheetname in book.sheetnames:
         if sheetname == name:
@@ -103,9 +104,10 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.model
     def _get_line_vals(self, record, line_field, fields):
-        line_field, max = get_line_max(line_field)
+        """ Get values of this field from record set """
+        line_field, max_row = get_line_max(line_field)
         lines = record[line_field]
-        if max > 0 and len(lines) > max:
+        if max_row > 0 and len(lines) > max_row:
             raise Exception(
                 _('Records in %s exceed max record allowed!') % line_field)
         vals = dict([(field, []) for field in fields])
@@ -115,7 +117,7 @@ class ExportXlsxTemplate(models.TransientModel):
                 for f in field.split('.'):
                     line_copy = line_copy[f]
                 vals[field].append(line_copy)
-        return vals
+        return (line_field, vals)
 
     @api.model
     def _fill_workbook_data(self, workbook, record, data_dict):
@@ -134,7 +136,8 @@ class ExportXlsxTemplate(models.TransientModel):
                 for line_field in line_fields:
                     fields = [field for rc, field
                               in worksheet.get(line_field, {}).iteritems()]
-                    vals = self._get_line_vals(record, line_field, fields)
+                    line_field, vals = self._get_line_vals(record,
+                                                           line_field, fields)
                     for rc, field in worksheet.get(line_field, {}).iteritems():
                         col, row = split_row_col(rc)  # starting point
                         i = 0

@@ -29,7 +29,7 @@
         'wizard/invest_asset_select_wizard_view.xml',
         'wizard/generate_budget_plan_wizard.xml',
         'wizard/budget_breakdown_action_excel_import_wizard.xml',
-        'wizard/export_xlsx_template_wizard.xml',
+        'wizard/xlsx_template_wizard.xml',
         'views/account_budget_view.xml',
         'views/budget_plan_unit_view.xml',
         'views/budget_plan_project_view.xml',

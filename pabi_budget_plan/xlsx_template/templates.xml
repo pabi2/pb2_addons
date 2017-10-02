@@ -36,14 +36,12 @@
                 },
                 '__IMPORT__': {
                     'Expense': {
-                        'HEAD': {
-                            'B1': 'fiscalyear_id',
-                            'B2': 'org_id',
-                            'B3': 'section_id',
-                        },
-                        'line_ids[30]': {
-                            'B20': 'amount',
-                            'C20': 'activity_group_id',
+                        'plan_expense_line_ids[100]': {
+                            'A10': 'charge_type',
+                            'B10': 'activity_group_id',
+                            'F10': 'unit',
+                            'G10': 'activity_unit_price',
+                            'D10': 'description',
                         }
                     }
                 }

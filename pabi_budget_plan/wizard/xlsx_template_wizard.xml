@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <!-- Budget Plan Unit Based -->
+      <act_window id="action_budget_plan_unit_export_xlsx_tempalte"
+          name="Get Import Template (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="budget.plan.unit"
+          view_mode="form"
+          target="new"/>
+      <act_window id="action_budget_plan_unit_import_xlsx_tempalte"
+          name="Import Template Data (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="budget.plan.unit"
+          view_mode="form"
+          target="new"/>
+
+    </data>
+</openerp>

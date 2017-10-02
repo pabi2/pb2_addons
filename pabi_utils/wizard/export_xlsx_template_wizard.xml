@@ -14,8 +14,8 @@
                           <field name="template_id" widget="selection"/>
                       </group>
                       <group>
-                          <field name="res_model" />
-                          <field name="res_id" />
+                          <field name="res_model" invisible="1"/>
+                          <field name="res_id" invisible="1"/>
                       </group>
                   </group>
                   <div states="get">

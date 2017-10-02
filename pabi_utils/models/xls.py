@@ -74,8 +74,6 @@ class PABIUtilsXLS(models.AbstractModel):
             model, file, header_map=header_map,
             extra_columns=extra_columns, auto_id=auto_id,
             force_id=force_id)
-        print header_fields
-        print file_txt
         # 2) Do the import
         xls_ids = self.import_csv(model, header_fields, file_txt)
         return xls_ids
@@ -103,23 +101,16 @@ class PABIUtilsXLS(models.AbstractModel):
             - headers, i.e,
               ['id', 'asset_id', ...]
         """
-        decoded_data = base64.decodestring(file)
-        ConfParam = self.env['ir.config_parameter']
-        ptemp = ConfParam.get_param('path_temp_file') or '/temp'
-        ftemp = ptemp + '/temp' + datetime.utcnow().strftime('%H%M%S%f')[:-3]
-        f = open(ftemp + '.xls', 'wb+')
-        f.write(decoded_data)
-        f.seek(0)
-        f.close()
         try:
-            wb = xlrd.open_workbook(f.name)
+            decoded_data = base64.decodestring(file)
+            wb = xlrd.open_workbook(file_contents=decoded_data)
         except xlrd.XLRDError:
             raise ValidationError(
                 _('Invalid file format, only .xls or .xlsx file allowed!'))
         except Exception:
             raise
         st = wb.sheet_by_index(0)
-        csv_file = open(ftemp + '.csv', 'wb')
+        csv_file = StringIO.StringIO()
         csv_out = unicodecsv.writer(csv_file,
                                     encoding='utf-8',
                                     quoting=unicodecsv.QUOTE_ALL)
@@ -136,39 +127,19 @@ class PABIUtilsXLS(models.AbstractModel):
             if nrow > 0:
                 row_values = st.row_values(nrow)
                 for index, val in enumerate(row_values):
-                    ctype = st.cell(nrow, index).ctype
-                    type = ctype_text.get(ctype, 'unknown type')
                     if id_index == index and val and not force_id:
                         # UUID replace id
                         xml_id = '%s.%s' % ('xls', uuid.uuid4())
                         row_values[index] = xml_id
-                    elif type == 'empty' or type == 'text' \
-                        or type == 'bool' or type == 'error' \
-                            or type == 'blank':
-                        row_values[index] = st.cell(nrow, index).value
-                    elif type == 'number':
-                        if not val:
-                            row_values[index] = 0
-                        else:
-                            if not str(val).isdigit():
-                                row_values[index] = int(val)
-                            else:
-                                row_values[index] = val
-                    elif type == 'xldate':
-                        str_date = self._xldate_to_datetime(
-                            st.cell(nrow, index).value)
-                        row_values[index] = str_date
                     else:
-                        row_values[index] = st.cell(nrow, index).value
+                        cell = st.cell(nrow, index)
+                        row_values[index] = self._get_cell_value(cell)
                 csv_out.writerow(row_values)
             else:
                 csv_out.writerow(st.row_values(nrow))
-        csv_file.close()
-        csv_file = open(ftemp + '.csv', 'r')
+        csv_file.seek(0)
         file_txt = csv_file.read()
         csv_file.close()
-        os.unlink(ftemp + '.xls')
-        os.unlink(ftemp + '.csv')
         if not file_txt:
             raise ValidationError(_(str("File Not found.")))
         # Create xml_ids if not already assigned
@@ -190,6 +161,31 @@ class PABIUtilsXLS(models.AbstractModel):
                 _HEADER_FIELDS.insert(0, str(column[0]))
                 file_txt = self._add_column(column[0], column[1], file_txt)
         return (_HEADER_FIELDS, file_txt)
+
+    @api.model
+    def _get_cell_value(self, cell):
+        ctype = cell.ctype
+        type = ctype_text.get(ctype, 'unknown type')
+        value = False
+        if type == 'empty' or type == 'text' \
+            or type == 'bool' or type == 'error' \
+                or type == 'blank':
+            value = cell.value
+        elif type == 'number':
+            if not cell.value:
+                value = 0
+            else:
+                if not str(cell.value).isdigit():
+                    value = int(cell.value)
+                else:
+                    value = cell.value
+        elif type == 'xldate':
+            str_date = self._xldate_to_datetime(
+                cell.value)
+            value = str_date
+        else:
+            value = cell.value
+        return value
 
     @api.model
     def import_csv(self, model, header_fields, file_txt):
@@ -226,3 +222,15 @@ class PABIUtilsXLS(models.AbstractModel):
         if errors:
             raise ValidationError(errors[0]['message'].encode('utf-8'))
         return xml_ids
+
+    @api.model
+    def get_external_id(self, record):
+        ModelData = self.env['ir.model.data']
+        xml_id = record.get_external_id([record.id])
+        if not xml_id or (record.id in xml_id and xml_id[record.id] == ''):
+            ModelData.create({'name': '%s_%s' % (record._table, record.id),
+                              'module': 'pabi_utils',
+                              'model': record._name,
+                              'res_id': record.id, })
+            xml_id = record.get_external_id([record.id])
+        return xml_id[record.id]
