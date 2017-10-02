@@ -232,6 +232,7 @@ class AccountModel(models.Model):
         'account.model.type',
         string='Type',
         ondelete='restrict',
+        required=True,
     )
     to_be_reversed = fields.Boolean(
         string='To Be Reversed',
@@ -264,6 +265,12 @@ class AccountModel(models.Model):
           'into the model line using ${object} (account.subscription),\n'
           'e.g. ${object.name} will get the name of Define Recurring\n')
     )
+
+    @api.onchange('model_type_id')
+    def _onchange_model_type_id(self):
+        self.journal_id = self.model_type_id.journal_id
+        self.to_be_reversed = self.model_type_id.to_be_reversed
+        self.reverse_type = self.model_type_id.reverse_type
 
     @api.multi
     def generate(self, data=None):
@@ -480,6 +487,26 @@ class AccountModelType(models.Model):
     active = fields.Boolean(
         string='Active',
         default=True,
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+    )
+    to_be_reversed = fields.Boolean(
+        string='To Be Reversed',
+        default=False,
+        help="Journal Entry created by this model will also be reversed",
+    )
+    reverse_type = fields.Selection(
+        [('manual', 'Manual (by user)'),
+         ('auto', 'Auto (1st day, following month)')],
+        string='Reverse Type',
+        required=True,
+        default='manual',
+        help="* Manual: Journal Entry created will be marked for Reversal but "
+        "user will have to do it manually.\n"
+        "* Auto: As soon as Recurring Entry is created, the reveral will be "
+        "auto created, and use 1st date of follwing month as entry date.",
     )
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Model type name must be unique!'),

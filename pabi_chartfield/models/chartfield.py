@@ -723,7 +723,7 @@ class ChartFieldAction(ChartField):
     """ Chartfield + Onchange for Document Transaction
         1) No Filter Domain from 1 field to another. Free to choose
         2) Choosing only folloiwng fields will auto populate others
-            - const_control_id (extra)
+            - cost_control_id (extra)
             - section_id
             - project_id
             - personnel_costcenter_id
@@ -761,30 +761,43 @@ class ChartFieldAction(ChartField):
                         raise ValidationError(
                             _('More than 1 dimension selected'))
 
+    # @api.multi
+    # @api.depends('activity_id', 'account_id')
+    # def _compute_require_chartfield(self):
+    #     for rec in self:
+    #         account = False
+    #         is_alyt_line = rec._name in ('account.analytic.line')  # Special
+    #         if not is_alyt_line and 'account_id' in rec and rec.account_id:
+    #             account = rec.account_id
+    #         elif is_alyt_line and 'general_account_id' in rec \
+    #                 and rec.general_account_id:
+    #             account = rec.general_account_id
+    #         elif 'activity_id' in rec and rec.activity_id:
+    #             account = rec.activity_id.account_id
+    #         if account:
+    #             report_type = account.user_type.report_type
+    #             rec.require_chartfield = report_type not in ('asset',
+    #                                                          'liability')
+    #       # kittiu: I found AV-Expense case no account and must not required.
+    #         # Not sure it comply to all case ?
+    #         elif 'is_advance_product_line' in rec and \
+    #                 rec.is_advance_product_line:  # Case product always
+    #             rec.require_chartfield = False
+    #         else:
+    #             rec.require_chartfield = True
+    #         if not rec.require_chartfield:
+    #             rec.section_id = False
+    #             rec.project_id = False
+    #             rec.personnel_costcenter_id = False
+    #             rec.invest_asset_id = False
+    #             rec.invest_construction_phase_id = False
+    #     return
     @api.multi
-    @api.depends('activity_id', 'account_id')
+    @api.depends('activity_id', 'product_id')
     def _compute_require_chartfield(self):
+        Budget = self.env['account.budget']
         for rec in self:
-            account = False
-            is_alyt_line = rec._name in ('account.analytic.line')  # Special
-            if not is_alyt_line and 'account_id' in rec and rec.account_id:
-                account = rec.account_id
-            elif is_alyt_line and 'general_account_id' in rec \
-                    and rec.general_account_id:
-                account = rec.general_account_id
-            elif 'activity_id' in rec and rec.activity_id:
-                account = rec.activity_id.account_id
-            if account:
-                report_type = account.user_type.report_type
-                rec.require_chartfield = report_type not in ('asset',
-                                                             'liability')
-            # kittiu: I found AV-Expense case no account and must not required.
-            # Not sure it comply to all case ?
-            elif 'is_advance_product_line' in rec and \
-                    rec.is_advance_product_line:  # Case product always
-                rec.require_chartfield = False
-            else:
-                rec.require_chartfield = True
+            rec.require_chartfield = Budget.trx_budget_required(rec)
             if not rec.require_chartfield:
                 rec.section_id = False
                 rec.project_id = False
@@ -806,6 +819,13 @@ class ChartFieldAction(ChartField):
         #         vals['personnel_costcenter_id'] = False
         #         vals['invest_asset_id'] = False
         #         vals['invest_construction_phase_id'] = False
+        Budget = self.env['account.budget']
+        if Budget.trx_budget_required(vals) == 0:  # Check vals, be specific
+            vals['section_id'] = False
+            vals['project_id'] = False
+            vals['personnel_costcenter_id'] = False
+            vals['invest_asset_id'] = False
+            vals['invest_construction_phase_id'] = False
         res = super(ChartFieldAction, self).write(vals)
         if not self._context.get('MyModelLoopBreaker', False):
             self.update_related_dimension(vals)

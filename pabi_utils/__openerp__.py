@@ -30,5 +30,7 @@ Functions
     ],
     "data": [
         "data/xls_config.xml",
+        "wizard/export_xlsx_template_wizard.xml",
+        "wizard/import_xlsx_template_wizard.xml",
     ],
 }

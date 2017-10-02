@@ -41,13 +41,18 @@ class AccountMoveLine(models.Model):
         move_lines = self._budget_eligible_move_lines()
         return super(AccountMoveLine, move_lines).create_analytic_lines()
 
+    # @api.multi
+    # def _budget_eligible_move_lines(self):
+    #     move_lines = self.filtered(
+    #         lambda l:
+    #         # kittiu: It seem NSTDA asset to charge budget !!!
+    #         # (l.account_id.user_type.report_type  # Not BS account
+    #         #  not in ('asset', 'liability')) and
+    #         (l.activity_id or l.product_id)  # Is Activity or Product
+    #     )
+    #     return move_lines
     @api.multi
     def _budget_eligible_move_lines(self):
-        move_lines = self.filtered(
-            lambda l:
-            # kittiu: It seem NSTDA asset to charge budget !!!
-            # (l.account_id.user_type.report_type  # Not BS account
-            #  not in ('asset', 'liability')) and
-            (l.activity_id or l.product_id)  # Is Activity or Product
-        )
+        Budget = self.env['account.budget']
+        move_lines = self.filtered(lambda l: Budget.trx_budget_required(l))
         return move_lines

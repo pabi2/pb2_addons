@@ -183,6 +183,24 @@ class AccountBudget(models.Model):
         help="Release amount - rolling amount",
     )
 
+    @api.model
+    def trx_budget_required(self, trx):
+        """ Determine whether a transaction require user to select budget
+        The logic can be extended by other addons.
+        return: 1 = required
+                0 = not required
+                -1 = not eligible (no field in field_list)
+        """
+        # If Product or Activity is selected, budget is required.
+        field_list = ['activity_id', 'product_id']
+        try:
+            for field in field_list:
+                if trx[field]:
+                    return 1
+            return 0
+        except:
+            return -1
+
     @api.multi
     def _get_past_consumed_domain(self):
         self.ensure_one()

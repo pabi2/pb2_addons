@@ -18,6 +18,7 @@
             <field name="model">account.model</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="account.view_model_form"/>
+            <field name="priority">100</field>
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
                     <field name="special_type"/>

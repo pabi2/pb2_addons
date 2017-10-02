@@ -90,7 +90,7 @@
             <field name="model">account.model.line</field>
             <field name="inherit_id" ref="account.view_model_line_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="/tree/field[@name='analytic_account_id']" position="after">
+                <xpath expr="/tree/field[@name='name']" position="after">
                     <field name="activity_group_id"/>
                     <field name="activity_id"/>
                 </xpath>
