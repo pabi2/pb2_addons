@@ -131,10 +131,6 @@
             <field name="model">account.model.type</field>
             <field name="arch" type="xml">
                 <form string="Model Type">
-                    <!-- <label for="name" class="oe_edit_only"/>
-                    <h1>
-                        <field name="name" class="oe_inline" placeholder="Name"/>
-                    </h1> -->
                     <group>
                         <group>
                             <field name="name"/>
@@ -143,7 +139,22 @@
                             <field name="active"/>
                         </group>
                     </group>
-                    <notebook></notebook>
+                    <notebook>
+                        <page string="Defaults">
+                            <group>
+                                <group>
+                                    <field name="journal_id"/>
+                                </group>
+                                <group>
+                                    <label for="to_be_reversed"/>
+                                    <div>
+                                      <field name="to_be_reversed" class="oe_inline"/>
+                                      <field name="reverse_type" class="oe_inline" attrs="{'invisible': [('to_be_reversed', '=', False)]}"/>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </form>
             </field>
         </record>
@@ -200,6 +211,7 @@
             <field name="name">view.model.form</field>
             <field name="model">account.model</field>
             <field name="type">form</field>
+            <field name="priority">200</field>
             <field name="inherit_id" ref="account.view_model_form"/>
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
@@ -235,6 +247,10 @@
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="placeholder">${object.name}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='date_maturity']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
             </field>
         </record>
 
