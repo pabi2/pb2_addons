@@ -12,6 +12,7 @@ class PABIBankStatement(models.Model):
         string='Name',
         default='/',
         required=True,
+        readonly=True,
     )
     import_file_name = fields.Char(
         string='FileName',
