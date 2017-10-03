@@ -203,6 +203,15 @@ class AccountModel(models.Model):
 class AccountSubscription(models.Model):
     _inherit = 'account.subscription'
 
+    special_type = fields.Selection(
+        [('invoice_plan', 'Purchase Invoice Plan'),
+         ('invoice_plan_fin_lease', 'Purchase Invoice Plan (Fin Lease)')],
+        string='Special Type',
+        related='model_id.special_type',
+        help="With this selection, journal entrires will be created based "
+        "on due/draft purchase invoice plan."
+    )
+
     @api.multi
     def _validate_model_invoice_plan_type(self, vals):
         if vals.get('model_id', False) or vals.get('type', False):
