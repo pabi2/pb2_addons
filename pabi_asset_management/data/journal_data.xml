@@ -16,7 +16,7 @@
         <record id="journal_asset" model="account.journal">
             <field name="name">Asset Journal</field>
             <field name="code">AJ</field>
-            <field name="type">adjust_no_budget</field>
+            <field name="type">general</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="sequence_id" ref="seq_journal_asset"/>
             <field name="entry_posted">True</field>
@@ -37,7 +37,7 @@
         <record id="journal_asset_depre_journal" model="account.journal">
             <field name="name">Depreciation Journal</field>
             <field name="code">AD</field>
-            <field name="type">adjust_no_budget</field>
+            <field name="type">general</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="sequence_id" ref="seq_journal_asset_depre_journal"/>
             <field name="entry_posted">True</field>

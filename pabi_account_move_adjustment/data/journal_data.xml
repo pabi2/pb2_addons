@@ -24,7 +24,7 @@
         <record id="journal_adjust_budget" model="account.journal">
             <field name="name">Adjust Budget</field>
             <field name="code">AJB</field>
-            <field name="type">adjust_budget</field>
+            <field name="type">general</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="sequence_id" ref="seq_journal_adjust_budget"/>
             <field name="entry_posted">True</field>
@@ -46,7 +46,7 @@
         <record id="journal_adjust_no_budget" model="account.journal">
             <field name="name">Adjust No-Budget</field>
             <field name="code">AJN</field>
-            <field name="type">adjust_no_budget</field>
+            <field name="type">general</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="sequence_id" ref="seq_journal_adjust_no_budget"/>
             <field name="entry_posted">True</field>

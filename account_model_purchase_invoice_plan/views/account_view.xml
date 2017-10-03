@@ -31,5 +31,33 @@
                 </field>
             </field>
         </record>
+
+        <record id="view_subscription_form" model="ir.ui.view">
+            <field name="name">view.subscription.form</field>
+            <field name="model">account.subscription</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account_subscription_enhanced.view_subscription_form"/>
+            <field name="arch" type="xml">
+                <field name="model_type_id" position="after">
+                    <field name="special_type" invisible="1"/>
+                </field>
+                <field name="date_start" position="attributes">
+                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
+                </field>
+                <field name="period_type" position="attributes">
+                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
+                </field>
+                <field name="consider_month_end" position="attributes">
+                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
+                </field>
+                <field name="period_nbr" position="attributes">
+                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
+                </field>
+                <field name="period_total" position="attributes">
+                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
+                </field>
+            </field>
+        </record>
+
     </data>
 </openerp>
