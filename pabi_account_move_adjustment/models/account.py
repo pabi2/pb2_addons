@@ -156,3 +156,30 @@ class AccountModel(models.Model):
                     rec.lines_id.filtered('chartfield_id'):
                 raise ValidationError(_('For %s, budget are not allowed') %
                                       rec.journal_id.name)
+
+    @api.multi
+    def onchange_journal_id(self, journal_id):
+        res = super(AccountModel, self).onchange_journal_id(journal_id)
+        res['value']['lines_id'] = False
+        return res
+
+
+class AccountModelLine(models.Model):
+    _inherit = 'account.model.line'
+
+    budget_journal = fields.Boolean(
+        string='Budget Journal',
+        compute='_compute_budget_journal',
+    )
+
+    @api.onchange('budget_journal')
+    def _onchange_budget_journal(self):
+        analytic_journal = self.model_id.journal_id.analytic_journal_id
+        self.budget_journal = analytic_journal and True or False
+
+    @api.multi
+    @api.depends()
+    def _compute_budget_journal(self):
+        for rec in self:
+            analytic_journal = rec.model_id.journal_id.analytic_journal_id
+            rec.budget_journal = analytic_journal and True or False
