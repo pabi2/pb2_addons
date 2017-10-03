@@ -183,3 +183,13 @@ class AccountModelLine(models.Model):
         for rec in self:
             analytic_journal = rec.model_id.journal_id.analytic_journal_id
             rec.budget_journal = analytic_journal and True or False
+
+
+class AccountModelType(models.Model):
+    _inherit = 'account.model.type'
+
+    journal_id = fields.Many2one(
+        'account.journal',
+        domain=[('code', 'in', ('AJB', 'AJN'))],
+        help="In PABI2, only 2 type of journal is allowed for adjustment",
+    )
