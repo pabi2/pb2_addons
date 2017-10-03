@@ -49,7 +49,7 @@ class PABIBankStatement(models.Model):
     journal_id = fields.Many2one(
         'account.journal',
         string='Payment Method',
-        domain=[('type', '=', 'bank')],
+        domain=[('type', '=', 'bank'), ('intransit', '=', False)],
         required=True,
     )
     partner_bank_id = fields.Many2one(
@@ -205,6 +205,8 @@ class PABIBankStatement(models.Model):
             domain = [('match_import_id', '=', False),
                       ('journal_id', '=', rec.journal_id.id),
                       ('account_id', '=', rec.account_id.id)]
+            print rec.journal_id
+            print rec.account_id
             if rec.doctype:
                 domain.append(('doctype', '=', rec.doctype))
             move_lines = MoveLine.search(domain)

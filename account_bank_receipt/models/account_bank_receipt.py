@@ -244,7 +244,7 @@ class AccountBankReceipt(models.Model):
         # period_ids will always have a value, cf the code of find()
         number = self.env['ir.sequence'].next_by_code('account.bank.receipt')
         move_vals = {
-            'journal_id': receipt.journal_id.id,
+            'journal_id': receipt.partner_bank_id.journal_id.id,
             'date': date,
             'period_id': period_ids[0].id,
             'name': number,
