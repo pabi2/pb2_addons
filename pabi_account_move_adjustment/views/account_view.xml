@@ -267,5 +267,23 @@
 
         <menuitem action="action_journal_adjust_no_budget" id="menu_journal_adjust_no_budget" parent="account.menu_finance_entries" groups="account.group_account_user" sequence="22"/>
 
+        # Model
+        <record id="view_model_line_tree" model="ir.ui.view">
+            <field name="name">account.model.line.tree</field>
+            <field name="model">account.model.line</field>
+            <field name="inherit_id" ref="account_budget_activity.view_model_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="budget_journal" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='activity_group_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('budget_journal', '=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='activity_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('budget_journal', '=', False)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>
