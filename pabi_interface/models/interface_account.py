@@ -606,6 +606,10 @@ class InterfaceAccountEntryLine(models.Model):
         'account.activity',
         string='Activity',
     )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+    )
     section_id = fields.Many2one(
         'res.section',
         string='Section',
@@ -742,12 +746,12 @@ class InterfaceAccountChecker(models.AbstractModel):
                 if not line.section_id and not line.project_id:
                     raise ValidationError(
                         _('%s is product/activity line, it requires '
-                          'Section/Project') % (line.name,))
+                          'section/project') % (line.name,))
             else:
                 if line.section_id or line.project_id:
                     raise ValidationError(
                         _('%s is product/activity line, it does not require '
-                          'Section/Project') % (line.name,))
+                          'section/project') % (line.name,))
         # Check activity account
         for line in inf.line_ids:
             if line.activity_id and \
