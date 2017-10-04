@@ -281,7 +281,8 @@ class AccountModel(models.Model):
             self.ensure_one()
             if len(self.lines_id) != 2:
                 raise ValidationError(
-                    _('Model template must have only 2 item lines!'))
+                    _('Model "%s" is using manual amount and must have '
+                      'only 2 item lines!' % self.name))
         move_ids = self._generate(data)
         return move_ids
 
