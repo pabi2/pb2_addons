@@ -96,6 +96,7 @@ class AccountAssetTransfer(models.Model):
     state = fields.Selection(
         [('draft', 'Source Assets'),
          ('draft2', 'Target Assets'),
+         ('ready', 'Ready'),
          ('done', 'Transferred'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -210,6 +211,12 @@ class AccountAssetTransfer(models.Model):
     @api.multi
     def action_draft2(self):
         self.write({'state': 'draft2'})
+
+    @api.multi
+    def action_ready(self):
+        for rec in self:
+            rec._validate_asset_values()
+        self.write({'state': 'ready'})
 
     @api.multi
     def action_done(self):
