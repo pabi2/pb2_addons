@@ -121,8 +121,8 @@
                             <field name="move_line_check" invisible="1"/>
                             <field name="status" widget="selection"/>
                             <field name="status_code" invisible="1"/>
-                            <field name="source_asset_ids" widget="many2many_tags" attrs="{'invisible': [('source_asset_count', '=', 0)]}"/>
-                            <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_count', '=', 0)]}"/>
+                            <field name="source_asset_ids" widget="many2many_tags" attrs="{'invisible': [('source_asset_count', '=', 0)]}" />
+                            <field name="target_asset_ids" widget="many2many_tags" attrs="{'invisible': [('target_asset_count', '=', 0)]}" />
                             <field name="deliver_to" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
                             <field name="deliver_date" attrs="{'invisible': [('status_code', '!=', 'deliver')], 'required': [('status_code', '=', 'deliver')]}"/>
                         </group>
