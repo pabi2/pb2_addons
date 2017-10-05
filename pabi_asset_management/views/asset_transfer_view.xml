@@ -68,7 +68,14 @@
                           <field name="state" widget="statusbar" statusbar_visible="draft,draft2,done"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_button_box oe_right">
+                            <button type="object" name="open_source_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('source_asset_count', '=', 0)]}">
+                                <field name="source_asset_count" widget="statinfo" string="Source Asset(s)"/>
+                            </button>
+                            <button type="object" name="open_target_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('target_asset_count', '=', 0)]}">
+                                <field name="target_asset_count" widget="statinfo" string="Target Asset(s)"/>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>

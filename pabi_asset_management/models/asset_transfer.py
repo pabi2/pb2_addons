@@ -112,6 +112,22 @@ class AccountAssetTransfer(models.Model):
         string='Target Asset Value',
         compute='_compute_asset_value',
     )
+    target_asset_count = fields.Integer(
+        string='Source Asset Count',
+        compute='_compute_asset_count',
+    )
+    source_asset_count = fields.Integer(
+        string='Source Asset Count',
+        compute='_compute_asset_count',
+    )
+
+    @api.multi
+    @api.depends()
+    def _compute_asset_count(self):
+        for rec in self:
+            rec.source_asset_count = len(rec.asset_ids)
+            rec.target_asset_count = \
+                len(rec.target_asset_ids.mapped('ref_asset_id'))
 
     @api.multi
     @api.depends('date', 'date_accept')
@@ -322,6 +338,29 @@ class AccountAssetTransfer(models.Model):
             'active': False,
             'target_asset_ids': [(4, x) for x in new_asset_ids],
             'status': AssetStatus.search([('code', '=', 'transfer')]).id})
+
+    @api.multi
+    def open_source_asset(self):
+        self.ensure_one()
+        action = self.env.ref('account_asset_management.account_asset_action')
+        result = action.read()[0]
+        assets = self.env['account.asset'].with_context(active_test=False).\
+            search([('id', 'in', self.asset_ids.ids)])
+        dom = [('id', 'in', assets.ids)]
+        result.update({'domain': dom, 'context': {'active_test': False}})
+        return result
+
+    @api.multi
+    def open_target_asset(self):
+        self.ensure_one()
+        action = self.env.ref('account_asset_management.account_asset_action')
+        result = action.read()[0]
+        target_assets = self.target_asset_ids.mapped('ref_asset_id')
+        assets = self.env['account.asset'].with_context(active_test=False).\
+            search([('id', 'in', target_assets.ids)])
+        dom = [('id', 'in', assets.ids)]
+        result.update({'domain': dom, 'context': {'active_test': False}})
+        return result
 
 
 class AccountAssetTransferTarget(models.Model):
