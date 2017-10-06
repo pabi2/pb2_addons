@@ -30,11 +30,12 @@ def action_purchase_create_invoice(session, model_name, res_id):
         session.pool[model_name].\
             action_invoice_create(session.cr, session.uid,
                                   [res_id], session.context)
+        purchase = session.pool[model_name].browse(session.cr,
+                                                   session.uid, res_id)
+        invoice_ids = [x.id for x in purchase.invoice_ids]
+        return {'invoice_ids': invoice_ids}
     except Exception, e:
         raise FailedJobError(e)
-    purchase = session.pool[model_name].browse(session.cr, session.uid, res_id)
-    invoice_ids = [x.id for x in purchase.invoice_ids]
-    return {'invoice_ids': invoice_ids}
 
 
 class PurchaseOrder(PabiAsync, models.Model):
@@ -42,17 +43,17 @@ class PurchaseOrder(PabiAsync, models.Model):
 
     @api.one
     def action_invoice_create(self):
-        if self._context.get('job_uuid', False):  # Called from job queue
+        if self._context.get('job_uuid', False):  # Called from @job
             return super(PurchaseOrder, self).action_invoice_create()
         # Enqueue
         if self._context.get('async_process', False):
-            func = 'action_invoice_create_enqueue'
-            self._check_queue(func, doc_name=self.name)
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = '%s - Create Supplier Invoice(s)' % self.name
             action_purchase_create_invoice.delay(session, self._name, self.id,
                                                  description=description)
-            self._cr.commit()
-            self._check_queue(func, doc_name=self.name)
+            # Checking for running task, use the same signature as delay()
+            task_name = "%s('%s', %s)" % \
+                ('action_purchase_create_invoice', self._name, self.id)
+            self._check_queue(task_name, desc=self.name, type='always')
         else:
             return super(PurchaseOrder, self).action_invoice_create()

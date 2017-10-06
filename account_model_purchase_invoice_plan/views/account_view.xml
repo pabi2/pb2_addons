@@ -41,21 +41,6 @@
                 <field name="model_type_id" position="after">
                     <field name="special_type" invisible="1"/>
                 </field>
-                <field name="date_start" position="attributes">
-                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
-                </field>
-                <field name="period_type" position="attributes">
-                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
-                </field>
-                <field name="consider_month_end" position="attributes">
-                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
-                </field>
-                <field name="period_nbr" position="attributes">
-                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
-                </field>
-                <field name="period_total" position="attributes">
-                    <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>
-                </field>
             </field>
         </record>
 

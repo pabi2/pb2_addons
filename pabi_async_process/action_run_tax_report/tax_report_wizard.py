@@ -39,10 +39,9 @@ def action_run_tax_report(session, data, format):
             'res_id': job.id,
             'type': 'binary'
         })
-
+        return _('Tax Report created successfully')
     except Exception, e:
         raise FailedJobError(e)  # Queue Error
-    return _('Tax Report created successfully')
 
 
 class AccountTaxReportWizard(PabiAsync, models.TransientModel):
@@ -62,9 +61,9 @@ class AccountTaxReportWizard(PabiAsync, models.TransientModel):
             description = '%s - Print Tax Report' % self.tax_id.name
             action_run_tax_report.delay(session, data, self.print_format,
                                         description=description)
-            self._cr.commit()
-            action = self.env.ref('pabi_async_process.action_my_queue_job')
-            raise RedirectWarning(_('VAT Report is created in background'),
-                                  action.id, _('Go to My Jobs'))
+            # Checking for running task, use the same signature as delay()
+            task_name = "%s(%s, u'%s')" % \
+                ('action_run_tax_report', data, self.print_format)
+            self._check_queue(task_name, desc=description, type='mytask')
         else:
             return super(AccountTaxReportWizard, self).run_report()
