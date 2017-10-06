@@ -35,6 +35,11 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="account.view_subscription_form"/>
             <field name="arch" type="xml">
+                <button name="remove_line" position="after">
+                    <field name="forced_done" invisible="1"/>
+                    <button name="force_done" type="object" string="Force Done" states="running"/>
+                    <button name="back_to_running" type="object" string="Back to Running" attrs="{'invisible': [('forced_done', '=', False), ('state', '!=', 'done')]}"/>
+                </button>
                 <field name="period_type" position="after">
                     <field name="consider_month_end" attrs="{'invisible': [('period_type', '=', 'day')]}"/>
                 </field>

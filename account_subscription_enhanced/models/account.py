@@ -50,6 +50,21 @@ class AccountSubscription(models.Model):
         store=True,
         readonly=True,
     )
+    forced_done = fields.Boolean(
+        string='Is forced done?',
+        boolean=False,
+        help="Checked, if Forced Done. It will allow to reset back to running."
+    )
+
+    @api.multi
+    def force_done(self):
+        self.write({'state': 'done',
+                    'force_done': True})
+
+    @api.multi
+    def back_to_running(self):
+        self.write({'state': 'running',
+                    'force_done': False})
 
     @api.multi
     @api.depends('amount', 'rate_type')
