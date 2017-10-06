@@ -5,42 +5,42 @@ from openerp.exceptions import ValidationError
 #     import INVOICE_DOCTYPE
 
 DOCTYPE_REPORT_MAP = {'invoice/refund': {
-                        'en': {
-                              'out_invoice': 'customer.invoice.en.form',
-                              'out_refund': 'customer.invoice.en.form',
-                              'out_invoice_debitnote': False,
-                              'in_invoice': False,
-                              'in_refund': False,
-                              'in_invoice_debitnote': False,
-                             },
-                        'th': {
-                              'out_invoice': 'customer.invoice.th.form',
-                              'out_refund': 'customer.invoice.th.form',
-                              'out_invoice_debitnote': False,
-                              'in_invoice': False,
-                              'in_refund': False,
-                              'in_invoice_debitnote': False,
-                             }
-                        },
-                      'tax_invoice_picking': {
-                        'en': {
-                              'out_invoice': 'customer.tax.receipt.picking.form.en',
-                              'out_refund': 'customer.tax.receipt.picking.form.en',
-                              'out_invoice_debitnote': False,
-                              'in_invoice': False,
-                              'in_refund': False,
-                              'in_invoice_debitnote': False,
-                             },
-                        'th': {
-                              'out_invoice': 'customer.tax.receipt.picking.form.th',
-                              'out_refund': 'customer.tax.receipt.picking.form.th',
-                              'out_invoice_debitnote': False,
-                              'in_invoice': False,
-                              'in_refund': False,
-                              'in_invoice_debitnote': False,
-                             }
-                        },
-                      }
+    'en': {
+        'out_invoice': 'customer.invoice.en.form',
+        'out_refund': 'customer.invoice.en.form',
+        'out_invoice_debitnote': False,
+        'in_invoice': False,
+        'in_refund': False,
+        'in_invoice_debitnote': False,
+    },
+    'th': {
+        'out_invoice': 'customer.invoice.th.form',
+        'out_refund': 'customer.invoice.th.form',
+        'out_invoice_debitnote': False,
+        'in_invoice': False,
+        'in_refund': False,
+        'in_invoice_debitnote': False,
+    }
+},
+    'tax_invoice_picking': {
+    'en': {
+        'out_invoice': 'customer.tax.receipt.picking.form.en',
+        'out_refund': 'customer.tax.receipt.picking.form.en',
+        'out_invoice_debitnote': False,
+        'in_invoice': False,
+        'in_refund': False,
+        'in_invoice_debitnote': False,
+    },
+    'th': {
+        'out_invoice': 'customer.tax.receipt.picking.form.th',
+        'out_refund': 'customer.tax.receipt.picking.form.th',
+        'out_invoice_debitnote': False,
+        'in_invoice': False,
+        'in_refund': False,
+        'in_invoice_debitnote': False,
+    }
+},
+}
 
 
 class PrintAccountInvoiceWizard(models.TransientModel):
@@ -51,7 +51,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         ('in_invoice', 'Supplier Invoice'),
         ('out_refund', 'Customer Refund'),
         ('in_refund', 'Supplier Refund'),
-        ],
+    ],
         string="Doctype",
         readonly=True,
         default=lambda self: self._get_default_doctype(),
@@ -60,7 +60,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
     doc_print = fields.Selection([
         ('invoice/refund', 'Invoice/Refund'),
         ('tax_invoice_picking', 'Tax Invoice Picking'),
-        ], default='invoice/refund',
+    ],
+        default='invoice/refund',
         string="Report Type",
         required=True,
     )
@@ -68,7 +69,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
     lang = fields.Selection([
         ('en', 'English'),
         ('th', 'Thai'),
-        ], default='en',
+    ],
+        default='en',
         string="Language",
         required=True,
     )
