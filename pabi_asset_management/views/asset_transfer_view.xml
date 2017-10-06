@@ -148,7 +148,10 @@
             <field name="arch" type="xml">
                 <tree string="Asset Transfer">
                     <field name="name"/>
+                    <field name="target_asset_value"/>
+                    <field name="date_accept"/>
                     <field name="date"/>
+                    <field name="user_id"/>
                     <field name="state"/>
                 </tree>
             </field>

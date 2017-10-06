@@ -161,7 +161,7 @@ class AccountAssetTransfer(models.Model):
     @api.multi
     def _validate_asset_values(self):
         for rec in self:
-            if not rec.asset_ids and not rec.target_asset_ids:
+            if not rec.asset_ids or not rec.target_asset_ids:
                 raise ValidationError(_('Soure or target assets not filled!'))
             if float_compare(rec.source_asset_value,
                              rec.target_asset_value, 2) != 0:
