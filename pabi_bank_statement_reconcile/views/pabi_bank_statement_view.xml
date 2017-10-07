@@ -8,16 +8,21 @@
             <field name="name">view.pabi.bank.statement.form</field>
             <field name="model">pabi.bank.statement</field>
             <field name="arch" type="xml">
+                <header>
+                    <button name="action_done" string="Done" type="object" states="reconcile" class="oe_highlight" groups="account.group_account_user"/>
+                    <button name="action_cancel" string="Cancel" type="object" states="draft,nstda,bank,reconcile,done" groups="account.group_account_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,nstda,bank,reconcile,done"/>
+                </header>
                 <form string="Bank Statement" class="oe_form_configuration">
                     <div class="oe_button_box oe_right">
-                        <button name="action_get_statement" string="1) Get Statement" type="object" class="oe_inline"/>
-                        <button name="action_import_xls" string="2) Import Data" type="object" class="oe_inline" attrs="{'invisible': [('import_file', '=', False)]}"/>
-                        <button name="action_reconcile" string="3) Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('import_ids', '=', [])]}"/>
+                        <button name="action_get_statement" string="1) Get NSTDA Data" type="object" states="draft,nstda,bank,reconcile" class="oe_inline"/>
+                        <button name="action_import_xls" string="2) Import Bank Data" type="object" class="oe_inline" attrs="{'invisible': ['|', ('import_file', '=', False), ('state', 'in', ('cancel', 'done'))]}"/>
+                        <button name="action_reconcile" string="3) Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': ['|', ('import_ids', '=', []), ('state', 'in', ('cancel', 'done'))]}"/>
                     </div>
                     <div class="oe_title">
                         <h1>
                             <label string="Reconcile"/>
-                            <field name="name" class="oe_inline"/>
+                            <field name="name" class="oe_inline" readonly="1"/>
                         </h1>
                     </div>
                     <group>
@@ -95,6 +100,7 @@
                     <field name="journal_id"/>
                     <field name="date_report"/>
                     <field name="report_type"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>

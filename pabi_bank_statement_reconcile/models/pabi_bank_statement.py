@@ -13,6 +13,7 @@ class PABIBankStatement(models.Model):
         default='/',
         required=True,
         readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     import_file_name = fields.Char(
         string='FileName',
@@ -21,6 +22,10 @@ class PABIBankStatement(models.Model):
     import_file = fields.Binary(
         string='Import File (*.xls)',
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'nstda': [('readonly', False)],
+                'bank': [('readonly', False)]},
     )
     report_type = fields.Selection(
         [('payment_cheque', 'Unreconciled Cheque'),
@@ -30,6 +35,8 @@ class PABIBankStatement(models.Model):
          ],
         string='Type of Report',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Template used to prefill the search criteria",
     )
     match_method = fields.Selection(
@@ -52,6 +59,8 @@ class PABIBankStatement(models.Model):
         string='Payment Method',
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
@@ -59,6 +68,8 @@ class PABIBankStatement(models.Model):
         domain=lambda self: [('partner_id', '=',
                               self.env.user.company_id.partner_id.id)],
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     account_id = fields.Many2one(
         'account.account',
@@ -73,10 +84,14 @@ class PABIBankStatement(models.Model):
          ],
         string='Doctype',
         default='payment',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     no_cancel_doc = fields.Boolean(
         string='No Cancelled Document',
         default=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     payment_type = fields.Selection(
         [('cheque', 'Cheque'),
@@ -84,6 +99,8 @@ class PABIBankStatement(models.Model):
          ],
         string='Payment Type',
         help="Specified Payment Type, can be used to screen Payment Method",
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     transfer_type = fields.Selection(
         [('direct', 'DIRECT'),
@@ -91,7 +108,9 @@ class PABIBankStatement(models.Model):
          ],
         string='Transfer Type',
         help="- DIRECT is transfer within same bank.\n"
-        "- SMART is transfer is between different bank."
+        "- SMART is transfer is between different bank.",
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date_report = fields.Date(
         string='Report Date',
@@ -110,9 +129,36 @@ class PABIBankStatement(models.Model):
         string='Statement Import',
         copy=False,
     )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('nstda', 'NSTDA Data'),
+         ('bank', 'Bank Data'),
+         ('reconcile', 'Reconciled'),
+         ('cancel', 'Cancelled'),
+         ('done', 'Done'),
+         ],
+        string='Status',
+        default='draft',
+        required=True,
+    )
     _sql_constraints = [
         ('name_unique', 'unique (name)', 'Bank Statement name must be unique!')
     ]
+
+    @api.multi
+    @api.constrains('report_type', 'journal_id')
+    def _check_wip_statement(self):
+        """ Make sure that, only 1 in work in process statement is allowed """
+        for rec in self:
+            # Find statement of the same type and journal that is in WIP state
+            wip_statements = self.search([
+                ('report_type', '=', rec.report_type),
+                ('journal_id', '=', rec.journal_id.id),
+                ('state', 'not in', ('done', 'cancel'))])
+            if len(wip_statements) > 1:
+                raise ValidationError(
+                    _('Processing more than 1 statement is not allowed.\n%s') %
+                    ', '.join([x.name for x in wip_statements]))
 
     @api.model
     def create(self, vals):
@@ -206,8 +252,6 @@ class PABIBankStatement(models.Model):
             domain = [('match_import_id', '=', False),
                       ('journal_id', '=', rec.journal_id.id),
                       ('account_id', '=', rec.account_id.id)]
-            print rec.journal_id
-            print rec.account_id
             if rec.doctype:
                 domain.append(('doctype', '=', rec.doctype))
             move_lines = MoveLine.search(domain)
@@ -224,6 +268,7 @@ class PABIBankStatement(models.Model):
                     lambda l: l.document_id.state != 'cancel')
             # --
             rec.write({'item_ids': rec._prepare_move_items(move_lines)})
+        self.write({'state': 'nstda'})
         return
 
     @api.multi
@@ -236,6 +281,8 @@ class PABIBankStatement(models.Model):
                 'pabi.bank.statement.import', rec.import_file,
                 extra_columns=[('statement_id/.id', rec.id)],
                 auto_id=True)
+        self.write({'state': 'bank'})
+        return
 
     @api.multi
     def _get_match_criteria(self):
@@ -324,7 +371,19 @@ class PABIBankStatement(models.Model):
                 where match_item_id is null
                 and statement_id = %s
             """ % (rec.id, ))
+        self.write({'state': 'reconcile'})
         return
+
+    @api.multi
+    def action_cancel(self):
+        for rec in self:
+            rec.item_ids.unlink()
+            rec.import_ids.unlink()
+        self.write({'state': 'cancel'})
+
+    @api.multi
+    def action_done(self):
+        self.write({'state': 'done'})
 
     # @api.multi
     # def action_import_and_reconcile(self):
