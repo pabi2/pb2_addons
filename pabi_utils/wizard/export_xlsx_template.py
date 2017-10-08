@@ -157,7 +157,14 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.model
     def _export_template(self, template, res_model, res_id):
-        # Prepare temp file
+        data_dict = literal_eval(template.description.strip())
+        export_dict = data_dict.get('__EXPORT__', False)
+        out_name = template.name
+        if not export_dict:  # If there is not __EXPORT__ formula, just export
+            out_name = template.datas_fname
+            out_file = template.datas
+            return (out_file, out_name)
+        # Prepare temp file (from now, only xlsx file works for openpyxl)
         decoded_data = base64.decodestring(template.datas)
         ConfParam = self.env['ir.config_parameter']
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
@@ -172,15 +179,13 @@ class ExportXlsxTemplate(models.TransientModel):
         os.remove(ftemp)
         # ============= Start working with workbook =============
         record = res_model and self.env[res_model].browse(res_id) or False
-        data_dict = literal_eval(template.description.strip())
-        self._fill_workbook_data(wb, record, data_dict['__EXPORT__'])
+        self._fill_workbook_data(wb, record, export_dict)
         # =======================================================
         # Return file as .xlsx
         content = cStringIO.StringIO()
         wb.save(content)
         content.seek(0)  # Set index to 0, and start reading
         out_file = base64.encodestring(content.read())
-        out_name = template.name
         if record and 'name' in record and record.name:
             out_name = record.name.replace('/', '')
         return (out_file, '%s.xlsx' % out_name)

@@ -12,7 +12,7 @@ from openerp.exceptions import ValidationError
 
 
 def get_line_max(line_field):
-    """ i.e., line_field = line_ids[100], mas = 100 else 0 """
+    """ i.e., line_field = line_ids[100], max = 100 else 0 """
     if '[' in line_field and ']' in line_field:
         i = line_field.index('[')
         j = line_field.index(']')
@@ -20,10 +20,9 @@ def get_line_max(line_field):
         try:
             if len(max_str) > 0:
                 return (line_field[:i], int(max_str))
-            else:
-                return (line_field, False)
         except:
             return (line_field, False)
+    return (line_field, False)
 
 
 def get_sheet_by_name(book, name):

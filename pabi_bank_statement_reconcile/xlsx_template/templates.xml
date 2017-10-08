@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory Bank Statement Reconcile Temlates -->
+        <record model="document.directory" id="dir_statement_reconcile_template">
+            <field name="name">Statement Reconcile Template</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+        </record>
+
+        <!-- KTB Statement (Sample) -->
+        <record id="ktb_statement_tempalte" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">ktb_statement.xls</field>
+            <field name="name">KTB Statement Template</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    'Expense': {
+                        'plan_expense_line_ids[100]': {
+                            'A10': 'charge_type',
+                            'B10': 'activity_group_id',
+                            'F10': 'unit',
+                            'G10': 'activity_unit_price',
+                            'D10': 'description',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

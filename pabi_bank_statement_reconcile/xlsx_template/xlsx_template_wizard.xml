@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <!-- PABI Bank Statement -->
+      <act_window id="action_bank_statement_export_xlsx_tempalte"
+          name="Get Import Template (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="pabi.bank.statement"
+          view_mode="form"
+          target="new"/>
+      <act_window id="action_bank_statement_import_xlsx_tempalte"
+          name="Import Template Data (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="pabi.bank.statement"
+          view_mode="form"
+          target="new"/>
+
+    </data>
+</openerp>
