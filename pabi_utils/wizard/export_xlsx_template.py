@@ -126,8 +126,15 @@ class ExportXlsxTemplate(models.TransientModel):
             return
         try:
             for sheet_name in data_dict:
-                st = get_sheet_by_name(workbook, sheet_name)
                 worksheet = data_dict[sheet_name]
+                st = False
+                if isinstance(sheet_name, str):
+                    st = get_sheet_by_name(workbook, sheet_name)
+                elif isinstance(sheet_name, int):
+                    st = workbook.worksheets(sheet_name - 1)
+                if not st:
+                    raise ValidationError(
+                        _('Sheet %s not found!') % sheet_name)
                 # HEAD
                 for rc, field in worksheet.get('_HEAD_', {}).iteritems():
                     st[rc] = self._get_val(record, field)

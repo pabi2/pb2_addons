@@ -80,20 +80,24 @@ class PABIUtilsXLS(models.AbstractModel):
         return xls_ids
 
     @api.model
+    def _get_field_type(self, model, field):
+        """ Get 2 field type """
+        record = self.env[model].new()
+        for f in field.split('/'):
+            field_type = record._fields[f].type
+            if field_type in ('one2many', 'many2many'):
+                record = record[f]
+            else:
+                return field_type
+        raise ValidationError(_('%s has no valid field type') % field)
+
+    @api.model
     def _get_field_types(self, model, fields):
+        """ Get multiple field type """
         field_types = {}
         for field in fields:
-            record = self.env[model].new()
-            field_types.update({field: False})
-            for f in field.split('/'):
-                field_type = record._fields[f].type
-                if field_type in ('one2many', 'many2many'):
-                    record = record[f]
-                else:
-                    field_types[field] = field_type
-                    break
-            if not field_types[field]:
-                raise ValidationError(_('%s has no valid field type') % field)
+            field_type = self._get_field_type(model, field)
+            field_types[field] = field_type
         return field_types
 
     @api.model
@@ -205,7 +209,9 @@ class PABIUtilsXLS(models.AbstractModel):
                 value = cell.value
         elif field_type in ('integer', 'float'):
             value_str = str(cell.value).strip().replace(',', '')
-            if field_type == 'integer':
+            if len(value_str) == 0:
+                value = ''
+            elif field_type == 'integer':
                 value = int(value_str)
             elif field_type == 'float':
                 value = float(value_str)
