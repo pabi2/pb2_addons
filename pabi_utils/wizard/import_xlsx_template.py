@@ -238,7 +238,7 @@ class ImportXlsxTemplate(models.TransientModel):
                 _('Post import operation error!\n%s') % e)
 
     @api.model
-    def _import_template(self, import_file, template, res_model, res_id):
+    def import_template(self, import_file, template, res_model, res_id):
         """
         - Delete fields' data according to data_dict['__IMPORT__']
         - Import data from excel according to data_dict['__IMPORT__']
@@ -262,6 +262,6 @@ class ImportXlsxTemplate(models.TransientModel):
         self.ensure_one()
         if not self.import_file:
             raise ValidationError(_('Please choose excel file to import!'))
-        self._import_template(self.import_file, self.template_id,
-                              self.res_model, self.res_id)
+        self.import_template(self.import_file, self.template_id,
+                             self.res_model, self.res_id)
         return

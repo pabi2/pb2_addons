@@ -34,6 +34,13 @@
                         <group>
                             <field name="date_report"/>
                             <field name="import_file_name" invisible="1"/>
+                            <label for="use_xlsx_template"/>  <!-- this section must after journal_id only -->
+                            <div>
+                                <div>
+                                    <field name="use_xlsx_template" class="oe_inline"/>
+                                    <field name="xlsx_tempalte_id" class="oe_inline" attrs="{'invisible': [('use_xlsx_template', '=', False)], 'required': [('use_xlsx_template', '=', True)]}"/>
+                                </div>
+                            </div>
                             <field name="import_file" filename="import_file_name"/>
                         </group>
                     </group>

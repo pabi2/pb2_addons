@@ -27,6 +27,25 @@ class PABIBankStatement(models.Model):
                 'nstda': [('readonly', False)],
                 'bank': [('readonly', False)]},
     )
+    use_xlsx_template = fields.Boolean(
+        string='Import Tempalte',
+        default=False,
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'nstda': [('readonly', False)],
+                'bank': [('readonly', False)]},
+        help="If checked, we will use the selected template for import."
+        "Otherwise, simply use the standard raw tempalte for import."
+    )
+    xlsx_tempalte_id = fields.Many2one(
+        'ir.attachment',
+        string='XLSX Template',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'nstda': [('readonly', False)],
+                'bank': [('readonly', False)]},
+        domain=lambda self: self._get_template_domain(),
+    )
     report_type = fields.Selection(
         [('payment_cheque', 'Unreconciled Cheque'),
          ('payment_direct', 'Unreconciled DIRECT'),
@@ -144,6 +163,12 @@ class PABIBankStatement(models.Model):
     _sql_constraints = [
         ('name_unique', 'unique (name)', 'Bank Statement name must be unique!')
     ]
+
+    @api.model
+    def _get_template_domain(self):
+        directory = self.env.ref('pabi_bank_statement_reconcile.'
+                                 'dir_statement_reconcile_template')
+        return [('parent_id', '=', directory.id)]
 
     @api.multi
     @api.constrains('report_type', 'journal_id')
@@ -277,10 +302,16 @@ class PABIBankStatement(models.Model):
             rec.import_ids.unlink()
             if not rec.import_file:
                 continue
-            self.env['pabi.utils.xls'].import_xls(
-                'pabi.bank.statement.import', rec.import_file,
-                extra_columns=[('statement_id/.id', rec.id)],
-                auto_id=True)
+            if not rec.use_xlsx_template:
+                # Use raw import file, import directly to import_ids
+                self.env['pabi.utils.xls'].import_xls(
+                    'pabi.bank.statement.import', rec.import_file,
+                    extra_columns=[('statement_id/.id', rec.id)],
+                    auto_id=True)
+            else:
+                self.env['import.xlsx.template'].import_template(
+                    rec.import_file, rec.xlsx_tempalte_id,
+                    'pabi.bank.statement', rec.id)
         self.write({'state': 'bank'})
         return
 
