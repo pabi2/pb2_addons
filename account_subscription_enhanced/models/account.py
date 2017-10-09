@@ -50,6 +50,21 @@ class AccountSubscription(models.Model):
         store=True,
         readonly=True,
     )
+    forced_done = fields.Boolean(
+        string='Is forced done?',
+        boolean=False,
+        help="Checked, if Forced Done. It will allow to reset back to running."
+    )
+
+    @api.multi
+    def force_done(self):
+        self.write({'state': 'done',
+                    'force_done': True})
+
+    @api.multi
+    def back_to_running(self):
+        self.write({'state': 'running',
+                    'force_done': False})
 
     @api.multi
     @api.depends('amount', 'rate_type')
@@ -201,7 +216,8 @@ class AccountSubscriptionLine(models.Model):
         context = self._context.copy()
         subscriptions = self.mapped('subscription_id')
         for subscription in subscriptions:
-            context.update({'subscription_id': subscription.id})
+            context.update({'subscription_id': subscription.id,
+                            'subline_amount': False})
             # Subline for this subscription
             sublines = self.filtered(lambda l:
                                      l.subscription_id == subscription)
@@ -282,7 +298,7 @@ class AccountModel(models.Model):
             if len(self.lines_id) != 2:
                 raise ValidationError(
                     _('Model "%s" is using manual amount and must have '
-                      'only 2 item lines!' % self.name))
+                      'only 2 entry lines!' % self.name))
         move_ids = self._generate(data)
         return move_ids
 

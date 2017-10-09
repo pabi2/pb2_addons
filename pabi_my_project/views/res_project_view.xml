@@ -60,6 +60,12 @@
                             <group>
                                 <field name="pm_employee_id"/>
                                 <field name="pm_section_id"/>
+                                <field name="analyst_employee_id"/>
+                                <field name="analyst_section_id"/>
+                                <field name="project_date_end_proposal"/>
+                                <field name="project_date_end_extension"/>
+                                <field name="project_date_close"/>
+
                             </group>
                         </group>
                         <notebook>

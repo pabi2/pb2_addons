@@ -113,6 +113,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
             'type': 'ir.actions.report.xml',
             'report_name': report_name,
             'datas': data,
+            'context': self._context,  # Requried for report wizard
         }
         return res
 

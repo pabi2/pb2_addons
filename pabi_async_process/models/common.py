@@ -1,21 +1,48 @@
 # -*- coding: utf-8 -*-
 from openerp import api, _
-from openerp.exceptions import RedirectWarning
+from openerp.exceptions import RedirectWarning, ValidationError
 
 
 class PabiAsync(object):
 
     @api.model
-    def _check_queue(self, enqueue_method, doc_name=False):
-        task = "%s('%s', %s)" % (enqueue_method, self._name, self.id)
-        jobs = self.env['queue.job'].\
-            search([('func_string', 'like', task),
-                    ('state', 'not in', ('done', 'failed'))])
-        if len(jobs) > 0:
-            action = self.env.ref('pabi_async_process.action_my_queue_job')
-            message = False
-            if doc_name:
-                message = _('This action is enqueued for %s') % (doc_name,)
-            else:
-                message = _('This action is enqueued')
-            raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+    def _check_queue(self, task_name, desc=False, type='always'):
+        """ Checking Type
+        'never' : No checking on task, simply show the RedirectWarning to myJob
+            - no check in any case
+        'always' : Check any duplicated task (regardless of who starts it)
+            - for document with document id
+        'mytask' : Check duplicate task on the same user only
+            - for reports
+        """
+        if type and type not in ['never', 'always', 'mytask']:
+            raise ValidationError(_('Wrong job checking type!'))
+
+        action = self.env.ref('pabi_async_process.action_my_queue_job')
+        if type == 'never':
+            self._cr.commit()
+        elif type in ['always', 'mytask']:
+            jobs = self._get_running_jobs(task_name, type)
+            if not jobs:
+                raise ValidationError(_('Something wrong, jot not created!'))
+            if len(jobs) == 1:  # 1 Job ok, we can commit. Else, not create.
+                self._cr.commit()
+        # Show RedirectWarning Message
+        message = False
+        if desc:
+            message = _('This action is enqueued -- %s') % desc
+        else:
+            message = _('This action is enqueued')
+        raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+
+    @api.model
+    def _get_running_jobs(self, task_name, type):
+
+        dom = [('func_string', 'like', task_name),
+               ('state', 'not in', ('done', 'failed'))]
+        if type == 'always':
+            dom = dom  # do nothing
+        if type == 'mytask':
+            dom.append(('user_id', '=', self._uid))  # My job only
+        jobs = self.env['queue.job'].search(dom)
+        return jobs

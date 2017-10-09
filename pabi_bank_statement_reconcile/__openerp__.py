@@ -16,11 +16,14 @@ and result from bank statement
     """,
     'depends': [
         'pabi_account',
+        'pabi_utils',
     ],
     'data': [
         'security/ir.model.access.csv',
         'data/ir_sequence.xml',
         'data/report_data.xml',
+        'xlsx_template/templates.xml',
+        'xlsx_template/xlsx_template_wizard.xml',
         'views/pabi_bank_statement_view.xml',
     ],
     'demo': [

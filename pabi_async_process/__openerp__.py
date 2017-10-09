@@ -10,11 +10,13 @@
         'purchase_invoice_plan',
         'pabi_procurement',
         'pabi_th_tax_report',
+        'account_subscription_enhanced',
     ],
     'data': [
         'views/my_queue_job_view.xml',
         'action_purchase_create_inovice/create_invoice_view.xml',
         'action_run_tax_report/tax_report_wizard.xml',
+        'action_generate_entries/account_subscription_generate_view.xml',
     ],
     'installable': True,
     'application': False,

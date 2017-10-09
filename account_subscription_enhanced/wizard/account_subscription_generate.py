@@ -10,6 +10,7 @@ class AccountSubscriptionGenerate(models.TransientModel):
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
         string='For Period',
+        domain=[('state', '=', 'draft')],
         required=True,
     )
     message = fields.Text(
@@ -36,12 +37,12 @@ class AccountSubscriptionGenerate(models.TransientModel):
 
     @api.multi
     def action_generate(self):
-        _ids = self.model_type_ids._ids
+        model_type_ids = self.model_type_ids._ids
         end_period_date = self.date
         date = datetime.strptime(self.date, "%Y-%m-%d") + relativedelta(days=1)
         self.date = date.strftime('%Y-%m-%d')
         res = super(AccountSubscriptionGenerate,
-                    self.with_context(model_type_ids=_ids,
+                    self.with_context(model_type_ids=model_type_ids,
                                       end_period_date=end_period_date,  # Pass
                                       )).action_generate()
         return res

@@ -96,6 +96,7 @@ class AccountAssetTransfer(models.Model):
     state = fields.Selection(
         [('draft', 'Source Assets'),
          ('draft2', 'Target Assets'),
+         ('ready', 'Ready'),
          ('done', 'Transferred'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -160,7 +161,7 @@ class AccountAssetTransfer(models.Model):
     @api.multi
     def _validate_asset_values(self):
         for rec in self:
-            if not rec.asset_ids and not rec.target_asset_ids:
+            if not rec.asset_ids or not rec.target_asset_ids:
                 raise ValidationError(_('Soure or target assets not filled!'))
             if float_compare(rec.source_asset_value,
                              rec.target_asset_value, 2) != 0:
@@ -210,6 +211,12 @@ class AccountAssetTransfer(models.Model):
     @api.multi
     def action_draft2(self):
         self.write({'state': 'draft2'})
+
+    @api.multi
+    def action_ready(self):
+        for rec in self:
+            rec._validate_asset_values()
+        self.write({'state': 'ready'})
 
     @api.multi
     def action_done(self):

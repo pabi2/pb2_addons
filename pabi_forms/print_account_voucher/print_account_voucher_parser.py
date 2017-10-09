@@ -7,6 +7,7 @@ def print_account_voucher_parser(cr, uid, ids, data, context):
         'ids': data['parameters']['ids'],
     }
 
+
 jasper_reports.report_jasper(
     'report.supplier_netpay_form_en',
     'account.voucher',  # Model View name

@@ -246,6 +246,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'account_asset_source_target_rel',
         'source_asset_id', 'target_asset_id',
         string='To Asset(s)',
+        domain=['|', ('active', '=', True), ('active', '=', False)],
         help="In case of transfer, this field show asset created by this one",
         readonly=True,
     )
@@ -258,6 +259,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'account_asset_source_target_rel',
         'target_asset_id', 'source_asset_id',
         string='From Asset(s)',
+        domain=['|', ('active', '=', True), ('active', '=', False)],
         help="List of source asset that has been transfer to this one",
     )
     source_asset_count = fields.Integer(
@@ -364,7 +366,18 @@ class AccountAsset(ChartFieldAction, models.Model):
         action = self.env.ref('account_asset_management.account_asset_action')
         result = action.read()[0]
         assets = self.with_context(active_test=False).\
-            search([('target_asset_ids', 'in', [self.id])])
+            search([('id', 'in', self.source_asset_ids.ids)])
+        dom = [('id', 'in', assets.ids)]
+        result.update({'domain': dom, 'context': {'active_test': False}})
+        return result
+
+    @api.multi
+    def open_target_asset(self):
+        self.ensure_one()
+        action = self.env.ref('account_asset_management.account_asset_action')
+        result = action.read()[0]
+        assets = self.with_context(active_test=False).\
+            search([('id', 'in', self.target_asset_ids.ids)])
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom, 'context': {'active_test': False}})
         return result
@@ -382,11 +395,12 @@ class AccountAsset(ChartFieldAction, models.Model):
     @api.multi
     @api.depends()
     def _compute_asset_count(self):
+        # self = self.with_context(active_test=False)
         for asset in self:
             # _ids = self.with_context(active_test=False).\
             #     search([('target_asset_ids', 'in', [asset.id])])._ids
-            asset.source_asset_count = len(asset.source_asset_ids)
-            asset.target_asset_count = len(asset.target_asset_ids)
+            asset.source_asset_count = len(asset.with_context(active_test=False).source_asset_ids)
+            asset.target_asset_count = len(asset.with_context(active_test=False).target_asset_ids)
 
     @api.model
     def create(self, vals):

@@ -42,12 +42,31 @@ class ResProject(LogCommon, models.Model):
     date_end = fields.Date(
         string='End Date',
     )
+    project_date_end_proposal = fields.Date(
+        string='Project End Date (by proposal)',
+    )
+    project_date_end_extension = fields.Date(
+        string='Project End Date (by extension)',
+    )
+    project_date_close = fields.Date(
+        string='Project Close Date',
+    )
     pm_employee_id = fields.Many2one(
         'hr.employee',
         string='Project Manager',
         required=True,
     )
     pm_section_id = fields.Many2one(
+        'res.section',
+        string='Project Manager Section',
+        required=True,
+    )
+    analyst_employee_id = fields.Many2one(
+        'hr.employee',
+        string='Project Analyst',
+        required=True,
+    )
+    analyst_section_id = fields.Many2one(
         'res.section',
         string='Project Manager Section',
         required=True,
@@ -87,8 +106,11 @@ class ResProject(LogCommon, models.Model):
 
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
-        employee = self.pm_employee_id
-        self.pm_section_id = employee.section_id
+        self.pm_section_id = self.pm_employee_id.section_id
+
+    @api.onchange('analyst_employee_id')
+    def _onchange_analyst_employee_id(self):
+        self.analyst_section_id = self.analyst_employee_id.section_id
 
     @api.model
     def find_active_project_budget(self, fiscalyear_ids, program_ids):
