@@ -8,7 +8,7 @@ class AccountMove(models.Model):
     @api.model
     def _switch_move_dict_dr_cr(self, move_dict):
         move_lines = []
-        if isinstance(move_dict, list):
+        if isinstance(move_dict, list) and len(move_dict) > 0:
             move_dict = move_dict[0]
         for line_dict in move_dict['line_id']:
             line_dict[2].update({
