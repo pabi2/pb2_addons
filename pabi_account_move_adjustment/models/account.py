@@ -9,7 +9,21 @@ MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _name = 'account.move'
+    _inherit = ['account.move', 'mail.thread']
+
+    state = fields.Selection(track_visibility='always')
+    name = fields.Char(track_visibility='onchange')
+    ref = fields.Char(track_visibility='onchange')
+    journal_id = fields.Many2one('account.journal',
+                                 track_visibility='onchange')
+    period_id = fields.Many2one('account.period',
+                                track_visibility='onchange')
+    to_be_reversed = fields.Boolean(track_visibility='onchange')
+    to_check = fields.Boolean(track_visibility='onchange')
+    line_id = fields.One2many('account.move.line',
+                              track_visibility='onchange')
+    narration = fields.Text(track_visibility='onchange')
 
     @api.multi
     def action_set_tax_sequence(self):

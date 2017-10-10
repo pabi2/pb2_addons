@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
+from openerp.tools import float_compare
 from openerp.exceptions import ValidationError
 
 
@@ -7,54 +8,38 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     @api.multi
-    def post(self):
-        res = super(AccountMove, self).post()
-        for move in self:
-            if move.state == 'posted':
-                # move.line_id._validate_account_user_type_vs_org()
-                move.line_id._validate_require_budget_vs_org()
+    def validate(self):
+        # Dr / Cr should be non zero
+        self.validate_drcr_amount()
+        self.validate_period_vs_date()
+        res = super(AccountMove, self).validate()
         return res
-    # @api.one
-    # @api.constrains('state')
-    # def _check_move_line(self):
+
+    @api.multi
+    def validate_drcr_amount(self):
+        prec = self.env['decimal.precision'].precision_get('Account')
+        for rec in self:
+            lines = rec.line_id
+            if not lines:
+                continue
+            debit = sum(lines.mapped('debit'))
+            credit = sum(lines.mapped('credit'))
+            if not debit or not credit:
+                raise ValidationError(
+                    _('Zero amount on Dr/Cr on entry, %s') % rec.ref)
+            if float_compare(debit, credit, prec) != 0:
+                raise ValidationError(
+                    _('Entry not balance, %s') % rec.ref)
+
+    @api.multi
+    def validate_period_vs_date(self):
+        Period = self.env['account.period']
+        for rec in self:
+            valid_period = Period.find(dt=rec.date)
+            if rec.period_id != valid_period:
+                raise ValidationError(
+                    _('Period and date conflict on entry, %s') % rec.ref)
 
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
-
-    # @api.multi
-    # def _validate_account_user_type_vs_org(self):
-    #     """
-    #     * Profit & Loss must have org_id
-    #     * Balance Sheet must not have org_id
-    #     """
-    #     error1 = _('%s is Balance Sheet\nOrg is NOT required!')
-    #     error2 = _('%s is Profit & Loss\nOrg is required!')
-    #     for move_line in self:
-    #         err_msg = False
-    #         report_type = move_line.account_id.user_type.report_type
-    #         # 1) Balance Sheet but have Org
-    #         if report_type in ('asset', 'liability') and move_line.org_id:
-    #             err_msg = error1 % (move_line.account_id.name_get()[0][1],)
-    #         # 2) Profit & Loss but no Org
-    #         if report_type not in ('asset', 'liability') and \
-    #                 not move_line.org_id:
-    #             err_msg = error2 % (move_line.account_id.name_get()[0][1],)
-    #         if err_msg:
-    #             raise ValidationError(err_msg)
-
-    @api.multi
-    def _validate_require_budget_vs_org(self):
-        """
-        * Require budget must have org id
-        """
-        Budget = self.env['account.budget']
-        for move_line in self:
-            required = Budget.trx_budget_required(move_line)
-            if not required and move_line.org_id:
-                raise ValidationError(
-                    _('Without product or activity,\nOrg is NOT required!'))
-            # 2) Profit & Loss but no Org
-            if required and not move_line.org_id:
-                raise ValidationError(
-                    _('With product or activity,\nOrg is required!'))
