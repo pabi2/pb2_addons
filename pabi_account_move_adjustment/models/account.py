@@ -9,7 +9,21 @@ MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _name = 'account.move'
+    _inherit = ['account.move', 'mail.thread']
+
+    state = fields.Selection(track_visibility='always')
+    name = fields.Char(track_visibility='onchange')
+    ref = fields.Char(track_visibility='onchange')
+    journal_id = fields.Many2one('account.journal',
+                                 track_visibility='onchange')
+    period_id = fields.Many2one('account.period',
+                                track_visibility='onchange')
+    to_be_reversed = fields.Boolean(track_visibility='onchange')
+    to_check = fields.Boolean(track_visibility='onchange')
+    line_id = fields.One2many('account.move.line',
+                              track_visibility='onchange')
+    narration = fields.Text(track_visibility='onchange')
 
     @api.multi
     def action_set_tax_sequence(self):
@@ -104,6 +118,16 @@ class AccountMoveLine(MergedChartField, models.Model):
     def _onchange_activity_id(self):
         if self._context.get('default_doctype', False) == 'adjustment':
             self.account_id = self.activity_id.account_id
+
+    @api.onchange('activity_group_id')
+    def _onchange_activity_group_id(self):
+        if self._context.get('default_doctype', False) == 'adjustment':
+            self.activity_id = False
+
+    @api.onchange('chartfield_id')
+    def _onchange_chartfield_id(self):
+        if self._context.get('default_doctype', False) == 'adjustment':
+            self.fund_id = False
 
     # @api.multi
     # def create_analytic_lines(self):

@@ -517,6 +517,9 @@ class InterfaceAccountEntry(models.Model):
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
+            if res['is_success']:
+                res_id = res['result']['id']
+                self.browse(res_id).execute()
         except Exception, e:
             res = {
                 'is_success': False,
