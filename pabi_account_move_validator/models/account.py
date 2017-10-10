@@ -8,11 +8,11 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     @api.multi
-    def validate(self):
+    def post(self):
         # Dr / Cr should be non zero
         self.validate_drcr_amount()
         self.validate_period_vs_date()
-        res = super(AccountMove, self).validate()
+        res = super(AccountMove, self).post()
         return res
 
     @api.multi
