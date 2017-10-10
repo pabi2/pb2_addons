@@ -58,6 +58,8 @@ class LoanBankMOU(models.Model):
         ('name_uniq', 'unique(name)', 'MOU Number must be unique!'),
         ('positive_loan_ratio', 'check(loan_ratio > 0)',
          'Loan ratio must be positive number!'),
+        ('positive_loan_ratio', 'check(loan_ratio <= 1)',
+         'Loan ratio must not exceed 1!'),
         ('positive_max_installment', 'check(max_installment > 0)',
          'Max installment must be positive number!!'),
     ]
