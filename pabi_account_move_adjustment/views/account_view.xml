@@ -57,9 +57,9 @@
                             <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
                                 <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
                                     <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
-                                    <field name="product_id" invisible="1"/>
+                                    <!-- <field name="product_id" invisible="1"/> -->
                                     <field name="activity_group_id"/>
-                                    <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
+                                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                                     <field name="name" string="Description"/>
                                     <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
                                     <field name="is_tax_line" invisible="1"/>
@@ -70,13 +70,13 @@
                                     <field name="costcenter_id" readonly="1"/>
                                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                     <field name="org_id" readonly="1"/>
-                                    <field name="chartfield_id" required="1"/>
-                                    <field name="project_id" invisible="1"/>
+                                    <field name="chartfield_id" attrs="{'required': [('activity_id', '!=', False)], 'readonly': [('activity_id', '=', False)]}"/>
+                                    <!-- <field name="project_id" invisible="1"/>
                                     <field name="section_id" invisible="1"/>
                                     <field name="invest_asset_id" invisible="1"/>
                                     <field name="invest_construction_phase_id" invisible="1"/>
-                                    <field name="personnel_costcenter_id" invisible="1"/>
-                                    <field name="fund_id" required="1"/>
+                                    <field name="personnel_costcenter_id" invisible="1"/> -->
+                                    <field name="fund_id" attrs="{'required': [('chartfield_id', '!=', False)], 'readonly': [('chartfield_id', '=', False)]}"/>
                                     <field name="cost_control_id" invisible="1"/>
                                     <field name="state"/>
                                     <field name="reconcile_id"/>
@@ -183,9 +183,9 @@
                             <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
                                 <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
                                     <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
-                                    <field name="product_id" invisible="1"/>
+                                    <!-- <field name="product_id" invisible="1"/>
                                     <field name="activity_group_id" invisible="1"/>
-                                    <field name="activity_id" invisible="1"/>
+                                    <field name="activity_id" invisible="1"/> -->
                                     <field name="name" string="Description"/>
                                     <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
                                     <field name="debit" sum="Total Debit"/>
@@ -193,13 +193,13 @@
                                     <field name="costcenter_id" readonly="1"/>
                                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                     <field name="org_id" readonly="1"/>
-                                    <field name="chartfield_id" required="1"/>
-                                    <field name="project_id" invisible="1"/>
+                                    <field name="chartfield_id" string="Section/Project"/>
+                                    <!-- <field name="project_id" invisible="1"/>
                                     <field name="section_id" invisible="1"/>
                                     <field name="invest_asset_id" invisible="1"/>
                                     <field name="invest_construction_phase_id" invisible="1"/>
-                                    <field name="personnel_costcenter_id" invisible="1"/>
-                                    <field name="fund_id" required="1"/>
+                                    <field name="personnel_costcenter_id" invisible="1"/> -->
+                                    <!-- <field name="fund_id" required="1"/> -->
                                     <field name="cost_control_id" invisible="1"/>
                                     <field name="state"/>
                                     <field name="reconcile_id"/>

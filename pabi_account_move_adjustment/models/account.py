@@ -105,6 +105,16 @@ class AccountMoveLine(MergedChartField, models.Model):
         if self._context.get('default_doctype', False) == 'adjustment':
             self.account_id = self.activity_id.account_id
 
+    @api.onchange('activity_group_id')
+    def _onchange_activity_group_id(self):
+        if self._context.get('default_doctype', False) == 'adjustment':
+            self.activity_id = False
+
+    @api.onchange('chartfield_id')
+    def _onchange_chartfield_id(self):
+        if self._context.get('default_doctype', False) == 'adjustment':
+            self.fund_id = False
+
     # @api.multi
     # def create_analytic_lines(self):
     #     """ For balance sheet item, do not create analytic line """
