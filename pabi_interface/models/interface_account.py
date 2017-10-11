@@ -199,13 +199,6 @@ class InterfaceAccountEntry(models.Model):
     @api.multi
     def execute(self):
         for interface in self:
-            # Validate balanced entry
-            prec = self.env['decimal.precision'].precision_get('Account')
-            debit = sum(interface.line_ids.mapped('debit'))
-            credit = sum(interface.line_ids.mapped('credit'))
-            if float_compare(debit, credit, prec) != 0:
-                raise ValidationError(
-                    _('Interface Entry, %s, not balanced!') % interface.name)
             # Set type based on journal type
             if interface.to_reverse_entry_id:
                 interface.type = 'reverse'
@@ -217,6 +210,11 @@ class InterfaceAccountEntry(models.Model):
             if interface.type == 'reverse':
                 AccountMove = self.env['account.move']
                 move = interface.to_reverse_entry_id.move_id
+                # Already reconciled?
+                if not move.line_id.filtered(lambda l: not l.reconcile_id and
+                                             l.account_id.reconcile):
+                    raise ValidationError(
+                        _('%s is already reversed') % move.name)
                 # If payment reversal, refresh it first
                 if interface.to_reverse_entry_id.type == 'voucher':
                     self._prepare_voucher_move_for_reversal(move)
@@ -259,6 +257,7 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def _validate_invoice_entry(self):
         Checker = self.env['interface.account.checker']
+        Checker._check_balance_entry(self)
         Checker._check_journal(self)
         Checker._check_has_line(self)
         Checker._check_tax_line(self)
@@ -272,6 +271,7 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def _validate_payment_entry(self):
         Checker = self.env['interface.account.checker']
+        Checker._check_balance_entry(self)
         Checker._check_journal(self)
         Checker._check_has_line(self)
         Checker._check_tax_line(self)
@@ -824,3 +824,13 @@ class InterfaceAccountChecker(models.AbstractModel):
             if (l.debit or l.credit) and not l.amount_currency:
                 raise ValidationError(
                     _('Amount Currency must not be False '))
+
+    @api.model
+    def _check_balance_entry(self, inf):
+        # Validate balanced entry
+        prec = self.env['decimal.precision'].precision_get('Account')
+        debit = sum(inf.line_ids.mapped('debit'))
+        credit = sum(inf.line_ids.mapped('credit'))
+        if float_compare(debit, credit, prec) != 0:
+            raise ValidationError(
+                _('Interface Entry, %s, not balanced!') % inf.name)
