@@ -43,6 +43,7 @@
                                 <field name="journal_id"/>
                                 <field name="user_id"/>
                                 <field name="date"/>
+                                <field name="date_approve"/>
                             </group>
                         </group>
                         <notebook>
@@ -70,6 +71,7 @@
                                         <field name="activity_group_id" required="0" invisible="0"/>
                                         <field name="activity_id" required="0"
                                           domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
+                                        <field name="name"/>
                                         <field name="account_id"/>
                                         <field name="move_id"/>
                                         <field name="chartfield_id" required="1"/>
@@ -109,6 +111,9 @@
                 <tree string="Asset Adjust">
                     <field name="name"/>
                     <field name="date"/>
+                    <field name="adjust_type"/>
+                    <field name="invoice_id"/>
+                    <field name="user_id"/>
                     <field name="state"/>
                 </tree>
             </field>

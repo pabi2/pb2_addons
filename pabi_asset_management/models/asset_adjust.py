@@ -38,6 +38,13 @@ class AccountAssetAdjust(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    date_approve = fields.Date(
+        string='Date Approved',
+        required=False,
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     user_id = fields.Many2one(
         'res.users',
         string='Prepared By',
@@ -186,6 +193,8 @@ class AccountAssetAdjust(models.Model):
                 rec.adjust_asset_to_expense()
             if rec.adjust_type == 'expense_to_asset':
                 rec.adjust_expense_to_asset()
+            if not rec.date_approve:
+                rec.date_approve = fields.Date.context_today(self)
         self.write({'state': 'done'})
 
     @api.multi
@@ -665,6 +674,10 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
                 '|', ('active', '=', True), ('active', '=', False)],
         help="Asset to be removed, as it create new asset of the same value",
     )
+    name = fields.Char(
+        string='Description',
+        help="Description to be shown in journal entry."
+    )
     asset_state = fields.Selection(
         [('draft', 'Draft'),
          ('open', 'Running'),
@@ -751,7 +764,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
         purchase_value = old_asset.purchase_value
         if purchase_value:
             expense_debit = AssetAdjust._setup_move_line_data(
-                exp_acc.name, False, period, exp_acc, adjust_date,
+                self.name or exp_acc.name, False, period, exp_acc, adjust_date,
                 debit=purchase_value, credit=False,
                 analytic_id=self.account_analytic_id.id)
             old_asset_credit = AssetAdjust._setup_move_line_data(
