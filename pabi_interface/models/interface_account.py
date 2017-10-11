@@ -214,7 +214,7 @@ class InterfaceAccountEntry(models.Model):
                 if not move.line_id.filtered(lambda l: not l.reconcile_id and
                                              l.account_id.reconcile):
                     raise ValidationError(
-                        _('%s is already reversed') % move.name)
+                        _('%s is already reconciled!') % move.name)
                 # If payment reversal, refresh it first
                 if interface.to_reverse_entry_id.type == 'voucher':
                     self._prepare_voucher_move_for_reversal(move)
