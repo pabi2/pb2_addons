@@ -2,6 +2,7 @@
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
+from openerp.tools import float_compare
 
 SALE_JOURNAL = ['sale', 'sale_refund', 'sale_debitnote']
 PURCHASE_JOURNAL = ['purchase', 'purchase_refund', 'purchase_debitnote']
@@ -198,6 +199,13 @@ class InterfaceAccountEntry(models.Model):
     @api.multi
     def execute(self):
         for interface in self:
+            # Validate balanced entry
+            prec = self.env['decimal.precision'].precision_get('Account')
+            debit = sum(interface.line_ids.mapped('debit'))
+            credit = sum(interface.line_ids.mapped('credit'))
+            if float_compare(debit, credit, prec) != 0:
+                raise ValidationError(
+                    _('Interface Entry, %s, not balanced!') % interface.name)
             # Set type based on journal type
             if interface.to_reverse_entry_id:
                 interface.type = 'reverse'
