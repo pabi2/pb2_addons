@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+
+      <record id="view_account_move_filter_adj" model="ir.ui.view">
+          <field name="name">view.account.move.filter.adj</field>
+          <field name="model">account.move</field>
+          <field name="arch" type="xml">
+              <search string="Search Move">
+                  <field name="name" filter_domain="['|', ('name','ilike',self), ('ref','ilike',self)]" string="Move"/>
+                  <field name="date"/>
+                  <filter icon="terp-document-new" string="Unposted" domain="[('state','=','draft')]" help="Unposted Journal Entries"/>
+                  <filter icon="terp-camera_test" string="Posted" domain="[('state','=','posted')]" help="Posted Journal Entries"/>
+                  <separator/>
+                  <filter icon="terp-gtk-jump-to-ltr" string="To Review" domain="[('to_check','=',True)]" help="Journal Entries to Review"/>
+                  <field name="partner_id"/>
+                  <field name="journal_id"/>
+                  <field name="period_id"/>
+                  <group expand="0" string="Group By">
+                      <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                      <filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'journal_id'}"/>
+                      <filter string="States" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                      <filter string="Period" icon="terp-go-month" domain="[]" context="{'group_by':'period_id'}"/>
+                      <filter string="Entries Month" icon="terp-go-month" domain="[]" context="{'group_by':'date'}" help="Journal Entries by Month"/>
+                      <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}" help="Creator of this document"/>
+                  </group>
+              </search>
+          </field>
+      </record>
+
       <record id="view_move_tree" model="ir.ui.view">
           <field name="name">account.move.tree</field>
           <field name="model">account.move</field>
@@ -57,7 +84,7 @@
                         <notebook>
                             <page string="Journal Items">
                                 <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
-                                    <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
+                                    <tree colors="blue:state == 'draft';black:state == 'posted'" editable="bottom" string="Journal Items">
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <!-- <field name="product_id" invisible="1"/> -->
                                         <field name="activity_group_id"/>
@@ -121,7 +148,7 @@
             <field name="res_model">account.move</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="account.view_account_move_filter"/>
+            <field name="search_view_id" ref="view_account_move_filter_adj"/>
             <field name="domain" eval="[('doctype', '=', 'adjustment'), ('journal_id', '=', ref('journal_adjust_budget'))]"/>
             <field name="context" eval="{'default_journal_id': ref('journal_adjust_budget'), 'default_doctype': 'adjustment'}"/>
             <field name="help" type="html">
@@ -189,7 +216,7 @@
                         <notebook>
                             <page string="Journal Items">
                                 <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
-                                    <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
+                                    <tree colors="blue:state == 'draft';black:state == 'posted'" editable="bottom" string="Journal Items">
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <!-- <field name="product_id" invisible="1"/>
                                         <field name="activity_group_id" invisible="1"/>
@@ -248,7 +275,7 @@
             <field name="res_model">account.move</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="account.view_account_move_filter"/>
+            <field name="search_view_id" ref="view_account_move_filter_adj"/>
             <field name="domain" eval="[('doctype', '=', 'adjustment'), ('journal_id', '=', ref('journal_adjust_no_budget'))]"/>
             <field name="context" eval="{'default_journal_id': ref('journal_adjust_no_budget'), 'default_doctype': 'adjustment'}"/>
             <field name="help" type="html">

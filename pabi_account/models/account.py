@@ -14,7 +14,7 @@ class AccountMove(models.Model):
 
     @api.multi
     def _write(self, vals):
-        if 'line_item_summary' in vals:
+        if 'line_item_summary' in vals and vals.get('line_item_summary'):
             self._write({'narration': vals.get('line_item_summary', False)})
         return super(AccountMove, self)._write(vals)
 
@@ -27,7 +27,8 @@ class AccountMove(models.Model):
                      if (x.name != '/' and
                          x.account_id.user_type.report_type in ('income',
                                                                 'expense'))]
-            rec.line_item_summary = ", ".join(items)
+            if items:
+                rec.line_item_summary = ", ".join(items)
 
 
 class AccountAccount(models.Model):
