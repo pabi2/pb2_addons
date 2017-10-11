@@ -89,8 +89,8 @@
                                         <!-- <field name="product_id" invisible="1"/> -->
                                         <field name="activity_group_id"/>
                                         <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
-                                        <field name="name" string="Description"/>
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
+                                        <field name="name" string="Description"/>
                                         <field name="is_tax_line" invisible="1"/>
                                         <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
                                         <field name="taxbranch_id" readonly="1"/>
@@ -221,8 +221,8 @@
                                         <!-- <field name="product_id" invisible="1"/>
                                         <field name="activity_group_id" invisible="1"/>
                                         <field name="activity_id" invisible="1"/> -->
-                                        <field name="name" string="Description"/>
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
+                                        <field name="name" string="Description"/>
                                         <field name="debit" sum="Total Debit"/>
                                         <field name="credit" sum="Total Credit"/>
                                         <field name="costcenter_id" readonly="1"/>

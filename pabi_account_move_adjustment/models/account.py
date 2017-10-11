@@ -128,6 +128,9 @@ class AccountMoveLine(MergedChartField, models.Model):
     def _onchange_chartfield_id(self):
         if self._context.get('default_doctype', False) == 'adjustment':
             self.fund_id = False
+            # display costcenter only if avail.
+            if 'costcenter_id' in self and self.chartfield_id.costcenter_id:
+                self.costcenter_id = self.chartfield_id.costcenter_id
 
     # @api.multi
     # def create_analytic_lines(self):
