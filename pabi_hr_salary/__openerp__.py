@@ -16,5 +16,6 @@ This module focus mainly on creating PDF and submit to Alfresco workflow
         "hr_salary",
     ],
     "data": [
+        "views/hr_salary_view.xml",
     ],
 }

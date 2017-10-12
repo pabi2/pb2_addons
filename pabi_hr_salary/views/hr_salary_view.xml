@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_hr_salary_expense_form">
+            <field name="name">view.hr.salary.expense.form</field>
+            <field name="model">hr.salary.expense</field>
+            <field name="inherit_id" ref="hr_salary.view_hr_salary_expense_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page/field[@name='line_ids']" position="before">
+                    <div>
+                      <button type="object" name="retrieve_data"
+                              string="Retrieve Data" icon="terp-stock_format-scientific" colspan="2"
+                              attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

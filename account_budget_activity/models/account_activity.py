@@ -259,7 +259,14 @@ class ActivityCommon(object):
     @api.constrains('activity_id', 'product_id')
     def _check_activity_product_id(self):
         for rec in self:
+            # Product / Activity can't co exists
             if 'product_id' in rec and 'activity_id' in rec:
                 if rec.product_id and rec.activity_id:
                     raise ValidationError(
                         _("Activity/Product can not coexist!"))
+            # Activity / Account ID must conform
+            if 'activity_id' in rec and 'account_id' in rec:
+                if rec.activity_id and rec.account_id and \
+                        rec.activity_id.account_id != rec.account_id:
+                    raise ValidationError(
+                        _("Account must inline with activity's account!"))

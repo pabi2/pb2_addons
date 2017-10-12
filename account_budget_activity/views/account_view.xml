@@ -80,7 +80,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/group/field[@name='analytic_account_id']" position="after">
                     <field name="activity_group_id"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                 </xpath>
             </field>
         </record>
@@ -92,7 +92,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='name']" position="after">
                     <field name="activity_group_id"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                 </xpath>
             </field>
         </record>
