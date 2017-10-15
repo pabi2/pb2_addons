@@ -346,6 +346,11 @@ class HRSalaryLine(models.Model):
         ondelete='cascade',
         index=True,
     )
+    date = fields.Date(
+        string='Date',
+        related='salary_id.date',
+        store=True,
+    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
