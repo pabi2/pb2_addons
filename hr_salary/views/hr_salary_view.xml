@@ -64,11 +64,9 @@
                         <page string="Description">
                             <field name="line_ids">
                                 <tree string="Salary Lines" editable="bottom">
-                                    <field name="sequence" invisible="1"/>
-                                    <field name="date" invisible="1"/>
                                     <field name="name"/>
                                     <field name="account_id"/>
-                                    <field name="analytic_account_id"/>
+                                    <field name="analytic_account_id" invisible="1"/>
                                     <field name="partner_id"/>
                                     <field name="amount" sum="Total"/>
                                 </tree>

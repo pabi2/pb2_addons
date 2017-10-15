@@ -25,6 +25,7 @@ from openerp import fields, models
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
+    # PABIWeb
     pabiweb_active = fields.Boolean(
         string="Open Connection to PABI Web.",
     )
@@ -39,4 +40,23 @@ class ResCompany(models.Model):
     )
     pabiweb_file_prefix = fields.Char(
         string='PABI Web URL for attachment prefix',
+    )
+    # e-HR
+    pabiehr_active = fields.Boolean(
+        string='Open Connection to e-HR Webservice',
+    )
+    pabiehr_login_url = fields.Char(
+        string='e-HR Login URL',
+    )
+    pabiehr_user = fields.Char(
+        string='e-HR Login',
+    )
+    pabiehr_password = fields.Char(
+        string='e-HR Password',
+    )
+    pabiehr_data_url = fields.Char(
+        string='e-HR Data Retrival URL',
+    )
+    pabiehr_data_mapper = fields.Text(
+        string='Odoo & e-HR Mapper Dict',
     )
