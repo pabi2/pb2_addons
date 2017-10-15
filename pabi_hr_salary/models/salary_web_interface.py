@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
+import StringIO
+import csv
+import base64
+import xmlrpclib
+import requests
+import ast
+import unicodecsv
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
-import xmlrpclib
+from .test_data import TEST_DATA
 
 
 class HRSalaryExpense(models.Model):
@@ -123,3 +130,73 @@ class HRSalaryExpense(models.Model):
                 'messages': _(str(e)),
             })
         return res
+
+    @api.multi
+    def _prepare_data_to_load(self, datas):
+        self.ensure_one()
+        """ Change data from REST API to CSV format """
+        if not datas:
+            return {}
+
+        try:
+            mapper = self.env.user.company_id.pabiehr_data_mapper
+            mapper = mapper and ast.literal_eval(mapper.strip()) or {}
+        except:
+            raise ValidationError(
+                _('Odoo & e-HR Mapper Dict is not well formed!'))
+
+        # Prepare CSV string
+        csv_file = StringIO.StringIO()
+        csv_out = unicodecsv.writer(csv_file,
+                                    encoding='utf-8',
+                                    quoting=unicodecsv.QUOTE_ALL)
+        # External ID of this record
+        ext_id = self.env['pabi.utils.xls'].get_external_id(self)
+        # Write odoo's header columns
+        header = [field for field in mapper]
+        # first_row = True
+        for data in datas:
+            line = [mapper[field] and data[mapper[field]] or ''
+                    for field in header]
+            # ext_id = first_row and ext_id or ''  # external id on 1st row
+            line.append(ext_id)
+            csv_out.writerow(line)
+            # first_row = False  # reset
+        csv_file.seek(0)
+        csv_txt = csv_file.read()
+        csv_file.close()
+        header.append('id')  # add external_id column
+        return (header, csv_txt)
+
+    @api.model
+    def _get_pabiehr_data(self):
+        token = self.env['pabi.web.config.settings']._get_pabiehr_connect()
+        if token == '':
+            raise ValidationError(
+                _('Cannot connect with e-HR, please check credential!'))
+        elif not token:
+            raise ValidationError(
+                _('Connection with e-HR is closed!'))
+        # Get data
+        url = self.env.user.company_id.pabiehr_data_url
+        headers = {'Bearer': token}
+        response = requests.get(url, headers=headers)
+        res = ast.literal_eval(response.text)
+        return res
+
+    @api.multi
+    def retrieve_data(self):
+        self.ensure_one()
+        try:
+            self.line_ids.unlink()
+            # res = TEST_DATA
+            res = self._get_pabiehr_data()
+            header, csv_txt = self._prepare_data_to_load(res)
+            self.env['pabi.utils.xls'].import_csv(self._name, header,
+                                                  csv_txt, csv_header=False)
+        except KeyError, e:
+            raise ValidationError(_('Key Error: %s') % e)
+        except Exception, e:
+            raise ValidationError(
+                _('Error retrieve or loading data!\n%s') % e)
+        return True

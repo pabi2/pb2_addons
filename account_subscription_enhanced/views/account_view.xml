@@ -10,9 +10,11 @@
             <field name="arch" type="xml">
                 <field name="model_id" position="after">
                     <field name="model_type_id"/>
+                    <field name="create_uid"/>
                 </field>
                 <group position="inside">
                     <filter string="Model Type" domain="[]" context="{'group_by':'model_type_id'}"/>
+                    <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}"/>
                 </group>
             </field>
         </record>
@@ -25,6 +27,7 @@
             <field name="arch" type="xml">
                 <field name="model_id" position="after">
                     <field name="model_type_id"/>
+                    <field name="create_uid"/>
                 </field>
             </field>
         </record>
@@ -193,9 +196,11 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
                     <field name="model_type_id"/>
+                    <field name="create_uid"/>
                 </field>
                 <group position="inside">
                     <filter string="Model Type" domain="[]" context="{'group_by':'model_type_id'}"/>
+                    <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}"/>
                 </group>
             </field>
         </record>
@@ -206,6 +211,7 @@
             <field name="inherit_id" ref="account.view_model_tree"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
+                    <field name="create_uid"/>
                     <field name="model_type_id"/>
                     <field name="to_be_reversed"/>
                     <field name="reverse_type"/>
@@ -255,7 +261,12 @@
                 <xpath expr="//field[@name='date_maturity']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-
+                <xpath expr="//field[@name='debit']" position="attributes">
+                    <attribute name="sum">Total Debit</attribute>
+                </xpath>
+                <xpath expr="//field[@name='credit']" position="attributes">
+                    <attribute name="sum">Total Credit</attribute>
+                </xpath>
             </field>
         </record>
 

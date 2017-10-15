@@ -265,22 +265,26 @@ class PABIUtilsXLS(models.AbstractModel):
     #     return value
 
     @api.model
-    def import_csv(self, model, header_fields, file_txt):
+    def import_csv(self, model, header_fields, csv_txt, csv_header=True):
         """
-        The file_txt loaded, must also have the header row
+        The csv_txt loaded, must also have the header row
         - header_fields i.e, ['id', 'field1', 'field2']
-        - field_txt = normal csv with comma delimited
+        - csv_txt = normal csv with comma delimited
+        - csv_header = True (default), if csv_txt contain header row
         """
         # get xml_ids
-        f = StringIO.StringIO(file_txt)
+        f = StringIO.StringIO(csv_txt)
         rows = csv.reader(f, delimiter=',')
         id_index = -1
         xml_ids = []
-        for row in rows:  # Check the first row only
-            head_row = [isinstance(x, basestring) and x.lower() or ''
-                        for x in row]
-            id_index = head_row.index('id')
-            break
+        # for row in rows:  # Check the first row only
+        #     head_row = [isinstance(x, basestring) and x.lower() or ''
+        #                 for x in row]
+        #     id_index = head_row.index('id')
+        #     break
+        head_row = [isinstance(x, basestring) and x.lower() or ''
+                    for x in header_fields]
+        id_index = head_row.index('id')
         if id_index >= 0:
             for row in rows:
                 if isinstance(row[id_index], basestring) and \
@@ -290,11 +294,11 @@ class PABIUtilsXLS(models.AbstractModel):
         Import = self.env['base_import.import']
         imp = Import.create({
             'res_model': model,
-            'file': file_txt,
+            'file': csv_txt,
         })
         [errors] = imp.do(
             header_fields,
-            {'headers': True, 'separator': ',',
+            {'headers': csv_header, 'separator': ',',
              'quoting': '"', 'encoding': 'utf-8'})
         if errors:
             raise ValidationError(errors[0]['message'].encode('utf-8'))

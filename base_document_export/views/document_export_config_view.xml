@@ -90,7 +90,7 @@
               </p>
             </field>
         </record>
-        <menuitem id="menu_document_export_config" name="Document Export Configurations"  parent="base.menu_administration"/>
+        <menuitem id="menu_document_export_config" name="Document Export"  parent="base.menu_administration"/>
 
         <menuitem action="action_document_export_config"
             id="menu_action_document_export_config"  parent="menu_document_export_config"/>

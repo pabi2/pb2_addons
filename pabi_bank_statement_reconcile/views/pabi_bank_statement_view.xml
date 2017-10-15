@@ -105,6 +105,7 @@
                 <tree string="Bank Statement">
                     <field name="name"/>
                     <field name="journal_id"/>
+                    <field name="create_uid"/>
                     <field name="date_report"/>
                     <field name="report_type"/>
                     <field name="state"/>

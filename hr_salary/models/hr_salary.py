@@ -18,7 +18,6 @@ class HRSalaryExpense(models.Model):
     )
     name = fields.Char(
         string='Description',
-        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -340,7 +339,6 @@ class HRSalaryExpense(models.Model):
 class HRSalaryLine(models.Model):
     _name = 'hr.salary.line'
     _description = 'Salary Line'
-    _order = 'sequence, id'
 
     salary_id = fields.Many2one(
         'hr.salary.expense',
@@ -348,28 +346,17 @@ class HRSalaryLine(models.Model):
         ondelete='cascade',
         index=True,
     )
-    sequence = fields.Integer(
-        string='Sequence',
-        index=True,
-    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
-        required=True,
     )
     name = fields.Char(
         string='Description',
-    )
-    date = fields.Date(
-        string='Date',
-        related='salary_id.date',
-        store=True,
     )
     account_id = fields.Many2one(
         'account.account',
         string='Account',
         domain=[('type', '=', 'other')],
-        required=True,
     )
     amount = fields.Float(
         string='Amount',

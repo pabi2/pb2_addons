@@ -181,9 +181,11 @@ class PABIBankStatement(models.Model):
                 ('journal_id', '=', rec.journal_id.id),
                 ('state', 'not in', ('done', 'cancel'))])
             if len(wip_statements) > 1:
+                names = [x.name for x in wip_statements]
+                names.pop()
                 raise ValidationError(
-                    _('Processing more than 1 statement is not allowed.\n%s') %
-                    ', '.join([x.name for x in wip_statements]))
+                    _('Working on more than 1 statement of the same type '
+                      'is not allowed.\n%s still open.') % ', '.join(names))
 
     @api.model
     def create(self, vals):

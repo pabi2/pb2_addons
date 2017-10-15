@@ -13,6 +13,7 @@
             <field name="prefix">BSR</field>
             <field name="padding">6</field>
             <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
         </record>
 
     </data>

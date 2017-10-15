@@ -14,7 +14,10 @@ This module focus mainly on creating PDF and submit to Alfresco workflow
     "installable": True,
     "depends": [
         "hr_salary",
+        "pabi_web_config",
+        "pabi_utils",
     ],
     "data": [
+        "views/hr_salary_view.xml",
     ],
 }

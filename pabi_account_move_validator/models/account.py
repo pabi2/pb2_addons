@@ -12,7 +12,7 @@ class AccountMove(models.Model):
         # Dr / Cr should be non zero
         self.validate_drcr_amount()
         self.validate_period_vs_date()
-        self.validate_activity_vs_account()
+        # self.validate_activity_vs_account()  # Already check in ActiviCommon
         res = super(AccountMove, self).post()
         return res
 
@@ -25,9 +25,6 @@ class AccountMove(models.Model):
                 continue
             debit = sum(lines.mapped('debit'))
             credit = sum(lines.mapped('credit'))
-            if not debit or not credit:
-                raise ValidationError(
-                    _('Zero amount on Dr/Cr on entry, %s') % rec.ref)
             if float_compare(debit, credit, prec) != 0:
                 raise ValidationError(
                     _('Entry not balance, %s') % rec.ref)
@@ -41,18 +38,19 @@ class AccountMove(models.Model):
                 raise ValidationError(
                     _('Period and date conflict on entry, %s') % rec.ref)
 
-    @api.multi
-    def validate_activity_vs_account(self):
-        for rec in self:
-            lines = rec.line_id
-            invalid_lines = lines.filtered(
-                lambda l: l.activity_id and
-                l.activity_id.account_id != l.account_id
-            )
-            for line in invalid_lines:
-                raise ValidationError(
-                    _('Account code "%s" not belong to activity %s!') %
-                    (line.account_id.code, line.activity_id.name))
+    # Already check in activity common
+    # @api.multi
+    # def validate_activity_vs_account(self):
+    #     for rec in self:
+    #         lines = rec.line_id
+    #         invalid_lines = lines.filtered(
+    #             lambda l: l.activity_id and
+    #             l.activity_id.account_id != l.account_id
+    #         )
+    #         for line in invalid_lines:
+    #             raise ValidationError(
+    #                 _('Account code "%s" not belong to activity %s!') %
+    #                 (line.account_id.code, line.activity_id.name))
 
 
 class AccountMoveLine(models.Model):

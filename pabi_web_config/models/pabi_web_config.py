@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import requests
 import xmlrpclib
-from openerp import fields, models, api
+import ast
+from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
 
 
 class PABIWebConfigSettings(models.TransientModel):
@@ -12,8 +15,9 @@ class PABIWebConfigSettings(models.TransientModel):
         string='Company',
         default=lambda self: self.env.user.company_id,
     )
+    # PABIWeb
     pabiweb_active = fields.Boolean(
-        string="Open Connection to PABI Web.",
+        string='Open Connection to PABI Web.',
         related='company_id.pabiweb_active',
     )
     pabiweb_hr_url = fields.Char(
@@ -32,6 +36,31 @@ class PABIWebConfigSettings(models.TransientModel):
         string='PABI Web URL for attachment prefix',
         related='company_id.pabiweb_file_prefix',
     )
+    # e-HR
+    pabiehr_active = fields.Boolean(
+        string='Open Connection to e-HR Webservice',
+        related='company_id.pabiehr_active',
+    )
+    pabiehr_login_url = fields.Char(
+        string='e-HR Login URL',
+        related='company_id.pabiehr_login_url',
+    )
+    pabiehr_user = fields.Char(
+        string='e-HR Login',
+        related='company_id.pabiehr_user',
+    )
+    pabiehr_password = fields.Char(
+        string='e-HR Password',
+        related='company_id.pabiehr_password',
+    )
+    pabiehr_data_url = fields.Char(
+        string='e-HR Data Retrival URL',
+        related='company_id.pabiehr_data_url',
+    )
+    pabiehr_data_mapper = fields.Text(
+        string='Odoo & e-HR Mapper Dict',
+        related='company_id.pabiehr_data_mapper',
+    )
 
     @api.model
     def _get_alfresco_connect(self, type):
@@ -48,3 +77,17 @@ class PABIWebConfigSettings(models.TransientModel):
         connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string)
         return alfresco
+
+    @api.model
+    def _get_pabiehr_connect(self):
+        if not self.env.user.company_id.pabiehr_active:
+            return False
+        url = self.env.user.company_id.pabiehr_login_url
+        user = self.env.user.company_id.pabiehr_user
+        password = self.env.user.company_id.pabiehr_password
+        data = {'username': user, 'password': password}
+        # Login
+        response = requests.post(url, data=data)
+        res = ast.literal_eval(response.text)
+        token = res.get('Bearer', False)
+        return token

@@ -9,6 +9,12 @@ class PABIUtilsWS(models.AbstractModel):
 
     @api.model
     def create_data(self, model, data_dict):
+        """ Accept friendly data_dict in following format to create new rec
+            {'field1': value1,
+             'line_ids': {
+                'field2': value2,
+             }}
+        """
         res = {}
         # Final Preparation of fields and data
         fields, data = self._finalize_data_to_load(data_dict)

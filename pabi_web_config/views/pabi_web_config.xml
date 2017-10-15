@@ -53,6 +53,47 @@
                             </div>
                         </div>
                     </group>
+
+                    <separator string="e-HR Webservice Configuration"/>
+                    <group>
+                        <label for="id" string="Options"/>
+                        <div name="pabi_ehr_option">
+                            <div>
+                                <label for="pabiehr_active"/>
+                                <field name="pabiehr_active" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)]}" >
+                                <br/>
+                                <label for="pabiehr_login_url"/>
+                                <field name="pabiehr_login_url" attrs="{'required': [('pabiehr_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)], 'required': [('pabiehr_active', '=', True)]}" >
+                              <p class="oe_gray">e.g., http://ehrdev.biotec.or.th:8082/hr/rest/MyHRService/login</p>
+                            </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)]}" >
+                                <br/>
+                                <label for="pabiehr_data_url"/>
+                                <field name="pabiehr_data_url" attrs="{'required': [('pabiehr_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)], 'required': [('pabiehr_active', '=', True)]}" >
+                              <p class="oe_gray">e.g., http://ehrdev.biotec.or.th:8082/hr/rest/MyHRService/ehr</p>
+                            </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)]}" >
+                                <br/>
+                                <label for="pabiehr_user"/>
+                                <field name="pabiehr_user" placeholder="Username" attrs="{'required': [('pabiehr_active', '=', True)]}" class="oe_inline"/>
+                                <field name="pabiehr_password" placeholder="Password" attrs="{'required': [('pabiehr_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)]}" >
+                                <br/>
+                                <label for="pabiehr_data_mapper"/>
+                                <field name="pabiehr_data_mapper" placeholder="{&lt;odoo_field&gt;: &lt;e-HR field&gt;}, i.e., {'name': 'A', 'line_ids/account_id': 'X'}"
+                                  attrs="{'required': [('pabiehr_active', '=', True)]}" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
+
+
                 </form>
             </field>
         </record>
