@@ -32,7 +32,7 @@ class PABIUnreconciledReport(models.Model):
                     null as validate_user_id, null as days_outstanding,
                     partner_code, partner_name
                 from pabi_bank_statement_import
-                where match_item_id is null
+                where match_item_id is null and prev_match_statement_id is null
                 order by date_value, document, cheque_number)
             union all
                 (select statement_id, 'nstda' as source, document,
