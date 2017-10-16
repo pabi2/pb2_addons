@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
-	<property name="ireport.x" value="42"/>
-	<property name="ireport.y" value="528"/>
+	<property name="ireport.x" value="70"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -217,9 +217,6 @@ WHERE $X{IN, pb.id, PIDS}]]>
 	</field>
 	<field name="billing_name" class="java.lang.String"/>
 	<field name="billnote" class="java.lang.String"/>
-	<field name="currency" class="java.lang.String">
-		<fieldDescription><![CDATA[currency_id/name]]></fieldDescription>
-	</field>
 	<variable name="VAT" class="java.lang.Number">
 		<variableExpression><![CDATA[$F{amount_total}*0.07]]></variableExpression>
 	</variable>
@@ -404,7 +401,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (" + $F{currency} + ")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (" + ")"]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="18">
@@ -747,7 +744,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (" + $F{currency} + ")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (" + ")"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="144" width="35" height="17"/>
