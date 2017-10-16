@@ -291,9 +291,6 @@ $F{validate_user_lname}]]></variableExpression>
 	<variable name="validate_date_en" class="java.lang.String">
 		<variableExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{validate_date})]]></variableExpression>
 	</variable>
-	<variable name="date_invoice_en" class="java.lang.String">
-		<variableExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_invoice})]]></variableExpression>
-	</variable>
 	<variable name="date_due_en" class="java.lang.String">
 		<variableExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_due})]]></variableExpression>
 	</variable>
@@ -446,7 +443,7 @@ $F{validate_user_lname}]]></variableExpression>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_invoice_en}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_invoice})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="4" y="158" width="367" height="28" forecolor="#000000" backcolor="#FFFFFF"/>

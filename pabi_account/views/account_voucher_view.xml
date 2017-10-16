@@ -69,7 +69,7 @@
                     <field name="number_preprint" required="1" />
                 </field>
                 <field name="name" position="after" >
-                    <field name="research_type" widget="radio" />
+                    <field name="research_type"/>
                     <field name="contract_number" attrs="{'invisible': [('research_type', '=', False)]}"/>
                 </field>
                 <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/field[@name='move_ids']/tree/field[@name='ref']" position="attributes">
