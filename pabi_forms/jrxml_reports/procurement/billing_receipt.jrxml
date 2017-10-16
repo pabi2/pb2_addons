@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="70"/>
-	<property name="ireport.y" value="480"/>
+	<property name="ireport.y" value="109"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -400,6 +400,13 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[รายละเอียด]]></text>
 			</staticText>
+			<textField>
+				<reportElement style="table" x="417" y="0" width="66" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (" + $F{currency} + ")"]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="18">
 			<componentElement>
@@ -737,9 +744,9 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<text><![CDATA[ เลขที่ใบกำกับภาษี/ลงวันที่]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="417" y="144" width="66" height="17"/>
+				<reportElement style="table" x="417" y="144" width="66" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="TH SarabunPSK" size="10" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน (" + $F{currency} + ")"]]></textFieldExpression>
 			</textField>
@@ -888,7 +895,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<reportElement x="246" y="57" width="236" height="34"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="1" y="0" width="416" height="48"/>
+				<reportElement style="table 4_TD" x="1" y="0" width="416" height="48"/>
 			</rectangle>
 			<line>
 				<reportElement x="297" y="69" width="136" height="1"/>
