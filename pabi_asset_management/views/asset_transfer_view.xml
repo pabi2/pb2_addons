@@ -96,7 +96,8 @@
                                 <field name="date_accept"/>
                                 <field name="date"/>
                                 <field name="date_diff" invisible="1"/>
-                                <field name="reason" attrs="{'invisible': [('date_diff', '=', False)], 'required': [('date_diff', '=', True)]}"/>
+                                <field name="reason" attrs="{'invisible': [('date_diff', '=', False)], 'required': [('date_diff', '=', True)]}"
+                                  options="{'pattern': '^(?!-$|--$|n\/a$|\/$|\s$).*'}"/>
                             </group>
                         </group>
                         <notebook>
