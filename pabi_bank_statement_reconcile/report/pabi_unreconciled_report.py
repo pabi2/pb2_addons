@@ -22,7 +22,8 @@ class PABIUnreconciledReport(models.Model):
                 b.partner_code, b.partner_name,
                 acct.code account_code, acct.name account_name,
                 bank.bank_name, bank.acc_number bank_account_name,
-                rp.name as validate_user
+                rp.name as validate_user,
+                rp2.name as doc_creator
             from pabi_bank_statement a
             join
             (
@@ -46,12 +47,12 @@ class PABIUnreconciledReport(models.Model):
             ) b
             on b.statement_id = a.id
             -- misc
-            left outer join account_account acct
-                on acct.id = a.account_id
+            left outer join account_account acct on acct.id = a.account_id
             left outer join res_partner_bank bank
                 on bank.id = a.partner_bank_id
-            left outer join res_users usr
-                on usr.id = b.validate_user_id
+            left outer join res_users usr on usr.id = b.validate_user_id
             left outer join res_partner rp on rp.id = usr.partner_id
+            left outer join res_users usr2 on usr2.id = a.create_uid
+            left outer join res_partner rp2 on rp2.id = usr2.partner_id
         )""" % (self._table,)
         )

@@ -76,6 +76,7 @@ order by id, source]]>
 	<field name="partner_name" class="java.lang.String"/>
 	<field name="validate_user" class="java.lang.String"/>
 	<field name="batch_code" class="java.lang.String"/>
+	<field name="doc_creator" class="java.lang.String"/>
 	<variable name="amount_1" class="java.lang.Double" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
 	</variable>
@@ -101,7 +102,7 @@ $F{report_type} == "payment_smart" ? "รายงานค้างโอนบ
 $F{report_type} == "bank_receipt" ? "รายงานเงินเข้าบัญชีไม่ทราบแหล่งที่มา" : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="nostyle" mode="Transparent" x="0" y="0" width="802" height="18"/>
+				<reportElement style="nostyle" mode="Transparent" x="422" y="0" width="380" height="18"/>
 				<textElement textAlignment="Right">
 					<font size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -176,6 +177,13 @@ $F{report_type} == "bank_receipt" ? "รายงานเงินเข้า�
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_account_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="nostyle" mode="Transparent" x="0" y="0" width="380" height="18"/>
+				<textElement>
+					<font size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_creator}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

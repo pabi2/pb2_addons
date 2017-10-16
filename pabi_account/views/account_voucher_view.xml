@@ -2,6 +2,20 @@
 <openerp>
     <data>
 
+        <record id="view_voucher_filter_vendor_pay" model="ir.ui.view">
+            <field name="name">account.voucher.supplier.pay.select</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor_pay"/>
+            <field name="arch" type="xml">
+                <group position="inside">
+                    <filter string="Payment Type" domain="[]" context="{'group_by':'payment_type'}"/>
+                    <filter string="Transfer Type" domain="[]" context="{'group_by':'transfer_type'}"/>
+                    <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}"/>
+                    <filter string="Validator" domain="[]" context="{'group_by':'validate_user_id'}"/>
+                </group>
+            </field>
+        </record>
+
         #Supplier Payment
         <record model="ir.ui.view" id="view_vendor_payment_form">
             <field name="name">account.voucher.payment.form</field>
