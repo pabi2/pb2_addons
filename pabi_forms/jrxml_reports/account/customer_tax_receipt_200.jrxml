@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.2418426461183112"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="192"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -318,8 +318,8 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{invoice_amount_total} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
+($F{invoice_type} == "out_refund" ? -$F{invoice_amount_untaxed} : $F{invoice_amount_untaxed})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="240" y="0" width="150" height="18">
