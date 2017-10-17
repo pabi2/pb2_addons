@@ -22,11 +22,12 @@ class AccountMove(models.Model):
     @api.depends('line_id.name')
     def _compute_line_item_summary(self):
         for rec in self:
-            items = ['%s [%s]' % (x.name, x.quantity)
+            items = [x.quantity and '%s [%s]' % (x.name, x.quantity) or x.name
                      for x in rec.line_id
                      if (x.name != '/' and
                          x.account_id.user_type.report_type in ('income',
                                                                 'expense'))]
+            items = list(set(items))
             if items:
                 rec.line_item_summary = ", ".join(items)
 

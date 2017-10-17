@@ -20,9 +20,9 @@ class HRExpenseExpense(models.Model):
     @api.multi
     def write(self, vals):
         if vals.get('state', False) == 'draft':
+            Analytic = self.env['account.analytic.account']
             for expense in self:
                 for line in expense.line_ids:
-                    Analytic = self.env['account.analytic.account']
                     line.analytic_account = \
                         Analytic.create_matched_analytic(line)
                 expense.line_ids._create_analytic_line(reverse=True)

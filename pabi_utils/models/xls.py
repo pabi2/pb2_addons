@@ -82,14 +82,16 @@ class PABIUtilsXLS(models.AbstractModel):
     @api.model
     def _get_field_type(self, model, field):
         """ Get 2 field type """
-        record = self.env[model].new()
-        for f in field.split('/'):
-            field_type = record._fields[f].type
-            if field_type in ('one2many', 'many2many'):
-                record = record[f]
-            else:
-                return field_type
-        raise ValidationError(_('%s has no valid field type') % field)
+        try:
+            record = self.env[model].new()
+            for f in field.split('/'):
+                field_type = record._fields[f].type
+                if field_type in ('one2many', 'many2many'):
+                    record = record[f]
+                else:
+                    return field_type
+        except Exception:
+            raise ValidationError(_('%s has no valid field type') % field)
 
     @api.model
     def _get_field_types(self, model, fields):
