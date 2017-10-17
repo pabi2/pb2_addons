@@ -16,9 +16,17 @@ jasper_reports.report_jasper(
 )
 
 
-# PV Voucher && RC Voucher
+# PV Voucher
 jasper_reports.report_jasper(
     'report.payment.voucher',  # report_name in account_data.xml
+    'account.move',  # Model View name
+    parser=print_voucher_parser
+)
+
+
+# RC Voucher
+jasper_reports.report_jasper(
+    'report.receipt.voucher',  # report_name in account_data.xml
     'account.move',  # Model View name
     parser=print_voucher_parser
 )
