@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 
 class PaymentExport(models.Model):
     _name = 'payment.export'
+    _inherit = ['mail.thread']
     _description = 'Payment Export'
 
     name = fields.Char(
@@ -19,12 +20,18 @@ class PaymentExport(models.Model):
         string='Payment Method',
         required=True,
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
         string='Bank Account',
         domain="[('partner_id', '=', company_partner_id)]",
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     payment_type = fields.Selection(
         [('cheque', 'Cheque'),
@@ -38,8 +45,11 @@ class PaymentExport(models.Model):
          ('smart', 'SMART')
          ],
         string='Transfer Type',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="- DIRECT is transfer within same bank.\n"
-        "- SMART is transfer is between different bank."
+        "- SMART is transfer is between different bank.",
+        track_visibility='onchange',
     )
     # is_cheque_lot = fields.Boolean(
     #     string='Is Cheque Lot Available',
@@ -53,20 +63,24 @@ class PaymentExport(models.Model):
         ondelete='restrict',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     date_value = fields.Date(
         string='Value/Cheque Date',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     cheque_number_from = fields.Char(
         string='Cheque Number From',
         compute='_compute_cheque_number',
+        track_visibility='onchange',
     )
     cheque_number_to = fields.Char(
         string='Cheque Number From',
         compute='_compute_cheque_number',
+        track_visibility='onchange',
     )
     user_id = fields.Many2one(
         'res.users',
@@ -74,6 +88,7 @@ class PaymentExport(models.Model):
         required=True,
         readonly=True,
         default=lambda self: self.env.user,
+        track_visibility='onchange',
     )
     line_ids = fields.One2many(
         'payment.export.line',
@@ -88,6 +103,7 @@ class PaymentExport(models.Model):
         string='Status',
         default='draft',
         required=True,
+        track_visibility='onchange',
     )
     cheque_register_id = fields.Many2one(
         'cheque.register',
@@ -141,6 +157,8 @@ class PaymentExport(models.Model):
     )
     line_filter = fields.Char(
         string='Filter',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="More filter. You can use complex search with comma and between.",
     )
 
@@ -410,6 +428,11 @@ class PaymentExportLine(models.Model):
     voucher_id = fields.Many2one(
         'account.voucher',
         string='Supplier Payment',
+        readonly=True,
+    )
+    invoice_source_documents = fields.Char(
+        string='Source Documents',
+        related='voucher_id.invoice_source_documents',
         readonly=True,
     )
     partner_id = fields.Many2one(

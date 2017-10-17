@@ -36,11 +36,13 @@ class SaleOrderLine(models.Model):
             _prepare_order_line_invoice_line(line, account_id)
         order = line.order_id
         if order.loan_agreement_id:
+            installment = self._context.get('installment')
             res.update({
                 'section_id': order.loan_agreement_id.section_id.id,
-                'name': (res.get('name', False) and
-                         res['name'] + (_(' / Installment %s') %
-                                        (self._context.get('installment'),)) or
-                         False)
+                'name': u'รับชำระเงินกู้ดอกเบี้ยต่ำ งวดที่ %s' % installment,
+                # 'name': (res.get('name', False) and
+                #          res['name'] + (_(' / Installment %s') %
+                #                      (self._context.get('installment'),)) or
+                #          False)
             })
         return res

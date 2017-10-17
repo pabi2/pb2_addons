@@ -8,47 +8,11 @@ class AccountInvoice(models.Model):
 
     late_delivery_work_acceptance_id = fields.Many2one(
         'purchase.work.acceptance',
-        string="Late Delivery Acceptance",
+        string='Late Delivery Acceptance',
         domain=[('total_fine', '>', 0.0), ('invoiced', '=', False)],
         copy=False,
-        help="List Purchase Work Acceptance which has a penalty amount"
+        help='List Purchase Work Acceptance which has a penalty amount',
     )
-
-    # No longer need as we change ways doing domain
-    # @api.multi
-    # def onchange_partner_id(self, ttype, partner_id, date_invoice=False,
-    #                         payment_term=False, partner_bank_id=False,
-    #                         company_id=False):
-    #     res = super(AccountInvoice, self).onchange_partner_id(
-    #         ttype, partner_id, date_invoice=date_invoice,
-    #         payment_term=payment_term, partner_bank_id=partner_bank_id,
-    #         company_id=company_id)
-    #     if not res:
-    #         res = {}
-    #     if 'value' not in res:
-    #         res['value'] = {}
-    #     if 'domain' not in res:
-    #         res['domain'] = {}
-    #
-    #     res['value'].update({'late_delivery_work_acceptance_id': False})
-    #     if not partner_id:
-    #         domain = [('id', 'in', [])]
-    #        res['domain'].update({'late_delivery_work_acceptance_id': domain})
-    #     else:
-    #         self._cr.execute("""
-    #             select id from purchase_work_acceptance
-    #             where partner_id = %s and total_fine > 0
-    #             and state = 'done'
-    #          and id not in (select distinct late_delivery_work_acceptance_id
-    #                         from account_invoice where partner_id = %s
-    #                         and late_delivery_work_acceptance_id is not null
-    #                         and state in ('open', 'paid'))
-    #             order by id
-    #         """, (partner_id, partner_id,))
-    #         invoice_ids = [x[0] for x in self._cr.fetchall()]
-    #         domain = [('id', 'in', invoice_ids)]
-    #        res['domain'].update({'late_delivery_work_acceptance_id': domain})
-    #     return res
 
     @api.model
     def _get_account_id_from_product(self, product, fpos):
@@ -71,6 +35,7 @@ class AccountInvoice(models.Model):
         if self.late_delivery_work_acceptance_id:
             self.invoice_line = []
             acceptance = self.late_delivery_work_acceptance_id
+            self.taxbranch_id = acceptance.order_id.taxbranch_id
             penalty_line = self.env['account.invoice.line'].new()
             amount_penalty = acceptance.total_fine
             company = self.env.user.company_id

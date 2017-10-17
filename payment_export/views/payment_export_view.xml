@@ -105,6 +105,7 @@
                                         <field name="payment_type" invisible="1"/>
                                         <field name="sequence" invisible="0"/>
                                         <field name="voucher_id"/>
+                                        <field name="invoice_source_documents"/>
                                         <field name="partner_id"/>
                                         <field name="amount"/>
                                         <field name="amount_fee" attrs="{'readonly': [('payment_type', '=', 'cheque')]}"/>
@@ -116,6 +117,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
