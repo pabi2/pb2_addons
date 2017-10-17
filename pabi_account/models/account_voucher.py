@@ -83,6 +83,11 @@ class AccountVoucher(models.Model):
     contract_number = fields.Char(
         string='Contract Number',
     )
+    partner_code = fields.Char(
+        string='Partner Code',
+        related='partner_id.search_key',
+        store=True,
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preparint Number must be unique!')]
 

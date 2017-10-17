@@ -166,6 +166,7 @@ class ResCostcenter(ResCommon, models.Model):
 class ResTaxbranch(ResCommon, models.Model):
     _name = 'res.taxbranch'
     _description = 'Tax Branch'
+    _order = 'code'
 
     logo = fields.Binary(
         string='Logo',
