@@ -50,6 +50,7 @@ class PABIBankStatement(models.Model):
         [('payment_cheque', 'Unreconciled Cheque'),
          ('payment_direct', 'Unreconciled DIRECT'),
          ('payment_smart', 'Unreconciled SMART'),
+         ('payment_oversea', 'Unreconciled Oversea'),
          ('bank_receipt', 'Unknown Bank Receipt'),
          ],
         string='Type of Report',
@@ -123,11 +124,13 @@ class PABIBankStatement(models.Model):
     )
     transfer_type = fields.Selection(
         [('direct', 'DIRECT'),
-         ('smart', 'SMART')
+         ('smart', 'SMART'),
+         ('oversea', 'Oversea')
          ],
         string='Transfer Type',
         help="- DIRECT is transfer within same bank.\n"
-        "- SMART is transfer is between different bank.",
+        "- SMART is transfer is between different bank.\n"
+        "- Oversea is transfer is from oversea.",
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -213,6 +216,11 @@ class PABIBankStatement(models.Model):
             self.doctype = 'payment'
             self.payment_type = 'transfer'
             self.transfer_type = 'smart'
+        elif self.report_type == 'payment_oversea':
+            self.match_method = 'document'
+            self.doctype = 'payment'
+            self.payment_type = 'transfer'
+            self.transfer_type = 'oversea'
         elif self.report_type == 'bank_receipt':
             self.match_method = 'date_value'
             self.doctype = 'bank_receipt'
