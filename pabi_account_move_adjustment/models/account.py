@@ -26,6 +26,12 @@ class AccountMove(models.Model):
     narration = fields.Text(track_visibility='onchange')
 
     @api.multi
+    def reset_desc(self):
+        for rec in self:
+            rec.narration = rec.line_item_summary
+        return True
+
+    @api.multi
     def action_set_tax_sequence(self):
         for rec in self:
             rec.tax_detail_ids._compute_taxbranch_id()

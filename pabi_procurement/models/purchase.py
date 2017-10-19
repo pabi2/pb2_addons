@@ -108,6 +108,17 @@ class PurchaseOrder(models.Model):
         states={'draft': [('readonly', False)]},
     )
 
+    @api.multi
+    def name_get(self):
+        result = []
+        for po in self:
+            if po.contract_id:
+                result.append((po.id, '%s (%s)' %
+                              (po.name, po.contract_id.display_code)))
+            else:
+                result.append((po.id, po.name))
+        return result
+
     @api.model
     def _prepare_committee_line(self, line, order_id):
         return {

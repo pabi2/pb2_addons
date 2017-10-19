@@ -4,6 +4,7 @@ from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
+import time
 
 
 class AccountInvoice(models.Model):
@@ -65,8 +66,28 @@ class AccountInvoice(models.Model):
         related='partner_id.search_key',
         store=True,
     )
+    date_invoice = fields.Date(
+        string='Account Date',  # Change label
+    )
+    date_document = fields.Date(
+        string='Document Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+        default=lambda self: fields.Date.context_today(self),
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preparint Number must be unique!')]
+
+    @api.multi
+    def write(self, vals):
+        # Set date
+        if vals.get('date_invoice') and not vals.get('date_document'):
+            for rec in self:
+                if not rec.date_document:
+                    vals['date_document'] = vals['date_invoice']
+                    break
+        return super(AccountInvoice, self).write(vals)
 
     @api.multi
     def confirm_paid(self):

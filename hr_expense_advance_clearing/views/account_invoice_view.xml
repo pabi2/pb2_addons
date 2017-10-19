@@ -21,7 +21,7 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='fiscal_position']" position="after">
-                    <field name="advance_expense_id"/>
+                    <field name="advance_expense_id" context="{'advance_partner_id': partner_id}"/>
                 </xpath>
             </field>
         </record>

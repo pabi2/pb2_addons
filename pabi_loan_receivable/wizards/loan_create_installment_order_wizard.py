@@ -71,6 +71,7 @@ class LoanCreateInstallmentOrderWizard(models.TransientModel):
                     'active_ids': [order_id],
                     'active_model': 'sale.order',
                     'default_num_installment': self.installment,
+                    'readonly_num_installment': True,
                     'hide_invoice_plan_detail': True,
                     })
         result['context'] = ctx

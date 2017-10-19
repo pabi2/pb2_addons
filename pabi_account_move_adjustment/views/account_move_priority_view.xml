@@ -28,10 +28,10 @@
             <field name="model">account.move</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
-                <form string="Account Entry" edit="0" create="0" delete="0">
+                <form string="Account Entry" edit="1" create="0" delete="0">
                     <header>
                         <button name="button_validate" states="draft" string="Post" type="object" class="oe_highlight" groups="account.group_account_invoice"/>
-                        <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice"/>
+                        <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice" invisible="1"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <label for="name" class="oe_edit_only" attrs="{'invisible':[('name','=','/')]}"/>
@@ -64,6 +64,8 @@
                                     <field name="activity_group_id"/>
                                     <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
                                     <field name="name" string="Description"/>
+                        	    			<button name="%(action_edit_desc)d" string="Edit" type="action"
+                                      icon="gtk-justify-fill"/>
                                     <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
                                     <field name="is_tax_line" invisible="1"/>
                                     <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
@@ -88,6 +90,7 @@
                                     <field name="asset_profile_id"/>
                                 </tree>
                             </field>
+                            <button name="reset_desc" string="(reset desc.)" type="object" class="oe_link"/>
                             <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
                             <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
                         </page>

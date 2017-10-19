@@ -43,6 +43,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_invoice']" position="before">
+                    <field name="date_document"/>
+                </xpath>
                 <xpath expr="//field[@name='fiscal_position']" position="after">
                     <field name="number_preprint"/>
                 </xpath>
@@ -87,6 +90,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_invoice']" position="before">
+                    <field name="date_document"/>
+                </xpath>
                 <xpath expr="//field[@name='payment_term']" position="after">
                     <field name="validate_user_id"/>
                     <field name="validate_date"/>

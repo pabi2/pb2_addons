@@ -12,8 +12,7 @@ class AccountMove(models.Model):
         # Dr / Cr should be non zero
         self._validate_drcr_amount()
         self._validate_period_vs_date()
-        # self.validate_activity_vs_account()  # Already check in ActiviCommon
-        self._remove_zero_lines()
+        # self._remove_zero_lines()  # Do not remove, may bring back
         res = super(AccountMove, self).post()
         return res
 
@@ -42,22 +41,9 @@ class AccountMove(models.Model):
     @api.multi
     def _remove_zero_lines(self):
         move_lines = self.mapped('line_id')
-        lines = move_lines.filtered(lambda l: not l.debit and not l.credit)
+        lines = move_lines.filtered(lambda l: not l.debit and
+                                    not l.credit and not l.product_id)
         lines.unlink()
-
-    # Already check in activity common
-    # @api.multi
-    # def validate_activity_vs_account(self):
-    #     for rec in self:
-    #         lines = rec.line_id
-    #         invalid_lines = lines.filtered(
-    #             lambda l: l.activity_id and
-    #             l.activity_id.account_id != l.account_id
-    #         )
-    #         for line in invalid_lines:
-    #             raise ValidationError(
-    #                 _('Account code "%s" not belong to activity %s!') %
-    #                 (line.account_id.code, line.activity_id.name))
 
 
 class AccountMoveLine(models.Model):

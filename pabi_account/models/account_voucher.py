@@ -88,8 +88,29 @@ class AccountVoucher(models.Model):
         related='partner_id.search_key',
         store=True,
     )
+    date = fields.Date(
+        string='Account Date',  # Change label
+    )
+    date_document = fields.Date(
+        string='Document Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+        default=lambda self: fields.Date.context_today(self),
+    )
+
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preparint Number must be unique!')]
+
+    @api.multi
+    def write(self, vals):
+        # Set date
+        if vals.get('date') and not vals.get('date_document'):
+            for rec in self:
+                if not rec.date_document:
+                    vals['date_document'] = vals['date']
+                    break
+        return super(AccountVoucher, self).write(vals)
 
     @api.multi
     @api.constrains('line_ids', 'line_cr_ids', 'line_dr_ids')
