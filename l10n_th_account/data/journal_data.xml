@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        # Journal for Asset Depre
+        <record id="seq_journal_transfer_tax_journal" model="ir.sequence">
+            <field name="name">Transfer Tax Journal</field>
+            <field name="code"></field>
+            <field name="prefix">TT%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_transfer_tax_journal" model="account.journal">
+            <field name="name">Transfer Tax Journal</field>
+            <field name="code">TT</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_transfer_tax_journal"/>
+            <field name="entry_posted">True</field>
+            <field name="update_posted">True</field>
+        </record>
+    </data>
+</openerp>

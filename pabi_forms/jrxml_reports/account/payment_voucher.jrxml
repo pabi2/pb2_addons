@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.331000000000012"/>
 	<property name="ireport.x" value="45"/>
-	<property name="ireport.y" value="139"/>
+	<property name="ireport.y" value="331"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
 	<style name="space">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
@@ -516,7 +516,8 @@
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{transfer_type} == "direct" ? "DIRECT" :
-($F{transfer_type} == "smart" ? "SMART" : "")]]></textFieldExpression>
+($F{transfer_type} == "smart" ? "SMART" :
+($F{transfer_type} == "oversea" ? "Oversea" : ""))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

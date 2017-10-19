@@ -125,6 +125,16 @@ class AccountAssetAdjust(models.Model):
         string='New Asset Count',
         compute='_compute_assset_count',
     )
+    limit_asset_value = fields.Float(
+        string='Limit Asset Value',
+        help="Limit asset value for case Expense -> Asset",
+    )
+    limit_asset_value_readonly = fields.Float(
+        string='Limit Asset Value',
+        related='limit_asset_value',
+        readonly=True,
+        help="Limit asset value for case Expense -> Asset",
+    )
 
     @api.model
     def _default_journal(self):
@@ -423,6 +433,9 @@ class AccountAssetAdjust(models.Model):
         * Create collective moves
         """
         self.ensure_one()
+        value = sum(self.adjust_expense_to_asset_ids.mapped('amount'))
+        if float_compare(self.limit_asset_value, value, 2) == -1:
+            raise ValidationError(_('Asset value exceed limit!'))
         Analytic = self.env['account.analytic.account']
         if not self.adjust_expense_to_asset_ids:
             raise ValidationError(_('No asset selected!'))

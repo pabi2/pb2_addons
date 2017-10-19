@@ -16,11 +16,13 @@ class AccountVoucher(models.Model):
     )
     transfer_type = fields.Selection(
         [('direct', 'DIRECT'),
-         ('smart', 'SMART')
+         ('smart', 'SMART'),
+         ('oversea', 'Oversea')
          ],
         string='Transfer Type',
         help="- DIRECT is transfer within same bank.\n"
         "- SMART is transfer is between different bank."
+        "- Oversea won't be sent to Payment Export",
     )
     is_cheque_lot = fields.Boolean(
         string='Is Cheque Lot Available',

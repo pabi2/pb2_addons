@@ -55,7 +55,10 @@ class AccountVoucher(models.Model):
         if self.pit_withhold:
             pit_line = self.env['personal.income.tax'].new()
             pit_line.partner_id = self.partner_id
-            pit_line.amount_income = self.amount - self.writeoff_amount
+            # DO NOT DELETE: user don't want to auto calc, but we will.
+            # pit_line.amount_income = self.amount - self.writeoff_amount
+            # --
+            # precalc_wht will be realized to amount_wht when validate doc.
             pit_line.precalc_wht = pit_line._calculate_pit_amount_wht(
                 self.date, pit_line.partner_id.id, pit_line.amount_income)
             self.pit_line += pit_line

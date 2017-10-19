@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor_pay"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="replace">
-                    <field name="partner_id" string="Supplier" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="partner_id" string="Partner" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
                 </field>
                 <group position="inside">
                     <filter string="Payment Type" domain="[]" context="{'group_by':'payment_type'}"/>
