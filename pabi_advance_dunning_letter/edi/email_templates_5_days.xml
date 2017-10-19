@@ -18,7 +18,7 @@
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
     <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
     <p style="text-indent: 25px;">
-        จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ วันที่ ${object.date | format_date('%d %B %Ey', lc='th_TH')} ปรากฎว่าท่านมีรายการเงินยืมทดรองจ่ายที่ใกล้ครบกําหนดหักล้าง เป็นยอดเงินยืมคงค้าง ${'{:,.2f}'.format(object.amount_to_clearing)} บาท
+        จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ วันที่ ${datetime.datetime.today().strftime('%Y-%m-%d') | format_date('%d %B %Ey', lc='th_TH')} ปรากฎว่าท่านมีรายการเงินยืมทดรองจ่ายที่ใกล้ครบกําหนดหักล้าง เป็นยอดเงินยืมคงค้าง ${'{:,.2f}'.format(object.amount_to_clearing)} บาท
     </p>
     <p style="text-indent: 25px;">
        จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินและบัญชี เพื่อหักล้างเงินยืมของท่านโดยด่วน
