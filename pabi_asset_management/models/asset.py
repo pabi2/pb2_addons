@@ -289,6 +289,7 @@ class AccountAsset(ChartFieldAction, models.Model):
          ('atm', 'ATM'),
          ],
         string='Parent Type',
+        default='atm',
     )
     installment = fields.Integer(
         string='Installment',
