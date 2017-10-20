@@ -90,15 +90,13 @@ class PABIAdvanceDunningLetter(models.Model):
 
     @api.multi
     def unlink(self):
-        vals = {
-            'date_dunning_1': False,
-            'date_dunning_2': False,
-            'date_dunning_3': False,
-        }
         for letter in self:
-            letter.dunning_list_1.mapped('expense_id').write(vals)
-            letter.dunning_list_2.mapped('expense_id').write(vals)
-            letter.dunning_list_3.mapped('expense_id').write(vals)
+            letter.dunning_list_1.mapped('expense_id').write(
+                {'date_dunning_1': False})
+            letter.dunning_list_2.mapped('expense_id').write(
+                {'date_dunning_2': False})
+            letter.dunning_list_3.mapped('expense_id').write(
+                {'date_dunning_3': False})
         return super(PABIAdvanceDunningLetter, self).unlink()
 
     @api.model
@@ -142,7 +140,7 @@ class PABIAdvanceDunningLetter(models.Model):
         today = datetime.strptime(
             fields.Date.context_today(self), '%Y-%m-%d').date()
         expense_ids = []
-        for due_type in ('3', '2', '1'):  # 3 types of notice,
+        for due_type in ('1', '2', '3'):  # 3 types of notice,
             res['dunning_list_' + due_type] = []
             date_due = today + relativedelta(days=DUE_TYPE_DAYS[due_type])
             expenses = Expense.search(self._search_domain(due_type, date_due))
