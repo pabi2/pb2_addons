@@ -15,7 +15,7 @@
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
 			<field name="force_locale">th_TH</field>
-			<field name="download_filename">${o.dunning_id.name}.pdf</field>
+			<field name="download_filename"></field>
 		</record>
 
 		<record id="advance_dunning_letter_values" model="ir.values">
