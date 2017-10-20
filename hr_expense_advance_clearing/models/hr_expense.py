@@ -196,7 +196,6 @@ class HRExpenseExpense(models.Model):
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):
-        print self._context
         if self._context.get('advance_partner_id', False):
             Partner = self.env['res.partner']
             partner = Partner.browse(self._context['advance_partner_id'])
