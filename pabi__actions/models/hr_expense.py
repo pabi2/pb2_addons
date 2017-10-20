@@ -55,6 +55,8 @@ class HRExpense(models.Model):
             [('type', '=', 'payable'),
              ('currency_id', '=', False)],
             limit=1)[0]
+        journal = self.env['account.journal'].search(
+            [('type', 'in', ['bank', 'cash'])], limit=1)
         voucher = self.env['account.voucher'].create({
             'date': fields.Date.context_today(self),
             'amount': invoice.amount_total,
@@ -62,6 +64,8 @@ class HRExpense(models.Model):
             'partner_id': invoice.partner_id.id,
             'type': 'payment',
             'date_value': fields.Date.context_today(self),
+            'journal_id': journal.id,
+            'operating_unit_id': self.env.user.default_operating_unit_id.id,
         })
         val = voucher.\
             with_context({
