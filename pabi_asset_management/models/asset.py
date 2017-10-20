@@ -45,6 +45,9 @@ class AccountAsset(ChartFieldAction, models.Model):
     _name = 'account.asset'
     _inherit = ['account.asset', 'mail.thread']
 
+    state = fields.Selection(
+        selection_add=[('delivered', 'Delivered')],  # special for parent asset
+    )
     name = fields.Char(
         default='/',
         readonly=False,
@@ -302,8 +305,23 @@ class AccountAsset(ChartFieldAction, models.Model):
         compute='_compute_installment_str',
         help="Nicely format installment vs number of installment",
     )
+    total_child_value = fields.Float(
+        string='Total Value',
+        compute='_compute_total_child_value',
+        help="Sum of this parent's child purchase values",
+    )
+    child_asset_count = fields.Integer(
+        string='Child Asset Count',
+        compute='_compute_asset_count',
+    )
+
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
+
+    @api.multi
+    def _compute_total_child_value(self):
+        for rec in self:
+            rec.total_child_value = sum(rec.child_ids.mapped('purchase_value'))
 
     @api.multi
     @api.depends('installment')
@@ -332,6 +350,17 @@ class AccountAsset(ChartFieldAction, models.Model):
             raise ValidationError(
                 _('Please select only running assets!'))
         return True
+
+    @api.multi
+    def action_undeliver_assets(self):
+        """ This function is used for parent asset only """
+        status_normal = self.env.ref('pabi_asset_management.'
+                                     'asset_status_normal')
+        for rec in self:
+            rec.child_ids.write({'status': status_normal.id,
+                                 'deliver_to': False,
+                                 'deliver_date': False})
+            rec.state = 'draft'
 
     @api.multi
     def write(self, vals):
@@ -393,14 +422,30 @@ class AccountAsset(ChartFieldAction, models.Model):
         return result
 
     @api.multi
+    def open_child_asset(self):
+        self.ensure_one()
+        action = self.env.ref('account_asset_management.account_asset_action')
+        result = action.read()[0]
+        assets = self.with_context(active_test=False).\
+            search([('id', 'in', self.child_ids.ids)])
+        print assets
+        dom = [('id', 'in', assets.ids)]
+        result.update({'domain': dom, 'context': {'active_test': False}})
+        return result
+
+    @api.multi
     @api.depends()
     def _compute_asset_count(self):
         # self = self.with_context(active_test=False)
         for asset in self:
             # _ids = self.with_context(active_test=False).\
             #     search([('target_asset_ids', 'in', [asset.id])])._ids
-            asset.source_asset_count = len(asset.with_context(active_test=False).source_asset_ids)
-            asset.target_asset_count = len(asset.with_context(active_test=False).target_asset_ids)
+            asset.source_asset_count = \
+                len(asset.with_context(active_test=False).source_asset_ids)
+            asset.target_asset_count = \
+                len(asset.with_context(active_test=False).target_asset_ids)
+            asset.child_asset_count = \
+                len(asset.with_context(active_test=False).child_ids)
 
     @api.model
     def create(self, vals):
@@ -409,7 +454,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         ptype = vals.get('parent_type', False)
         if ptype and type == 'view':
             sequence_code = 'parent.asset.%s' % (ptype)
-            vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
+            vals['code'] = self.env['ir.sequence'].next_by_code(sequence_code)
         # Normal Case
         product_id = vals.get('product_id', False)
         if product_id:
