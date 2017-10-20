@@ -137,6 +137,18 @@ class AccountMoveLine(MergedChartField, models.Model):
             # display costcenter only if avail.
             if 'costcenter_id' in self and self.chartfield_id.costcenter_id:
                 self.costcenter_id = self.chartfield_id.costcenter_id
+            # Change other chartfield, we need it to set domain on Fund
+            res_id = self.chartfield_id.res_id
+            if self.chartfield_id.model == 'res.section':
+                self.section_id = res_id
+            if self.chartfield_id.model == 'res.project':
+                self.project_id = res_id
+            if self.chartfield_id.model == 'res.invest.construction.phase':
+                self.invest_construction_phase_id = res_id
+            if self.chartfield_id.model == 'res.invest.asset':
+                self.invest_asset_id = res_id
+            if self.chartfield_id.model == 'res.project':
+                self.project_id = res_id
 
     # @api.multi
     # def create_analytic_lines(self):
