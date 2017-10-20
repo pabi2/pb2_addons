@@ -88,6 +88,19 @@ class PABIAdvanceDunningLetter(models.Model):
         vals['name'] = self.env['ir.sequence'].get('advance.dunning') or '/'
         return super(PABIAdvanceDunningLetter, self).create(vals)
 
+    @api.multi
+    def unlink(self):
+        vals = {
+            'date_dunning_1': False,
+            'date_dunning_2': False,
+            'date_dunning_3': False,
+        }
+        for letter in self:
+            letter.dunning_list_1.mapped('expense_id').write(vals)
+            letter.dunning_list_2.mapped('expense_id').write(vals)
+            letter.dunning_list_3.mapped('expense_id').write(vals)
+        return super(PABIAdvanceDunningLetter, self).unlink()
+
     @api.model
     def _search_domain(self, due_type, date_due):
         search_domain = [('is_employee_advance', '=', True),
