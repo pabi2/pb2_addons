@@ -29,6 +29,7 @@ This module allow creating asset during incoming shipment.
         "data/journal_data.xml",
         "data/asset_status.xml",
         "data/default_value.xml",
+        "wizard/asset_parent_deliver_wizard.xml",
         "views/asset_view.xml",
         "wizard/account_asset_remove_view.xml",
         "wizard/create_asset_request_view.xml",

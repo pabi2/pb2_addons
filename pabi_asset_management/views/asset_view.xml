@@ -70,7 +70,7 @@
                     <field name="name"/>
                     <field name="purchase_id"/>
                     <field name="installment_str"/>
-                    <field name="purchase_value"/>
+                    <field name="purchase_value" sum="Amount"/>
                     <field name="date_start"/>
                     <field name="partner_id"/>
                     <field name="picking_id"/>
@@ -284,26 +284,57 @@
             <field name="model">account.asset</field>
             <field name="arch" type="xml">
                 <form string="Asset">
+                    <header>
+                        <button name="action_undeliver_assets" states="delivered" string="Undelivered"
+                          type="object" confirm="This action will set asset status of all child assets back to 'ใช้งานปกติ' regardless of its original asset status."
+                          groups="purchase.group_purchase_user"/>
+                        <button name="%(action_deliver_assets)d" states="draft" string="Deliver Assets"
+                          type="action" confirm="This action will set mark all child assets statue to 'ส่งมอบ'."
+                          groups="purchase.group_purchase_user" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,delivered"/>
+                    </header>
                     <sheet>
-                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_button_box oe_right">
+                            <button type="object" name="open_child_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('child_asset_count', '=', 0)]}">
+                                <field name="child_asset_count" widget="statinfo" string="Child Asset(s)"/>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" readonly="1" class="oe_inline"/>
+                                <field name="name" class="oe_inline"/>
                             </h1>
+                            <h2>
+                              <field name="code" readonly="1" attrs="{'invisible': [('code', '=', '/')]}" class="oe_inline"/>
+                            </h2>
                         </div>
                         <group>
                             <group>
                                 <field name="type" invisible="1"/>
-                                <field name="parent_type" attrs="{'required': [('type', '=', 'view')], 'readonly': [('name', '!=', '/')]}"/>
+                                <field name="parent_type" attrs="{'required': [('type', '=', 'view')], 'readonly': [('code', '!=', '/')]}"/>
                                 <field name="project_id"/>
                                 <field name="section_id"/>
                             </group>
                             <group>
-                                <field name="state" invisible="1"/>
                                 <field name="note" placeholder="Add an internal note here..."/>
                             </group>
                         </group>
+                        <div class="oe_button_box oe_right">
+                            <h2>
+                                <label for="total_child_value" />
+                                <field name="total_child_value" class="oe_inline"/>
+                            </h2>
+                        </div>
+                        <separator string="Child Assets"/>
+                        <field name="child_ids" nolabel="1" readonly="1" >
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="purchase_value" sum="Total Value"/>
+                                <field name="status"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
                     </sheet>
                 </form>
             </field>
@@ -424,6 +455,7 @@
         <menuitem action="action_asset_action_import_template" id="menu_asset_action_import_template"
             parent="account_asset_management.menu_finance_config_assets" sequence="30"
             groups="base.group_no_one"/>
+
 
     </data>
 </openerp>
