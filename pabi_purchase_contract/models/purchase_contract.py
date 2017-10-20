@@ -164,17 +164,19 @@ class PurchaseContract(models.Model):
         else:
             return False
 
-    @api.one
+    @api.multi
     def _compute_currency_id(self):
-        if self.pd_id:
-            self.currency_id = self.pd_id.currency_id
-        elif 'active_model' in self._context and 'active_id' in self._context:
-            res_model = self._context['active_model']
-            res_id = self._context['active_id']
-            PD = self.env[res_model].browse(res_id)
-            self.currency_id = PD.currency_id
-        else:
-            self.currency_id = False
+        for rec in self:
+            if rec.pd_id:
+                rec.currency_id = rec.pd_id.currency_id
+            elif 'active_model' in self._context and \
+                    'active_id' in self._context:
+                res_model = self._context['active_model']
+                res_id = self._context['active_id']
+                PD = self.env[res_model].browse(res_id)
+                rec.currency_id = PD.currency_id
+            else:
+                rec.currency_id = False
 
     @api.multi
     def get_purchase_type_id(self):
@@ -188,17 +190,19 @@ class PurchaseContract(models.Model):
         else:
             return False
 
-    @api.one
+    @api.multi
     def _compute_purchase_type_id(self):
-        if self.pd_id:
-            self.purchase_type_id = self.pd_id.purchase_type_id.id
-        elif 'active_model' in self._context and 'active_id' in self._context:
-            res_model = self._context['active_model']
-            res_id = self._context['active_id']
-            PD = self.env[res_model].browse(res_id)
-            self.purchase_type_id = PD.purchase_type_id.id
-        else:
-            self.purchase_type_id = False
+        for rec in self:
+            if rec.pd_id:
+                rec.purchase_type_id = rec.pd_id.purchase_type_id
+            elif 'active_model' in self._context and \
+                    'active_id' in self._context:
+                res_model = self._context['active_model']
+                res_id = self._context['active_id']
+                PD = self.env[res_model].browse(res_id)
+                rec.purchase_type_id = PD.purchase_type_id
+            else:
+                rec.purchase_type_id = False
 
     @api.multi
     def get_purchase_method_id(self):
@@ -212,17 +216,19 @@ class PurchaseContract(models.Model):
         else:
             return False
 
-    @api.one
+    @api.multi
     def _compute_purchase_method_id(self):
-        if self.pd_id:
-            self.purchase_method_id = self.pd_id.purchase_method_id.id
-        elif 'active_model' in self._context and 'active_id' in self._context:
-            res_model = self._context['active_model']
-            res_id = self._context['active_id']
-            PD = self.env[res_model].browse(res_id)
-            self.purchase_method_id = PD.purchase_method_id.id
-        else:
-            self.purchase_method_id = False
+        for rec in self:
+            if rec.pd_id:
+                rec.purchase_method_id = rec.pd_id.purchase_method_id
+            elif 'active_model' in self._context and \
+                    'active_id' in self._context:
+                res_model = self._context['active_model']
+                res_id = self._context['active_id']
+                PD = self.env[res_model].browse(res_id)
+                rec.purchase_method_id = PD.purchase_method_id
+            else:
+                rec.purchase_method_id = False
 
     @api.multi
     def get_is_central_purchase(self):
@@ -236,17 +242,19 @@ class PurchaseContract(models.Model):
         else:
             return False
 
-    @api.one
+    @api.multi
     def _compute_is_central_purchase(self):
-        if self.pd_id:
-            self.is_central_purchase = self.pd_id.is_central_purchase
-        elif 'active_model' in self._context and 'active_id' in self._context:
-            res_model = self._context['active_model']
-            res_id = self._context['active_id']
-            PD = self.env[res_model].browse(res_id)
-            self.is_central_purchase = PD.is_central_purchase
-        else:
-            self.is_central_purchase = False
+        for rec in self:
+            if rec.pd_id:
+                rec.is_central_purchase = rec.pd_id.is_central_purchase
+            elif 'active_model' in self._context and \
+                    'active_id' in self._context:
+                res_model = self._context['active_model']
+                res_id = self._context['active_id']
+                PD = self.env[res_model].browse(res_id)
+                rec.is_central_purchase = PD.is_central_purchase
+            else:
+                rec.is_central_purchase = False
 
     @api.multi
     def get_org_groups_id(self):
@@ -825,15 +833,17 @@ class PurchaseContract(models.Model):
         else:
             self.write_emp_id = False
 
-    @api.one
+    @api.multi
     @api.depends('poc_code', 'poc_rev')
     def _compute_display_code(self):
-        name = ""
-        if self.poc_code and self.poc_rev == 0:
-            name = ("%s" % (self.poc_code or ''))
-        elif self.poc_code and self.poc_rev > 0:
-            name = ("%s-R%s" % (self.poc_code or '', str(self.poc_rev) or ''))
-        self.display_code = name
+        for rec in self:
+            name = False
+            if rec.poc_code and rec.poc_rev == 0:
+                name = ("%s" % (rec.poc_code or ''))
+            elif rec.poc_code and rec.poc_rev > 0:
+                name = ("%s-R%s" %
+                        (rec.poc_code or '', str(rec.poc_rev) or ''))
+            rec.display_code = name
 
     @api.multi
     @api.onchange('num_of_period')

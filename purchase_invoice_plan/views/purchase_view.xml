@@ -55,7 +55,7 @@
                             <group>
                                 <field name="use_advance"/>
                                 <field name="use_deposit"/>
-                                <h2 >
+                                <h2>
                                     <label for="total_invoice_amount"/>
                                     <field name="total_invoice_amount" class="oe_inline"/>
                                 </h2>

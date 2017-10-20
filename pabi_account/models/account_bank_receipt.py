@@ -18,6 +18,26 @@ class AccountBankReceipt(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    receipt_date = fields.Date(
+        string='Account Date',  # Change label
+    )
+    date_document = fields.Date(
+        string='Document Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+        default=lambda self: fields.Date.context_today(self),
+    )
+
+    @api.multi
+    def write(self, vals):
+        # Set date
+        if vals.get('receipt_date') and not vals.get('date_document'):
+            for rec in self:
+                if not rec.date_document:
+                    vals['date_document'] = vals['receipt_date']
+                    break
+        return super(AccountBankReceipt, self).write(vals)
 
     @api.onchange('bank_account_id')
     def onchange_bank_account_id(self):

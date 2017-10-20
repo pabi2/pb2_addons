@@ -7,34 +7,6 @@ from openerp import tools
 import ast
 
 
-class HRExpenseLine(models.Model):
-    _inherit = "hr.expense.line"
-
-    is_advance_product_line = fields.Boolean('Advance Product Line')
-
-    @api.model
-    def _get_non_product_account_id(self):
-        # If Advance Line, get from setup account
-        if self.is_advance_product_line:
-            advance_account = \
-                self.env.user.company_id.employee_advance_account_id
-            if not advance_account:
-                raise ValidationError(
-                    _('No Employee Advance Code setup!'))
-            else:
-                return advance_account.id
-        else:
-            return super(HRExpenseLine, self)._get_non_product_account_id()
-
-    @api.model
-    def _prepare_analytic_line(self, reverse=False, currency=False):
-        if self.is_advance_product_line:
-            return False
-        res = super(HRExpenseLine, self).\
-            _prepare_analytic_line(reverse=reverse, currency=currency)
-        return res
-
-
 class HRExpenseExpense(models.Model):
     _inherit = "hr.expense.expense"
     _rec_name = "number"
@@ -221,6 +193,52 @@ class HRExpenseExpense(models.Model):
                 vals.get('number', '/') == '/':
             vals['number'] = self.env['ir.sequence'].get('hr.expense.advance')
         return super(HRExpenseExpense, self).create(vals)
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=80):
+        if self._context.get('advance_partner_id', False):
+            Partner = self.env['res.partner']
+            partner = Partner.browse(self._context['advance_partner_id'])
+            ref_employee_id = (partner.user_ids and
+                               partner.user_ids[0] and
+                               partner.user_ids[0].employee_ids and
+                               partner.user_ids[0].employee_ids[0].id or
+                               False)
+            domain = [('is_employee_advance', '=', True),
+                      ('state', 'in', ('open', 'paid')),
+                      ('employee_id', '=', ref_employee_id),
+                      ('amount_to_clearing', '>', 0.0)]
+            args += domain
+        return super(HRExpenseExpense, self).\
+            name_search(name=name, args=args, operator=operator, limit=limit)
+
+
+class HRExpenseLine(models.Model):
+    _inherit = "hr.expense.line"
+
+    is_advance_product_line = fields.Boolean('Advance Product Line')
+
+    @api.model
+    def _get_non_product_account_id(self):
+        # If Advance Line, get from setup account
+        if self.is_advance_product_line:
+            advance_account = \
+                self.env.user.company_id.employee_advance_account_id
+            if not advance_account:
+                raise ValidationError(
+                    _('No Employee Advance Code setup!'))
+            else:
+                return advance_account.id
+        else:
+            return super(HRExpenseLine, self)._get_non_product_account_id()
+
+    @api.model
+    def _prepare_analytic_line(self, reverse=False, currency=False):
+        if self.is_advance_product_line:
+            return False
+        res = super(HRExpenseLine, self).\
+            _prepare_analytic_line(reverse=reverse, currency=currency)
+        return res
 
 
 class HRExpenseClearing(models.Model):

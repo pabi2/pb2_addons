@@ -12,7 +12,7 @@
                     <filter name="payment_type_transfer" string="Transfer" domain="[('payment_type','=','transfer')]" help="Payment Type Transfer"/>
                 </search>
                 <xpath expr="/search/field[@name='partner_id']" position="replace">
-                    <field name="partner_id" string="Customer" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="partner_id" string="Partner" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
                 </xpath>
                 <xpath expr="/search/field[@name='period_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -43,6 +43,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_invoice']" position="before">
+                    <field name="date_document"/>
+                </xpath>
                 <xpath expr="//field[@name='fiscal_position']" position="after">
                     <field name="number_preprint"/>
                 </xpath>
@@ -87,6 +90,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_invoice']" position="before">
+                    <field name="date_document"/>
+                </xpath>
                 <xpath expr="//field[@name='payment_term']" position="after">
                     <field name="validate_user_id"/>
                     <field name="validate_date"/>

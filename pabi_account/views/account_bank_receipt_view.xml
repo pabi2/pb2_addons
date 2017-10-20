@@ -6,6 +6,9 @@
             <field name="model">account.bank.receipt</field>
             <field name="inherit_id" ref="account_bank_receipt.account_bank_receipt_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='receipt_date']" position="before">
+                    <field name="date_document"/>
+                </xpath>
                 <xpath expr="//field[@name='partner_bank_id']" position="replace"/>
                 <xpath expr="//field[@name='bank_account_id']" position="after">
                     <field name="partner_bank_id"/>

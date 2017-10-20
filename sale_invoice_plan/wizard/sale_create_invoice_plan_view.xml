@@ -8,7 +8,8 @@
                 <form string="Create Invoice Plan">
                     <group>
 	                    <group>
-	                        <field name="num_installment" />
+	                        <field name="num_installment_readonly" invisible="not context.get('readonly_num_installment', False)"/>
+	                        <field name="num_installment" invisible="context.get('readonly_num_installment', False)"/>
 	                        <field name="order_amount" string="Order Amount" />
 	                        <field name="invoice_mode" invisible="context.get('hide_invoice_plan_detail', False)"/>
 	                    </group>

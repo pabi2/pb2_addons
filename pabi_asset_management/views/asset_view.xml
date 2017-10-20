@@ -77,6 +77,7 @@
                     <field name="location_id"/>
                     <field name="room"/>
                     <field name="status"/>
+                    <field name="date_remove" string="Remove Date"/>
                     <field name="state" invisible="1"/>
                 </tree>
             </field>

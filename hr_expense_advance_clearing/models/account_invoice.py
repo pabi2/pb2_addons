@@ -39,36 +39,14 @@ class AccountInvoice(models.Model):
             ttype, partner_id, date_invoice=date_invoice,
             payment_term=payment_term, partner_bank_id=partner_bank_id,
             company_id=company_id)
-        if not res:
-            res = {}
-        if 'value' not in res:
-            res['value'] = {}
-        if 'domain' not in res:
-            res['domain'] = {}
-
         res['value'].update({'advance_expense_id': False})
-        if not partner_id:
-            domain = [('id', 'in', [])]
-            res['domain'].update({'advance_expense_id': domain})
-        else:
-            partner = self.env['res.partner'].browse(partner_id)
-            ref_employee_id = (partner.user_ids and
-                               partner.user_ids[0] and
-                               partner.user_ids[0].employee_ids and
-                               partner.user_ids[0].employee_ids[0].id or
-                               False)
-            domain = [('is_employee_advance', '=', True),
-                      ('state', 'in', ('open', 'paid')),
-                      ('employee_id', '=', ref_employee_id),
-                      ('amount_to_clearing', '>', 0.0)]
-            res['domain'].update({'advance_expense_id': domain})
         return res
 
     @api.onchange('advance_expense_id')
     def _onchange_advance_expense_id(self):
         # This method is called from Customer invoice to return money
         if self.advance_expense_id:
-            self.invoice_line = []
+            self.invoice_line = False
             advance_invoice = self.advance_expense_id.invoice_id
             if advance_invoice.invoice_line:
                 advance_line = advance_invoice.invoice_line[0]

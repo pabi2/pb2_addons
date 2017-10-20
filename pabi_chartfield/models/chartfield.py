@@ -431,6 +431,7 @@ class ChartField(object):
     fund_id = fields.Many2one(
         'res.fund',
         string='Fund',
+        domain=lambda self: self._get_fund_domain(),
     )
     # Unit Base
     org_id = fields.Many2one(
@@ -740,9 +741,6 @@ class ChartFieldAction(ChartField):
         string='Require Chartfield',
         compute='_compute_require_chartfield',
         store=True,
-    )
-    fund_id = fields.Many2one(
-        domain=lambda self: self._get_fund_domain(),
     )
 
     @api.multi

@@ -79,6 +79,13 @@
                                 </field>
                             </page>
                             <page string="Expense to Asset" attrs="{'invisible': [('adjust_type', '!=', 'expense_to_asset')]}">
+                                <div class="oe_button_box oe_right">
+                                    <h3>
+                                        <label string="Limit Asset Value: "/>
+                                        <field name="limit_asset_value_readonly" class="oe_inline"/>
+                                        <field name="limit_asset_value" invisible="1"/>
+                                    </h3>
+                                </div>
                                 <field name="adjust_expense_to_asset_ids">
                                     <tree editable="bottom">
                                         <field name="account_id"/>

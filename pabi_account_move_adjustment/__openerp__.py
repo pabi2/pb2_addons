@@ -32,6 +32,7 @@ Note: following are arequiremen for system to properly create analytic line
     'data': [
         'data/journal_data.xml',
         'wizard/create_journal_entry_wizard.xml',
+        'wizard/edit_desc.xml',
         'views/account_view.xml',
         'views/account_invoice_view.xml',
         'views/account_move_priority_view.xml',

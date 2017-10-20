@@ -26,6 +26,11 @@ class sale_create_invoice_plan(models.TransientModel):
         string='Number of Installment',
         default=0,
     )
+    num_installment_readonly = fields.Integer(
+        string='Number of Installment',
+        related='num_installment',
+        readonly=True,
+    )
     installment_ids = fields.One2many(
         'sale.create.invoice.plan.installment',
         'plan_id',

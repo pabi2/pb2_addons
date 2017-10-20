@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor_pay"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="replace">
-                    <field name="partner_id" string="Supplier" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="partner_id" string="Partner" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
                 </field>
                 <group position="inside">
                     <filter string="Payment Type" domain="[]" context="{'group_by':'payment_type'}"/>
@@ -36,6 +36,9 @@
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="after">
                     <field name="invoice_taxbranch_id"/>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="before">
+                    <field name="date_document"/>
                 </xpath>
                 <xpath expr="//field[@name='date']" position="after">
                     <field name="validate_user_id"/>
@@ -81,6 +84,9 @@
                                 <strong><field name="total_ar_amount" widget="monetary"/></strong><br/>AR</div>
                         </button>
                     </div>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="before">
+                    <field name="date_document"/>
                 </xpath>
                 <field name="journal_id" position="after" >
                     <field name="number_preprint" required="1" />

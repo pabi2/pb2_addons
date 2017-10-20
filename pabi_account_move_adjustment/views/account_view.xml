@@ -91,6 +91,7 @@
                                         <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
                                         <field name="name" string="Description"/>
+                                        <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
                                         <field name="is_tax_line" invisible="1"/>
                                         <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
                                         <field name="taxbranch_id" readonly="1"/>
@@ -100,11 +101,11 @@
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                         <field name="org_id" readonly="1"/>
                                         <field name="chartfield_id" attrs="{'required': [('activity_id', '!=', False)], 'readonly': [('activity_id', '=', False)]}"/>
-                                        <!-- <field name="project_id" invisible="1"/>
+                                        <field name="project_id" invisible="1"/>
                                         <field name="section_id" invisible="1"/>
                                         <field name="invest_asset_id" invisible="1"/>
                                         <field name="invest_construction_phase_id" invisible="1"/>
-                                        <field name="personnel_costcenter_id" invisible="1"/> -->
+                                        <field name="personnel_costcenter_id" invisible="1"/>
                                         <field name="fund_id" attrs="{'required': [('chartfield_id', '!=', False)], 'readonly': [('chartfield_id', '=', False)]}"/>
                                         <field name="cost_control_id" invisible="0"/>
                                         <field name="state"/>
@@ -112,6 +113,7 @@
                                         <field name="reconcile_partial_id"/>
                                     </tree>
                                 </field>
+                                <button name="reset_desc" string="(reset desc.)" type="object" class="oe_link"/>
                                 <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
                                 <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
                             </page>
@@ -121,6 +123,8 @@
                                     <tree editable="bottom" >
                                         <field name="doc_type"/>
                                         <field name="partner_id"/>
+                                        <field name="vat"/>
+                                        <field name="taxbranch"/>
                                         <field name="period_id"/>
                                         <field name="invoice_number" required="1"/>
                                         <field name="invoice_date" required="1"/>
@@ -223,6 +227,7 @@
                                         <field name="activity_id" invisible="1"/> -->
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
                                         <field name="name" string="Description"/>
+                                        <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
                                         <field name="debit" sum="Total Debit"/>
                                         <field name="credit" sum="Total Credit"/>
                                         <field name="costcenter_id" readonly="1"/>
@@ -241,6 +246,7 @@
                                         <field name="reconcile_partial_id"/>
                                     </tree>
                                 </field>
+                                <button name="reset_desc" string="(reset desc.)" type="object" class="oe_link"/>
                                 <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
                                 <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
                             </page>
@@ -250,6 +256,8 @@
                                     <tree editable="bottom" >
                                         <field name="doc_type"/>
                                         <field name="partner_id"/>
+                                        <field name="vat"/>
+                                        <field name="taxbranch"/>
                                         <field name="period_id"/>
                                         <field name="invoice_number"/>
                                         <field name="invoice_date"/>

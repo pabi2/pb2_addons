@@ -511,10 +511,9 @@ class LoanCustomerAgreement(models.Model):
         }
 
     @api.model
-    def _prepare_order_line(self, loan, order_id):
+    def _prepare_order_line(self, loan):
         product = loan.mou_id.product_id
         return {
-            'order_id': order_id,
             'product_id': product.id,
             'name': product.name,
             'price_unit': loan.amount_receivable,
@@ -526,14 +525,12 @@ class LoanCustomerAgreement(models.Model):
     @api.multi
     def _create_installment_order_for_loan(self, date_order=False):
         self.ensure_one()
-        Order = self.env['sale.order']
-        OrderLine = self.env['sale.order.line']
         loan = self
         order_vals = self._prepare_order_header(loan, date_order)
         # For payment_term to none, so due date = invoice date in invoices
+        order_line_data = self._prepare_order_line(loan)
         order_vals.update({'loan_agreement_id': self.id,
-                           'payment_term': False})
-        order = Order.create(order_vals)
-        order_line_data = self._prepare_order_line(loan, order.id)
-        OrderLine.create(order_line_data)
+                           'payment_term': False,
+                           'order_line': [(0, 0, order_line_data)]})
+        order = self.env['sale.order'].create(order_vals)
         return order

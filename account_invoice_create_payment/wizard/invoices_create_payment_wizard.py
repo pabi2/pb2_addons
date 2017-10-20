@@ -40,9 +40,14 @@ class InovicesCreatePaymentWizard(models.TransientModel):
         self.ensure_one()
         invoice_ids = self._context.get('active_ids', [])
         invoices = self.env['account.invoice'].browse(invoice_ids)
-        # Pass due date to value date (if only 1 due date)
+        # For Customer Invoice, pass due date to value date (only 1 due date)
         date_dues = list(set(invoices.mapped('date_due')))
-        date_due = len(date_dues) == 1 and date_dues[0] or False
+        date_due = False
+        if invoices and invoices[0].type in ('in_invoice', 'in_refund'):
+            date_dues = list(set(invoices.mapped('date_due')))
+            date_due = len(date_dues) == 1 and date_dues[0] or False
+        else:
+            date_due = fields.Date.context_today(self)
         res = invoices.action_create_payment()
         res['context'].update({
             'default_partner_id': self.partner_id.id,
