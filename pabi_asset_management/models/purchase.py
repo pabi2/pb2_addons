@@ -25,8 +25,10 @@ class PurchaseOrderLine(models.Model):
 
     parent_asset_id = fields.Many2one(
         'account.asset',
-        string='Prototype',
+        string='Parent Asset',
         domain="[('parent_id', '=', False),('type', '=', 'view'),"
-        "'|',('project_id', '=', project_id),('section_id', '=', section_id)]",
+        "('state', '=', 'draft'),"
+        "'|',('project_id', '=', [project_id or -1]),"
+        "('section_id', '=', [section_id or -1])]",
         help="The project prototype the receiving asset will belong to.",
     )

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-from openerp import api, models, fields
+from openerp import api, models, fields, _
+from openerp.exceptions import ValidationError
 
 
 class AssetParentDeliver(models.TransientModel):
@@ -22,10 +23,12 @@ class AssetParentDeliver(models.TransientModel):
         active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
         parent_asset = self.env[active_model].browse(active_id)
+        if not parent_asset.child_ids:
+            raise ValidationError(_('No child assets!'))
         status_deliver = self.env.ref('pabi_asset_management.'
                                       'asset_status_deliver')
         parent_asset.child_ids.write({'status': status_deliver.id,
                                       'deliver_to': self.deliver_to,
                                       'deliver_date': self.deliver_date})
-        parent_asset.state = 'delivered'
+        parent_asset.state = 'close'
         return True
