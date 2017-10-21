@@ -8,7 +8,7 @@ DUE_TYPES = [('1', 'Due in 10 days'),
              ('2', 'Due in 5 days'),
              ('3', 'Due now'),
              ]
-DUE_TYPE_DAYS = {'3': 10, '2': 5, '1': 0}
+DUE_TYPE_DAYS = {'3': 0, '2': 5, '1': 10}
 
 
 class PABIAdvanceDunningLetter(models.Model):
@@ -140,7 +140,7 @@ class PABIAdvanceDunningLetter(models.Model):
         today = datetime.strptime(
             fields.Date.context_today(self), '%Y-%m-%d').date()
         expense_ids = []
-        for due_type in ('1', '2', '3'):  # 3 types of notice,
+        for due_type in ('3', '2', '1'):  # 3 types of notice,
             res['dunning_list_' + due_type] = []
             date_due = today + relativedelta(days=DUE_TYPE_DAYS[due_type])
             expenses = Expense.search(self._search_domain(due_type, date_due))
