@@ -22,6 +22,7 @@ This module sits on top of other modules whose configuration is moved here.
 * pabi_purchase_billing
 * pabi_ar_late_payment_penalty
 * pabi_loan_receivable
+* pabi_advance_dunning_letter
 
     """,
     "website": "https://ecosoft.co.th/",
@@ -41,6 +42,7 @@ This module sits on top of other modules whose configuration is moved here.
         'pabi_purchase_billing',
         'pabi_ar_late_payment_penalty',
         'pabi_loan_receivable',
+        'pabi_advance_dunning_letter',
     ],
     "data": [
         'views/pabi_apps_config.xml',
