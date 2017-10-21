@@ -45,9 +45,6 @@ class AccountAsset(ChartFieldAction, models.Model):
     _name = 'account.asset'
     _inherit = ['account.asset', 'mail.thread']
 
-    state = fields.Selection(
-        selection_add=[('delivered', 'Delivered')],  # special for parent asset
-    )
     name = fields.Char(
         default='/',
         readonly=False,
