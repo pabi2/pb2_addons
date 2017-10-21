@@ -6,13 +6,13 @@
   		<record id="pabi_hr_advance_status_report" model="ir.actions.report.xml">
   			<field name="auto">True</field>
   			<field name="model">hr.expense.expense</field>
-  			<field name="name">Pabi Hr Advance Status Report</field>
+  			<field name="name">HR Advance Status Report</field>
   			<field name="report_name">pabi_hr_advance_status_report</field>
   			<field name="report_rml">pabi_hr_advance_status_report/report/pabi_hr_advance_status_report.jrxml</field>
   			<field name="menu">True</field>
   			<field name="header">False</field>
   			<field name="jasper_report">True</field>
-  			<field name="jasper_output">xls</field>
+  			<field name="jasper_output">pdf</field>
   			<field name="copies">1</field>
         <field name="force_locale">th_TH</field>
   		</record>
@@ -29,13 +29,13 @@
   		<record id="pabi_hr_advance_status_summary_report" model="ir.actions.report.xml">
   			<field name="auto">True</field>
   			<field name="model">hr.expense.expense</field>
-  			<field name="name">Pabi Hr Advance Status Summary Report</field>
+  			<field name="name">HR Advance Status Summary Report</field>
   			<field name="report_name">pabi_hr_advance_status_summary_report</field>
   			<field name="report_rml">pabi_hr_advance_status_report/report/pabi_hr_advance_status_summary_report.jrxml</field>
   			<field name="menu">True</field>
   			<field name="header">False</field>
   			<field name="jasper_report">True</field>
-  			<field name="jasper_output">xls</field>
+  			<field name="jasper_output">pdf</field>
   			<field name="copies">1</field>
         <field name="force_locale">th_TH</field>
   		</record>
@@ -52,13 +52,13 @@
   		<record id="pabi_hr_advance_status_detail_report" model="ir.actions.report.xml">
   			<field name="auto">True</field>
   			<field name="model">hr.expense.expense</field>
-  			<field name="name">Pabi Hr Advance Status detail Report</field>
+  			<field name="name">HR Advance Status Detail Report</field>
   			<field name="report_name">pabi_hr_advance_status_detail_report</field>
   			<field name="report_rml">pabi_hr_advance_status_report/report/pabi_hr_advance_status_detail_report.jrxml</field>
   			<field name="menu">True</field>
   			<field name="header">False</field>
   			<field name="jasper_report">True</field>
-  			<field name="jasper_output">xls</field>
+  			<field name="jasper_output">pdf</field>
   			<field name="copies">1</field>
         <field name="force_locale">th_TH</field>
   		</record>
