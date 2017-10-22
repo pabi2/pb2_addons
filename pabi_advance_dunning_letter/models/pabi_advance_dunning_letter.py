@@ -136,7 +136,7 @@ class PABIAdvanceDunningLetter(models.Model):
             if expense.employee_id.id in employee_ids:
                 index_employee_level = employee_ids.index(
                     expense.employee_id.id)
-            if index_employee_level >= 0:
+            if index_employee_level is not False and index_employee_level >= 0:
                 if len(boss_level_approval) >= index_employee_level + 2:
                     supervisor_id = \
                         boss_level_approval[index_employee_level + 1] \
