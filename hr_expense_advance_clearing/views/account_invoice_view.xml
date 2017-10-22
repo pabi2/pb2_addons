@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='check_total']" position="after">
-                    <field name="supplier_invoice_type"/>
+                    <field name="supplier_invoice_type" invisible="1"/>
                 </xpath>
                 <xpath expr="//button[@name='invoice_cancel']" position="attributes">
                     <field name="attrs">{'invisible': ['|', ('state', '!=', 'paid'), ('supplier_invoice_type', 'not in', ('expense_advance_invoice', 'advance_clearing_invoice'))]}</field>

@@ -102,6 +102,8 @@
                     <field name="has_wht" invisible="1"/>
                     <field name="income_tax_form" attrs="{'required': [('type', 'in', ('in_invoice', 'in_refund')), ('has_wht', '=', True)],
                                 'invisible': ['|', ('type', 'not in', ('in_invoice', 'in_refund')), ('has_wht', '!=', True)]}"/>
+                    <!-- Additional Features -->
+                    <hr colspan="2" name="extra_line"/>
                 </xpath>
                 <xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
                     <attribute name="required">True</attribute>

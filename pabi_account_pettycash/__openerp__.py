@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "HR Expense Petty Cash",
-    "summary": "Advanc of type Petty Cash",
+    "name": "PABI2 :: Petty Cash",
+    "summary": "",
     "version": "8.0.1.0.0",
     "category": "Accounting & Finance",
     "description": """
@@ -12,10 +12,10 @@
     "application": False,
     "installable": True,
     "depends": [
-        'hr_expense_advance_clearing',
+        'pabi_account',
     ],
     "data": [
-        'data/hr_expense_data.xml',
-        'views/hr_expense_view.xml',
+        'views/account_invoice_view.xml',
+        'views/pettycash_view.xml',
     ],
 }
