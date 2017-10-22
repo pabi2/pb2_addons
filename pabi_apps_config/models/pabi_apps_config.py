@@ -118,3 +118,13 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Loan Penalty Product',
         related="company_id.loan_penalty_product_id",
     )
+    # pabi_advance_dunning_letter
+    group_email = fields.Char(
+        string='Group Email',
+        related='company_id.group_email',
+    )
+    head_accounting_id = fields.Many2one(
+        'hr.employee',
+        string='Head Accounting',
+        related='company_id.head_accounting_id',
+    )
