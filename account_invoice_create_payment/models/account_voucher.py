@@ -18,9 +18,11 @@ class AccountVoucher(models.Model):
             invoice_ids = self._context.get('filter_invoices')
             move_line_ids = self.env['account.move.line'].\
                 search([('invoice', 'in', invoice_ids)]).ids
-            line_cr_ids = filter(lambda l: l['move_line_id'] in move_line_ids,
+            line_cr_ids = filter(lambda l: isinstance(l, dict) and
+                                 l.get('move_line_id') in move_line_ids,
                                  line_cr_ids)
-            line_dr_ids = filter(lambda l: l['move_line_id'] in move_line_ids,
+            line_dr_ids = filter(lambda l: isinstance(l, dict) and
+                                 l.get('move_line_id') in move_line_ids,
                                  line_dr_ids)
             res['value']['line_cr_ids'] = line_cr_ids
             res['value']['line_dr_ids'] = line_dr_ids
