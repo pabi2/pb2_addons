@@ -20,7 +20,12 @@
 					<button name="action_view_move" states="paid" string="View Invoices" type="object" groups="account.group_account_invoice"/>
 				</button>
 				<field name="name" position="after">
-					<field name="pay_to"/>
+					<label for="pay_to"/>
+					<div name="payto_div1">
+							<div name="payto_div2">
+									<field name="pay_to" class="oe_inline"/>
+							</div>
+					</div>
 					<field name="partner_id" attrs="{'invisible': ['|', ('pay_to', '!=', 'supplier'),
 																('partner_id', '=', False)]}"/>
 					<!--				<field name="is_invoiced" invisible="1"/-->

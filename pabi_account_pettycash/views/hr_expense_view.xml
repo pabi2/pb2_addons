@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='payto_div2']" position="after">
+                    <div attrs="{'invisible': [('pay_to', '!=', 'pettycash')]}">
+                        <field name="pettycash_id" attrs="{'required': [('pay_to', '=', 'pettycash')]}" class="oe_inline"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

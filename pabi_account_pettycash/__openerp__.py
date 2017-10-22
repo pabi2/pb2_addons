@@ -17,5 +17,6 @@
     "data": [
         'views/account_invoice_view.xml',
         'views/pettycash_view.xml',
+        'views/hr_expense_view.xml',
     ],
 }

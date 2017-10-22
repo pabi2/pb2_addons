@@ -12,4 +12,5 @@ class HRExpense(models.Model):
     pettycash_id = fields.Many2one(
         'account.pettycash',
         string='Petty Cash',
+        ondelete='restrict',
     )
