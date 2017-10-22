@@ -315,7 +315,6 @@
                                 <field name="project_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="section_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="total_child_value" />
-
                             </group>
                             <group>
                                 <field name="note" placeholder="Add an internal note here..." nolabel="1"/>
