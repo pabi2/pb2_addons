@@ -756,13 +756,11 @@ class InterfaceAccountChecker(models.AbstractModel):
             if Budget.trx_budget_required(line):
                 if not line.section_id and not line.project_id:
                     raise ValidationError(
-                        _('%s is product/activity line, it requires '
-                          'section/project') % (line.name,))
+                        _('%s requires section/project') % line.name)
             else:
                 if line.section_id or line.project_id:
                     raise ValidationError(
-                        _('%s is product/activity line, it does not require '
-                          'section/project') % (line.name,))
+                        _('%s does not require section/project') % line.name)
         # Check activity account
         for line in inf.line_ids:
             if line.activity_id and \

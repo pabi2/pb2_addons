@@ -57,8 +57,7 @@ class AccountMoveLine(models.Model):
         * With journal with analytic_journal
         * Have product or activity
         * Have AG """
-        Budget = self.env['account.budget']
-        move_lines = self.filtered(lambda l: Budget.trx_budget_required(l) and
+        move_lines = self.filtered(lambda l:
                                    l.journal_id.analytic_journal_id and
                                    l.activity_group_id)
         return move_lines

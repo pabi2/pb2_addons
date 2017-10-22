@@ -191,15 +191,16 @@ class AccountBudget(models.Model):
                 0 = not required
                 -1 = not eligible (no field in field_list)
         """
-        # If Product or Activity is selected, budget is required.
-        field_list = ['activity_id', 'product_id']
-        try:
-            for field in field_list:
-                if trx[field]:
-                    return 1
-            return 0
-        except:
-            return -1
+        # # If Product or Activity is selected, budget is required.
+        # field_list = ['activity_id', 'product_id']
+        # try:
+        #     for field in field_list:
+        #         if trx[field]:
+        #             return 1
+        #     return 0
+        # except:
+        #     return -1
+        return 1  # Latest decision is, always required
 
     @api.multi
     def _get_past_consumed_domain(self):
