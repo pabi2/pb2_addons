@@ -6,23 +6,19 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
             <field name="arch" type="xml">
-                <field name="pay_to" position="replace">
-                    <label for="pay_to"/>
-                    <div>
-                        <div>
-                            <field name="pay_to" class="oe_inline"/>
-                            <field name="internal_charge" class="oe_inline" invisible="1"/>
-                        </div>
-                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
-                            <label for="internal_section_id" string="Section"/>
-                            <field name="internal_section_id" attrs="{'required': [('pay_to', '=', 'internal'), ('internal_project_id', '=', False)]}" class="oe_inline"/>
-                        </div>
-                        <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
-                            <label for="internal_project_id" string="Project"/>
-                            <field name="internal_project_id" attrs="{'required': [('pay_to', '=', 'internal'), ('internal_section_id', '=', False)]}" class="oe_inline"/>
-                        </div>
-                    </div>
+                <field name="pay_to" position="after">
+                  <field name="internal_charge" class="oe_inline" invisible="1"/>
                 </field>
+                <xpath expr="//div[@name='payto_div2']" position="after">
+                  <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                      <label for="internal_section_id" string="Section"/>
+                      <field name="internal_section_id" attrs="{'required': [('pay_to', '=', 'internal'), ('internal_project_id', '=', False)]}" class="oe_inline"/>
+                  </div>
+                  <div attrs="{'invisible': [('pay_to', '!=', 'internal')]}">
+                      <label for="internal_project_id" string="Project"/>
+                      <field name="internal_project_id" attrs="{'required': [('pay_to', '=', 'internal'), ('internal_section_id', '=', False)]}" class="oe_inline"/>
+                  </div>
+                </xpath>
             </field>
         </record>
         <record id="view_expenses_form2" model="ir.ui.view">
