@@ -17,3 +17,4 @@ from . import account
 from . import purchase
 from . import res_project
 from . import res_section
+from . import hr_expense

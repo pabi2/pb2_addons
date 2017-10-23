@@ -30,6 +30,9 @@
                 <field name="name" position="attributes">
                     <attribute name="filter_domain">['|',('name','ilike',self),('code','ilike',self)]</attribute>
                 </field>
+                <field name="name" position="after">
+                    <field name="all_purchase" filter_domain="['|', ('purchase_id','ilike', self), ('adjust_id.invoice_id.expense_id.ship_purchase_id.name','ilike', self)]"/>
+                </field>
                 <field name="code" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </field>

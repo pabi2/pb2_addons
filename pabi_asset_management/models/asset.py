@@ -312,7 +312,12 @@ class AccountAsset(ChartFieldAction, models.Model):
         string='Child Asset Count',
         compute='_compute_asset_count',
     )
-
+    # Special field that search PO through adjustmnet and po
+    all_purchase = fields.Char(
+        string='All Purchase Orders',
+        help="Search POs from purchase_id and "
+        "adjust_id.invoice_id.expense_id.ship_purchase_id",
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
