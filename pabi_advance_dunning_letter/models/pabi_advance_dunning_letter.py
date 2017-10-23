@@ -146,24 +146,41 @@ class PABIAdvanceDunningLetter(models.Model):
                     second_supervisor_id = \
                         boss_level_approval[index_employee_level + 2] \
                         .employee_id.id
+            elif index_employee_level is False and boss_level_approval:
+                if len(boss_level_approval) >= 1:
+                    supervisor_id = \
+                        boss_level_approval[0].employee_id.id
+                if due_type == '3' and \
+                   len(boss_level_approval) >= 2:
+                    second_supervisor_id = \
+                        boss_level_approval[1].employee_id.id
         # TODO: assign email based on command lines
+        to_employee_ids = []
+        cc_employee_ids = []
         if due_type == '1':  # Due Now
+            to_employee_ids = to_employee_ids.append(expense.employee_id.id)
             line.update({
-                'to_employee_ids': [expense.employee_id.id],
-                'cc_employee_ids': [],
+                'to_employee_ids': to_employee_ids,
+                'cc_employee_ids': cc_employee_ids,
             })
         if due_type == '2':
+            if supervisor_id:
+                to_employee_ids.append(supervisor_id)
+            else:
+                to_employee_ids.append(expense.employee_id.id)
+            cc_employee_ids.append(expense.employee_id.id)
             line.update({
-                'to_employee_ids': [supervisor_id] if supervisor_id else [],
-                'cc_employee_ids': [expense.employee_id.id],
+                'to_employee_ids': to_employee_ids,
+                'cc_employee_ids': cc_employee_ids,
             })
         if due_type == '3':
-            to_employee_ids = []
-            cc_employee_ids = [expense.employee_id.id]
+            cc_employee_ids.append(expense.employee_id.id)
             if supervisor_id:
                 to_employee_ids.append(supervisor_id)
             if second_supervisor_id:
                 to_employee_ids.append(second_supervisor_id)
+            if not supervisor_id and not second_supervisor_id:
+                to_employee_ids.append(expense.employee_id.id)
             if self.env.user.company_id.head_accounting_id:
                 cc_employee_ids.append(
                     self.env.user.company_id.head_accounting_id.id)
