@@ -10,12 +10,14 @@ class AccountInvoice(models.Model):
         string='Petty Cash',
         default=False,
         readonly=True,
+        copy=False,
         states={'draft': [('readonly', False)]},
     )
     clear_pettycash_id = fields.Many2one(
         'account.pettycash',
         string='Clear with Petty Cash',
         readonly=True,
+        copy=False,
     )
 
     @api.multi
@@ -79,12 +81,20 @@ class AccountInvoice(models.Model):
     def invoice_validate(self):
         result = super(AccountInvoice, self).invoice_validate()
         for invoice in self:
-            if invoice.amount_total:
-                raise ValidationError(
-                    _('Please clear petty cash with full amount!\n'
-                      'Final total amount should be 0.0.'))
             # Petty cash case, do reconcile
             if invoice.clear_pettycash_id:
+                if invoice.amount_total:
+                    raise ValidationError(
+                        _('Please clear petty cash with full amount!\n'
+                          'Final total amount should be 0.0.'))
+                # Set partner to petty cash line
+                account = invoice.clear_pettycash_id.account_id
+                partner = invoice.clear_pettycash_id.partner_id
+                move_lines = invoice.move_id.line_id
+                move_lines = move_lines.filtered(lambda l:
+                                                 l.account_id == account)
+                move_lines.write({'partner_id': partner.id})
+                # Reconcile it.
                 move_lines = \
                     self.env['account.move.line'].search(
                         [('state', '=', 'valid'),
