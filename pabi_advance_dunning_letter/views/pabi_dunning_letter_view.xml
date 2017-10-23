@@ -53,7 +53,7 @@
                     </group>
                     <separator string="10 days to due date"/>
                     <field name="dunning_list_1" nolabel="1">
-                        <tree editable="bottom" create="0" delete="0">
+                        <tree editable="bottom" create="0" delete="1">
                             <field name="due_type" invisible="1"/>
                             <field name="expense_id"/>
                             <field name="date_due"/>
@@ -68,7 +68,7 @@
                     </field>
                     <separator string="5 days to due date"/>
                     <field name="dunning_list_2" nolabel="1">
-                        <tree editable="bottom" create="0" delete="0">
+                        <tree editable="bottom" create="0" delete="1">
                             <field name="due_type" invisible="1"/>
                             <field name="expense_id"/>
                             <field name="date_due"/>
@@ -83,7 +83,7 @@
                     </field>
                     <separator string="On due date"/>
                     <field name="dunning_list_3" nolabel="1">
-                        <tree editable="bottom" create="0" delete="0">
+                        <tree editable="bottom" create="0" delete="1">
                             <field name="due_type" invisible="1"/>
                             <field name="expense_id"/>
                             <field name="date_due"/>
