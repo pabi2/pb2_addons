@@ -290,6 +290,7 @@ class PABIAdvanceDunningLetter(models.Model):
                 if line.expense_id:
                     to_email = False
                     cc_email = self.group_email
+                    reply_to = self.group_email
                     for to_line in line.to_employee_ids:
                         if to_line.work_email:
                             if not to_email:
@@ -302,6 +303,7 @@ class PABIAdvanceDunningLetter(models.Model):
                             cc_email = cc_email + ',' + cc_line.work_email
                     template.email_to = to_email
                     template.email_cc = cc_email
+                    template.reply_to = reply_to
                     template.with_context(ctx).send_mail(line.expense_id.id)
         return True
 
