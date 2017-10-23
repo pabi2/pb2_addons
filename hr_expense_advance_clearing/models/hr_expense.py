@@ -172,6 +172,7 @@ class HRExpenseExpense(models.Model):
 
     @api.multi
     def _create_supplier_invoice_from_expense(self):
+        self.ensure_one()
         expense = self
         invoice = super(HRExpenseExpense, self).\
             _create_supplier_invoice_from_expense()
