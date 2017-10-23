@@ -2,7 +2,7 @@
 from openerp import models, api, fields
 
 
-class AdvanceClearingFollowupWizard(models.Model):
+class AdvanceClearingFollowupWizard(models.TransientModel):
     _name = "advance.clearing.followup.wizard"
 
     run_date = fields.Date(
