@@ -15,6 +15,7 @@
         "pabi_chartfield_merged",
         "pabi_utils",
         "pabi_account_move_adjustment",
+        "hr_expense_auto_invoice",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
@@ -51,6 +52,7 @@ This module allow creating asset during incoming shipment.
         "views/purchase_master_data_view.xml",
         "views/res_project_view.xml",
         "views/res_section_view.xml",
+        "views/hr_expense_view.xml",
         "wizard/asset_action_excel_import.xml",
     ],
     'installable': True,

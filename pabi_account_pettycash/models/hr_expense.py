@@ -13,6 +13,8 @@ class HRExpense(models.Model):
         'account.pettycash',
         string='Petty Cash',
         ondelete='restrict',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.model

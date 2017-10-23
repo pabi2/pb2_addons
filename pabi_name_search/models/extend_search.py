@@ -84,17 +84,17 @@ class AccountVoucher(ExtendSearch, models.Model):
                                                   limit=limit, order=order,
                                                   count=count)
 
-
-class AccountInvoice(ExtendSearch, models.Model):
-    _inherit = 'account.invoice'
-
-    @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
-        # if self._context.get('extended_search', False):
-        args = self._extend_search_arg(args)
-        return super(AccountInvoice, self).search(args, offset=offset,
-                                                  limit=limit, order=order,
-                                                  count=count)
+# CAN NOT USE, conflict with search for all_purchase in pabi_asset_management
+# class AccountInvoice(ExtendSearch, models.Model):
+#     _inherit = 'account.invoice'
+#
+#     @api.model
+#     def search(self, args, offset=0, limit=None, order=None, count=False):
+#         # if self._context.get('extended_search', False):
+#         args = self._extend_search_arg(args)
+#         return super(AccountInvoice, self).search(args, offset=offset,
+#                                                   limit=limit, order=order,
+#                                                   count=count)
 
 
 class AccounMove(ExtendSearch, models.Model):
