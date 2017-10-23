@@ -158,7 +158,7 @@ class PABIAdvanceDunningLetter(models.Model):
         to_employee_ids = []
         cc_employee_ids = []
         if due_type == '1':  # Due Now
-            to_employee_ids = to_employee_ids.append(expense.employee_id.id)
+            to_employee_ids.append(expense.employee_id.id)
             line.update({
                 'to_employee_ids': to_employee_ids,
                 'cc_employee_ids': cc_employee_ids,
