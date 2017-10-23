@@ -17,6 +17,8 @@ class AccountInvoice(models.Model):
     is_retention_return = fields.Boolean(
         string='Return Retention on PO',
         default=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     retention_return_purchase_id = fields.Many2one(
         'purchase.order',

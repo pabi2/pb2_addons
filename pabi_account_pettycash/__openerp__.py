@@ -13,8 +13,10 @@
     "installable": True,
     "depends": [
         'pabi_account',
+        'pabi_hr_expense',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'views/account_invoice_view.xml',
         'views/pettycash_view.xml',
         'views/hr_expense_view.xml',

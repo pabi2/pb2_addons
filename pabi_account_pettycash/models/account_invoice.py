@@ -9,6 +9,13 @@ class AccountInvoice(models.Model):
     is_pettycash = fields.Boolean(
         string='Petty Cash',
         default=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    clear_pettycash_id = fields.Many2one(
+        'account.pettycash',
+        string='Clear with Petty Cash',
+        readonly=True,
     )
 
     @api.multi
@@ -67,3 +74,23 @@ class AccountInvoice(models.Model):
                 company_currency.compute(amount, self.currency_id)
             inv_line.price_unit = amount_doc_currency
             self.invoice_line += inv_line
+
+    @api.multi
+    def invoice_validate(self):
+        result = super(AccountInvoice, self).invoice_validate()
+        for invoice in self:
+            if invoice.amount_total:
+                raise ValidationError(
+                    _('Please clear petty cash with full amount!\n'
+                      'Final total amount should be 0.0.'))
+            # Petty cash case, do reconcile
+            if invoice.clear_pettycash_id:
+                move_lines = \
+                    self.env['account.move.line'].search(
+                        [('state', '=', 'valid'),
+                         ('account_id.type', '=', 'payable'),
+                         ('reconcile_id', '=', False),
+                         ('move_id', '=', invoice.move_id.id),
+                         ('debit', '=', 0.0), ('credit', '=', 0.0)])
+                move_lines.reconcile(type='manual')
+        return result
