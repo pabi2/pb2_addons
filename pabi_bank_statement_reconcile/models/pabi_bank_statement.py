@@ -237,7 +237,7 @@ class PABIBankStatement(models.Model):
         if self.journal_id:
             BankAcct = self.env['res.partner.bank']
             banks = BankAcct.search([('journal_id', '=', self.journal_id.id)])
-            if self.doctype == 'bank_receipt':
+            if self.doctype in ('bank_receipt', 'payment_oversea'):
                 banks = banks.filtered(lambda l: l.state == 'SA')
             else:
                 banks = banks.filtered(lambda l: l.state == 'CA')
