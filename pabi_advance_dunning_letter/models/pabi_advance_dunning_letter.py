@@ -59,7 +59,7 @@ class PABIAdvanceDunningLetter(models.Model):
     # Temporary Fields todo remove
     group_email = fields.Char(
         string="Group Email",
-        default="acf-adv@nstda.or.th",
+        default=lambda self: self.env.user.company_id.group_email,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -121,16 +121,73 @@ class PABIAdvanceDunningLetter(models.Model):
         line = {'expense_id': expense.id,
                 'due_type': due_type,
                 }
+        # Supervisor and second supervisor of employee
+        supervisor_id = False
+        second_supervisor_id = False
+        if due_type in ['2', '3']:
+            BossLevelApproval = self.env['wkf.cmd.boss.level.approval']
+            boss_level_approval = BossLevelApproval.search(
+                [('org_id', '=', expense.employee_id.org_id.id),
+                 ('section_id', '=', expense.employee_id.section_id.id)]) \
+                .sorted(key=lambda self: self.level.name, reverse=False)
+            index_employee_level = False
+            employee_ids = [
+                approval.employee_id.id for approval in boss_level_approval]
+            if expense.employee_id.id in employee_ids:
+                index_employee_level = employee_ids.index(
+                    expense.employee_id.id)
+            if index_employee_level is not False and index_employee_level >= 0:
+                if len(boss_level_approval) >= index_employee_level + 2:
+                    supervisor_id = \
+                        boss_level_approval[index_employee_level + 1] \
+                        .employee_id.id
+                if due_type == '3' and \
+                   len(boss_level_approval) >= index_employee_level + 3:
+                    second_supervisor_id = \
+                        boss_level_approval[index_employee_level + 2] \
+                        .employee_id.id
+            elif index_employee_level is False and boss_level_approval:
+                if len(boss_level_approval) >= 1:
+                    supervisor_id = \
+                        boss_level_approval[0].employee_id.id
+                if due_type == '3' and \
+                   len(boss_level_approval) >= 2:
+                    second_supervisor_id = \
+                        boss_level_approval[1].employee_id.id
         # TODO: assign email based on command lines
+        to_employee_ids = []
+        cc_employee_ids = []
         if due_type == '1':  # Due Now
-            line.update({'to_employee_ids': [],
-                        'cc_employee_ids': [expense.employee_id.id], })
+            to_employee_ids.append(expense.employee_id.id)
+            line.update({
+                'to_employee_ids': to_employee_ids,
+                'cc_employee_ids': cc_employee_ids,
+            })
         if due_type == '2':
-            line.update({'to_employee_ids': [],
-                        'cc_employee_ids': [expense.employee_id.id], })
+            if supervisor_id:
+                to_employee_ids.append(supervisor_id)
+            else:
+                to_employee_ids.append(expense.employee_id.id)
+            cc_employee_ids.append(expense.employee_id.id)
+            line.update({
+                'to_employee_ids': to_employee_ids,
+                'cc_employee_ids': cc_employee_ids,
+            })
         if due_type == '3':
-            line.update({'to_employee_ids': [expense.employee_id.id],
-                        'cc_employee_ids': [], })
+            cc_employee_ids.append(expense.employee_id.id)
+            if supervisor_id:
+                to_employee_ids.append(supervisor_id)
+            if second_supervisor_id:
+                to_employee_ids.append(second_supervisor_id)
+            if not supervisor_id and not second_supervisor_id:
+                to_employee_ids.append(expense.employee_id.id)
+            if self.env.user.company_id.head_accounting_id:
+                cc_employee_ids.append(
+                    self.env.user.company_id.head_accounting_id.id)
+            line.update({
+                'to_employee_ids': to_employee_ids,
+                'cc_employee_ids': cc_employee_ids,
+            })
         return line
 
     @api.model
@@ -233,6 +290,7 @@ class PABIAdvanceDunningLetter(models.Model):
                 if line.expense_id:
                     to_email = False
                     cc_email = self.group_email
+                    reply_to = self.group_email
                     for to_line in line.to_employee_ids:
                         if to_line.work_email:
                             if not to_email:
@@ -245,6 +303,7 @@ class PABIAdvanceDunningLetter(models.Model):
                             cc_email = cc_email + ',' + cc_line.work_email
                     template.email_to = to_email
                     template.email_cc = cc_email
+                    template.reply_to = reply_to
                     template.with_context(ctx).send_mail(line.expense_id.id)
         return True
 

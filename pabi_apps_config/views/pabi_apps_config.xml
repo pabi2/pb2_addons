@@ -143,6 +143,24 @@
                             </div>
                         </div>
                     </group>
+                    <!-- Advance Dunning Letter -->
+                    <separator string="Advance Dunning Letter"/>
+                    <group>
+                        <label for="id" string="Group Email"/>
+                        <div>
+                            <div>
+                              <field name="group_email" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
+                    <group>
+                        <label for="id" string="Head Accounting"/>
+                        <div>
+                            <div>
+                              <field name="head_accounting_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
                 </form>
             </field>
         </record>
