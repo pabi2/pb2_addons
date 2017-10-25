@@ -15,22 +15,26 @@
                     <field name="bank_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>
                     <field name="bank_branch" attrs="{'invisible': [('number_cheque','=',False)]}"/>
                 </field>
+                <field name="date" position="after">
+                    <field name="date_value" attrs="{'invisible': [('type', '!=', 'receipt')],
+                                                     'required': [('type', '=', 'receipt')]}"/>
+                </field>
             </field>
         </record>
 
-        <record id="view_vendor_receipt_form2" model="ir.ui.view">
+        <!-- <record id="view_vendor_receipt_form2" model="ir.ui.view">
             <field name="name">account.voucher.payment.check.form</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_bank_receipt.view_vendor_receipt_form"/>
             <field name="arch" type="xml">
                 <field name="date" position="after">
                     <field name="date_value" attrs="{'invisible': [('type', '!=', 'receipt')],
-                                                     'required': [('type', '=', 'receipt')]}"/>
+                                                     'required': [('type', '=', 'receipt')]}"/> -->
                     <!-- <field name="date_value" attrs="{'invisible': ['|', ('type', '!=', 'receipt'), ('intransit', '=', True)],
                                                      'required': [('type', '=', 'receipt'), ('intransit', '=', False)]}"/> -->
-                </field>
+                <!-- </field>
             </field>
-        </record>
+        </record> -->
         <!-- Customer / Supplier -->
 
         <record id="view_vendor_receipt_dialog_form" model="ir.ui.view">
