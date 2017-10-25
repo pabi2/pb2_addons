@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_journal_entry_template">
+            <field name="name">Journal Entry Template</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+        </record>
+
+        <record id="journal_entry_tempalte" model="ir.attachment">
+            <field name="res_model">account.move</field>
+            <field name="datas"></field>
+            <field name="datas_fname">journal_entry_template.xls</field>
+            <field name="name">Journal Entry Template</field>
+            <field name="parent_id" eval="ref('dir_journal_entry_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                },
+                '__IMPORT__': {
+                    1: {
+                        'line_id': {
+                            'A9': 'date_value',
+                            'B9': 'document',
+                            'E9': 'cheque_number',
+                            'F9': ['account_id${value and value.sp_accout_code}'],
+                        }
+                    }
+                },
+            }
+          </field>
+        </record>
+    </data>
+</openerp>
