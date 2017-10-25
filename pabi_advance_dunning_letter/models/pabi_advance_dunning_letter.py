@@ -155,10 +155,9 @@ class PABIAdvanceDunningLetter(models.Model):
                     second_supervisor_id = \
                         boss_level_approval[1].employee_id.id
         # TODO: assign email based on command lines
-        to_employee_ids = []
+        to_employee_ids = [expense.employee_id.id]
         cc_employee_ids = []
         if due_type == '1':  # Due Now
-            to_employee_ids.append(expense.employee_id.id)
             line.update({
                 'to_employee_ids': to_employee_ids,
                 'cc_employee_ids': cc_employee_ids,
@@ -166,24 +165,18 @@ class PABIAdvanceDunningLetter(models.Model):
         if due_type == '2':
             if supervisor_id:
                 to_employee_ids.append(supervisor_id)
-            else:
-                to_employee_ids.append(expense.employee_id.id)
-            cc_employee_ids.append(expense.employee_id.id)
             line.update({
                 'to_employee_ids': to_employee_ids,
                 'cc_employee_ids': cc_employee_ids,
             })
         if due_type == '3':
-            cc_employee_ids.append(expense.employee_id.id)
+            head_accounting = self.env.user.company_id.head_accounting_id
             if supervisor_id:
                 to_employee_ids.append(supervisor_id)
             if second_supervisor_id:
                 to_employee_ids.append(second_supervisor_id)
-            if not supervisor_id and not second_supervisor_id:
-                to_employee_ids.append(expense.employee_id.id)
-            if self.env.user.company_id.head_accounting_id:
-                cc_employee_ids.append(
-                    self.env.user.company_id.head_accounting_id.id)
+            if head_accounting:
+                cc_employee_ids.append(head_accounting.id)
             line.update({
                 'to_employee_ids': to_employee_ids,
                 'cc_employee_ids': cc_employee_ids,
