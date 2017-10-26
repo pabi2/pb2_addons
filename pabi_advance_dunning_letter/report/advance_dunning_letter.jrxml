@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="0.6830134553650705"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="174"/>
 	<style name="border_box">
@@ -171,7 +171,7 @@
 				<text><![CDATA[วันที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="space" x="1" y="190" width="555" height="16">
+				<reportElement style="space" x="1" y="190" width="751" height="16">
 					<printWhenExpression><![CDATA[$F{due_type} == "3"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single" markup="none">
@@ -180,7 +180,7 @@
 				<text><![CDATA[ฝ่ายการเงินและบัญชีได้มีการออกจดหมายแจ้งเตือนก่อนวันครบกำหนดการสะสางเงินยืมทดรองจ่าย 2 ครั้งแล้ว]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="22" y="168" width="515" height="16">
+				<reportElement x="22" y="168" width="730" height="16">
 					<printWhenExpression><![CDATA[$F{due_type} == "3"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single" markup="none">
@@ -278,7 +278,7 @@
 	<pageFooter>
 		<band height="421">
 			<staticText>
-				<reportElement x="26" y="31" width="595" height="16"/>
+				<reportElement x="26" y="31" width="726" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -292,14 +292,14 @@
 				<text><![CDATA[เพื่อหักล้างเงินยืมของท่านโดยด่วน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="113" width="515" height="16"/>
+				<reportElement x="0" y="113" width="752" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หรือ Email นี้แล้ว ฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="25" y="91" width="651" height="16"/>
+				<reportElement x="25" y="91" width="727" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

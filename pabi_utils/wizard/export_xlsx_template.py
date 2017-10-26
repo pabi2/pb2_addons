@@ -4,11 +4,26 @@ import openpyxl
 import base64
 import cStringIO
 import re
+import time
 from datetime import datetime, timedelta
 from ast import literal_eval
 
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+
+
+def get_field_condition(field):
+    """ i..e, 'field${value > 0 and value or False}' """
+    if '${' in field and '}' in field:
+        i = field.index('${')
+        j = field.index('}')
+        cond = field[i + 2:j]
+        try:
+            if len(cond) > 0:
+                return (field[:i], cond)
+        except:
+            return (field, False)
+    return (field, False)
 
 
 def get_line_max(line_field):
@@ -24,6 +39,7 @@ def get_line_max(line_field):
                 return (line_field, False)
         except:
             return (line_field, False)
+    return (line_field, False)
 
 
 def split_row_col(pos):
@@ -105,6 +121,21 @@ class ExportXlsxTemplate(models.TransientModel):
     @api.model
     def _get_line_vals(self, record, line_field, fields):
         """ Get values of this field from record set """
+
+        def _get_field_data(_field, _line):
+            """ Get field data, and convert data type if needed """
+            line_copy = _line
+            for f in _field.split('.'):
+                data_type = line_copy._fields[f].type
+                line_copy = line_copy[f]
+                if data_type == 'date':
+                    line_copy = datetime.strptime(line_copy,
+                                                  '%Y-%m-%d')
+                elif data_type == 'datetime':
+                    line_copy = datetime.strptime(line_copy,
+                                                  '%Y-%m-%d %H:%M:%S')
+            return line_copy
+
         line_field, max_row = get_line_max(line_field)
         lines = record[line_field]
         if max_row > 0 and len(lines) > max_row:
@@ -113,10 +144,18 @@ class ExportXlsxTemplate(models.TransientModel):
         vals = dict([(field, []) for field in fields])
         for line in lines:
             for field in fields:
-                line_copy = line
-                for f in field.split('.'):
-                    line_copy = line_copy[f]
-                vals[field].append(line_copy)
+                x_field, eval_cond = get_field_condition(field)
+                value = _get_field_data(x_field, line)
+                # Case Eval
+                if eval_cond:
+                    eval_context = {'time': time,
+                                    'value': value,
+                                    'model': self.env[record._name],
+                                    'env': self.env,
+                                    }
+                    value = str(eval(eval_cond, eval_context))
+                # --
+                vals[field].append(value)
         return (line_field, vals)
 
     @api.model
@@ -131,7 +170,7 @@ class ExportXlsxTemplate(models.TransientModel):
                 if isinstance(sheet_name, str):
                     st = get_sheet_by_name(workbook, sheet_name)
                 elif isinstance(sheet_name, int):
-                    st = workbook.worksheets(sheet_name - 1)
+                    st = workbook.worksheets[sheet_name - 1]
                 if not st:
                     raise ValidationError(
                         _('Sheet %s not found!') % sheet_name)

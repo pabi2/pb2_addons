@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <act_window id="action_export_journal_entry_xlsx_tempalte"
+          name="Export (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="account.move"
+          view_mode="form"
+          target="new"/>
+      <act_window id="action_import_journal_entry_xlsx_tempalte"
+          name="Import (.xlsx) with mapped account"
+          res_model="import.xlsx.template"
+          src_model="account.move"
+          view_mode="form"
+          target="new"/>
+
+    </data>
+</openerp>

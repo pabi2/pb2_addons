@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, fields
 
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
+    _order = 'sequence, date desc, id desc'
+
+    sequence = fields.Integer('Sequence', default=0)
 
     @api.model
     def _update_analytic_dimension(self, vals):

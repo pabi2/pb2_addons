@@ -22,7 +22,7 @@
 			<field name="name">view.pabi.partner.dunning.report.tree</field>
 			<field name="model">pabi.partner.dunning.report</field>
 			<field name="arch" type="xml">
-				<tree string="Partner Dunning Report">
+				<tree string="Partner Dunning Report" create="0" edit="0" delete="0">
 					<field name="partner_id"/>
 					<field name="date_run"/>
 					<field name="date" string="Invoice Date"/>

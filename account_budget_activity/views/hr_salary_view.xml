@@ -11,7 +11,7 @@
 					<field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense')]"/>
 				</xpath>
 				<xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="attributes">
-					<attribute name="invisible">0</attribute>
+					<attribute name="invisible">1</attribute>
 				</xpath>
 			</field>
 		</record>
