@@ -88,14 +88,15 @@ class ImportXlsxTemplate(models.TransientModel):
     def default_get(self, fields):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
-        template = self.env['ir.attachment'].\
+        templates = self.env['ir.attachment'].\
             search([('res_model', '=', res_model)])
-        if not template:
+        if not templates:
             raise ValidationError(_('No template found!'))
         defaults = super(ImportXlsxTemplate, self).default_get(fields)
-        if not template.datas:
-            raise ValidationError(_('No file in %s') % (template.name,))
-        defaults['template_id'] = len(template) == 1 and template.id or False
+        for template in templates:
+            if not template.datas:
+                raise ValidationError(_('No file in %s') % (template.name,))
+        defaults['template_id'] = len(templates) == 1 and template.id or False
         defaults['res_id'] = res_id
         defaults['res_model'] = res_model
         return defaults
@@ -108,10 +109,12 @@ class ImportXlsxTemplate(models.TransientModel):
         try:
             for sheet_name in data_dict:
                 worksheet = data_dict[sheet_name]
-                # HEAD
-                for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                    if field in record and record[field]:
-                        record[field] = False  # Set to False
+                # kittiu: Don't del header value, it make requried field error
+                # # HEAD
+                # for rc, field in worksheet.get('_HEAD_', {}).iteritems():
+                #     if field in record and record[field]:
+                #         record[field] = False  # Set to False
+                # --
                 # Line Items
                 line_fields = filter(lambda l: l != '_HEAD_', worksheet)
                 for line_field in line_fields:
@@ -132,21 +135,22 @@ class ImportXlsxTemplate(models.TransientModel):
             if not isinstance(columns, list):  # Ex. 'A1': ['field1', 'field2']
                 columns = [columns]
             for field in columns:
-                field, eval_cond = get_field_condition(field)
+                x_field, eval_cond = get_field_condition(field)
                 row, col = XLS.pos2idx(rc)
-                out_field = '%s/%s' % (new_line_field, field)
+                out_field = '%s/%s' % (new_line_field, x_field)
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
-                for idx in range(row, st.nrows - 1):
+                for idx in range(row, st.nrows):
                     value = XLS._get_cell_value(st.cell(idx, col),
                                                 field_type=field_type)
-                    # Special case to eval number condition, if true set value
-                    if field_type in ('integer', 'float') and eval_cond:
-                        eval_context = {'time': time, 'value': value}
-                        try:
-                            value = eval(eval_cond, eval_context)
-                        except:
-                            pass
+                    # Case Eval
+                    if eval_cond:
+                        eval_context = {'time': time,
+                                        'value': value,
+                                        'model': self.env[model],
+                                        'env': self.env,
+                                        }
+                        value = str(eval(eval_cond, eval_context))
                     # --
                     vals[out_field].append(value)
                     if max_row and (idx - row) >= max_row:

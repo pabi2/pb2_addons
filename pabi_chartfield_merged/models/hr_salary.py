@@ -7,5 +7,5 @@ class HRSalaryLine(MergedChartField, models.Model):
     _inherit = 'hr.salary.line'
 
     chartfield_id = fields.Many2one(
-        domain=[('model', 'in', ('res.personnel.costcenter', 'res.project'))],
+        domain=[('model', '=', 'res.personnel.costcenter')],
     )

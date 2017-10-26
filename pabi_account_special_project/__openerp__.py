@@ -18,7 +18,7 @@
     'data': [
         'xlsx_template/xlsx_template_wizard.xml',
         'xlsx_template/templates.xml',
-        'views/account_view.xml',
+        'data/data_map.xml',
     ],
     'test': [
     ],
