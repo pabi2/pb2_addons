@@ -16,19 +16,19 @@
             <field name="lang">th_TH</field>
             <field name="body_html"><![CDATA[
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-    <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} </span> <span style="float: right;">รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
+    <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
     <p style="text-indent: 25px;">
-        จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ  ${object.date} ปรากฎว่าท่านมี
+        จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ วันที่ ${object.date | format_date('%d %B %Ey', lc='th_TH')} ปรากฎว่าท่านมี
     </p>
-    <p>รายการเงินยืมทดรองจ่ายที่ใกล้ครบกําหนดหักล้าง ดังต่อไปนี้ - ${"%.2f" | format(object.amount_to_clearing)} </p>
+    <p>รายการเงินยืมทดรองจ่ายที่ใกล้ครบกําหนดหักล้าง เป็นยอดเงินยืมคงค้าง ${'{:,.2f}'.format(object.amount_to_clearing)} บาท</p>
     <p style="text-indent: 25px;">
-       จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ เพื่อหักล้างเงินยืม ของท่านโดยด่วน
+       จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ เพื่อหักล้างเงินยืม ของท่าน
     </p>
     <p style="text-indent: 25px;">
-        กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันที่ในเอกสาร หรือ Email นี้แล้วฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้
+        กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันที่ในเอกสาร หรือ Email นี้แล้ว ฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้
     </p>
     <p>
-        <div style="text-align: right;">ฝ่ายการเงินและบัญชี สวทช.</div>
+        <div style="text-align: right;">ฝ่ายการเงินและบัญชี</div>
     </p>
 </div>
             ]]></field>

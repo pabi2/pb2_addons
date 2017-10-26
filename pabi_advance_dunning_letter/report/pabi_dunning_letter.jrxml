@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="240"/>
 	<style name="border_box">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 			<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -182,7 +182,7 @@
 				<textElement lineSpacing="Single" markup="none">
 					<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[ตามที่ท่าน ได้ยืมเงินทดรองจ่ายตามสัญญาเพื่อใช้ในการปฏิบัติงาน ซึ่งขณะนี้ถึงวันที่ครบกาหนดหักล้างเงินยืม]]></text>
+				<text><![CDATA[ตามที่ท่าน ได้ยืมเงินทดรองจ่ายตามสัญญาเพื่อใช้ในการปฏิบัติงาน ซึ่งขณะนี้ถึงวันที่ครบกำหนดหักล้างเงินยืม]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="space" x="0" y="211" width="555" height="16">
@@ -278,7 +278,7 @@
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ]]></text>
+				<text><![CDATA[จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินและบัญชี]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="53" width="515" height="16"/>

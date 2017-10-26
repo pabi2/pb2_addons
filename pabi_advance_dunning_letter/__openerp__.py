@@ -17,6 +17,7 @@ Expense Related Reports
 
     """,
     'depends': [
+        'email_template_dateutil',
         'pabi_hr_expense',
     ],
     'data': [
