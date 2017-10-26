@@ -135,15 +135,15 @@ class ImportXlsxTemplate(models.TransientModel):
             if not isinstance(columns, list):  # Ex. 'A1': ['field1', 'field2']
                 columns = [columns]
             for field in columns:
-                field, eval_cond = get_field_condition(field)
+                x_field, eval_cond = get_field_condition(field)
                 row, col = XLS.pos2idx(rc)
-                out_field = '%s/%s' % (new_line_field, field)
+                out_field = '%s/%s' % (new_line_field, x_field)
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
-                for idx in range(row, st.nrows - 1):
+                for idx in range(row, st.nrows):
                     value = XLS._get_cell_value(st.cell(idx, col),
                                                 field_type=field_type)
-                    # Special case to eval number condition, if true set value
+                    # Case Eval
                     if eval_cond:
                         eval_context = {'time': time,
                                         'value': value,
