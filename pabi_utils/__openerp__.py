@@ -29,6 +29,7 @@ Functions
         "base",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "data/xls_config.xml",
         "wizard/export_xlsx_template_wizard.xml",
         "wizard/import_xlsx_template_wizard.xml",

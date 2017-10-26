@@ -71,8 +71,8 @@ class MergedChartField(ChartField):
             self.invest_construction_phase_id = res_id
         if self.chartfield_id.model == 'res.invest.asset':
             self.invest_asset_id = res_id
-        if self.chartfield_id.model == 'res.project':
-            self.project_id = res_id
+        if self.chartfield_id.model == 'res.personnel.costcenter':
+            self.personnel_costcenter_id = res_id
 
 
 class ChartfieldView(models.Model):
