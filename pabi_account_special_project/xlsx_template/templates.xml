@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <!-- Directory -->
         <record model="document.directory" id="dir_journal_entry_template">
             <field name="name">Journal Entry Template</field>
             <field name="parent_id" ref="document.dir_root"/>
@@ -8,11 +9,13 @@
             <field name="ressource_id">0</field>
         </record>
 
-        <record id="journal_entry_tempalte" model="ir.attachment">
+        <!-- Template for each company -->
+        <!-- Each template difference is the passing of map_type and field -->
+        <record id="special_project_a_tempalte" model="ir.attachment">
             <field name="res_model">account.move</field>
             <field name="datas"></field>
-            <field name="datas_fname">journal_entry_template.xls</field>
-            <field name="name">Journal Entry Template</field>
+            <field name="datas_fname">special_project.xls</field>
+            <field name="name">Special Project - A</field>
             <field name="parent_id" eval="ref('dir_journal_entry_template')"/>
             <field name="description">
               {
@@ -20,11 +23,18 @@
                 },
                 '__IMPORT__': {
                     1: {
+                        '_HEAD_': {
+                            'B2': 'date',
+                            'D2': 'ref',
+                        },
                         'line_id': {
-                            'A9': 'date_value',
-                            'B9': 'document',
-                            'E9': 'cheque_number',
-                            'F9': ['account_id${value and value.sp_accout_code}'],
+                            'A2': 'sequence',
+                            'E2': 'name',
+                            # Following will be different for each Special Project
+                            'F2': 'account_id${env["pabi.data.map"].get_in_value("Special Project - A", "account.account", "code", value)}',
+                            'H2': 'section_id',
+                            'I2': 'debit',
+                            'J2': 'credit',
                         }
                     }
                 },

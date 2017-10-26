@@ -214,7 +214,7 @@ class PABIUtilsXLS(models.AbstractModel):
             if len(value_str) == 0:
                 value = ''
             elif field_type == 'integer':
-                value = int(value_str)
+                value = int(float(value_str))
             elif field_type == 'float':
                 value = float(value_str)
         else:

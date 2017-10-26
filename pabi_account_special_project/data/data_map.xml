@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Special Project - A -->
+        <record model="pabi.data.map.type" id="pabi_type_special_project_a">
+            <field name="name">Special Project - A</field>
+        </record>
+
+        <!--- Special Project - A, mapping on account.account,code -->
+        <record model="pabi.data.map" id="pabi_special_project_a">
+            <field name="map_type_id" eval="ref('pabi_type_special_project_a')"/>
+            <field name="model_id" eval="ref('account.model_account_account')"/>
+            <field name="field_id" eval="ref('account.field_account_account_code')"/>
+        </record>
+    </data>
+</openerp>

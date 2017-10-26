@@ -7,22 +7,25 @@ class PABIDataMap(models.Model):
     _name = 'pabi.data.map'
     _description = 'Field mapping database, used for import/export'
 
-    type = fields.Selection(
-        [('sample', 'Sample')],
-        string='Type',
+    map_type_id = fields.Many2one(
+        'pabi.data.map.type',
+        string='Map Type',
         index=True,
-        default='sample',
+        ondelete='cascade',
+        requried=True,
     )
     model_id = fields.Many2one(
         'ir.model',
         string='Model',
         index=True,
+        required=True,
     )
     field_id = fields.Many2one(
         'ir.model.fields',
         string='Field',
         domain="[('model_id', '=', model_id)]",
         index=True,
+        required=True,
     )
     in_value = fields.Char(
         string='Input Value',
@@ -35,9 +38,11 @@ class PABIDataMap(models.Model):
         help="Mapped output value",
     )
     _sql_constraints = [
-        ('in_value_uniq', 'unique(type, model_id, field_id, in_value)',
+        ('in_value_uniq',
+         'unique(map_type_id, model_id, field_id, in_value)',
          'In value must be unique!'),
-        ('out_value_uniq', 'unique(type, model_id, field_id, out_value)',
+        ('out_value_uniq',
+         'unique(map_type_id, model_id, field_id, out_value)',
          'Out value must be unique!')
     ]
 
@@ -45,12 +50,70 @@ class PABIDataMap(models.Model):
     def _onchange_model_id(self):
         self.field_id = False
 
+    @api.multi
+    def write(self, vals):
+        if 'field_id' in vals:
+            if not vals['field_id']:
+                vals['model_id'] = False
+            elif not vals.get('model_id', False):
+                field = self.env['ir.model.fields'].browse(vals['field_id'])
+                vals['model_id'] = field.model_id.id
+        return super(PABIDataMap, self).write(vals)
+
     @api.model
-    def get_out_value(self, type, model_id, field_id, in_value=False):
+    def get_out_value(self, map_type, model, field, in_value=False):
+        """
+        map_type = Name of mapping type
+        model = Name of model, i.e., account.account
+        field = Database field, i.e., code
+        in_value = Value in PABI2
+        return: out_value
+        """
         out_value = False
         if in_value:
             out_value = self.search(
-                [('type', '=', type), ('model_id', '=', model_id),
-                 ('field_id', '=', field_id), ('in_value', '=', in_value)],
+                [('map_type_id.name', '=', map_type),
+                 ('model_id.model', '=', model),
+                 ('field_id.name', '=', field),
+                 ('in_value', '=', in_value)],
                 limit=1).out_value
         return out_value
+
+    @api.model
+    def get_in_value(self, map_type, model, field, out_value=False):
+        """
+        map_type = Name of mapping type
+        model = Name of model, i.e., account.account
+        field = Database field, i.e., code
+        out_value = Value of other system
+        return: in_value
+        """
+        in_value = False
+        if out_value:
+            in_value = self.search(
+                [('map_type_id.name', '=', map_type),
+                 ('model_id.model', '=', model),
+                 ('field_id.name', '=', field),
+                 ('out_value', '=', out_value)],
+                limit=1).in_value
+        return in_value
+
+
+class PABIDataMapType(models.Model):
+    _name = 'pabi.data.map.type'
+    _description = 'Type of data map, will be created for each application'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    line_ids = fields.One2many(
+        'pabi.data.map',
+        'map_type_id',
+        string='Map Details',
+        ondelete='cascade',
+        index=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)', 'Name must be unique!'),
+    ]
