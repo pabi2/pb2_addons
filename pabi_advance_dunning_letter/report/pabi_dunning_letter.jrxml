@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="240"/>
+	<property name="ireport.y" value="27"/>
 	<style name="border_box">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 			<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -132,7 +132,7 @@
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ                                  ปรากฎว่าท่านมี]]></text>
+				<text><![CDATA[จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ                             ปรากฎว่าท่านมี]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="212" width="515" height="16">
@@ -158,7 +158,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["รหัสพนักงาน " + $F{employee_code}.toString()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="283" y="190" width="50" height="16">
+				<reportElement x="271" y="190" width="50" height="16">
 					<printWhenExpression><![CDATA[$P{due_days} == "10" || $P{due_days} == "5"]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" lineSpacing="Single" markup="none">
@@ -201,7 +201,7 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[(new SimpleDateFormat("yyyy-MM-dd")).parse($P{date_print})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMMMM yyyy">
-				<reportElement x="338" y="190" width="187" height="16">
+				<reportElement x="323" y="190" width="187" height="16">
 					<printWhenExpression><![CDATA[$P{due_days} == "10" || $P{due_days} == "5"]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -285,14 +285,14 @@
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[เพื่อหักล้างเงินยืม ของท่านโดยด่วน]]></text>
+				<text><![CDATA[เพื่อหักล้างเงินยืมของท่านโดยด่วน]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="113" width="515" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[หรือ Email นี้แล้วฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้]]></text>
+				<text><![CDATA[หรือ Email นี้แล้ว ฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="25" y="91" width="651" height="16"/>
