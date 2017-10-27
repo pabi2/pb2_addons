@@ -27,6 +27,10 @@
                     <div attrs="{'invisible': [('clear_pettycash_id', '=', False)]}">
                         <field name="clear_pettycash_id" class="oe_inline"/>
                     </div>
+                    <xpath expr="/form/sheet/group/group/div//field[@name='payment_type']" position="attributes">
+                        <attribute name="required">False</attribute>
+                        <attribute name="attrs">{'required': [('clear_pettycash_id', '=', False)]}</attribute>
+                    </xpath>
                 </xpath>
             </field>
         </record>
