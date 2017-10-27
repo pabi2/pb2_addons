@@ -71,6 +71,9 @@ class PABIDataMap(models.Model):
         """
         out_value = False
         if in_value:
+            in_value = str(in_value)
+            if in_value[-2:] == '.0':
+                in_value = in_value[:-2]
             out_value = self.search(
                 [('map_type_id.name', '=', map_type),
                  ('model_id.model', '=', model),
@@ -90,6 +93,9 @@ class PABIDataMap(models.Model):
         """
         in_value = False
         if out_value:
+            out_value = str(out_value)
+            if out_value[-2:] == '.0':
+                out_value = out_value[:-2]
             in_value = self.search(
                 [('map_type_id.name', '=', map_type),
                  ('model_id.model', '=', model),
@@ -113,6 +119,16 @@ class PABIDataMapType(models.Model):
         string='Map Details',
         ondelete='cascade',
         index=True,
+    )
+    app_name = fields.Selection(
+        [],  # to be added for the calling apps.
+        string='Application',
+        help="Application can be used to group multiple map types",
+    )
+    default_template_id = fields.Many2one(
+        'ir.attachment',
+        string='Default Template',
+        help="Default Template used during import/export xlxs",
     )
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Name must be unique!'),

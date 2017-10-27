@@ -149,6 +149,7 @@ class ImportXlsxTemplate(models.TransientModel):
                                         'value': value,
                                         'model': self.env[model],
                                         'env': self.env,
+                                        'context': self._context,
                                         }
                         value = str(eval(eval_cond, eval_context))
                     # --

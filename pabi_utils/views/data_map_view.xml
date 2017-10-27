@@ -9,6 +9,10 @@
             <field name="arch" type="xml">
                 <search string="Data Mapper(s)">
                     <field name="name"/>
+                    <field name="app_name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Application" domain="[]" context="{'group_by':'app_name'}"/>
+                    </group>
                 </search>
             </field>
         </record>
@@ -19,6 +23,7 @@
             <field name="arch" type="xml">
                 <tree string="Data Mapper(s)">
                     <field name="name"/>
+                    <field name="app_name"/>
                 </tree>
             </field>
         </record>
@@ -33,6 +38,8 @@
                             <field name="name"/>
                         </group>
                         <group>
+                            <field name="app_name" readonly="1"/>
+                            <field name="default_template_id" readonly="1"/>
                         </group>
                     </group>
                     <field name="line_ids" options="{'web_x2m_defaults_from_previous': ['model_id']}">

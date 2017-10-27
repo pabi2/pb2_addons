@@ -2,20 +2,18 @@
 <openerp>
     <data>
         <!-- Directory -->
-        <record model="document.directory" id="dir_journal_entry_template">
-            <field name="name">Journal Entry Template</field>
+        <record model="document.directory" id="dir_special_project_template">
+            <field name="name">Special Project</field>
             <field name="parent_id" ref="document.dir_root"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="ressource_id">0</field>
         </record>
 
-        <!-- Template for each company -->
-        <!-- Each template difference is the passing of map_type and field -->
-        <record id="special_project_a_tempalte" model="ir.attachment">
+        <record id="special_project_template" model="ir.attachment">
             <field name="res_model">account.move</field>
             <field name="datas_fname">special_project.xls</field>
-            <field name="name">Special Project - A</field>
-            <field name="parent_id" eval="ref('dir_journal_entry_template')"/>
+            <field name="name">Special Project</field>
+            <field name="parent_id" eval="ref('dir_special_project_template')"/>
             <field name="description">
               {
                 '__EXPORT__': {
@@ -42,7 +40,7 @@
                             'A2': 'sequence',
                             'E2': 'name',
                             # Following will be different for each Special Project
-                            'F2': 'account_id${env["pabi.data.map"].get_in_value("Special Project - A", "account.account", "code", value)}',
+                            'F2': 'account_id${env["pabi.data.map"].get_in_value(context.get("map_type"), "account.account", "code", value)}',
                             'H2': 'section_id',
                             'I2': 'debit',
                             'J2': 'credit',
