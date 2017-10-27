@@ -20,6 +20,19 @@ class ImportXLSXSpecialProject(models.TransientModel):
         string='Import File (*.xlsx)',
         required=True,
     )
+    datas = fields.Binary(
+        string='Template',
+        related='template_id.datas',
+        readonly=True,
+    )
+    datas_fname = fields.Char(
+        string='Template Name',
+        related='template_id.datas_fname',
+        readonly=True,
+    )
+    # @api.onchange('template_id')
+    # def _onchange_template_id(self):
+    #     self.datas = self.template_id.datas
 
     @api.model
     def view_init(self, fields_list):
