@@ -9,7 +9,7 @@
           view_mode="form"
           target="new"/>
       <act_window id="action_import_journal_entry_xlsx_tempalte"
-          name="Import (.xlsx) with mapped account"
+          name="Import (.xlsx)"
           res_model="import.xlsx.template"
           src_model="account.move"
           view_mode="form"
