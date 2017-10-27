@@ -21,6 +21,16 @@ class ImportXLSXSpecialProject(models.TransientModel):
         required=True,
     )
 
+    @api.model
+    def view_init(self, fields_list):
+        move = self.env['account.move'].browse(self._context.get('active_id'))
+        if move.doctype != 'adjustment':
+            raise ValidationError(
+                _('This action apply only to adjustment journal!'))
+        if move.state == 'posted':
+            raise ValidationError(
+                _('You can not import if document is already posted!'))
+
     @api.onchange('map_type_id')
     def _onchange_map_type_id(self):
         if self.map_type_id and not self.map_type_id.default_template_id:
