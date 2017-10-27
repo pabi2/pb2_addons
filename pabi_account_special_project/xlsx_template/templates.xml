@@ -13,25 +13,24 @@
         <!-- Each template difference is the passing of map_type and field -->
         <record id="special_project_a_tempalte" model="ir.attachment">
             <field name="res_model">account.move</field>
-            <field name="datas"></field>
             <field name="datas_fname">special_project.xls</field>
             <field name="name">Special Project - A</field>
             <field name="parent_id" eval="ref('dir_journal_entry_template')"/>
             <field name="description">
               {
                 '__EXPORT__': {
-                    1: {
-                        'line_id': {
-                            'A2': 'sequence',
-                            'B2': 'move_id.date',
-                            'D2': 'move_id.ref',
-                            'E2': 'name',
-                            'F2': 'account_id.code${env["pabi.data.map"].get_out_value("Special Project - A", "account.account", "code", value)}',
-                            'H2': 'section_id.code',
-                            'I2': 'debit',
-                            'J2': 'credit',
-                        }
-                    }
+                    # 1: {
+                    #    'line_id': {
+                    #        'A2': 'sequence',
+                    #        'B2': 'move_id.date',
+                    #        'D2': 'move_id.ref',
+                    #        'E2': 'name',
+                    #        'F2': 'account_id.code${env["pabi.data.map"].get_out_value("Special Project - A", "account.account", "code", value)}',
+                    #        'H2': 'section_id.code',
+                    #        'I2': 'debit',
+                    #        'J2': 'credit',
+                    #    }
+                    # }
                 },
                 '__IMPORT__': {
                     1: {

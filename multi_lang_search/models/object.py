@@ -66,6 +66,7 @@ def _extend_search_results_translation(self, sub_domain):
         trans_name = 'res.partner,name'
     # --
     if isinstance(value, str) or isinstance(value, unicode):
+        value = value.replace("'", "''")  # Escape for SQL
         self._cr.execute("""
             SELECT src
             FROM ir_translation
