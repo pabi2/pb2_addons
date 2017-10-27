@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        # Data map for Special Project
+        <record id="view_pabi_data_map_type_special_project_form" model="ir.ui.view">
+            <field name="name">view.pabi.data.map.type.special.projectform</field>
+            <field name="model">pabi.data.map.type</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Special Project Data Mapper(s)">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="app_name" readonly="1"/>
+                            <field name="default_template_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" options="{'web_x2m_defaults_from_previous': ['model_id']}">
+                        <tree editable="bottom">
+                            <field name="model_id" invisile="0"/>
+                            <field name="field_id" invisible="0"/>
+                            <field name="in_value" string="PABI Account Code"/>
+                            <field name="out_value" string="Special Project Account Code"/>
+                        </tree>
+                    </field>
+                    <p>
+                      <h3>Remarks:</h3>
+                    </p>
+                    <p>
+                      During importing of special project journal entries, it will map project account code to pabi account code.
+                    </p>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_data_map_type_special_project" model="ir.actions.act_window">
+            <field name="name">Special Project GL</field>
+            <field name="res_model">pabi.data.map.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="pabi_utils.view_pabi_data_map_type_search"/>
+            <field name="context" eval="{'default_app_name': 'special_project', 'default_default_template_id': ref('special_project_template')}"/>
+            <field name="domain" eval="[('app_name', '=', 'special_project')]"/>
+        </record>
+        <record id="action_pabi_data_map_type_special_project_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="pabi_utils.view_pabi_data_map_type_tree"/>
+            <field name="act_window_id" ref="action_pabi_data_map_type_special_project"/>
+        </record>
+        <record id="action_pabi_data_map_type_special_project_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pabi_data_map_type_special_project_form"/>
+            <field name="act_window_id" ref="action_pabi_data_map_type_special_project"/>
+        </record>
+
+
+        <menuitem action="action_pabi_data_map_type_special_project" sequence="100" id="menu_pabi_data_map_type_special_project" parent="account.account_account_menu" groups="account.group_account_user"/>
+
+    </data>
+</openerp>

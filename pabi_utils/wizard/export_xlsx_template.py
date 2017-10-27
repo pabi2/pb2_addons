@@ -152,6 +152,7 @@ class ExportXlsxTemplate(models.TransientModel):
                                     'value': value,
                                     'model': self.env[record._name],
                                     'env': self.env,
+                                    'context': self._context,
                                     }
                     value = str(eval(eval_cond, eval_context))
                 # --

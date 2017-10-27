@@ -16,9 +16,10 @@
     ],
     'demo': [],
     'data': [
-        'xlsx_template/xlsx_template_wizard.xml',
+        'security/ir.model.access.csv',
         'xlsx_template/templates.xml',
-        'data/data_map.xml',
+        'wizard/import_xlsx_special_project_wizard.xml',
+        'views/account_view.xml',
     ],
     'test': [
     ],
