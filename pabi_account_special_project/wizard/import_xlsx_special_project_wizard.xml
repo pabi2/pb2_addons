@@ -10,6 +10,8 @@
                         <group>
                             <field name="map_type_id" widget="selection"/>
                             <field name="template_id" required="1" invisible="1"/>
+                            <field name="datas_fname" invisible="1"/>
+                            <field name="datas" filename="datas_fname"/>
                         </group>
                         <group>
                             <field name="import_file"/>

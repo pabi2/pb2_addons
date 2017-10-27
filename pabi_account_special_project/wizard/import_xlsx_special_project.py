@@ -20,6 +20,29 @@ class ImportXLSXSpecialProject(models.TransientModel):
         string='Import File (*.xlsx)',
         required=True,
     )
+    datas = fields.Binary(
+        string='Template',
+        related='template_id.datas',
+        readonly=True,
+    )
+    datas_fname = fields.Char(
+        string='Template Name',
+        related='template_id.datas_fname',
+        readonly=True,
+    )
+    # @api.onchange('template_id')
+    # def _onchange_template_id(self):
+    #     self.datas = self.template_id.datas
+
+    @api.model
+    def view_init(self, fields_list):
+        move = self.env['account.move'].browse(self._context.get('active_id'))
+        if move.doctype != 'adjustment':
+            raise ValidationError(
+                _('This action apply only to adjustment journal!'))
+        if move.state == 'posted':
+            raise ValidationError(
+                _('You can not import if document is already posted!'))
 
     @api.onchange('map_type_id')
     def _onchange_map_type_id(self):
