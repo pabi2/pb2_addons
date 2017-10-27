@@ -170,7 +170,7 @@
 			<field name="arch" type="xml">
 				<!-- Invisible Columns -->
 				<xpath expr="/form/sheet/notebook/page/field/tree//field[@name='tax_ids']" position="attributes">
-					<attribute name="invisible">True</attribute>
+					<attribute name="invisible">False</attribute>
 				</xpath>
 				<xpath expr="//button[@string='Create Supplier Invoice']" position="after">
 					<button type="action" name="%(action_message_to_employee)d" string="Message to Employee" states="accepted"/>
