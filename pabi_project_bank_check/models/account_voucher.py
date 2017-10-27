@@ -36,6 +36,13 @@ class AccountVoucher(models.Model):
         default=False,
         help="Force payment regardless of account balance."
     )
+    bank_mandate_emp_id = fields.Many2one(
+        'hr.employee',
+        related='journal_id.bank_mandate_emp_id',
+        string='Project bank mandate',
+        readonly=True,
+        help="Information about bank madate for this account, if any."
+    )
 
     @api.multi
     def _compute_journal_balance(self):
