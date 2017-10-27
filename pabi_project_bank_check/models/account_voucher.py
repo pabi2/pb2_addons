@@ -106,6 +106,8 @@ class AccountVoucher(models.Model):
                 self._get_project_journals(invoices)
             res['use_project_journal'] = use_project_journal
             res['project_journal_ids'] = project_journal_ids
+            if project_journal_ids and len(project_journal_ids) == 1:
+                res['journal_id'] = project_journal_ids[0]
         return res
 
     @api.multi
