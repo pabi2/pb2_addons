@@ -18,6 +18,7 @@ This module focus mainly on creating PDF and submit to Alfresco workflow
         "pabi_utils",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "xlsx_template/xlsx_template_wizard.xml",
         "xlsx_template/templates.xml",
         "views/hr_salary_view.xml",

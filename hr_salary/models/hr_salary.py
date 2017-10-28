@@ -15,17 +15,20 @@ class HRSalaryExpense(models.Model):
         default='/',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     name = fields.Char(
         string='Description',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     user_id = fields.Many2one(
         'res.users',
         string='Prepared By',
         readonly=True,
         default=lambda self: self.env.user,
+        track_visibility='onchange',
     )
     date = fields.Date(
         string='Date',
@@ -35,30 +38,35 @@ class HRSalaryExpense(models.Model):
         states={'draft': [('readonly', False)]},
         default=lambda self: fields.Date.context_today(self),
         copy=False,
+        track_visibility='onchange',
     )
     date_submit = fields.Date(
         string='Submitted Date',
         index=True,
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     submit_user_id = fields.Many2one(
         'res.users',
         string='Submited By',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     date_approve = fields.Date(
         string='Approved Date',
         index=True,
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     approve_user_id = fields.Many2one(
         'res.users',
         string='Approved By',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -68,13 +76,15 @@ class HRSalaryExpense(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         default=lambda self: self.env['account.journal'].
-        search([('type', '=', 'purchase')], limit=1)
+        search([('type', '=', 'purchase')], limit=1),
+        track_visibility='onchange',
     )
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     move_line_ids = fields.One2many(
         'account.move.line',
@@ -92,6 +102,7 @@ class HRSalaryExpense(models.Model):
     )
     note = fields.Text(
         string='Notes',
+        track_visibility='onchange',
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -119,11 +130,13 @@ class HRSalaryExpense(models.Model):
         default='draft',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     is_paid = fields.Boolean(
         string='Fully Paid',
         compute='_compute_is_paid',
         store=True,
+        track_visibility='onchange',
     )
 
     @api.multi

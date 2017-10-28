@@ -6,15 +6,14 @@
             <field name="model">hr.salary.expense</field>
             <field name="inherit_id" ref="hr_salary.view_hr_salary_expense_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//page/field[@name='line_ids']" position="before">
-                    <div>
-                      <button type="object" name="retrieve_data"
-                              string="Retrieve Data" icon="terp-stock_format-scientific" colspan="2"
-                              attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
-                    </div>
-                </xpath>
                 <xpath expr="//page[@name='detail']" position="before">
                     <page string="Summary">
+                        <div>
+                          <button type="object" name="retrieve_data"
+                                  string="Retrieve Data" icon="terp-stock_format-scientific" colspan="2"
+                                  attrs="{'invisible': [('state', 'not in', ['draft'])]}"
+                          />
+                        </div>
                         <field name="summary_ids">
                             <tree string="Summary" editable="bottom">
                                 <field name="activity_group_id"/>
