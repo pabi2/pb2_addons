@@ -11,7 +11,7 @@ import time
 import datetime
 import dateutil
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval as eval
 from openerp import workflow
 
@@ -71,7 +71,9 @@ class ImportXlsxTemplate(models.TransientModel):
         string='Template',
         required=True,
         ondelete='set null',
-        domain="[('res_model', '=', res_model)]",
+        domain="[('res_model', '=', res_model),"
+        "('res_name', '=', False)],"
+        "('parent_id', '=', False)]",
     )
     res_id = fields.Integer(
         string='Resource ID',
@@ -82,6 +84,16 @@ class ImportXlsxTemplate(models.TransientModel):
         string='Resource Model',
         readonly=True,
         required=True,
+    )
+    datas = fields.Binary(
+        string='Sample',
+        related='template_id.datas',
+        readonly=True,
+    )
+    datas_fname = fields.Char(
+        string='Template Name',
+        related='template_id.datas_fname',
+        readonly=True,
     )
 
     @api.model
@@ -122,8 +134,7 @@ class ImportXlsxTemplate(models.TransientModel):
                     if line_field in record and record[line_field]:
                         record[line_field].unlink()  # Delete all lines
         except Exception, e:
-            raise ValidationError(
-                _('Error deleting data!\n%s') % e)
+            raise except_orm(_('Error deleting data!'), e)
 
     @api.model
     def _get_line_vals(self, st, worksheet, model, line_field):
@@ -222,8 +233,7 @@ class ImportXlsxTemplate(models.TransientModel):
             raise ValidationError(
                 _('Invalid file format, only .xls or .xlsx file allowed!'))
         except Exception, e:
-            raise ValidationError(
-                _('Error importing data!\n%s') % e)
+            raise except_orm(_('Error importing data!'), e)
 
     @api.model
     def _post_import_operation(self, record, operations):
@@ -239,8 +249,7 @@ class ImportXlsxTemplate(models.TransientModel):
                     eval_context = {'object': record}
                     eval(code, eval_context)
         except Exception, e:
-            raise ValidationError(
-                _('Post import operation error!\n%s') % e)
+            raise except_orm(_('Post import operation error!'), e)
 
     @api.model
     def import_template(self, import_file, template, res_model, res_id):

@@ -8,7 +8,7 @@
             <field name="model">hr.salary.expense</field>
             <field name="inherit_id" ref="hr_salary.view_hr_salary_expense_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
+                <xpath expr="/form/sheet/notebook/page[@name='detail']/field/tree/field[@name='analytic_account_id']" position="after">
 
                     <field name="require_chartfield" invisible="1"/>
 

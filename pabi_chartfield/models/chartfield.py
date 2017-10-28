@@ -395,56 +395,69 @@ class ChartField(object):
     spa_id = fields.Many2one(
         'res.spa',
         string='SPA',
+        ondelete='restrict',
     )
     mission_id = fields.Many2one(
         'res.mission',
         string='Mission',
+        ondelete='restrict',
     )
     tag_type_id = fields.Many2one(
         'res.tag.type',
         string='Tag Type',
+        ondelete='restrict',
     )
     tag_id = fields.Many2one(
         'res.tag',
         string='Tag',
+        ondelete='restrict',
     )
     functional_area_id = fields.Many2one(
         'res.functional.area',
         string='Functional Area',
+        ondelete='restrict',
     )
     program_group_id = fields.Many2one(
         'res.program.group',
         string='Program Group',
+        ondelete='restrict',
     )
     program_id = fields.Many2one(
         'res.program',
         string='Program',
+        ondelete='restrict',
     )
     project_group_id = fields.Many2one(
         'res.project.group',
         string='Project Group',
+        ondelete='restrict',
     )
     project_id = fields.Many2one(
         'res.project',
         string='Project',
+        ondelete='restrict',
     )
     fund_id = fields.Many2one(
         'res.fund',
         string='Fund',
         domain=lambda self: self._get_fund_domain(),
+        ondelete='restrict',
     )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+        ondelete='restrict',
     )
     sector_id = fields.Many2one(
         'res.sector',
         string='Sector',
+        ondelete='restrict',
     )
     subsector_id = fields.Many2one(
         'res.subsector',
         string='Subsector',
+        ondelete='restrict',
     )
     division_id = fields.Many2one(
         'res.division',
@@ -453,42 +466,51 @@ class ChartField(object):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
+        ondelete='restrict',
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
         string='Costcenter',
+        ondelete='restrict',
     )
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
+        ondelete='restrict',
     )
     # Personnel
     personnel_costcenter_id = fields.Many2one(
         'res.personnel.costcenter',
         string='Personnel Budget',
+        ondelete='restrict',
     )
     # Investment - Asset
     invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
+        ondelete='restrict',
     )
     # Investment - Construction
     invest_construction_id = fields.Many2one(
         'res.invest.construction',
         string='Construction',
+        ondelete='restrict',
     )
     invest_construction_phase_id = fields.Many2one(
         'res.invest.construction.phase',
         string='Construction Phase',
+        ondelete='restrict',
     )
     # Non Binding Dimension
     cost_control_id = fields.Many2one(
         'cost.control',
         string='Job Order',
+        ondelete='restrict',
     )
     cost_control_type_id = fields.Many2one(
         'cost.control.type',
         string='Job Order Type',
+        ondelete='restrict',
     )
     chart_view = fields.Selection(
         CHART_VIEW_LIST,

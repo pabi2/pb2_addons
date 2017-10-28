@@ -61,7 +61,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Description">
+                        <page name="detail" string="Details">
                             <field name="line_ids">
                                 <tree string="Salary Lines" editable="bottom">
                                     <field name="name"/>

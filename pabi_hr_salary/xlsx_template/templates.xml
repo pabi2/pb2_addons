@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_hr_salary_template">
+            <field name="name">HR Salary Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+        </record>
+
+        <record id="hr_salary_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">hr.salary.expense</field>
+            <field name="datas"></field>
+            <field name="datas_fname">hr_salary.xls</field>
+            <field name="name">HR Salary</field>
+            <field name="parent_id" eval="ref('dir_hr_salary_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'C2': 'date',
+                            'D2': 'name',
+                        },
+                        'line_ids': {
+                            'A2': 'sequence',
+                            'E2': 'activity_group_id',
+                            'F2': 'activity_id',
+                            'G2': 'account_id',
+                            'H2': 'personnel_costcenter_id',
+                            'I2': 'amount',
+                            'J2': 'name',
+                            'K2': 'partner_id',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

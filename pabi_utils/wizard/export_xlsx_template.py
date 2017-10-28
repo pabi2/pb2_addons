@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from ast import literal_eval
 
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import except_orm, ValidationError
 
 
 def get_field_condition(field):
@@ -45,7 +45,7 @@ def get_line_max(line_field):
 def split_row_col(pos):
     match = re.match(r"([a-z]+)([0-9]+)", pos, re.I)
     if not match:
-        raise ValidationError(_('Position %s is not valid') % (pos, ))
+        raise ValidationError(_('Position %s is not valid') % pos)
     col, row = match.groups()
     return col, int(row)
 
@@ -197,10 +197,9 @@ class ExportXlsxTemplate(models.TransientModel):
             message = str(e).format(rc)
             raise ValidationError(message)
         except KeyError, e:
-            raise ValidationError(_('Key Error: %s') % e)
+            raise except_orm(_('Key Error!'), e)
         except Exception, e:
-            raise ValidationError(
-                _('Error filling data into excel sheets!\n%s') % e)
+            raise except_orm(_('Error filling data into excel sheets!'), e)
 
     @api.model
     def _export_template(self, template, res_model, res_id):
