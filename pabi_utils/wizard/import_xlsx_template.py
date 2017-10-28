@@ -72,8 +72,7 @@ class ImportXlsxTemplate(models.TransientModel):
         required=True,
         ondelete='set null',
         domain="[('res_model', '=', res_model),"
-        "('res_name', '=', False)],"
-        "('parent_id', '=', False)]",
+        "('res_id', '=', False), ('res_name', '=', False)]",
     )
     res_id = fields.Integer(
         string='Resource ID',
