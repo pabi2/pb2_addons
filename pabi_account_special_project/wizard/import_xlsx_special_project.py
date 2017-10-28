@@ -21,7 +21,7 @@ class ImportXLSXSpecialProject(models.TransientModel):
         required=True,
     )
     datas = fields.Binary(
-        string='Template',
+        string='Sample',
         related='template_id.datas',
         readonly=True,
     )

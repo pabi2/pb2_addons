@@ -13,6 +13,22 @@
                               attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
                     </div>
                 </xpath>
+                <xpath expr="//page[@name='detail']" position="before">
+                    <page string="Summary">
+                        <field name="summary_ids">
+                            <tree string="Summary" editable="bottom">
+                                <field name="activity_group_id"/>
+                                <field name="amount" sum="Total"/>
+                            </tree>
+                        </field>
+                        <group>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="summary_total" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
             </field>
         </record>
     </data>

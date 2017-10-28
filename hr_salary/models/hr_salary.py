@@ -132,46 +132,47 @@ class HRSalaryExpense(models.Model):
         for rec in self:
             rec.amount_total = sum([x.amount for x in rec.line_ids])
 
-    @api.multi
-    def _validate_salary_line(self):
-        """ Rules:
-        - account_id must be regular and of type expense revenue
-        - if expense, amount must >= 0, if revenue, amout must <= 0
-        """
-        errors = []
-        for line in self.mapped('line_ids'):
-            if line.account_id.type != 'other':
-                t = _('Account %s is not of regular type')
-                error = t % (line.account_id.code, )
-                errors.append(error)
-            report_type = line.account_id.user_type.report_type
-            if report_type not in ('revenue', 'expense'):
-                t = _('Account %s is not of type Profit & Loss')
-                error = t % (line.account_id.code, )
-                errors.append(error)
-            if report_type == 'revenue' and line.amount > 0:
-                t = _('For revenue account %s, amount must be negative')
-                error = t % (line.account_id.code, )
-                errors.append(error)
-            if report_type == 'expense' and line.amount < 0:
-                t = _('For expense account %s, amount must be positive')
-                error = t % (line.account_id.code, )
-                errors.append(error)
-            if report_type == 'expense' and not line.partner_id.supplier:
-                t = _('For expense account %s, partner %s must be supplier')
-                error = t % (line.account_id.code, line.partner_id.name)
-                errors.append(error)
-            if report_type == 'revenue' and not line.partner_id.customer:
-                t = _('For expense account %s, partner %s must be customer')
-                error = t % (line.account_id.code, line.partner_id.name)
-                errors.append(error)
-        if errors:
-            message = '\n'.join(x for x in errors)
-            if len(message) > 1000:
-                message = message[:1000] + '......'
-            raise ValidationError(message)
-        else:
-            return True
+    # kittiu: Just get data from eHR, no vailidation required at this moment
+    # @api.multi
+    # def _validate_salary_line(self):
+    #     """ Rules:
+    #     - account_id must be regular and of type expense revenue
+    #     - if expense, amount must >= 0, if revenue, amout must <= 0
+    #     """
+    #     errors = []
+    #     for line in self.mapped('line_ids'):
+    #         if line.account_id.type != 'other':
+    #             t = _('Account %s is not of regular type')
+    #             error = t % (line.account_id.code, )
+    #             errors.append(error)
+    #         report_type = line.account_id.user_type.report_type
+    #         if report_type not in ('revenue', 'expense'):
+    #             t = _('Account %s is not of type Profit & Loss')
+    #             error = t % (line.account_id.code, )
+    #             errors.append(error)
+    #         if report_type == 'revenue' and line.amount > 0:
+    #             t = _('For revenue account %s, amount must be negative')
+    #             error = t % (line.account_id.code, )
+    #             errors.append(error)
+    #         if report_type == 'expense' and line.amount < 0:
+    #             t = _('For expense account %s, amount must be positive')
+    #             error = t % (line.account_id.code, )
+    #             errors.append(error)
+    #         if report_type == 'expense' and not line.partner_id.supplier:
+    #             t = _('For expense account %s, partner %s must be supplier')
+    #             error = t % (line.account_id.code, line.partner_id.name)
+    #             errors.append(error)
+    #         if report_type == 'revenue' and not line.partner_id.customer:
+    #             t = _('For expense account %s, partner %s must be customer')
+    #             error = t % (line.account_id.code, line.partner_id.name)
+    #             errors.append(error)
+    #     if errors:
+    #         message = '\n'.join(x for x in errors)
+    #         if len(message) > 1000:
+    #             message = message[:1000] + '......'
+    #         raise ValidationError(message)
+    #     else:
+    #         return True
 
     @api.multi
     def action_cancel_hook(self, moves=False):
@@ -207,7 +208,7 @@ class HRSalaryExpense(models.Model):
 
     @api.multi
     def action_submit(self):
-        self._validate_salary_line()
+        # self._validate_salary_line()
         self.write({'state': 'submit',
                     'date_submit': fields.Date.context_today(self),
                     'submit_user_id': self.env.user.id})
@@ -263,46 +264,22 @@ class HRSalaryExpense(models.Model):
         self.ensure_one()
         move_line_dict = []
         for line in self.line_ids:
-            # Src
-            src_line = self.move_line_get_item(line)  # Expense line
-            move_line_dict.append((0, 0, self.line_get_convert(src_line)))
-            # Dest
-            dest_line = src_line.copy()
-            dest_line['type'] = 'dest'
-            move_line_dict.append((0, 0, self.line_get_convert(dest_line)))
+            line_dict = self.move_line_get_item(line)  # Expense line
+            move_line_dict.append((0, 0, line_dict))
         return move_line_dict
 
     @api.model
     def move_line_get_item(self, line):
         return {
-            'type': 'src',
             'date': line.date,
             'name': line.name or '/',
             'partner_id': line.partner_id.id,
-            'price': line.amount,
             'account_id': line.account_id.id,
             'analytic_account_id': line.analytic_account_id.id,
-        }
-
-    @api.model
-    def line_get_convert(self, line):
-        partner = self.env['res.partner'].browse(line['partner_id'])
-        if line['type'] == 'dest':  # Receivable / Payable
-            if line['price'] < 0.0:
-                line['account_id'] = partner.property_account_receivable.id
-            else:
-                line['account_id'] = partner.property_account_payable.id
-            line['price'] = - line['price']  # contra
-            line['name'] = '/'
-            line['analytic_account_id'] = False
-        line.update({
             'date_maturity': line['date'],
-            'debit': line['price'] > 0 and line['price'],
-            'credit': line['price'] < 0 and -line['price'],
-            'account_id': line['account_id'],
-            'ref': line.get('ref', False),
-        })
-        return line
+            'debit': line.amount > 0 and line.amount,
+            'credit': line.amount < 0 and -line.amount,
+        }
 
     @api.multi
     @api.depends('move_id', 'move_id.line_id.reconcile_id')

@@ -7,7 +7,7 @@ import requests
 import ast
 import unicodecsv
 from openerp import models, api, fields, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import except_orm, ValidationError
 from .test_data import TEST_DATA
 
 
@@ -195,8 +195,7 @@ class HRSalaryExpense(models.Model):
             self.env['pabi.utils.xls'].import_csv(self._name, header,
                                                   csv_txt, csv_header=False)
         except KeyError, e:
-            raise ValidationError(_('Key Error: %s') % e)
+            raise except_orm(_('Key Error!'), e)
         except Exception, e:
-            raise ValidationError(
-                _('Error retrieve or loading data!\n%s') % e)
+            raise except_orm(_('Error retrieve or loading data!'), e)
         return True

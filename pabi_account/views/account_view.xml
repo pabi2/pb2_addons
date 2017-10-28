@@ -25,6 +25,9 @@
                 <field name="ref" position="attributes">
                     <attribute name="attrs">{'readonly': [('state', '=', 'posted')]}</attribute>
                 </field>
+                <field name="date" position="before">
+                    <field name="date_document"/>
+                </field>
                 <xpath expr="/form/notebook/page/field[@name='narration']" position="after">
                     <field name="line_item_summary" colspan="4" nolabel="1" invisible="1"/>
                 </xpath>

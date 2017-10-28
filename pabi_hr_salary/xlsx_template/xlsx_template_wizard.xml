@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <act_window id="action_hr_salary_expense_import_xlsx_tempalte"
+            name="Import Salary Data (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="hr.salary.expense"
+            view_mode="form"
+            target="new"/>
+
+    </data>
+</openerp>

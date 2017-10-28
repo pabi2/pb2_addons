@@ -6,7 +6,7 @@
             <field name="model">hr.salary.expense</field>
             <field name="inherit_id" ref="pabi_chartfield.view_hr_salary_expense_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
+                <xpath expr="//form/sheet/notebook/page[@name='detail']/field/tree/field[@name='analytic_account_id']" position="after">
                     <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree//field[@name='section_id']" position="attributes">

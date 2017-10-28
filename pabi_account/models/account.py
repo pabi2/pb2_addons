@@ -11,6 +11,16 @@ class AccountMove(models.Model):
         store=True,
         help="This field provide summary of items in move line with Qty."
     )
+    date = fields.Date(
+        string='Account Date',  # Rename
+    )
+    date_document = fields.Date(
+        string='Document Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+        default=lambda self: fields.Date.context_today(self),
+    )
 
     @api.multi
     def _write(self, vals):

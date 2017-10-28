@@ -190,6 +190,7 @@ class PABIUtilsXLS(models.AbstractModel):
             for column in extra_columns:
                 _HEADER_FIELDS.insert(0, str(column[0]))
                 file_txt = self._add_column(column[0], column[1], file_txt)
+        print file_txt
         return (_HEADER_FIELDS, file_txt)
 
     @api.model
@@ -198,7 +199,7 @@ class PABIUtilsXLS(models.AbstractModel):
         if not know, just get value  as is """
         value = False
         datemode = 0  # From book.datemode, but we fix it for simplicity
-        if field_type in ('date', 'datetime'):
+        if field_type in ['date', 'datetime']:
             ctype = ctype_text.get(cell.ctype, 'unknown type')
             if ctype == 'number':
                 time_tuple = xlrd.xldate_as_tuple(cell.value, datemode)
@@ -209,16 +210,34 @@ class PABIUtilsXLS(models.AbstractModel):
                     value = date.strftime("%Y-%m-%d %H:%M:%S")
             else:
                 value = cell.value
-        elif field_type in ('integer', 'float'):
+        elif field_type in ['integer', 'float']:
             value_str = str(cell.value).strip().replace(',', '')
             if len(value_str) == 0:
                 value = ''
-            elif field_type == 'integer':
-                value = int(float(value_str))
-            elif field_type == 'float':
-                value = float(value_str)
+            elif value_str.replace('.', '', 1).isdigit():  # Is number
+                if field_type == 'integer':
+                    value = int(float(value_str))
+                elif field_type == 'float':
+                    value = float(value_str)
+            else:  # Is string, no conversion
+                value = value_str
+        elif field_type in ['many2one']:
+            # If number, change to string
+            if isinstance(cell.value, (int, long, float, complex)):
+                value = str(cell.value)
+            else:
+                value = cell.value
         else:
             value = cell.value
+        # If string, cleanup
+        if isinstance(value, str):
+            value = value.encode('utf-8')
+            if value[-2:] == '.0':
+                value = value[:-2]
+        # Except boolean, when no value, we should return as ''
+        if field_type not in ['boolean']:
+            if not value:
+                value = ''
         return value
 
         # if type == 'empty' or type == 'text' \
