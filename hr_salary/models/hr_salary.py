@@ -241,8 +241,11 @@ class HRSalaryExpense(models.Model):
 
     @api.multi
     def action_open(self):
-        self.action_move_create()
-        self.write({'state': 'open'})
+        for rec in self:
+            if rec.state == 'open':  # already opened, do nothing
+                continue
+            rec.action_move_create()
+            rec.state = 'open'
         return True
 
     @api.multi
