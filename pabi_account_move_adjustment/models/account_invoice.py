@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -13,3 +14,14 @@ class AccountInvoice(models.Model):
         ondelete='restrict',
         copy=False,
     )
+
+    @api.multi
+    def action_open_adjust_journal(self):
+        self.ensure_one()
+        action = self.env.ref('pabi_account_move_adjustment.'
+                              'action_journal_adjust_no_budget')
+        if not action:
+            raise ValidationError(_('No Action'))
+        res = action.read([])[0]
+        res['domain'] = [('id', '=', self.adjust_move_id.id)]
+        return res

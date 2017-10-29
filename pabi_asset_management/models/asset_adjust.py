@@ -88,7 +88,8 @@ class AccountAssetAdjust(models.Model):
         'account.invoice',
         string='Ref Supplier Invoice',
         domain=[('type', '=', 'in_invoice'),
-                ('state', 'in', ('open', 'paid'))],
+                ('state', 'in', ('open', 'paid')),
+                ('asset_adjust_id', '=', False)],
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -205,6 +206,13 @@ class AccountAssetAdjust(models.Model):
                 rec.adjust_expense_to_asset()
             if not rec.date_approve:
                 rec.date_approve = fields.Date.context_today(self)
+            # Reference invoice back
+            if rec.invoice_id:
+                if rec.invoice_id.asset_adjust_id:
+                    raise ValidationError(
+                        _('Asset adjustment for %s already created!') %
+                        rec.invoice_id.number)
+                rec.invoice_id.asset_adjust_id = rec
         self.write({'state': 'done'})
 
     @api.multi

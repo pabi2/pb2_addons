@@ -39,6 +39,9 @@ class CreateAssetAdjustWizard(models.TransientModel):
         if invoice.state not in ('open', 'paid'):
             raise ValidationError(
                 _('Only open invoice allowed!'))
+        if invoice.asset_adjust_id:
+            raise ValidationError(
+                _('The asset adjustment already created!'))
 
     @api.multi
     def _validate(self):
