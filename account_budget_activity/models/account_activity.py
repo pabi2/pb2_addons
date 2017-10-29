@@ -22,6 +22,11 @@ class AccountActivityGroup(models.Model):
         string='Activity Group',
         required=True,
     )
+    code = fields.Char(
+        string='Code',
+        size=10,
+        required=True,
+    )
     description = fields.Char(
         string='Description',
     )
@@ -122,6 +127,11 @@ class AccountActivity(models.Model):
     )
     name = fields.Char(
         string='Activity',
+        required=True,
+    )
+    code = fields.Char(
+        string='Code',
+        size=10,
         required=True,
     )
     account_id = fields.Many2one(
