@@ -124,7 +124,9 @@
             <field name="inherit_id" ref="l10n_th_fields.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='buttons']" position="inside">
-                    <button class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text" context="{'default_partner_id': partner_id, 'default_payment_type': payment_type}">
+                    <button class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text"
+                      attrs="{'invisible': [('payment_count', '=', 0)]}"
+                      context="{'default_partner_id': partner_id, 'default_payment_type': payment_type}">
                         <field string="Payments" name="payment_count" widget="statinfo"/>
                     </button>
                 </xpath>
