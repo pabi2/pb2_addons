@@ -24,7 +24,7 @@ class PabiAsync(object):
         elif type in ['always', 'mytask']:
             jobs = self._get_running_jobs(task_name, type)
             if not jobs:
-                raise ValidationError(_('Something wrong, jot not created!'))
+                raise ValidationError(_('Something wrong, job not created!'))
             if len(jobs) == 1:  # 1 Job ok, we can commit. Else, not create.
                 self._cr.commit()
         # Show RedirectWarning Message
@@ -37,7 +37,6 @@ class PabiAsync(object):
 
     @api.model
     def _get_running_jobs(self, task_name, type):
-
         dom = [('func_string', 'like', task_name),
                ('state', 'not in', ('done', 'failed'))]
         if type == 'always':
