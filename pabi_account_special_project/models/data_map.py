@@ -2,7 +2,7 @@
 from openerp import models, fields, api, _
 
 
-class PABIDataMapType(models.TransientModel):
+class PABIDataMapType(models.Model):
     _inherit = 'pabi.data.map.type'
 
     # Add new type wil lbe used specifically for this addon

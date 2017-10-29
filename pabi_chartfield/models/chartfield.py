@@ -364,10 +364,10 @@ class HeaderTaxBranch(object):
     def _set_taxbranch_ids(self, lines):
         taxbranch_ids = list(set([x.taxbranch_id.id
                                   for x in lines if x.taxbranch_id]))
+        self.len_taxbranch = len(taxbranch_ids)
         if not taxbranch_ids:  # If not tax branch at all, allow manual select
             taxbranch_ids = self.env['res.taxbranch'].search([]).ids
         self.taxbranch_ids = taxbranch_ids
-        self.len_taxbranch = len(taxbranch_ids)
 
     def _set_header_taxbranch_id(self):
         if len(self.taxbranch_ids) == 1:
