@@ -19,19 +19,13 @@
               {
                 '__IMPORT__': {
                     1: {
-                        '_HEAD_': {
-                            'B2': 'date_document',
-                            'C2': 'date',
-                            'D2': 'ref',
-                        },
                         'line_id': {
                             'A2': 'sequence',
-                            'E2': 'name',
-                            # Following will be different for each Special Project
-                            'F2': 'account_id${env["pabi.data.map"].get_in_value(context.get("map_type"), "account.account", "code", value)}',
-                            'H2': 'section_id',
-                            'I2': 'debit',
-                            'J2': 'credit',
+                            'B2': 'name',
+                            'C2': 'account_id${env["pabi.data.map"].get_in_value(context.get("map_type"), "account.account", "code", value)}',
+                            'D2': 'section_id',
+                            'E2': 'debit',
+                            'F2': 'credit',
                         }
                     }
                 },
