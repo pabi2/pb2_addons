@@ -46,10 +46,11 @@ class HRSalaryExpense(PabiAsync, models.TransientModel):
 
     @api.multi
     def action_open(self):
+        self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
             return super(HRSalaryExpense, self).action_open()
         # Enqueue
-        if self.async_process:
+        if self.async_process and self.state != 'open':
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Generate Entries - Salary Expense %s' % self.number
             action_open_hr_salary.delay(session, self._name, self.id,
