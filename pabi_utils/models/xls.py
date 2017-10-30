@@ -2,15 +2,13 @@
 import StringIO
 import csv
 import base64
-import os
 import xlrd
 import uuid
 import re
 import string
-import time
 from xlrd.sheet import ctype_text
 import unicodecsv
-from datetime import datetime, timedelta
+from datetime import datetime
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
 

@@ -47,6 +47,7 @@
                             <field name="to_be_reversed"/>
                             <field name="reversal_id" attrs="{'invisible': [('to_be_reversed', '=', False), ('reversal_id', '=', False)]}"/>
                             <field name="doctype"/>
+                            <field name="document_id"/>
                         </group>
                         <group>
                             <field name="ref"/>

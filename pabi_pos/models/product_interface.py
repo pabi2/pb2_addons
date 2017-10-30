@@ -13,7 +13,9 @@ class ProductProduct(models.Model):
         return res
 
     @api.model
-    def _get_product_count_by_loc(self, location_id, product_ids=[]):
+    def _get_product_count_by_loc(self, location_id, product_ids=None):
+        if product_ids is None:
+            product_ids = []
         """ return dict of product count by location,
         i.e., [{'product_id': 5378, 'product_qty': -24.0}, {...}] """
         domain = ' location_id = %s'
@@ -32,7 +34,9 @@ class ProductProduct(models.Model):
         return vals
 
     @api.model
-    def get_pos_product_count(self, pos_name, product_names=[]):
+    def get_pos_product_count(self, pos_name, product_names=None):
+        if product_names is None:
+            product_names = []
         WorkflowProcess = self.env['sale.workflow.process']
         pos = WorkflowProcess.search([('name', '=', pos_name)], limit=1)
         warehouse = pos.warehouse_id

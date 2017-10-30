@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import io
 import itertools
 import base64
 import cStringIO
@@ -7,11 +6,8 @@ import string
 import re
 from xlrd import open_workbook
 from xlwt import Formula
-from xlutils.copy import copy
 from xlutils.filter import process, XLRDReader, XLWTWriter
 import openpyxl
-from openpyxl import Workbook
-from openpyxl.worksheet.datavalidation import DataValidation
 
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError

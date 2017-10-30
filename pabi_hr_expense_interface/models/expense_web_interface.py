@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
-import xmlrpclib
 
 
 class HRExpense(models.Model):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+# from openerp import models, api
 
 
 # THIS MAY NEED TO BE MODIFIED, AS WE CHANGED MODEL ALREADY

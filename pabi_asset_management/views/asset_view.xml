@@ -66,8 +66,9 @@
             <field name="name">account.asset.tree</field>
             <field name="model">account.asset</field>
             <field name="type">tree</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
-                <tree string="Assets" create="1" colors="blue:(type == 'view')">
+                <tree string="Assets" create="0" colors="blue:(type == 'view')">
                     <field name="type" invisible="1"/>
                     <field name="code"/>
                     <field name="name"/>
@@ -353,10 +354,10 @@
                     <field name="code"/>
                     <field name="type" invisible="1"/>
                     <field name="parent_type" invisible="1"/>
-                    <field name="create_uid"/>
                     <field name="project_id"/>
                     <field name="section_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="create_uid"/>
                     <field name="state" />
                 </tree>
             </field>

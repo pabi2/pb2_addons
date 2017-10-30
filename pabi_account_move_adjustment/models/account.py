@@ -67,6 +67,7 @@ class AccountMove(models.Model):
                 raise ValidationError(_('Please fill Tax Detail!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
+            # Only direct creation of account move, we will recompute dimension
             if self._context.get('direct_create', False) and \
                     move.doctype == 'adjustment':
                 # if move.doctype == 'adjustment':

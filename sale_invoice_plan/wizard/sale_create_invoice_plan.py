@@ -62,7 +62,6 @@ class sale_create_invoice_plan(models.TransientModel):
 
     @api.model
     def _validate_total_amount(self):
-        return True
         obj_precision = self.env['decimal.precision']
         prec = obj_precision.precision_get('Account')
         amount_total = sum([x.installment > 0 and x.amount or

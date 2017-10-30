@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import ast
-from openerp import models, fields, api
+from openerp import models, api
 
 
 class AccountMoveReverse(models.TransientModel):

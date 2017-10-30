@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-import time
-from openerp.tools import float_compare
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
-from openerp.addons.pabi_chartfield.models.chartfield import \
-    CHART_VIEW_LIST, ChartField
 
 
 class BudgetAllocation(models.Model):

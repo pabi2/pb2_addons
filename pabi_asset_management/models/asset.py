@@ -50,6 +50,10 @@ class AccountAsset(ChartFieldAction, models.Model):
         readonly=False,
         states={},  # Always editable
     )
+    parent_id = fields.Many2one(
+        readonly=False,
+        states={},  # Procurement team want it to always editable.
+    )
     type = fields.Selection(
         # Need this way of doing default, because default_type in context will
         # cause problem compute depreciation table, it set line type wrongly
@@ -431,7 +435,6 @@ class AccountAsset(ChartFieldAction, models.Model):
         result = action.read()[0]
         assets = self.with_context(active_test=False).\
             search([('id', 'in', self.child_ids.ids)])
-        print assets
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom, 'context': {'active_test': False}})
         return result

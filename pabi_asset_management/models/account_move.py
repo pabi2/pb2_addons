@@ -62,14 +62,14 @@ class AccountMoveLine(models.Model):
                          'num_installment': num_installment,
                          })
         # --
-        # if not (vals['section_id'] or vals['project_id'] or
-        #         vals['invest_asset_id'] or
-        #         vals['invest_construction_phase_id']):
-        #     raise ValidationError(
-        #         _('Source of budget is not specified!'))
-        # if not (vals['owner_section_id'] or vals['owner_project_id']):
-        #     raise ValidationError(
-        #         _('Project/Section owner of asset not specified!'))
+        if not (vals['section_id'] or vals['project_id'] or
+                vals['invest_asset_id'] or
+                vals['invest_construction_phase_id']):
+            raise ValidationError(
+                _('Source of budget is not specified!'))
+        if not (vals['owner_section_id'] or vals['owner_project_id']):
+            raise ValidationError(
+                _('Project/Section owner of asset not specified!'))
         return vals
 
     @api.model
