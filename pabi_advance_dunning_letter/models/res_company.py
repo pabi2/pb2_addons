@@ -9,7 +9,7 @@ class ResCompany(models.Model):
         string='Group Email',
         default='acf-adv@nstda.or.th',
     )
-    head_accounting_id = fields.Many2one(
+    head_account_employee_id = fields.Many2one(
         'hr.employee',
         string='Head Accounting',
     )

@@ -6,7 +6,7 @@
         <record id="email_template_edi_5_due_days" model="email.template">
             <field name="name">Expense clearning - 5 Days to Due Reminder</field>
             <field name="email_from">${(object.company_id.email or 'noreply@localhost')|safe}</field>
-            <field name="subject">เรื่อง จดหมายแจ้งวันครบกําหนดเงินยืม ก่อนวัน due 5 วัน</field>
+            <field name="subject">เรื่อง จดหมายแจ้งวันครบกําหนดเงินยืม ก่อนวันครบกำหนด 5 วัน</field>
             <field name="partner_to"></field>
             <field name="email_to"></field>
             <field name="model_id" ref="pabi_advance_dunning_letter.model_hr_expense_expense"/>
@@ -16,19 +16,18 @@
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
-    <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} </span> <span style="float: right;">รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
+    <p> <span>เรียน ${object.employee_id.title_id.name} ${object.employee_id.first_name} ${object.employee_id.last_name} รหัสพนักงาน ${object.employee_id.employee_code}</span></p>
     <p style="text-indent: 25px;">
-        จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ  ${object.date} ปรากฎว่าท่านมี
-    </p>
-    <p>รายการเงินยืมทดรองจ่ายที่ใกล้ครบกําหนดหักล้าง ดังต่อไปนี้ - ${"%.2f" | format(object.amount_to_clearing)} </p>
-    <p style="text-indent: 25px;">
-       จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินฯ เพื่อหักล้างเงินยืม ของท่านโดยด่วน
+        จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ วันที่ ${datetime.datetime.today().strftime('%Y-%m-%d') | format_date('%d %B %Ey', lc='th_TH')} ปรากฎว่าท่านมีรายการเงินยืมทดรองจ่ายที่ใกล้ครบกําหนดหักล้าง เป็นยอดเงินยืมคงค้าง ${'{:,.2f}'.format(object.amount_to_clearing)} บาท
     </p>
     <p style="text-indent: 25px;">
-        กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันที่ในเอกสาร หรือ Email นี้แล้วฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้
+       จึงขอให้ท่านดําเนินการจัดส่งเอกสารและเงินเหลือจ่าย (ถ้ามี) ดังกล่าวให้กับฝ่ายการเงินและบัญชี เพื่อหักล้างเงินยืมของท่านโดยด่วน
+    </p>
+    <p style="text-indent: 25px;">
+        กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันที่ในเอกสาร หรือ Email นี้แล้ว ฝ่ายการเงินและบัญชีต้องขออภัยมา ณ ที่นี้
     </p>
     <p>
-        <div style="text-align: right;">ฝ่ายการเงินและบัญชี สวทช.</div>
+        <div style="text-align: right;">ฝ่ายการเงินและบัญชี</div>
     </p>
 </div>
             ]]></field>
