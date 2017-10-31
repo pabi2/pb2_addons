@@ -170,13 +170,14 @@ class PABIAdvanceDunningLetter(models.Model):
                 'cc_employee_ids': cc_employee_ids,
             })
         if due_type == '3':
-            head_accounting = self.env.user.company_id.head_accounting_id
+            head_account_employee = \
+                self.env.user.company_id.head_account_employee_id
             if supervisor_id:
                 to_employee_ids.append(supervisor_id)
             if second_supervisor_id:
                 to_employee_ids.append(second_supervisor_id)
-            if head_accounting:
-                cc_employee_ids.append(head_accounting.id)
+            if head_account_employee:
+                cc_employee_ids.append(head_account_employee.id)
             line.update({
                 'to_employee_ids': to_employee_ids,
                 'cc_employee_ids': cc_employee_ids,

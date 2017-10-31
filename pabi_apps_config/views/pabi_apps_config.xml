@@ -154,7 +154,7 @@
                             </div>
                             <div>
                               <label string="Head Accounting"/>
-                              <field name="head_accounting_id" class="oe_inline"/>
+                              <field name="head_account_employee_id" class="oe_inline"/>
                             </div>
                         </div>
                     </group>

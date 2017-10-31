@@ -123,8 +123,8 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Group Email',
         related='company_id.group_email',
     )
-    head_accounting_id = fields.Many2one(
+    head_account_employee_id = fields.Many2one(
         'hr.employee',
         string='Head Accounting',
-        related='company_id.head_accounting_id',
+        related='company_id.head_account_employee_id',
     )
