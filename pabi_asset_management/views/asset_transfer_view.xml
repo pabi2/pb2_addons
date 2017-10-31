@@ -28,6 +28,7 @@
             <field name="arch" type="xml">
                 <search string="Assets">
                     <filter string="Active Assets" name="active_asset" domain="[('state', '=', 'open'), ('active', '=', True)]"/>
+                    <field name="all_purchase" filter_domain="['|', ('purchase_id','ilike', self), ('adjust_id.invoice_id.expense_id.ship_purchase_id.name','ilike', self)]"/>
                     <separator/>
                     <filter string="Normal" name="normal" domain="[('type', '!=', 'view'), ('profile_type', '=', 'normal'), ('active', '=', True)]"/>
                     <filter string="AIT" name="ait" domain="[('type', '!=', 'view'), ('profile_type', '=', 'ait'), ('active', '=', True)]"/>
