@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_loan_installment_menu" name="Loan Installments" parent="account.menu_finance" sequence="4" groups="account.group_account_user"/>
+
+        # Loan Installment
+        <record id="view_loan_installment_filter" model="ir.ui.view">
+            <field name="name">view.loan.installment.filter</field>
+            <field name="model">loan.installment</field>
+            <field name="arch" type="xml">
+                <search string="Search Bank Loan Installment">
+                    <field name="name"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Partner" domain="[]" context="{'group_by':'partner'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_loan_installment_tree">
+            <field name="name">view.loan.installment.tree</field>
+            <field name="model">loan.installment</field>
+            <field name="arch" type="xml">
+                <tree string="Loan Installment" colors="blue:state == 'draft';black:state not in ('draft','cancel');gray:state == 'cancel'">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="amount_receivable"/>
+                    <field name="amount_income"/>
+                    <field name="amount_loan_total"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_loan_installment_move_line_filter" model="ir.ui.view">
+            <field name="name">view.loan.installment.move.linefilter</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Receivable">
+                    <field name="ref"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Account" domain="[]" context="{'group_by':'account_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_loan_installment_move_line_tree">
+            <field name="name">view.loan.installment.move.linetree</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="period_id" readonly="1"/>
+                    <field name="date" readonly="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="ref" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="account_id" readonly="1"/>
+                    <field name="debit" sum="Total Debit" readonly="1"/>
+                    <field name="credit" sum="Total Credit" readonly="1"/>
+                    <field name="reconcile_id" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_loan_installment_form">
+            <field name="name">view.loan.installment.form</field>
+            <field name="model">loan.installment</field>
+            <field name="arch" type="xml">
+                <form string="Loan Installment">
+                    <header>
+                        <button name="action_move_create" string="Convert to Loan" states="draft" type="object" class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" type="object" states="open"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,order,paid"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <label string="Number"/>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="open_account_move" attrs="{'invisible': [('move_id', '=', False)]}">
+                                <field name="move_name" widget="statinfo"/>
+                                <field name="move_id" invisible="1"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id"/>
+                                <field name="journal_id"/>
+                                <field name="account_id"/>
+                                <hr colspan="2"/>
+                                <label for="amount_receivable"/>
+                                <div>
+                                    <h3><field name="amount_receivable"/></h3>
+                                </div>
+                                <label for="amount_income"/>
+                                <div>
+                                    <h3><field name="amount_income"/></h3>
+                                </div>
+                                <label for="amount_loan_total"/>
+                                <div>
+                                    <h2><field name="amount_loan_total"/></h2>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="date" string="Document Date"/>
+                                <field name="date_start"/>
+                                <field name="period_type"/>
+                                <field name="consider_month_end"/>
+                                <field name="period_nbr"/>
+                                <field name="period_total"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Trade Receivables">
+                                <field
+                                    name="receivable_ids"
+                                    nolabel="1"
+                                    context="{'tree_view_ref': 'pabi_loan_installment.view_loan_installment_move_line_tree',
+                                            'search_view_ref': 'pabi_loan_installment.view_loan_installment_move_line_filter'}">
+                                    <tree editable="bottom">
+                                        <field name="period_id" readonly="1"/>
+                                        <field name="date" readonly="1"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="ref" readonly="1"/>
+                                        <field name="partner_id" readonly="1"/>
+                                        <field name="account_id" readonly="1"/>
+                                        <field name="debit" sum="Total Debit" readonly="1"/>
+                                        <field name="credit" sum="Total Credit" readonly="1"/>
+                                        <field name="reconcile_id" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Additional Income">
+                                <field name="income_ids" nolabel="1">
+                                    <tree editable="bottom">
+
+                                        <field name="require_chartfield" invisible="1"/>
+                                        <field name="activity_group_id"/>
+                                        <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
+
+                                        <field name="account_id"/>
+                                        <field name="name"/>
+                                        <!-- Chartfields -->
+                                        <field
+                                            name="project_id"
+                                            invisible="1"
+                                            attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                                            ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                                            ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                                        <field
+                                            name="section_id"
+                                            invisible="0"
+                                            attrs="{'required': [('project_id','=',False),('invest_asset_id','=',False),
+                                            ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                                            ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                                        <field
+                                            name="invest_asset_id"
+                                            invisible="1"
+                                            attrs="{'required': [('section_id','=',False),('project_id','=',False),
+                                            ('invest_construction_phase_id','=',False),('personnel_costcenter_id','=',False),
+                                            ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                                        <field
+                                            name="invest_construction_phase_id"
+                                            invisible="1"
+                                            attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                                            ('project_id','=',False),('personnel_costcenter_id','=',False),
+                                            ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                                        <field
+                                            name="personnel_costcenter_id"
+                                            invisible="1"
+                                            attrs="{'required': [('section_id','=',False),('invest_asset_id','=',False),
+                                            ('invest_construction_phase_id','=',False),('project_id','=',False),
+                                            ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                                        <field name="fund_id"/>
+                                        <field name="cost_control_id"/>
+                                        <!-- -->
+                                        <field name="analytic_account_id" invisible="1"/>
+                                        <field name="amount" sum="Total Amount"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Installment Plan">
+                                <group>
+                                    <group>
+                                        <label for="rate_type"/>
+                                        <div>
+                                            <field name="rate_type" class="oe_inline"/>
+                                            =
+                                            <field name="rate" class="oe_inline" nolabel="1"/>
+                                        </div>
+                                        <field name="rate_err_message" attrs="{'invisible': [('rate_err_message', '=', False)]}" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <button name="calculate_installment" states="draft" string="Calculate" type="object" icon="terp-stock_format-scientific"/>
+                                    </group>
+                                </group>
+                                <field name="installment_ids">
+                                    <tree editable="bottom">
+                                        <field name="installment" string="#"/>
+                                        <field name="date_start" string="Installment Date"/>
+                                        <field name="date_end" invisible="1"/>
+                                        <field name="days" sum="Total Days"/>
+                                        <field name="income" sum="Total Income"/>
+                                        <field name="amount" sum="Total Amount"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_loan_installment" model="ir.actions.act_window">
+            <field name="name">Loan Installment</field>
+            <field name="res_model">loan.installment</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to register a new Loan Installment.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_loan_installment_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_loan_installment_tree"/>
+            <field name="act_window_id" ref="action_loan_installment"/>
+        </record>
+        <record id="action_loan_installment_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_loan_installment_form"/>
+            <field name="act_window_id" ref="action_loan_installment"/>
+        </record>
+
+        <menuitem action="action_loan_installment" sequence="1" id="menu_loan_installment" parent="menu_loan_installment_menu"/>
+    </data>
+</openerp>

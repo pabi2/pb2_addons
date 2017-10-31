@@ -128,3 +128,9 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Head Accounting',
         related='company_id.head_accounting_id',
     )
+    # Loan Installment
+    loan_installment_account_id = fields.Many2one(
+        'account.account',
+        string='Loan Installment Account',
+        related="company_id.loan_installment_account_id",
+    )
