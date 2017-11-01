@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
-from openerp import SUPERUSER_ID
-from openerp.api import Environment
 
 
 class AccountPeriod(models.Model):

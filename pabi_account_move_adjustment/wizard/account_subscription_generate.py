@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from openerp import models, fields, api, _
+from openerp import models, api, _
 
 
 class AccountSubscriptionGenerate(models.TransientModel):

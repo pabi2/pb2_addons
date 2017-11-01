@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-from openerp import models, api, fields, _
+from openerp import models, api
 
 
 class ExtendSearch(object):

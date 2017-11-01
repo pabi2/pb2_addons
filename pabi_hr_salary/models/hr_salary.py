@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import time
 import base64
 import openerp
 from openerp import tools

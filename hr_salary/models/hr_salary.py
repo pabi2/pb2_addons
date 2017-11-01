@@ -298,7 +298,7 @@ class HRSalaryExpense(models.Model):
         }
 
     @api.multi
-    @api.depends('move_id', 'move_id.line_id.reconcile_id')
+    @api.depends('move_id.line_id.reconcile_id')
     def _compute_is_paid(self):
         MoveLine = self.env['account.move.line']
         account_types = ['receivable', 'payable']

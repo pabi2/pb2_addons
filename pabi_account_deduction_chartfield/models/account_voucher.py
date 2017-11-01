@@ -4,7 +4,6 @@ from openerp.addons.account_budget_activity_rpt.models.account_activity \
     import ActivityCommon
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
-from openerp.exceptions import ValidationError
 
 
 class AccuontVoucherMultipleReconcile(ActivityCommon,

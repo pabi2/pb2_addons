@@ -3,17 +3,12 @@ from ast import literal_eval
 import base64
 import xlrd
 import xlwt
-import string
-import re
 import itertools
 import cStringIO
 import time
-import datetime
-import dateutil
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval as eval
-from openerp import workflow
 
 
 def get_field_condition(field):

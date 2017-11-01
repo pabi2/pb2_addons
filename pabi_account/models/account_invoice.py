@@ -4,7 +4,6 @@ from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
-import time
 
 
 class AccountInvoice(models.Model):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield import CHART_VIEW_LIST

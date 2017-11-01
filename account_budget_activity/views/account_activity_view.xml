@@ -100,7 +100,7 @@
             <field name="model">account.activity</field>
             <field name="arch" type="xml">
                 <search string="Activity">
-                    <field name="name" filter_domain="['|', '|', '('name','ilike',self), ('code','ilike',self), ('search_keywords','ilike',self)]" string="Activity"/>
+                    <field name="name" filter_domain="['|', '|', ('name','ilike',self), ('code','ilike',self), ('search_keywords','ilike',self)]" string="Activity"/>
                     <field name="activity_group_ids" filter_domain="[('activity_group_ids', 'child_of', self)]"/>
                 </search>
             </field>

@@ -156,8 +156,8 @@
                                 <group>
                                     <label for="to_be_reversed"/>
                                     <div>
-                                      <field name="to_be_reversed" class="oe_inline"/>
-                                      <field name="reverse_type" class="oe_inline" attrs="{'invisible': [('to_be_reversed', '=', False)]}"/>
+                                        <field name="to_be_reversed" class="oe_inline"/>
+                                        <field name="reverse_type" class="oe_inline" attrs="{'invisible': [('to_be_reversed', '=', False)]}"/>
                                     </div>
                                 </group>
                             </group>

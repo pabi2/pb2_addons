@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="seq_type_loan_installment" model="ir.sequence.type">
+            <field name="name">Loan Installment</field>
+            <field name="code">loan.installment</field>
+        </record>
+
+        <record id="seq_loan_installment" model="ir.sequence">
+            <field name="name">Loan Installment</field>
+            <field name="code">loan.installment</field>
+            <field name="prefix">LI</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</openerp>

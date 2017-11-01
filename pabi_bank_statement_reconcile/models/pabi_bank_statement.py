@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 

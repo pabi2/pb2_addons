@@ -158,6 +158,28 @@
                             </div>
                         </div>
                     </group>
+                    <!-- Loan Installment -->
+                    <separator string="Loan Installment"/>
+                    <group>
+                        <label for="id" string="Loan Installment Account"/>
+                        <div>
+                            <div>
+                              <field name="loan_installment_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                        <label for="id" string="Defer Income Account"/>
+                        <div>
+                            <div>
+                              <field name="loan_defer_income_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                        <label for="id" string="Income Account"/>
+                        <div>
+                            <div>
+                              <field name="loan_income_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
                 </form>
             </field>
         </record>

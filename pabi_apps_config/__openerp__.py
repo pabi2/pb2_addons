@@ -23,6 +23,7 @@ This module sits on top of other modules whose configuration is moved here.
 * pabi_ar_late_payment_penalty
 * pabi_loan_receivable
 * pabi_advance_dunning_letter
+* pabi_loan_installment
 
     """,
     "website": "https://ecosoft.co.th/",

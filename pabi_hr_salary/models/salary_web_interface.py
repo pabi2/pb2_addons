@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import StringIO
-import csv
 import base64
-import xmlrpclib
 import requests
 import ast
 import unicodecsv
 from openerp import models, api, fields, _
 from openerp.exceptions import except_orm, ValidationError
-from .test_data import TEST_DATA
+# from .test_data import TEST_DATA
 
 
 class HRSalaryExpense(models.Model):

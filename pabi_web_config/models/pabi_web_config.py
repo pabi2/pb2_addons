@@ -2,8 +2,7 @@
 import requests
 import xmlrpclib
 import ast
-from openerp import fields, models, api, _
-from openerp.exceptions import ValidationError
+from openerp import fields, models, api
 
 
 class PABIWebConfigSettings(models.TransientModel):

@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-import ast
 import re
 import base64
 
 import openerp
 from openerp import models, fields, api, _
-from openerp.exceptions import RedirectWarning, Warning as UserError
 from ..models.common import PabiAsync
 
-from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import FailedJobError
 

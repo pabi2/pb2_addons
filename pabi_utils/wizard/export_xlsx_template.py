@@ -3,9 +3,8 @@ import os
 import openpyxl
 import base64
 import cStringIO
-import re
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from ast import literal_eval
 
 from openerp import models, fields, api, _

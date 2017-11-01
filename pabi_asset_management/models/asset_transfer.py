@@ -258,6 +258,8 @@ class AccountAssetTransfer(models.Model):
             raise ValidationError(
                 _('When transfer to new asset, all selected '
                   'assets must belong to same owner!'))
+        new_owner = {'owner_project_id': project.id,
+                     'owner_section_id': section.id}
         # Purchase method, when mixed -> อื่นๆ (asset_purchase_method_11)
         purchase_methods = self.asset_ids.mapped('asset_purchase_method_id')
         new_purchase_method = (len(purchase_methods) == 1 and
@@ -269,7 +271,9 @@ class AccountAssetTransfer(models.Model):
             Asset._prepare_asset_reverse_moves(self.asset_ids)
         # Create move line for target asset
         new_asset_move_line_dict = \
-            Asset._prepare_asset_target_move(asset_move_lines_dict)
+            Asset._prepare_asset_target_move(asset_move_lines_dict,
+                                             new_owner=new_owner)
+        print new_asset_move_line_dict
         new_asset_ids = []
         count = len(self.target_asset_ids)
         total_depre = sum([x['debit'] for x in depre_move_lines])
@@ -330,9 +334,9 @@ class AccountAssetTransfer(models.Model):
                          'period_id': period.id,
                          'date': self.date,
                          'ref': self.name}
-            move = AccountMove.\
-                with_context(asset_purchase_method_id=new_purchase_method.id).\
-                create(move_dict)
+            ctx = {'asset_purchase_method_id': new_purchase_method.id,
+                   'direct_create': False}  # direct_create to recalc dimension
+            move = AccountMove.with_context(ctx).create(move_dict)
             # For transfer, new asset should be created
             asset = move.line_id.mapped('asset_id')
             if len(asset) != 1:

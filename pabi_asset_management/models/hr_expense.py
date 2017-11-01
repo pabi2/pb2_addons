@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 
 
 class HRExpense(models.Model):
@@ -25,3 +25,10 @@ class HRExpense(models.Model):
     @api.onchange('ship_expense')
     def _onchange_ship_expense(self):
         self.ship_purchase_id = False
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        if self._context.get('asset_sudo_search', False):
+            self = self.sudo()
+        return super(HRExpense, self).search(args, offset=offset, limit=limit,
+                                             order=order, count=count)
