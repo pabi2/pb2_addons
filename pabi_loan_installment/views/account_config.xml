@@ -11,10 +11,12 @@
                     <separator string="Loan Installment"/>
                     <group name="loan_installment">
                         <field name="loan_installment_account_id" class="oe_inline"/>
+                        <field name="loan_defer_income_account_id" class="oe_inline"/>
+                        <field name="loan_income_account_id" class="oe_inline"/>
                     </group>
                 </field>
             </field>
         </record>
-        
+
     </data>
 </openerp>

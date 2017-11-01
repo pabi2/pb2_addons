@@ -9,3 +9,15 @@ class ResCompany(models.Model):
         'account.account',
         string='Locan Installment Account',
     )
+    loan_defer_income_account_id = fields.Many2one(
+        'account.account',
+        string='Income Account',
+        domain=[('type', '=', 'other'),
+                ('user_type.report_type', '=', 'liability')],
+    )
+    loan_income_account_id = fields.Many2one(
+        'account.account',
+        string='Income Account',
+        domain=[('type', '=', 'other'),
+                ('user_type.report_type', '=', 'income')],
+    )

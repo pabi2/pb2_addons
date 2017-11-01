@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <act_window
+          id="action_loan_create_payment"
+          name="Create Payment"
+          src_model="loan.installment"
+          res_model="loan.create.payment.wizard"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"
+          />
+
+        <record id="wizard_loan_create_payment" model="ir.ui.view">
+            <field name="name">wizard.loan.create.payment</field>
+            <field name="model">loan.create.payment.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Create Payment">
+                    <p>New Payment will be created with following information.</p>
+                    <group>
+                        <group name="partner">
+                            <field name="partner_id"/>
+                        </group>
+                        <group name="extra">
+                            <field name="installment_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <br/><br/><br/>
+                    <footer>
+                        <button name="action_create_payment" type="object" string="Create Payment" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

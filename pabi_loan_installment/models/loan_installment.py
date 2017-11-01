@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
+import ast
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
-from openerp.addons.account_budget_activity_rpt.models.account_activity \
-    import ActivityCommon
-from openerp.addons.pabi_chartfield.models.chartfield \
-    import ChartFieldAction
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 
@@ -50,13 +47,13 @@ class LoanInstallment(models.Model):
         "('partner_id', '=', partner_id),"
         "('account_id', '!=', account_id)]",
     )
-    income_ids = fields.One2many(
-        'loan.installment.income',
-        'loan_install_id',
-        string='Additional Income',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
+    # income_ids = fields.One2many(
+    #     'loan.installment.income',
+    #     'loan_install_id',
+    #     string='Additional Income',
+    #     readonly=True,
+    #     states={'draft': [('readonly', False)]},
+    # )
     amount_loan_total = fields.Float(
         string='Loan Amount',
         compute='_compute_amount',
@@ -69,8 +66,9 @@ class LoanInstallment(models.Model):
     )
     amount_income = fields.Float(
         string='Incomes',
-        compute='_compute_amount',
-        store=True,
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -88,14 +86,30 @@ class LoanInstallment(models.Model):
         default=lambda self:
         self.env.user.company_id.loan_installment_account_id,
     )
+    defer_income_account_id = fields.Many2one(
+        'account.account',
+        string='Defer Income Account',
+        required=True,
+        readonly=True,
+        default=lambda self:
+        self.env.user.company_id.loan_defer_income_account_id,
+    )
+    income_account_id = fields.Many2one(
+        'account.account',
+        string='Income Account',
+        required=True,
+        readonly=True,
+        default=lambda self:
+        self.env.user.company_id.loan_income_account_id,
+    )
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
         readonly=True,
     )
-    move_name = fields.Char(
-        string='Journal Entry',
-        related='move_id.name',
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        string='Cancel Entry',
         readonly=True,
     )
     sale_id = fields.Many2one(
@@ -105,13 +119,19 @@ class LoanInstallment(models.Model):
     )
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('open', 'Coverted'),
-         ('paid', 'Loan Installments Paid'),
+         ('open', 'Coverted to Loan'),
+         ('paid', 'Fully Paid'),
          ('cancel', 'Cancelled')],
         string='Status',
         default='draft',
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    is_paid = fields.Boolean(
+        string='Fully Paid',
+        compute='_compute_is_paid',
+        store=True,
+        track_visibility='onchange',
     )
     # Compute installment table
     date_start = fields.Date(
@@ -181,6 +201,37 @@ class LoanInstallment(models.Model):
     ]
 
     @api.multi
+    @api.depends('move_id.line_id.reconcile_id')
+    def _compute_is_paid(self):
+        MoveLine = self.env['account.move.line']
+        account_types = ['receivable', 'payable']
+        for rec in self:
+            if not rec.move_id:
+                rec.is_paid = False
+                continue
+            # Move created, find whether all are paid.
+            unreconcile_line_ids = MoveLine.search([
+                ('move_id', '=', rec.move_id.id),
+                ('state', '=', 'valid'),
+                ('account_id.type', 'in', account_types),
+                ('reconcile_id', '=', False)])._ids
+            if not unreconcile_line_ids:
+                rec.is_paid = True
+            else:
+                rec.is_paid = False
+
+    @api.multi
+    def _write(self, vals):
+        """ As is_paid is triggered, so do the state """
+        for rec in self:
+            if 'is_paid' in vals:
+                if rec.state == 'open' and vals['is_paid'] is True:
+                    vals['state'] = 'paid'
+                if rec.state == 'paid' and vals['is_paid'] is False:
+                    vals['state'] = 'open'
+        return super(LoanInstallment, self)._write(vals)
+
+    @api.multi
     def open_account_move(self):
         self.ensure_one()
         return {
@@ -192,19 +243,35 @@ class LoanInstallment(models.Model):
             'type': 'ir.actions.act_window',
             'context': self._context,
             'nodestroy': True,
-            'domain': [('id', '=', self.move_id.id)],
+            'domain': [('id', '=', [self.move_id.id, self.cancel_move_id.id])],
         }
+
+    @api.multi
+    def action_open_payments(self):
+        self.ensure_one()
+        move_line_ids = self.installment_ids.mapped('move_line_id').ids
+        Voucher = self.env['account.voucher']
+        vouchers = Voucher.search(
+            [('line_ids.move_line_id', 'in', move_line_ids),
+             ('state', '=', 'posted')])
+        action = self.env.ref('account_voucher.action_vendor_payment')
+        if not action:
+            raise ValidationError(_('No Action'))
+        action = action.read([])[0]
+        action['domain'] = [('id', 'in', vouchers.ids)]
+        return action
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
         self.receivable_ids = False
-        self.income_ids = False
+        self.amount_income = 0.0
+        # self.income_ids = False
 
     @api.multi
-    @api.depends('receivable_ids', 'income_ids')
+    @api.depends('receivable_ids', 'amount_income')
     def _compute_amount(self):
         for rec in self:
-            rec.amount_income = sum(rec.income_ids.mapped('amount'))
+            # rec.amount_income = sum(rec.income_ids.mapped('amount'))
             rec.amount_receivable = \
                 sum(rec.receivable_ids.mapped(lambda l: l.debit - l.credit))
             rec.amount_loan_total = rec.amount_income + rec.amount_receivable
@@ -217,47 +284,57 @@ class LoanInstallment(models.Model):
         return res
 
     @api.multi
-    def loan_move_line_get(self):
+    def loan_move_line_get(self, line):
         self.ensure_one()
-        period = self.env['account.period'].find(self.date)
-        move_lines = []
-        for line in self.installment_ids:
-            move_line = {
-                'name': '%s #%s' % (self.name, line.installment),
-                'debit': line.amount > 0.0 and line.amount or 0.0,
-                'credit': line.amount < 0.0 and line.amount or 0.0,
-                'account_id': self.account_id.id,
-                'journal_id': self.journal_id.id,
-                'period_id': period.id,
-                'partner_id': self.partner_id.id,
-                'date': self.date,
-                'date_maturity': line.date_start,
-            }
-            move_lines.append((0, 0, move_line))
-        return move_lines
+        move_line = {
+            'move_id': self.move_id.id,
+            'name': '%s #%s' % (self.name, line.installment),
+            'debit': line.amount > 0.0 and line.amount or 0.0,
+            'credit': line.amount < 0.0 and line.amount or 0.0,
+            'account_id': self.account_id.id,
+            'partner_id': self.partner_id.id,
+            'date_maturity': line.date_start,
+        }
+        return move_line
+
+    # @api.multi
+    # def _prepare_income_move_lines(self):
+    #     self.ensure_one()
+    #     move_line_dict = []
+    #     for line in self.income_ids:
+    #         line_dict = self.move_line_get_item(line)
+    #         move_line_dict.append((0, 0, line_dict))
+    #     return move_line_dict
 
     @api.multi
-    def _prepare_income_move_lines(self):
+    def _prepare_income_move_line(self):
         self.ensure_one()
-        move_line_dict = []
-        for line in self.income_ids:
-            line_dict = self.move_line_get_item(line)
-            move_line_dict.append((0, 0, line_dict))
+        move_line_dict = {
+            'move_id': self.move_id.id,
+            'date': self.date,
+            'date_maturity': False,
+            'name': self.defer_income_account_id.name or '/',
+            'partner_id': self.partner_id.id,
+            'account_id': self.defer_income_account_id.id,
+            'analytic_account_id': False,
+            'debit': self.amount_income < 0 and -self.amount_income or 0.0,
+            'credit': self.amount_income > 0 and self.amount_income or 0.0,
+        }
         return move_line_dict
 
-    @api.multi
-    def move_line_get_item(self, line):
-        self.ensure_one()
-        return {
-            'date': line.date,
-            'date_maturity': False,
-            'name': line.name or '/',
-            'partner_id': line.partner_id.id,
-            'account_id': line.account_id.id,
-            'analytic_account_id': line.analytic_account_id.id,
-            'debit': line.amount < 0 and -line.amount or 0.0,
-            'credit': line.amount > 0 and line.amount or 0.0,
-        }
+    # @api.multi
+    # def move_line_get_item(self, line):
+    #     self.ensure_one()
+    #     return {
+    #         'date': line.date,
+    #         'date_maturity': False,
+    #         'name': line.name or '/',
+    #         'partner_id': line.partner_id.id,
+    #         'account_id': line.account_id.id,
+    #         'analytic_account_id': False,
+    #         'debit': line.amount < 0 and -line.amount or 0.0,
+    #         'credit': line.amount > 0 and line.amount or 0.0,
+    #     }
 
     @api.multi
     def _validate(self):
@@ -269,17 +346,50 @@ class LoanInstallment(models.Model):
                 raise ValidationError(_('Please calculate installment plan!'))
 
     @api.multi
+    def _cancel(self):
+        self.ensure_one()
+        period = self.env['account.period'].find()
+        move = self.move_id
+        AccountMove = self.env['account.move']
+        move_dict = move.copy_data({
+            'name': move.name + '_VOID',
+            'ref': move.ref,
+            'period_id': period.id,
+            'date': fields.Date.context_today(self), })[0]
+        move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
+        rev_move = AccountMove.create(move_dict)
+        # Delete reconcile, and receconcile with reverse entry
+        move.line_id.filtered('reconcile_id').reconcile_id.unlink()
+        accounts = move.line_id.mapped('account_id')
+        for account in accounts:
+            AccountMove.\
+                _reconcile_voided_entry_by_account([move.id, rev_move.id],
+                                                   account.id)
+        self.cancel_move_id = rev_move
+
+    @api.multi
+    def action_cancel(self):
+        for rec in self:
+            if not rec.move_id:
+                continue
+            if rec.installment_ids.mapped('reconcile_id'):
+                raise ValidationError(
+                    _('Some installment was paid, cancllation not allowed!'))
+            rec._cancel()
+        self.write({'state': 'cancel'})
+
+    @api.multi
     def action_move_create(self):
         self._validate()
         Move = self.env['account.move']
         MoveLine = self.env['account.move.line']
-        Analytic = self.env['account.analytic.account']
-        # Update dimensions
-        for rec in self:
-            for line in rec.income_ids:
-                line.analytic_account_id = \
-                    Analytic.create_matched_analytic(line)
-        # --
+        # Analytic = self.env['account.analytic.account']
+        # # Update dimensions
+        # for rec in self:
+        #     for line in rec.income_ids:
+        #         line.analytic_account_id = \
+        #             Analytic.create_matched_analytic(line)
+        # # --
         for rec in self:
             if rec.move_id:
                 continue
@@ -288,9 +398,11 @@ class LoanInstallment(models.Model):
             move = Move.create(move_dict)
             rec.move_id = move
             # Dr ลูกหนี้ผ่อนชำระ
-            loan_move_lines = rec.loan_move_line_get()
+            for line in self.installment_ids:
+                move_line_dict = self.loan_move_line_get(line)
+                loan_move_line = MoveLine.create(move_line_dict)
+                line.move_line_id = loan_move_line
             # --
-            move.write({'line_id': loan_move_lines})
             rec_pair_ids = []
             # Receivables to be reconciled
             for move_line in rec.receivable_ids:
@@ -303,9 +415,9 @@ class LoanInstallment(models.Model):
                 rec_move_line = MoveLine.create(move_line_dict)
                 # --
                 rec_pair_ids.append([move_line.id, rec_move_line.id])
-            # Extra Income, revenue.
-            income_lines = rec._prepare_income_move_lines()
-            move.write({'line_id': income_lines})
+            # Extra Defer Income.
+            income_line = rec._prepare_income_move_line()
+            MoveLine.create(income_line)
             # Post move
             move.with_context(direct_create=True).button_validate()
             # Reconcile receivables
@@ -438,57 +550,65 @@ class LoanInstallment(models.Model):
                         (rec.amount_loan_total - sum_amount) + line.amount
         return
 
+    @api.multi
+    def action_create_payment(self, installment_ids=False):
+        action_id = False
+        action_id = self.env.ref('account_voucher.action_vendor_receipt')
+        if not action_id:
+            raise ValidationError(_('No Action'))
+        action = action_id.read([])[0]
+        ctx = ast.literal_eval(action['context'])
+        ctx.update({
+            'filter_loans': self.ids,
+            'filter_loan_installments': installment_ids,
+        })
+        action['context'] = ctx
+        action['views'].reverse()
+        return action
 
-class LoanInstallmentIncome(ActivityCommon, ChartFieldAction, models.Model):
-    _name = 'loan.installment.income'
 
-    loan_install_id = fields.Many2one(
-        'loan.installment',
-        string='Loan Installment',
-        index=True,
-        ondelete='cascade',
-        readonly=True,
-    )
-    name = fields.Char(
-        string='Description',
-    )
-    date = fields.Date(
-        string='Date',
-        related='loan_install_id.date',
-        readonly=True,
-    )
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Customer',
-        related='loan_install_id.partner_id',
-        readonly=True,
-    )
-    account_id = fields.Many2one(
-        'account.account',
-        string='Account',
-        domain=[('type', '=', 'other'),
-                ('user_type.report_type', '=', 'income')],
-        required=True,
-    )
-    analytic_account_id = fields.Many2one(
-        'account.analytic.account',
-        string='Analytic',
-    )
-    amount = fields.Float(
-        string='Amount',
-        required=True,
-        default=0.0,
-    )
-
-    @api.model
-    def create(self, vals):
-        res = super(LoanInstallmentIncome, self).create(vals)
-        res.update_related_dimension(vals)
-        return res
+# class LoanInstallmentIncome(models.Model):
+#     _name = 'loan.installment.income'
+#
+#     loan_install_id = fields.Many2one(
+#         'loan.installment',
+#         string='Loan Installment',
+#         index=True,
+#         ondelete='cascade',
+#         readonly=True,
+#     )
+#     name = fields.Char(
+#         string='Description',
+#     )
+#     date = fields.Date(
+#         string='Date',
+#         related='loan_install_id.date',
+#         readonly=True,
+#     )
+#     partner_id = fields.Many2one(
+#         'res.partner',
+#         string='Customer',
+#         related='loan_install_id.partner_id',
+#         readonly=True,
+#     )
+#     account_id = fields.Many2one(
+#         'account.account',
+#         string='Account',
+#         domain=[('type', '=', 'other'),
+#                 ('user_type.report_type', '=', 'liability')],
+#         required=True,
+#         default=lambda self: self.env.user.company_id.loan_income_account_id,
+#     )
+#     amount = fields.Float(
+#         string='Amount',
+#         required=True,
+#         default=0.0,
+#     )
 
 
 class LoanInstallmentPlan(models.Model):
     _name = 'loan.installment.plan'
+    _rec_name = 'installment'
 
     loan_install_id = fields.Many2one(
         'loan.installment',
@@ -521,6 +641,27 @@ class LoanInstallmentPlan(models.Model):
         string='Amount',
         default=0.0,
     )
+    move_line_id = fields.Many2one(
+        'account.move.line',
+        string='Journal Item',
+        readonly=True,
+    )
+    reconcile_id = fields.Many2one(
+        'account.move.reconcile',
+        related='move_line_id.reconcile_id',
+        string='Reconcile',
+        readonly=True,
+    )
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for rec in self.sorted(key=lambda l: (l.loan_install_id,
+                                              l.installment)):
+            name = '%s #%s' % \
+                (rec.loan_install_id.name, rec.installment)
+            res.append((rec.id, name))
+        return res
 
     @api.multi
     def _compute_days(self):

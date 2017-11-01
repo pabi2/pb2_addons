@@ -17,9 +17,12 @@
         'sale_invoice_plan',
         'pabi_base',
         'pabi_account_move_adjustment',
+        'account_cancel_reversal',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/sequence.xml',
+        'wizard/loan_create_payment_wizard.xml',
         'views/account_config.xml',
         'views/loan_installment_view.xml',
     ],

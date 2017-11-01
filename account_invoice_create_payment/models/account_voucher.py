@@ -11,10 +11,10 @@ class AccountVoucher(models.Model):
         res = super(AccountVoucher, self).recompute_voucher_lines(
             partner_id, journal_id,
             price, currency_id, ttype, date)
-        line_cr_ids = res['value']['line_cr_ids']
-        line_dr_ids = res['value']['line_dr_ids']
         # Only scope down to selected invoices
         if self._context.get('filter_invoices', False):
+            line_cr_ids = res['value']['line_cr_ids']
+            line_dr_ids = res['value']['line_dr_ids']
             invoice_ids = self._context.get('filter_invoices')
             move_line_ids = self.env['account.move.line'].\
                 search([('invoice', 'in', invoice_ids)]).ids
