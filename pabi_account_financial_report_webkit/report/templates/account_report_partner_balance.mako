@@ -23,6 +23,7 @@
             }
 
         </style>
+        <meta charset="UTF-8"/>
     </head>
     <body>
         <%!
@@ -116,7 +117,7 @@
             # in multiple columns mode, we do not want to print accounts without any rows
             if comparison_mode in ('single', 'multiple'):
                 all_comparison_lines = [comp['partners_amounts'][partner_id[1]]
-                                      for partner_id in partners_order 
+                                      for partner_id in partners_order
                                       for comp in comparisons]
                 if not display_line(all_comparison_lines):
                     continue
@@ -193,7 +194,7 @@
                         # which have a balance at 0.0 in each comparison column
                         if comparison_mode in ('single', 'multiple'):
                             all_comparison_lines = [comp['partners_amounts'][partner_id]
-                                                    for comp in comparisons 
+                                                    for comp in comparisons
                                                     if comp['partners_amounts'].get(partner_id)]
                             if not display_line(all_comparison_lines):
                                 continue

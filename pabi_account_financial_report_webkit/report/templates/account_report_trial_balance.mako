@@ -35,6 +35,7 @@
                 font-size:10px;
             }
         </style>
+        <meta charset="UTF-8"/>
     </head>
     <body>
         <%!
@@ -200,7 +201,7 @@
                                 <div class="act_as_cell amount">${formatLang(comp_account['balance']) | amount}</div>
                                 %if comparison_mode == 'single':  ## no diff in multiple comparisons because it shows too data
                                     <div class="act_as_cell amount">${formatLang(comp_account['diff']) | amount}</div>
-                                    <div class="act_as_cell amount"> 
+                                    <div class="act_as_cell amount">
                                     %if comp_account['percent_diff'] is False:
                                      ${ '-' }
                                     %else:

@@ -11,6 +11,7 @@
                 font-size:10px;
             }
         </style>
+        <meta charset="UTF-8"/>
     </head>
     <body>
         <%!
