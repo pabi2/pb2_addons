@@ -42,12 +42,18 @@ class AccountVoucher(models.Model):
                 company = self.env.user.company_id
                 defer_income_account = company.loan_defer_income_account_id
                 income_account = company.loan_income_account_id
+                activity_group = company.loan_income_activity_group_id
+                activity = company.loan_income_activity_id
                 loans = Loan.browse(loan_ids)
                 loan_number = ', '.join(loans.mapped('name'))
                 res['value']['multiple_reconcile_ids'] = [
-                    {'account_id': defer_income_account.id, 'amount': -income,
+                    {'account_id': defer_income_account.id,
+                     'amount': -income,
                      'note': loan_number},
-                    {'account_id': income_account.id, 'amount': income,
+                    {'activity_group_id': activity_group.id,
+                     'activity_id': activity.id,
+                     'account_id': income_account.id,
+                     'amount': income,
                      'note': loan_number},
                 ]
                 # Add write off OU

@@ -652,6 +652,19 @@ class LoanInstallmentPlan(models.Model):
         string='Reconcile',
         readonly=True,
     )
+    ref_voucher = fields.Char(
+        string='Ref Payments',
+        compute='_compute_ref_voucher',
+    )
+
+    @api.multi
+    def _compute_ref_voucher(self):
+        Voucher = self.env['account.voucher']
+        for rec in self:
+            vouchers = Voucher.search(
+                [('line_ids.move_line_id', '=', rec.move_line_id.id),
+                 ('state', '=', 'posted')])
+            rec.ref_voucher = ', '.join(vouchers.mapped('number'))
 
     @api.multi
     def name_get(self):
