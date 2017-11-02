@@ -2,8 +2,8 @@
 from openerp import models, fields
 
 
-class HRConfigSettings(models.TransientModel):
-    _inherit = 'hr.config.settings'
+class AccountConfigSettings(models.TransientModel):
+    _inherit = 'account.config.settings'
 
     group_email = fields.Char(
         string='Group Email',

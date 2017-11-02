@@ -17,7 +17,6 @@ Expense Related Reports
 
     """,
     'depends': [
-        'hr_config_settings_ext',
         'email_template_dateutil',
         'pabi_hr_expense',
     ],
@@ -30,7 +29,7 @@ Expense Related Reports
         'edi/email_templates_5_days.xml',
         'edi/email_templates_10_days.xml',
         'views/pabi_dunning_letter_view.xml',
-        'views/res_config_view.xml',
+        'views/account_config.xml',
     ],
     'demo': [
     ],

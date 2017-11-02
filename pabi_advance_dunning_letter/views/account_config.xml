@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_human_resources_configuration" model="ir.ui.view">
-            <field name="name">hr settings</field>
-            <field name="model">hr.config.settings</field>
-            <field name="inherit_id" ref="hr.view_human_resources_configuration"/>
+
+        <record id="view_account_config_settings" model="ir.ui.view">
+            <field name="name">view.account.config.settings</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
             <field name="arch" type="xml">
-                <form position="inside">
+                <field name="purchase_refund_journal_id" position="after">
                     <separator string="Advance Dunning Letter"/>
                     <group name="advance_dunning_letter">
                         <field name="group_email" class="oe_inline"/>
                         <field name="head_account_employee_id" class="oe_inline"/>
                     </group>
-                </form>
+                </field>
             </field>
         </record>
+
     </data>
 </openerp>
