@@ -362,8 +362,10 @@ class PaymentExport(models.Model):
                     cheque_date = export.date_value
                     # bank account
                     bank = export.partner_bank_id
-                    bank_name = bank and bank.name_get()[0][1]
-                    bank_branch = bank and bank.bank_branch.name_get()[0][1]
+                    bank_name = bank and bank.name_get() and \
+                        bank.name_get()[0][1]
+                    bank_branch = bank and bank.bank_branch.name_get() and \
+                        bank.bank_branch.name_get()[0][1]
                     # --
                     line.voucher_id.write({
                         'date_cheque': cheque_date,

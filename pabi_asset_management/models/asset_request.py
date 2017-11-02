@@ -183,6 +183,7 @@ class AccountAssetRequestLine(models.Model):
                 ('type', '=', 'normal'),
                 ('state', '=', 'open')],
         required=True,
+        ondelete='restrict',
     )
     purchase_value = fields.Float(
         string='Purchase Value',

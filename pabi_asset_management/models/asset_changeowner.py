@@ -172,6 +172,7 @@ class AccountAssetChangeownerLine(models.Model):
         string='Asset',
         domain=[('state', '=', 'open')],
         required=True,
+        ondelete='restrict',
     )
     # Target Owner
     section_id = fields.Many2one(
