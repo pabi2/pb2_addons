@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <record id="view_account_move_line_tree" model="ir.ui.view">
+          <field name="name">view.account.move.line.tree</field>
+          <field name="model">account.move.line</field>
+          <field name="arch" type="xml">
+              <tree editable="bottom">
+                  <field name="period_id" readonly="1"/>
+                  <field name="date" readonly="1"/>
+                  <field name="name" readonly="1"/>
+                  <field name="ref" readonly="1"/>
+                  <field name="partner_id" readonly="1"/>
+                  <field name="account_id" readonly="1"/>
+                  <field name="debit" sum="Total Debit" readonly="1"/>
+                  <field name="credit" sum="Total Credit" readonly="1"/>
+                  <field name="reconcile_id" readonly="1"/>
+              </tree>
+          </field>
+      </record>
+
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">view.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='accounting']" position="after">
+                    <page name="investment" string="Investments" attrs="{'invisible': [('supplier', '=', False)]}">
+                        <group>
+                            <field name="percent_invest"/>
+                        </group>
+                        <field name="investment_ids">
+                            <tree editable="bottom">
+                                <field name="name" string="Approval No."/>
+                                <field name="date_approve" string="Date"/>
+                                <field name="description" string="Desc."/>
+                                <field name="total_captial" string="Capital"/>
+                                <field name="total_share" string="Shares"/>
+                                <field name="nstda_share" string="NSTDA Shares"/>
+                                <field name="price_unit" string="Price"/>
+                                <field name="price_subtotal" string="Total"/>
+                                <field name="move_line_ids" widget="many2many_tags"
+                                  context="{'tree_view_ref': 'pabi_long_term_investment_report.view_account_move_line_tree'}"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
