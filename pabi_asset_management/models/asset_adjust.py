@@ -520,6 +520,7 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
                 ('profile_type', 'not in', ('ait', 'auc')),
                 ('state', '=', 'open'),
                 ('adjust_id', '=', False)],
+        ondelete='restrict',
         help="Asset to be removed, as it create new asset of the same value",
     )
     asset_state = fields.Selection(
@@ -554,6 +555,7 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         'account.asset',
         string='New Asset Item',
         readonly=True,
+        ondelete='restrict',
     )
     target_status = fields.Many2one(
         'account.asset.status',
@@ -689,6 +691,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
         'account.asset',
         string='Origin Asset',
         required=True,
+        ondelete='restrict',
         domain=[('type', '!=', 'view'),
                 ('profile_type', 'not in', ('ait', 'auc')),
                 ('state', '=', 'open'),
@@ -859,6 +862,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         'account.asset',
         string='New Asset',
         readonly=True,
+        ondelete='restrict',
     )
     move_id = fields.Many2one(
         'account.move',

@@ -75,6 +75,7 @@ class AccountAssetTransfer(models.Model):
                 '|', ('active', '=', True), ('active', '=', False)],
         copy=True,
         readonly=True,
+        ondelete='restrict',
         states={'draft': [('readonly', False)]},
     )
     target_asset_ids = fields.One2many(
@@ -409,6 +410,7 @@ class AccountAssetTransferTarget(models.Model):
         'account.asset',
         string='New Asset',
         readonly=True,
+        ondelete='restrict',
     )
 
     @api.onchange('product_id')

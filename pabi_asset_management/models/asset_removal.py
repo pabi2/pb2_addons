@@ -170,6 +170,7 @@ class AccountAssetRemovalLine(models.Model):
         domain=[('type', '=', 'normal'),
                 ('state', '=', 'open')],
         required=True,
+        ondelete='restrict',
     )
     target_status = fields.Many2one(
         'account.asset.status',
