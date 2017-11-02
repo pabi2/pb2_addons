@@ -12,7 +12,21 @@
                     <group name="loan_installment">
                         <field name="loan_installment_account_id" class="oe_inline"/>
                         <field name="loan_defer_income_account_id" class="oe_inline"/>
-                        <field name="loan_income_account_id" class="oe_inline"/>
+                        <label for="id" string="Loan Income AG/A"/>
+                        <div>
+                            <div>
+                              <label string="Activity Group"/>
+                              <field name="loan_income_activity_group_id" class="oe_inline"/>
+                            </div>
+                            <div>
+                              <label string="Activity"/>
+                              <field name="loan_income_activity_id" class="oe_inline"/>
+                            </div>
+                            <div>
+                              <label string="Account"/>
+                              <field name="loan_income_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
                     </group>
                 </field>
             </field>

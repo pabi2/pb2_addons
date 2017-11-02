@@ -93,19 +93,6 @@
                                 <field name="account_id"/>
                                 <field name="defer_income_account_id"/>
                                 <field name="income_account_id"/>
-                                <hr colspan="2"/>
-                                <label for="amount_receivable"/>
-                                <div>
-                                    <h3><field name="amount_receivable"/></h3>
-                                </div>
-                                <label for="amount_income"/>
-                                <div>
-                                    <h3><field name="amount_income"/></h3>
-                                </div>
-                                <label for="amount_loan_total"/>
-                                <div>
-                                    <h2><field name="amount_loan_total"/></h2>
-                                </div>
                             </group>
                             <group>
                                 <field name="date" string="Document Date"/>
@@ -114,6 +101,25 @@
                                 <field name="consider_month_end"/>
                                 <field name="period_nbr"/>
                                 <field name="period_total"/>
+                            </group>
+                        </group>
+                        <hr colspan="4"/>
+                        <group>
+                            <group>
+                                <label for="amount_receivable"/>
+                                <div>
+                                    <h3><field name="amount_receivable"/></h3>
+                                </div>
+                                <label for="amount_income"/>
+                                <div>
+                                    <h3><field name="amount_income"/></h3>
+                                </div>
+                            </group>
+                            <group>
+                              <h2>
+                                    <label string="Total Loan Amount:"/>
+                                    <field name="amount_loan_total" class="oe_inline"/>
+                                </h2>
                             </group>
                         </group>
                         <notebook>
@@ -169,6 +175,7 @@
                                         <field name="income" sum="Total Income"/>
                                         <field name="amount" sum="Total Amount"/>
                                         <field name="move_line_id" invisible="1"/>
+                                        <field name="ref_voucher"/>
                                         <field name="reconcile_id" widget="many2onebutton" string="Paid"/>
                                     </tree>
                                 </field>
