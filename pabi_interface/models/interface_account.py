@@ -751,16 +751,16 @@ class InterfaceAccountChecker(models.AbstractModel):
     @api.model
     def _check_line_dimension(self, inf):
         # For product / activity line must have section/project
-        Budget = self.env['account.budget']
         for line in inf.line_ids:
-            if Budget.trx_budget_required(line):
+            if line.activity_group_id and \
+                    (line.product_id or line.activity_id):
                 if not line.section_id and not line.project_id:
                     raise ValidationError(
                         _('%s requires section/project') % line.name)
-            else:
-                if line.section_id or line.project_id:
-                    raise ValidationError(
-                        _('%s does not require section/project') % line.name)
+            # else:
+            #     if line.section_id or line.project_id:
+            #         raise ValidationError(
+            #             _('%s does not require section/project') % line.name)
         # Check activity account
         for line in inf.line_ids:
             if line.activity_id and \
