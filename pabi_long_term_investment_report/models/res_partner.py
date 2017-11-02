@@ -38,7 +38,7 @@ class ResPartnerInvestment(models.Model):
         string='Description',
         required=True,
     )
-    total_captial = fields.Float(
+    total_capital = fields.Float(
         string='Registered Captial',
         required=True,
     )
@@ -59,12 +59,32 @@ class ResPartnerInvestment(models.Model):
         compute='_compute_price_subtotal',
         store=True,
     )
+    invoice_ids = fields.Many2many(
+        'account.invoice',
+        'partner_investment_invoice_rel',
+        'investmetn_id', 'invoice_id',
+        string='Invoices',
+        domain="[('state', 'in', ('open', 'paid')),"
+        "('partner_id', '=', partner_id),"
+        "('invoice_line.account_id.code', '=', '1203900001')]",
+        # get only long term investment account 1203900001
+    )
     move_line_ids = fields.One2many(
         'account.move.line',
         'investment_id',
         string='Invoice',
-        domain=[('account_id.code', '=', '1203900001')],  # เงินลงทุนระยะยาว
+        compute='_compute_move_line_ids',
+        store=True,
     )
+
+    @api.multi
+    @api.depends('invoice_ids')
+    def _compute_move_line_ids(self):
+        for rec in self:
+            # get only long term investment account 1203900001
+            move_lines = rec.invoice_ids.mapped('move_id').mapped('line_id').\
+                filtered(lambda l: l.account_id.code == '1203900001')
+            rec.move_line_ids = move_lines
 
     @api.multi
     @api.depends('nstda_share', 'price_unit')
