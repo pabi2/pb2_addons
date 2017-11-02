@@ -10,4 +10,5 @@ class AccountMoveLine(models.Model):
         string='Investment',
         index=True,
         ondelete='restrict',
+        readonly=True,
     )

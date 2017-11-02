@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class ResPartner(models.Model):
@@ -13,6 +14,17 @@ class ResPartner(models.Model):
     percent_invest = fields.Float(
         string='Investment Percent',
     )
+
+    @api.multi
+    @api.constrains('investment_ids')
+    def _check_investment_invoice_ids(self):
+        invoice_ids = []
+        for rec in self:
+            for invest in rec.investment_ids:
+                invoice_ids += invest.invoice_ids.ids
+        if len(invoice_ids) != len(list(set(invoice_ids))):
+            raise ValidationError(
+                _('One invoice can relate to only one investment'))
 
 
 class ResPartnerInvestment(models.Model):
