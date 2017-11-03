@@ -189,6 +189,16 @@
                             </div>
                         </div>
                     </group>
+                    <!-- Loan Installment -->
+                    <separator string="Loan Installment"/>
+                    <group>
+                        <label for="id" string="Long Term Investment Account"/>
+                        <div>
+                            <div>
+                              <field name="longterm_invest_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
                 </form>
             </field>
         </record>
