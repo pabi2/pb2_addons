@@ -76,10 +76,7 @@ class ResPartnerInvestment(models.Model):
         'partner_investment_invoice_rel',
         'investmetn_id', 'invoice_id',
         string='Invoices',
-        domain="[('state', 'in', ('open', 'paid')),"
-        "('partner_id', '=', partner_id),"
-        "('invoice_line.account_id.code', '=', '1203900001')]",
-        # get only long term investment account 1203900001
+        domain=lambda self: self._get_domain_invoices(),
     )
     move_line_ids = fields.One2many(
         'account.move.line',
@@ -89,13 +86,24 @@ class ResPartnerInvestment(models.Model):
         store=True,
     )
 
+    @api.model
+    def _get_domain_invoices(self):
+        account = self.env.user.company_id.longterm_invest_account_id
+        dom = """
+            [('state', 'in', ('open', 'paid')),
+             ('partner_id', '=', partner_id),
+             ('invoice_line.account_id', '=', %s)]
+        """ % account.id
+        return dom
+
     @api.multi
     @api.depends('invoice_ids')
     def _compute_move_line_ids(self):
         for rec in self:
-            # get only long term investment account 1203900001
+            # get only long term investment account
+            account = self.env.user.company_id.longterm_invest_account_id
             move_lines = rec.invoice_ids.mapped('move_id').mapped('line_id').\
-                filtered(lambda l: l.account_id.code == '1203900001')
+                filtered(lambda l: l.account_id == account)
             rec.move_line_ids = move_lines
 
     @api.multi

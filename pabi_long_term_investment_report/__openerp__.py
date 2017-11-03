@@ -17,6 +17,7 @@
         "account",
     ],
     "data": [
+        "views/account_config.xml",
         "views/res_partner_view.xml",
     ],
     "demo": [

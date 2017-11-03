@@ -154,6 +154,12 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Income Account',
         related="company_id.loan_income_account_id",
     )
+    # Long term investment
+    longterm_invest_account_id = fields.Many2one(
+        'account.account',
+        string='Long Term Investment Account',
+        related="company_id.longterm_invest_account_id",
+    )
 
     @api.onchange('loan_income_activity_id')
     def _onchange_loan_income_activity_id(self):
