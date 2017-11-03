@@ -38,7 +38,10 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
         header_report_name = ' - '.join((_('OPEN INVOICES REPORT'),
                                         company.name,
                                         company.currency_id.name))
-
+        # kittiu: Add to remove bug in case compan name is TH
+        if header_report_name:
+            header_report_name = header_report_name.encode('utf-8')
+        # --
         footer_date_time = self.formatLang(
             str(datetime.today()), date_time=True)
 

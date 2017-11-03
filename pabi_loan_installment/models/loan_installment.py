@@ -339,11 +339,17 @@ class LoanInstallment(models.Model):
     @api.multi
     def _validate(self):
         for rec in self:
+            # No line
             if not rec.receivable_ids:
                 raise ValidationError(_('No trade receivable line selected!'))
-            install_amount = sum(rec.installment_ids.mapped('amount'))
-            if float_compare(install_amount, rec.amount_loan_total, 2) != 0:
-                raise ValidationError(_('Please calculate installment plan!'))
+            # Wrong line
+            if rec.receivable_ids.mapped('reconcile_id'):
+                raise ValidationError(_('No reconciled line can be selected!'))
+            # Check amount
+            amount = sum(rec.installment_ids.mapped('amount'))
+            if float_compare(amount, rec.amount_loan_total, 2) != 0:
+                raise ValidationError(
+                    _('Amount mismatch, please calculate installment plan!'))
 
     @api.multi
     def _cancel(self):
