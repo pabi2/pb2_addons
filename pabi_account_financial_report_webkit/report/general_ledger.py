@@ -22,7 +22,10 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             self.cr, uid, uid, context=context).company_id
         header_report_name = ' - '.join(
             (_('GENERAL LEDGER'), company.name, company.currency_id.name))
-
+        # kittiu: Add to remove bug in case compan name is TH
+        if header_report_name:
+            header_report_name = header_report_name.encode('utf-8')
+        # --
         footer_date_time = self.formatLang(
             str(datetime.today()), date_time=True)
 
