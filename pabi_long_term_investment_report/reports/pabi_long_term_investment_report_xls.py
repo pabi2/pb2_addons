@@ -216,10 +216,10 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                 c_ftr_cell_style_decimal, c_ftr_cell_style, c_ftr_cell_style,
                 c_ftr_cell_style, c_ftr_cell_style_decimal, c_ftr_cell_style]
             c_foot_specs = self._get_spec_data(
-                    C_HEADER_LINE_FOOT_FIELDS, C_HEADER_LINE_FOOT_CELL_NUMBER,
-                    C_HEADER_LINE_FOOT_CELL_WIDTH, c_foot_type, c_foot_des,
-                    c_foot_style
-                )
+                C_HEADER_LINE_FOOT_FIELDS, C_HEADER_LINE_FOOT_CELL_NUMBER,
+                C_HEADER_LINE_FOOT_CELL_WIDTH, c_foot_type, c_foot_des,
+                c_foot_style
+            )
             row_data = self.xls_row_template(c_foot_specs,
                                              [x[0] for x in c_foot_specs])
             row_pos = self.xls_write_row(ws, row_pos, row_data)
