@@ -8,7 +8,7 @@
 
     """,
     "website": "http://ecosoft.co.th",
-    "author": "Kitti U.",
+    "author": "Kitti U.,Tharathip C.",
     "license": "AGPL-3",
     "application": False,
     "installable": True,
@@ -17,6 +17,7 @@
         "account",
     ],
     "data": [
+        "wizards/pabi_long_term_investment_report_wizard.xml",
         "views/account_config.xml",
         "views/res_partner_view.xml",
     ],
