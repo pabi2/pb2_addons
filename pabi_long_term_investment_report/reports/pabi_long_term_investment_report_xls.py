@@ -49,7 +49,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
         # Set Locale
-        locale.setlocale(locale.LC_TIME, 'th_TH.utf8')
+        # locale.setlocale(locale.LC_TIME, 'th_TH.utf8')  # server may not have
 
         ws = wb.add_sheet(_p.report_name[:31])
         ws.panes_frozen = True
@@ -68,7 +68,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
             'สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ',
             'รายละเอียด เลขที่บัญชี %s ชื่อบัญชี %s'
             % (str(_p.account.code), _p.account.name.encode('utf-8')),
-            'ณ วันที่ %s' % (datetime.datetime.today().strftime('%-d %B %Ey'))
+            'ณ วันที่ %s' % (datetime.datetime.today().strftime('%d/%m/%Y'))
         ]
         head_specs = self._get_spec_data(HEADER_FIELDS, HEADER_CELL_NUMBER,
                                          HEADER_CELL_WIDTH, head_type,
@@ -152,7 +152,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                     line.get('name', None),
                     datetime.datetime.strptime(
                         line.get('date_approve'), '%Y-%m-%d')
-                    .strftime('%-d %b %Ey'),
+                    .strftime('%d/%m/%Y'),
                     line.get('description', None),
                     line.get('total_capital', 0.0),
                     line.get('total_share', 0.0),
@@ -162,7 +162,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                     line.get('invoice_number', None),
                     datetime.datetime.strptime(line.get('date_approve'),
                                                '%Y-%m-%d')
-                        .strftime('%-d %b %Ey') or None,
+                        .strftime('%d/%m/%Y') or None,
                     line.get('invoice_desc', None),
                     line.get('amount_invoice', 0.0),
                     ref_payments
@@ -216,10 +216,10 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                 c_ftr_cell_style_decimal, c_ftr_cell_style, c_ftr_cell_style,
                 c_ftr_cell_style, c_ftr_cell_style_decimal, c_ftr_cell_style]
             c_foot_specs = self._get_spec_data(
-                    C_HEADER_LINE_FOOT_FIELDS, C_HEADER_LINE_FOOT_CELL_NUMBER,
-                    C_HEADER_LINE_FOOT_CELL_WIDTH, c_foot_type, c_foot_des,
-                    c_foot_style
-                )
+                C_HEADER_LINE_FOOT_FIELDS, C_HEADER_LINE_FOOT_CELL_NUMBER,
+                C_HEADER_LINE_FOOT_CELL_WIDTH, c_foot_type, c_foot_des,
+                c_foot_style
+            )
             row_data = self.xls_row_template(c_foot_specs,
                                              [x[0] for x in c_foot_specs])
             row_pos = self.xls_write_row(ws, row_pos, row_data)
