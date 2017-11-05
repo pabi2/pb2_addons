@@ -214,11 +214,14 @@ class trial_balance_xls(report_xls):
         regular_cell_style_pct = xlwt.easyxf(
             regular_cell_format + _xs['center'], num_format_str='0')
 
+        row_start = row_pos
+        display_account = False
         for current_account in objects:
 
             if not _p['to_display_accounts'][current_account.id]:
                 continue
 
+            display_account = True
             if current_account.type == 'view':
                 cell_style = view_cell_style
                 cell_style_center = view_cell_style_center
@@ -296,6 +299,65 @@ class trial_balance_xls(report_xls):
             row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
             row_pos = self.xls_write_row(
                 ws, row_pos, row_data, row_style=cell_style)
+
+        # Summary
+        if display_account:
+            cell_format = regular_cell_format + _xs['bold']
+            c_sum_cell_style = xlwt.easyxf(cell_format)
+            c_sum_cell_style_decimal = xlwt.easyxf(
+                cell_format + _xs['right'],
+                num_format_str=report_xls.decimal_format)
+            c_sum_specs = [(c_spec[0], 1, 0, 'text', None)
+                           for c_spec in c_specs]
+            for c_spec in c_specs:
+                index = c_specs.index(c_spec)
+                if 'init_bal' == c_spec[0]:
+                    init_bal_start = rowcol_to_cell(row_start,
+                                                    index + account_span - 1)
+                    init_bal_end = rowcol_to_cell(row_pos - 1, index +
+                                                  account_span - 1)
+                    init_bal_formula = 'SUM(' + init_bal_start + ':' + \
+                        init_bal_end + ')'
+                    c_sum_specs[index] = \
+                        ('init_bal', 1, 0, 'number', None,
+                         init_bal_formula, c_sum_cell_style_decimal)
+                if 'debit' == c_spec[0]:
+                    debit_start = rowcol_to_cell(row_start,
+                                                 index + account_span - 1)
+                    debit_end = rowcol_to_cell(row_pos - 1,
+                                               index + account_span - 1)
+                    debit_formula = \
+                        'SUM(' + debit_start + ':' + debit_end + ')'
+                    c_sum_specs[index] = ('debit', 1, 0, 'number', None,
+                                          debit_formula,
+                                          c_sum_cell_style_decimal)
+                if 'credit' == c_spec[0]:
+                    credit_start = rowcol_to_cell(row_start,
+                                                  index + account_span - 1)
+                    credit_end = rowcol_to_cell(row_pos - 1,
+                                                index + account_span - 1)
+                    credit_formula = \
+                        'SUM(' + credit_start + ':' + credit_end + ')'
+                    c_sum_specs[index] = \
+                        ('credit', 1, 0, 'number', None,
+                         credit_formula, c_sum_cell_style_decimal)
+                if 'balance' == c_spec[0]:
+                    balance_start = rowcol_to_cell(row_start,
+                                                   index + account_span - 1)
+                    balance_end = rowcol_to_cell(row_pos - 1,
+                                                 index + account_span - 1)
+                    balance_formula = 'SUM(' + balance_start + ':' + \
+                        balance_end + ')'
+                    c_sum_specs[index] = \
+                        ('balance', 1, 0, 'number', None,
+                         balance_formula, c_sum_cell_style_decimal)
+
+            c_sum_specs.insert(
+                2, ('text_total', 1, 0, 'text', 'Total', None,
+                    c_sum_cell_style))
+        row_data = self.xls_row_template(c_sum_specs,
+                                         [x[0] for x in c_sum_specs])
+        row_pos = self.xls_write_row(ws, row_pos, row_data)
 
 
 trial_balance_xls('report.account.account_report_trial_balance_xls',
