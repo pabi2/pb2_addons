@@ -71,6 +71,7 @@ class HRExpenseLine(ActivityCommon, models.Model):
 
     @api.model
     def _prepare_analytic_line(self, reverse=False, currency=False):
+        self.ensure_one()
         # general_account_id = self._get_account_id_from_po_line()
         general_journal = self.env['account.journal'].search(
             [('type', '=', 'purchase')], limit=1)
@@ -83,10 +84,16 @@ class HRExpenseLine(ActivityCommon, models.Model):
             raise ValidationError(
                 _("No analytic journal for expense commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
+        analytic_journal = general_journal.exp_commitment_analytic_journal_id
+
+        # Pre check, is eligible line
+        Budget = self.env['account.budget']
+        if not Budget.budget_eligible_line(analytic_journal, self):
+            return False
 
         # Use EXP Commitment Account
         general_account_id = general_journal.exp_commitment_account_id.id
-        journal_id = general_journal.exp_commitment_analytic_journal_id.id
+
         line_qty = 0.0
         if 'diff_qty' in self._context:
             line_qty = self._context.get('diff_qty')
@@ -106,7 +113,7 @@ class HRExpenseLine(ActivityCommon, models.Model):
             'amount': currency.compute(sign * self._price_subtotal(line_qty),
                                        company_currency),
             'general_account_id': general_account_id,
-            'journal_id': journal_id,
+            'journal_id': analytic_journal.id,
             'ref': self.expense_id.name,
             'user_id': self._uid,
             # Expense

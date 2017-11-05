@@ -55,9 +55,9 @@ class AccountMoveLine(models.Model):
     def _budget_eligible_move_lines(self):
         """ To be eligible, move line must,
         * With journal with analytic_journal
-        * Have product or activity
         * Have AG """
-        move_lines = self.filtered(lambda l:
-                                   l.journal_id.analytic_journal_id and
-                                   l.activity_group_id)
+        Budget = self.env['account.budget']
+        move_lines = self.filtered(
+            lambda l: Budget.budget_eligible_line(
+                l.journal_id.analytic_journal_id, l))
         return move_lines

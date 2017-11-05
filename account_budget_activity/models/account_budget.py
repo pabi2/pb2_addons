@@ -202,6 +202,14 @@ class AccountBudget(models.Model):
         #     return -1
         return 1  # Latest decision is, always required
 
+    @api.model
+    def budget_eligible_line(self, analytic_journal, line):
+        if analytic_journal and line and \
+                'activity_group_id' in line and line.activity_group_id:
+            return True
+        else:
+            return False
+
     @api.multi
     def _get_past_consumed_domain(self):
         self.ensure_one()

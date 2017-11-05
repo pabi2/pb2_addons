@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_budget_transition_search" model="ir.ui.view">
+            <field name="name">view.budget.transition.search</field>
+            <field name="model">budget.transition</field>
+            <field name="arch" type="xml">
+                <search string="Budget Transition">
+                    <field name="purchase_request_id"/>
+                    <field name="expense_id"/>
+                    <field name="purchase_id"/>
+                    <field name="picking_id"/>
+                    <field name="sale_id"/>
+                    <field name="invoice_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_budget_transition_tree" model="ir.ui.view">
+            <field name="name">view.budget.transition.tree</field>
+            <field name="model">budget.transition</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Transition">
+                    <field name="id"/>
+                    <field name="source"/>
+                    <field name="target"/>
+                    <field name="quantity"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_transition_form" model="ir.ui.view">
+            <field name="name">view.budget.transition.form</field>
+            <field name="model">budget.transition</field>
+            <field name="arch" type="xml">
+                <form string="Budget Transition">
+                    <group>
+                        <group>
+                            <field name="expense_id" attrs="{'invisible': [('expense_id', '=', False)]}"/>
+                            <field name="purchase_request_id" attrs="{'invisible': [('purchase_request_id', '=', False)]}"/>
+                            <field name="purchase_id" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
+                            <field name="sale_id" attrs="{'invisible': [('sale_id', '=', False)]}"/>
+                            <field name="invoice_id" attrs="{'invisible': [('invoice_id', '=', False)]}"/>
+                            <field name="picking_id" attrs="{'invisible': [('picking_id', '=', False)]}"/>
+                            <field name="forward"/>
+                            <field name="backward"/>
+                        </group>
+                        <group>
+                            <field name="expense_line_id" attrs="{'invisible': [('expense_line_id', '=', False)]}"/>
+                            <field name="purchase_request_line_id" attrs="{'invisible': [('purchase_request_line_id', '=', False)]}"/>
+                            <field name="purchase_line_id" attrs="{'invisible': [('purchase_line_id', '=', False)]}"/>
+                            <field name="sale_line_id" attrs="{'invisible': [('sale_line_id', '=', False)]}"/>
+                            <field name="invoice_line_id" attrs="{'invisible': [('invoice_line_id', '=', False)]}"/>
+                            <field name="stock_move_id" attrs="{'invisible': [('stock_move_id', '=', False)]}"/>
+                            <field name="quantity"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_budget_transition" model="ir.actions.act_window">
+            <field name="name">Budget Transition</field>
+            <field name="res_model">budget.transition</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_budget_transition_tree"/>
+            <field name="search_view_id" ref="view_budget_transition_search"/>
+        </record>
+        <menuitem action="action_budget_transition" id="menu_budget_transitionp" parent="menu_action_budget_report" sequence="100"/>
+
+
+    </data>
+</openerp>
