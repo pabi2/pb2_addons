@@ -239,7 +239,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
 
         # Retrieving accounts
         account_ids = self.get_all_accounts(
-            new_ids, only_type=filter_report_type)
+            new_ids, only_type=filter_report_type, exclude_type=['view'])
 
         # get details for each accounts, total of debit / credit / balance
         accounts_by_ids = self._get_account_details(
