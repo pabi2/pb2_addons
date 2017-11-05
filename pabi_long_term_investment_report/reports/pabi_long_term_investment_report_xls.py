@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
+import xlwt
+from datetime import datetime
 from .pabi_long_term_investment_report import PabiLongTermInvestmentReport
 from openerp.addons.report_xls.report_xls import report_xls
 from openerp.tools.translate import _
-import locale
-import xlwt
-import datetime
 
 # HEADER
 HEADER_FIELDS = ['company', 'account_detail', 'date_current']
@@ -64,12 +63,16 @@ class PabiLongTermInvestmentReportXLS(report_xls):
 
         # Header
         head_type = ['text', 'text', 'text']
+        print_date = _p.date_print and \
+            datetime.strptime(_p.date_print, '%Y-%m-%d') or datetime.today()
+
         head_des = [
             'สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ',
             'รายละเอียด เลขที่บัญชี %s ชื่อบัญชี %s'
             % (str(_p.account.code), _p.account.name.encode('utf-8')),
-            'ณ วันที่ %s' % (_p.date_print.strftime('%d/%m/%Y'))
+            'ณ วันที่ %s' % (print_date.strftime('%d/%m/%Y'))
         ]
+
         head_specs = self._get_spec_data(HEADER_FIELDS, HEADER_CELL_NUMBER,
                                          HEADER_CELL_WIDTH, head_type,
                                          head_des)
@@ -150,7 +153,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                                'text', 'number', 'text']
                 c_line_des = [
                     line.get('name', None),
-                    datetime.datetime.strptime(
+                    datetime.strptime(
                         line.get('date_approve'), '%Y-%m-%d')
                     .strftime('%d/%m/%Y'),
                     line.get('description', None),
@@ -160,8 +163,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                     line.get('price_unit', 0.0),
                     line.get('price_subtotal', 0.0),
                     line.get('invoice_number', None),
-                    datetime.datetime.strptime(line.get('date_approve'),
-                                               '%Y-%m-%d')
+                    datetime.strptime(line.get('date_approve'), '%Y-%m-%d')
                         .strftime('%d/%m/%Y') or None,
                     line.get('invoice_desc', None),
                     line.get('amount_invoice', 0.0),
