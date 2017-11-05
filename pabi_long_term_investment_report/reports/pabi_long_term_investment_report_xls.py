@@ -68,7 +68,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
             'สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ',
             'รายละเอียด เลขที่บัญชี %s ชื่อบัญชี %s'
             % (str(_p.account.code), _p.account.name.encode('utf-8')),
-            'ณ วันที่ %s' % (datetime.datetime.today().strftime('%d/%m/%Y'))
+            'ณ วันที่ %s' % (_p.date_print.strftime('%d/%m/%Y'))
         ]
         head_specs = self._get_spec_data(HEADER_FIELDS, HEADER_CELL_NUMBER,
                                          HEADER_CELL_WIDTH, head_type,
