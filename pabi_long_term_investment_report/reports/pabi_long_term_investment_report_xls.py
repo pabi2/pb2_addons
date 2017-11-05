@@ -163,8 +163,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                     line.get('price_unit', 0.0),
                     line.get('price_subtotal', 0.0),
                     line.get('invoice_number', None),
-                    datetime.strptime(line.get('date_approve'), '%Y-%m-%d')
-                        .strftime('%d/%m/%Y') or None,
+                    datetime.strptime(line.get('date_approve'), '%Y-%m-%d').strftime('%d/%m/%Y') or None,
                     line.get('invoice_desc', None),
                     line.get('amount_invoice', 0.0),
                     ref_payments
@@ -200,7 +199,7 @@ class PabiLongTermInvestmentReportXLS(report_xls):
 
             # FOOTER
             c_ftr_cell_style_decimal = xlwt.easyxf(
-                _xs['borders_all'] + _xs['right'] + _xs['fill'],
+                _xs['bold'] + _xs['borders_all'] + _xs['right'] + _xs['fill'],
                 num_format_str=report_xls.decimal_format)
             c_ftr_cell_style = xlwt.easyxf(
                 _xs['bold'] + _xs['fill'] + _xs['borders_all'])
