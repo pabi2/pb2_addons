@@ -68,6 +68,10 @@ class BudgetMonitorReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
     product_id = fields.Many2one(
         'product.product',
         string='Product'
@@ -135,7 +139,10 @@ class BudgetMonitorReport(models.Model):
         return sql_view
 
     def _get_dimension(self):
-        return 'activity_group_id, activity_id, product_id, period_id, quarter'
+        return """
+            activity_group_id, activity_id, account_id,
+            product_id, period_id, quarter
+        """
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

@@ -67,6 +67,10 @@ class BudgetConsumeReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
     period_id = fields.Many2one(
         'account.period',
         string="Period",
@@ -130,7 +134,7 @@ class BudgetConsumeReport(models.Model):
 
     def _get_dimension(self):
         return 'aal.product_id, aal.activity_group_id, aal.activity_id, ' + \
-            'aal.period_id, aal.quarter'
+            'aal.account_id, aal.period_id, aal.quarter'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
