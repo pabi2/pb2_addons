@@ -77,6 +77,10 @@ class BudgetPlanReport(models.Model):
         'account.activity',
         string='Activity',
     )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
     product_id = fields.Many2one(
         'product.product',
         string='Product',
@@ -147,6 +151,7 @@ class BudgetPlanReport(models.Model):
         return """
             abl.activity_group_id,
             abl.activity_id,
+            null account_id,
             null product_id,
             ablps.period_id as period_id,
             ablps.quarter as quarter

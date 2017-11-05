@@ -33,6 +33,7 @@
                	 <field name="product_id" />
                  <field name="activity_group_id" />
                  <field name="activity_id" />
+                 <field name="account_id"/>
                  <field name="user_id" />
                  <field name="fiscalyear_id" />
                  <field name="date" />
@@ -60,6 +61,7 @@
                     <filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
                     <filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
                     <filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+                    <filter string="Account" name="account_id" context="{'group_by':'account_id', 'residual_visible':True}"/>
                     <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                     <filter string="Year" context="{'group_by':'date:year'}"/>
                     <filter string="Month" context="{'group_by':'date:month'}"/>
