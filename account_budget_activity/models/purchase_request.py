@@ -99,7 +99,7 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
     def _price_subtotal(self, line_qty):
         return self.price_unit * line_qty
 
-    @api.multis
+    @api.multi
     def _prepare_analytic_line(self, reverse=False, currency=False):
         self.ensure_one()
         # general_account_id = self._get_account_id_from_pr_line()
