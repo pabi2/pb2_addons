@@ -297,15 +297,6 @@ class LoanInstallment(models.Model):
         }
         return move_line
 
-    # @api.multi
-    # def _prepare_income_move_lines(self):
-    #     self.ensure_one()
-    #     move_line_dict = []
-    #     for line in self.income_ids:
-    #         line_dict = self.move_line_get_item(line)
-    #         move_line_dict.append((0, 0, line_dict))
-    #     return move_line_dict
-
     @api.multi
     def _prepare_income_move_line(self):
         self.ensure_one()
@@ -321,20 +312,6 @@ class LoanInstallment(models.Model):
             'credit': self.amount_income > 0 and self.amount_income or 0.0,
         }
         return move_line_dict
-
-    # @api.multi
-    # def move_line_get_item(self, line):
-    #     self.ensure_one()
-    #     return {
-    #         'date': line.date,
-    #         'date_maturity': False,
-    #         'name': line.name or '/',
-    #         'partner_id': line.partner_id.id,
-    #         'account_id': line.account_id.id,
-    #         'analytic_account_id': False,
-    #         'debit': line.amount < 0 and -line.amount or 0.0,
-    #         'credit': line.amount > 0 and line.amount or 0.0,
-    #     }
 
     @api.multi
     def _validate(self):
@@ -389,13 +366,6 @@ class LoanInstallment(models.Model):
         self._validate()
         Move = self.env['account.move']
         MoveLine = self.env['account.move.line']
-        # Analytic = self.env['account.analytic.account']
-        # # Update dimensions
-        # for rec in self:
-        #     for line in rec.income_ids:
-        #         line.analytic_account_id = \
-        #             Analytic.create_matched_analytic(line)
-        # # --
         for rec in self:
             if rec.move_id:
                 continue
@@ -429,6 +399,8 @@ class LoanInstallment(models.Model):
             # Reconcile receivables
             for rec_ids in rec_pair_ids:
                 MoveLine.browse(rec_ids).reconcile('auto')
+            # Stamp Loand installment number back to invoice
+            rec.receivable_ids.mapped('invoice').write({'comment': rec.name})
         # Done
         self.write({'state': 'open'})
         return True
