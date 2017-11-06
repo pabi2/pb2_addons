@@ -342,7 +342,7 @@ class LoanInstallment(models.Model):
         move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
         rev_move = AccountMove.create(move_dict)
         # Delete reconcile, and receconcile with reverse entry
-        move.line_id.filtered('reconcile_id').reconcile_id.unlink()
+        move.line_id.filtered('reconcile_id').mapped('reconcile_id').unlink()
         accounts = move.line_id.mapped('account_id')
         for account in accounts:
             AccountMove.\
@@ -427,7 +427,6 @@ class LoanInstallment(models.Model):
             install_lines = []
             while i < rec.period_total:
                 line = {
-                    'installment': i + 1,
                     'date_start': date_start.strftime('%Y-%m-%d'),
                     'loan_install_id': rec.id,
                 }
@@ -526,6 +525,13 @@ class LoanInstallment(models.Model):
                 if i == num_line:
                     line.amount = \
                         (rec.amount_loan_total - sum_amount) + line.amount
+        # Delete line with amount = 0.0
+        rec.installment_ids.filtered(lambda l: not l.amount).unlink()
+        # Assign Installment Number
+        i = 1
+        for line in rec.installment_ids.sorted(key=lambda l: l.date_start):
+            line.installment = i
+            i += 1
         return
 
     @api.model
