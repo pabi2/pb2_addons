@@ -6,36 +6,70 @@ from openerp.exceptions import ValidationError
 class BudgetTransition(models.Model):
     _name = 'budget.transition'
     _description = 'Keep track of budget transition from one model to another'
+    _order = 'id desc'
 
+    id = fields.Integer(
+        string='ID',
+    )
     expense_line_id = fields.Many2one(
         'hr.expense.line',
         string='Expense Line',
         index=True,
+    )
+    expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Expense',
+        related='expense_line_id.expense_id',
     )
     purchase_request_line_id = fields.Many2one(
         'purchase.request.line',
         string='Purchase Request Line',
         index=True,
     )
+    purchase_request_id = fields.Many2one(
+        'purchase.request',
+        string='Purchase Request',
+        related='purchase_request_line_id.request_id',
+    )
     purchase_line_id = fields.Many2one(
         'purchase.order.line',
         string='Purchase Order Line',
         index=True,
+    )
+    purchase_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+        related='purchase_line_id.order_id',
     )
     sale_line_id = fields.Many2one(
         'sale.order.line',
         string='Sales Order Line',
         index=True,
     )
+    sale_id = fields.Many2one(
+        'sale.order',
+        string='Sales Order',
+        related='sale_line_id.order_id',
+    )
     invoice_line_id = fields.Many2one(
         'account.invoice.line',
         string='Invoice Line',
         index=True,
     )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice',
+        related='invoice_line_id.invoice_id',
+    )
     stock_move_id = fields.Many2one(
         'stock.move',
         string='Stock Move',
         index=True,
+    )
+    picking_id = fields.Many2one(
+        'stock.picking',
+        string='Picking',
+        related='stock_move_id.picking_id',
     )
     quantity = fields.Float(
         string='Quantity',
@@ -52,6 +86,68 @@ class BudgetTransition(models.Model):
         help="True, when the end document is cancelled, "
         "if it has been forwarded, do regain budget commitment."
     )
+    source = fields.Char(
+        string='Source',
+        compute='_compute_source_target',
+    )
+
+    target = fields.Char(
+        string='Target',
+        compute='_compute_source_target',
+    )
+
+    @api.multi
+    def _compute_source_target(self):
+        for rec in self:
+            source = 'source'
+            target = 'target'
+            if rec.backward:
+                source = 'target'
+                target = 'source'
+            # PR -> PO
+            if rec.purchase_request_line_id and rec.purchase_line_id:
+                rec[source] = '%s, %s' % \
+                    (rec.purchase_request_id.name,
+                     rec.purchase_request_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.purchase_id.name,
+                     rec.purchase_line_id.name_get()[0][1])
+            # PO -> Invoice
+            if rec.purchase_line_id and rec.invoice_line_id:
+                rec[source] = '%s, %s' % \
+                    (rec.purchase_id.name,
+                     rec.purchase_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.invoice_id.number,
+                     rec.invoice_line_id.name_get()[0][1])
+            # PO -> Picking
+            if rec.purchase_line_id and rec.stock_move_id:
+                rec[source] = '%s, %s' % \
+                    (rec.purchase_id.name,
+                     rec.purchase_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.picking_id.name,
+                     rec.stock_move_id.name_get()[0][1])
+            # Picking -> invoice
+            if rec.invoice_line_id and rec.stock_move_id:
+                rec[source] = '%s, %s' % \
+                    (rec.invoice_id.number,
+                     rec.invoice_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.picking_id.name,
+                     rec.stock_move_id.name_get()[0][1])
+            # EXP -> Invoice
+            if rec.expense_line_id and rec.invoice_line_id:
+                rec[source] = '%s, %s' % \
+                    (rec.expense_id.number,
+                     rec.expense_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.invoice_id.number,
+                     rec.invoice_line_id.name_get()[0][1])
+        if not rec.source:
+            rec.source = _('N/A')
+        if not rec.target:
+            rec.target = _('N/A')
 
     @api.multi
     def return_budget_commitment(self, trigger_model, to_sources):

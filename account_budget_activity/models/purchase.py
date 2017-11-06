@@ -105,8 +105,9 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
         cur = self.order_id.pricelist_id.currency_id
         return cur.round(taxes['total'])
 
-    @api.model
+    @api.multi
     def _prepare_analytic_line(self, reverse=False, currency=False):
+        self.ensure_one()
         # general_account_id = self._get_account_id_from_po_line()
         general_journal = self.env['account.journal'].search(
             [('type', '=', 'purchase'),
@@ -120,6 +121,12 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
             raise ValidationError(
                 _("No analytic journal for PO commitments defined on the "
                   "accounting journal '%s'") % general_journal.name)
+        analytic_journal = general_journal.po_commitment_analytic_journal_id
+
+        # Pre check, is eligible line
+        Budget = self.env['account.budget']
+        if not Budget.budget_eligible_line(analytic_journal, self):
+            return False
 
         # Use PO Commitment Account
         general_account_id = general_journal.po_commitment_account_id.id
@@ -143,7 +150,7 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
             'amount': currency.compute(sign * self._price_subtotal(line_qty),
                                        company_currency),
             'general_account_id': general_account_id,
-            'journal_id': general_journal.po_commitment_analytic_journal_id.id,
+            'journal_id': analytic_journal.id,
             'ref': self.order_id.name,
             'user_id': self._uid,
             # PO
