@@ -556,12 +556,31 @@ class LoanInstallment(models.Model):
                         (rec.amount_loan_total - sum_amount) + line.amount
         return
 
+    @api.model
+    def _chcek_installment_no_skip(self, installment_ids):
+        Installment = self.env['loan.installment.plan']
+        installments = Installment.browse(installment_ids)
+        if installments:
+            investments = installments.mapped('loan_install_id')
+            for invest in investments:
+                reconciled = invest.installment_ids.\
+                    filtered(lambda l: not l.reconcile_id).\
+                    mapped('installment')
+                selected = installments.\
+                    filtered(lambda l: l.loan_install_id == invest).\
+                    mapped('installment')
+                idx = reconciled.index(max(selected))
+                reconciled = reconciled[:idx + 1]
+                if len(reconciled) > len(selected):
+                    raise ValidationError(_('You can not skip installment!'))
+
     @api.multi
     def action_create_payment(self, installment_ids=False):
         action_id = False
         action_id = self.env.ref('account_voucher.action_vendor_receipt')
         if not action_id:
             raise ValidationError(_('No Action'))
+        self._chcek_installment_no_skip(installment_ids)
         action = action_id.read([])[0]
         ctx = ast.literal_eval(action['context'])
         ctx.update({
@@ -571,45 +590,6 @@ class LoanInstallment(models.Model):
         action['context'] = ctx
         action['views'].reverse()
         return action
-
-
-# class LoanInstallmentIncome(models.Model):
-#     _name = 'loan.installment.income'
-#
-#     loan_install_id = fields.Many2one(
-#         'loan.installment',
-#         string='Loan Installment',
-#         index=True,
-#         ondelete='cascade',
-#         readonly=True,
-#     )
-#     name = fields.Char(
-#         string='Description',
-#     )
-#     date = fields.Date(
-#         string='Date',
-#         related='loan_install_id.date',
-#         readonly=True,
-#     )
-#     partner_id = fields.Many2one(
-#         'res.partner',
-#         string='Customer',
-#         related='loan_install_id.partner_id',
-#         readonly=True,
-#     )
-#     account_id = fields.Many2one(
-#         'account.account',
-#         string='Account',
-#         domain=[('type', '=', 'other'),
-#                 ('user_type.report_type', '=', 'liability')],
-#         required=True,
-#         default=lambda self: self.env.user.company_id.loan_income_account_id,
-#     )
-#     amount = fields.Float(
-#         string='Amount',
-#         required=True,
-#         default=0.0,
-#     )
 
 
 class LoanInstallmentPlan(models.Model):
