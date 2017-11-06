@@ -254,7 +254,7 @@ class LoanInstallment(models.Model):
         vouchers = Voucher.search(
             [('line_ids.move_line_id', 'in', move_line_ids),
              ('state', '=', 'posted')])
-        action = self.env.ref('account_voucher.action_vendor_payment')
+        action = self.env.ref('account_voucher.action_vendor_receipt')
         if not action:
             raise ValidationError(_('No Action'))
         action = action.read([])[0]
