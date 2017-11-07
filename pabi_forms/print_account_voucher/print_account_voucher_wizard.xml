@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <act_window name="Print Voucher"
+        <act_window name="Print Receipt"
             id="action_print_account_voucher_wizard"
             src_model="account.voucher"
             res_model="print.account.voucher.wizard"
@@ -15,7 +15,7 @@
             <field name="name">print.account.voucher.wizard</field>
             <field name="model">print.account.voucher.wizard</field>
             <field name="arch" type="xml">
-                <form string="Print Voucher">
+                <form string="Print Receipt">
                     <p>This wizard select voucher form based on doctype</p>
                     <group>
                         <field name="doctype"/>
