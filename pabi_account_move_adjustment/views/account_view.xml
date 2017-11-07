@@ -23,6 +23,10 @@
                       <filter string="Period" icon="terp-go-month" domain="[]" context="{'group_by':'period_id'}"/>
                       <filter string="Entries Month" icon="terp-go-month" domain="[]" context="{'group_by':'date'}" help="Journal Entries by Month"/>
                       <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}" help="Creator of this document"/>
+                      <filter name="to_be_reversed"
+                          string="To Be Reversed"
+                          domain="[('to_be_reversed', '=', True), ('reversal_id', '=', False)]"
+                          help="Journal Entries to be Reversed"/>
                   </group>
               </search>
           </field>

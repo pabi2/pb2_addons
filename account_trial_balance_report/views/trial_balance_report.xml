@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_account_trial_balance_report_menu" name="Trial Balance" parent="account.menu_finance" sequence="4" groups="account.group_account_user"/>
+
+        <record model="ir.ui.view" id="view_account_trial_balance_report_form">
+            <field name="name">view.account.trial.balance.report.form</field>
+            <field name="model">account.trial.balance.report</field>
+            <field name="arch" type="xml">
+                <form string="Traial Balance" edit="0" create="0" delete="0">
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="fiscalyear_id"/>
+                            <field name="date_start"/>
+                            <field name="date_stop"/>
+                        </group>
+                        <group>
+                            <field name="target_move"/>
+                            <field name="with_movement"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <tree>
+                            <field name="account_id"/>
+                            <field name="initial" sum="Total Initial Balance"/>
+                            <button name="open_initial_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
+                            <field name="debit" sum="Total Debit"/>
+                            <button name="open_debit_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
+                            <field name="credit" sum="Total Credit"/>
+                            <button name="open_credit_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
+                            <field name="balance" sum="Total Balance"/>
+                            <button name="open_balance_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_trial_balance_report" model="ir.actions.act_window">
+            <field name="name">Trial Balance</field>
+            <field name="res_model">account.trial.balance.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</openerp>
