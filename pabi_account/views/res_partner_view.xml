@@ -15,7 +15,7 @@
                     <group>
                         <group name="account_change_history" string="Bank Account Change History">
                             <field name="bank_account_history_ids" nolabel="1">
-                                <tree editable="bottom" edit="1" create="1" delete="1">
+                                <tree editable="bottom" edit="1" create="0" delete="0">
                                     <field name="partner_id" invisible="1"/>
                                     <field name="bank_account"/>
                                     <field name="write_uid"/>
