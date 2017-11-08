@@ -38,8 +38,9 @@ def action_purchase_create_invoice(session, model_name, res_id):
 class PurchaseOrder(PabiAsync, models.Model):
     _inherit = 'purchase.order'
 
-    @api.one
+    @api.multi
     def action_invoice_create(self):
+        self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
             return super(PurchaseOrder, self).action_invoice_create()
         # Enqueue
