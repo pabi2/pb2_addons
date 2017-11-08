@@ -164,6 +164,11 @@ class AccountAssetTransfer(models.Model):
         for rec in self:
             if not rec.asset_ids or not rec.target_asset_ids:
                 raise ValidationError(_('Soure or target assets not filled!'))
+            inactive_assets = rec.asset_ids.filtered(lambda l: not l.active)
+            if inactive_assets:
+                names = ', '.join(inactive_assets.mapped('code'))
+                raise ValidationError(
+                    _('Following asset are not active!\n%s') % names)
             if float_compare(rec.source_asset_value,
                              rec.target_asset_value, 2) != 0:
                 raise ValidationError(
