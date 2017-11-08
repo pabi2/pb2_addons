@@ -52,5 +52,5 @@ class ResPartnerBankChangeHistory(models.Model):
     )
     note = fields.Text(
         string='Note',
-        readonly=True,
+        readonly=False,
     )
