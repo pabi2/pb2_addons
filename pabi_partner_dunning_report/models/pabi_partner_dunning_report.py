@@ -96,6 +96,22 @@ class PABIPartnerDunningReport(models.Model):
         string='#3 Date'
     )
 
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None,
+                   orderby=False, lazy=True):
+        res = super(PABIPartnerDunningReport, self).read_group(
+            domain, fields, groupby, offset=offset, limit=limit,
+            orderby=orderby, lazy=True)
+        if 'amount_residual' in fields:
+            for line in res:
+                if '__domain' in line:
+                    lines = self.search(line['__domain'])
+                    amount_residual = 0.0
+                    for dunning_report in lines:
+                        amount_residual += dunning_report.amount_residual
+                    line['amount_residual'] = amount_residual
+        return res
+
     @api.multi
     @api.depends()
     def _compute_validate_user_id(self):
