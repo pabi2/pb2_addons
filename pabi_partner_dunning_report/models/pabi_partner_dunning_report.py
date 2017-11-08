@@ -193,6 +193,20 @@ class PABIPartnerDunningReport(models.Model):
                               }
             self.env['pabi.partner.dunning.letter'].create(dunning_letter)
 
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None,
+                   orderby=False, lazy=True):
+        res = super(PABIPartnerDunningReport, self).read_group(
+            domain, fields, groupby, offset=offset, limit=limit,
+            orderby=orderby, lazy=lazy)
+        if 'amount_residual' in fields:
+            for line in res:
+                if '__domain' in line:
+                    line['amount_residual'] = \
+                        sum(self.search(line['__domain'])
+                            .mapped('amount_residual'))
+        return res
+
 
 class PABIPartnerDunningPrintHistory(models.Model):
     _name = 'pabi.partner.dunning.print.history'
