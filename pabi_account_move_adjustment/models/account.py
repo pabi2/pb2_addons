@@ -196,14 +196,14 @@ class AccountModel(models.Model):
     )
 
     # If AJN (Not adjust budget), user must not choose any budget.
-    @api.multi
-    @api.constrains('lines_id', 'journal_id')
-    def _check_adjust_no_budget(self):
-        for rec in self:
-            if rec.journal_id.code == 'AJN' and \
-                    rec.lines_id.filtered('chartfield_id'):
-                raise ValidationError(_('For %s, budget are not allowed') %
-                                      rec.journal_id.name)
+    # @api.multi
+    # @api.constrains('lines_id', 'journal_id')
+    # def _check_adjust_no_budget(self):
+    #     for rec in self:
+    #         if rec.journal_id.code == 'AJN' and \
+    #                 rec.lines_id.filtered('chartfield_id'):
+    #             raise ValidationError(_('For %s, budget are not allowed') %
+    #                                   rec.journal_id.name)
 
     @api.multi
     def onchange_journal_id(self, journal_id):
