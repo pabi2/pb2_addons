@@ -8,7 +8,7 @@
                 <form string="Partner Dunning Report">
                     <group>
                         <group>
-                            <field name="search_options"/>
+                            <field name="search_options" widget="radio"/>
                         </group>
                         <group></group>
                     </group>

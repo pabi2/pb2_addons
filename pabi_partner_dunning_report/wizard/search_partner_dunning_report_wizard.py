@@ -41,4 +41,5 @@ class SearchPartnerDunningReportWizard(models.TransientModel):
                               'action_pabi_partner_dunning_report')
         result = action.read()[0]
         result.update({'domain': self._get_domain()})
+        result.update({'context': {}})
         return result

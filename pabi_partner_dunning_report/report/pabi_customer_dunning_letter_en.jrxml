@@ -113,23 +113,23 @@
 	<group name="GroupID" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
 		<groupHeader>
-			<band height="121">
+			<band height="130">
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="150" y="101" width="100" height="20"/>
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="150" y="110" width="100" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["Date"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="250" y="101" width="100" height="20"/>
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="250" y="110" width="100" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["Due Date"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="350" y="101" width="145" height="20"/>
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="350" y="110" width="145" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
@@ -137,7 +137,7 @@
 ($F{currency} == "THB" ? "(Baht)" : "("+$F{currency}+")")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="box" positionType="Float" x="1" y="74" width="495" height="20"/>
+					<reportElement style="box" positionType="Float" x="1" y="83" width="495" height="20"/>
 					<textElement textAlignment="Justified" lineSpacing="1_1_2" markup="html">
 						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
@@ -151,21 +151,21 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{subject}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="false">
-					<reportElement style="box" mode="Transparent" x="0" y="27" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement style="box" mode="Transparent" x="0" y="36" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
 						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["Dear Sir,"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="0" y="101" width="150" height="20"/>
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="0" y="110" width="150" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["Invoice"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="false">
-					<reportElement style="box" mode="Transparent" x="28" y="48" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF">
+					<reportElement style="box" mode="Transparent" x="28" y="57" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF">
 						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
@@ -174,6 +174,20 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name} + "\n" +
 (new Scriptlet()).getAddress($F{street},$F{street2},$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
 				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="34" y="20" width="340" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Transparent" x="0" y="20" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Date]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -345,7 +359,7 @@ Tel. +66 2564 7000 Fax. +66 2564 7002-5 http://www.nstda.or.th]]></text>
 				<textElement lineSpacing="1_1_2" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Finance & Account Shared Services
+				<text><![CDATA[Finance & Account Division
 Tel. 0 2564 7000 ext 71317
 email: ar@nstda.or.th]]></text>
 			</staticText>
