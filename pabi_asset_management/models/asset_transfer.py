@@ -168,7 +168,7 @@ class AccountAssetTransfer(models.Model):
             if inactive_assets:
                 names = ', '.join(inactive_assets.mapped('code'))
                 raise ValidationError(
-                    _('Following asset are not active!\n%s') % names)
+                    _('Following assets are not active!\n%s') % names)
             if float_compare(rec.source_asset_value,
                              rec.target_asset_value, 2) != 0:
                 raise ValidationError(

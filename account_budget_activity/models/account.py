@@ -163,25 +163,30 @@ class AccountAccount(models.Model):
     )
 
 
-class AccountModelLine(ActivityCommon, models.Model):
-    _inherit = 'account.model.line'
+class AccountModel(models.Model):
+    _inherit = 'account.model'
 
     @api.model
     def create(self, vals):
-        line = super(AccountModelLine, self).create(vals)
-        Analytic = self.env['account.analytic.account']
-        line.analytic_account_id = \
-            Analytic.create_matched_analytic(line)
-        return line
+        res = super(AccountModel, self).create(vals)
+        if 'lines_id' in vals:
+            for line in res.lines_id:
+                Analytic = self.env['account.analytic.account']
+                line.analytic_account_id = \
+                    Analytic.create_matched_analytic(line)
+        return res
 
     @api.multi
     def write(self, vals):
-        res = super(AccountModelLine, self).write(vals)
-        if self.env.context.get('MyModelLoopBreaker'):
-            return res
-        self = self.with_context(MyModelLoopBreaker=True)
-        for line in self:
-            Analytic = self.env['account.analytic.account']
-            line.analytic_account_id = \
-                Analytic.create_matched_analytic(line)
+        res = super(AccountModel, self).write(vals)
+        if 'lines_id' in vals:
+            for rec in self:
+                for line in rec.lines_id:
+                    Analytic = self.env['account.analytic.account']
+                    line.analytic_account_id = \
+                        Analytic.create_matched_analytic(line)
         return res
+
+
+class AccountModelLine(ActivityCommon, models.Model):
+    _inherit = 'account.model.line'
