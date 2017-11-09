@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
 from openerp.osv.orm import setup_modifiers
-from openerp import api, models, fields
+from openerp import api, models, fields, _
+from openerp.exceptions import ValidationError
 
 
 class ExpenseCreateSupplierInvoice(models.TransientModel):
@@ -24,7 +25,6 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
         Expense = self.env['hr.expense.expense']
         expense = Expense.browse(self._context.get('active_id'))
         no_multi_supplier = (expense.pay_to != 'supplier' or
-                             len(expense.line_ids) != 1 or
                              expense.is_employee_advance or
                              expense.is_advance_clearing) or False
         result = super(ExpenseCreateSupplierInvoice, self).\
@@ -53,6 +53,9 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
             return super(ExpenseCreateSupplierInvoice, self).\
                 action_create_supplier_invoice()
         else:
+            if len(expense.line_ids) != 1:
+                raise ValidationError(
+                    _('Attendee list can be used only for 1 expense line!'))
             lines = []
             amount_untaxed = sum([x.unit_amount * x.unit_quantity
                                   for x in expense.line_ids])
