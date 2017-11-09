@@ -83,6 +83,7 @@ class AccountInvoice(models.Model):
         for invoice in self:
             # Petty cash case, do reconcile
             if invoice.clear_pettycash_id:
+                balance = invoice.clear_pettycash_id.pettycash_balance
                 if invoice.amount_total:
                     raise ValidationError(
                         _('Please clear petty cash with full amount!\n'
@@ -103,4 +104,9 @@ class AccountInvoice(models.Model):
                          ('move_id', '=', invoice.move_id.id),
                          ('debit', '=', 0.0), ('credit', '=', 0.0)])
                 move_lines.reconcile(type='manual')
+
+                if invoice.clear_pettycash_id.pettycash_balance < 0.0:
+                    raise ValidationError(
+                        _('Requested amount exceed petty cash balance: %s') %
+                        '{:,.2f}'.format(balance))
         return result
