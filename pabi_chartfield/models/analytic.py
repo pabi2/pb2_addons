@@ -14,10 +14,10 @@ class AccountAnalyticLine(ChartFieldAction, models.Model):
 class AccountAnalyticAccount(ChartFieldAction, models.Model):
     _inherit = 'account.analytic.account'
 
-    # taxbranch_id = fields.Many2one(
-    #     'res.taxbranch',
-    #     required=True,
-    # )
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        required=True,
+    )
 
     @api.model
     def _analytic_dimensions(self):
