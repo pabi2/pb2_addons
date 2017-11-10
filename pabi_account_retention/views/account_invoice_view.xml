@@ -22,7 +22,7 @@
                     <label for="is_retention_return" attrs="{'invisible': [('source_document_id', '!=', False)]}" />
                     <div attrs="{'invisible': [('source_document_id', '!=', False)]}">
                         <field name="is_retention_return" class="oe_inline"/>
-                        <field name="retention_return_purchase_id" class="oe_inline"
+                        <field name="retention_return_purchase_id" class="oe_inline" context="{'retention_return_to_supplier_id': partner_id}"
                             attrs="{'invisible': [('is_retention_return', '=', False)], 'required': [('is_retention_return', '=', True)]}"/>
                     </div>
                 </xpath>

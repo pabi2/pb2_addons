@@ -39,49 +39,13 @@ class AccountInvoice(models.Model):
             res = {}
         if 'value' not in res:
             res['value'] = {}
-        if 'domain' not in res:
-            res['domain'] = {}
-
         res['value'].update({'retention_purchase_id': False,
-                             'retention_return_purchase_id': False,
-                             })
-        if not partner_id:
-            domain = [('id', 'in', [])]
-            res['domain'].update({'retention_return_purchase_id': domain})
-        else:
-            domain = [('partner_id', '=', partner_id),
-                      ('order_type', '=', 'purchase_order'),
-                      ('state', 'in', ['done', 'approved']),
-                      ]
-            # Exclude PO already used.
-            inv_dom = [('partner_id', '=', partner_id),
-                       ('state', 'in', ['open', 'paid'])]
-            invoices = self.search(
-                inv_dom + [('type', 'in', ['in_invoice', 'in_refund']),
-                           ('is_retention_return', '=', True)])
-            po_ids = [x.retention_return_purchase_id.id for x in invoices]
-            domain.append(('id', 'not in', po_ids))
-            # Only invoices with retention
-            # 1) Contract Warranty (customer_invoice)
-            invoices = self.search(
-                inv_dom + [('type', 'in', ['out_invoice', 'out_refund']),
-                           ('retention_purchase_id', '!=', False)])
-            po_ids = [x.retention_purchase_id.id for x in invoices]
-            # 2) Retention from Supplier Invoice (invoice plan)
-            invoices = self.search(
-                inv_dom + [('type', 'in', ['in_invoice', 'in_refund']),
-                           ('amount_retention', '>', 0.0)])
-            for x in invoices:
-                if x.purchase_ids:
-                    po_ids += x.purchase_ids._ids
-            domain.append(('id', 'in', po_ids))
-            # --
-            res['domain'].update({'retention_return_purchase_id': domain})
+                             'retention_return_purchase_id': False})
         return res
 
     @api.onchange('retention_purchase_id')
     def _onchange_retention_purchase_id(self):
-        self.invoice_line = []
+        self.invoice_line = False
         if self.retention_purchase_id:
             retention_line = self.env['account.invoice.line'].new()
             retention_line.account_id = \
@@ -93,7 +57,7 @@ class AccountInvoice(models.Model):
 
     @api.onchange('retention_return_purchase_id')
     def _onchange_retention_return_purchase_id(self):
-        self.invoice_line = []
+        self.invoice_line = False
         if self.retention_return_purchase_id:
             account_retention_supplier = \
                 self.env.user.company_id.account_retention_supplier
