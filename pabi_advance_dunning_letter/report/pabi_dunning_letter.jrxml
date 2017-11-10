@@ -132,7 +132,7 @@
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ                             ปรากฎว่าท่านมี]]></text>
+				<text><![CDATA[จากการตรวจสอบบัญชีเงินยืมทดรองจ่ายของ สวทช. ณ                                  ปรากฎว่าท่านมี]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="212" width="515" height="16">
