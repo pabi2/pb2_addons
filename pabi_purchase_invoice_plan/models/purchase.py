@@ -80,8 +80,7 @@ class PurchaseOrder(models.Model):
         self.ensure_one()
         # Case Invoice Plan + Advance: all line must charge same budget
         # So that, advance line know which budget to use.
-        if self.invoice_method == 'invoice_plan' and \
-                (self.use_advance or self.use_deposit):
+        if self.use_invoice_plan and (self.use_advance or self.use_deposit):
             if len(self.order_line.mapped('account_analytic_id')) != 1:
                 raise ValidationError(
                     _('No mixing of costcenter when use Advance/Deposit!'))
