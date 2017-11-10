@@ -173,29 +173,34 @@ class sale_order(models.Model):
                     invoice.id, 'invoice_cancel', self._cr)
         return True
 
+    @api.model
+    def _prepare_deposit_invoice_line(self, name, order, amount):
+        company = self.env.user.company_id
+        account_id = company.account_deposit_customer.id
+        return {
+            'name': name,
+            'origin': order.name,
+            'user_id': order.user_id.id,
+            'account_id': account_id,
+            'price_unit': amount,
+            'quantity': 1.0,
+            'discount': False,
+            'uos_id': False,
+            'product_id': False,
+            'invoice_line_tax_id': [
+                (6, 0, [x.id for x in order.order_line[0].tax_id])],
+            'account_analytic_id': order.project_id.id or False,
+        }
+
     @api.multi
     def _create_deposit_invoice(self, percent, amount, date_invoice=False):
         for order in self:
             if amount:
                 advance_label = 'Advance'
-                company = self.env.user.company_id
-                account_id = company.account_deposit_customer.id
                 name = _("%s of %s %%") % (advance_label, percent)
                 # create the invoice
-                inv_line_values = {
-                    'name': name,
-                    'origin': order.name,
-                    'user_id': order.user_id.id,
-                    'account_id': account_id,
-                    'price_unit': amount,
-                    'quantity': 1.0,
-                    'discount': False,
-                    'uos_id': False,
-                    'product_id': False,
-                    'invoice_line_tax_id': [
-                        (6, 0, [x.id for x in order.order_line[0].tax_id])],
-                    'account_analytic_id': order.project_id.id or False,
-                }
+                inv_line_values = \
+                    self._prepare_deposit_invoice_line(name, order, amount)
                 inv_values = self._prepare_invoice(order, inv_line_values)
                 inv_values.update({'is_advance': True,
                                    'date_invoice': date_invoice})
