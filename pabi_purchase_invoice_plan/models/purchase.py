@@ -94,7 +94,7 @@ class PurchaseOrder(models.Model):
                                             'asset and non-asset!'))
                 if self.invoice_mode != 'change_price':
                     raise ValidationError(_('Invoice Plan/Assets, please use '
-                                            'invoice mode "Change Price"'))
+                                            'invoice mode "As 1 Job"'))
         return res
 
     @api.model

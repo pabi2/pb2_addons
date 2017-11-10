@@ -49,7 +49,7 @@
 		                <field name="receivable_type" style="width: 50%%" />
 		                <field name="advance_expense_id" context="{'advance_partner_id': partner_id}" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'advance_return')], 'required': [('receivable_type', '=', 'advance_return')]}"/>
 		                <field name="late_delivery_work_acceptance_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'late_work_acceptance')], 'required': [('receivable_type', '=', 'late_work_acceptance')]}"/>
-		                <field name="loan_late_payment_invoice_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'loan_late_repayment')], 'required': [('receivable_type', '=', 'loan_late_repayment')]}"/>
+		                <field name="loan_late_payment_invoice_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'loan_late_repayment')], 'required': [('receivable_type', '=', 'loan_late_repayment')]}" context="{'loan_late_payment_customer_id': partner_id}"/>
                     <field name="retention_purchase_id" style="width: 50%%" attrs="{'invisible': [('receivable_type', '!=', 'supplier_retention')], 'required': [('receivable_type', '=', 'supplier_retention')]}"/>
 	            	</div>
 	            </xpath>

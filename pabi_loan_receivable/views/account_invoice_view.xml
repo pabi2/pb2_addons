@@ -8,7 +8,7 @@
 	        <field name="inherit_id" ref="account.invoice_form"/>
 	        <field name="arch" type="xml">
 	            <xpath expr="//field[@name='fiscal_position']" position="after">
-	                <field name="loan_late_payment_invoice_id" />
+	                <field name="loan_late_payment_invoice_id" context="{'loan_late_payment_customer_id': partner_id}" />
 	            </xpath>
 	        </field>
 	    </record>
