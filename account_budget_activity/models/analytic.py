@@ -86,30 +86,63 @@ class AccountAnalyticLine(models.Model):
     #     string='Doc Ref',
     #     readonly=True,
     # )
+    # ---------- PR ---------------
     purchase_request_id = fields.Many2one(
         'purchase.request',
         string='Purchase Request',
+        related='purchase_request_line_id.request_id',
+        store=True,
+        help="PR Commitment",
+    )
+    purchase_request_line_id = fields.Many2one(
+        'purchase.request.line',
+        string='Purchase Request Line',
         readonly=True,
         help="PR Commitment",
     )
+    # ---------- PO ---------------
     purchase_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',
+        related='purchase_line_id.order_id',
+        store=True,
+        help="PO Commitment",
+    )
+    purchase_line_id = fields.Many2one(
+        'purchase.order.line',
+        string='Purchase Order Line',
         readonly=True,
         help="PO Commitment",
     )
+    # ---------- SO ---------------
     sale_id = fields.Many2one(
         'sale.order',
         string='Sales Order',
+        related='sale_line_id.order_id',
+        store=True,
+        help="SO Commitment",
+    )
+    sale_line_id = fields.Many2one(
+        'sale.order.line',
+        string='Sales Order Line',
         readonly=True,
         help="SO Commitment",
     )
+    # ---------- Expense ---------------
     expense_id = fields.Many2one(
         'hr.expense.expense',
         string='Expense',
+        related='expense_line_id.expense_id',
+        store=True,
+        help="Expense Commitment",
+    )
+    expense_line_id = fields.Many2one(
+        'hr.expense.line',
+        string='Expense Line',
         readonly=True,
         help="Expense Commitment",
     )
+    # ----------------------------------
     period_id = fields.Many2one(
         'account.period',
         string="Period",
@@ -123,6 +156,10 @@ class AccountAnalyticLine(models.Model):
         string="Quarter",
         compute="_compute_quarter",
         store=True,
+    )
+    commit_remark = fields.Char(
+        string='Remarks',
+        reaonly=True,
     )
 
     @api.depends('period_id')
@@ -167,7 +204,9 @@ class AccountAnalyticLine(models.Model):
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
-        # --
+        # Commit Remarks sent from originator
+        if self._context.get('commit_remark', False):
+            vals['commit_remark'] = self._context.get('commit_remark')
         return super(AccountAnalyticLine, self).create(vals)
 
     @api.multi

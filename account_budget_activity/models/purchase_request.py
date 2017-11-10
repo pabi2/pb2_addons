@@ -7,6 +7,24 @@ from .account_activity import ActivityCommon
 class PurchaseRequest(models.Model):
     _inherit = 'purchase.request'
 
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        'purchase_request_id',
+        string='Budget Commitment',
+        readonly=True,
+    )
+    budget_transition_ids = fields.One2many(
+        'budget.transition',
+        'purchase_request_id',
+        string='Budget Transition',
+        reaonly=True,
+    )
+
+    @api.multi
+    def release_all_committed_budget(self):
+        for rec in self:
+            rec.line_ids.release_committed_budget()
+
     @api.multi
     def button_to_approve(self):
         for request in self:
@@ -52,19 +70,34 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         help="This field calculate purchased quantity at line level. "
         "Will be used to calculate committed budget",
     )
-    # temp_purchased_qty = fields.Float(
-    #     string='Temporary Purchased Quantity',
-    #     digits=(12, 6),
-    #     compute='_compute_temp_purchased_qty',
-    #     store=True,
-    #     copy=False,
-    #     default=0.0,
-    #     help="This field is used to keep the previous purchase qty, "
-    #     "for calculate release commitment amount",
-    # )
     price_unit = fields.Float(
         string='Unit Price',
     )
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        'purchase_request_line_id',
+        string='Budget Commitment',
+        readonly=True,
+    )
+    budget_commit_bal = fields.Float(
+        string='Budget Balance',
+        compute='_compute_budget_commit_bal',
+    )
+
+    @api.multi
+    def _compute_budget_commit_bal(self):
+        for rec in self:
+            rec.budget_commit_bal = sum(rec.budget_commit_ids.mapped('amount'))
+
+    @api.multi
+    def release_committed_budget(self):
+        _field = 'purchase_request_line_id'
+        Analytic = self.env['account.analytic.line']
+        for rec in self:
+            aline = Analytic.search([(_field, '=', rec.id)],
+                                    order='create_date desc', limit=1)
+            if aline and rec.budget_commit_bal:
+                aline.copy({'amount': -rec.budget_commit_bal})
 
     @api.multi
     @api.depends('requisition_lines.purchase_line_ids.order_id.state')
@@ -129,7 +162,8 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         if 'diff_qty' in self._context:
             line_qty = self._context.get('diff_qty')
         else:
-            line_qty = self.product_qty - self.purchased_qty
+            # line_qty = self.product_qty - self.purchased_qty
+            line_qty = self.product_qty
         if not line_qty:
             return False
         sign = reverse and -1 or 1
@@ -148,15 +182,16 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
             'ref': self.request_id.name,
             'user_id': self._uid,
             # PR
-            'purchase_request_id': self.request_id.id,
+            'purchase_request_line_id': self.id,
         }
 
-    @api.one
+    @api.multi
     def _create_analytic_line(self, reverse=False):
-        vals = self._prepare_analytic_line(
-            reverse=reverse, currency=self.request_id.currency_id)
-        if vals:
-            self.env['account.analytic.line'].sudo().create(vals)
+        for rec in self:
+            vals = rec._prepare_analytic_line(
+                reverse=reverse, currency=rec.request_id.currency_id)
+            if vals:
+                self.env['account.analytic.line'].sudo().create(vals)
 
     # # When partial purchased_qty
     # @api.multi

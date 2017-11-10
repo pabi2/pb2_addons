@@ -7,7 +7,8 @@
     'website': 'http://ecosoft.co.th',
     'depends': [
         'purchase_invoice_plan',
-        'purchase_action_invoice_create_hook'
+        'purchase_action_invoice_create_hook',
+        'pabi_chartfield',
     ],
     "description": """
     Purchase invoice plan by fiscal year

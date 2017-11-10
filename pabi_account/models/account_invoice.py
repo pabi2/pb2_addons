@@ -80,6 +80,15 @@ class AccountInvoice(models.Model):
                         'Preparint Number must be unique!')]
 
     @api.multi
+    def action_cancel(self):
+        for rec in self:
+            # For invoice created by Picking, cancel it should change PO status
+            # (for invoice created by PO, it is done that way)
+            if rec.source_document_id._name == 'purchase.order':
+                rec.source_document_id.state = 'except_invoice'
+        return super(AccountInvoice, self).action_cancel()
+
+    @api.multi
     def write(self, vals):
         # Set date
         if vals.get('date_invoice') and not vals.get('date_document'):

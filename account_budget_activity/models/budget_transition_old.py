@@ -154,35 +154,22 @@ class BudgetTransition(models.Model):
         if not rec.target:
             rec.target = _('N/A')
 
-    @api.model
-    def _get_qty(self, line):
-        qty_fields = ['quantity', 'product_uom_qty',
-                      'product_qty', 'unit_quantity']
-        for field in qty_fields:
-            if field in line:
-                return line[field]
-
     @api.multi
-    def return_budget_commitment(self, to_sources):
+    def return_budget_commitment(self, trigger_model, to_sources):
         for source in to_sources:
             for tran in self:
                 if source in tran and tran[source]:
-                    quantity = self._get_qty(tran[source])  # use samller qty
-                    if quantity > tran.quantity:
-                        quantity = tran.quantity
-                    ctx = {'diff_qty': quantity}
+                    if tran.quantity > 
+                    ctx = {'diff_qty': tran.quantity}
                     tran[source].with_context(ctx).\
                         _create_analytic_line(reverse=False)
 
     @api.multi
-    def regain_budget_commitment(self, to_sources):
+    def regain_budget_commitment(self, trigger_model, to_sources):
         for source in to_sources:
             for tran in self:
                 if source in tran and tran[source] and tran.forward:  # Fwd
-                    quantity = self._get_qty(tran[source])  # use samller qty
-                    if quantity > tran.quantity:
-                        quantity = tran.quantity
-                    ctx = {'diff_qty': quantity}
+                    ctx = {'diff_qty': tran.quantity}
                     tran[source].with_context(ctx).\
                         _create_analytic_line(reverse=True)  # True
 
@@ -204,31 +191,31 @@ class BudgetTransition(models.Model):
         to_sources = trigger_models[model]  # source document to return/regain
         # Start
         if is_forward:
-            self.return_budget_commitment(to_sources)
+            self.return_budget_commitment(model, to_sources)
         elif is_backward:
-            self.regain_budget_commitment(to_sources)
+            self.regain_budget_commitment(model, to_sources)
 
         return super(BudgetTransition, self).write(vals)
 
     @api.model
     def _create_trans_by_target_lines(self, source_line, target_lines,
                                       source_qty_field, target_qty_field,
-                                      trans_source_field, trans_target_field):
+                                      trans_source_field, trans_target_field,
+                                      force_multi=False):
         trans_ids = []
-        # Do not add, if exists. We value the first entry to be correct.
-        existing_trans = self.search([
+        # Delete if exists
+        self.search([
             (trans_source_field, '=', source_line.id),
-            (trans_target_field, 'in', target_lines.ids)])
-        # TODO: existing_trans can be > 1 for case create invoice plan
-        # Also make it run faster
+            (trans_target_field, 'in', target_lines.ids)]).unlink()
+        # Case Split: 1 source_line - M target_line, use target qty
+        # Case Merge: M source_line - 1 taret_line, use source qty
+        multi = force_multi or len(target_lines) > 1
         for target_line in target_lines:
-            if existing_trans[trans_source_field] == source_line and \
-                    existing_trans[trans_target_field] == target_line:
-                continue
             trans_dict = {
                 trans_source_field: source_line.id,
                 trans_target_field: target_line.id,
-                'quantity': target_line[target_qty_field],
+                'quantity': (multi and target_line[target_qty_field] or
+                             source_line[source_qty_field]),
             }
             trans = self.create(trans_dict)
             trans_ids.append(trans.id)
@@ -237,14 +224,16 @@ class BudgetTransition(models.Model):
     @api.model
     def _create_budget_transition(self, source_line, field_name,
                                   source_qty_field, target_qty_field,
-                                  trans_source_field, trans_target_field):
+                                  trans_source_field, trans_target_field,
+                                  force_multi=False):
         trans_ids = []
         if field_name in source_line and source_line[field_name]:
             target_lines = source_line[field_name]
             trans_ids = self._create_trans_by_target_lines(
                 source_line, target_lines,
                 source_qty_field, target_qty_field,
-                trans_source_field, trans_target_field)
+                trans_source_field, trans_target_field,
+                force_multi)
         return trans_ids
 
     # Create budget transition log, when link between doc is created
@@ -264,9 +253,9 @@ class BudgetTransition(models.Model):
     def create_trans_purchase_to_invoice(self, line):
         return self._create_budget_transition(
             line, 'invoice_lines', 'product_qty',
-            'quantity', 'purchase_line_id', 'invoice_line_id')
+            'quantity', 'purchase_line_id', 'invoice_line_id',
+            force_multi=True)  # force_multi ensure of using target qty
 
-    # TODO: Why this one can't use create_budget_transition???
     @api.model
     def create_trans_purchase_to_picking(self, moves):
         trans_ids = []
@@ -275,7 +264,8 @@ class BudgetTransition(models.Model):
             grp_moves = moves.filtered(lambda l: l.purchase_line_id == line)
             trans_ids += self._create_trans_by_target_lines(
                 line, grp_moves, 'product_qty', 'product_uom_qty',
-                'purchase_line_id', 'stock_move_id')
+                'purchase_line_id', 'stock_move_id',
+                force_multi=True)  # force_multi ensure of using target qty
         return trans_ids
 
     @api.model
@@ -345,17 +335,17 @@ class PurchaseOrderLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'purchase.order.line'
 
-    # TODO: Error on case purchase invoice plan
-    # @api.multi
-    # @api.constrains('invoice_lines')
-    # def _trigger_purchase_lines(self):
-    #     """ PO -> INV """
-    #     BudgetTrans = self.env['budget.transition'].sudo()
-    #     for po_line in self:
-    #         product = po_line.product_id
-    #         if product.type != 'service' and product.valuation == 'realtime':
-    #             continue  # Skip case real time stockable
-    #         BudgetTrans.create_trans_purchase_to_invoice(po_line)
+    @api.multi
+    @api.constrains('invoice_lines')
+    def _trigger_purchase_lines(self):
+        """ PO -> INV """
+        BudgetTrans = self.env['budget.transition'].sudo()
+        print self
+        for po_line in self:
+            product = po_line.product_id
+            if product.type != 'service' and product.valuation == 'realtime':
+                continue  # Skip case real time stockable
+            BudgetTrans.create_trans_purchase_to_invoice(po_line)
 
 
 class StockMove(models.Model):

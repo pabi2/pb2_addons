@@ -653,6 +653,7 @@ class ChartField(object):
     def update_related_dimension(self, vals):
         # Find selected dimension that is in CHART_SELECT list
         selects = list(set(CHART_SELECT) & set(vals.keys()))
+        print selects
         if selects:
             selects = dict([(x, vals[x]) for x in selects])
             selects_no = {k: v for k, v in selects.items() if not v}
@@ -667,7 +668,7 @@ class ChartField(object):
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
             self.with_context(MyModelLoopBreaker=True).write(res)
-            # Fund, assign defult if none
+            # Fund, assign default if none
             if not vals.get('fund_id', False):
                 for rec in self:
                     if not rec.fund_id:
