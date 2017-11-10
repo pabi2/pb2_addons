@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <record id="purchase_order_form" model="ir.ui.view" >
+        <record id="purchase_order_form" model="ir.ui.view">
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
@@ -10,6 +10,33 @@
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="before">
                     <field name="activity_group_id" required="0" invisible="0"/>
                     <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense')]"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook" position="inside">
+                    <page string="Budgeting">
+                        <separator string="Budget Commitment"/>
+                        <button name="recreate_all_budget_commitment" string="Recreate budget commitment" type="object" confirm="This will delete all budget commit lines, and regenerate again, are you sure to continue?"/>
+                        <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"/>
+                        <field name="budget_commit_ids">
+                            <tree default_order='id'>
+                                <field name="id"/>
+                                <field name="purchase_line_id"/>
+                                <field name="commit_remark"/>
+                                <field name="create_date"/>
+                                <field name="amount" string="Committed Amount" sum="Total Amount"/>
+                            </tree>
+                        </field>
+                        <separator string="Budget Transition"/>
+                        <field name="budget_transition_ids">
+                            <tree default_order='id'>
+                                <field name="id"/>
+                                <field name="source"/>
+                                <field name="target"/>
+                                <field name="forward"/>
+                                <field name="backward"/>
+                                <field name="quantity" sum="Total Quantity"/>
+                            </tree>
+                        </field>
+                    </page>
                 </xpath>
             </field>
         </record>

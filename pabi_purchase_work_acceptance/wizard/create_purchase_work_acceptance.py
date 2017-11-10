@@ -13,7 +13,6 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _get_invoice_plan(self):
         res = []
-        installment = 0
         Plan = self.env['purchase.invoice.plan']
         if 'active_id' in self._context:
             plans = Plan.search(
@@ -23,13 +22,17 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                 ],
                 order='installment'
             )
-            for plan in plans:
-                if plan.installment != installment and plan.installment > 0:
-                    res.append((plan.installment, '#%s %s' %
-                                (str(plan.installment), plan.description))),
-                    installment = plan.installment
-                else:
-                    continue
+            installments = list(set(plans.mapped('installment')))
+            if 0 in installments:
+                installments.pop(0)
+            for i in installments:
+                ip = plans.filtered(lambda l: l.installment == i)
+                amount = sum(ip.mapped('deposit_amount')) + \
+                    sum(ip.mapped('invoice_amount'))
+                descriptions = ip.mapped('description')
+                name = '#%s - %s, %s' % \
+                    (i, ', '.join(descriptions), '{:,.2f}'.format(amount))
+                res.append((i, name))
         return res
 
     name = fields.Char(
@@ -65,8 +68,9 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         select=True,
     )
 
-    @api.model
+    @api.multi
     def _prepare_acceptance_plan_line(self, plan_installment):
+        self.ensure_one()
         Plan = self.env['purchase.invoice.plan']
         items = []
         plans = Plan.search(

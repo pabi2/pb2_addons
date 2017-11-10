@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -73,6 +73,30 @@ class PurchaseOrder(models.Model):
                     inv_lines.append(inv_line_id)
                     po_line.write({'invoice_lines': [(4, inv_line_id)]})
         return inv_lines
+
+    @api.multi
+    def _check_invoice_plan(self):
+        res = super(PurchaseOrder, self)._check_invoice_plan()
+        self.ensure_one()
+        if self.invoice_method == 'invoice_plan' and \
+                (self.use_advance or self.use_deposit):
+            if len(self.order_line.mapped('account_analytic_id')) != 1:
+                raise ValidationError(
+                    _('No mixing of costcenter when use Advance/Deposit!'))
+        return res
+
+    @api.model
+    def _prepare_deposit_invoice_line(self, name, order, amount):
+        res = super(PurchaseOrder, self).\
+            _prepare_deposit_invoice_line(name, order, amount)
+        AnayticAccount = self.env['account.analytic.account']
+        dimensions = AnayticAccount._analytic_dimensions()
+        for d in dimensions:
+            if d in ('product_id', 'activity_group_id',
+                     'activity_id', 'activity_rpt_id'):
+                continue  # Do not need to copy above dimension.
+            res.update({d: order.order_line[0][d].id})
+        return res
 
 
 class PurchaseOrderLine(models.Model):

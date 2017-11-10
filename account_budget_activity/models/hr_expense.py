@@ -1,11 +1,29 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, _
+from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError
 from .account_activity import ActivityCommon
 
 
 class HRExpenseExpense(models.Model):
     _inherit = 'hr.expense.expense'
+
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        'expense_id',
+        string='Budget Commitment',
+        readonly=True,
+    )
+    budget_transition_ids = fields.One2many(
+        'budget.transition',
+        'expense_id',
+        string='Budget Transition',
+        reaonly=True,
+    )
+
+    @api.multi
+    def release_all_committed_budget(self):
+        for rec in self:
+            rec.line_ids.release_committed_budget()
 
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
@@ -36,16 +54,31 @@ class HRExpenseExpense(models.Model):
 class HRExpenseLine(ActivityCommon, models.Model):
     _inherit = 'hr.expense.line'
 
-    # temp_invoiced_qty = fields.Float(
-    #     string='Temporary Invoiced Quantity',
-    #     digits=(12, 6),
-    #     compute='_compute_temp_invoiced_qty',
-    #     store=True,
-    #     copy=False,
-    #     default=0.0,
-    #     help="This field is used to keep the previous invoice qty, "
-    #     "for calculate release commitment amount",
-    # )
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        'expense_line_id',
+        string='Budget Commitment',
+        readonly=True,
+    )
+    budget_commit_bal = fields.Float(
+        string='Budget Balance',
+        compute='_compute_budget_commit_bal',
+    )
+
+    @api.multi
+    def _compute_budget_commit_bal(self):
+        for rec in self:
+            rec.budget_commit_bal = sum(rec.budget_commit_ids.mapped('amount'))
+
+    @api.multi
+    def release_committed_budget(self):
+        _field = 'expense_line_id'
+        Analytic = self.env['account.analytic.line']
+        for rec in self:
+            aline = Analytic.search([(_field, '=', rec.id)],
+                                    order='create_date desc', limit=1)
+            if aline and rec.budget_commit_bal:
+                aline.copy({'amount': -rec.budget_commit_bal})
 
     @api.model
     def _get_non_product_account_id(self):
@@ -98,7 +131,8 @@ class HRExpenseLine(ActivityCommon, models.Model):
         if 'diff_qty' in self._context:
             line_qty = self._context.get('diff_qty')
         else:
-            line_qty = self.unit_quantity - self.open_invoiced_qty
+            # line_qty = self.unit_quantity - self.open_invoiced_qty
+            line_qty = self.unit_quantity
         if not line_qty:
             return False
         sign = reverse and -1 or 1
@@ -117,15 +151,16 @@ class HRExpenseLine(ActivityCommon, models.Model):
             'ref': self.expense_id.name,
             'user_id': self._uid,
             # Expense
-            'expense_id': self.expense_id.id,
+            'expense_line_id': self.id,
         }
 
-    @api.one
+    @api.multi
     def _create_analytic_line(self, reverse=False):
-        vals = self._prepare_analytic_line(
-            reverse=reverse, currency=self.expense_id.currency_id)
-        if vals:
-            self.env['account.analytic.line'].sudo().create(vals)
+        for rec in self:
+            vals = rec._prepare_analytic_line(
+                reverse=reverse, currency=rec.expense_id.currency_id)
+            if vals:
+                self.env['account.analytic.line'].sudo().create(vals)
 
     # # When partial open_invoiced_qty
     # @api.multi

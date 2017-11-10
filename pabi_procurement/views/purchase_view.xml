@@ -80,7 +80,6 @@
                 </xpath>
 
                 <xpath expr="//button[@name='action_cancel']" position="before">
-                    <button name="wkf_send_rfq" states="approved" string="Send by Email" type="object" context="{'send_rfq':True}"/>
                 	<field name="plan_invoice_created" invisible="1"/>
                     <button name="%(action_purchase_create_invoices)d" string="Create Invoices"
                             type="action" class="oe_highlight"
@@ -119,9 +118,9 @@
                     <!--<button name="%(purchase_cancel_reason.action_order_cancel)d" states="draft,confirmed,sent,bid,approved,except_picking,except_invoice" string="Cancel" type="action"/>-->
                 <!--</xpath>-->
                 <!-- end :: cancel reason -->
-                <xpath expr="//header[@name='quotation']/button[@name='action_cancel']" position="before">
+                <!-- <xpath expr="//header[@name='quotation']/button[@name='action_cancel']" position="before">
                     <button name="wkf_send_rfq" states="draft" string="Send by Email" type="object" context="{'send_rfq':True}" class="oe_highlight" groups="base.group_user"/>
-                </xpath>
+                </xpath> -->
                 <xpath expr="//button[@name='view_picking']" position="replace">
                     <button name="view_picking" string="Receive Products" type="object" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}"/>
                 </xpath>

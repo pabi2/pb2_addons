@@ -25,6 +25,21 @@
                     <field name="price_unit" />
                 </xpath>
 
+                <xpath expr="/form/sheet/notebook" position="inside">
+                    <page string="Budget Commitment">
+                        <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"/>
+                        <field name="budget_commit_ids">
+                            <tree default_order='id'>
+                                <field name="id"/>
+                                <field name="purchase_request_line_id"/>
+                                <field name="commit_remark"/>
+                                <field name="create_date"/>
+                                <field name="amount" string="Committed Amount" sum="Total Amount"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
             </field>
         </record>
 
