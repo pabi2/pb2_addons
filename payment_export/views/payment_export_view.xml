@@ -104,7 +104,7 @@
                                         <field name="export_id" invisible="1"/>
                                         <field name="payment_type" invisible="1"/>
                                         <field name="sequence" invisible="0"/>
-                                        <field name="voucher_id"/>
+                                        <field name="voucher_id" context="{'form_view_ref': 'account_voucher.view_vendor_payment_form'}"/>
                                         <field name="invoice_source_documents"/>
                                         <field name="partner_id"/>
                                         <field name="amount"/>
