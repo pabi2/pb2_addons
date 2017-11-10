@@ -153,16 +153,16 @@
                     <field name="id" invisible="1"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('id', '!=', False)]}</attribute>
+                    <attribute name="attrs">{'readonly': [('id', '>', 0)]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='uos_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('id', '!=', False)]}</attribute>
+                    <attribute name="attrs">{'readonly': [('id', '>', 0)]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='chartfield_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': ['|', ('id', '!=', False), ('require_chartfield', '=', False)]}</attribute>
+                    <attribute name="attrs">{'readonly': [('id', '>', 0)]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='fund_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('require_chartfield', '=', False)]}</attribute>
+                    <attribute name="attrs">{'readonly': [('id', '>', 0)]}</attribute>
                 </xpath>
             </field>
         </record>
@@ -172,10 +172,10 @@
             <field name="inherit_id" ref="account_budget_activity.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='activity_group_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('id', '!=', False)]}</attribute>
+                    <attribute name="attrs">{'readonly': [('id', '>', 0)]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='activity_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('id', '!=', False)]}</attribute>
+                    <attribute name="attrs">{'readonly': [('id', '>', 0)]}</attribute>
                 </xpath>
             </field>
         </record>
