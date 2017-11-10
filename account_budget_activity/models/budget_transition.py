@@ -319,12 +319,13 @@ class HRExpenseLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'hr.expense.line'
 
-    @api.multi
-    @api.constrains('invoice_line_ids')
-    def _trigger_invoice_line_ids(self):
-        BudgetTrans = self.env['budget.transition'].sudo()
-        for expense_line in self:
-            BudgetTrans.create_trans_expense_to_invoice(expense_line)
+    # TODO:
+    # @api.multi
+    # @api.constrains('invoice_line_ids')
+    # def _trigger_invoice_line_ids(self):
+    #     BudgetTrans = self.env['budget.transition'].sudo()
+    #     for expense_line in self:
+    #         BudgetTrans.create_trans_expense_to_invoice(expense_line)
 
 
 class PurchaseRequestLine(models.Model):
@@ -362,28 +363,30 @@ class StockMove(models.Model):
     """ For real time stock, transition created and actual when it is moved """
     _inherit = 'stock.move'
 
-    @api.multi
-    @api.constrains('state')
-    def _trigger_stock_moves(self):
-        """ PO -> Stock Move, create transaction as it is tansferred """
-        BudgetTrans = self.env['budget.transition'].sudo()
-        # For done moves, create transition and return budget
-        moves = self.filtered(lambda l: l.state == 'done' and
-                              l.product_id.valuation == 'real_time')
-        BudgetTrans.create_trans_purchase_to_picking(moves)
-        BudgetTrans.do_forward(self._name, moves)
+    # TODO:
+    # @api.multi
+    # @api.constrains('state')
+    # def _trigger_stock_moves(self):
+    #     """ PO -> Stock Move, create transaction as it is tansferred """
+    #     BudgetTrans = self.env['budget.transition'].sudo()
+    #     # For done moves, create transition and return budget
+    #     moves = self.filtered(lambda l: l.state == 'done' and
+    #                           l.product_id.valuation == 'real_time')
+    #     BudgetTrans.create_trans_purchase_to_picking(moves)
+    #     BudgetTrans.do_forward(self._name, moves)
 
 
 class SaleOrderLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'sale.order.line'
 
-    @api.multi
-    @api.constrains('invoice_lines')
-    def _trigger_sale_lines(self):
-        BudgetTrans = self.env['budget.transition'].sudo()
-        for so_line in self:
-            BudgetTrans.create_trans_sale_to_invoice(so_line)
+    # TODO:
+    # @api.multi
+    # @api.constrains('invoice_lines')
+    # def _trigger_sale_lines(self):
+    #     BudgetTrans = self.env['budget.transition'].sudo()
+    #     for so_line in self:
+    #         BudgetTrans.create_trans_sale_to_invoice(so_line)
 
 
 class PurchaseOrder(models.Model):
