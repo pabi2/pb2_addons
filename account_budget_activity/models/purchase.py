@@ -217,7 +217,6 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
                 continue
             vals = rec._prepare_analytic_line(
                 reverse=reverse, currency=rec.order_id.currency_id)
-            print vals
             if vals:
                 self.env['account.analytic.line'].sudo().create(vals)
 

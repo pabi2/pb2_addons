@@ -33,8 +33,9 @@ class StockTransferDetails(models.TransientModel):
         res['item_ids'] = self._asset_split_line(res)
         return res
 
-    @api.one
+    @api.multi
     def do_detailed_transfer(self):
+        self.ensure_one()
         # Pass Installament information to Asset
         wa = self.picking_id.acceptance_id
         if wa:
