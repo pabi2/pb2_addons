@@ -653,7 +653,6 @@ class ChartField(object):
     def update_related_dimension(self, vals):
         # Find selected dimension that is in CHART_SELECT list
         selects = list(set(CHART_SELECT) & set(vals.keys()))
-        print selects
         if selects:
             selects = dict([(x, vals[x]) for x in selects])
             selects_no = {k: v for k, v in selects.items() if not v}

@@ -279,7 +279,6 @@ class AccountAssetTransfer(models.Model):
         new_asset_move_line_dict = \
             Asset._prepare_asset_target_move(asset_move_lines_dict,
                                              new_owner=new_owner)
-        print new_asset_move_line_dict
         new_asset_ids = []
         count = len(self.target_asset_ids)
         total_depre = sum([x['debit'] for x in depre_move_lines])

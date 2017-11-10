@@ -78,11 +78,24 @@ class PurchaseOrder(models.Model):
     def _check_invoice_plan(self):
         res = super(PurchaseOrder, self)._check_invoice_plan()
         self.ensure_one()
+        # Case Invoice Plan + Advance: all line must charge same budget
+        # So that, advance line know which budget to use.
         if self.invoice_method == 'invoice_plan' and \
                 (self.use_advance or self.use_deposit):
             if len(self.order_line.mapped('account_analytic_id')) != 1:
                 raise ValidationError(
                     _('No mixing of costcenter when use Advance/Deposit!'))
+        # Case Invoice Plan + Asset: all ine must be asset, and use Job base
+        # So that, Picking qty will be equal to number of intsallment.
+        if self.invoice_method == 'invoice_plan':
+            assets = [x.product_id.asset or False for x in self.order_line]
+            if True in assets:  # has some asset in line
+                if len(list(set(assets))) != 1:
+                    raise ValidationError(_('Invoice plan not allow mixing '
+                                            'asset and non-asset!'))
+                if self.invoice_mode != 'change_price':
+                    raise ValidationError(_('Invoice Plan/Assets, please use '
+                                            'invoice mode "Change Price"'))
         return res
 
     @api.model
@@ -96,6 +109,20 @@ class PurchaseOrder(models.Model):
                      'activity_id', 'activity_rpt_id'):
                 continue  # Do not need to copy above dimension.
             res.update({d: order.order_line[0][d].id})
+        return res
+
+    @api.model
+    def _prepare_order_line_move(self, order, order_line,
+                                 picking_id, group_id):
+        res = super(PurchaseOrder, self).\
+            _prepare_order_line_move(order, order_line, picking_id, group_id)
+        # If invoice plan + all assets + change_price -> qty = num_installment
+        if order.use_invoice_plan and order_line.product_id.asset and \
+                order.invoice_mode == 'change_price':
+            num = order.num_installment
+            for r in res:
+                r.update({'product_uom_qty': r['product_uom_qty'] * num,
+                          'product_uos_qty': r['product_uos_qty'] * num})
         return res
 
 

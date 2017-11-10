@@ -17,7 +17,7 @@ class ProductProduct(models.Model):
         if product_ids is None:
             product_ids = []
         """ return dict of product count by location,
-        i.e., [{'product_id': 5378, 'product_qty': -24.0}, {...}] """
+        i.e., [{'product_id': 5378, 'product_qty': -24.0}, {'...'}] """
         domain = ' location_id = %s'
         args = (location_id, )
         if product_ids:

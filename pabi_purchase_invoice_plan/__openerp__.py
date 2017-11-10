@@ -6,9 +6,12 @@
     'author': 'Ecosoft',
     'website': 'http://ecosoft.co.th',
     'depends': [
+        'purchase',
         'purchase_invoice_plan',
         'purchase_action_invoice_create_hook',
         'pabi_chartfield',
+        'pabi_asset_management',
+        'pabi_purchase_work_acceptance',
     ],
     "description": """
     Purchase invoice plan by fiscal year

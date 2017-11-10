@@ -188,7 +188,6 @@ class PABIUtilsXLS(models.AbstractModel):
             for column in extra_columns:
                 _HEADER_FIELDS.insert(0, str(column[0]))
                 file_txt = self._add_column(column[0], column[1], file_txt)
-        print file_txt
         return (_HEADER_FIELDS, file_txt)
 
     @api.model
