@@ -22,7 +22,6 @@
         'views/pabi_dunning_config.xml',
         'wizard/pabi_partner_dunning_wizard.xml',
         'wizard/create_dunning_letter.xml',
-        'wizard/search_partner_dunning_report_wizard.xml',
     ],
     'demo': [
     ],
