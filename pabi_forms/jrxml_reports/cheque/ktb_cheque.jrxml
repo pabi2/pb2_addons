@@ -27,6 +27,12 @@
 	<field name="date" class="java.lang.String">
 		<fieldDescription><![CDATA[date]]></fieldDescription>
 	</field>
+	<field name="transferdebt_partner_name" class="java.lang.String">
+		<fieldDescription><![CDATA[transdebt_partner_id/display_name]]></fieldDescription>
+	</field>
+	<field name="is_transdebt" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[is_transdebt]]></fieldDescription>
+	</field>
 	<background>
 		<band height="380">
 			<image>
@@ -42,7 +48,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="16" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="236" y="141" width="401" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -146,7 +152,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{partner_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
