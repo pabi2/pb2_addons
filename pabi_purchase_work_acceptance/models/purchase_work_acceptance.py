@@ -18,6 +18,182 @@ class PurchaseWorkAcceptance(models.Model):
         ('done', 'Done'),
     ]
 
+    name = fields.Char(
+        string="Acceptance No.",
+        default=lambda self:
+        self.env['ir.sequence'].get('purchase.work.acceptance'),
+        readonly=True,
+    )
+    date_contract_start = fields.Date(
+        string="Contract Start Date",
+        default=lambda self: fields.Date.context_today(self),
+    )
+    date_scheduled_end = fields.Date(
+        string="Scheduled End Date",
+        default=lambda self: fields.Date.context_today(self),
+    )
+    date_contract_end = fields.Date(
+        string="Contract End Date",
+        default=lambda self: fields.Date.context_today(self),
+    )
+    date_receive = fields.Date(
+        string="Receive Date",
+        default=lambda self: fields.Date.context_today(self),
+    )
+    date_accept = fields.Date(
+        string="Acceptance Date",
+    )
+    is_manual_fine = fields.Boolean(
+        string="Use Manual Fine",
+    )
+    manual_fine = fields.Float(
+        string="Manual Fine",
+        default=0.0,
+    )
+    manual_days = fields.Integer(
+        string="No. of Days",
+        default=1,
+    )
+    fine_per_day = fields.Float(
+        string="Fine per Day",
+        default=0.0,
+    )
+    amount_fine_per_day_text_th = fields.Char(
+        string='Fine per Day TH Text',
+        compute='_compute_fine_per_day_to_word_th',
+        store=True,
+    )
+    overdue_day = fields.Integer(
+        string="Overdue Days",
+        default=0,
+    )
+    total_fine_cal = fields.Float(
+        string="Total Fine Calculation",
+        compute="_compute_total_fine",
+        store=True,
+    )
+    total_fine = fields.Float(
+        string="Total Fine",
+    )
+    amount_total_fine_text_th = fields.Char(
+        string='Total Fine TH Text',
+        compute='_compute_fine_amount_to_word_th',
+        store=True,
+    )
+    supplier_invoice = fields.Char(
+        string="Invoice No.",
+        required=True,
+    )
+    date_invoice = fields.Date(
+        string="Invoice Date",
+        required=True,
+    )
+    write_to_invoice = fields.Boolean(
+        string="Write to invoice date",
+    )
+    invoice_created = fields.Boolean(
+        string="Invoice created",
+    )
+    acceptance_line_ids = fields.One2many(
+        'purchase.work.acceptance.line',
+        'acceptance_id',
+        string='Work Acceptance Line',
+        required=True,
+    )
+    order_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order',
+        required=True,
+        readonly=True,
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        related='order_id.partner_id',
+        store=True,
+    )
+    order_method = fields.Selection(
+        string='Order Method',
+        store=True,
+        related='order_id.invoice_method',
+    )
+    eval_receiving = fields.Selection(
+        selection=[
+            ('3', 'On time [3]'),
+            ('2', 'Late for 1-7 days [2]'),
+            ('1', 'Late for 8-14 days [1]'),
+            ('0', 'Late more than 15 days [0]'),
+        ],
+        string='Rate - Receiving',
+    )
+    eval_quality = fields.Selection(
+        selection=[
+            ('2', 'Better than expectation [2]'),
+            ('1', 'As expectation [1]'),
+        ],
+        string='Rate - Quality',
+    )
+    eval_service = fields.Selection(
+        selection=[
+            ('3', 'Excellent [3]'),
+            ('2', 'Good [2]'),
+            ('1', 'Satisfactory [1]'),
+            ('0', 'Needs Improvement [0]'),
+        ],
+        string='Rate - Service',
+    )
+    state = fields.Selection(
+        selection=_STATES,
+        copy=False,
+        default='draft',
+    )
+    amount_untaxed = fields.Float(
+        string='Untaxed Amount',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    amount_tax = fields.Float(
+        string='Taxes',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    amount_total = fields.Float(
+        string='Total',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+        default=0.0,
+    )
+    invoiced = fields.Boolean(
+        string='Invoiced',
+        compute='_compute_invoiced',
+        store=True,
+        help="Fine is invoiced if it is referenced by an open invioce",
+    )
+    invoice_ids = fields.One2many(
+        'account.invoice',
+        'late_delivery_work_acceptance_id',
+        string='Referred Invoices',
+        readonly=True,
+        help="Invoice that reference to this WA for panalty",
+    )
+    installment = fields.Integer(
+        string='Installment',
+        readonly=True,
+        help="Installment, if this WA is created with PO's invoice plan",
+    )
+    num_installment = fields.Integer(
+        string='Number of Installment',
+        related='order_id.num_installment',
+        store=True,
+        readonly=True,
+        help="Total Installment, if this WA is created with PO's invoice plan",
+    )
+
     @api.model
     @api.depends('date_receive', 'date_scheduled_end')
     def _compute_fine_amount_to_word_th(self):
@@ -315,182 +491,6 @@ class PurchaseWorkAcceptance(models.Model):
             if acceptance.manual_fine > 0:
                 acceptance.total_fine_cal = acceptance.manual_fine
                 acceptance.total_fine = acceptance.manual_fine
-
-    name = fields.Char(
-        string="Acceptance No.",
-        default=lambda self:
-        self.env['ir.sequence'].get('purchase.work.acceptance'),
-        readonly=True,
-    )
-    date_contract_start = fields.Date(
-        string="Contract Start Date",
-        default=lambda self: fields.Date.context_today(self),
-    )
-    date_scheduled_end = fields.Date(
-        string="Scheduled End Date",
-        default=lambda self: fields.Date.context_today(self),
-    )
-    date_contract_end = fields.Date(
-        string="Contract End Date",
-        default=lambda self: fields.Date.context_today(self),
-    )
-    date_receive = fields.Date(
-        string="Receive Date",
-        default=lambda self: fields.Date.context_today(self),
-    )
-    date_accept = fields.Date(
-        string="Acceptance Date",
-    )
-    is_manual_fine = fields.Boolean(
-        string="Use Manual Fine",
-    )
-    manual_fine = fields.Float(
-        string="Manual Fine",
-        default=0.0,
-    )
-    manual_days = fields.Integer(
-        string="No. of Days",
-        default=1,
-    )
-    fine_per_day = fields.Float(
-        string="Fine per Day",
-        default=0.0,
-    )
-    amount_fine_per_day_text_th = fields.Char(
-        string='Fine per Day TH Text',
-        compute='_compute_fine_per_day_to_word_th',
-        store=True,
-    )
-    overdue_day = fields.Integer(
-        string="Overdue Days",
-        default=0,
-    )
-    total_fine_cal = fields.Float(
-        string="Total Fine Calculation",
-        compute="_compute_total_fine",
-        store=True,
-    )
-    total_fine = fields.Float(
-        string="Total Fine",
-    )
-    amount_total_fine_text_th = fields.Char(
-        string='Total Fine TH Text',
-        compute='_compute_fine_amount_to_word_th',
-        store=True,
-    )
-    supplier_invoice = fields.Char(
-        string="Invoice No.",
-        required=True,
-    )
-    date_invoice = fields.Date(
-        string="Invoice Date",
-        required=True,
-    )
-    write_to_invoice = fields.Boolean(
-        string="Write to invoice date",
-    )
-    invoice_created = fields.Boolean(
-        string="Invoice created",
-    )
-    acceptance_line_ids = fields.One2many(
-        'purchase.work.acceptance.line',
-        'acceptance_id',
-        string='Work Acceptance Line',
-        required=True,
-    )
-    order_id = fields.Many2one(
-        'purchase.order',
-        string='Purchase Order',
-        required=True,
-        readonly=True,
-    )
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Supplier',
-        related='order_id.partner_id',
-        store=True,
-    )
-    order_method = fields.Selection(
-        string='Order Method',
-        store=True,
-        related='order_id.invoice_method',
-    )
-    eval_receiving = fields.Selection(
-        selection=[
-            ('3', 'On time [3]'),
-            ('2', 'Late for 1-7 days [2]'),
-            ('1', 'Late for 8-14 days [1]'),
-            ('0', 'Late more than 15 days [0]'),
-        ],
-        string='Rate - Receiving',
-    )
-    eval_quality = fields.Selection(
-        selection=[
-            ('2', 'Better than expectation [2]'),
-            ('1', 'As expectation [1]'),
-        ],
-        string='Rate - Quality',
-    )
-    eval_service = fields.Selection(
-        selection=[
-            ('3', 'Excellent [3]'),
-            ('2', 'Good [2]'),
-            ('1', 'Satisfactory [1]'),
-            ('0', 'Needs Improvement [0]'),
-        ],
-        string='Rate - Service',
-    )
-    state = fields.Selection(
-        selection=_STATES,
-        copy=False,
-        default='draft',
-    )
-    amount_untaxed = fields.Float(
-        string='Untaxed Amount',
-        compute='_compute_amount',
-        store=True,
-        readonly=True,
-        default=0.0,
-    )
-    amount_tax = fields.Float(
-        string='Taxes',
-        compute='_compute_amount',
-        store=True,
-        readonly=True,
-        default=0.0,
-    )
-    amount_total = fields.Float(
-        string='Total',
-        compute='_compute_amount',
-        store=True,
-        readonly=True,
-        default=0.0,
-    )
-    invoiced = fields.Boolean(
-        string='Invoiced',
-        compute='_compute_invoiced',
-        store=True,
-        help="Fine is invoiced if it is referenced by an open invioce",
-    )
-    invoice_ids = fields.One2many(
-        'account.invoice',
-        'late_delivery_work_acceptance_id',
-        string='Referred Invoices',
-        readonly=True,
-        help="Invoice that reference to this WA for panalty",
-    )
-    installment = fields.Integer(
-        string='Installment',
-        readonly=True,
-        help="Installment, if this WA is created with PO's invoice plan",
-    )
-    num_installment = fields.Integer(
-        string='Number of Installment',
-        related='order_id.num_installment',
-        store=True,
-        readonly=True,
-        help="Total Installment, if this WA is created with PO's invoice plan",
-    )
 
     @api.multi
     @api.depends('invoice_ids', 'invoice_ids.state')

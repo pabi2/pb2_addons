@@ -39,5 +39,5 @@ class PurchaseOrder(models.Model):
         else:
             res = Data.get_object_reference('account', 'invoice_supplier_form')
             result['views'] = [(res and res[1] or False, 'form')]
-            result['res_id'] = invoices.ids or False
+            result['res_id'] = invoices.ids and invoices.ids[0] or False
         return result

@@ -82,11 +82,11 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_cancel(self):
         for rec in self:
-            # For invoice created by Picking, cancel it should change PO status
-            # (for invoice created by PO, it is done that way)
-            if rec.source_document_id and \
-                    rec.source_document_id._name == 'purchase.order':
-                rec.source_document_id.state = 'except_invoice'
+            # For invoice created by Picking, cancel invoice should
+            # set back invoice_state of picking to 2binvoiced
+            # This will allow recreate invoice form picking
+            moves = rec.invoice_line.mapped('move_id')
+            moves.write({'invoice_state': '2binvoiced'})
         return super(AccountInvoice, self).action_cancel()
 
     @api.multi
