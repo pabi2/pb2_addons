@@ -84,7 +84,8 @@ class AccountInvoice(models.Model):
         for rec in self:
             # For invoice created by Picking, cancel it should change PO status
             # (for invoice created by PO, it is done that way)
-            if rec.source_document_id._name == 'purchase.order':
+            if rec.source_document_id and \
+                    rec.source_document_id._name == 'purchase.order':
                 rec.source_document_id.state = 'except_invoice'
         return super(AccountInvoice, self).action_cancel()
 

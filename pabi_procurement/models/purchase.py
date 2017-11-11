@@ -32,6 +32,8 @@ class PurchaseOrder(models.Model):
         string='Reference Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     contract_id = fields.Many2one(
         'purchase.contract',
@@ -43,6 +45,8 @@ class PurchaseOrder(models.Model):
         string='Contract Start Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     committee_ids = fields.One2many(
         'purchase.order.committee',

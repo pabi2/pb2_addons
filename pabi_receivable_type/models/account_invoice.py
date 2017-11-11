@@ -14,6 +14,8 @@ class AccountInvoice(models.Model):
          ],
         string='Receivable Type',
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.onchange('receivable_type')

@@ -28,6 +28,8 @@ class AccountInvoice(models.Model):
         'hr.expense.expense',
         string="Advance Expense",
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Refer to Employee Advance this invoice is clearing/return",
     )
 

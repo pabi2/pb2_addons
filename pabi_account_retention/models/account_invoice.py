@@ -12,6 +12,8 @@ class AccountInvoice(models.Model):
         domain="[('partner_id', '=', partner_id),"
         "('order_type', '=', 'purchase_order'),"
         "('state', 'in', ['done', 'approved'])]",
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Visible in Customer Invoice only, to create retention invoice",
     )
     is_retention_return = fields.Boolean(
@@ -23,6 +25,8 @@ class AccountInvoice(models.Model):
     retention_return_purchase_id = fields.Many2one(
         'purchase.order',
         string='Return Retention on Purchase',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="Visible in Supplier Invoice only, to create return retention "
         "consisting of amount from retention invoice, and invoice plan",
     )

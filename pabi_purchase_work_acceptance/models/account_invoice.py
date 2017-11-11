@@ -11,6 +11,8 @@ class AccountInvoice(models.Model):
         string='Late Delivery Acceptance',
         domain=[('total_fine', '>', 0.0), ('invoiced', '=', False)],
         copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help='List Purchase Work Acceptance which has a penalty amount',
     )
 

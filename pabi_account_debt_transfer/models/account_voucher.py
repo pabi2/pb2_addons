@@ -8,10 +8,14 @@ class AccountVoucher(models.Model):
     is_transdebt = fields.Boolean(
         string='Transfer Debt',
         default=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     transdebt_partner_id = fields.Many2one(
         'res.partner',
         string='Trasnfer Debt To',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi

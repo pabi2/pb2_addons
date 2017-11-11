@@ -357,6 +357,8 @@ class HeaderTaxBranch(object):
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         domain="[('id', 'in', taxbranch_ids and "
         "taxbranch_ids[0] and taxbranch_ids[0][2] or False)]",
     )
