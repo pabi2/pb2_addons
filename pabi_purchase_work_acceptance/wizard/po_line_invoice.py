@@ -36,13 +36,16 @@ class PurchaseLineInvoice(models.TransientModel):
     @api.multi
     def makeInvoices(self):
         self.ensure_one()
-        # Validate qty > 0 and <= wa_line_qty
-        for line in self.line_ids:
-            if not line.invoiced_qty:
-                raise ValidationError(_("Quantity to invoice can't be zero!"))
-            if line.invoiced_qty > line.wa_line_qty:
-                raise ValidationError(_("Can't receive product's quantity "
-                                        "over work acceptance's quantity"))
+        if self._context['active_model'] == 'purchase.work.acceptance':
+            # Validate qty > 0 and <= wa_line_qty
+            for line in self.line_ids:
+                if not line.invoiced_qty:
+                    raise ValidationError(
+                        _("Quantity to invoice can't be zero!"))
+                if line.invoiced_qty > line.wa_line_qty:
+                    raise ValidationError(_("Can't receive product's quantity "
+                                            "over work acceptance's quantity"))
+        # Call super
         res = super(PurchaseLineInvoice, self).makeInvoices()
         if self._context['active_model'] == 'purchase.work.acceptance':
             # Newly created invoice

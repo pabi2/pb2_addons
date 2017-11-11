@@ -46,6 +46,5 @@
         "views/res_partner_view.xml",
         "views/res_company_view.xml",
         "views/account_bank_receipt_view.xml",
-        "views/purchase_view.xml",
     ],
 }

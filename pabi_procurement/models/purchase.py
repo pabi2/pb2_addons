@@ -144,7 +144,7 @@ class PurchaseOrder(models.Model):
         else:
             res = Data.get_object_reference('stock', 'view_picking_form')
             action['views'] = [(res and res[1] or False, 'form')]
-            action['res_id'] = pickings.ids or False
+            action['res_id'] = pickings.ids and pickings.ids[0] or False
         return action
 
     @api.multi
