@@ -20,6 +20,8 @@ class AccountVoucher(models.Model):
          ('oversea', 'Oversea')
          ],
         string='Transfer Type',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="- DIRECT is transfer within same bank.\n"
         "- SMART is transfer is between different bank."
         "- Oversea won't be sent to Payment Export",
@@ -34,13 +36,15 @@ class AccountVoucher(models.Model):
         string='Cheque Lot',
         domain="[('journal_id', '=', journal_id)]",
         ondelete="restrict",
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     supplier_bank_id = fields.Many2one(
         'res.partner.bank',
         string='Supplier Bank Account',
         domain="[('partner_id', '=', partner_id)]",
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     supplier_bank_branch = fields.Char(
         string='Supplier Bank Branch',

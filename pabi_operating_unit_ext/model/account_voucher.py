@@ -6,7 +6,10 @@ class AccountVoucher(models.Model):
     _inherit = "account.voucher"
 
     operating_unit_id = fields.Many2one(
+        'operating.unit',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )
 
@@ -20,4 +23,7 @@ class AccountVoucher(models.Model):
 class AccountVoucherLine(models.Model):
     _inherit = "account.voucher.line"
 
-    operating_unit_id = fields.Many2one(required=False)
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        required=False,
+    )

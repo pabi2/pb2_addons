@@ -7,6 +7,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
     _inherit = "purchase.request.line.make.purchase.requisition"
 
     operating_unit_id = fields.Many2one(
+        'operating.unit',
         required=True,
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
     )

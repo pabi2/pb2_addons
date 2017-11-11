@@ -8,14 +8,20 @@ class StockRequest(models.Model):
     project_id = fields.Many2one(
         'res.project',
         string='Project',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     section_id = fields.Many2one(
         'res.section',
         string='Section',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     fund_id = fields.Many2one(
         'res.fund',
         string='Fund',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         domain="['|',"
         "('project_ids', 'in', [project_id or -1]),"
         "('section_ids', 'in', [section_id or -1]),"

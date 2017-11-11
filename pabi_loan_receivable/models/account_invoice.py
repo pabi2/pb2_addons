@@ -16,6 +16,8 @@ class AccountInvoice(models.Model):
     loan_late_payment_invoice_id = fields.Many2one(
         'account.invoice',
         string="CD Loan Late Payment",
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         help="List CD Loan customer invoice which is paid after its due date "
         "which has not been paying for its penalty"
     )
