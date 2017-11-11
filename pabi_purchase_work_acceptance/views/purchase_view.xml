@@ -22,7 +22,7 @@
                         icon="fa-pencil-square-o"
                         attrs="{'invisible': [('count_acceptance','=',False)]}"
                         >
-                    <field name="count_acceptance" widget="statinfo" string="Work Acceptances"/>
+                        <field name="count_acceptance" widget="statinfo" string="Work Accept."/>
                     </button>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">

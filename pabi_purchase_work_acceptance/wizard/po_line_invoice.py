@@ -1,31 +1,10 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    Copyright (C) 2013 Agile Business Group sagl (<http://www.agilebg.com>)
-#    Copyright (c) 2015 ACSONE SA/NV (<http://acsone.eu>)
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as published
-#    by the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
-
-from __future__ import division
 from ast import literal_eval
-from openerp import models, api
+from openerp import models, api, fields, _
+from openerp.exceptions import ValidationError
 
 
 class PurchaseLineInvoice(models.TransientModel):
-
     _inherit = 'purchase.order.line_invoice'
 
     @api.model
@@ -46,6 +25,7 @@ class PurchaseLineInvoice(models.TransientModel):
                     'product_qty': max_quantity,
                     'invoiced_qty': wa_line.to_receive_qty,
                     'price_unit': po_line.price_unit,
+                    'wa_line_qty': wa_line.to_receive_qty,
                 })
             defaults = super(PurchaseLineInvoice, self).default_get(fields)
             defaults['line_ids'] = lines
@@ -55,6 +35,14 @@ class PurchaseLineInvoice(models.TransientModel):
 
     @api.multi
     def makeInvoices(self):
+        self.ensure_one()
+        # Validate qty > 0 and <= wa_line_qty
+        for line in self.line_ids:
+            if not line.invoiced_qty:
+                raise ValidationError(_("Quantity to invoice can't be zero!"))
+            if line.invoiced_qty > line.wa_line_qty:
+                raise ValidationError(_("Can't receive product's quantity "
+                                        "over work acceptance's quantity"))
         res = super(PurchaseLineInvoice, self).makeInvoices()
         if self._context['active_model'] == 'purchase.work.acceptance':
             # Newly created invoice
@@ -69,4 +57,15 @@ class PurchaseLineInvoice(models.TransientModel):
                 invoices = self.env['account.invoice'].browse(invoice_ids)
                 invoices.write({'supplier_invoice_number':
                                 acceptance.supplier_invoice})
+                invoices.button_reset_taxes()
         return res
+
+# Can't receive product's quantity over work acceptance's quantity
+
+
+class PurchaseLineInvoiceLine(models.TransientModel):
+    _inherit = 'purchase.order.line_invoice.line'
+
+    wa_line_qty = fields.Float(
+        string='WA Line Quantity',
+    )

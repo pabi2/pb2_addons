@@ -11,3 +11,4 @@ from . import account_move_line
 from . import res_structure
 from . import hr_expense
 from . import account_bank_receipt
+from . import purchase

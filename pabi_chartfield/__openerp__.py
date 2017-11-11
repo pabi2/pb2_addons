@@ -21,7 +21,8 @@
     'data': [
         'security/security.xml',
         'security/security_rules_job_order.xml',
-        'security/security_rules_chartfield.xml',
+        'security/security_rules_chartfield_budget.xml',
+        'security/security_rules_chartfield_operations.xml',
         'security/ir.model.access.csv',
         'views/res_config_view.xml',
         'data/cost_control_data.xml',
