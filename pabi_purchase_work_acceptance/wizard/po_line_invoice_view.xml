@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_purchase_line_invoice" model="ir.ui.view">
+            <field name="name">view.purchase.line.invoice</field>
+            <field name="model">purchase.order.line_invoice</field>
+            <field name="inherit_id" ref="purchase_partial_invoicing.view_purchase_line_invoice"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='invoiced_qty']" position="after">
+                    <field name="wa_line_qty" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

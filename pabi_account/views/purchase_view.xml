@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="purchase_order_form" model="ir.ui.view">
+			<field name="name">purchase.order.form</field>
+			<field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase.purchase_order_form"/>
+			<field name="arch" type="xml">
+				<button name="invoice_ok" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</button>
+			</field>
+		</record>
+
+		<record id="purchase_order_form" model="ir.ui.view">
+			<field name="name">purchase.order.form</field>
+			<field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase_split_quote2order.view_purchase_order_form"/>
+			<field name="arch" type="xml">
+				<button name="invoice_ok" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</button>
+			</field>
+		</record>
+
+	</data>
+</openerp>

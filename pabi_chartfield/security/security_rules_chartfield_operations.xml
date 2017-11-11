@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Section for Operation (Accountant and Procurement) -->
+        <record id="rule_section_org_level_operation" model="ir.rule">
+            <field name="name">Section - Operations</field>
+            <field name="model_id" ref="pabi_base.model_res_division"/>
+            <field name="domain_force">['|', (user.access_all_operating_unit, '=', True), ('org_id', '=', user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user')), (4,ref('purchase.group_purchase_user'))]"/>
+        </record>
+        <!-- Division for Operation (Accountant and Procurement) -->
+        <record id="rule_division_org_level_operation" model="ir.rule">
+            <field name="name">Division - Operations</field>
+            <field name="model_id" ref="pabi_base.model_res_sector"/>
+            <field name="domain_force">['|', (user.access_all_operating_unit, '=', True), ('org_id', '=', user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user')), (4,ref('purchase.group_purchase_user'))]"/>
+        </record>
+        <!-- SubSector for Operation (Accountant and Procurement) -->
+        <record id="rule_subsector_org_level_operation" model="ir.rule">
+            <field name="name">Subsector - Operations</field>
+            <field name="model_id" ref="pabi_base.model_res_subsector"/>
+            <field name="domain_force">['|', (user.access_all_operating_unit, '=', True), ('org_id', '=', user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user')), (4,ref('purchase.group_purchase_user'))]"/>
+        </record>
+        <!-- Sector for Operation (Accountant and Procurement) -->
+        <record id="rule_sector_org_level_operation" model="ir.rule">
+            <field name="name">Sector - Operations</field>
+            <field name="model_id" ref="pabi_base.model_res_sector"/>
+            <field name="domain_force">['|', (user.access_all_operating_unit, '=', True), ('org_id', '=', user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user')), (4,ref('purchase.group_purchase_user'))]"/>
+        </record>
+
+    </data>
+</openerp>

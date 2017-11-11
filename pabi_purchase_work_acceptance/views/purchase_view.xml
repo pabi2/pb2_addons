@@ -20,9 +20,9 @@
                     <button type="object"  name="acceptance_open"
                         class="oe_stat_button"
                         icon="fa-pencil-square-o"
-                        attrs="{'invisible': [('state','not in',('approved','done','cancel'))]}"
+                        attrs="{'invisible': [('count_acceptance','=',False)]}"
                         >
-                    <field name="count_acceptance" widget="statinfo" string="Work Acceptances"/>
+                        <field name="count_acceptance" widget="statinfo" string="Work Accept."/>
                     </button>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page" position="after">

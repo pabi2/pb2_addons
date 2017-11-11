@@ -28,6 +28,7 @@
         "hr_expense_auto_invoice",
         "pabi_source_document",
         "account_invoice_create_payment",
+        "purchase_split_quote2order",
     ],
     "data": [
         "data/default_value.xml",
@@ -45,5 +46,6 @@
         "views/res_partner_view.xml",
         "views/res_company_view.xml",
         "views/account_bank_receipt_view.xml",
+        "views/purchase_view.xml",
     ],
 }
