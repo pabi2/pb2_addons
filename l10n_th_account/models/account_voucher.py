@@ -686,6 +686,8 @@ class AccountVoucher(common_voucher, models.Model):
                 voucher.write({
                     'recognize_vat_move_id': move.id,
                 })
+                if journal.entry_posted:
+                    move.post()
             # Call just to by pass in hook, but still benefit from others
             super(AccountVoucher,
                   self.with_context(bypass=True)).action_move_line_create()

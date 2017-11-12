@@ -284,10 +284,16 @@ class AccountVoucherLine(models.Model):
     )
     invoice_taxbranch_id = fields.Many2one(
         'res.taxbranch',
-        related='move_line_id.invoice.taxbranch_id',
         string='Taxbranch',
-        store=True,
+        compute='_compute_invoice_taxbranch_id',
+        # related='move_line_id.invoice.taxbranch_id',
+        # store=True,
     )
+
+    @api.multi
+    def _compute_invoice_taxbranch_id(self):
+        for rec in self:
+            rec.invoice_taxbranch_id = rec.move_line_id.invoice.taxbranch_id
 
 
 class AccountVoucherTax(models.Model):

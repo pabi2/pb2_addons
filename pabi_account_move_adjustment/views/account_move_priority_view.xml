@@ -106,7 +106,7 @@
                                     <field name="invoice_number" required="1"/>
                                     <field name="invoice_date" required="1"/>
                                     <field name="tax_id" string="Tax Type" required="1"/>
-                                    <field name="taxbranch_id" string="Tax Branch"/>
+                                    <field name="taxbranch_id" string="Tax Branch" required="1"/>
                                     <field name="base" sum="Base" required="1"/>
                                     <field name="amount" sum="Tax" required="1"/>
                                     <field name="tax_sequence_display"/>

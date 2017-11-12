@@ -15,5 +15,6 @@ class AccountMoveLine(models.Model):
         if 'taxbranch_id' in vals:
             # tax_taxbranch_id is prepared form the calling document
             # it use invoice's taxbranch
-            vals['taxbranch_id'] = vals.get('taxinvoice_taxbranch_id', False)
+            if vals.get('taxinvoice_taxbranch_id', False):
+                vals['taxbranch_id'] = vals.get('taxinvoice_taxbranch_id')
         return vals
