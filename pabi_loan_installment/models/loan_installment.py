@@ -5,9 +5,10 @@ from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
+from openerp.addons.pabi_chartfield.models.chartfield import HeaderTaxBranch
 
 
-class LoanInstallment(models.Model):
+class LoanInstallment(HeaderTaxBranch, models.Model):
     _name = 'loan.installment'
     _inherit = ['mail.thread']
     _order = 'name desc'
@@ -195,10 +196,31 @@ class LoanInstallment(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    # Taxbranch Calculation
+    taxbranch_ids = fields.Many2many(
+        compute='_compute_taxbranch_ids',
+    )
+    len_taxbranch = fields.Integer(
+        compute='_compute_taxbranch_ids',
+    )
     _sql_constraints = [
         ('name_unique', 'unique(name)',
          'Loan installment number must be unique!'),
     ]
+
+    @api.one
+    @api.depends('receivable_ids')
+    def _compute_taxbranch_ids(self):
+        lines = self.receivable_ids.mapped('invoice')
+        self._set_taxbranch_ids(lines)
+
+    @api.model
+    def create(self, vals):
+        sequence_code = 'loan.installment'
+        vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
+        res = super(LoanInstallment, self).create(vals)
+        res._set_header_taxbranch_id()
+        return res
 
     @api.multi
     @api.depends('move_id.line_id.reconcile_id')
@@ -276,13 +298,6 @@ class LoanInstallment(models.Model):
                 sum(rec.receivable_ids.mapped(lambda l: l.debit - l.credit))
             rec.amount_loan_total = rec.amount_income + rec.amount_receivable
 
-    @api.model
-    def create(self, vals):
-        sequence_code = 'loan.installment'
-        vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
-        res = super(LoanInstallment, self).create(vals)
-        return res
-
     @api.multi
     def loan_move_line_get(self, line):
         self.ensure_one()
@@ -316,6 +331,9 @@ class LoanInstallment(models.Model):
     @api.multi
     def _validate(self):
         for rec in self:
+            # No Taxbranch
+            if not rec.taxbranch_id:
+                raise ValidationError(_('No taxbranch'))
             # No line
             if not rec.receivable_ids:
                 raise ValidationError(_('No trade receivable line selected!'))

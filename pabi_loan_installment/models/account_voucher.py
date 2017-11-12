@@ -75,3 +75,21 @@ class AccountVoucher(models.Model):
         return super(AccountVoucher, self).writeoff_move_line_get(
             voucher_id, line_total, move_id, name,
             company_currency, current_currency)
+
+
+class AccountVoucherLine(models.Model):
+    _inherit = 'account.voucher.line'
+
+    @api.multi
+    def _compute_invoice_taxbranch_id(self):
+        super(AccountVoucherLine, self)._compute_invoice_taxbranch_id()
+        for rec in self:
+            if not rec.invoice_taxbranch_id:
+                # Find if this move_id belongs to any loan installment.
+                loan = self.env['loan.installment'].search(
+                    [('move_id', '=', rec.move_line_id.move_id.id)])
+                if not loan:
+                    continue
+                if len(loan) > 1:
+                    raise ValidationError(_('1 move_id belongs to > 1 loan!'))
+                rec.invoice_taxbranch_id = loan.taxbranch_id

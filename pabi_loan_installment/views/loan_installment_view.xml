@@ -93,6 +93,9 @@
                                 <field name="account_id"/>
                                 <field name="defer_income_account_id"/>
                                 <field name="income_account_id"/>
+                                <field name="taxbranch_id"/>
+                                <field name="taxbranch_ids" invisible="1"/>
+                                <field name="len_taxbranch" invisible="1"/>
                             </group>
                             <group>
                                 <field name="date" string="Document Date"/>
