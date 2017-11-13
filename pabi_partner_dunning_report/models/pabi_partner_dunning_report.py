@@ -100,7 +100,7 @@ class PABIPartnerDunningReport(models.Model):
     @api.depends()
     def _compute_validate_user_id(self):
         for line in self:
-            line.validate_user_id = \
+            line.validate_user_id = line.move_line_id.document_id and \
                 line.move_line_id.document_id.validate_user_id
 
     @api.multi
