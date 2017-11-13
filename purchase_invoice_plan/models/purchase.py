@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import time
-
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, float_round as round
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, \
+    float_compare, float_round as round
 
 
 class PurchaseOrder(models.Model):
@@ -298,6 +298,7 @@ class PurchaseOrder(models.Model):
         invoice_ids = []
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
+            first_time_invoice_plan = not order.invoice_ids and True or False
             if order.invoice_method == 'invoice_plan':
                 plan_obj = self.env['purchase.invoice.plan']
                 installments = list(set([plan.installment
@@ -355,12 +356,27 @@ class PurchaseOrder(models.Model):
             else:
                 inv_id = super(PurchaseOrder, order).action_invoice_create()
                 invoice_ids.append(inv_id)
-            order._action_invoice_create_hook(invoice_ids)  # Special Hook
+            order.with_context(first_time=first_time_invoice_plan).\
+                _action_invoice_create_hook(invoice_ids)  # Special Hook
         return inv_id
 
     @api.model
     def _action_invoice_create_hook(self, invoice_ids):
-        # For Hook
+        # Hook
+        # Check total amount PO must equal to Invoice
+        if self._context.get('first_time', False) and len(invoice_ids) > 0:
+            invoices = self.env['account.invoice'].browse(invoice_ids)
+            prec = self.env['decimal.precision'].precision_get('Account')
+            invoice_untaxed = sum(invoices.mapped('amount_untaxed'))
+            if float_compare(invoice_untaxed, self.amount_untaxed,
+                             precision_digits=prec) != 0:
+                raise except_orm(
+                    _('Amount Mismatch!'),
+                    _('Total invoice amount, %s, not equal to purchase '
+                      'order amount, %s.\nThis may be caused by quantity '
+                      'rounding from invoice plan to invoice line.') %
+                    ('{:,.2f}'.format(invoice_untaxed),
+                     '{:,.2f}'.format(self.amount_untaxed)))
         return
 
     @api.model

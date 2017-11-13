@@ -193,7 +193,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             'installment': install.installment,
             'date_invoice': install.date_invoice,
             'invoice_percent': install.percent,
-            'invoice_amount': round(install.percent/100 *
+            'invoice_amount': round(install.percent / 100 *
                                     subtotal, prec),
         }
         return data
@@ -234,7 +234,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     i.amount = remaning_installment_amount
                 remaning_installment_amount = (remaning_installment_amount -
                                                self.installment_amount)
-                new_val = i.amount / self.order_amount * 100
+                new_val = i.amount / (self.order_amount or 1) * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
                 last_line = i

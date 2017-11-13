@@ -4,6 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 from openerp.tools.float_utils import float_round as round
 from openerp import workflow
+from openerp.tools import float_compare
 import time
 import logging
 
@@ -140,7 +141,7 @@ class sale_order(models.Model):
                 for line in invoice_lines:
                     total_amount += line.invoice_amount
                     # Validate percent
-                    if round(line.invoice_percent/100 * subtotal, prec) != \
+                    if round(line.invoice_percent / 100 * subtotal, prec) != \
                             round(line.invoice_amount, prec):
                         raise except_orm(
                             _('Invoice Plan Percent Mismatch!'),
@@ -236,6 +237,7 @@ class sale_order(models.Model):
         invoice_ids = []
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
+            first_time_invoice_plan = not order.invoice_ids and True or False
             if order.use_invoice_plan:
                 plan_obj = self.env['sale.invoice.plan']
                 installments = list(set([plan.installment
@@ -276,12 +278,27 @@ class sale_order(models.Model):
                 inv_id = super(sale_order, order).action_invoice_create(
                     grouped=grouped, states=states, date_invoice=date_invoice)
                 invoice_ids.append(inv_id)
-            order._action_invoice_create_hook(invoice_ids)  # Special Hook
+            order.with_context(first_time=first_time_invoice_plan).\
+                _action_invoice_create_hook(invoice_ids)  # Special Hook
         return inv_id
 
     @api.model
     def _action_invoice_create_hook(self, invoice_ids):
-        # For Hook
+        # Hook
+        # Check total amount PO must equal to Invoice
+        if self._context.get('first_time', False) and len(invoice_ids) > 0:
+            invoices = self.env['account.invoice'].browse(invoice_ids)
+            prec = self.env['decimal.precision'].precision_get('Account')
+            invoice_untaxed = sum(invoices.mapped('amount_untaxed'))
+            if float_compare(invoice_untaxed, self.amount_untaxed,
+                             precision_digits=prec) != 0:
+                raise except_orm(
+                    _('Amount mismatch!'),
+                    _('Total invoice amount, %s, not equal to purchase '
+                      'order amount, %s.\nThis may be caused by quantity '
+                      'rounding from invoice plan to invoice line.') %
+                    ('{:,.2f}'.format(invoice_untaxed),
+                     '{:,.2f}'.format(self.amount_untaxed)))
         return
 
     @api.model
