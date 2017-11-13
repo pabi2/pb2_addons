@@ -22,6 +22,10 @@ class PABIPartnerDunningWizard(models.TransientModel):
         help="Always run as today"
     )
 
+    @api.onchange('search_options')
+    def _onchange_search_options(self):
+        self.date_run = fields.Date.context_today(self)
+
     @api.model
     def _get_domain(self):
         Report = self.env['pabi.partner.dunning.report']
@@ -29,7 +33,8 @@ class PABIPartnerDunningWizard(models.TransientModel):
         domain = [('reconcile_id', '=', False),
                   ('account_type', '=', 'receivable')]
         if self.search_options == 'today_dunning_report':
-            _ids = Report.search([('date_maturity', '<=', date_run)])._ids
+            today = fields.Date.context_today(self)
+            _ids = Report.search([('date_maturity', '<=', today)])._ids
             domain.append(('move_line_id', 'in', _ids))
         else:
             date_run = self.date_run
