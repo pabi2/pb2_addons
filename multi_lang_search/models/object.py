@@ -21,35 +21,57 @@ def _get_rec_names(self):
     return rec_name + other_names
 
 
-def _extend_name_results_translation(self, domain, field_name,
-                                     name, results, limit):
+def _extend_name_results_translation(self, field_name, name, results, limit):
     result_count = len(results)
     limit = limit or 100
     if result_count < limit:
-        domain += [('id', 'not in', [x[0] for x in results])]
         trans_name = '%s,%s' % (self._model, field_name)
+
+        # -------------------------------------------------------------------
         # kittiu: Sepcial Case for res_users, which use name from res_partner
-        special_case = trans_name == 'res.users,name'
+        special_case = trans_name in ['res.users,name', 'account.tax,name']
         if special_case:
-            trans_name = 'res.partner,name'
-        # --
+            if trans_name == 'res.users,name':
+                trans_name = 'res.partner,name'
+        # -------------------------------------------------------------------
+
         self._cr.execute("""
             SELECT res_id
             FROM ir_translation
-            WHERE (src ilike '%s' or value ilike '%s') AND
-                name = '%s'
-            LIMIT %d
-        """ % ('%' + name + '%', '%' + name + '%', trans_name, limit))
+            WHERE (src ilike %s or value ilike %s) AND
+                name = %s
+            LIMIT %s
+        """, ('%' + name + '%', '%' + name + '%', trans_name, limit))
         res = self._cr.dictfetchall()
         record_ids = [t['res_id'] for t in res]
+
+        # -------------------------------------------------------------------
         # kittiu: Special case
         if special_case:  # need to change from res.partner to res.users
-            partners = self.env['res.partner'].browse(record_ids)
-            user_ids = []
-            for partner in partners:
-                user_ids += partner.user_ids.ids
-            record_ids = user_ids
-        # --
+            # Partner
+            if trans_name == 'res.partner,name':
+                partners = self.env['res.partner'].browse(record_ids)
+                user_ids = []
+                for partner in partners:
+                    user_ids += partner.user_ids.ids
+                record_ids = user_ids
+            # Tax
+            if trans_name == 'account.tax,name':
+                tax_domain = []
+                if self._context.get('type') in ('out_invoice', 'out_refund'):
+                    tax_domain += [('type_tax_use', 'in', ['sale', 'all'])]
+                elif self._context.get('type') in ('in_invoice', 'in_refund'):
+                    tax_domain += [('type_tax_use', 'in', ['purchase', 'all'])]
+                if self._context.get('journal_id', False):
+                    journal = self.env['account.journal'].\
+                        browse(self._context.get('journal_id'))
+                    tax_domain += \
+                        [('type_tax_use', 'in', [journal.type, 'all'])]
+                if tax_domain:
+                    tax_ids = self.env['account.tax'].search(tax_domain).ids
+                    record_ids = list(set(tax_ids).intersection(record_ids))
+        # -------------------------------------------------------------------
+
         record_ids = self.browse(record_ids)
         results.extend(record_ids.name_get())
         results = list(set(results))
@@ -104,15 +126,10 @@ class ModelExtended(models.Model):
                 if name and enabled and operator in ALLOWED_OPS:
                     # Support a list of fields to search on
                     all_names = _get_rec_names(self)
-                    base_domain = args or []
                     # Try translation word search each of the search fields
                     for rec_name in all_names:
-                        domain = [(rec_name, operator, name)]
-                        domain = [(rec_name, operator, x)
-                                  for x in name.split() if x]
                         res = _extend_name_results_translation(
-                            self, base_domain + domain,
-                            rec_name, name, res, limit)
+                            self, rec_name, name, res, limit)
                 return res
             return name_search
 
