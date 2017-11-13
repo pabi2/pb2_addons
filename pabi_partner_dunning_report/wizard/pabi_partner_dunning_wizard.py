@@ -3,23 +3,23 @@ from openerp import api, fields, models
 
 SEARCH_OPTIONS = [
     ('today_dunning_report', 'Today Dunning Report'),
-    ('printed_report', 'Printed Report'),
+    ('printed_report', 'Report Printed On'),
 ]
 
 
 class PABIPartnerDunningWizard(models.TransientModel):
     _name = 'pabi.partner.dunning.wizard'
 
-    date_run = fields.Date(
-        string='Report Run Date',
-        default=lambda self: fields.Date.context_today(self),
-        help="Always run as today"
-    )
     search_options = fields.Selection(
         selection=SEARCH_OPTIONS,
         string="Search",
         required=True,
         default='today_dunning_report',
+    )
+    date_run = fields.Date(
+        string='Date',
+        default=lambda self: fields.Date.context_today(self),
+        help="Always run as today"
     )
 
     @api.model

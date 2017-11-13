@@ -8,21 +8,25 @@
 			<field name="model">pabi.partner.dunning.wizard</field>
 			<field name="arch" type="xml">
 				<form>
-					<group>
-						<group>
-							<field name="search_options" widget="radio"/>
-						</group>
-						<group>
-							<field name="date_run" attrs="{'readonly': [('search_options', '=', 'today_dunning_report')]}"/>
-						</group>
+					<group colspan="4">
+						<label for="id" string="Search For"/>
+						<div>
+							<div>
+								<field name="search_options" style="width:30%%"/>
+								<label string=" " class="oe_inline"/>
+								<field name="date_run" attrs="{'readonly': [('search_options', '=', 'today_dunning_report')]}" class="oe_inline"/>
+							</div>
+						</div>
 					</group>
-					<group>
-                        <p>
-                            <strong>Remarks</strong> <br/>
-                            - Search for "Today Dunning Report" will shows records that need to create dunning letter as of today. <br/>
-                            - Search for "Printed Report" will show records that was created as letter (1, 2, 3)
-                        </p>
-                    </group>
+					<group colspan="4">
+						<p>
+							<strong>Remarks</strong>
+							<br/>
+							- Search for "Today Dunning Report" will shows records that need to create dunning letter as of today.
+							<br/>
+							- Search for "Printed Report" will show records that was created as letter (1, 2, 3)
+						</p>
+					</group>
 					<footer>
 						<button name="run_report" string="Run Report" type="object" class="oe_highlight"/>
 						or
