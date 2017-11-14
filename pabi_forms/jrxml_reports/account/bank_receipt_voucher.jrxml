@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.10000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="145"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
 	<style name="space">
 		<box rightPadding="2"/>
@@ -97,7 +97,7 @@
 		<fieldDescription><![CDATA[line_id/personnel_costcenter_id/code]]></fieldDescription>
 	</field>
 	<field name="validate_user" class="java.lang.String">
-		<fieldDescription><![CDATA[document_id/validate_user_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/validate_user_id/partner_id/display_name]]></fieldDescription>
 	</field>
 	<field name="validate_date" class="java.util.Date">
 		<fieldDescription><![CDATA[document_id/validate_date]]></fieldDescription>
@@ -117,6 +117,8 @@
 	<field name="bank_intransit_ids_name" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/bank_intransit_ids/ref]]></fieldDescription>
 	</field>
+	<sortField name="debit"/>
+	<sortField name="credit"/>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{debit} == null ? 0.0 : $F{debit}]]></variableExpression>
 	</variable>

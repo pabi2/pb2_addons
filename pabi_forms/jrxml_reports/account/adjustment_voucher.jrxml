@@ -91,7 +91,7 @@
 		<fieldDescription><![CDATA[line_id/personnel_costcenter_id/code]]></fieldDescription>
 	</field>
 	<field name="validate_user" class="java.lang.String">
-		<fieldDescription><![CDATA[document_id/validate_user_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/validate_user_id/partner_id/display_name]]></fieldDescription>
 	</field>
 	<field name="validate_date" class="java.util.Date">
 		<fieldDescription><![CDATA[document_id/validate_date]]></fieldDescription>
@@ -111,6 +111,8 @@
 	<field name="journal_code" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/code]]></fieldDescription>
 	</field>
+	<sortField name="debit"/>
+	<sortField name="credit"/>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{debit} == null ? 0.0 : $F{debit}]]></variableExpression>
 	</variable>
