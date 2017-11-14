@@ -33,6 +33,20 @@ DOCTYPE_REPORT_MAP = {
             'payment': False,
         }
     },
+    'customer_receipt_voucher': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.receipt.voucher.form.en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'customer.receipt.voucher.form.th',
+            'payment': False,
+        }
+    },
     'customer_tax_receipt': {
         'en': {
             'sale': False,
@@ -124,6 +138,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
             voucher = self.env['account.voucher'].browse(ids[0])
             if voucher.type == 'receipt':
                 return[('customer_receipt', 'Receipt'),
+                       ('customer_receipt_voucher', 'Receipt Voucher'),
                        ('customer_tax_receipt', 'Tax Receipt'),
                        ('customer_tax_receipt200', 'Tax Receipt 200%'), ]
             elif voucher.type == 'payment':
