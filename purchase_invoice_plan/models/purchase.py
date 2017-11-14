@@ -192,8 +192,10 @@ class PurchaseOrder(models.Model):
                 if round(total_amount, prec) != round(subtotal, prec):
                     raise except_orm(
                         _('Invoice Plan Amount Mismatch!'),
-                        _("%s, plan amount %d not equal to line amount %d!")
-                        % (order_line.name, total_amount, subtotal))
+                        _("%s, plan amount %s not equal to line amount %s!")
+                        % (order_line.name,
+                           '{:,.2f}'.format(total_amount),
+                           '{:,.2f}'.format(subtotal)))
         return True
 
     @api.model
@@ -356,12 +358,13 @@ class PurchaseOrder(models.Model):
             else:
                 inv_id = super(PurchaseOrder, order).action_invoice_create()
                 invoice_ids.append(inv_id)
+            order._action_invoice_create_hook(invoice_ids)  # Special Hook
             order.with_context(first_time=first_time_invoice_plan).\
-                _action_invoice_create_hook(invoice_ids)  # Special Hook
+                _validate_invoice_balance(invoice_ids)  # Special Hook
         return inv_id
 
     @api.model
-    def _action_invoice_create_hook(self, invoice_ids):
+    def _validate_invoice_balance(self, invoice_ids):
         # Hook
         # Check total amount PO must equal to Invoice
         if self._context.get('first_time', False) and len(invoice_ids) > 0:
@@ -377,6 +380,11 @@ class PurchaseOrder(models.Model):
                       'rounding from invoice plan to invoice line.') %
                     ('{:,.2f}'.format(invoice_untaxed),
                      '{:,.2f}'.format(self.amount_untaxed)))
+        return
+
+    @api.model
+    def _action_invoice_create_hook(self, invoice_ids):
+        # Hook
         return
 
     @api.model

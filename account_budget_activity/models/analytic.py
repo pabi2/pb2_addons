@@ -157,10 +157,6 @@ class AccountAnalyticLine(models.Model):
         compute="_compute_quarter",
         store=True,
     )
-    commit_remark = fields.Char(
-        string='Remarks',
-        reaonly=True,
-    )
 
     @api.depends('period_id')
     def _compute_quarter(self):
@@ -204,9 +200,6 @@ class AccountAnalyticLine(models.Model):
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
-        # Commit Remarks sent from originator
-        if self._context.get('commit_remark', False):
-            vals['commit_remark'] = self._context.get('commit_remark')
         return super(AccountAnalyticLine, self).create(vals)
 
     @api.multi

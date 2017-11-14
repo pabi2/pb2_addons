@@ -93,6 +93,12 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
         string='Budget Balance',
         compute='_compute_budget_commit_bal',
     )
+    budget_transition_ids = fields.One2many(
+        'budget.transition',
+        'purchase_line_id',
+        string='Budget Transition',
+        reaonly=True,
+    )
 
     @api.multi
     def _compute_budget_commit_bal(self):

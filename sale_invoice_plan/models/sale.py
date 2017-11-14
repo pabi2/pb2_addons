@@ -150,8 +150,10 @@ class sale_order(models.Model):
                 if round(total_amount, prec) != round(subtotal, prec):
                     raise except_orm(
                         _('Invoice Plan Amount Mismatch!'),
-                        _("%s, plan amount %d not equal to line amount %d!")
-                        % (order_line.name, total_amount, subtotal))
+                        _("%s, plan amount %s not equal to line amount %s!")
+                        % (order_line.name,
+                           '{:,.2f}'.format(total_amount),
+                           '{:,.2f}'.format(subtotal)))
         return True
 
     @api.multi

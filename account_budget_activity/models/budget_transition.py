@@ -213,76 +213,68 @@ class BudgetTransition(models.Model):
     @api.model
     def _create_trans_by_target_lines(self, source_line, target_lines,
                                       source_qty_field, target_qty_field,
-                                      trans_source_field, trans_target_field):
+                                      trans_source_field, trans_target_field,
+                                      reverse=False):
         trans_ids = []
-        # Do not add, if exists. We value the first entry to be correct.
-        existing_trans = self.search([
-            (trans_source_field, '=', source_line.id),
-            (trans_target_field, 'in', target_lines.ids)])
-        # TODO: existing_trans can be > 1 for case create invoice plan
-        # Also make it run faster
+        # If trans already exist (same source id and target id), skip it.
+        existing_trans = source_line.budget_transition_ids
+        # Prepare existing trans dictionary. We use it to skip.
+        existing_dicts = []
+        for existing_tran in existing_trans:
+            existing_dicts.append({
+                trans_source_field: existing_tran[trans_source_field].id,
+                trans_target_field: existing_tran[trans_target_field].id,
+            })
         for target_line in target_lines:
-            if existing_trans[trans_source_field] == source_line and \
-                    existing_trans[trans_target_field] == target_line:
-                continue
+            # Check if new trans dict already exists
+            todo = True
             trans_dict = {
                 trans_source_field: source_line.id,
                 trans_target_field: target_line.id,
-                'quantity': target_line[target_qty_field],
             }
-            trans = self.create(trans_dict)
-            trans_ids.append(trans.id)
-        return trans_ids
-
-    @api.model
-    def _create_budget_transition(self, source_line, field_name,
-                                  source_qty_field, target_qty_field,
-                                  trans_source_field, trans_target_field):
-        trans_ids = []
-        if field_name in source_line and source_line[field_name]:
-            target_lines = source_line[field_name]
-            trans_ids = self._create_trans_by_target_lines(
-                source_line, target_lines,
-                source_qty_field, target_qty_field,
-                trans_source_field, trans_target_field)
+            for existing_dict in existing_dicts:
+                if existing_dict == trans_dict:
+                    todo = False
+                    break
+            if todo:
+                quantity = target_line[target_qty_field]
+                trans_dict['quantity'] = reverse and -quantity or quantity
+                trans = self.create(trans_dict)
+                trans_ids.append(trans.id)
         return trans_ids
 
     # Create budget transition log, when link between doc is created
     @api.model
     def create_trans_expense_to_invoice(self, line):
-        return self._create_budget_transition(
-            line, 'invoice_line_ids', 'unit_quantity',
+        return self._create_trans_by_target_lines(
+            line, line.invoice_line_ids, 'unit_quantity',
             'quantity', 'expense_line_id', 'invoice_line_id')
 
     @api.model
     def create_trans_pr_to_purchase(self, line):
-        return self._create_budget_transition(
-            line, 'purchase_lines', 'product_qty',
+        return self._create_trans_by_target_lines(
+            line, line.purchase_lines, 'product_qty',
             'product_qty', 'purchase_request_line_id', 'purchase_line_id')
 
     @api.model
-    def create_trans_purchase_to_invoice(self, line):
-        return self._create_budget_transition(
-            line, 'invoice_lines', 'product_qty',
+    def create_trans_purchase_to_invoice(self, po_line):
+        return self._create_trans_by_target_lines(
+            po_line, po_line.invoice_lines, 'product_qty',
             'quantity', 'purchase_line_id', 'invoice_line_id')
 
-    # TODO: Why this one can't use create_budget_transition???
     @api.model
-    def create_trans_purchase_to_picking(self, moves):
-        trans_ids = []
-        purchase_lines = moves.mapped('purchase_line_id')
-        for line in purchase_lines:
-            grp_moves = moves.filtered(lambda l: l.purchase_line_id == line)
-            trans_ids += self._create_trans_by_target_lines(
-                line, grp_moves, 'product_qty', 'product_uom_qty',
-                'purchase_line_id', 'stock_move_id')
-        return trans_ids
+    def create_trans_purchase_to_picking(self, po_line, moves, reverse=False):
+        return self._create_trans_by_target_lines(
+            po_line, moves, 'product_qty',
+            'product_uom_qty', 'purchase_line_id', 'stock_move_id',
+            reverse=reverse)
 
     @api.model
-    def create_trans_sale_to_invoice(self, line):
+    def create_trans_sale_to_invoice(self, line, reverse=False):
         return self._create_budget_transition(
             line, 'invoice_lines', 'product_uom_qty',
-            'quantity', 'sale_line_id', 'invoice_line_id')
+            'quantity', 'sale_line_id', 'invoice_line_id',
+            reverse=reverse)
 
     # TODO: from sale to picking. Cannot find field from sale that link to move
     # def create_trans_sale_to_picking(self, line):
@@ -346,34 +338,37 @@ class PurchaseOrderLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'purchase.order.line'
 
-    # TODO: Error on case purchase invoice plan
-    # @api.multi
-    # @api.constrains('invoice_lines')
-    # def _trigger_purchase_lines(self):
-    #     """ PO -> INV """
-    #     BudgetTrans = self.env['budget.transition'].sudo()
-    #     for po_line in self:
-    #         product = po_line.product_id
-    #         if product.type != 'service' and product.valuation == 'realtime':
-    #             continue  # Skip case real time stockable
-    #         BudgetTrans.create_trans_purchase_to_invoice(po_line)
+    @api.multi
+    @api.constrains('invoice_lines')
+    def _trigger_purchase_invoice_lines(self):
+        """ PO -> INV """
+        BudgetTrans = self.env['budget.transition'].sudo()
+        for po_line in self:
+            product = po_line.product_id
+            if product.type != 'service' and product.valuation == 'realtime':
+                continue  # Skip case real time stockable
+            BudgetTrans.create_trans_purchase_to_invoice(po_line)
 
 
 class StockMove(models.Model):
     """ For real time stock, transition created and actual when it is moved """
     _inherit = 'stock.move'
 
-    # TODO:
-    # @api.multi
-    # @api.constrains('state')
-    # def _trigger_stock_moves(self):
-    #     """ PO -> Stock Move, create transaction as it is tansferred """
-    #     BudgetTrans = self.env['budget.transition'].sudo()
-    #     # For done moves, create transition and return budget
-    #     moves = self.filtered(lambda l: l.state == 'done' and
-    #                           l.product_id.valuation == 'real_time')
-    #     BudgetTrans.create_trans_purchase_to_picking(moves)
-    #     BudgetTrans.do_forward(self._name, moves)
+    @api.multi
+    @api.constrains('state')
+    def _trigger_stock_moves(self):
+        """ PO -> Stock Move, create transaction as it is tansferred """
+        BudgetTrans = self.env['budget.transition'].sudo()
+        # For done moves, create transition and return budget same time
+        moves = self.filtered(lambda l: l.state == 'done' and
+                              l.product_id.valuation == 'real_time')
+        for move in moves:
+            reverse = move.picking_type_id.code == 'outgoing'
+            BudgetTrans.create_trans_purchase_to_picking(move.purchase_line_id,
+                                                         moves,
+                                                         reverse=reverse)
+        # Do Forward immediately
+        BudgetTrans.do_forward(self._name, moves)
 
 
 class SaleOrderLine(models.Model):
