@@ -20,7 +20,6 @@
                             <tree default_order='id'>
                                 <field name="id"/>
                                 <field name="purchase_line_id"/>
-                                <field name="commit_remark"/>
                                 <field name="create_date"/>
                                 <field name="amount" string="Committed Amount" sum="Total Amount"/>
                             </tree>
