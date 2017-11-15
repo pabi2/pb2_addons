@@ -5,6 +5,8 @@ from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 from openerp.addons.pabi_chartfield_merged.models.chartfield \
     import MergedChartField
+from openerp.addons.pabi_chartfield.models.chartfield \
+    import ChartFieldAction
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 
@@ -261,7 +263,7 @@ class AccountAssetAdjust(models.Model):
                 adjust_line.section_id = asset.section_id
                 adjust_line.project_id = asset.project_id
                 adjust_line.invest_asset_id = asset.invest_asset_id
-                adjust_line.invest_contruction_phase_id = \
+                adjust_line.invest_construction_phase_id = \
                     asset.invest_construction_phase_id
                 # --
                 self.adjust_line_ids += adjust_line
@@ -284,7 +286,7 @@ class AccountAssetAdjust(models.Model):
                 adjust_line.section_id = asset.section_id
                 adjust_line.project_id = asset.project_id
                 adjust_line.invest_asset_id = asset.invest_asset_id
-                adjust_line.invest_contruction_phase_id = \
+                adjust_line.invest_construction_phase_id = \
                     asset.invest_construction_phase_id
                 # --
                 self.adjust_asset_to_expense_ids += adjust_line
@@ -374,11 +376,14 @@ class AccountAssetAdjust(models.Model):
     @api.model
     def _create_asset(self, asset_date, amount, product, asset_name, analytic):
         Asset = self.env['account.asset']
+        Analytic = self.env['account.analytic.account']
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         asset_dict.update({'date_start': asset_date,
                            'purchase_value': amount,
                            })
         new_asset = Asset.create(asset_dict)
+        new_asset.account_analytic_id = \
+            Analytic.create_matched_analytic(new_asset)
         # Set back to normal
         new_asset.type = 'normal'
         return new_asset
@@ -502,7 +507,7 @@ class AccountAssetAdjust(models.Model):
 
 
 class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
-                             models.Model):
+                             ChartFieldAction, models.Model):
     _name = 'account.asset.adjust.line'
     _description = 'Asset to Asset'
 
@@ -566,6 +571,11 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
+        readonly=True,
+    )
+    account_analytic_id = fields.Many2one(
+        'account.analytic.account',
+        string='Analytic',
         readonly=True,
     )
     _sql_constraints = [
@@ -678,7 +688,7 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
 
 
 class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
-                                       models.Model):
+                                       ChartFieldAction, models.Model):
     _name = 'account.asset.adjust.asset_to_expense'
 
     adjust_id = fields.Many2one(
@@ -726,6 +736,11 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
+        readonly=True,
+    )
+    account_analytic_id = fields.Many2one(
+        'account.analytic.account',
+        string='Analytic',
         readonly=True,
     )
     _sql_constraints = [
@@ -813,7 +828,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
 
 
 class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
-                                       models.Model):
+                                       ChartFieldAction, models.Model):
     _name = 'account.asset.adjust.expense_to_asset'
 
     adjust_id = fields.Many2one(
@@ -867,6 +882,11 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
+        readonly=True,
+    )
+    account_analytic_id = fields.Many2one(
+        'account.analytic.account',
+        string='Analytic',
         readonly=True,
     )
     _sql_constraints = [
