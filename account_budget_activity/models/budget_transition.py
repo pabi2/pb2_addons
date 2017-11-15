@@ -117,6 +117,14 @@ class BudgetTransition(models.Model):
                 rec[target] = '%s, %s' % \
                     (rec.purchase_id.name,
                      rec.purchase_line_id.name_get()[0][1])
+            # SO -> Invoice
+            if rec.sale_line_id and rec.invoice_line_id:
+                rec[source] = '%s, %s' % \
+                    (rec.sale_id.name,
+                     rec.sale_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.invoice_id.number,
+                     rec.invoice_line_id.name_get()[0][1])
             # PO -> Invoice
             if rec.purchase_line_id and rec.invoice_line_id:
                 rec[source] = '%s, %s' % \
@@ -125,6 +133,14 @@ class BudgetTransition(models.Model):
                 rec[target] = '%s, %s' % \
                     (rec.invoice_id.number,
                      rec.invoice_line_id.name_get()[0][1])
+            # SO -> Picking
+            if rec.sale_line_id and rec.stock_move_id:
+                rec[source] = '%s, %s' % \
+                    (rec.sale_id.name,
+                     rec.sale_line_id.name_get()[0][1])
+                rec[target] = '%s, %s' % \
+                    (rec.picking_id.name,
+                     rec.stock_move_id.name_get()[0][1])
             # PO -> Picking
             if rec.purchase_line_id and rec.stock_move_id:
                 rec[source] = '%s, %s' % \
@@ -133,15 +149,6 @@ class BudgetTransition(models.Model):
                 rec[target] = '%s, %s' % \
                     (rec.picking_id.name,
                      rec.stock_move_id.name_get()[0][1])
-            # Souldn't have!
-            # # Invocie -> Picking
-            # if rec.invoice_line_id and rec.stock_move_id:
-            #     rec[source] = '%s, %s' % \
-            #         (rec.invoice_id.number,
-            #          rec.invoice_line_id.name_get()[0][1])
-            #     rec[target] = '%s, %s' % \
-            #         (rec.picking_id.name,
-            #          rec.stock_move_id.name_get()[0][1])
             # EXP -> Invoice
             if rec.expense_line_id and rec.invoice_line_id:
                 rec[source] = '%s, %s' % \
@@ -194,7 +201,8 @@ class BudgetTransition(models.Model):
                                               'purchase_line_id',
                                               'sale_line_id'],
                           'purchase.order': ['purchase_request_line_id'],
-                          'stock.move': ['purchase_line_id'],
+                          'stock.move': ['purchase_line_id',
+                                         'sale_line_id'],
                           }
         model = self._context.get('trigger', False)
         if model not in trigger_models:
@@ -271,14 +279,19 @@ class BudgetTransition(models.Model):
             reverse=reverse)
 
     @api.model
-    def create_trans_sale_to_invoice(self, line, reverse=False):
-        return self._create_budget_transition(
-            line, 'invoice_lines', 'product_uom_qty',
+    def create_trans_sale_to_invoice(self, so_line):
+        return self._create_trans_by_target_lines(
+            so_line, so_line.invoice_lines, 'product_uom_qty',
             'quantity', 'sale_line_id', 'invoice_line_id',
-            reverse=reverse)
+            reverse=True)  # For sales
 
-    # TODO: from sale to picking. Cannot find field from sale that link to move
-    # def create_trans_sale_to_picking(self, line):
+    @api.model
+    def create_trans_sale_to_picking(self, so_line, moves, reverse=False):
+        reverse = not reverse  # For sales
+        return self._create_trans_by_target_lines(
+            so_line, moves, 'product_uom_qty',
+            'product_uom_qty', 'sale_line_id', 'stock_move_id',
+            reverse=reverse)
 
     # Return / Regain Commitment
     @api.model
@@ -292,6 +305,7 @@ class BudgetTransition(models.Model):
     @api.model
     def do_transit(self, direction, model, objects, obj_line_field=False):
         target_model_fields = {'account.invoice': 'invoice_line_id',
+                               'sale.order': 'sale_line_id',
                                'purchase.order': 'purchase_line_id',
                                'stock.move': 'stock_move_id'}
         trans_target_field = target_model_fields.get(model, False)
@@ -357,16 +371,21 @@ class StockMove(models.Model):
     @api.multi
     @api.constrains('state')
     def _trigger_stock_moves(self):
-        """ PO -> Stock Move, create transaction as it is tansferred """
+        """ SO/PO -> Stock Move, create transaction as it is tansferred """
         BudgetTrans = self.env['budget.transition'].sudo()
         # For done moves, create transition and return budget same time
         moves = self.filtered(lambda l: l.state == 'done' and
                               l.product_id.valuation == 'real_time')
+        if not moves:
+            return
         for move in moves:
             reverse = move.picking_type_id.code == 'outgoing'
-            BudgetTrans.create_trans_purchase_to_picking(move.purchase_line_id,
-                                                         moves,
-                                                         reverse=reverse)
+            if move.purchase_line_id:
+                BudgetTrans.create_trans_purchase_to_picking(
+                    move.purchase_line_id, moves, reverse=reverse)
+            if move.sale_line_id:
+                BudgetTrans.create_trans_sale_to_picking(
+                    move.sale_line_id, moves, reverse=reverse)
         # Do Forward immediately
         BudgetTrans.do_forward(self._name, moves)
 
@@ -375,13 +394,15 @@ class SaleOrderLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'sale.order.line'
 
-    # TODO:
-    # @api.multi
-    # @api.constrains('invoice_lines')
-    # def _trigger_sale_lines(self):
-    #     BudgetTrans = self.env['budget.transition'].sudo()
-    #     for so_line in self:
-    #         BudgetTrans.create_trans_sale_to_invoice(so_line)
+    @api.multi
+    @api.constrains('invoice_lines')
+    def _trigger_sale_invoice_lines(self):
+        """ SO -> INV """
+        BudgetTrans = self.env['budget.transition'].sudo()
+        for so_line in self:
+            product = so_line.product_id
+            if product.type == 'service' or product.valuation != 'real_time':
+                BudgetTrans.create_trans_sale_to_invoice(so_line)
 
 
 class PurchaseOrder(models.Model):

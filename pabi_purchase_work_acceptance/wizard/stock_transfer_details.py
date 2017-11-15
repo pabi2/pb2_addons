@@ -42,7 +42,8 @@ class StockTransferDetails(models.TransientModel):
 
     @api.one
     def do_detailed_transfer(self):
-        skip_wa = self._context.get('skip_work_acceptance', False)
+        skip_wa = self._context.get('skip_work_acceptance', False) or \
+            self._context.get('order_type') == 'sale_order'  # No WA in SO
         picking = self.picking_id
         if picking.picking_type_code == 'incoming' and not skip_wa:
             transfer_qty = self._product_summary_qty(self.item_ids,
