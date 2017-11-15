@@ -1,6 +1,25 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models
+from openerp import api, models, fields
 from .account_activity import ActivityCommon
+
+
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        string='Budget Commitment',
+        compute='_compute_budget_commit_ids',
+        readonly=True,
+    )
+
+    @api.multi
+    def _compute_budget_commit_ids(self):
+        Move = self.env['account.move']
+        Analytic = self.env['account.analytic.line']
+        for rec in self:
+            _ids = Move.search([('document', '=', rec.name)]).ids
+            rec.budget_commit_ids = Analytic.search([('move_id', 'in', _ids)])
 
 
 class StockMove(ActivityCommon, models.Model):

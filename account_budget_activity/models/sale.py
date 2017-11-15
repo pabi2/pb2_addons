@@ -17,7 +17,7 @@ class SaleOrder(models.Model):
         'budget.transition',
         'sale_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi
@@ -66,7 +66,7 @@ class SaleOrderLine(ActivityCommon, models.Model):
         'budget.transition',
         'sale_line_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi

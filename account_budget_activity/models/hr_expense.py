@@ -17,7 +17,7 @@ class HRExpenseExpense(models.Model):
         'budget.transition',
         'expense_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi
@@ -68,7 +68,7 @@ class HRExpenseLine(ActivityCommon, models.Model):
         'budget.transition',
         'expense_line_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi

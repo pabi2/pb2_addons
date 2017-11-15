@@ -16,5 +16,5 @@ class ResPartner(models.Model):
         'personal.income.tax.yearly',
         'partner_id',
         string='PIT Yearly',
-        reaonly=True,
+        readonly=True,
     )

@@ -133,14 +133,15 @@ class BudgetTransition(models.Model):
                 rec[target] = '%s, %s' % \
                     (rec.picking_id.name,
                      rec.stock_move_id.name_get()[0][1])
-            # Picking -> invoice
-            if rec.invoice_line_id and rec.stock_move_id:
-                rec[source] = '%s, %s' % \
-                    (rec.invoice_id.number,
-                     rec.invoice_line_id.name_get()[0][1])
-                rec[target] = '%s, %s' % \
-                    (rec.picking_id.name,
-                     rec.stock_move_id.name_get()[0][1])
+            # Souldn't have!
+            # # Invocie -> Picking
+            # if rec.invoice_line_id and rec.stock_move_id:
+            #     rec[source] = '%s, %s' % \
+            #         (rec.invoice_id.number,
+            #          rec.invoice_line_id.name_get()[0][1])
+            #     rec[target] = '%s, %s' % \
+            #         (rec.picking_id.name,
+            #          rec.stock_move_id.name_get()[0][1])
             # EXP -> Invoice
             if rec.expense_line_id and rec.invoice_line_id:
                 rec[source] = '%s, %s' % \
@@ -311,13 +312,13 @@ class HRExpenseLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'hr.expense.line'
 
-    # TODO:
-    # @api.multi
-    # @api.constrains('invoice_line_ids')
-    # def _trigger_invoice_line_ids(self):
-    #     BudgetTrans = self.env['budget.transition'].sudo()
-    #     for expense_line in self:
-    #         BudgetTrans.create_trans_expense_to_invoice(expense_line)
+    @api.multi
+    @api.constrains('invoice_line_ids')
+    def _trigger_expense_invoice_lines(self):
+        """ EXP -> INV """
+        BudgetTrans = self.env['budget.transition'].sudo()
+        for expense_line in self:
+            BudgetTrans.create_trans_expense_to_invoice(expense_line)
 
 
 class PurchaseRequestLine(models.Model):
@@ -345,9 +346,8 @@ class PurchaseOrderLine(models.Model):
         BudgetTrans = self.env['budget.transition'].sudo()
         for po_line in self:
             product = po_line.product_id
-            if product.type != 'service' and product.valuation == 'realtime':
-                continue  # Skip case real time stockable
-            BudgetTrans.create_trans_purchase_to_invoice(po_line)
+            if product.type == 'service' or product.valuation != 'real_time':
+                BudgetTrans.create_trans_purchase_to_invoice(po_line)
 
 
 class StockMove(models.Model):

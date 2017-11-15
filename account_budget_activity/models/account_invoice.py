@@ -1,10 +1,25 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models
+from openerp import api, models, fields
 from .account_activity import ActivityCommon
 
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
+
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        string='Budget Commitment',
+        compute='_compute_budget_commit_ids',
+        readonly=True,
+    )
+
+    @api.multi
+    def _compute_budget_commit_ids(self):
+        Analytic = self.env['account.analytic.line']
+        for rec in self:
+            _ids = rec.move_id.line_id.ids + \
+                rec.cancel_move_id.line_id.ids
+            rec.budget_commit_ids = Analytic.search([('move_id', 'in', _ids)])
 
     # Budget check will be done in Budget Monitor module
     # ==================================================

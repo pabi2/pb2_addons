@@ -34,23 +34,20 @@ class AccountMoveLine(models.Model):
     @api.multi
     def create_analytic_lines(self):
         """ Create Analytic Line only when,
-            - Is not BS and has (Activity or Product) """
+            - Is not BS and has (Activity or Product)
+            - Product Valuation is not real_time (invioce)
+            - Product Valuation is real_time (picking) """
         # Before create, always remove analytic line if exists
         for move_line in self:
             move_line.analytic_lines.unlink()
         move_lines = self._budget_eligible_move_lines()
+        # Invoice realtime stockable, no budget charge.
+        invoice = self._context.get('invoice', False)
+        move_lines = move_lines.filtered(
+            lambda l: not invoice or l.product_id.type == 'service' or
+            l.product_id.valuation != 'real_time')
         return super(AccountMoveLine, move_lines).create_analytic_lines()
 
-    # @api.multi
-    # def _budget_eligible_move_lines(self):
-    #     move_lines = self.filtered(
-    #         lambda l:
-    #         # kittiu: It seem NSTDA asset to charge budget !!!
-    #         # (l.account_id.user_type.report_type  # Not BS account
-    #         #  not in ('asset', 'liability')) and
-    #         (l.activity_id or l.product_id)  # Is Activity or Product
-    #     )
-    #     return move_lines
     @api.multi
     def _budget_eligible_move_lines(self):
         """ To be eligible, move line must,
