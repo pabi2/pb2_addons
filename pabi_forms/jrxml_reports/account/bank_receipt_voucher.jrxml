@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.10000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="145"/>
+	<property name="ireport.y" value="49"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
 	<style name="space">
 		<box rightPadding="2"/>
@@ -111,11 +111,11 @@
 	<field name="income_tax_form" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/income_tax_form]]></fieldDescription>
 	</field>
-	<field name="bank_intransit_ids_amount" class="java.lang.Float">
-		<fieldDescription><![CDATA[document_id/bank_intransit_ids/debit]]></fieldDescription>
+	<field name="line_ids_amount" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/line_ids_amount]]></fieldDescription>
 	</field>
-	<field name="bank_intransit_ids_name" class="java.lang.String">
-		<fieldDescription><![CDATA[document_id/bank_intransit_ids/ref]]></fieldDescription>
+	<field name="line_ids_name" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/line_ids_name]]></fieldDescription>
 	</field>
 	<sortField name="debit"/>
 	<sortField name="credit"/>
@@ -139,7 +139,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="256" splitType="Stretch">
+		<band height="221" splitType="Stretch">
 			<image>
 				<reportElement x="451" y="0" width="104" height="41"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.gif"]]></imageExpression>
@@ -229,26 +229,6 @@
 				<text><![CDATA[RV]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="185" width="555" height="1"/>
-			</line>
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="245" width="555" height="1"/>
-			</line>
-			<staticText>
-				<reportElement x="11" y="191" width="149" height="15"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[Text: ]]></text>
-			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="48" y="191" width="482" height="65"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{narration}]]></textFieldExpression>
-			</textField>
-			<line>
 				<reportElement x="1" y="131" width="555" height="1"/>
 			</line>
 			<staticText>
@@ -265,9 +245,6 @@
 				</textElement>
 				<text><![CDATA[Amount]]></text>
 			</staticText>
-			<line>
-				<reportElement x="0" y="156" width="555" height="1"/>
-			</line>
 			<staticText>
 				<reportElement x="365" y="99" width="149" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
@@ -337,22 +314,45 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reverse_doc_ref}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00;#,##0.00-" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="269" y="161" width="287" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box rightPadding="2"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="219" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="175" width="555" height="1"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="FixRelativeToBottom" x="57" y="179" width="482" height="37"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Float"><![CDATA[$F{bank_intransit_ids_amount}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{narration}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" x="10" y="178" width="149" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Text: ]]></text>
+			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="1" y="161" width="268" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="1" y="159" width="268" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box leftPadding="0"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier_New.ttf" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_intransit_ids_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{line_ids_name}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;#,##0.00-" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="269" y="159" width="218" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier_New.ttf" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{line_ids_amount}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="155" width="555" height="1"/>
+			</line>
 		</band>
 	</pageHeader>
 	<columnHeader>
