@@ -43,7 +43,7 @@
 		<fieldDescription><![CDATA[document_id/reference]]></fieldDescription>
 	</field>
 	<field name="wht_sequence_display" class="java.lang.String">
-		<fieldDescription><![CDATA[wht_sequence_display]]></fieldDescription>
+		<fieldDescription><![CDATA[document_id/wht_sequence_display]]></fieldDescription>
 	</field>
 	<field name="fund" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/line_ids/move_line_id/invoice/invoice_line/fund_id/name]]></fieldDescription>
