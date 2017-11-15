@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.1000000000000099"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="355"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
 	<style name="space">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
@@ -41,6 +41,9 @@
 	</field>
 	<field name="reference" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/reference]]></fieldDescription>
+	</field>
+	<field name="wht_sequence_display" class="java.lang.String">
+		<fieldDescription><![CDATA[wht_sequence_display]]></fieldDescription>
 	</field>
 	<field name="fund" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/line_ids/move_line_id/invoice/invoice_line/fund_id/name]]></fieldDescription>
@@ -160,8 +163,8 @@
 	<field name="journal_name" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/journal_id/name]]></fieldDescription>
 	</field>
-	<sortField name="debit"/>
-	<sortField name="credit"/>
+	<sortField name="debit" order="Descending"/>
+	<sortField name="credit" order="Descending"/>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{debit} == null ? 0.0 : $F{debit}]]></variableExpression>
 	</variable>
@@ -401,7 +404,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference} != null ? $F{reference} : $F{wht_sequence_display}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="433" y="99" width="133" height="15" forecolor="#000000" backcolor="#FFFFFF">
