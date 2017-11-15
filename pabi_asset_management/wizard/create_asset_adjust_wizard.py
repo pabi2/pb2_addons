@@ -118,8 +118,9 @@ class CreateAssetAdjustWizard(models.TransientModel):
                 self[TYPES[self.adjust_type][1]] += line
         # Expense to Asset
         if self.adjust_type in ('expense_to_asset'):
-            inv_lines = invoice.invoice_line.filtered(lambda l:
-                                                      not l.product_id)
+            # inv_lines = invoice.invoice_line.filtered(lambda l:
+            #                                           not l.product_id)
+            inv_lines = invoice.invoice_line  # Take any line
             for inv_line in inv_lines:
                 line = self.env[TYPES[self.adjust_type][0]].new()
                 line.from_account_id = inv_line.account_id
