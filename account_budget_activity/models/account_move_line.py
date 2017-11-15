@@ -38,11 +38,13 @@ class AccountMoveLine(models.Model):
             - Product Valuation is not real_time (invioce)
             - Product Valuation is real_time (picking) """
         # Before create, always remove analytic line if exists
+        print self
         for move_line in self:
             move_line.analytic_lines.unlink()
         move_lines = self._budget_eligible_move_lines()
         # Invoice realtime stockable, no budget charge.
         invoice = self._context.get('invoice', False)
+        print invoice
         move_lines = move_lines.filtered(
             lambda l: not invoice or l.product_id.type == 'service' or
             l.product_id.valuation != 'real_time')
