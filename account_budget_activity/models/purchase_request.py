@@ -17,7 +17,7 @@ class PurchaseRequest(models.Model):
         'budget.transition',
         'purchase_request_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi
@@ -87,7 +87,7 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         'budget.transition',
         'purchase_request_line_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi

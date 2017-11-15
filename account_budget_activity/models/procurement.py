@@ -13,4 +13,7 @@ class ProcurementOrder(ActivityCommon, models.Model):
         dimensions = AnayticAccount._analytic_dimensions()
         for d in dimensions:
             res.update({d: procurement[d].id})
+        # We need to add sale_line_id to stock_move, for budget_transition
+        res['sale_line_id'] = procurement.sale_line_id.id
+        # --
         return res

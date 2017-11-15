@@ -17,7 +17,7 @@ class PurchaseOrder(models.Model):
         'budget.transition',
         'purchase_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi
@@ -97,7 +97,7 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
         'budget.transition',
         'purchase_line_id',
         string='Budget Transition',
-        reaonly=True,
+        readonly=True,
     )
 
     @api.multi

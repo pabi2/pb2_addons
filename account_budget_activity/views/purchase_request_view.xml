@@ -26,7 +26,9 @@
                 </xpath>
 
                 <xpath expr="/form/sheet/notebook" position="inside">
-                    <page string="Budget Commitment">
+                    <page string="Budgeting">
+                        <separator string="Budget Commitment"/>
+                        <button name="recreate_all_budget_commitment" string="Recreate budget commitment" type="object" confirm="This will delete all budget commit lines, and regenerate again, are you sure to continue?"/>
                         <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"/>
                         <field name="budget_commit_ids">
                             <tree default_order='id'>
@@ -36,8 +38,20 @@
                                 <field name="amount" string="Committed Amount" sum="Total Amount"/>
                             </tree>
                         </field>
+                        <separator string="Budget Transition"/>
+                        <field name="budget_transition_ids">
+                            <tree default_order='id'>
+                                <field name="id"/>
+                                <field name="source"/>
+                                <field name="target"/>
+                                <field name="forward"/>
+                                <field name="backward"/>
+                                <field name="quantity" sum="Total Quantity"/>
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
+
 
             </field>
         </record>

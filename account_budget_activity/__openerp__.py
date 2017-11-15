@@ -48,6 +48,7 @@ Note: This module provide only framework. There will be no budget check here.
         'views/analytic_view.xml',
         'views/hr_expense_view.xml',
         'views/hr_salary_view.xml',
+        'views/stock_view.xml',
         'views/account_journal_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
         # 'workflow/account_budget_workflow.xml',
