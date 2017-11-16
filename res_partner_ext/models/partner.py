@@ -37,6 +37,7 @@ class ResPartner(models.Model):
     category_id = fields.Many2one(
         'res.partner.category',
         string='Supplier Category',
+        required=True,
     )
     tag_ids = fields.Many2many(
         'res.partner.tag',
