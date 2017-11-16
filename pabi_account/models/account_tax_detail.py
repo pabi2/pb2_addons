@@ -28,14 +28,14 @@ class AccountTaxDetail(models.Model):
             rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
         return rec
 
-    # @api.multi
-    # @api.depends('invoice_tax_id', 'voucher_tax_id')
-    # def _compute_taxbranch_id(self):
-    #     for rec in self:
-    #         if rec.invoice_tax_id:
-    #             rec.taxbranch_id = rec.invoice_tax_id.invoice_id.taxbranch_id
-    #         elif rec.voucher_tax_id:
-    #             rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
+    @api.multi
+    @api.depends('invoice_tax_id', 'voucher_tax_id')
+    def _compute_taxbranch_id(self):
+        for rec in self:
+            if rec.invoice_tax_id:
+                rec.taxbranch_id = rec.invoice_tax_id.invoice_id.taxbranch_id
+            elif rec.voucher_tax_id:
+                rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
 
     @api.model
     def _get_seq_search_domain(self, doc_type, period):

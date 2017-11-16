@@ -12,7 +12,7 @@ class CreateJournalEntryWizard(models.TransientModel):
          ('no_budget', 'Adjust No-Budget (JN)')],
         string='Type of Adjustment',
         required=True,
-        readonly=True,
+        readonly=False,
         default='no_budget',
     )
 
