@@ -11,6 +11,7 @@ class AccountTaxDetail(models.Model):
         index=True,
         # compute='_compute_taxbranch_id',
         # store=True,
+        required=True,
     )
     _sql_constraints = [
         ('tax_sequence_uniq',

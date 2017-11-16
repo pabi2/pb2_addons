@@ -2,8 +2,6 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_account_trial_balance_report_menu" name="Trial Balance" parent="account.menu_finance" sequence="4" groups="account.group_account_user"/>
-
         <record model="ir.ui.view" id="view_account_trial_balance_report_form">
             <field name="name">view.account.trial.balance.report.form</field>
             <field name="model">account.trial.balance.report</field>
