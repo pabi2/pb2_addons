@@ -14,13 +14,21 @@
                     <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')],
                 										'required': [('payment_type', '=', 'transfer')]}"/>
                     <field name="is_cheque_lot" invisible="1"/>
-                    <field name="cheque_lot_id" attrs="{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('is_cheque_lot', '=', False)],
-                										'required': [('payment_type', '=', 'cheque'), ('is_cheque_lot', '=', True)]}"/>
-                    <field name="supplier_bank_id" attrs="{'required': [('transfer_type', 'in', ('direct', 'smart'))], 'invisible': [('transfer_type', '=', 'oversea')]}"/>
-                    <field name="supplier_bank_branch" attrs="{'invisible': [('transfer_type', '=', 'oversea')]}"/>
+                    <field name="cheque_lot_id" attrs="{'invisible': [('payment_type', '!=', 'cheque')],
+                										'required': [('payment_type', '=', 'cheque')]}"/>
+                    <field name="supplier_bank_id" attrs="{'required': [('transfer_type', 'in', ('direct', 'smart'))],
+                      'invisible': ['|', ('payment_type', '=', 'cheque'), ('transfer_type', '=', 'oversea')]}"/>
+                    <field name="supplier_bank_branch" attrs="{'invisible': ['|', ('payment_type', '=', 'cheque'), ('transfer_type', '=', 'oversea')]}"/>
+                    <field name="payment_export_id" attrs="{'invisible': [('payment_export_id', '=', False)]}"/>
                 </field>
                 <field name="number_cheque" position="attributes">
-                    <attribute name="attrs">{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('cheque_lot_id', '!=', False), ('number_cheque', '=', False)]}</attribute>
+                    <attribute name="attrs">{'invisible': [('number_cheque', '=', False)]}</attribute>
+                </field>
+                <field name="bank_branch" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+                <field name="bank_cheque" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </field>
             </field>
         </record>
@@ -37,8 +45,8 @@
                   <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')],
                                   'required': [('payment_type', '=', 'transfer')]}"/>
                   <field name="is_cheque_lot" invisible="1"/>
-                  <field name="cheque_lot_id" attrs="{'invisible': ['|', ('payment_type', '!=', 'cheque'), ('is_cheque_lot', '=', False)],
-                                  'required': [('payment_type', '=', 'cheque'), ('is_cheque_lot', '=', True)]}"/>
+                  <field name="cheque_lot_id" attrs="{'invisible': [('payment_type', '!=', 'cheque')],
+                                  'required': [('payment_type', '=', 'cheque')]}"/>
                     <field name="supplier_bank_id" attrs="{'required': [('transfer_type', '!=', False)]}"/>
                     <field name="supplier_bank_branch"/>
                 </field>

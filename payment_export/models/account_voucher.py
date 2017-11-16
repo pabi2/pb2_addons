@@ -51,6 +51,12 @@ class AccountVoucher(models.Model):
         related='supplier_bank_id.bank_branch',
         readonly=True,
     )
+    payment_export_id = fields.Many2one(
+        'payment.export',
+        string='Payment Export',
+        readonly=True,
+        ondelete='restrict',
+    )
 
     @api.multi
     @api.depends('journal_id')
@@ -94,3 +100,14 @@ class AccountVoucher(models.Model):
                           'it was in already exported by %s')
                         % (line.export_id.name,))
         return super(AccountVoucher, self).cancel_voucher()
+
+    @api.multi
+    def onchange_journal(self, journal_id, line_ids, tax_id, partner_id,
+                         date, amount, ttype, company_id):
+        res = super(AccountVoucher, self).onchange_journal(
+            journal_id, line_ids, tax_id, partner_id,
+            date, amount, ttype, company_id)
+        if not res:
+            res = {'value': {}}
+        res['value'].update({'cheque_lot_id': False})
+        return res

@@ -374,6 +374,9 @@ class PaymentExport(models.Model):
                         'bank_branch': bank_branch,
                     })
                     line.write({'exported': True})
+            # Write back the export id
+            export.line_ids.mapped('voucher_id').\
+                write({'payment_export_id': export.id})
         self.write({'state': 'done'})
 
     @api.multi
