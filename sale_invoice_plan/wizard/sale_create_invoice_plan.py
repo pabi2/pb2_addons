@@ -60,10 +60,9 @@ class sale_create_invoice_plan(models.TransientModel):
                   'defined as global property.')
             )
 
-    # TODO: kittiu
     @api.model
     def _validate_total_amount(self):
-        return
+        return True
         # obj_precision = self.env['decimal.precision']
         # prec = obj_precision.precision_get('Account')
         # amount_total = sum([x.installment > 0 and x.amount or
