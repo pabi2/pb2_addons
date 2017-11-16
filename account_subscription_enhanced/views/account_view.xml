@@ -52,6 +52,11 @@
                 <field name="ref" position="after">
                     <field name="type"/>
                 </field>
+                <group position="before">
+                    <div class="oe_button_box oe_right">
+                      <button name="open_entries" string="Journal Entries" type="object" class="oe_inline"/>
+                    </div>
+                </group>
                 <group position="after">
                     <group string="Calculation Helper" attrs="{'invisible': [('type', '!=', 'amount')]}">
                         <group>

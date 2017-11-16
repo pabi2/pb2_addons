@@ -186,6 +186,24 @@ class AccountSubscription(models.Model):
                     line.amount = (rec.amount - sum_amount) + line.amount
         return
 
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        action = False
+        code = self.model_id.journal_id.code
+        if code == 'AJN':
+            action = self.env.ref('pabi_account_move_adjustment.'
+                                  'action_journal_adjust_no_budget')
+        elif code == 'AJB':
+            action = self.env.ref('pabi_account_move_adjustment.'
+                                  'action_journal_adjust_budget')
+        if not action:
+            raise ValidationError(_('Invalid journal code from model!'))
+        result = action.read()[0]
+        move_ids = self.lines_id.mapped('move_id').ids
+        result.update({'domain': [('id', 'in', move_ids)]})
+        return result
+
 
 class AccountSubscriptionLine(models.Model):
     _inherit = 'account.subscription.line'
