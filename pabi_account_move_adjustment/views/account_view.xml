@@ -240,7 +240,7 @@
                                         <field name="costcenter_id" readonly="1"/>
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                         <field name="org_id" readonly="1"/>
-                                        <field name="chartfield_id" string="Section/Project" required="1"/>
+                                        <field name="chartfield_id" string="Section/Project"/>
                                         <!-- <field name="project_id" invisible="1"/>
                                         <field name="section_id" invisible="1"/>
                                         <field name="invest_asset_id" invisible="1"/>
