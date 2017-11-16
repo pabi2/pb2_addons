@@ -192,6 +192,12 @@ class PaymentExport(models.Model):
         res = super(PaymentExport, self).write(vals)
         if 'line_ids' in vals:
             self._assign_line_sequence()
+        # Write export id back to voucher
+        if vals.get('state') == 'done':
+            for export in self:
+                # Write back the export id
+                export.line_ids.mapped('voucher_id').\
+                    write({'payment_export_id': export.id})
         return res
 
     @api.onchange('transfer_type')
@@ -374,9 +380,6 @@ class PaymentExport(models.Model):
                         'bank_branch': bank_branch,
                     })
                     line.write({'exported': True})
-            # Write back the export id
-            export.line_ids.mapped('voucher_id').\
-                write({'payment_export_id': export.id})
         self.write({'state': 'done'})
 
     @api.multi
