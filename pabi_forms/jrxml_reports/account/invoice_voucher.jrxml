@@ -123,6 +123,9 @@
 	<field name="inv_source_po_contract" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/source_document_id/contract_id/display_code]]></fieldDescription>
 	</field>
+	<field name="origin_invoice" class="java.lang.String">
+		<fieldDescription><![CDATA[document_id/origin_invoice_id/number]]></fieldDescription>
+	</field>
 	<sortField name="debit" order="Descending"/>
 	<sortField name="credit" order="Descending"/>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
@@ -222,7 +225,7 @@
 				<text><![CDATA[Doc. No.:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="365" y="113" width="149" height="15"/>
+				<reportElement x="365" y="128" width="149" height="15"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -233,7 +236,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="34" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "out_invoice" || $F{doctype} == "out_refund" ? "DV" : "KV"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "out_invoice" ? "DV" :
+($F{doctype} == "in_invoice" ? "KV" :
+($F{doctype} == "out_refund" ? "CN" :
+($F{doctype} == "in_refund" ? "SN" : "??")))]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="146" width="149" height="15"/>
@@ -300,13 +306,16 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_invoice_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="433" y="99" width="218" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="433" y="99" width="218" height="29" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[!$F{inv_source_doc}.toString().equals("") ?
-(!$F{inv_source_po_contract}.toString().equals("") ? $F{inv_source_doc} + " / " + $F{inv_source_po_contract} : $F{inv_source_doc})
-: $F{reference_doc}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(!$F{inv_source_doc}.toString().equals("") ?
+(!$F{inv_source_po_contract}.toString().equals("") ?
+    $F{inv_source_doc} + " " + $F{inv_source_po_contract} :
+    $F{inv_source_doc})
+: $F{reference_doc})
++ "\n" + $F{origin_invoice}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="81" y="128" width="234" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -316,7 +325,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fund}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="464" y="113" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="464" y="128" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
