@@ -40,7 +40,6 @@ class AccountMove(models.Model):
                      for x in lines]
             items = list(set(items))
             if items:
-                print ", ".join(items)
                 rec.line_item_summary = ", ".join(items)
 
 
