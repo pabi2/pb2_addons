@@ -16,7 +16,7 @@ class AccountAnalyticAccount(ChartFieldAction, models.Model):
 
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
-        # required=True,  # Some error on adjust asset -> expense, temp remove
+        required=True,  # Some error on adjust asset -> expense, temp remove
     )
 
     @api.model

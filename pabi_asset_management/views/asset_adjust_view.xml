@@ -59,6 +59,11 @@
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
                                         <field name="chartfield_id" required="1"/>
+                                        <field name="project_id" invisible="1"/>
+                                        <field name="section_id" invisible="1"/>
+                                        <field name="invest_asset_id" invisible="1"/>
+                                        <field name="invest_construction_phase_id" invisible="1"/>
+                                        <field name="personnel_costcenter_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -75,6 +80,11 @@
                                         <field name="account_id"/>
                                         <field name="move_id"/>
                                         <field name="chartfield_id" required="1"/>
+                                        <field name="project_id" invisible="1"/>
+                                        <field name="section_id" invisible="1"/>
+                                        <field name="invest_asset_id" invisible="1"/>
+                                        <field name="invest_construction_phase_id" invisible="1"/>
+                                        <field name="personnel_costcenter_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -97,6 +107,11 @@
                                         <field name="ref_asset_id"/>
                                         <field name="move_id"/>
                                         <field name="chartfield_id" required="1"/>
+                                        <field name="project_id" invisible="1"/>
+                                        <field name="section_id" invisible="1"/>
+                                        <field name="invest_asset_id" invisible="1"/>
+                                        <field name="invest_construction_phase_id" invisible="1"/>
+                                        <field name="personnel_costcenter_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>
