@@ -60,18 +60,19 @@ class sale_create_invoice_plan(models.TransientModel):
                   'defined as global property.')
             )
 
-    @api.model
-    def _validate_total_amount(self):
-        obj_precision = self.env['decimal.precision']
-        prec = obj_precision.precision_get('Account')
-        amount_total = sum([x.installment > 0 and x.amount or
-                            0.0 for x in self.installment_ids])
-        if round(amount_total, prec) != round(self.order_amount, prec):
-            raise except_orm(
-                _('Amount Mismatch!'),
-                _("Total installment amount %d not "
-                  "equal to order amount %d!")
-                % (amount_total, self.order_amount))
+    # TODO: kittiu
+    # @api.model
+    # def _validate_total_amount(self):
+    #     obj_precision = self.env['decimal.precision']
+    #     prec = obj_precision.precision_get('Account')
+    #     amount_total = sum([x.installment > 0 and x.amount or
+    #                         0.0 for x in self.installment_ids])
+    #     if round(amount_total, prec) != round(self.order_amount, prec):
+    #         raise except_orm(
+    #             _('Amount Mismatch!'),
+    #             _("Total installment amount %d not "
+    #               "equal to order amount %d!")
+    #             % (amount_total, self.order_amount))
 
     @api.one
     def do_create_invoice_plan(self):
