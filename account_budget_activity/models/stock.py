@@ -18,7 +18,8 @@ class StockPicking(models.Model):
         Move = self.env['account.move']
         Analytic = self.env['account.analytic.line']
         for rec in self:
-            _ids = Move.search([('document', '=', rec.name)]).line_id.ids
+            _ids = Move.search(
+                [('document', '=', rec.name)]).mapped('line_id').ids
             rec.budget_commit_ids = Analytic.search([('move_id', 'in', _ids)])
 
 
