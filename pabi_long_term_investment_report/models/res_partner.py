@@ -74,7 +74,7 @@ class ResPartnerInvestment(models.Model):
     invoice_ids = fields.Many2many(
         'account.invoice',
         'partner_investment_invoice_rel',
-        'investment_id', 'invoice_id',
+        'investmetn_id', 'invoice_id',
         string='Invoices',
         domain=lambda self: self._get_domain_invoices(),
     )
