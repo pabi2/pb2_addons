@@ -487,7 +487,7 @@ Order]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{credit} == null ? 0.0 : $F{credit} ]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{debit} == null && $F{credit} == null ? 0.0 : $F{credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="355" y="2" width="50" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -501,7 +501,7 @@ Order]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{debit} == null ? 0.0 : $F{debit}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{debit} == null && $F{credit} == null ? null : $F{debit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="456" y="2" width="59" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
