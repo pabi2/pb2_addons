@@ -298,10 +298,12 @@ class LoanCustomerAgreement(models.Model):
                     rec.supplier_invoice_id.state == 'paid':
                 state = 'bank_paid'
             if rec.sale_id.state == 'cancel':
-                state = 'bank_paid'
+                state = 'sign'
             if rec.sale_id and \
                     rec.sale_id.state == 'done':
                 state = 'done'
+            if rec.cancelled:
+                state = 'cancel'
             rec.state = state
 
     @api.onchange('amount_loan_total')
@@ -386,13 +388,28 @@ class LoanCustomerAgreement(models.Model):
 
     @api.multi
     def action_cancel(self):
+        for rec in self:
+            if rec.state in ('open', 'bank_invoice', 'bank_paid'):
+                # Check SO cancelled
+                if rec.sale_id and rec.sale_id.state != 'cancel':
+                    raise ValidationError(
+                        _('Please cancel related sales order first!'))
+                # Check bank invoice cancelled
+                invoices = self.env['account.invoice'].search(
+                    [('loan_agreement_id', '=', rec.id)])
+                if invoices.filtered(lambda l: l.state != 'cancel'):
+                    raise ValidationError(
+                        _('Please cancel all related invoices first!'))
+        # Update status
         self.write({'signed': False,
-                    'cancelled': True})
+                    'cancelled': True,
+                    'state': 'cancel'})
 
     @api.multi
     def action_cancel_draft(self):
         self.write({'signed': False,
-                    'cancelled': False})
+                    'cancelled': False,
+                    'state': 'draft'})
 
     @api.multi
     def unlink(self):
@@ -501,6 +518,8 @@ class LoanCustomerAgreement(models.Model):
 
     @api.model
     def _prepare_order_header(self, loan, date_order):
+        warehouse_ids = self.env['stock.warehouse'].search(
+            [('operating_unit_id', '=', loan.operating_unit_id.id)]).ids
         return {
             'operating_unit_id': loan.operating_unit_id.id,
             'partner_id': loan.partner_id.id,
@@ -508,6 +527,7 @@ class LoanCustomerAgreement(models.Model):
             'client_order_ref': loan.name,
             'use_invoice_plan': True,
             'user_id': self.env.user.id,
+            'warehouse_id': warehouse_ids and warehouse_ids[0] or False,
         }
 
     @api.model
