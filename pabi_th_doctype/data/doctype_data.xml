@@ -59,5 +59,13 @@
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="l10n_th_doctype_reversal.doctype_cancel_with_reversal_seq"/>
         </record>
+
+        <!-- Other Documents -->
+        <record id="doctype_advance_dunning_letter" model="res.doctype" >
+            <field name="name">Advance Dunning Letter</field>
+            <field name="sequence_id" ref="doctype_advance_dunning_letter_seq"/>
+            <field name="refer_type">advance_dunning_letter</field>
+        </record>
+
     </data>
 </openerp>

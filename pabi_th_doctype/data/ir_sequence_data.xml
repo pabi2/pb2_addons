@@ -99,5 +99,16 @@
             <field name="implementation">standard</field>
             <field name="special_type">doctype</field>
         </record>
+        # Advance Dunnning Letter
+        <record id="doctype_advance_dunning_letter_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Advance Dunning Letter</field>
+            <field name="code"></field>
+            <field name="prefix">AD%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
     </data>
 </openerp>
